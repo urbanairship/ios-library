@@ -1,0 +1,9 @@
+.DS_Store
+*.orig
+.hg*
+*.mode1v3
+*.pbxuser
+*.perspective*
+AirshipConfig.plist
+Debug/
+Release/

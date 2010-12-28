@@ -1,0 +1,198 @@
+2.2.0 - December 27, 2010
+- First Static Library Release
+
+2.1.6 - November 12, 2010
+- Removed an extra call to setProgress that would erroneously set progress to complete.
+- Added call to cancel network requests on 3.x devices upon close.
+- Added a purchaseCancelled delegate method.
+- Improved logic around decompression of files.
+- [Bug] Fixed issue where purchase status would be incorrect when resuming an incomplete 
+  download.
+
+2.1.5 - October 21, 2010
+
+- Compatible with iOS 4.2, including backgrounding.
+- Updated universal build target.
+- [Bug] Fixed iPad rotation issues.
+- [Bug] Fixed NSLibrary vs NSDocuments directory and includes migration of UA data.
+  NSDocumentsDirectory is no longer secure. Downloads will still default here to 
+  maintain compatibility. Added ability to "setDownloadDirectory".
+- [Bug] Fixed rare bug causing product download cells to draw incorrectly.
+
+2.1.4 - October 4, 2010
+
+ - Changes TableCell drawing to a nib-less layout that conforms to latest Apple 
+   recommendations and improves draw performance.
+ - Removes reference to "Apple" in localization text.
+ - Adds async image caching.
+ - Adds newest version of Reachability.
+ - Adds newest version os ASIHTTP.
+ - Adds version logging to UA servers.
+ - Adds iOS4 Backgrounding support which will trigger a refresh of the product list 
+   upon foregrounding, insuring accurate data.
+ - Adds an explicit "Restore" button for restoring previous purchases to conform to 
+   the latest Apple policies around App Store Approvals.
+
+2.1.3 - August 2, 2010
+
+ - [Bug] Fixed issue with running an iOS application built for iPhone on iPad 
+ - [Bug] Fixed issue with StoreFront displaying full screen product details view
+   if user exited StoreFront and then re-entered.
+
+2.1.2 - June 28, 2010
+
+- workaround for massive StoreKit bug affecting anyone targeting OS3, but
+  running on OS4. That would cause products to download in a infinate 
+  loop.
+- @2x art for iPhone 4
+
+2.1.1 - June 22, 2010
+
+- [Bug] Fix issue with broken productPurchased delegate method was no longer
+  being triggered after refactor
+- Fix rare crashing bug where calling removeItemAtPath on NSFileManager would
+  make error non-nil, but not produce a valid NSError object
+
+2.1.0 - June 21, 2010
+
+- iOS4 code updates
+- [Feature] New delegate method productsDownloadProgress:count so that your
+  application can display a combined download progress indicator. Without
+  having StoreFront in the foreground.
+- Cleaned up internationalization code
+
+2.0.1 - May 11, 2010
+
+- [Bug] Fixed possible crashing issue with content that displayed a preview
+  image.
+- Buy button will say 'Restore' now instead of being disabled allowing the
+  user to retry or redownload content that failed for some reason.
+- First purchase will now trigger the content restore flow and based on 
+  user interaction possibly cancel the purchase flow and restore the 
+  content based on previous receipt to prevent getting duplicate receipts
+  (and charging the developer twice) for the same peice of content.
+- Minor UI tweaking
+- Force all delegate callbacks to happen on the main thread
+- Display number of updates available in filter control
+- Removed UAStoreFrontiPadCell.* files that were no longer in user
+- Address some unused variable issues that the static analyzer found 
+
+2.0.0 - May 5, 2010
+
+- [Feature] NEW UI! - Completely redesigned UI with a much flatter and more
+  functional layout.
+- [Feature] Visible content accounting: See what items you've purchased 
+  and/or which items need updated.
+- [Feature] iPad Support - New UI design carried over and formatted for the
+  Apple iPad.
+- [Feature] now displays file size on content detail screen
+- [Feature] flexible content ordering, order your content by product id, 
+  price, name etc.
+- [Feature] content filtering via search interface
+- [Bug] Fixed a bug that could potential cause a crash on download resume
+- [Bug] Free content will now resume after interruption
+
+1.5.1 - March 26, 2010
+
+- [DEPRECATED] +displayStoreFront - Please use 
+  displayStoreFront:(UIViewController *)viewController;  This is necessary
+  to ensure proper rotation.
+- [DEPRECATED] -makeStoreFrontview -  Please use 
+  displayStoreFront:(UIViewController *)viewController;  This is necessary
+  to ensure proper rotation.
+- [Feature] Now includes complete internationalization sample
+- Renamed 'Downloads' tab to 'History' since it functions as a list of
+  historical downloads.  Hopefully this will prevent
+  any possible confusion.
+- [Bug] Fixed several issues with rotation introduced in 1.5.0
+- [Bug] Fixed issue with 'Restore All' in which items would be added to the 
+  download queue, but wouldn't kick off immediately.
+- Fail visually on receipt verification failure.  If Apple rejects a purchase
+   we used to fail silently, now we display a UIAlert.
+- [Bug] Fixed a few memory leaks
+
+1.5.0 - March 3, 2010
+
+- [Feature] Landscape support.
+- [Feature] Improved internationalization
+- [Feature] Restore all button available on the updates screen that will
+  restore all non-consumable user content.
+- [Feature] New Default UI, addresses rejections from Apple some users
+  reported due to StoreFront resembling AppStore, now it's sexier than the 
+  AppStore :-p
+- [Feature] Check to see if the user has disabled purchases and notify the user
+  immedidately upon opening StoreFront that they need to re-enable them.
+- [Bug] Fix potential crash with images using rounded corders could be released
+  prematurely (replaced the corner rounding code with CALayer)
+- [Bug] Show preview_image now on the product details screen /embarrased
+
+1.2.2 - February 10, 2010
+
+- [Feature] Partial/inerrupted downloads will now resume from previous session
+- Fixed some miscellaneous warning the latest version of xCode creates
+- Upgraded ASIHttpRequest to version 1.5 
+- Increased default timeout for http requests.
+
+1.2.1 - January 14, 2010
+- Reorganized project files.  Sample app is now called StoreFrontSample instead
+  of AirshipClient and Airship files are in the top level directory.
+- Content is now ordered by product id inside of Store Front
+- [Bug] Resolved issue where corrupted or deprecated history plist file with
+  missing icon_url would cause an exception that would crash the app.
+- Clicking on a row on the update table will start the update for the
+  individual content item - Thanks to Ian Dunlop
+
+1.2.0 - November 5, 2009
+
+- [Bug] Fixed raise condition when StoreKit retries purchase before inventory
+  is loaded which would cause application to crash.
+- [Bug] productPurchased delegate is now called after the decompression thread
+  has finished and not just after download has completed.
+- [Bug] Fixed issue where items that failed to downloads due to interuption
+  where still listed in the downloaded content list.
+- [Feature] Downloads now work in the background while the application is 
+  running, even after StoreFront is closed.
+- [Feature] Made row text change to white when selected to better match 
+  AppStore visuals
+- [Feature] added following method to StoreFront to allow applications to use
+  custom UI animations when displaying storefront.  (thanks jjthrash for the 
+  patch)
+  +(UIView*)makeStoreFrontView;
+  This also includes a new StoreFront delegate method:
+  -(void)storeFrontWillHide;
+- [Bug] Fixed issue with status bar style not restoring properly
+
+1.1.2 - October 18, 2009
+ - [Bug] Fixed raise condition that could be triggered when opening and closing
+   StoreFront rapidly that would result in application crashing
+ - [Bug] Fixed a minor memory leak in inventory
+
+1.1.1 - October 5, 2009
+ - Fixed a bug where closing StoreFront would release the delegate object
+   breaking delegation on re-launching StoreFront
+
+1.1.0 - September 17, 2009
+ - [Feature] added StoreFront delegate class that allows developers to hook
+   into StoreFront events. 
+    -(void)productPurchased:(UAProduct*) product;
+    -(void)storeFrontDidHide;
+ - Fixed several small memory leaks
+ - Added the ability to provide descriptions for free content
+ - Removed the use of Objective-C categories to make it easier to compile 
+   Airship as a static dependency.
+ - Made it so that the status bar is always displayed properly, even
+   when app starts in landscape mode
+ - Replaced the zip utilities with some thing a bit more stable and 
+   predictable
+
+1.0.0 - August 25, 2009
+ - Fixed an issue that could cause download history to be lost when
+   opening/closing StoreFront to quickly.
+ - Moved the position of the 'Done' button to the left side to match typical
+   navigation experience
+ - Fixed issue where content could be displayed as free even though it was not
+   causing it to fail to download
+ - Improved logging and alerts to help developers fix common issues.
+
+1.0.0 beta - August 01, 2009
+  - First public release

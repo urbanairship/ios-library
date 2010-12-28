@@ -1,0 +1,144 @@
+/*
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+#import "InboxSampleAppDelegate.h"
+#import "UAirship.h"
+#import "UAInbox.h"
+#import "UAInboxUI.h"
+#import "InboxSampleViewController.h"
+#import "UAInboxDefaultJSDelegate.h"
+
+@implementation InboxSampleAppDelegate
+
+@synthesize window;
+@synthesize viewController;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [window addSubview:[viewController view]];
+    [window makeKeyAndVisible];
+
+    [self failIfSimulator];
+
+    // Inbox uses SplitViewController on iPad target, but you could customize to
+    // use NavigationController on iPad device by uncommenting below line.
+    //UAInboxUI.runiPhoneTargetOniPad = YES;
+    
+    //Init Airship launch options
+    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    
+    // To use your own pre-existing inbox credentials, remove the previous line and take off like this:
+    //[takeOffOptions setValue:@"4cf54407a9ee256d9400000c" forKey:UAAirshipTakeOffOptionsDefaultUsername];
+    //[takeOffOptions setValue:@"GUvTvih4RcaqZZOAsLvKXQ" forKey:UAAirshipTakeOffOptionsDefaultPassword];
+    
+    // Create Airship singleton that's used to talk to Urban Airhship servers.
+    // Please replace these with your info from http://go.urbanairship.com
+    [UAirship takeOff: @"YOUR_APP_KEY" identifiedBy: @"YOUR_APP_SECRET" withOptions:takeOffOptions];
+    
+    // Register for notifications
+    [[UIApplication sharedApplication]
+     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                         UIRemoteNotificationTypeSound |
+                                         UIRemoteNotificationTypeAlert)];
+
+    // Config Inbox behaviour before UAInboxPushHandler since it may need it
+    // when launching from notification
+
+    // Optional: Delegate for JavaScript callback
+    jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
+    [UAInbox shared].jsDelegate = jsDelegate;
+
+    // If the application gets an UAInbox message id on launch open it up immediately.
+    // Only works for the default inbox
+	[UAInboxUI shared].inboxParentController = viewController;
+    [UAInboxPushHandler handleLaunchOptions:launchOptions];
+	
+	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
+		[UAInboxUI loadLaunchMessage];
+	}
+
+    // Return value is ignored for push notifications, so it's safer to return
+    // NO by default for other resources
+    return NO;
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    UALOG(@"APN device token: %@", deviceToken);
+    // Updates the device token and registers the token with UA
+    [[UAirship shared] registerDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
+    UALOG(@"did Fail To Register For Remote Notifications With Error: %@", error);
+}
+
+// Copy and paste this method into your AppDelegate to recieve push
+// notifications for your application while the app is running.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [UAInboxPushHandler handleNotification:userInfo forInbox:[UAInboxMessageList defaultInbox]];
+}
+
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [UAirship land];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    UAInbox *inbox = [UAInbox shared];
+    if (inbox != nil && inbox.activeInbox != nil) {
+        [inbox.activeInbox retrieveMessageList];
+    }
+    
+	id<UAInboxAlertProtocol> alertHandler = [UAInboxUI getAlertHandler];
+	[alertHandler cancelPreviousAlertAndShowMessage];
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    UAInbox *inbox = [UAInbox shared];
+    if (inbox != nil && inbox.activeInbox != nil && [UAInbox shared].activeInbox.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAInbox shared].activeInbox.unreadCount];
+    }
+}
+
+- (void)dealloc {
+    [jsDelegate release];
+    [viewController release];
+    [window release];
+    [super dealloc];
+}
+
+- (void)failIfSimulator {
+    if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
+                                                            message:@"You can see UAInbox in the simulator, but you will not be able to recieve push notifications"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+
+        [someError show];
+        [someError release];
+    }
+}
+
+@end

@@ -1,0 +1,115 @@
+/*
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+#import "StoreFrontSampleAppDelegate.h"
+#import "UAirship.h"
+#import "UAStoreFront.h"
+#import "UAInventory.h"
+#import "UAStoreFrontUI.h"
+
+@implementation StoreFrontSampleAppDelegate
+
+@synthesize window;
+@synthesize viewController;
+@synthesize navController;
+@synthesize tabBarController;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    // StoreFront uses SplitViewController on iPad target, but you could customize to
+    // use NavigationController on iPad device by uncommenting below line.
+    //UAStoreFrontUI.runiPhoneTargetOniPad = YES;
+
+    [window makeKeyAndVisible];
+
+    // Uncomment one of the following three different view controllers
+    //[window addSubview: [tabBarController view]];
+    //[window addSubview: [navController view]];
+    [window addSubview:[viewController view]];
+
+    [self failIfSimulator];
+
+    //Init Airship launch options
+    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    
+    // Create Airship singleton that's used to talk to Urban Airhship servers.
+    // Please replace these with your info from http://go.urbanairship.com
+    [UAirship takeOff: @"YOUR_APP_KEY" identifiedBy: @"YOUR_APP_SECRET" withOptions:takeOffOptions];
+
+    //Optional if you want to receive StoreFrontDelegate callbacks
+    [[UAStoreFront shared] setDelegate:self];
+    
+    return YES;
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [UAirship land];
+}
+
+- (void)dealloc {
+    [navController release];
+    [tabBarController release];
+    [viewController release];
+    [window release];
+    [super dealloc];
+}
+
+- (void)failIfSimulator {
+    if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Ooopsie"
+                                                            message:@"Can't test StoreKit functionality in the simulator. :-("
+                                                           delegate:self
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+
+        [someError show];
+        [someError release];
+    }
+}
+
+
+#pragma mark -
+#pragma mark StoreFrontDelegate
+
+-(void)productPurchased:(UAProduct*) product {
+    UALOG(@"[StoreFrontDelegate] Purchased: %@ -- %@", product.productIdentifier, product.title);
+}
+
+-(void)storeFrontDidHide {
+    UALOG(@"[StoreFrontDelegate] StoreFront quit, do something with content");
+}
+
+-(void)storeFrontWillHide {
+    UALOG(@"[StoreFrontDelegate] StoreFront will hide");
+}
+
+- (void)productsDownloadProgress:(float)progress count:(int)count {
+    //UALOG(@"[StoreFrontDelegate] productsDownloadProgress: %f count: %d", progress, count);
+    if (count == 0) {
+        UALOG(@"Downloads complete");
+    }
+}
+
+@end
