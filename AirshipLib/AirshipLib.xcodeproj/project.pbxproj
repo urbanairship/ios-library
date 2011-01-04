@@ -12,7 +12,7 @@
 		1890B8A712519FCD00E6EBF1 /* libPush-1.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.1.0.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
-		1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; };
+		1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1FC71654129597F9003BDD2B /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		1FE4379A128B589000D38A14 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };

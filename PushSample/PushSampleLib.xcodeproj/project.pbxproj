@@ -52,7 +52,7 @@
 		D5C75CBC12BC24210041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBB12BC24210041239E /* Icon-Small@2x.png */; };
 		D5C75CBF12BC242F0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBD12BC242F0041239E /* Default@2x.png */; };
 		D5C75CC012BC242F0041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBE12BC242F0041239E /* Icon.png */; };
-		D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; };
+		D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -593,6 +593,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				OTHER_LDFLAGS = (
 					"-cclib",

@@ -59,7 +59,7 @@
 		D5C75B3612BC1F820041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B3512BC1F820041239E /* Icon-72.png */; };
 		D5C75B3812BC1F8E0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B3712BC1F8E0041239E /* Icon-Small@2x.png */; };
 		D5C75B3A12BC1F9A0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B3912BC1F9A0041239E /* Default@2x.png */; };
-		E9CB327D12B85C44002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB327C12B85C44002E39EA /* CoreTelephony.framework */; };
+		E9CB327D12B85C44002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB327C12B85C44002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

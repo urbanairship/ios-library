@@ -42,7 +42,7 @@
 		18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; };
+		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		63314727122FAB0E008F2D48 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6331471E122FAB0E008F2D48 /* Icon-Small-50.png */; };
 		63314729122FAB0E008F2D48 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63314720122FAB0E008F2D48 /* MainWindow_Pad.xib */; };
