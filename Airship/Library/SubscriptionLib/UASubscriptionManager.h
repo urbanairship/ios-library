@@ -28,6 +28,8 @@
 #import "UAUser.h"
 #import "UASubscriptionProduct.h"
 
+#define SUBSCRIPTION_UI_CLASS @"UASubscriptionUI"
+
 UA_VERSION_INTERFACE(SubscriptionVersion)
 
 @class UASubscriptionObserver;
@@ -63,16 +65,16 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
     UASubscriptionInventory *inventory;
     UASubscriptionObserver *transactionObserver;
     UASubscriptionProduct *pendingProduct;
-    Class mainUIClass;
 }
 
 // public
 @property (retain, readonly) UASubscriptionInventory *inventory;
 @property (retain, nonatomic) UASubscriptionProduct *pendingProduct;
-@property (retain, nonatomic) Class mainUIClass;
 
 SINGLETON_INTERFACE(UASubscriptionManager)
 
+- (Class)uiClass;
++ (void)useCustomUI:(Class)customUIClass;
 + (void)displaySubscription:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)hideSubscription;
 + (void)land;

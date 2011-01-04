@@ -31,8 +31,6 @@
 #import "UASubscriptionInventory.h"
 #import "UASubscriptionProduct.h"
 
-#define SUBSCRIPTION_UI_CLASS @"UASubscriptionUI"
-
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -42,23 +40,41 @@ UA_VERSION_IMPLEMENTATION(SubscriptionVersion, UA_VERSION)
 @implementation UASubscriptionManager
 @synthesize transactionObserver;
 @synthesize inventory;
-@synthesize mainUIClass;
 @synthesize pendingProduct;
 
 SINGLETON_IMPLEMENTATION(UASubscriptionManager)
+
+#pragma mark -
+#pragma mark Custom UI
+
+static Class _uiClass;
+
+- (Class)uiClass {
+    if (!_uiClass) {
+        _uiClass = NSClassFromString(SUBSCRIPTION_UI_CLASS);
+    }
+	
+    return _uiClass;
+}
+
+#pragma mark -
+#pragma mark Open APIs, set custom ui
+
++ (void)useCustomUI:(Class)customUIClass {
+    _uiClass = customUIClass;
+}
+
 
 #pragma mark Class Methods
 
 + (void)displaySubscription:(UIViewController *)viewController animated:(BOOL)animated {
     UASubscriptionManager *manager = [UASubscriptionManager shared];
-    Class uiClass = manager.mainUIClass ? manager.mainUIClass : NSClassFromString(SUBSCRIPTION_UI_CLASS);
-    [uiClass displaySubscription:viewController animated:animated];
+    [[[UASubscriptionManager shared] uiClass] displaySubscription:viewController animated:animated];
 }
 
 + (void)hideSubscription {
     UASubscriptionManager *manager = [UASubscriptionManager shared];
-    Class uiClass = manager.mainUIClass ? manager.mainUIClass : NSClassFromString(SUBSCRIPTION_UI_CLASS);
-    [uiClass performSelector:@selector(hideSubscription)];
+    [[[UASubscriptionManager shared] uiClass] performSelector:@selector(hideSubscription)];
 }
 
 + (void)land {

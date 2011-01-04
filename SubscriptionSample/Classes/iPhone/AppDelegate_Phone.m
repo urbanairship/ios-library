@@ -27,6 +27,8 @@
 #import "UAirship.h"
 #import "UAProductInventory.h"
 #import "UAContentInventory.h"
+#import "UASubscription.h"
+#import "UASubscriptionUI.h"
 #import "UASubscriptionManager.h"
 
 @implementation AppDelegate_Phone
@@ -50,6 +52,8 @@
 
     [self failIfSimulator];
 
+    [UASubscriptionManager useCustomUI:[UASubscriptionUI class]];
+    
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
