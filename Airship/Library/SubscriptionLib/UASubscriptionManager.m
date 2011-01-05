@@ -68,12 +68,10 @@ static Class _uiClass;
 #pragma mark Class Methods
 
 + (void)displaySubscription:(UIViewController *)viewController animated:(BOOL)animated {
-    UASubscriptionManager *manager = [UASubscriptionManager shared];
     [[[UASubscriptionManager shared] uiClass] displaySubscription:viewController animated:animated];
 }
 
 + (void)hideSubscription {
-    UASubscriptionManager *manager = [UASubscriptionManager shared];
     [[[UASubscriptionManager shared] uiClass] performSelector:@selector(hideSubscription)];
 }
 
