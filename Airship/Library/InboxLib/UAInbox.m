@@ -36,7 +36,6 @@ UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
 @implementation UAInbox
 
 @synthesize activeInbox;
-@synthesize delegate;
 @synthesize jsDelegate;
 @synthesize pushHandler;
 @synthesize clientCache, inboxCache;

@@ -29,7 +29,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_Base64.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
-#import "UAInboxDelegate.h"
 #import "UAInboxAlertProtocol.h"
 
 #define INBOX_UI_CLASS @"UAInboxUI"
@@ -59,7 +58,6 @@ UA_VERSION_INTERFACE(UAInboxVersion)
     UAInboxMessageList *activeInbox;
 	UAInboxPushHandler *pushHandler;
 	
-    id<UAInboxDelegate> delegate;
     id<UAInboxJavaScriptDelegate> jsDelegate;
 	
     
@@ -81,7 +79,6 @@ SINGLETON_INTERFACE(UAInbox);
 
 @property (nonatomic, assign) UAInboxMessageList *activeInbox;
 @property (nonatomic, retain) UAInboxPushHandler *pushHandler;
-@property (nonatomic, assign) id<UAInboxDelegate> delegate;
 @property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
 @property(retain) NSURLCache *clientCache, *inboxCache;
 
