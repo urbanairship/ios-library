@@ -13,6 +13,8 @@
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
 		1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1F2B10C512DD01B60020843D /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; };
+		1F2B10C612DD01B60020843D /* UATagUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2B10C412DD01B60020843D /* UATagUtils.m */; };
 		1FC71654129597F9003BDD2B /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		1FE4379A128B589000D38A14 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
@@ -161,6 +163,8 @@
 		1F23001212B2B7BA001DB898 /* UAAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalytics.h; sourceTree = "<group>"; };
 		1F23001312B2B7BA001DB898 /* UAAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalytics.m; sourceTree = "<group>"; };
 		1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		1F2B10C312DD01B60020843D /* UATagUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATagUtils.h; sourceTree = "<group>"; };
+		1F2B10C412DD01B60020843D /* UATagUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtils.m; sourceTree = "<group>"; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -477,6 +481,8 @@
 				1F23001312B2B7BA001DB898 /* UAAnalytics.m */,
 				1FFE558612B7034E00A98BD0 /* UIDevice+machine.h */,
 				1FFE558712B7034E00A98BD0 /* UIDevice+machine.m */,
+				1F2B10C312DD01B60020843D /* UATagUtils.h */,
+				1F2B10C412DD01B60020843D /* UATagUtils.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -543,6 +549,7 @@
 				E9F73FB312ADE93A003CF572 /* UA_ASIDataDecompressor.h in Headers */,
 				1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */,
 				1FFE558812B7034E00A98BD0 /* UIDevice+machine.h in Headers */,
+				1F2B10C512DD01B60020843D /* UATagUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +710,7 @@
 				1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */,
 				1FFE558912B7034E00A98BD0 /* UIDevice+machine.m in Sources */,
 				1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */,
+				1F2B10C612DD01B60020843D /* UATagUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
