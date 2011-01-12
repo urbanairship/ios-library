@@ -129,6 +129,10 @@ static UAUser *_defaultUser;
 
     if (self = [super init]) {
 		
+        if (![UAirship shared].ready) {
+            return self;
+        }
+        
         [self migrateUser];
         
 		NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
@@ -381,6 +385,10 @@ static UAUser *_defaultUser;
 #pragma mark Create
 
 - (BOOL)defaultUserCreated {
+    
+    if (![UAirship shared].ready) {
+        return NO;
+    }
     
     NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
 	NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];

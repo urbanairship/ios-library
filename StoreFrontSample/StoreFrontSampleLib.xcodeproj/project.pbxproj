@@ -119,6 +119,9 @@
 		1872B72512BA14E1003CC5AC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872B6A512BA133C003CC5AC /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		18CB079C12B0E120005DEB1B /* MockedUAStoreKitObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CB079B12B0E120005DEB1B /* MockedUAStoreKitObserver.m */; };
 		18CB07A512B0E883005DEB1B /* UAStoreFront+Mocked.m in Sources */ = {isa = PBXBuildFile; fileRef = 182DA70E12AF735F0030AF40 /* UAStoreFront+Mocked.m */; };
+		1F79712B12DE3C6500D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79712A12DE3C6500D4937F /* AirshipConfig.plist */; };
+		1F79715612DE3E2900D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79712A12DE3C6500D4937F /* AirshipConfig.plist */; };
+		1F79715712DE3E2A00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79712A12DE3C6500D4937F /* AirshipConfig.plist */; };
 		636CB320128D0CB300481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
 		636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C009A71279871D00E5A656 /* libsqlite3.dylib */; };
 		636CB3D5128D0CE700481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
@@ -285,6 +288,7 @@
 		18CB079A12B0E120005DEB1B /* MockedUAStoreKitObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockedUAStoreKitObserver.h; sourceTree = "<group>"; };
 		18CB079B12B0E120005DEB1B /* MockedUAStoreKitObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockedUAStoreKitObserver.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* StoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F79712A12DE3C6500D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* StoreFrontSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFrontSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
 		638EA09611C4D50B009F6B9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		638EA09911C4D515009F6B9C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -692,6 +696,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1F79712A12DE3C6500D4937F /* AirshipConfig.plist */,
 				1854B67612C1B4E10048CD83 /* StoreFrontUITests-Info.plist */,
 				B6C008701279859300E5A656 /* StoreFrontTests-Info.plist */,
 				B6C00886127985E300E5A656 /* StoreFrontTests_Prefix.pch */,
@@ -882,6 +887,7 @@
 				1854B6C012C1B5B60048CD83 /* Default.png in Resources */,
 				1854B6C112C1B5B70048CD83 /* Icon-Small.png in Resources */,
 				1854B6C212C1B5B70048CD83 /* Icon.png in Resources */,
+				1F79715712DE3E2A00D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -917,6 +923,7 @@
 				D5C75B0912BBF0130041239E /* iPadDefault-Portrait.png in Resources */,
 				D5A3F61812C15564009731BE /* Icon@2x.png in Resources */,
 				D5A3F61A12C1556C009731BE /* iTunesArtwork in Resources */,
+				1F79712B12DE3C6500D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,6 +939,7 @@
 				B6EF6C51127A9FB3007E0DE5 /* Icon.png in Resources */,
 				182DA6E112AF72820030AF40 /* checkConfig.sh in Resources */,
 				1854B62E12C1B4940048CD83 /* RunIPhoneUnitTest.sh in Resources */,
+				1F79715612DE3E2900D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

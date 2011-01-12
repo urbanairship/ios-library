@@ -55,8 +55,8 @@
     //[takeOffOptions setValue:@"GUvTvih4RcaqZZOAsLvKXQ" forKey:UAAirshipTakeOffOptionsDefaultPassword];
     
     // Create Airship singleton that's used to talk to Urban Airhship servers.
-    // Please replace these with your info from http://go.urbanairship.com
-    [UAirship takeOff: @"YOUR_APP_KEY" identifiedBy: @"YOUR_APP_SECRET" withOptions:takeOffOptions];
+    // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+    [UAirship takeOff:takeOffOptions];
     
     // Register for notifications
     [[UIApplication sharedApplication]

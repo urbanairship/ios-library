@@ -57,6 +57,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     NSString *deviceToken;
     NSString *deviceAlias;
     BOOL deviceTokenHasChanged;
+    BOOL ready;
 
     UA_ASIHTTPRequest *registerRequest;
 }
@@ -68,12 +69,12 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 @property (retain) NSString *appId;
 @property (retain) NSString *appSecret;
 @property (assign) BOOL deviceTokenHasChanged;
+@property (assign) BOOL ready;
 
 // Lifecycle
 + (UAirship *)shared;
 + (void)setReleaseLogging:(BOOL)value;
-+ (void)takeOff:(NSString*)appkey identifiedBy:(NSString *)secret;
-+ (void)takeOff:(NSString*)appkey identifiedBy:(NSString *)secret withOptions:(NSDictionary *)options;
++ (void)takeOff:(NSDictionary *)options;
 + (void)land;
 
 // callback for succeed register APN device token

@@ -42,6 +42,8 @@
 		18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
+		1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
 		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		63314727122FAB0E008F2D48 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6331471E122FAB0E008F2D48 /* Icon-Small-50.png */; };
@@ -155,6 +157,7 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubscriptionSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1F79714C12DE3DB000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F7D037F12B8362000B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* SubscriptionSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
@@ -308,6 +311,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1F79714C12DE3DB000D4937F /* AirshipConfig.plist */,
 				B6BC28F01279550F005CBE16 /* SubscriptionTests_Prefix.pch */,
 				B6BC289C1279501D005CBE16 /* SubscriptionTests-Info.plist */,
 				0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */,
@@ -604,6 +608,7 @@
 				D5C75AFF12BBEFA80041239E /* Icon-72.png in Resources */,
 				D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */,
 				D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */,
+				1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +621,7 @@
 				B6EF6C55127A9FD4007E0DE5 /* Icon-Small.png in Resources */,
 				B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */,
 				B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */,
+				1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

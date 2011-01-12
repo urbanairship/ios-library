@@ -83,12 +83,18 @@ NSString *UADocumentDirectory(void) {
 
 + (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
                              delegate:(id)delegate finish:(SEL)selector {
+    
     return [self requestWithURL:url method:method delegate:delegate
                          finish:selector fail:@selector(requestWentWrong:)];
 }
 
 + (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
                              delegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
+    
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
     UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
     [request setRequestMethod:method];
     request.username = [UAirship shared].appId;
@@ -109,6 +115,10 @@ NSString *UADocumentDirectory(void) {
 
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
+    
+    if (![UAirship shared].ready) {
+        return nil;
+    }
     
     UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
     [request setRequestMethod:method];

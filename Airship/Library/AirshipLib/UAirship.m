@@ -50,13 +50,14 @@ BOOL releaseLogging = false;
 @synthesize appId;
 @synthesize appSecret;
 @synthesize deviceTokenHasChanged;
+@synthesize ready;
 @synthesize analytics;
 
-+(void)setReleaseLogging:(BOOL)value {
++ (void)setReleaseLogging:(BOOL)value {
     releaseLogging = value;
 }
 
--(void)dealloc {
+- (void)dealloc {
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
@@ -67,7 +68,7 @@ BOOL releaseLogging = false;
     [super dealloc];
 }
 
--(id)initWithId:(NSString *)appkey identifiedBy:(NSString *)secret {
+- (id)initWithId:(NSString *)appkey identifiedBy:(NSString *)secret {
     if (self = [super init]) {
         self.appId = appkey;
         self.appSecret = secret;
@@ -77,82 +78,108 @@ BOOL releaseLogging = false;
     return self;
 }
 
-+(void)takeOff:(NSString *)appid identifiedBy:(NSString *)secret {
-    [UAirship takeOff:appid identifiedBy:secret withOptions:nil];
-}
-
-+(void)takeOff:(NSString*)appid identifiedBy:(NSString *)secret withOptions:(NSDictionary *)options {
-    if(!_sharedAirship) {
-        
-        //Application launch options
-        NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-        
-        //Set up analytics - record when app is opened from a push
-        NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
-        if (analyticsOptions == nil) {
-            analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
-        }
-        [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
-                            forKey:UAAnalyticsOptionsRemoteNotificationKey];
-        
-        //optionally read custom configuration information from AirshipConfig.plist
-        NSString *path = [[NSBundle mainBundle]
-                                    pathForResource:@"AirshipConfig" ofType:@"plist"];
-        if (path != nil){
-            NSMutableDictionary *config = [[[NSMutableDictionary alloc] initWithContentsOfFile:path] autorelease];
-
-            NSString *APP_KEY = [config objectForKey:@"APP_KEY"];
-            NSString *APP_SECRET = [config objectForKey:@"APP_SECRET"];
-            NSString *AIRSHIP_SERVER = [config objectForKey:@"AIRSHIP_SERVER"];
-            NSString *ANALYTICS_SERVER = [config objectForKey:@"ANALYTICS_SERVER"];
-            
-            _sharedAirship = [[UAirship alloc] initWithId:APP_KEY
-                                            identifiedBy:APP_SECRET];
-            _sharedAirship.server = AIRSHIP_SERVER;
-            
-            //Add the server to the analytics options
-            if (ANALYTICS_SERVER != nil) {
-                [analyticsOptions setObject:ANALYTICS_SERVER forKey:UAAnalyticsOptionsServerKey];
-            }
-            //For testing, set this value in AirshipConfig to clear out
-            //the keychain credentials, as they will otherwise be persisted
-            //even when the application is uninstalled.
-            BOOL deleteKeychainCredentials = 
-                [[config objectForKey:@"DELETE_KEYCHAIN_CREDENTIALS"] boolValue];
-            
-            if (deleteKeychainCredentials) {
-                UALOG(@"Deleting the keychain credentials");
-                [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
-            }
-            
-        } else {
-            if([appid isEqual: @"YOUR_APP_KEY"] || [secret isEqual: @"YOUR_APP_SECRET"]) {
-                NSString* okStr = @"OK";
-                NSString* errorMessage =
-                @"Application KEY and/or SECRET not set, please"
-                " insert your application key from http://go.urbanairship.com into"
-                " the Airship initialization located in your App Delegate's"
-                " didFinishLaunching method";
-                NSString *errorTitle = @"Ooopsie";
-                UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                                    message:errorMessage
-                                                                   delegate:nil
-                                                          cancelButtonTitle:okStr
-                                                          otherButtonTitles:nil];
-
-                [someError show];
-                [someError release];
-            }
-
-            _sharedAirship = [[UAirship alloc] initWithId:appid identifiedBy:secret];
-            _sharedAirship.server = kAirshipProductionServer;
-        }
-        UALOG(@"App Key: %@", _sharedAirship.appId);
-        UALOG(@"App Secret: %@", _sharedAirship.appSecret);
-        UALOG(@"Server: %@", _sharedAirship.server);
-        
-        _sharedAirship.analytics = [[UAAnalytics alloc] initWithOptions:analyticsOptions];
++ (void)takeOff:(NSDictionary *)options {
+    
+    //Airships only take off once!
+    if (_sharedAirship) {
+        return;
     }
+    
+    //Application launch options
+    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    
+    //Set up analytics - record when app is opened from a push
+    NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
+    if (analyticsOptions == nil) {
+        analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    }
+    [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
+                        forKey:UAAnalyticsOptionsRemoteNotificationKey];
+    
+    //Read configuration information from AirshipConfig.plist
+    NSString *configPath = [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"];
+
+    if (configPath) {
+        
+        NSMutableDictionary *config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
+        
+        BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
+        
+        NSString *configAppKey;
+        NSString *configAppSecret;
+        
+        if (inProduction) {
+            configAppKey = [config objectForKey:@"PRODUCTION_APP_KEY"];
+            configAppSecret = [config objectForKey:@"PRODUCTION_APP_SECRET"];
+        } else {
+            configAppKey = [config objectForKey:@"DEVELOPMENT_APP_KEY"];
+            configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
+            
+            //set release logging to yes because static lib is built in release mode
+            [UAirship setReleaseLogging:YES];
+        }
+        
+        //Check for a custom UA server value
+        NSString *airshipServer = [config objectForKey:@"AIRSHIP_SERVER"];
+        if (airshipServer == nil) {
+            airshipServer = kAirshipProductionServer;
+        }
+        
+        _sharedAirship = [[UAirship alloc] initWithId:configAppKey identifiedBy:configAppSecret];
+        _sharedAirship.server = airshipServer;
+        
+        //Add the server to the analytics options, but do not delete if not set as
+        //it may also be set in the options parameters
+        NSString *analyticsServer = [config objectForKey:@"ANALYTICS_SERVER"];
+        if (analyticsServer != nil) {
+            [analyticsOptions setObject:analyticsServer forKey:UAAnalyticsOptionsServerKey];
+        }
+        
+        
+        //For testing, set this value in AirshipConfig to clear out
+        //the keychain credentials, as they will otherwise be persisted
+        //even when the application is uninstalled.
+        if ([[config objectForKey:@"DELETE_KEYCHAIN_CREDENTIALS"] boolValue]) {
+            UALOG(@"Deleting the keychain credentials");
+            [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
+        }
+        
+    }
+    
+    UALOG(@"App Key: %@", _sharedAirship.appId);
+    UALOG(@"App Secret: %@", _sharedAirship.appSecret);
+    UALOG(@"Server: %@", _sharedAirship.server);
+    
+    
+    //Check the format of the app key and password.
+    //If they're missing or malformed, stop takeoff
+    //and prevent the app from connecting to UA.
+    NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\w{22}+$"];  
+    BOOL match = [matchPred evaluateWithObject:_sharedAirship.appId] 
+                    && [matchPred evaluateWithObject:_sharedAirship.appSecret];  
+    
+    if (!match) {
+        NSString* okStr = @"OK";
+        NSString* errorMessage =
+            @"Application KEY and/or SECRET not set properly, please"
+            " insert your application key from http://go.urbanairship.com into"
+            " the Airship initialization located in your AirshipConfig.plist"
+            " file";
+        NSString *errorTitle = @"Ooopsie";
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
+                                                            message:errorMessage
+                                                           delegate:nil
+                                                  cancelButtonTitle:okStr
+                                                  otherButtonTitles:nil];
+        
+        [someError show];
+        [someError release];
+        return;
+        
+    }
+    
+    _sharedAirship.ready = true;
+    _sharedAirship.analytics = [[UAAnalytics alloc] initWithOptions:analyticsOptions];
     
     //Send Startup Analytics Info
     //init first event
@@ -161,7 +188,7 @@ BOOL releaseLogging = false;
     
     //Handle custom options
     if (options != nil) {
-    
+        
         NSString *defaultUsername = [options valueForKey:UAirshipTakeOffOptionsDefaultUsernameKey];
         NSString *defaultPassword = [options valueForKey:UAirshipTakeOffOptionsDefaultPasswordKey];
         if (defaultUsername != nil && defaultPassword != nil) {
@@ -172,7 +199,6 @@ BOOL releaseLogging = false;
     
     //create/setup user (begin listening for device token changes)
     [UAUser defaultUser];
-
 }
 
 + (void)land {
@@ -190,10 +216,10 @@ BOOL releaseLogging = false;
     _sharedAirship = nil;
 }
 
-+(UAirship *)shared {
++ (UAirship *)shared {
     if (_sharedAirship == nil) {
         [NSException raise:@"InstanceNotExists"
-                    format:@"Attempted to access instance before initializaion. Please call takeOff:identifiedBy: first."];
+                    format:@"Attempted to access instance before initializaion. Please call takeOff: first."];
     }
     return _sharedAirship;
 }
@@ -316,7 +342,7 @@ BOOL releaseLogging = false;
 #pragma mark -
 #pragma mark Callback for succeed register APN device token
 
--(void)registerDeviceToken:(NSData *)token {
+- (void)registerDeviceToken:(NSData *)token {
     // succeed register APN device token, then register on UA server
     [self registerDeviceToken:token withExtraInfo:nil];
 }
