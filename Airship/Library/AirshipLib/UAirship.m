@@ -98,7 +98,7 @@ BOOL releaseLogging = false;
     
     //Read configuration information from AirshipConfig.plist
     NSString *configPath = [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"];
-
+    
     if (configPath) {
         
         NSMutableDictionary *config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
@@ -144,6 +144,25 @@ BOOL releaseLogging = false;
             [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
         }
         
+    } else {
+        NSString* okStr = @"OK";
+        NSString* errorMessage = @"The AirshipConfig.plist file is missing.";
+        NSString *errorTitle = @"Error";
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
+                                                            message:errorMessage
+                                                           delegate:nil
+                                                  cancelButtonTitle:okStr
+                                                  otherButtonTitles:nil];
+        
+        [someError show];
+        [someError release];
+        
+        //Use blank credentials to prevent app from crashing while error msg
+        //is displayed
+        _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
+        
+        return;
+
     }
     
     UALOG(@"App Key: %@", _sharedAirship.appId);
@@ -163,9 +182,8 @@ BOOL releaseLogging = false;
         NSString* errorMessage =
             @"Application KEY and/or SECRET not set properly, please"
             " insert your application key from http://go.urbanairship.com into"
-            " the Airship initialization located in your AirshipConfig.plist"
-            " file";
-        NSString *errorTitle = @"Ooopsie";
+            " your AirshipConfig.plist file";
+        NSString *errorTitle = @"Error";
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
                                                             message:errorMessage
                                                            delegate:nil
