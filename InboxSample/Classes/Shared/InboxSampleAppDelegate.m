@@ -54,7 +54,7 @@
     //[takeOffOptions setValue:@"4cf54407a9ee256d9400000c" forKey:UAAirshipTakeOffOptionsDefaultUsername];
     //[takeOffOptions setValue:@"GUvTvih4RcaqZZOAsLvKXQ" forKey:UAAirshipTakeOffOptionsDefaultPassword];
     
-    // Create Airship singleton that's used to talk to Urban Airhship servers.
+    // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
     
@@ -118,8 +118,8 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.activeInbox != nil && [UAInbox shared].activeInbox.unreadCount >= 0) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAInbox shared].activeInbox.unreadCount];
+    if (inbox != nil && inbox.activeInbox != nil && inbox.activeInbox.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.activeInbox.unreadCount];
     }
 }
 

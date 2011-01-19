@@ -173,7 +173,7 @@ BOOL releaseLogging = false;
     //Check the format of the app key and password.
     //If they're missing or malformed, stop takeoff
     //and prevent the app from connecting to UA.
-    NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\w{22}+$"];  
+    NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\S{22}+$"];
     BOOL match = [matchPred evaluateWithObject:_sharedAirship.appId] 
                     && [matchPred evaluateWithObject:_sharedAirship.appSecret];  
     
