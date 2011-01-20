@@ -32,7 +32,7 @@
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
-@synthesize alias, tags, badge, quiettime, tz;
+@synthesize alias, tags, badge, quietTime, tz;
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -42,7 +42,7 @@ static Class _uiClass;
     [[UAirship shared] removeObserver:self];
     RELEASE_SAFELY(alias);
     RELEASE_SAFELY(tags);
-    RELEASE_SAFELY(quiettime);
+    RELEASE_SAFELY(quietTime);
     RELEASE_SAFELY(tz);
     [super dealloc];
 }
@@ -51,12 +51,12 @@ static Class _uiClass;
     self = [super init];
     if (self) {
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        alias = [[defaults objectForKey:kalias] retain];
+        alias = [[defaults objectForKey:kAlias] retain];
         tags = [[defaults objectForKey:kTags] retain];
         if (tags == nil) {
             tags = [[NSMutableArray alloc] init];
         }
-        quiettime = [[defaults objectForKey:kQuiettime] retain];
+        quietTime = [[defaults objectForKey:kQuietTime] retain];
         tz = [[defaults objectForKey:kTimeZone] retain];
         badge = [defaults integerForKey:kBadge];
 
@@ -87,9 +87,9 @@ static Class _uiClass;
     if (tags != nil && tags.count != 0) {
         [body setObject:tags forKey:@"tags"];
     }
-    if (tz != nil && quiettime != nil) {
+    if (tz != nil && quietTime != nil) {
         [body setObject:tz forKey:@"tz"];
-        [body setObject:quiettime forKey:@"quiettime"];
+        [body setObject:quietTime forKey:@"quiettime"];
     }
     [body setObject:[NSNumber numberWithInt:badge] forKey:@"badge"];
     [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
@@ -97,12 +97,12 @@ static Class _uiClass;
 
 - (void)saveDefaults {
     UALOG(@"save user defaults, alias: %@; tags: %@; badge: %d, quiettime: %@, tz: %@",
-          alias, tags, badge, quiettime, tz);
+          alias, tags, badge, quietTime, tz);
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:tags forKey:kTags];
-    [defaults setObject:alias forKey:kalias];
+    [defaults setObject:alias forKey:kAlias];
     [defaults setInteger:badge forKey:kBadge];
-    [defaults setObject:quiettime forKey:kQuiettime];
+    [defaults setObject:quietTime forKey:kQuietTime];
     [defaults setObject:tz forKey:kTimeZone];
     [defaults synchronize];
 }
@@ -177,7 +177,7 @@ static Class _uiClass;
     [self updateRegistrationInfo];
 }
 
-- (void)setQuiettimeFrom:(NSDate *)from To:(NSDate *)to WithTimeZone:(NSTimeZone *)timezone {
+- (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to || !timezone) {
         UALOG(@"parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
         return;
@@ -190,7 +190,7 @@ static Class _uiClass;
     NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
                        [cal components:NSHourCalendarUnit fromDate:to].hour,
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
-    self.quiettime = [NSDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
+    self.quietTime = [NSDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
                       toStr, @"end", nil];
     self.tz = [timezone name];
     [self updateRegistrationInfo];

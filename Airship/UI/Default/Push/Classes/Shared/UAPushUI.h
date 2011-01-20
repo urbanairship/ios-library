@@ -27,7 +27,7 @@
 #import "UAPush.h"
 
 
-@interface UAPushUI : NSObject <UAPushUIProtocol>{
+@interface UAPushUI : NSObject<UAPushUIProtocol> {
     UIViewController *_apnsSettingsViewController;
     UIViewController *_tokenSettingsViewController;
 }

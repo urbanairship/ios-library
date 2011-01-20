@@ -27,16 +27,20 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
-#define kalias @"UAPushAlias"
+#define kAlias @"UAPushAlias"
 #define kTags @"UAPushTags"
 #define kBadge @"UAPushBadge"
-#define kQuiettime @"UAPushQuiettime"
+#define kQuietTime @"UAPushQuietTime"
 #define kTimeZone @"UAPushTimeZone"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 
 UA_VERSION_INTERFACE(UAPushVersion)
 
+/**
+ * 
+ *
+ */
 @protocol UAPushUIProtocol
 + (void)openApnsSettings:(UIViewController *)viewController
                    animated:(BOOL)animated;
@@ -47,22 +51,36 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @end
 
 
+/**
+ * 
+ */
 @interface UAPush : UAObservable <UARegistrationObserver> {
-    NSString *alias;
-    NSMutableArray *tags;
-    NSInteger badge;
-    NSMutableDictionary *quiettime;
-    NSString *tz; //timezone
+  @private
+    NSString *alias; /**< Device token alias. */
+    NSMutableArray *tags; /**< Device token tags */
+    NSInteger badge; /**< Current badge number. */ //TODO: verify comment
+    NSMutableDictionary *quietTime; /**< Quiet time period. */
+    NSString *tz; /**< Timezone, for quiet time */
 }
 
 @property (nonatomic, retain) NSString *alias;
 @property (nonatomic, retain) NSMutableArray *tags;
-@property (nonatomic, retain) NSMutableDictionary *quiettime;
+@property (nonatomic, retain) NSMutableDictionary *quietTime;
 @property (nonatomic, retain) NSString *tz;
 @property (nonatomic, assign) int badge;
 
 SINGLETON_INTERFACE(UAPush);
 
+/**
+ * Use a custom UI implementation.
+ * Replaces the default push UI, defined in UAPushUI, with
+ * a custom implementation.
+ *
+ * @see UAPushUIProtocol
+ * @see UAPushUI
+ *
+ * @param customUIClass An implementation of UAPushUIProtocol
+ */
 + (void)useCustomUI:(Class)customUIClass;
 + (void)openApnsSettings:(UIViewController *)viewController
                 animated:(BOOL)animated;
@@ -76,6 +94,6 @@ SINGLETON_INTERFACE(UAPush);
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 // Change quiet time for current device token, only take hh:mm into account
-- (void)setQuiettimeFrom:(NSDate *)from To:(NSDate *)to WithTimeZone:(NSTimeZone *)tz;
+- (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 
 @end

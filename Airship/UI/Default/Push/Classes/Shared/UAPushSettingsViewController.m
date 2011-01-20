@@ -103,7 +103,7 @@
 static NSString *cellID = @"QuietTimeCell";
 
 - (void)initViews {
-    self.title = @"Quiet Time";
+    self.title = @"Push Settings";
     self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                             target:self
                                                                                             action:@selector(quit)]
@@ -121,7 +121,7 @@ static NSString *cellID = @"QuietTimeCell";
     fromCell.textLabel.text = @"From";
     toCell.textLabel.text = @"To";
 
-    NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuiettime];
+    NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
     if (quietTime) {
         NSDate *date1, *date2;
         NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -160,7 +160,7 @@ static NSString *cellID = @"QuietTimeCell";
     [UAPush closeApnsSettingsAnimated:YES];
 }
 
-- (IBAction)pickerVauleChanged:(id)sender {
+- (IBAction)pickerValueChanged:(id)sender {
 
     NSDate *date = [datePicker date];
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -185,7 +185,7 @@ static NSString *cellID = @"QuietTimeCell";
     NSDate *fromDate = [formatter dateFromString:fromString];
     NSDate *toDate = [formatter dateFromString:toString];
 
-    [[UAPush shared] setQuiettimeFrom:fromDate To:toDate WithTimeZone:[NSTimeZone localTimeZone]];
+    [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
 }
 
 - (IBAction)switchValueChanged:(id)sender {

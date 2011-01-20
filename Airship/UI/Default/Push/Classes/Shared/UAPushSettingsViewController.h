@@ -44,7 +44,7 @@
 @property (nonatomic, retain)UITableViewCell *enabledCell;
 
 - (IBAction)quit;
-- (IBAction)pickerVauleChanged:(id)sender;
+- (IBAction)pickerValueChanged:(id)sender;
 - (IBAction)switchValueChanged:(id)sender;
 
 // Private Methods
