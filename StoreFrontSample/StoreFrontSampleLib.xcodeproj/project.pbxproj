@@ -36,7 +36,7 @@
 		1813F0241279620E009DEB29 /* UAProductDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6A1279620E009DEB29 /* UAProductDetail.xib */; };
 		1813F0251279620E009DEB29 /* UAStoreFront.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6B1279620E009DEB29 /* UAStoreFront.xib */; };
 		1813F0261279620E009DEB29 /* UAStoreFrontLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6C1279620E009DEB29 /* UAStoreFrontLocalization.bundle */; };
-		1813F05812796312009DEB29 /* libUAirship-1.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.0.a */; };
+		1813F05812796312009DEB29 /* libUAirship-1.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.1.a */; };
 		1827ED3912364571004001E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2412364571004001E2 /* main.m */; };
 		1827ED3A12364571004001E2 /* StoreFrontSampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2612364571004001E2 /* StoreFrontSampleAppDelegate.m */; };
 		1827ED3B12364571004001E2 /* StoreFrontSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2812364571004001E2 /* StoreFrontSampleViewController.m */; };
@@ -61,7 +61,7 @@
 		1854B68412C1B5420048CD83 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		1854B68512C1B5430048CD83 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		1854B68712C1B5550048CD83 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1854B68612C1B5550048CD83 /* QuartzCore.framework */; };
-		1854B68A12C1B55A0048CD83 /* libUAirship-1.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.0.a */; };
+		1854B68A12C1B55A0048CD83 /* libUAirship-1.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.1.a */; };
 		1854B68D12C1B5770048CD83 /* GTMNSNumber+64Bit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B5A212C1B4940048CD83 /* GTMNSNumber+64Bit.m */; };
 		1854B68E12C1B5780048CD83 /* GTMObjC2Runtime.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B5A412C1B4940048CD83 /* GTMObjC2Runtime.m */; };
 		1854B68F12C1B5780048CD83 /* GTMRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B5A612C1B4940048CD83 /* GTMRegex.m */; };
@@ -144,7 +144,7 @@
 		B6C009991279869500E5A656 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */; };
 		B6C0099A1279869500E5A656 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09611C4D50B009F6B9C /* UIKit.framework */; };
 		B6C0099B1279869500E5A656 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09911C4D515009F6B9C /* StoreKit.framework */; };
-		B6C009A0127986B100E5A656 /* libUAirship-1.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.0.a */; };
+		B6C009A0127986B100E5A656 /* libUAirship-1.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.0.1.a */; };
 		B6C009A81279871D00E5A656 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C009A71279871D00E5A656 /* libsqlite3.dylib */; };
 		B6EF6C4A127A9FB3007E0DE5 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00405BA71262F9BE001E4D7E /* MainWindow_Pad.xib */; };
 		B6EF6C4B127A9FB3007E0DE5 /* iPadStoreFrontSampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 00405BA81262F9BE001E4D7E /* iPadStoreFrontSampleViewController.xib */; };
@@ -341,7 +341,7 @@
 				1854B68412C1B5420048CD83 /* CFNetwork.framework in Frameworks */,
 				1854B68512C1B5430048CD83 /* Foundation.framework in Frameworks */,
 				1854B68712C1B5550048CD83 /* QuartzCore.framework in Frameworks */,
-				1854B68A12C1B55A0048CD83 /* libUAirship-1.0.0.a in Frameworks */,
+				1854B68A12C1B55A0048CD83 /* libUAirship-1.0.1.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,7 +357,7 @@
 				63F3544D11B50A7C00A02182 /* MobileCoreServices.framework in Frameworks */,
 				638EA09711C4D50B009F6B9C /* UIKit.framework in Frameworks */,
 				638EA09A11C4D515009F6B9C /* StoreKit.framework in Frameworks */,
-				1813F05812796312009DEB29 /* libUAirship-1.0.0.a in Frameworks */,
+				1813F05812796312009DEB29 /* libUAirship-1.0.1.a in Frameworks */,
 				636CB320128D0CB300481EFC /* Security.framework in Frameworks */,
 				636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */,
 				1872B72512BA14E1003CC5AC /* CoreTelephony.framework in Frameworks */,
@@ -368,7 +368,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6C009A0127986B100E5A656 /* libUAirship-1.0.0.a in Frameworks */,
+				B6C009A0127986B100E5A656 /* libUAirship-1.0.1.a in Frameworks */,
 				B6C0088D1279867C00E5A656 /* GHUnitIOS.framework in Frameworks */,
 				B6C009941279869500E5A656 /* CFNetwork.framework in Frameworks */,
 				B6C009951279869500E5A656 /* CoreGraphics.framework in Frameworks */,
@@ -518,7 +518,7 @@
 		1813F04B1279623C009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813F04F1279623C009DEB29 /* libUAirship-1.0.0.a */,
+				1813F04F1279623C009DEB29 /* libUAirship-1.0.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -844,10 +844,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813F04F1279623C009DEB29 /* libUAirship-1.0.0.a */ = {
+		1813F04F1279623C009DEB29 /* libUAirship-1.0.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.0.0.a";
+			path = "libUAirship-1.0.1.a";
 			remoteRef = 1813F04E1279623C009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
