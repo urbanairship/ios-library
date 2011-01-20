@@ -25,6 +25,7 @@
 
 #import "UAAnalytics.h"
 #import "UAirship.h"
+#import "UAUser.h"
 #import "UAUtils.h"
 #import "UIDevice+machine.h"
 #import "UA_ASIHTTPRequest.h"
@@ -32,11 +33,23 @@
 #import "UA_Reachability.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+#import <UIKit/UIApplication.h>
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
+
+
+@interface UAAnalytics()
+
+/**
+ * Create a UUID. 
+ * Wraps CFUUID.
+ */
++ (NSString *)createUUID;
+
+@end
 
 @implementation UAAnalytics
 
@@ -57,15 +70,12 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
         
         //setup session with push id
         BOOL launchedFromPush = [options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] != nil;
-        NSString *pushId = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] objectForKey:@"_uaid"];
-        NSString *inboxId = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
+        NSString *pushId = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] objectForKey:@"_"];
         
         if (pushId != nil) {
-            [session setValue:pushId forKey:@"launched_from_push_id"];
-        } else if (inboxId != nil) {
-            [session setValue:inboxId forKey:@"launched_from_push_id"];
+            [session setValue:pushId forKey:@"push_id"];
         } else if (launchedFromPush) {
-            [session setValue:@"true" forKey:@"launched_from_push_id"];
+            [session setValue:[UAAnalytics createUUID] forKey:@"push_id"];
         }
         
     }
@@ -84,18 +94,29 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
                            server, 
                            @"/warp9/"];
     NSURL *url = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                                  method:@"POST"
-                                                delegate:self
-                                                  finish:@selector(sendDataSucceeded:)
-                                                    fail:@selector(sendDataFailed:)];
+    UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
+    [request setRequestMethod:@"POST"];
+    request.delegate = self;
+    request.timeOutSeconds = 60;
+    [request setDidFinishSelector:@selector(sendDataSucceeded:)];
+    [request setDidFailSelector:@selector(sendDataFailed:)];
+    
+    
     UIDevice *device = [UIDevice currentDevice];
     
-    [request addRequestHeader:@"X-UA-Library" value:UA_VERSION];
-    [request addRequestHeader:@"X-UA-Device-Model" value:[device machine]];
+    // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:device.systemName];
-    [request addRequestHeader:@"X-UA-OS-Version" value:device.systemVersion];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
+    [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
+    [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey]];
+    [request addRequestHeader:@"X-UA-Device-ID" value:[UAUtils udidHash]];
+    [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
+    
+    //Optional items
+    [request addRequestHeader:@"X-UA-Lib-Version" value:UA_VERSION];
+    [request addRequestHeader:@"X-UA-Device-Model" value:[device machine]];
+    [request addRequestHeader:@"X-UA-OS-Version" value:device.systemVersion];
+
     
     //UALOG(@"Sending analytics headers: %@", [request.requestHeaders descriptionWithLocale:nil indent:1]);
     
@@ -114,7 +135,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
         [eventsToSend release];
     }
     
-    UALOG(@"Starting async analytics request.");
+    UALOG(@"Starting async analytics request to %@", url);
     [request setValidatesSecureCertificate:NO];
     [request startAsynchronous];
     
@@ -122,6 +143,9 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
 - (void)sendDataSucceeded:(UA_ASIHTTPRequest*)request {
     UALOG(@"Analytics data sent successfully. Status: %d", request.responseStatusCode);
+
+    //NSString *responseString = [[[NSString alloc] initWithData:[request responseData] encoding:NSUTF8StringEncoding] autorelease];
+    //UALOG(@"Analytics Response Body: %@", responseString);
 }
 
 - (void)sendDataFailed:(UA_ASIHTTPRequest*)request {
@@ -135,10 +159,14 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 - (NSMutableDictionary *)buildStartupMetadataDictionary {
     
     NSMutableDictionary *metadata = [[[NSMutableDictionary alloc] init] autorelease];
-    [metadata setValue:[UAirship shared].appId forKey:@"app_key"];
+    [metadata setValue:[UAUser defaultUser].username forKey:@"user_id"];
+    
+    [metadata setValue:[UAirship shared].deviceToken forKey:@"device_token"];
     
     // Record time zone
-    [metadata setValue:[[NSTimeZone systemTimeZone] abbreviation] forKey:@"time_zone"];
+    [metadata setValue:[NSNumber numberWithInt:[[NSTimeZone systemTimeZone] secondsFromGMT]] forKey:@"time_zone"];
+    NSString *dstBoolean = [[NSTimeZone systemTimeZone] isDaylightSavingTime] ? @"true" : @"false";
+    [metadata setValue:dstBoolean forKey:@"daylight_savings"];
     
     // Caputre connection type using Reachability
     NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
@@ -153,7 +181,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
             
         case ReachableViaWWAN:
         {
-            connectionTypeString = @"wwan";
+            connectionTypeString = @"cell";
             break;
         }
         case ReachableViaWiFi:
@@ -175,6 +203,28 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
         [netInfo release];
     )
     
+    // Build a notification type list
+    NSMutableArray *notificationTypeArray = [[[NSMutableArray alloc] init] autorelease];
+    UIRemoteNotificationType notificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    
+    if (notificationTypes & UIRemoteNotificationTypeAlert) {
+        [notificationTypeArray addObject:@"alert"];
+    }
+    
+    if (notificationTypes & UIRemoteNotificationTypeBadge) {
+        [notificationTypeArray addObject:@"badge"];
+    }
+    
+    if (notificationTypes & UIRemoteNotificationTypeSound) {
+        [notificationTypeArray addObject:@"sound"];
+    }
+    
+    if (notificationTypes == UIRemoteNotificationTypeNone) {
+        [notificationTypeArray addObject:@"none"];
+    }
+    
+    [metadata setValue:notificationTypeArray forKey:@"notification_types"];
+    
     return metadata;
 }
 
@@ -188,11 +238,20 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
     NSMutableDictionary *data = [[[NSMutableDictionary alloc] init] autorelease];
     
     [data setObject:typeString forKey:@"type"];
+    [data setObject:[UAAnalytics createUUID] forKey:@"event_id"];
     [data setObject:payload forKey:@"data"];
     [data setObject:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]] forKey:@"time"];
     
     return data;
     
+}
+     
++ (NSString *)createUUID {
+    CFUUIDRef uuidCFObject = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *uuid = [(NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidCFObject) autorelease];
+    CFRelease(uuidCFObject);
+    
+    return uuid;
 }
 
 - (void) dealloc {
