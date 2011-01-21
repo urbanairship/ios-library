@@ -36,7 +36,7 @@ fi
 
 rm -rf "${destPath}"
 mkdir -p "${destPath}"
-echo "cp -R ${srcPath} ${srcRoot}/../${buildConfig}"
+echo "cp -R \"${srcPath}\" \"${srcRoot}/../${buildConfig}\""
 cp -R "${srcPath}" "${srcRoot}/../${buildConfig}"
 
 cd "${destPath}"
