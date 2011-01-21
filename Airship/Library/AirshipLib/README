@@ -1,0 +1,159 @@
+Airship API Setup
+#################
+
+Inside your application delegate's ``application:didFinishLaunchingWithOptions:`` method initialize a shared
+UAirship instance:
+
+    //Init Airship launch options
+    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+
+    // Create Airship singleton that's used to talk to Urban Airship servers.
+    // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+    [UAirship takeOff:takeOffOptions];
+
+Register for Push Notifications
+###############################
+
+Register for push notifications in ``application:didFinishLaunchingWithOptions:``
+
+    // Register for notifications
+    [[UIApplication sharedApplication]
+     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                         UIRemoteNotificationTypeSound |
+                                         UIRemoteNotificationTypeAlert)];
+
+Then, implement the callback that registers your new device token with Urban Airship:
+
+    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        // Updates the device token and registers the token with UA
+        [[UAirship shared] registerDeviceToken:deviceToken];
+    }
+
+Set Tags for a Device Token
+###########################
+
+Tags can be used to categorize devices. See the Tag API for details.
+
+To set tags on a device token:
+
+    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
+
+        // Create a few tags
+        NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"Tag1", @"Tag2", @"Tag3", nil];
+        NSDictionary *info = [[NSMutableDictionary alloc] initWithObjectsAndKeys:tags, @"tags", nil];
+
+        // Updates the device token and registers the token with UA
+        [[UAirship shared] registerDeviceToken:deviceToken withExtraInfo:info];
+    }
+
+You can also use ``[UATagUtils createTags:options]`` to apply commonly used tags such as country, language, time zone or device type,
+where ``options`` is an bitfield with the following options::
+
+    UATagTypeTimeZone - Full Time Zone: "America/Los_Angeles"
+    UATagTypeTimeZoneAbbreviation - Abbreviated Time Zone: "PST" Note: Contains DST info
+    UATagTypeLanguage - Language Code, with prefix: "language_en"
+    UATagTypeCountry - Country Code, with prefix: "country_us"
+    UATagTypeDeviceType - Device type: iPhone, iPad or iPod
+
+To use it in your project, register your device token as illustrated here:
+
+    #import "UATagUtils.h"
+
+    ...
+
+
+    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
+
+        // Set some commonly used tags by OR'ing UATagType values
+        NSMutableArray *tags = [UATagUtils createTags:
+                                              (UATagTypeTimeZoneAbbreviation
+                                                  | UATagTypeLanguage
+                                                  | UATagTypeCountry
+                                                  | UATagTypeDeviceType)];
+
+        NSDictionary *info = [[NSMutableDictionary alloc] initWithObjectsAndKeys:tags, @"tags", nil];
+
+        // Updates the device token and registers the token with UA
+        [[UAirship shared] registerDeviceToken:deviceToken withExtraInfo:info];
+    }
+
+Set an Alias for a Device Token
+###############################
+
+To set an alias for a device token:
+
+    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
+
+
+        NSString *yourAlias = @"Your Alias";
+
+        // Updates the device token and registers the token with UA
+        [[UAirship shared] registerDeviceToken:deviceToken withAlias:yourAlias];
+    }
+
+User Management
+###############
+
+Users, represented by the UAUser class, are used by the rich push inbox and subscriptions products. Device tokens
+are limited to a single device while users may span multiple devices and share content. Like device tokens, users may
+also have aliases and tags associated with them.
+
+    [UAUser defaultUser].alias = @"an_alias";
+    [UAUser defaultUser].tags = [NSMutableArray arrayWithObjects:@"Tag1", @"Tag2", @"Tag3", nil];
+    [[UAUser defaultUser] saveUserData];
+
+    //submit the update request asynchronously
+    [[UAUser defaultUser] updateUserWithDelegate:self finish:@selector(userUpdated:) fail:@selector(userUpdateFailed:)];
+
+The ``finish`` and ``fail`` parameters are optional, but if you would like status callbacks on user updates, you can use
+these implementations as a starting point:
+
+    // Default failure handler, set in UAUtils helper function
+    - (void)userUpdated:(UA_ASIHTTPRequest*)request {
+
+        UALOG(@"User updated: %d:%@", request.responseStatusCode, request.responseString);
+                if (request.responseStatusCode == 200) {
+                    UALOG(@"User update successful!);
+                }
+
+    }
+
+    - (void)userUpdateFailed:(UA_ASIHTTPRequest*)request {
+        UALOG(@"User update failed!);
+    }
+
+Badge Updates
+#############
+
+You can set (or reset) the badge number within your application by setting ``applicationIconBadgeNumber``:
+
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
+If you are using auto-badge, in addition to setting the local badge number as shown above, you will need to
+make a device registration call to reset the server-side counter.
+
+    - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
+        // Updates the device token and registers the token with UA
+        [[UAirship shared] registerDeviceToken:deviceToken];
+    }
+
+Applications using Rich Push can set the badge to the number of unread messages with the following code in
+the application delegate (this is already done in our sample app):
+
+    - (void)applicationWillResignActive:(UIApplication *)application {
+        UAInbox *inbox = [UAInbox shared];
+        if (inbox != nil && inbox.activeInbox != nil && inbox.activeInbox.unreadCount >= 0) {
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.activeInbox.unreadCount];
+        }
+    }
+
+Rich Push inbox handles updating your application's badge number when new messages are
+sent and then again once messages are read so you don't have to worry about
+keeping track of them.  Therefore we don't recommend setting the badge number
+manually via Push notification since Rich Pushes will override it.
+

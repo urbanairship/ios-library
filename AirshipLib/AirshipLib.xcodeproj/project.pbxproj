@@ -21,7 +21,7 @@
 		1FE4379B128B589000D38A14 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
 		1FFE558812B7034E00A98BD0 /* UIDevice+machine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FFE558612B7034E00A98BD0 /* UIDevice+machine.h */; };
 		1FFE558912B7034E00A98BD0 /* UIDevice+machine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFE558712B7034E00A98BD0 /* UIDevice+machine.m */; };
-		6331479E122FB0AA008F2D48 /* libSubscription-1.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.0.a */; };
+		6331479E122FB0AA008F2D48 /* libSubscription-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */; };
 		633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -253,7 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5A1928712C15A4E006AF4AE /* libInbox-1.5.0.a in Frameworks */,
-				6331479E122FB0AA008F2D48 /* libSubscription-1.2.0.a in Frameworks */,
+				6331479E122FB0AA008F2D48 /* libSubscription-1.2.1.a in Frameworks */,
 				633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */,
 				633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */,
 				633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */,
@@ -333,7 +333,7 @@
 		63314698122FA34B008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6331469C122FA34B008F2D48 /* libSubscription-1.2.0.a */,
+				6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -639,10 +639,10 @@
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6331469C122FA34B008F2D48 /* libSubscription-1.2.0.a */ = {
+		6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libSubscription-1.2.0.a";
+			path = "libSubscription-1.2.1.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -820,7 +820,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -844,7 +844,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

@@ -1,2 +1,10 @@
+1.0.1 - January 20, 2011
+- Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
+- Moved keys to AirshipConfig.plist
+- Added missing -all_load linker flags
+- Added UATagUtils helper class for setting typical device tags 
+- Removed unused class UAInboxDelegate
+- Updated README
+
 1.0.0 - December 27, 2010
 - First Static Library Release

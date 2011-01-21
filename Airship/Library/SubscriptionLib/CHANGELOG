@@ -1,2 +1,5 @@
+1.2.1 - January 20, 2011
+- Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
+
 1.2.0 - December 27, 2010
 - First Static Library Release

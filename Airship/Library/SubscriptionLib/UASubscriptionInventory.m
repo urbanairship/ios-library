@@ -209,10 +209,10 @@
     [UAUtils requestWentWrong:request];
 
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
-    if (transaction != nil) {
-        UALOG(@"Purchase product failed: %@", transaction.payment.productIdentifier);
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    }
+
+	// Do not finish the transaction here, leave it open for iOS to re-deliver until it explicitly fails or works
+	UALOG(@"Purchase product failed: %@", transaction.payment.productIdentifier);
+
 }
 
 #pragma mark -

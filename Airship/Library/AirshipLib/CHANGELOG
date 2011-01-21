@@ -1,2 +1,6 @@
+1.0.1 - January 20, 2010
+- Added UATagUtils
+- Moved Airship keys to AirshipConfig.plist
+
 1.0.0 - December 27, 2010
 - First Static Library Release
