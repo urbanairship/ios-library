@@ -36,7 +36,6 @@ cp -R *Sample Release
 
 cd Release
 rm -rf `find . -name "build"`
-rm -rf `find . -name "AirshipConfig.plist"`
 rm -rf `find . -name "*SampleLib.xcodeproj"`
 rm -rf `find . -name "*Tests"`
 rm -rf `find . -name "*Test*.plist"`
