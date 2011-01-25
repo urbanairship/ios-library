@@ -32,19 +32,31 @@
 
 @synthesize tableView;
 @synthesize datePicker;
+
+@synthesize pushEnabledCell;
+@synthesize pushEnabledSwitch;
+
+@synthesize quietTimeEnabledCell;
 @synthesize quietTimeSwitch;
 @synthesize fromCell;
 @synthesize toCell;
-@synthesize enabledCell;
+@synthesize timeFormat;
 
 #pragma mark -
 #pragma mark Lifecycle methods
 
 - (void)dealloc {
+    
+    //TODO: this is horribly wrong
+    
+    self.pushEnabledSwitch = nil;
+    
     [quietTimeSwitch release];
     [tableView release];
     [datePicker release];
 
+    self.timeFormat = nil;
+    
     [super dealloc];
 }
 
@@ -58,12 +70,16 @@
 }
 
 - (void)viewDidUnload {
+    self.pushEnabledSwitch = nil;
+    self.pushEnabledCell = nil;
+    
     self.quietTimeSwitch = nil;
-    self.tableView = nil;
-    self.datePicker = nil;
-    self.enabledCell = nil;
+    self.quietTimeEnabledCell = nil;
     self.toCell = nil;
     self.fromCell = nil;
+    
+    self.tableView = nil;
+    self.datePicker = nil;
 
     [super viewDidUnload];
 }
@@ -71,20 +87,46 @@
 #pragma mark -
 #pragma mark UITableViewDataSource Methods
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (pushEnabledSwitch.on) {
+        return SectionCount;
+    } else {
+        return SectionCount - 1;
+    }
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    switch (section) {
+        case SectionPushEnabled:
+            return PushEnabledSectionRowCount;
+        case SectionQuietTime:
+        {
+            if (pushEnabledSwitch.on && quietTimeSwitch.on) {
+                return QuietTimeSectionRowCount;
+            } else if (pushEnabledSwitch.on) {
+                return 1;
+            }
+        }
+        default:
+            break;
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger row = [indexPath row];
-    if (row == 0) {
-        enabledCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        return enabledCell;
-    } else if (row == 1) {
-        return fromCell;
-    } else {
-        return toCell;
+    if (indexPath.section == SectionQuietTime) {
+        if (indexPath.row == QuietTimeSectionSwitchCell) {
+            quietTimeEnabledCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            return quietTimeEnabledCell;
+        } else if (indexPath.row == QuietTimeSectionStartCell) {
+            return fromCell;
+        } else {
+            return toCell;
+        }
+    } else if (indexPath.section == SectionPushEnabled) {
+        return pushEnabledCell;
     }
+    return nil;
 }
 
 #pragma mark -
@@ -110,32 +152,46 @@ static NSString *cellID = @"QuietTimeCell";
                                               autorelease];
 
     UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    if (type == UIRemoteNotificationTypeNone) {
-        quietTimeSwitch.on = NO;
+    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].enabled) {
+        pushEnabledSwitch.on = NO;
     } else {
-        quietTimeSwitch.on = YES;
+        pushEnabledSwitch.on = YES;
     }
 
+    if (self.timeFormat == nil) {
+        self.timeFormat = @"hh:mm aaa";
+    }
+    
     fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
     toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
     fromCell.textLabel.text = @"From";
     toCell.textLabel.text = @"To";
 
+    
+    NSDate *date1 = nil;
+    NSDate *date2 = nil;
+    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    
     NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
-    if (quietTime) {
-        NSDate *date1, *date2;
-        NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-
-        [formatter setDateFormat:@"HH:mm"];
+    [formatter setDateFormat:@"HH:mm"];
+    if (quietTime != nil) {
+        UALOG(@"Quiet time dict found: %@ to %@", [quietTime objectForKey:@"start"], [quietTime objectForKey:@"end"]);
+        quietTimeSwitch.on = YES;
         date1 = [formatter dateFromString:[quietTime objectForKey:@"start"]];
         date2 = [formatter dateFromString:[quietTime objectForKey:@"end"]];
-        [formatter setDateFormat:@"hh:mm aaa"];
-        fromCell.detailTextLabel.text = [formatter stringFromDate:date1];
-        toCell.detailTextLabel.text = [formatter stringFromDate:date2];
-    } else {
-        fromCell.detailTextLabel.text = @"";
-        toCell.detailTextLabel.text = @"";
     }
+    
+    if (date1 == nil || date2 == nil) {
+        quietTimeSwitch.on = NO;
+        date1 = [formatter dateFromString:@"00:00"];//default start
+        date2 = [formatter dateFromString:@"06:00"];//default end //TODO: make defaults parameters
+    }
+    
+    UALOG(@"Start: %@ End %@", date1, date2);
+
+    [formatter setDateFormat:timeFormat];
+    fromCell.detailTextLabel.text = [formatter stringFromDate:date1];
+    toCell.detailTextLabel.text = [formatter stringFromDate:date2];
 
     NSDate *now = [[NSDate alloc] init];
     [datePicker setDate:now animated:YES];
@@ -157,20 +213,32 @@ static NSString *cellID = @"QuietTimeCell";
 }
 
 - (IBAction)quit {
+    
+    if (dirty) {
+        if (pushEnabledSwitch.on) {
+            [self updateQuietTime];
+        } else {
+            [[UAPush shared] updateRegistration];
+        }
+        dirty = NO;
+    }
+    
     [UAPush closeApnsSettingsAnimated:YES];
 }
 
 - (IBAction)pickerValueChanged:(id)sender {
 
+    dirty = YES;
+    
     NSDate *date = [datePicker date];
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateFormat:@"hh:mm aaa"];
-
+    [formatter setDateFormat:timeFormat];
+    
     int row = [[self.tableView indexPathForSelectedRow] row];
-    if (row == 1) {
+    if (row == QuietTimeSectionStartCell) {
         fromCell.detailTextLabel.text = [formatter stringFromDate:date];
         [fromCell setNeedsLayout];
-    } else if (row == 2) {
+    } else if (row == QuietTimeSectionEndCell) {
         toCell.detailTextLabel.text = [formatter stringFromDate:date];
         [toCell setNeedsLayout];
     } else {
@@ -179,26 +247,37 @@ static NSString *cellID = @"QuietTimeCell";
         [now release];
         return;
     }
+        
+    //[self updateQuietTime];
 
-    NSString *fromString = fromCell.detailTextLabel.text;
-    NSString *toString = toCell.detailTextLabel.text;
-    NSDate *fromDate = [formatter dateFromString:fromString];
-    NSDate *toDate = [formatter dateFromString:toString];
-
-    [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
 }
 
 - (IBAction)switchValueChanged:(id)sender {
-    UIRemoteNotificationType type;
-
-    if (quietTimeSwitch.on) {
-        type = UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:type];
-    } else {
-        // Urban server will unregister this device token with apple server.
-        [[UAirship shared] unRegisterDeviceToken];
+    
+    
+//    if (sender == self.quietTimeSwitch) {
+//        [self updateQuietTime];
+//        [self updateDatePicker:NO];
+//    } else if (sender == self.pushEnabledSwitch) {
+//        
+//        if (pushEnabledSwitch.on) {
+//            UIRemoteNotificationType type
+//                = UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
+//            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:type];
+//        } else {
+//            // Urban server will unregister this device token with apple server.
+//            [[UAirship shared] unRegisterDeviceToken];
+//        }
+//        [self updateDatePicker:NO];
+//    }
+    
+    dirty = YES;
+    
+    if (!quietTimeSwitch.on || !pushEnabledSwitch.on) {
+        [self updateDatePicker:NO];
     }
-    [self updateDatePicker:NO];
+    [self.tableView reloadData];
+
 }
 
 - (void)updateDatePicker:(BOOL)show {
@@ -213,7 +292,7 @@ static NSString *cellID = @"QuietTimeCell";
     [UIView commitAnimations];
 
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateFormat:@"hh:mm aaa"];
+    [formatter setDateFormat:timeFormat];
     NSString *fromString = fromCell.detailTextLabel.text;
     NSString *toString = toCell.detailTextLabel.text;
 
@@ -225,6 +304,29 @@ static NSString *cellID = @"QuietTimeCell";
         NSDate *toDate = [formatter dateFromString:toString];
         [datePicker setDate:toDate animated:YES];
     }
+}
+
+- (void)updateQuietTime {
+    
+    if (quietTimeSwitch.on) {
+        
+        NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+        [formatter setDateFormat:timeFormat];
+        
+        NSString *fromString = fromCell.detailTextLabel.text;
+        NSString *toString = toCell.detailTextLabel.text;
+        NSDate *fromDate = [formatter dateFromString:fromString];
+        NSDate *toDate = [formatter dateFromString:toString];
+        
+        UALOG(@"Start String: %@", fromString);
+        UALOG(@"End String: %@", toString);
+        
+        [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
+    } else {
+        [[UAPush shared] disableQuietTime];
+    }
+    
+
 }
 
 @end

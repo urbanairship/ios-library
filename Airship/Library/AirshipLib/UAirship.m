@@ -302,6 +302,7 @@ BOOL releaseLogging = false;
         [self unRegisterDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token unregistered on Urban Airship successfully.");
+        self.deviceToken = nil;
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
 }
@@ -344,6 +345,12 @@ BOOL releaseLogging = false;
 }
 
 - (void)unRegisterDeviceToken {
+    
+    if (deviceToken == nil) {
+        UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
+        return;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
                            server,
                            deviceToken];

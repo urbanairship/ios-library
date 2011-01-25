@@ -27,6 +27,7 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
+#define kEnabled @"UAPushEnabled"
 #define kAlias @"UAPushAlias"
 #define kTags @"UAPushTags"
 #define kBadge @"UAPushBadge"
@@ -54,8 +55,10 @@ UA_VERSION_INTERFACE(UAPushVersion)
 /**
  * 
  */
-@interface UAPush : UAObservable <UARegistrationObserver> {
+@interface UAPush : UAObservable<UARegistrationObserver> {
   @private
+    BOOL enabled;
+    UIRemoteNotificationType notificationTypes;
     NSString *alias; /**< Device token alias. */
     NSMutableArray *tags; /**< Device token tags */
     NSInteger badge; /**< Current badge number. */ //TODO: verify comment
@@ -63,11 +66,13 @@ UA_VERSION_INTERFACE(UAPushVersion)
     NSString *tz; /**< Timezone, for quiet time */
 }
 
+@property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, retain) NSString *alias;
 @property (nonatomic, retain) NSMutableArray *tags;
 @property (nonatomic, retain) NSMutableDictionary *quietTime;
 @property (nonatomic, retain) NSString *tz;
 @property (nonatomic, assign) int badge;
+@property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -89,11 +94,16 @@ SINGLETON_INTERFACE(UAPush);
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;
 
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
+- (void)registerDeviceToken:(NSData *)token;
+- (void)updateRegistration;
+
 // Change tags for current device token
 - (void)addTagToCurrentDevice:(NSString *)tag;
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 // Change quiet time for current device token, only take hh:mm into account
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
+- (void)disableQuietTime;
 
 @end

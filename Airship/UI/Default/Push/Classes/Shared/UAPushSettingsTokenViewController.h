@@ -37,4 +37,7 @@
 @property (nonatomic, retain) UIButton *copyButton;
 @property (nonatomic, retain) UIButton *emailButton;
 
+- (IBAction)copyDeviceToken;
+- (IBAction)emailDeviceToken;
+
 @end

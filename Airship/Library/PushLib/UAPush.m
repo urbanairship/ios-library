@@ -32,7 +32,7 @@
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
-@synthesize alias, tags, badge, quietTime, tz;
+@synthesize enabled, alias, tags, badge, quietTime, tz, notificationTypes;
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -59,6 +59,14 @@ static Class _uiClass;
         quietTime = [[defaults objectForKey:kQuietTime] retain];
         tz = [[defaults objectForKey:kTimeZone] retain];
         badge = [defaults integerForKey:kBadge];
+        
+        //enable push by default
+        if ([defaults objectForKey:kEnabled]) {
+            enabled = [defaults boolForKey:kEnabled];
+        } else {
+            enabled = YES;
+        }
+        
 
         [[UAirship shared] addObserver:self];
     }
@@ -79,26 +87,27 @@ static Class _uiClass;
     return [[url.relativePath componentsSeparatedByString:@"/"] lastObject];
 }
 
-- (void)updateRegistrationInfo {
-    NSMutableDictionary *body = [NSMutableDictionary dictionary];
-    if (alias != nil) {
-        [body setObject:alias forKey:@"alias"];
+- (void)updateRegistration {
+    
+    //if on, but not yet registered, re-register
+    if (enabled && [UAirship shared].deviceToken == nil) {
+        [self registerForRemoteNotificationTypes:notificationTypes];
+        
+    //if enabled, simply update existing device token
+    } else if (enabled) {
+        [self registerDeviceToken:nil];
+        
+    // unregister token w/ UA
+    } else {
+        [[UAirship shared] unRegisterDeviceToken];
     }
-    if (tags != nil && tags.count != 0) {
-        [body setObject:tags forKey:@"tags"];
-    }
-    if (tz != nil && quietTime != nil) {
-        [body setObject:tz forKey:@"tz"];
-        [body setObject:quietTime forKey:@"quiettime"];
-    }
-    [body setObject:[NSNumber numberWithInt:badge] forKey:@"badge"];
-    [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
 }
 
 - (void)saveDefaults {
-    UALOG(@"save user defaults, alias: %@; tags: %@; badge: %d, quiettime: %@, tz: %@",
-          alias, tags, badge, quietTime, tz);
+    UALOG(@"Save user defaults, enabled: %d, alias: %@; tags: %@; badge: %d, quiettime: %@, tz: %@",
+          enabled, alias, tags, badge, quietTime, tz);
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:enabled forKey:kEnabled];
     [defaults setObject:tags forKey:kTags];
     [defaults setObject:alias forKey:kAlias];
     [defaults setInteger:badge forKey:kBadge];
@@ -108,9 +117,88 @@ static Class _uiClass;
 }
 
 #pragma mark -
+#pragma mark APNS wrapper
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
+    notificationTypes = types;
+    
+    if (enabled) {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+    }
+}
+
+- (void)registerDeviceToken:(NSData *)token {
+    
+    if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+        UALOG(@"iOS Registered a device token, but nothing is enabled!");
+        
+        if ([UAirship shared].deviceToken != nil) { //already been set this session
+            NSString* okStr = @"OK";
+            NSString* errorMessage =
+            @"Unable to turn on notifications. They may be disabled in the Settings app.";
+            NSString *errorTitle = @"Error";
+            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
+                                                                message:errorMessage
+                                                               delegate:nil
+                                                      cancelButtonTitle:okStr
+                                                      otherButtonTitles:nil];
+            
+            [someError show];
+            [someError release];
+        }
+    } else if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] != notificationTypes) {
+        
+        //TODO: UI popup in this case, but only if the user enabled it in the settings screen
+        
+        UALOG(@"Failed to register a device token with the requested services. Your notifications may be turned off.");
+        
+        if ([UAirship shared].deviceToken != nil) { //already been set this session
+            NSString* okStr = @"OK";
+            NSString* errorMessage =
+            @"Unable to turn on some notifications. They may be disabled in the Settings app.";
+            NSString *errorTitle = @"Error";
+            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
+                                                                message:errorMessage
+                                                               delegate:nil
+                                                      cancelButtonTitle:okStr
+                                                      otherButtonTitles:nil];
+            
+            [someError show];
+            [someError release];
+        }
+    }
+    
+    NSMutableDictionary *body = [NSMutableDictionary dictionary];
+    if (alias != nil) {
+        [body setObject:alias forKey:@"alias"];
+    }
+    if (tags != nil && tags.count != 0) {
+        [body setObject:tags forKey:@"tags"];
+    }
+    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
+        [body setObject:tz forKey:@"tz"];
+        [body setObject:quietTime forKey:@"quiettime"];
+    }
+    [body setObject:[NSNumber numberWithInt:badge] forKey:@"badge"];
+    
+    UALOG("Updating device token (%@) with: %@", token, body);
+    
+    if (token != nil) {
+        [[UAirship shared] registerDeviceToken:token withExtraInfo:body];
+    } else {
+        [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
+    }
+
+}
+
+#pragma mark -
 #pragma mark UA Registration Observer methods
 
-- (void)registerDeviceTokenSucceed {
+- (void)registerDeviceTokenSucceeded {
+    UALOG(@"UAPush - Device Token Registration Succeeded");
+    [self saveDefaults];
+}
+
+- (void)unRegisterDeviceTokenSucceeded {
     [self saveDefaults];
 }
 
@@ -162,19 +250,19 @@ static Class _uiClass;
     [value retain];
     [alias release];
     alias = value;
-    [self updateRegistrationInfo];
+    [self updateRegistration];
 }
 
 - (void)setTags:(NSMutableArray *)value {
     [value retain];
     [tags release];
     tags = value;
-    [self updateRegistrationInfo];
+    [self updateRegistration];
 }
 
 - (void)setBadge:(int)value {
     badge = value;
-    [self updateRegistrationInfo];
+    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
@@ -190,10 +278,15 @@ static Class _uiClass;
     NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
                        [cal components:NSHourCalendarUnit fromDate:to].hour,
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
-    self.quietTime = [NSDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
+    self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
                       toStr, @"end", nil];
     self.tz = [timezone name];
-    [self updateRegistrationInfo];
+    [self updateRegistration];
+}
+
+- (void)disableQuietTime {
+    [self.quietTime removeAllObjects];
+    [self updateRegistration];
 }
 
 #pragma mark -

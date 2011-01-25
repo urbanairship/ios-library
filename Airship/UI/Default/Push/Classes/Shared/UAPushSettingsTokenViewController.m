@@ -26,7 +26,6 @@
 #import "UAPushSettingsTokenViewController.h"
 #import "UAirship.h"
 
-
 @implementation UAPushSettingsTokenViewController
 
 @synthesize emailButton;
@@ -46,9 +45,8 @@
 
     self.title = @"Device Token";
 
-    // TODO: get description from server
-    text = @"This is a very loooooooooooooooooooooooooooooooooooooooooooooooooo"
-           @"ooooooooooooooooooooooooooooooooooooooooooooooooooong description";
+    text = @"Your current device token. Test a push notification at "
+           @"https://go.urbanairship.com";
 
     tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
 }
@@ -90,10 +88,11 @@
     UIImageView *bgImageView = [[UIImageView alloc] initWithImage: stretchableBgImage];
 
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"description-cell"];
-    if (!cell)
+    if (!cell) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                        reuseIdentifier:@"description-cell"] autorelease];
-
+    }
+    
     UIFont *font = [UIFont systemFontOfSize: 17];
 
     UILabel* description = [[UILabel alloc] init];
@@ -117,6 +116,18 @@
     [bgImageView release];
 
     return cell;
+}
+
+#pragma mark -
+#pragma mark UI Button Actions
+- (IBAction)copyDeviceToken {
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = [UAirship shared].deviceToken;
+}
+
+- (IBAction)emailDeviceToken {
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = [UAirship shared].deviceToken;
 }
 
 @end

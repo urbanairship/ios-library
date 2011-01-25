@@ -53,18 +53,25 @@
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
-    // Register for notifications
-    [[UIApplication sharedApplication]
-     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                         UIRemoteNotificationTypeSound |
-                                         UIRemoteNotificationTypeAlert)];
+//    if ([UAPush shared].enabled) {
+//        // Register for notifications
+//        [[UIApplication sharedApplication]
+//         registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+//                                             UIRemoteNotificationTypeSound |
+//                                             UIRemoteNotificationTypeAlert)];
+//    }
+    [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                                         UIRemoteNotificationTypeSound |
+                                                         UIRemoteNotificationTypeAlert)];
+
     return YES;
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    [[UAirship shared] registerDeviceToken:deviceToken];
+    //[[UAirship shared] registerDeviceToken:deviceToken];
+    [[UAPush shared] registerDeviceToken:deviceToken];
     // And manually set quiet time
     // [[UAPushLib shared] setQuiettimeFrom:fromDate To:toDate WithTimeZone:[NSTimeZone localTimeZone]];
 }

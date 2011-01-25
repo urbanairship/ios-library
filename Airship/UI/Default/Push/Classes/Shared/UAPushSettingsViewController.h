@@ -25,23 +25,55 @@
 
 #import <UIKit/UIKit.h>
 
+enum {
+    SectionPushEnabled = 0,
+    SectionQuietTime   = 1,
+    SectionCount       = 2
+};
+
+enum {
+    PushEnabledSectionSwitchCell = 0,
+    PushEnabledSectionRowCount   = 1
+};
+
+enum {
+    QuietTimeSectionSwitchCell  = 0,
+    QuietTimeSectionStartCell   = 1,
+    QuietTimeSectionEndCell     = 2,
+    QuietTimeSectionRowCount    = 3
+};
 
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
     IBOutlet UITableView  *tableView;
-    IBOutlet UITableViewCell *enabledCell;
+    
+    IBOutlet UITableViewCell *pushEnabledCell;
+    IBOutlet UISwitch *pushEnabledSwitch;
+    
+    IBOutlet UITableViewCell *quietTimeEnabledCell;
+    IBOutlet UISwitch *quietTimeSwitch;
     UITableViewCell *fromCell;
     UITableViewCell *toCell;
-    IBOutlet UISwitch *quietTimeSwitch;
+
     IBOutlet UIDatePicker *datePicker;
     CGRect pickerShownFrame, pickerHiddenFrame;
+    
+    NSString *timeFormat;
+    
+    BOOL dirty;
 }
 
 @property (nonatomic, retain)UITableView *tableView;
 @property (nonatomic, retain)UIDatePicker *datePicker;
+
+@property (nonatomic, retain)UITableViewCell *pushEnabledCell;
+@property (nonatomic, retain)UISwitch *pushEnabledSwitch;
+
+@property (nonatomic, retain)UITableViewCell *quietTimeEnabledCell;
 @property (nonatomic, retain)UISwitch *quietTimeSwitch;
 @property (nonatomic, retain)UITableViewCell *fromCell;
 @property (nonatomic, retain)UITableViewCell *toCell;
-@property (nonatomic, retain)UITableViewCell *enabledCell;
+@property (nonatomic, copy)NSString *timeFormat;
+
 
 - (IBAction)quit;
 - (IBAction)pickerValueChanged:(id)sender;
@@ -50,5 +82,6 @@
 // Private Methods
 - (void)initViews;
 - (void)updateDatePicker:(BOOL)show;
+- (void)updateQuietTime;
 
 @end
