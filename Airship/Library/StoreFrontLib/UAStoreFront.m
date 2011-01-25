@@ -274,6 +274,7 @@ static Class _uiClass;
         [self loadReceipts];
 
         [self initProperties];
+        [self setDownloadDirectory:kUADownloadDirectory];
     }
     return self;
 }
