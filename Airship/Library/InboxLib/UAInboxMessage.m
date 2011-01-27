@@ -65,6 +65,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		[dateFormatter setLocale:enUSPOSIXLocale];
         [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         self.messageSent = [dateFormatter dateFromString:dateString];
         [dateFormatter release];
 

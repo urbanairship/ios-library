@@ -101,6 +101,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 		[dateFormatter setLocale:enUSPOSIXLocale];
         [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         msg.messageSent = [dateFormatter dateFromString:dateString];
         [dateFormatter release];
 
@@ -116,6 +117,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 	[dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [db beginTransaction];
     for (UAInboxMessage *message in messages) {
         [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)" ,
