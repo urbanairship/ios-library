@@ -165,7 +165,7 @@
             NSFileManager *fileManager = [NSFileManager defaultManager];
             self.decompressedContentPath = outputDirectory;
             
-            UALOG("Decompressed: %@", [fileManager contentsOfDirectoryAtPath:self.decompressedContentPath error:&error]);
+            //UALOG("Decompressed: %@", [fileManager contentsOfDirectoryAtPath:self.decompressedContentPath error:&error]);
             
             BOOL success = [fileManager removeItemAtPath:path error:&error];
             if (!success) {
