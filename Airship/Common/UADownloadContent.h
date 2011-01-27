@@ -43,6 +43,7 @@
     
     NSString *downloadPath;
     NSString *downloadTmpPath;
+    
     NSDictionary *postData;
     NSString *requestMethod; 
     NSString *responseString;
@@ -77,8 +78,12 @@
 
 @interface UAZipDownloadContent : UADownloadContent {
     id<UAZipDownloadContentProtocol> decompressDelegate;
+    
+    @private
+      NSString *decompressedContentPath;
 }
 @property (assign, nonatomic) id decompressDelegate;
+@property (retain, nonatomic) NSString *decompressedContentPath;
 
 - (void)decompress;
 @end

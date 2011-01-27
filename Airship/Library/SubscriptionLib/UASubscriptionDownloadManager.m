@@ -107,8 +107,8 @@
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
-    UALOG(@"Download Content successful: %@, and decompressed to %@", content.contentName,
-          [UADocumentDirectory() stringByAppendingPathComponent:content.subscriptionKey]);
+    UALOG(@"Download Content successful: %@, and decompressed to %@", 
+          content.contentName, downloadContent.decompressedContentPath);
     
     // update subscription
     [[[UASubscriptionManager shared].inventory subscriptionForContent:content] filterDownloadedContents];

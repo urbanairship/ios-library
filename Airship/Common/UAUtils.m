@@ -29,10 +29,6 @@
 #import "UAirship.h"
 #import "UA_SBJSON.h"
 
-NSString *UADocumentDirectory(void) {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-}
-
 @implementation UAUtils
 
 + (NSString *)udidHash {

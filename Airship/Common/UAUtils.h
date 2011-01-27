@@ -26,8 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UA_ASIHTTPRequest.h"
 
-FOUNDATION_EXPORT NSString *UADocumentDirectory(void);
-
 @interface UAUtils : NSObject {
 
 }

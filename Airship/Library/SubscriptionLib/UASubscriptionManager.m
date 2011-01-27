@@ -105,11 +105,16 @@ IF_IOS4_OR_GREATER(
 									
 );
 
-        //Make sure ~/Documents/ua directory exists, we use it for storing
+        //Make sure the default ua directory exists, we use it for storing
         //various bits of data like download history, image cache
         BOOL uaExists = [[NSFileManager defaultManager] fileExistsAtPath:kUADirectory];
         if(!uaExists) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:NO attributes:nil error:nil];
+            [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
+        //Set up default download directory
+        if (![[NSFileManager defaultManager] fileExistsAtPath:kUADownloadDirectory]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:kUADownloadDirectory withIntermediateDirectories:YES attributes:nil error:nil];
         }
 
         transactionObserver = [[UASubscriptionObserver alloc] init];
