@@ -246,9 +246,12 @@
     userPurchasingInfo = [[result objectForKey:@"subscriptions"] retain];
     has_active_subscriptions = ([[result objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
 
-
     NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    [generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
+	NSLocale *enUSPOSIXLocale = enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+	
+	[generateDateFormatter setLocale:enUSPOSIXLocale];
+	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
+	[generateDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
     // refs http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
     // Date Format Patterns 'ZZZ' is for date strings like '-0800' and 'ZZZZ'
