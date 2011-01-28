@@ -1,4 +1,8 @@
-1.0.1 - January 20, 2010
+1.0.2 - January 27, 2011
+- Fixed bug causing downloads to still go to NSDocuments instead of NSLibrary
+- Removed category on UIDevice, eliminating -all_load flag requirement, and moved the functionality to UAUtils
+
+1.0.1 - January 20, 2011
 - Added UATagUtils
 - Moved Airship keys to AirshipConfig.plist
 

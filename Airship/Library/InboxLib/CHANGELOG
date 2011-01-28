@@ -1,3 +1,6 @@
+1.5.2 - January 27, 2011
+- Fixed dateFormatter to require GMT and en_us_posix locale
+
 1.5.1 - January 20, 2011
 - Removed unused class UAInboxDelegate
 - Added missing -all_load linker flags
