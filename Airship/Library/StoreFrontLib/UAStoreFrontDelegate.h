@@ -30,8 +30,11 @@
 - (void)productPurchased:(UAProduct*) product;
 
 @optional
-- (void)storeFrontDidHide;
+
+// Indicates that the store front view will hide via
+// [UAStoreFront quitStoreFront]
 - (void)storeFrontWillHide;
+
 // Only when count == 0, downloads are all finished
 // Progress is between 0.0 and 1.0, inclusive
 - (void)productsDownloadProgress:(float)progress count:(int)count;
