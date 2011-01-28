@@ -25,7 +25,7 @@
 
 #import "UATagUtils.h"
 #import "UAGlobal.h"
-#import "UIDevice+machine.h"
+#import "UAUtils.h"
 
 @implementation UATagUtils
 
@@ -67,7 +67,7 @@
     }
     
     if (tagFlags & UATagTypeDeviceType) {
-        NSString *deviceModel = [[UIDevice currentDevice] machine];
+        NSString *deviceModel = [UAUtils deviceModelName];
         
         if ([deviceModel hasPrefix:@"iPad"]) {
             [tags addObject:@"iPad"];

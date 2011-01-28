@@ -32,6 +32,8 @@
 
 + (NSString *)udidHash;
 
++ (NSString *)deviceModelName;
+
 + (NSString *)pluralize:(int)count 
              singularForm:(NSString*)singular
              pluralForm:(NSString*)plural;
