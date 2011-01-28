@@ -43,7 +43,7 @@
     
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
-    [self setDownloadDirectory:kUADownloadDirectory];
+    self.downloadDirectory = kUADownloadDirectory;
     [self loadPendingProducts];
     
     return self;
@@ -271,6 +271,8 @@
         UAProduct *product = zipDownloadContent.userInfo;
         product.status = UAProductStatusWaiting;
         zipDownloadContent.decompressDelegate = self;
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:(UADownloadContent *)downloadContent];

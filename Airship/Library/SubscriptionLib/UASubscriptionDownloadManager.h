@@ -29,7 +29,10 @@
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
     UADownloadManager *downloadManager;
+    NSString *downloadDirectory;
 }
+
+@property (nonatomic, retain) NSString *downloadDirectory;
 
 - (void)download:(UASubscriptionContent *)content;
 - (void)checkDownloading:(UASubscriptionContent *)content;

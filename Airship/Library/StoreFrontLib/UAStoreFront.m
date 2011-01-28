@@ -139,7 +139,7 @@ static Class _uiClass;
     }
 
     if (success) {
-        [self.downloadManager setDownloadDirectory:path];
+        self.downloadManager.downloadDirectory = path;
         UALOG(@"New Download Directory: %@", self.downloadManager.downloadDirectory);
     }
 

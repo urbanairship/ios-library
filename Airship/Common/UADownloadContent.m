@@ -82,7 +82,7 @@
             UALOG(@"download path is nil");
             return nil;
         }
-        self.downloadPath = [kUADownloadDirectory stringByAppendingPathComponent:
+        self.downloadPath = [NSTemporaryDirectory() stringByAppendingPathComponent:
                          [NSString stringWithFormat: @"%@.zip", [self downloadFileName]]];
         
         UALOG(@"download path: %@", downloadPath);
@@ -156,24 +156,25 @@
     UA_ZipArchive *za = [[UA_ZipArchive alloc] init];
     if ([za UnzipOpenFile:path]) {
         
-        NSString *outputDirectory = [[path stringByDeletingPathExtension] stringByAppendingString:@"/"];
-        UALOG(@"Decompressing to %@", outputDirectory);
+        UALOG(@"Decompressing to %@", self.decompressedContentPath);
 
-        if ([za UnzipFileTo:outputDirectory overWrite:YES]) {
+        if ([za UnzipFileTo:self.decompressedContentPath overWrite:YES]) {
+            
             decompressed = YES;
+            
             NSError *error = nil;
             NSFileManager *fileManager = [NSFileManager defaultManager];
-            self.decompressedContentPath = outputDirectory;
-            
-            //UALOG("Decompressed: %@", [fileManager contentsOfDirectoryAtPath:self.decompressedContentPath error:&error]);
-            
             BOOL success = [fileManager removeItemAtPath:path error:&error];
             if (!success) {
                 UALOG(@"Failed to remove downloaded item, %@", error);
                 decompressed = NO;
             }
+            
+            //UALOG("Decompressed: %@", [fileManager contentsOfDirectoryAtPath:self.decompressedContentPath error:&error]);
+            
         } else {
             UALOG(@"Failed to decompress content %@", path);
+            self.decompressedContentPath = nil;
         }
 
         [za UnzipCloseFile];
