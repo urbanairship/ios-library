@@ -34,9 +34,6 @@
 #import <CoreTelephony/CTCarrier.h>
 #import <UIKit/UIApplication.h>
 
-#include <sys/types.h>
-#include <sys/sysctl.h>
-
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
@@ -50,8 +47,6 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
  * Wraps CFUUID.
  */
 + (NSString *)createUUID;
-
-- (NSString *)deviceModelName;
 
 @end
 
@@ -118,11 +113,11 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
     
     //Optional items
     [request addRequestHeader:@"X-UA-Lib-Version" value:UA_VERSION];
-    [request addRequestHeader:@"X-UA-Device-Model" value:[self deviceModelName]];
+    [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
     [request addRequestHeader:@"X-UA-OS-Version" value:device.systemVersion];
 
     
-    UALOG(@"Sending analytics headers: %@", [request.requestHeaders descriptionWithLocale:nil indent:1]);
+    //UALOG(@"Sending analytics headers: %@", [request.requestHeaders descriptionWithLocale:nil indent:1]);
     
     //replace event buffer
     NSArray *eventsToSend = events;
@@ -256,28 +251,6 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
     CFRelease(uuidCFObject);
     
     return uuid;
-}
-
-- (NSString *)deviceModelName {
-    size_t size;
-
-    // Set 'oldp' parameter to NULL to get the size of the data
-    // returned so we can allocate appropriate amount of space
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0); 
-
-    // Allocate the space to store name
-    char *name = malloc(size);
-
-    // Get the platform name
-    sysctlbyname("hw.machine", name, &size, NULL, 0);
-
-    // Place name into a string
-    NSString *machine = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
-
-    // Done with this
-    free(name);
-
-    return machine;
 }
 
 - (void) dealloc {
