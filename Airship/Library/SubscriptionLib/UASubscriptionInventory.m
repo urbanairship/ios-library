@@ -247,7 +247,7 @@
     has_active_subscriptions = ([[result objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
 
     NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-	NSLocale *enUSPOSIXLocale = enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	
 	[generateDateFormatter setLocale:enUSPOSIXLocale];
 	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46

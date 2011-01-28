@@ -97,7 +97,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
         NSString *dateString = [rs stringForColumn:@"sent_time"]; //2010-04-16 16:32:50
         NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-		NSLocale *enUSPOSIXLocale = enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 		[dateFormatter setLocale:enUSPOSIXLocale];
         [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
