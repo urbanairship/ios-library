@@ -244,9 +244,9 @@
     // if put the error alert codes in '...Finished' method, will miss these
     // alerts when timeout error raised
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
-    if (product.status = UAProductStatusWaiting) {
+    if (product.status == UAProductStatusWaiting) {
         [alertHandler showReceiptVerifyFailedAlert];
-    } else if (product.status = UAProductStatusDownloading){
+    } else if (product.status == UAProductStatusDownloading){
         [alertHandler showDownloadContentFailedAlert];
     }
 
