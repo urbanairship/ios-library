@@ -162,7 +162,17 @@ static Class _uiClass;
 }
 
 + (void)quitStoreFront {
+    
+    // call the optional storeFrontWillHide delegate method
+    NSObject<UAStoreFrontDelegate> *sfDelegate = [UAStoreFront shared].delegate;    
+    if ([sfDelegate respondsToSelector:@selector(storeFrontWillHide)]) {
+        [sfDelegate performSelectorOnMainThread:@selector(storeFrontWillHide) 
+                                     withObject:nil 
+                                  waitUntilDone:YES];
+    }
+    
     [[[UAStoreFront shared] uiClass] quitStoreFront];
+    
 }
 
 #pragma mark -

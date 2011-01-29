@@ -97,10 +97,6 @@
     UALOG(@"[StoreFrontDelegate] Purchased: %@ -- %@", product.productIdentifier, product.title);
 }
 
--(void)storeFrontDidHide {
-    UALOG(@"[StoreFrontDelegate] StoreFront quit, do something with content");
-}
-
 -(void)storeFrontWillHide {
     UALOG(@"[StoreFrontDelegate] StoreFront will hide");
 }
