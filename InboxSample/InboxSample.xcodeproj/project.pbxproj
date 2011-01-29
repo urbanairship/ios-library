@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		184E3F3C129E4C1A004465C8 /* libUAirship-1.0.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F3B129E4C1A004465C8 /* libUAirship-1.0.2.a */; };
+		184E3F3C129E4C1A004465C8 /* libUAirship-1.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F3B129E4C1A004465C8 /* libUAirship-1.0.3.a */; };
 		1872674D1287C6200064C41B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		189224A0127A6795000CF8D0 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27C9A125EDD6E0045D75B /* Icon-Small-50.png */; };
 		18A27CA7125EDD6E0045D75B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A27C88125EDD6E0045D75B /* main.m */; };
@@ -78,7 +78,7 @@
 		0D27C1CA1165E9440086F66D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		0D5F511011744AF5004AE48F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D962FB51169952C008D18A2 /* fmdb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = fmdb.xcodeproj; path = "/Users/yuchao/iphone-research/flycode-read-only/fmdb/fmdb.xcodeproj"; sourceTree = "<absolute>"; };
-		184E3F3B129E4C1A004465C8 /* libUAirship-1.0.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.2.a"; path = "../Airship/libUAirship-1.0.2.a"; sourceTree = SOURCE_ROOT; };
+		184E3F3B129E4C1A004465C8 /* libUAirship-1.0.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.3.a"; path = "../Airship/libUAirship-1.0.3.a"; sourceTree = SOURCE_ROOT; };
 		1872674C1287C6200064C41B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		18A27C88125EDD6E0045D75B /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/Shared/main.m; sourceTree = "<group>"; };
 		18A27C9A125EDD6E0045D75B /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -162,7 +162,7 @@
 				63CB563A1247164900DF2EBC /* StoreKit.framework in Frameworks */,
 				1872674D1287C6200064C41B /* Security.framework in Frameworks */,
 				636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */,
-				184E3F3C129E4C1A004465C8 /* libUAirship-1.0.2.a in Frameworks */,
+				184E3F3C129E4C1A004465C8 /* libUAirship-1.0.3.a in Frameworks */,
 				E9CB326612B85A87002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,7 +181,7 @@
 		184E3F3A129E4C0D004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3F3B129E4C1A004465C8 /* libUAirship-1.0.2.a */,
+				184E3F3B129E4C1A004465C8 /* libUAirship-1.0.3.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -590,13 +590,14 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
 				OTHER_LDFLAGS = (
+					"-weak_library",
+					/usr/lib/libSystem.B.dylib,
 					"-cclib",
 					"-lstdc++",
 					"-all_load",
@@ -629,6 +630,8 @@
 					"\"$(SRCROOT)/../Airship\"",
 				);
 				OTHER_LDFLAGS = (
+					"-weak_library",
+					/usr/lib/libSystem.B.dylib,
 					"-ObjC",
 					"-all_load",
 					"-lstdc++",
@@ -648,11 +651,12 @@
 				BUILD_STYLE = Debug;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -671,10 +675,11 @@
 				BUILD_STYLE = Release;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
