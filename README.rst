@@ -71,7 +71,7 @@ The library uses a .plist configuration file named `Airship.plist` to manage you
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com:
 
-You can also edit the file as plain-text:
+You can also edit the file as plain-text::
 
         {
                 /* NOTE: DO NOT USE THE MASTER SECRET */
