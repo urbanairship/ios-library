@@ -86,12 +86,12 @@
 
 #pragma mark -
 
-- (void)setProducts:(NSArray *)productArray {
+- (void)setProductsWithArray:(NSArray *)productArray {
     [products setArray:productArray];
     [products sortUsingSelector:@selector(compareByDuration:)];
 }
 
-- (void)setContents:(NSArray *)contents {
+- (void)setContentsWithArray:(NSArray *)contents {
     if (!contents)
         return;
 
@@ -114,7 +114,7 @@
     }
 }
 
-- (void)setPurchasedProducts:(NSArray *)infos {
+- (void)setPurchasedProductsWithArray:(NSArray *)infos {
     [purchasedProducts removeAllObjects];
 
     for (NSDictionary *info in infos) {

@@ -50,7 +50,7 @@
     NSString *purchasingProductIdentifier;
 }
 
-@property (assign) UAInventoryStatus status;
+@property (nonatomic, assign) UAInventoryStatus status;
 @property (nonatomic, retain) NSString *orderBy;
 @property (nonatomic, retain) NSString *purchasingProductIdentifier;
 

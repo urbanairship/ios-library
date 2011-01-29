@@ -50,9 +50,9 @@
 @property (nonatomic, retain, readonly) NSMutableArray *undownloadedContents;
 
 - (id)initWithKey:(NSString *)aKey name:(NSString *)aName;
-- (void)setProducts:(NSArray *)productArray;
-- (void)setPurchasedProducts:(NSArray *)infos;
-- (void)setContents:(NSArray *)contents;
+- (void)setProductsWithArray:(NSArray *)productArray;
+- (void)setPurchasedProductsWithArray:(NSArray *)infos;
+- (void)setContentsWithArray:(NSArray *)contents;
 - (void)filterDownloadedContents;
 
 @end

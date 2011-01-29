@@ -155,7 +155,7 @@
             [subscriptions addObject:subscription];
         }
 
-        [subscription setProducts:productArray];
+        [subscription setProductsWithArray:productArray];
     }
 
     [subscriptions sortUsingSelector:@selector(compare:)];
@@ -185,11 +185,11 @@
             // set user purchased products
             NSArray *filteredInfo = [userPurchasingInfo filteredArrayUsingPredicate:
                                      [NSPredicate predicateWithFormat:@"subscription_key like[c] %@", subscriptionKey]];
-            [subscription setPurchasedProducts:filteredInfo];
+            [subscription setPurchasedProductsWithArray:filteredInfo];
             [userSubscriptions addObject:subscription];
 
             // set user available contents
-            [subscription setContents:[contents contentsForSubscription:subscriptionKey]];
+            [subscription setContentsWithArray:[contents contentsForSubscription:subscriptionKey]];
         }
     }
 

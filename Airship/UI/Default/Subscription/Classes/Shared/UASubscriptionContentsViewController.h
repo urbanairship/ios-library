@@ -37,7 +37,7 @@
     NSString *subscriptionKey;
 }
 @property (retain) IBOutlet UITableView *contentsTable;
-@property (retain) NSString *subscriptionKey;
+@property (nonatomic, retain) NSString *subscriptionKey;
 
 - (void)updateDataSource;
 
