@@ -113,7 +113,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId {
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-	NSLocale *enUSPOSIXLocale = enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	[dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
