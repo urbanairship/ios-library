@@ -5,7 +5,11 @@ Overview
 --------
 
 Urban Airship's libUArship is a drop-in static library that provides a simple way to
-integrate Urban Airship services into your iOS applications.
+integrate Urban Airship services into your iOS applications. This entire project will
+allow you to build the library files and all sample projects. If you just want to
+include the library in your app, you can simply download the latest ``libUAirship.zip``
+and a sample project. These zips contain a pre-compiled universal arm6/arm7 library.
+We do not support i386 or simulator usage.
 
 Working with the Library
 ------------------------
@@ -18,14 +22,15 @@ projects, copy the ``Airship`` directory into the same directory as your project
 
     cp -r Airship /SomeDirectory/ (where /SomeDirectory/YourProject/ is your project)
 
-If you are not using a sample project, you'll need to import the source files into your project.
+If you are not using a sample project, you'll need to import the source files for the User 
+Interface into your project. These are located under /Airship/UI/Default
 
 Required Libraries
 ##################
 
 AirMail Inbox requires your application to link against the following Frameworks::
 
-    libUAirship-1.0.1.a
+    libUAirship-1.0.3.a
     CFNetwork.framework
     CoreGraphics.framework
     Foundation.framework
@@ -43,7 +48,7 @@ Build Settings
 
 **Compiler**
     
-Your project should use the GCC compiler (the default).  LLVM is not supported at this time.
+LLVM 1.6 is the default compiler for all projects and the static library. GCC 4.2 is also supported.
      
 **Header search path**
                                          
@@ -52,7 +57,7 @@ Ensure that your build target's header search path includes the Airship director
 **Linker**
 
 In order to properly link against the Urban Airship static library, you will need to set the ``-all_load``
-flag in your build target's ``Other Linker Flags``.
+flag and ``-weak_library /usr/lib/libSystem.B.dylib`` in your build target's ``Other Linker Flags``.
              
 Quickstart
 ----------
@@ -75,11 +80,11 @@ You can also edit the file as plain-text::
 
         {
                 /* NOTE: DO NOT USE THE MASTER SECRET */
-                "APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
-                "DEVELOPMENT_APP_KEY" = "Your development app key";
-                "DEVELOPMENT_APP_SECRET" = "Your development app secret";
-                "PRODUCTION_APP_KEY" = "Your production app key";
-                "PRODUCTION_APP_SECRET" = "Your production app secret";
+				"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
+				"DEVELOPMENT_APP_KEY" = "Your development app key";
+				"DEVELOPMENT_APP_SECRET" = "Your development app secret";
+				"PRODUCTION_APP_KEY" = "Your production app key";
+				"PRODUCTION_APP_SECRET" = "Your production app secret";
         }
 
 If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to false. For
