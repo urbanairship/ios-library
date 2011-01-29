@@ -74,17 +74,17 @@ The AirshipConfig File
 
 The library uses a .plist configuration file named `Airship.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
-in your project and set the following values to the ones in your application at http://go.urbanairship.com:
+in your project and set the following values to the ones in your application at http://go.urbanairship.com
 
 You can also edit the file as plain-text::
 
         {
                 /* NOTE: DO NOT USE THE MASTER SECRET */
-				"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
-				"DEVELOPMENT_APP_KEY" = "Your development app key";
-				"DEVELOPMENT_APP_SECRET" = "Your development app secret";
-				"PRODUCTION_APP_KEY" = "Your production app key";
-				"PRODUCTION_APP_SECRET" = "Your production app secret";
+			"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
+			"DEVELOPMENT_APP_KEY" = "Your development app key";
+			"DEVELOPMENT_APP_SECRET" = "Your development app secret";
+			"PRODUCTION_APP_KEY" = "Your production app key";
+			"PRODUCTION_APP_SECRET" = "Your production app secret";
         }
 
 If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to false. For
