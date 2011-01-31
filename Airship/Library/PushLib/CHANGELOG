@@ -1,2 +1,6 @@
+1.1.1 - January 31, 2011
+- Updated copyrights
+- Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
+
 1.1.0 - December 27, 2010
 - First Static Library Release

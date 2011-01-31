@@ -1,3 +1,9 @@
+1.0.3 - January 31, 2011
+- Updated copyrights
+- Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide. 
+- Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
+- Fixed numerous LLVM/Analyzer warnings
+
 1.0.2 - January 27, 2011
 - Fixed bug causing downloads to still go to NSDocuments instead of NSLibrary
 - Removed category on UIDevice, eliminating -all_load flag requirement, and moved the functionality to UAUtils
