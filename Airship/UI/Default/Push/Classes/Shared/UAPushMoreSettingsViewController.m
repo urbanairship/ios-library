@@ -29,7 +29,7 @@
 #import "UAPush.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
-
+#import "UAPushSettingsTagsViewController.h"
 
 enum {
     SectionDeviceToken = 0,
@@ -69,6 +69,11 @@ enum {
     self.footerImageView = nil;
     self.tableView = nil;
     
+    
+    RELEASE_SAFELY(tokenViewController);
+    RELEASE_SAFELY(aliasViewController);
+    RELEASE_SAFELY(tagsViewController);
+    
     [super dealloc];
 }
 
@@ -99,9 +104,11 @@ enum {
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
-    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+//    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+//    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+//    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+//    
+    [self updateCellValues];
     
     [self.tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
 }
@@ -123,6 +130,7 @@ enum {
     RELEASE_SAFELY(deviceTokenTagsCell);
     RELEASE_SAFELY(helpSoundsCell);
     RELEASE_SAFELY(helpLogCell);
+    
     
     self.footerImageView = nil;
     self.tableView = nil;
@@ -264,6 +272,14 @@ enum {
                                        initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
             }
             [self.navigationController pushViewController:aliasViewController animated:YES];
+            
+        }else if (indexPath.row == DeviceTokenSectionTagsCell) {
+            if (!tagsViewController) {
+                tagsViewController = [[UAPushSettingsTagsViewController alloc] init];
+                                       //initWithNibName:@"UAPushSettingsTagsView" bundle:nil];
+            }
+            [self.navigationController pushViewController:tagsViewController animated:YES];
+            
         } else {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }

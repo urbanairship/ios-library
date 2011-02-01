@@ -41,6 +41,7 @@
 
     UIViewController *tokenViewController;
     UIViewController *aliasViewController;
+    UIViewController *tagsViewController;
 }
 
 @property (nonatomic, retain) UITableView *tableView;

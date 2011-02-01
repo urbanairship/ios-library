@@ -42,6 +42,10 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
 		1F7FD3A912F784E100317B96 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7FD3A812F784E100317B96 /* MessageUI.framework */; };
+		1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */; };
+		1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */; };
+		1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */; };
+		1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -121,6 +125,12 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1F79711212DE3BFB00D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F7FD3A812F784E100317B96 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		1F7FD3F612F79AFF00317B96 /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
+		1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
+		1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsTagsViewController.xib; sourceTree = "<group>"; };
+		1F7FD45212F8956900317B96 /* UAPushSettingsAddTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAddTagViewController.h; sourceTree = "<group>"; };
+		1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsAddTagViewController.m; sourceTree = "<group>"; };
+		1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsAddTagViewController.xib; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -209,12 +219,16 @@
 				1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */,
 				1890BA081251B5E900E6EBF1 /* UAPushSettingsAliasViewController.h */,
 				1890BA091251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m */,
+				1F7FD45212F8956900317B96 /* UAPushSettingsAddTagViewController.h */,
+				1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */,
 				1890BA0A1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.h */,
 				1890BA0B1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m */,
 				1890BA0C1251B5E900E6EBF1 /* UAPushSettingsViewController.h */,
 				1890BA0D1251B5E900E6EBF1 /* UAPushSettingsViewController.m */,
 				1890BA0E1251B5E900E6EBF1 /* UAPushUI.h */,
 				1890BA0F1251B5E900E6EBF1 /* UAPushUI.m */,
+				1F7FD3F612F79AFF00317B96 /* UAPushSettingsTagsViewController.h */,
+				1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -238,6 +252,8 @@
 				1890BA171251B5E900E6EBF1 /* top-detail@2x.png */,
 				1890BA181251B5E900E6EBF1 /* UAPushMoreSettingsView.xib */,
 				1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */,
+				1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */,
+				1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */,
 				1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */,
 				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 			);
@@ -481,6 +497,8 @@
 				D5A3F63512C15636009731BE /* Icon@2x.png in Resources */,
 				D5A3F63712C15644009731BE /* iTunesArtwork in Resources */,
 				1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */,
+				1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */,
+				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +547,8 @@
 				1890BAC01251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m in Sources */,
 				1890BAC11251B5E900E6EBF1 /* UAPushSettingsViewController.m in Sources */,
 				1890BAC21251B5E900E6EBF1 /* UAPushUI.m in Sources */,
+				1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */,
+				1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
