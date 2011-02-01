@@ -29,6 +29,8 @@
 #import "UAViewUtils.h"
 #import "UAUtils.h"
 
+#import <UIKit/UIKit.h>
+
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
@@ -349,6 +351,37 @@ static Class _uiClass;
                                          fail:@selector(removeTagFromDeviceFailed:)];
 
     [request startAsynchronous];
+}
+
++ (NSString *)pushTypeString {
+    
+    //TODO: Localize
+    
+    
+    
+    UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    
+    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
+    
+
+    //Use the same order as the Settings->Notifications panel
+    if (types & UIRemoteNotificationTypeBadge) {
+        [typeArray addObject:@"Badges"];
+    }
+    
+    if (types & UIRemoteNotificationTypeAlert) {
+        [typeArray addObject:@"Alerts"];
+    }
+    
+    if (types & UIRemoteNotificationTypeSound) {
+        [typeArray addObject:@"Sounds"];
+    }
+    
+    if ([typeArray count] > 0) {
+        return [typeArray componentsJoinedByString:@", "];
+    }
+    
+    return @"None";
 }
 
 @end

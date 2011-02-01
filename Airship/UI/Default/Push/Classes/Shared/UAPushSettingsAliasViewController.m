@@ -49,9 +49,8 @@
 
     self.title = @"Device Alias";
 
-    // TODO: get description from server
-    text = @"This is a another very loooooooooooooooooooooooooooooooooooooooooo"
-           @"ooooooooooooooooooooooooooooooooooooooooooooooooooong description";
+    text = @"Assign an alias to a device or a group of devices to simplify "
+           @"the process of sending notifications.";
 
     aliasField.text = [UAPush shared].alias;
     textLabel.text = text;

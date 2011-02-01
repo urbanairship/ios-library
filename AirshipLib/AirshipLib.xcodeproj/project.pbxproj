@@ -72,7 +72,7 @@
 		B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */; };
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
-		D5A1928712C15A4E006AF4AE /* libInbox-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.0.a */; };
+		D5A1928712C15A4E006AF4AE /* libInbox-1.5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */; };
 		D9983E971238462100B7E69F /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		D9983E981238462100B7E69F /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; };
 		D9983E991238462100B7E69F /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8D1238462100B7E69F /* UADateUtils.m */; };
@@ -252,7 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5A1928712C15A4E006AF4AE /* libInbox-1.5.0.a in Frameworks */,
+				D5A1928712C15A4E006AF4AE /* libInbox-1.5.1.a in Frameworks */,
 				6331479E122FB0AA008F2D48 /* libSubscription-1.2.1.a in Frameworks */,
 				633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */,
 				633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */,
@@ -420,7 +420,7 @@
 		D5A1927412C158A8006AF4AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D5A1927812C158A8006AF4AE /* libInbox-1.5.0.a */,
+				D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -646,10 +646,10 @@
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		D5A1927812C158A8006AF4AE /* libInbox-1.5.0.a */ = {
+		D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libInbox-1.5.0.a";
+			path = "libInbox-1.5.1.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

@@ -46,15 +46,18 @@
 #pragma mark Lifecycle methods
 
 - (void)dealloc {
-    
-    //TODO: this is horribly wrong
-    
-    self.pushEnabledSwitch = nil;
-    
-    [quietTimeSwitch release];
-    [tableView release];
-    [datePicker release];
 
+    self.pushEnabledSwitch = nil;
+    self.pushEnabledCell = nil;
+    
+    self.quietTimeSwitch = nil;
+    self.quietTimeEnabledCell = nil;
+    self.toCell = nil;
+    self.fromCell = nil;
+    
+    self.tableView = nil;
+    self.datePicker = nil;
+    
     self.timeFormat = nil;
     
     [super dealloc];
@@ -247,29 +250,10 @@ static NSString *cellID = @"QuietTimeCell";
         [now release];
         return;
     }
-        
-    //[self updateQuietTime];
 
 }
 
 - (IBAction)switchValueChanged:(id)sender {
-    
-    
-//    if (sender == self.quietTimeSwitch) {
-//        [self updateQuietTime];
-//        [self updateDatePicker:NO];
-//    } else if (sender == self.pushEnabledSwitch) {
-//        
-//        if (pushEnabledSwitch.on) {
-//            UIRemoteNotificationType type
-//                = UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound;
-//            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:type];
-//        } else {
-//            // Urban server will unregister this device token with apple server.
-//            [[UAirship shared] unRegisterDeviceToken];
-//        }
-//        [self updateDatePicker:NO];
-//    }
     
     dirty = YES;
     

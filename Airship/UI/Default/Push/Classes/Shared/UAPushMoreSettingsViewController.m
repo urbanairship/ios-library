@@ -31,6 +31,26 @@
 #import "UAPushSettingsAliasViewController.h"
 
 
+enum {
+    SectionDeviceToken = 0,
+    SectionHelp        = 1,
+    SectionCount       = 2
+};
+
+enum {
+    DeviceTokenSectionTokenCell = 0,
+    DeviceTokenSectionTypesCell = 1,
+    DeviceTokenSectionAliasCell = 2,
+    DeviceTokenSectionTagsCell = 3,
+    DeviceTokenSectionRowCount  = 4
+};
+
+enum {
+    HelpSectionSounds = 0,
+    HelpSectionLog = 1,
+    HelpSectionRowCount  = 2
+};
+
 @implementation UAPushMoreSettingsViewController
 
 @synthesize footerImageView;
@@ -38,8 +58,17 @@
 
 - (void)dealloc {
     [[UAirship shared] removeObserver:self];
-    [tableView release];
-    [footerImageView release];
+
+    RELEASE_SAFELY(deviceTokenCell);
+    RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenAliasCell);
+    RELEASE_SAFELY(deviceTokenTagsCell);
+    RELEASE_SAFELY(helpSoundsCell);
+    RELEASE_SAFELY(helpLogCell);
+    
+    self.footerImageView = nil;
+    self.tableView = nil;
+    
     [super dealloc];
 }
 
@@ -69,6 +98,11 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
+    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+    
     [self.tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
 }
 
@@ -82,6 +116,14 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
+    
+    RELEASE_SAFELY(deviceTokenCell);
+    RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenAliasCell);
+    RELEASE_SAFELY(deviceTokenTagsCell);
+    RELEASE_SAFELY(helpSoundsCell);
+    RELEASE_SAFELY(helpLogCell);
+    
     self.footerImageView = nil;
     self.tableView = nil;
 }
@@ -89,23 +131,35 @@
 #pragma mark -
 
 - (void)initCells {
-    cell00 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell00"];
-    cell00.textLabel.text = @"Device Token";
-    cell00.detailTextLabel.text = [UAirship shared].deviceToken;
-    cell00.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell00"];
+    deviceTokenCell.textLabel.text = @"Device Token";
+    //deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken;
+    deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenTypesCell"];
+    deviceTokenTypesCell.textLabel.text = @"Notification Types";
+    //deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+    //deviceTokenTypesCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    cell01 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
-    cell01.textLabel.text = @"Device-token Alias";
-    cell01.detailTextLabel.text = [UAPush shared].alias;
-    cell01.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
+    deviceTokenAliasCell.textLabel.text = @"Alias";
+    //deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias;
+    deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
+    deviceTokenTagsCell.textLabel.text = @"Tags";
+    //deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
+    deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    cell10 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
-    cell10.textLabel.text = @"Custom Notification Sounds";
-    cell10.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
+    helpSoundsCell.textLabel.text = @"Custom Notification Sounds";
+    helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    cell11 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell11"];
-    cell11.textLabel.text = @"Device Log";
-    cell11.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell11"];
+    helpLogCell.textLabel.text = @"Device Log";
+    helpLogCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    [self updateCellValues];
 }
 
 - (void)quit {
@@ -116,56 +170,102 @@
 #pragma mark UITableViewDataSource Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return SectionCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    switch (section) {
+        case SectionDeviceToken:
+            return DeviceTokenSectionRowCount;
+        case SectionHelp:
+            return HelpSectionRowCount;
+        default:
+            break;
+    }
+    return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return section == 0 ? nil : @"Help";
+    
+    switch (section) {
+        case SectionHelp:
+            return @"Help";
+        default:
+            break;
+    }
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = nil;
-    if (indexPath.section == 0)
-        if (indexPath.row == 0) {
-            cell00.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-            cell = cell00;
+    if (indexPath.section == SectionDeviceToken) {
+        
+        switch (indexPath.row) {
+            case DeviceTokenSectionTokenCell:
+                //deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+                cell = deviceTokenCell;
+                break;
+            case DeviceTokenSectionTypesCell:
+                //deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+                cell = deviceTokenTypesCell;
+                break;
+            case DeviceTokenSectionAliasCell:
+                //deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+                cell = deviceTokenAliasCell;
+                break;
+            case DeviceTokenSectionTagsCell:
+                cell = deviceTokenTagsCell;
+                break;
+            default:
+                break;
         }
-        else {
-            cell01.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-            cell = cell01;
+        
+        
+//        if (indexPath.row == DeviceTokenSectionTokenCell) {
+//            deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+//            cell = deviceTokenCell;
+//        } else if (indexPath.row == DeviceTokenSectionTypesCell) {
+//            deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+//            cell = deviceTokenTypesCell;
+//        } else if (indexPath.row == DeviceTokenSectionAliasCell) {
+//            deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+//            cell = deviceTokenAliasCell;
+//        }
+    } else if (indexPath.section == SectionHelp) {
+
+        if (indexPath.row == HelpSectionSounds) {
+            cell = helpSoundsCell;
+        } else if (indexPath.row == HelpSectionLog) {
+            cell = helpLogCell;
         }
-    else
-        if (indexPath.row == 0)
-            cell = cell10;
-        else
-            cell = cell11;
+    }
 
     return cell;
 }
 
 #pragma mark -
-#pragma mark UITableVieDelegate Methods
+#pragma mark UITableViewDelegate Methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return indexPath.section == 0 ? 60 : 44;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        if (indexPath.row == 0) {
-            if (!tokenViewController)
+    if (indexPath.section == SectionDeviceToken) {
+        if (indexPath.row == DeviceTokenSectionTokenCell) {
+            if (!tokenViewController) {
                 tokenViewController = [[UAPushSettingsTokenViewController alloc]
                                        initWithNibName:@"UAPushSettingsTokenView" bundle:nil];
+            }
             [self.navigationController pushViewController:tokenViewController animated:YES];
-        } else {
-            if (!aliasViewController)
+        } else if (indexPath.row == DeviceTokenSectionAliasCell) {
+            if (!aliasViewController) {
                 aliasViewController = [[UAPushSettingsAliasViewController alloc]
                                        initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
+            }
             [self.navigationController pushViewController:aliasViewController animated:YES];
+        } else {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -177,10 +277,31 @@
 #pragma mark UA Registration Observer methods
 
 - (void)registerDeviceTokenSucceed {
-    cell00.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-    cell01.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-    [cell00 setNeedsLayout];
-    [cell01 setNeedsLayout];
+//    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+//    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+//    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+//    deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
+//    
+    
+    [self updateCellValues];
+    
+    [deviceTokenCell setNeedsLayout];
+    [deviceTokenTypesCell setNeedsLayout];
+    [deviceTokenAliasCell setNeedsLayout];
+    [deviceTokenTagsCell setNeedsLayout];
+}
+
+- (void)updateCellValues {
+    
+    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+    
+    if ([[UAPush shared].tags count] > 0) {
+        deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
+    } else {
+        deviceTokenTagsCell.detailTextLabel.text = @"None";
+    }
 }
 
 @end

@@ -126,8 +126,54 @@
 }
 
 - (IBAction)emailDeviceToken {
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = [UAirship shared].deviceToken;
+
+    if ([MFMailComposeViewController canSendMail]) {
+		MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
+		mfViewController.mailComposeDelegate = self;
+        
+        
+        
+        NSString *messageBody = [NSString stringWithFormat:@"Your device token is %@\n\nSend a test push at http://go.urbanairship.com", [UAirship shared].deviceToken];
+        
+        [mfViewController setSubject:@"Device Token"];
+        [mfViewController setMessageBody:messageBody isHTML:NO];
+		
+		[self presentModalViewController:mfViewController animated:YES];
+		[mfViewController release];
+	}else {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Status:" message:@"Your phone is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+		
+		[alert show];
+		[alert release];
+	}
+}
+
+#pragma mark -
+#pragma mark MFMailComposeViewControllerDelegate Methods
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Status:" message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+	
+	switch (result) {
+		case MFMailComposeResultCancelled:
+			alert.message = @"Message Canceled";
+			break;
+		case MFMailComposeResultSaved:
+			alert.message = @"Message Saved";
+			break;
+		case MFMailComposeResultSent:
+			alert.message = @"Message Sent";
+			break;
+		case MFMailComposeResultFailed:
+			alert.message = @"Message Failed";
+			break;
+		default:
+			alert.message = @"Message Not Sent";
+        break;	}
+	[self dismissModalViewControllerAnimated:YES];
+	
+	[alert show];
+	[alert release];
 }
 
 @end

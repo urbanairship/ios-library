@@ -106,4 +106,6 @@ SINGLETON_INTERFACE(UAPush);
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 - (void)disableQuietTime;
 
++ (NSString *)pushTypeString;
+
 @end

@@ -24,9 +24,9 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 
-
-@interface UAPushSettingsTokenViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
+@interface UAPushSettingsTokenViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate> {
     NSString *text;
     IBOutlet UIButton *copyButton;
     IBOutlet UIButton *emailButton;
