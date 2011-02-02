@@ -20,6 +20,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    
+    self.title = @"Tags";
+    
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
@@ -202,6 +205,8 @@
      
      
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
+     
+     [[UAPush shared] updateRegistration];//update server
  }
  
  - (void)cancelAddTag {
@@ -222,15 +227,26 @@
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
     
-    [super viewDidUnload];
+    if (addTagController) {
+        addTagController.tagDelegate = nil;
+        RELEASE_SAFELY(addTagController);
+    }
+    
     RELEASE_SAFELY(addButton);
+    
+    [super viewDidUnload];
 }
 
 
 - (void)dealloc {
     
     RELEASE_SAFELY(addButton);
-    RELEASE_SAFELY(addTagController);
+    
+    if (addTagController) {
+        addTagController.tagDelegate = nil;
+        RELEASE_SAFELY(addTagController);
+    }
+
     
     [super dealloc];
 }
