@@ -149,7 +149,7 @@ static NSString *cellID = @"QuietTimeCell";
 
 - (void)initViews {
     self.title = @"Push Settings";
-    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                             target:self
                                                                                             action:@selector(quit)]
                                               autorelease];

@@ -46,6 +46,12 @@
 		1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */; };
 		1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */; };
 		1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */; };
+		1F7FD5EF12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */; };
+		1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */; };
+		1F7FD61912F8E39900317B96 /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61512F8E39900317B96 /* cat.caf */; };
+		1F7FD61A12F8E39900317B96 /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61612F8E39900317B96 /* cow.caf */; };
+		1F7FD61B12F8E39900317B96 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
+		1F7FD61C12F8E39900317B96 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -131,6 +137,13 @@
 		1F7FD45212F8956900317B96 /* UAPushSettingsAddTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAddTagViewController.h; sourceTree = "<group>"; };
 		1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsAddTagViewController.m; sourceTree = "<group>"; };
 		1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsAddTagViewController.xib; sourceTree = "<group>"; };
+		1F7FD5EC12F8DE2200317B96 /* UAPushSettingsSoundsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsSoundsViewController.h; sourceTree = "<group>"; };
+		1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsSoundsViewController.m; sourceTree = "<group>"; };
+		1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsSoundsViewController.xib; sourceTree = "<group>"; };
+		1F7FD61512F8E39900317B96 /* cat.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cat.caf; sourceTree = "<group>"; };
+		1F7FD61612F8E39900317B96 /* cow.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cow.caf; sourceTree = "<group>"; };
+		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
+		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -229,6 +242,8 @@
 				1890BA0F1251B5E900E6EBF1 /* UAPushUI.m */,
 				1F7FD3F612F79AFF00317B96 /* UAPushSettingsTagsViewController.h */,
 				1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */,
+				1F7FD5EC12F8DE2200317B96 /* UAPushSettingsSoundsViewController.h */,
+				1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -244,6 +259,7 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
 				1890BA121251B5E900E6EBF1 /* bottom-detail.png */,
 				1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */,
 				1890BA141251B5E900E6EBF1 /* middle-detail.png */,
@@ -332,6 +348,10 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F7FD61512F8E39900317B96 /* cat.caf */,
+				1F7FD61612F8E39900317B96 /* cow.caf */,
+				1F7FD61712F8E39900317B96 /* frog.caf */,
+				1F7FD61812F8E39900317B96 /* pig.caf */,
 				D5A3F63612C15644009731BE /* iTunesArtwork */,
 				D5C75CBD12BC242F0041239E /* Default@2x.png */,
 				D5C75CBE12BC242F0041239E /* Icon.png */,
@@ -499,6 +519,11 @@
 				1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */,
 				1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */,
 				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
+				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
+				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
+				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
+				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
+				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,6 +574,7 @@
 				1890BAC21251B5E900E6EBF1 /* UAPushUI.m in Sources */,
 				1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */,
 				1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */,
+				1F7FD5EF12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,6 +30,7 @@
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsTagsViewController.h"
+#import "UAPushSettingsSoundsViewController.h"
 
 enum {
     SectionDeviceToken = 0,
@@ -276,13 +277,22 @@ enum {
         }else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!tagsViewController) {
                 tagsViewController = [[UAPushSettingsTagsViewController alloc] init];
-                                       //initWithNibName:@"UAPushSettingsTagsView" bundle:nil];
             }
             [self.navigationController pushViewController:tagsViewController animated:YES];
             
         } else {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
+    } else if (indexPath.section == SectionHelp) {
+        if (indexPath.row == HelpSectionSounds) {
+
+            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] init] autorelease];
+            [self.navigationController pushViewController:soundsViewController animated:YES];
+        } else {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        }
+
+
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }

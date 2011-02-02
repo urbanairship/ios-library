@@ -1,16 +1,16 @@
 //
-//  UAPushSettingsTagsViewController.m
+//  UAPushSettingsSoundsViewController.m
 //  PushSampleLib
 //
-//  Created by Jeff Towle on 1/31/11.
+//  Created by Jeff Towle on 2/1/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "UAPushSettingsTagsViewController.h"
-#import "UAPushSettingsAddTagViewController.h"
-#import "UAPush.h"
+#import "UAGlobal.h"
+#import "UAPushSettingsSoundsViewController.h"
 
-@implementation UAPushSettingsTagsViewController
+
+@implementation UAPushSettingsSoundsViewController
 
 
 #pragma mark -
@@ -20,30 +20,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.title = @"Bundled Sounds";
     
-    self.title = @"Tags";
+    if (soundList == nil) {
+        soundList = [[[NSBundle mainBundle] pathsForResourcesOfType:@"caf" inDirectory:nil] retain];
+    }
+    
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-
-    
-    
-    //Create an add button in the nav bar
-    if (addButton == nil) {
-        addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)];
-    }
-    self.navigationItem.rightBarButtonItem = addButton;
 }
 
+
+/*
 - (void)viewWillAppear:(BOOL)animated {
-    
-    //default to editing, since the view is for adding/removing tags
-    [self setEditing:YES];
     [super viewWillAppear:animated];
-    
 }
-
+*/
 /*
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -79,64 +72,49 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [[UAPush shared].tags count];//tags plus an "add" row
+    return [soundList count];
 }
 
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell;
+    static NSString *CellIdentifier = @"SoundCell";
     
-    /////////////
-    
-    static NSString *CellIdentifier = @"Cell";
-    
-    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
     }
     
     // Configure the cell...
-    
-    cell.textLabel.text = [[UAPush shared].tags objectAtIndex:indexPath.row];
-    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.textLabel.text = [[[soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
     
     return cell;
 }
 
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return UITableViewCellEditingStyleDelete;
-}
 
-
+/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
+*/
 
 
-
-
+/*
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        
         // Delete the row from the data source.
-        NSString *tagToDelete = [[UAPush shared].tags objectAtIndex:indexPath.row];
-        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
-        
-        // Delete the row from the view
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        
-        // Commit to server
-        [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
-        
-    }
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+    }   
 }
-
+*/
 
 
 /*
@@ -167,52 +145,11 @@
     [self.navigationController pushViewController:detailViewController animated:YES];
     [detailViewController release];
     */
-}
-
-#pragma mark -
-#pragma mark Add Item
-
-- (void)addItem:(id)sender {
     
-    if (addTagController == nil) {
-        addTagController = [[UAPushSettingsAddTagViewController alloc] init];
-        addTagController.tagDelegate = self;
-    }
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:addTagController];
-    [[self navigationController] presentModalViewController:navigationController animated:YES];
-    [navigationController release];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 
- - (void)addTag:(NSString *)tag {
-     
-     [[self navigationController] dismissModalViewControllerAnimated:YES];
-     
-     if ([[UAPush shared].tags containsObject:tag]) {
-         UALOG(@"Tag %@ already exists.", tag);
-         return;
-     }
-     
-     NSInteger index = [[UAPush shared].tags count];
-     
-     
-     [[UAPush shared].tags insertObject:tag atIndex:index];
-     
-     NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
-     
-
-     
-     
-     [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
-     
-     [[UAPush shared] updateRegistration];//update server
- }
- 
- - (void)cancelAddTag {
-     [[self navigationController] dismissModalViewControllerAnimated:YES];
- }
-     
 #pragma mark -
 #pragma mark Memory management
 
@@ -226,27 +163,12 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
-    
-    if (addTagController) {
-        addTagController.tagDelegate = nil;
-        RELEASE_SAFELY(addTagController);
-    }
-    
-    RELEASE_SAFELY(addButton);
-    
-    [super viewDidUnload];
 }
 
 
 - (void)dealloc {
     
-    RELEASE_SAFELY(addButton);
-    
-    if (addTagController) {
-        addTagController.tagDelegate = nil;
-        RELEASE_SAFELY(addTagController);
-    }
-
+    RELEASE_SAFELY(soundList);
     
     [super dealloc];
 }
