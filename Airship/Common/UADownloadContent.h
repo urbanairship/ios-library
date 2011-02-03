@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,6 +43,7 @@
     
     NSString *downloadPath;
     NSString *downloadTmpPath;
+    
     NSDictionary *postData;
     NSString *requestMethod; 
     NSString *responseString;
@@ -77,8 +78,12 @@
 
 @interface UAZipDownloadContent : UADownloadContent {
     id<UAZipDownloadContentProtocol> decompressDelegate;
+    
+    @private
+      NSString *decompressedContentPath;
 }
 @property (assign, nonatomic) id decompressDelegate;
+@property (retain, nonatomic) NSString *decompressedContentPath;
 
 - (void)decompress;
 @end

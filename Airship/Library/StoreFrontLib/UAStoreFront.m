@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -131,15 +131,15 @@ static Class _uiClass;
         return success;
     }
 
-    if(![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         success = [[NSFileManager defaultManager] createDirectoryAtPath:path
                                               withIntermediateDirectories:YES
                                                                attributes:nil
                                                                     error:nil];
     }
 
-    if(success) {
-        [self.downloadManager setDownloadDirectory:path];
+    if (success) {
+        self.downloadManager.downloadDirectory = path;
         UALOG(@"New Download Directory: %@", self.downloadManager.downloadDirectory);
     }
 
@@ -162,7 +162,17 @@ static Class _uiClass;
 }
 
 + (void)quitStoreFront {
+    
+    // call the optional storeFrontWillHide delegate method
+    NSObject<UAStoreFrontDelegate> *sfDelegate = [UAStoreFront shared].delegate;    
+    if ([sfDelegate respondsToSelector:@selector(storeFrontWillHide)]) {
+        [sfDelegate performSelectorOnMainThread:@selector(storeFrontWillHide) 
+                                     withObject:nil 
+                                  waitUntilDone:YES];
+    }
+    
     [[[UAStoreFront shared] uiClass] quitStoreFront];
+    
 }
 
 #pragma mark -
@@ -263,8 +273,13 @@ static Class _uiClass;
     if (self = [super init]) {
         BOOL uaExists = [self directoryExistsAtPath:kUADirectory orOldPath:kUAOldDirectory];
 
-        if(!uaExists) {
+        if (!uaExists) {
             [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
+        //Set up default download directory
+        if (![[NSFileManager defaultManager] fileExistsAtPath:kUADownloadDirectory]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:kUADownloadDirectory withIntermediateDirectories:YES attributes:nil error:nil];
         }
 
         // In StoreFront, we set the cache policy to use cache if possible.
@@ -274,7 +289,6 @@ static Class _uiClass;
         [self loadReceipts];
 
         [self initProperties];
-        [self setDownloadDirectory:kUADownloadDirectory];
     }
     return self;
 }

@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -61,8 +61,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         }
         NSString* dateString = [message objectForKey: @"message_sent"];
         NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+		[dateFormatter setLocale:enUSPOSIXLocale];
         [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         self.messageSent = [dateFormatter dateFromString:dateString];
         [dateFormatter release];
 

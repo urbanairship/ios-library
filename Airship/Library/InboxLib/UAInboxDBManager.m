@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -97,8 +97,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
         NSString *dateString = [rs stringForColumn:@"sent_time"]; //2010-04-16 16:32:50
         NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+		[dateFormatter setLocale:enUSPOSIXLocale];
         [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         msg.messageSent = [dateFormatter dateFromString:dateString];
         [dateFormatter release];
 
@@ -110,8 +113,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId {
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+	[dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [db beginTransaction];
     for (UAInboxMessage *message in messages) {
         [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)" ,

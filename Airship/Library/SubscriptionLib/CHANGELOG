@@ -1,3 +1,12 @@
+1.2.3 - January 31, 2011
+- Updated copyrights
+- Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
+- Fixed numerous LLVM/Analyzer warnings
+
+1.2.2 - January 27, 2011
+- Fixed bug where download directory intermediate dirs were not initialized
+- Fixed dateFormatter to require GMT and en_us_posix locale
+
 1.2.1 - January 20, 2011
 - Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
 

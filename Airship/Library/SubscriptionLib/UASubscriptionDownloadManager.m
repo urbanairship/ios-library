@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -35,6 +35,7 @@
 #import "UASubscriptionInventory.h"
 
 @implementation UASubscriptionDownloadManager
+@synthesize downloadDirectory;
 
 - (void)checkDownloading:(UASubscriptionContent *)content {
     for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
@@ -92,6 +93,8 @@
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
         zipDownloadContent.decompressDelegate = self;
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                        [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:downloadContent];
@@ -107,8 +110,8 @@
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
-    UALOG(@"Download Content successful: %@, and decompressed to %@", content.contentName,
-          [UADocumentDirectory() stringByAppendingPathComponent:content.subscriptionKey]);
+    UALOG(@"Download Content successful: %@, and decompressed to %@", 
+          content.contentName, downloadContent.decompressedContentPath);
     
     // update subscription
     [[[UASubscriptionManager shared].inventory subscriptionForContent:content] filterDownloadedContents];
@@ -135,13 +138,17 @@
 - (id)init {
     if (!(self = [super init]))
         return nil;
+    
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
+    self.downloadDirectory = kUADownloadDirectory;
+    
     return self;
 }
 
 - (void)dealloc {
     RELEASE_SAFELY(downloadManager);
+    RELEASE_SAFELY(downloadDirectory);
     [super dealloc];
 }
 

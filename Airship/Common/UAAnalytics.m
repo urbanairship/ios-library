@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,6 @@
 #import "UAirship.h"
 #import "UAUser.h"
 #import "UAUtils.h"
-#import "UIDevice+machine.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
 #import "UA_Reachability.h"
@@ -114,7 +113,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
     
     //Optional items
     [request addRequestHeader:@"X-UA-Lib-Version" value:UA_VERSION];
-    [request addRequestHeader:@"X-UA-Device-Model" value:[device machine]];
+    [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
     [request addRequestHeader:@"X-UA-OS-Version" value:device.systemVersion];
 
     

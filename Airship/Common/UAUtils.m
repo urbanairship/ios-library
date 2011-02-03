@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -29,9 +29,8 @@
 #import "UAirship.h"
 #import "UA_SBJSON.h"
 
-NSString *UADocumentDirectory(void) {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-}
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 @implementation UAUtils
 
@@ -48,6 +47,28 @@ NSString *UADocumentDirectory(void) {
                             result[12], result[13], result[14], result[15]
                             ];
 
+}
+
++ (NSString *)deviceModelName {
+    size_t size;
+    
+    // Set 'oldp' parameter to NULL to get the size of the data
+    // returned so we can allocate appropriate amount of space
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0); 
+    
+    // Allocate the space to store name
+    char *name = malloc(size);
+    
+    // Get the platform name
+    sysctlbyname("hw.machine", name, &size, NULL, 0);
+    
+    // Place name into a string
+    NSString *machine = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
+    
+    // Done with this
+    free(name);
+    
+    return machine;
 }
 
 + (NSString *)pluralize:(int)count singularForm:(NSString*)singular

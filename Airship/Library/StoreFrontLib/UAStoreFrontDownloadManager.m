@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,7 +43,7 @@
     
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
-    [self setDownloadDirectory:kUADownloadDirectory];
+    self.downloadDirectory = kUADownloadDirectory;
     [self loadPendingProducts];
     
     return self;
@@ -244,9 +244,9 @@
     // if put the error alert codes in '...Finished' method, will miss these
     // alerts when timeout error raised
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
-    if (product.status = UAProductStatusWaiting) {
+    if (product.status == UAProductStatusWaiting) {
         [alertHandler showReceiptVerifyFailedAlert];
-    } else if (product.status = UAProductStatusDownloading){
+    } else if (product.status == UAProductStatusDownloading){
         [alertHandler showDownloadContentFailedAlert];
     }
 
@@ -271,6 +271,8 @@
         UAProduct *product = zipDownloadContent.userInfo;
         product.status = UAProductStatusWaiting;
         zipDownloadContent.decompressDelegate = self;
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:(UADownloadContent *)downloadContent];

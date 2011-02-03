@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -86,12 +86,12 @@
 
 #pragma mark -
 
-- (void)setProducts:(NSArray *)productArray {
+- (void)setProductsWithArray:(NSArray *)productArray {
     [products setArray:productArray];
     [products sortUsingSelector:@selector(compareByDuration:)];
 }
 
-- (void)setContents:(NSArray *)contents {
+- (void)setContentsWithArray:(NSArray *)contents {
     if (!contents)
         return;
 
@@ -114,7 +114,7 @@
     }
 }
 
-- (void)setPurchasedProducts:(NSArray *)infos {
+- (void)setPurchasedProductsWithArray:(NSArray *)infos {
     [purchasedProducts removeAllObjects];
 
     for (NSDictionary *info in infos) {

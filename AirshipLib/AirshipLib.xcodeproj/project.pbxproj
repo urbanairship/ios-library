@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1813EDE412796188009DEB29 /* libStoreFront-2.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.0.a */; };
+		1813EDE412796188009DEB29 /* libStoreFront-2.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.1.a */; };
 		1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
 		1890B8A712519FCD00E6EBF1 /* libPush-1.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.1.0.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
@@ -19,9 +19,7 @@
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		1FE4379A128B589000D38A14 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
 		1FE4379B128B589000D38A14 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
-		1FFE558812B7034E00A98BD0 /* UIDevice+machine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FFE558612B7034E00A98BD0 /* UIDevice+machine.h */; };
-		1FFE558912B7034E00A98BD0 /* UIDevice+machine.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FFE558712B7034E00A98BD0 /* UIDevice+machine.m */; };
-		6331479E122FB0AA008F2D48 /* libSubscription-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */; };
+		6331479E122FB0AA008F2D48 /* libSubscription-1.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.2.a */; };
 		633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -72,7 +70,7 @@
 		B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */; };
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
-		D5A1928712C15A4E006AF4AE /* libInbox-1.5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */; };
+		D5A1928712C15A4E006AF4AE /* libInbox-1.5.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.2.a */; };
 		D9983E971238462100B7E69F /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		D9983E981238462100B7E69F /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; };
 		D9983E991238462100B7E69F /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8D1238462100B7E69F /* UADateUtils.m */; };
@@ -169,8 +167,6 @@
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
-		1FFE558612B7034E00A98BD0 /* UIDevice+machine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+machine.h"; sourceTree = "<group>"; };
-		1FFE558712B7034E00A98BD0 /* UIDevice+machine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+machine.m"; sourceTree = "<group>"; };
 		6331464F122F9A7C008F2D48 /* SubscriptionLib.xcodeproj */ = {isa = PBXFileReference; explicitFileType = "wrapper.pb-project"; name = SubscriptionLib.xcodeproj; path = ../SubscriptionLib/SubscriptionLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -218,7 +214,7 @@
 		B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASINetworkQueue.h; sourceTree = "<group>"; };
 		B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASINetworkQueue.m; sourceTree = "<group>"; };
 		B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIProgressDelegate.h; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.0.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.0.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.0.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.0.3.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A1927312C158A8006AF4AE /* InboxLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InboxLib.xcodeproj; path = ../InboxLib/InboxLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		D905032712398BDC00D60744 /* mergeArmSymbols.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mergeArmSymbols.sh; sourceTree = "<group>"; };
 		D9983E8B1238462100B7E69F /* UAUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUtils.m; sourceTree = "<group>"; };
@@ -252,15 +248,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5A1928712C15A4E006AF4AE /* libInbox-1.5.1.a in Frameworks */,
-				6331479E122FB0AA008F2D48 /* libSubscription-1.2.1.a in Frameworks */,
+				D5A1928712C15A4E006AF4AE /* libInbox-1.5.2.a in Frameworks */,
+				6331479E122FB0AA008F2D48 /* libSubscription-1.2.2.a in Frameworks */,
 				633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */,
 				633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */,
 				633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */,
 				B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */,
 				63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */,
 				1890B8A712519FCD00E6EBF1 /* libPush-1.1.0.a in Frameworks */,
-				1813EDE412796188009DEB29 /* libStoreFront-2.2.0.a in Frameworks */,
+				1813EDE412796188009DEB29 /* libStoreFront-2.2.1.a in Frameworks */,
 				1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -271,7 +267,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.0.1.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.0.3.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -307,7 +303,7 @@
 		1813EDDC12796185009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813EDE312796185009DEB29 /* libStoreFront-2.2.0.a */,
+				1813EDE312796185009DEB29 /* libStoreFront-2.2.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -333,7 +329,7 @@
 		63314698122FA34B008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */,
+				6331469C122FA34B008F2D48 /* libSubscription-1.2.2.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -420,7 +416,7 @@
 		D5A1927412C158A8006AF4AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */,
+				D5A1927812C158A8006AF4AE /* libInbox-1.5.2.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -479,8 +475,6 @@
 				E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */,
 				1F23001212B2B7BA001DB898 /* UAAnalytics.h */,
 				1F23001312B2B7BA001DB898 /* UAAnalytics.m */,
-				1FFE558612B7034E00A98BD0 /* UIDevice+machine.h */,
-				1FFE558712B7034E00A98BD0 /* UIDevice+machine.m */,
 				1F2B10C312DD01B60020843D /* UATagUtils.h */,
 				1F2B10C412DD01B60020843D /* UATagUtils.m */,
 			);
@@ -548,7 +542,6 @@
 				E9F73F8C12ADE86D003CF572 /* UA_ASIDataCompressor.h in Headers */,
 				E9F73FB312ADE93A003CF572 /* UA_ASIDataDecompressor.h in Headers */,
 				1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */,
-				1FFE558812B7034E00A98BD0 /* UIDevice+machine.h in Headers */,
 				1F2B10C512DD01B60020843D /* UATagUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -575,7 +568,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.0.1.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.0.3.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -625,10 +618,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813EDE312796185009DEB29 /* libStoreFront-2.2.0.a */ = {
+		1813EDE312796185009DEB29 /* libStoreFront-2.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libStoreFront-2.2.0.a";
+			path = "libStoreFront-2.2.1.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -639,17 +632,17 @@
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6331469C122FA34B008F2D48 /* libSubscription-1.2.1.a */ = {
+		6331469C122FA34B008F2D48 /* libSubscription-1.2.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libSubscription-1.2.1.a";
+			path = "libSubscription-1.2.2.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		D5A1927812C158A8006AF4AE /* libInbox-1.5.1.a */ = {
+		D5A1927812C158A8006AF4AE /* libInbox-1.5.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libInbox-1.5.1.a";
+			path = "libInbox-1.5.2.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -708,7 +701,6 @@
 				E9F73F8D12ADE86D003CF572 /* UA_ASIDataCompressor.m in Sources */,
 				E9F73FB412ADE93A003CF572 /* UA_ASIDataDecompressor.m in Sources */,
 				1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */,
-				1FFE558912B7034E00A98BD0 /* UIDevice+machine.m in Sources */,
 				1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */,
 				1F2B10C612DD01B60020843D /* UATagUtils.m in Sources */,
 			);
@@ -746,12 +738,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.0.1;
 				DSTROOT = /tmp/AirshipLib.dst;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../Airship/External\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -761,12 +749,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/build/Debug-iphonesimulator\"",
-					"\"$(SRCROOT)/../InboxLib/build/Debug-iphoneos\"",
-					"\"$(SRCROOT)/../../../build/Release-iphoneos\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-DDEBUG",
@@ -790,22 +773,14 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DSTROOT = /tmp/AirshipLib.dst;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../Airship/External\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/build/Debug-iphonesimulator\"",
-					"\"$(SRCROOT)/../InboxLib/build/Debug-iphoneos\"",
-					"\"$(SRCROOT)/../../../build/Release-iphoneos\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -820,9 +795,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.0.1;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
@@ -844,8 +820,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.0.1;
+				CURRENT_PROJECT_VERSION = 1.0.3;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";

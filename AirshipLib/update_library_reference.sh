@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+# Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -33,7 +33,7 @@ echo "copy $lib_name from ${TARGET_BUILD_DIR} to $dest_lib_root"
 cp "${TARGET_BUILD_DIR}/$lib_name" "$dest_lib_root"
 
 
-for sample_prj_root in "${SRCROOT}/../*Sample"
+for sample_prj_root in "${SRCROOT}"/../*Sample
 do
     sample_prj_name="$(basename "$sample_prj_root")"
     sample_prj_setting_file="$sample_prj_root/$sample_prj_name.xcodeproj/project.pbxproj"

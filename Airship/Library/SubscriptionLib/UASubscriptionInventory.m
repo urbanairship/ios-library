@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -155,7 +155,7 @@
             [subscriptions addObject:subscription];
         }
 
-        [subscription setProducts:productArray];
+        [subscription setProductsWithArray:productArray];
     }
 
     [subscriptions sortUsingSelector:@selector(compare:)];
@@ -185,11 +185,11 @@
             // set user purchased products
             NSArray *filteredInfo = [userPurchasingInfo filteredArrayUsingPredicate:
                                      [NSPredicate predicateWithFormat:@"subscription_key like[c] %@", subscriptionKey]];
-            [subscription setPurchasedProducts:filteredInfo];
+            [subscription setPurchasedProductsWithArray:filteredInfo];
             [userSubscriptions addObject:subscription];
 
             // set user available contents
-            [subscription setContents:[contents contentsForSubscription:subscriptionKey]];
+            [subscription setContentsWithArray:[contents contentsForSubscription:subscriptionKey]];
         }
     }
 
@@ -246,9 +246,12 @@
     userPurchasingInfo = [[result objectForKey:@"subscriptions"] retain];
     has_active_subscriptions = ([[result objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
 
-
     NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    [generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
+	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+	
+	[generateDateFormatter setLocale:enUSPOSIXLocale];
+	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
+	[generateDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
     // refs http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
     // Date Format Patterns 'ZZZ' is for date strings like '-0800' and 'ZZZZ'

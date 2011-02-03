@@ -1,3 +1,12 @@
+2.2.2 - January 31, 2011
+- Updated copyrights
+- Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide. 
+- Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
+- Fixed numerous LLVM/Analyzer warnings
+
+2.2.1 - January 27, 2011
+- Fixed bug where download directory intermediate dirs were not initialized
+
 2.2.0 - December 27, 2010
 - First Static Library Release
 
