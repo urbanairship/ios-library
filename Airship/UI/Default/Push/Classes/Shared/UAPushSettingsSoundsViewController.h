@@ -11,8 +11,8 @@
 
 @interface UAPushSettingsSoundsViewController : UITableViewController {
 
-    NSArray *soundList;
-    
+    NSMutableArray *soundList;
+
 }
 
 @end

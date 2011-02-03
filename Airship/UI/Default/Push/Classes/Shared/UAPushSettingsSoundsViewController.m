@@ -23,12 +23,18 @@
     self.title = @"Bundled Sounds";
     
     if (soundList == nil) {
-        soundList = [[[NSBundle mainBundle] pathsForResourcesOfType:@"caf" inDirectory:nil] retain];
+
+        NSArray *aiffFiles = [[NSBundle mainBundle] pathsForResourcesOfType:@"aiff" inDirectory:nil];
+        NSArray *cafFiles = [[NSBundle mainBundle] pathsForResourcesOfType:@"caf" inDirectory:nil];
+        NSArray *wavFiles = [[NSBundle mainBundle] pathsForResourcesOfType:@"wav" inDirectory:nil];
+
+                              
+        soundList = [[NSMutableArray alloc] init];
+        [soundList addObjectsFromArray:aiffFiles];
+        [soundList addObjectsFromArray:cafFiles];
+        [soundList addObjectsFromArray:wavFiles];
+        
     }
-    
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 

@@ -28,12 +28,15 @@
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
+#import "UAPushNotificationHandler.h"
 
 #import <UIKit/UIKit.h>
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
+
+@synthesize delegate;
 @synthesize enabled, alias, tags, badge, quietTime, tz, notificationTypes;
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -42,6 +45,8 @@ static Class _uiClass;
 
 -(void)dealloc {
     [[UAirship shared] removeObserver:self];
+    
+    RELEASE_SAFELY(defaultPushHandler);
     RELEASE_SAFELY(alias);
     RELEASE_SAFELY(tags);
     RELEASE_SAFELY(quietTime);
@@ -353,11 +358,61 @@ static Class _uiClass;
     [request startAsynchronous];
 }
 
+
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
+    
+    if (!self.delegate) {
+        //TODO: use default delegate implementation
+        defaultPushHandler = [[UAPushNotificationHandler alloc] init];
+        self.delegate = defaultPushHandler;
+    }
+    
+    if (state != UIApplicationStateActive) {
+        UALOG(@"Received a notification for an inactive application state.");
+        [delegate handleBackgroundNotification:notification];
+        return;
+    }
+    
+    // Please refer to the following Apple documentation for full details on handling the userInfo payloads
+	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
+	
+	if ([[notification allKeys] containsObject:@"aps"]) { 
+		
+        NSDictionary *apsDict = [notification objectForKey:@"aps"];
+        
+		if ([[apsDict allKeys] containsObject:@"alert"]) {
+
+			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]]) {
+                
+				// The alert is a single string message so we can display it
+                [delegate displayNotificationAlertMessage:[apsDict valueForKey:@"alert"]];
+
+			} else {
+				// The alert is a a dictionary with more details, let's just get the message without localization
+				// This should be customized to fit your message details or usage scenario
+				//message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
+				
+                [delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+			}
+			
+		}
+        
+        //badge
+        //TODO: set badge, or ..not
+        
+        //sound
+        [delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+        
+
+	}//aps
+    
+    [delegate handleCustomPayload:notification];
+    
+}
+
 + (NSString *)pushTypeString {
     
     //TODO: Localize
-    
-    
     
     UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     

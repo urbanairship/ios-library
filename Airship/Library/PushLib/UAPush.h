@@ -45,10 +45,22 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @protocol UAPushUIProtocol
 + (void)openApnsSettings:(UIViewController *)viewController
                    animated:(BOOL)animated;
-+ (void)openTokenSettings:(UIViewController *)viewController
++ (void)openTokenSettings:(UIViewController *)viewController //TODO: remove from lib - it's a demo feature
                    animated:(BOOL)animated;
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
-+ (void)closeTokenSettingsAnimated:(BOOL)animated;
++ (void)closeTokenSettingsAnimated:(BOOL)animated;//TODO: remove from lib - it's a demo feature
+@end
+
+/**
+ *
+ *
+ */
+@protocol UAPushNotificationDelegate
+- (void)displayNotificationAlertMessage:(NSString *)alertMessage;
+- (void)displayNotificationAlert:(NSDictionary *)alertDict;
+- (void)playNotificationSound:(NSString *)sound;
+- (void)handleCustomPayload:(NSDictionary *)data;
+- (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end
 
 
@@ -56,6 +68,10 @@ UA_VERSION_INTERFACE(UAPushVersion)
  * 
  */
 @interface UAPush : UAObservable<UARegistrationObserver> {
+    
+    id<UAPushNotificationDelegate> delegate;
+    NSObject<UAPushNotificationDelegate> *defaultPushHandler;
+    
   @private
     BOOL enabled;
     UIRemoteNotificationType notificationTypes;
@@ -66,6 +82,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
     NSString *tz; /**< Timezone, for quiet time */
 }
 
+@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 @property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, retain) NSString *alias;
 @property (nonatomic, retain) NSMutableArray *tags;
@@ -105,6 +122,9 @@ SINGLETON_INTERFACE(UAPush);
 // Change quiet time for current device token, only take hh:mm into account
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 - (void)disableQuietTime;
+
+//Handle incoming push notifications
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
 + (NSString *)pushTypeString;
 

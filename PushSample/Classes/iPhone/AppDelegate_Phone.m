@@ -70,10 +70,7 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    //[[UAirship shared] registerDeviceToken:deviceToken];
     [[UAPush shared] registerDeviceToken:deviceToken];
-    // And manually set quiet time
-    // [[UAPushLib shared] setQuiettimeFrom:fromDate To:toDate WithTimeZone:[NSTimeZone localTimeZone]];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
@@ -82,6 +79,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"Received remote notification: %@", userInfo);
+    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
