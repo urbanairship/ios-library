@@ -66,7 +66,7 @@ enum TagSections {
     
     self.title = @"New Tag";
     
-    text = @"Assign a tags to a device to simplify "
+    text = @"Assign tags to a device to simplify "
     @"the process of sending notifications. Define custom tags, or use UATagUtils to "
     @"generate commonly used tags.";
     

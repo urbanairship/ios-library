@@ -42,14 +42,14 @@ enum {
     DeviceTokenSectionTokenCell = 0,
     DeviceTokenSectionTypesCell = 1,
     DeviceTokenSectionAliasCell = 2,
-    DeviceTokenSectionTagsCell = 3,
+    DeviceTokenSectionTagsCell  = 3,
     DeviceTokenSectionRowCount  = 4
 };
 
 enum {
-    HelpSectionSounds = 0,
-    HelpSectionLog = 1,
-    HelpSectionRowCount  = 2
+    HelpSectionSounds   = 0,
+    //HelpSectionLog = 1,
+    HelpSectionRowCount = 1
 };
 
 @implementation UAPushMoreSettingsViewController
@@ -90,7 +90,7 @@ enum {
                                               action:nil]
                                              autorelease];
 
-    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc]
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc]
                                               initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                               target:self
                                               action:@selector(quit)]
@@ -105,10 +105,6 @@ enum {
 
 - (void)viewWillAppear:(BOOL)animated {
     
-//    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-//    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
-//    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-//    
     [self updateCellValues];
     
     [self.tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
@@ -142,22 +138,17 @@ enum {
 - (void)initCells {
     deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell00"];
     deviceTokenCell.textLabel.text = @"Device Token";
-    //deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken;
     deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenTypesCell"];
     deviceTokenTypesCell.textLabel.text = @"Notification Types";
-    //deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
-    //deviceTokenTypesCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
     deviceTokenAliasCell.textLabel.text = @"Alias";
-    //deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias;
     deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
     deviceTokenTagsCell.textLabel.text = @"Tags";
-    //deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
     deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
@@ -211,15 +202,12 @@ enum {
         
         switch (indexPath.row) {
             case DeviceTokenSectionTokenCell:
-                //deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
                 cell = deviceTokenCell;
                 break;
             case DeviceTokenSectionTypesCell:
-                //deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
                 cell = deviceTokenTypesCell;
                 break;
             case DeviceTokenSectionAliasCell:
-                //deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
                 cell = deviceTokenAliasCell;
                 break;
             case DeviceTokenSectionTagsCell:
@@ -229,24 +217,14 @@ enum {
                 break;
         }
         
-        
-//        if (indexPath.row == DeviceTokenSectionTokenCell) {
-//            deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-//            cell = deviceTokenCell;
-//        } else if (indexPath.row == DeviceTokenSectionTypesCell) {
-//            deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
-//            cell = deviceTokenTypesCell;
-//        } else if (indexPath.row == DeviceTokenSectionAliasCell) {
-//            deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-//            cell = deviceTokenAliasCell;
-//        }
     } else if (indexPath.section == SectionHelp) {
 
         if (indexPath.row == HelpSectionSounds) {
             cell = helpSoundsCell;
-        } else if (indexPath.row == HelpSectionLog) {
-            cell = helpLogCell;
-        }
+        } 
+//        else if (indexPath.row == HelpSectionLog) {
+//            cell = helpLogCell;
+//        }
     }
 
     return cell;
@@ -274,7 +252,7 @@ enum {
             }
             [self.navigationController pushViewController:aliasViewController animated:YES];
             
-        }else if (indexPath.row == DeviceTokenSectionTagsCell) {
+        } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!tagsViewController) {
                 tagsViewController = [[UAPushSettingsTagsViewController alloc] init];
             }
@@ -303,11 +281,6 @@ enum {
 #pragma mark UA Registration Observer methods
 
 - (void)registerDeviceTokenSucceed {
-//    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-//    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
-//    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-//    deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
-//    
     
     [self updateCellValues];
     

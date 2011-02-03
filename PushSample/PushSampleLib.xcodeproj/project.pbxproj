@@ -267,7 +267,6 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
 				1890BA121251B5E900E6EBF1 /* bottom-detail.png */,
 				1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */,
 				1890BA141251B5E900E6EBF1 /* middle-detail.png */,
@@ -278,6 +277,7 @@
 				1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */,
 				1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */,
 				1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */,
+				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
 				1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */,
 				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 			);
@@ -658,6 +658,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
@@ -684,6 +685,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;

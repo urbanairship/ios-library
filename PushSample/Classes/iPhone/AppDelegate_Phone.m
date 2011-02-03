@@ -53,13 +53,6 @@
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
-//    if ([UAPush shared].enabled) {
-//        // Register for notifications
-//        [[UIApplication sharedApplication]
-//         registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-//                                             UIRemoteNotificationTypeSound |
-//                                             UIRemoteNotificationTypeAlert)];
-//    }
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
@@ -79,6 +72,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"Received remote notification: %@", userInfo);
+    
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
 }
 

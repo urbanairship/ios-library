@@ -37,7 +37,13 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @implementation UAPush
 
 @synthesize delegate;
-@synthesize enabled, alias, tags, badge, quietTime, tz, notificationTypes;
+@synthesize enabled;
+@synthesize alias;
+@synthesize tags;
+@synthesize badge;
+@synthesize quietTime;
+@synthesize tz;
+@synthesize notificationTypes;
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -51,6 +57,7 @@ static Class _uiClass;
     RELEASE_SAFELY(tags);
     RELEASE_SAFELY(quietTime);
     RELEASE_SAFELY(tz);
+    
     [super dealloc];
 }
 
@@ -74,6 +81,9 @@ static Class _uiClass;
             enabled = YES;
         }
         
+        //init with default delegate implementation
+        defaultPushHandler = [[UAPushNotificationHandler alloc] init];
+        self.delegate = defaultPushHandler;
 
         [[UAirship shared] addObserver:self];
     }
@@ -206,6 +216,7 @@ static Class _uiClass;
 }
 
 - (void)unRegisterDeviceTokenSucceeded {
+    UALOG(@"UAPush - Device Token Unregistered Successfully");
     [self saveDefaults];
 }
 
@@ -228,14 +239,14 @@ static Class _uiClass;
             [tags addObject:tag];
         }
         [self saveDefaults];
-        [self notifyObservers:@selector(addTagToDeviceSucceed)];
+        [self notifyObservers:@selector(addTagToDeviceSucceeded)];
     }
 }
 
 - (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Using U/P: %@ / %@", request.username, request.password);
     [UAUtils requestWentWrong:request keyword:@"remove tag from current device"];
-    [self notifyObservers:@selector(addTagToDeviceFailed:) withObject:[request error]];
+    [self notifyObservers:@selector(removeTagFromDeviceFailed:) withObject:[request error]];
 }
 
 - (void)removeTagFromDeviceSucceed:(UA_ASIHTTPRequest *)request {
@@ -246,7 +257,7 @@ static Class _uiClass;
         NSString *tag = [self getTagFromUrl:request.url];
         [tags removeObject:tag];
         [self saveDefaults];
-        [self notifyObservers:@selector(removeTagFromDeviceSucceed)];
+        [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
     }
 }
 
@@ -254,17 +265,17 @@ static Class _uiClass;
 #pragma mark Open APIs - Property Setters
 
 - (void)setAlias:(NSString *)value {
-    [value retain];
-    [alias release];
-    alias = value;
+    
+    self.alias = value;
     [self updateRegistration];
+    
 }
 
 - (void)setTags:(NSMutableArray *)value {
-    [value retain];
-    [tags release];
-    tags = value;
+    
+    self.tags = value;
     [self updateRegistration];
+    
 }
 
 - (void)setBadge:(int)value {
@@ -274,7 +285,7 @@ static Class _uiClass;
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to || !timezone) {
-        UALOG(@"parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
+        UALOG(@"Set Quiet Time - parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
         return;
     }
 
@@ -361,12 +372,6 @@ static Class _uiClass;
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     
-    if (!self.delegate) {
-        //TODO: use default delegate implementation
-        defaultPushHandler = [[UAPushNotificationHandler alloc] init];
-        self.delegate = defaultPushHandler;
-    }
-    
     if (state != UIApplicationStateActive) {
         UALOG(@"Received a notification for an inactive application state.");
         [delegate handleBackgroundNotification:notification];
@@ -399,6 +404,7 @@ static Class _uiClass;
         
         //badge
         //TODO: set badge, or ..not
+        //[[UIApplication sharedApplication] setApplicationIconBadgeNumber:99];
         
         //sound
         [delegate playNotificationSound:[apsDict objectForKey:@"sound"]];

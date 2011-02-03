@@ -79,9 +79,7 @@
 }
 
 - (void)handleCustomPayload:(NSDictionary *)data {
-    
     UALOG(@"Received an alert with a custom payload");
-    
 }
 
 - (void)handleBackgroundNotification:(NSDictionary *)notification {

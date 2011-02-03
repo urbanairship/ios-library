@@ -25,24 +25,6 @@
 
 #import <UIKit/UIKit.h>
 
-enum {
-    SectionPushEnabled = 0,
-    SectionQuietTime   = 1,
-    SectionCount       = 2
-};
-
-enum {
-    PushEnabledSectionSwitchCell = 0,
-    PushEnabledSectionRowCount   = 1
-};
-
-enum {
-    QuietTimeSectionSwitchCell  = 0,
-    QuietTimeSectionStartCell   = 1,
-    QuietTimeSectionEndCell     = 2,
-    QuietTimeSectionRowCount    = 3
-};
-
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
     IBOutlet UITableView  *tableView;
     
