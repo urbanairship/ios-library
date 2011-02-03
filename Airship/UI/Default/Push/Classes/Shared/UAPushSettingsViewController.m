@@ -172,7 +172,7 @@ static NSString *cellID = @"QuietTimeCell";
                                               autorelease];
 
     UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].enabled) {
+    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
         pushEnabledSwitch.on = NO;
     } else {
         pushEnabledSwitch.on = YES;
@@ -235,6 +235,9 @@ static NSString *cellID = @"QuietTimeCell";
 - (IBAction)quit {
     
     if (dirty) {
+        
+        [UAPush shared].pushEnabled = pushEnabledSwitch.on;
+        
         if (pushEnabledSwitch.on) {
             [self updateQuietTime];
         } else {

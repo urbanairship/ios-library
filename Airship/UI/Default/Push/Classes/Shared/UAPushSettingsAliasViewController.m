@@ -113,7 +113,7 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     NSString *newAlias = aliasField.text;
     if ([newAlias length] != 0) {
-        [UAPush shared].alias = newAlias;
+        [[UAPush shared] updateAlias:newAlias];
     }
 }
 

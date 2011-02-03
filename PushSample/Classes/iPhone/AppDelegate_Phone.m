@@ -44,7 +44,7 @@
     [window addSubview:controller.view];
     [window makeKeyAndVisible];
     [self failIfSimulator];
-
+    
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
@@ -53,11 +53,19 @@
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
+    [[UAPush shared] enableAutobadge:YES];
+    [[UAPush shared] resetAutobadge];
+    
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
-
+    
     return YES;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    UALOG(@"Application did become active.");
+    [[UAPush shared] resetAutobadge];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -74,6 +82,7 @@
     UALOG(@"Received remote notification: %@", userInfo);
     
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+    [[UAPush shared] resetAutobadge];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

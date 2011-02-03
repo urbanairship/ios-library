@@ -37,10 +37,9 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @implementation UAPush
 
 @synthesize delegate;
-@synthesize enabled;
+@synthesize pushEnabled;
 @synthesize alias;
 @synthesize tags;
-@synthesize badge;
 @synthesize quietTime;
 @synthesize tz;
 @synthesize notificationTypes;
@@ -72,13 +71,12 @@ static Class _uiClass;
         }
         quietTime = [[defaults objectForKey:kQuietTime] retain];
         tz = [[defaults objectForKey:kTimeZone] retain];
-        badge = [defaults integerForKey:kBadge];
         
         //enable push by default
         if ([defaults objectForKey:kEnabled]) {
-            enabled = [defaults boolForKey:kEnabled];
+            pushEnabled = [defaults boolForKey:kEnabled];
         } else {
-            enabled = YES;
+            pushEnabled = YES;
         }
         
         //init with default delegate implementation
@@ -107,11 +105,11 @@ static Class _uiClass;
 - (void)updateRegistration {
     
     //if on, but not yet registered, re-register
-    if (enabled && [UAirship shared].deviceToken == nil) {
+    if (pushEnabled && [UAirship shared].deviceToken == nil) {
         [self registerForRemoteNotificationTypes:notificationTypes];
         
     //if enabled, simply update existing device token
-    } else if (enabled) {
+    } else if (pushEnabled) {
         [self registerDeviceToken:nil];
         
     // unregister token w/ UA
@@ -121,13 +119,12 @@ static Class _uiClass;
 }
 
 - (void)saveDefaults {
-    UALOG(@"Save user defaults, enabled: %d, alias: %@; tags: %@; badge: %d, quiettime: %@, tz: %@",
-          enabled, alias, tags, badge, quietTime, tz);
+    UALOG(@"Save user defaults, enabled: %d, alias: %@; tags: %@; quiettime: %@, tz: %@",
+          pushEnabled, alias, tags, quietTime, tz);
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:enabled forKey:kEnabled];
+    [defaults setBool:pushEnabled forKey:kEnabled];
     [defaults setObject:tags forKey:kTags];
     [defaults setObject:alias forKey:kAlias];
-    [defaults setInteger:badge forKey:kBadge];
     [defaults setObject:quietTime forKey:kQuietTime];
     [defaults setObject:tz forKey:kTimeZone];
     [defaults synchronize];
@@ -138,7 +135,7 @@ static Class _uiClass;
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
     notificationTypes = types;
     
-    if (enabled) {
+    if (pushEnabled) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
     }
 }
@@ -195,7 +192,9 @@ static Class _uiClass;
         [body setObject:tz forKey:@"tz"];
         [body setObject:quietTime forKey:@"quiettime"];
     }
-    [body setObject:[NSNumber numberWithInt:badge] forKey:@"badge"];
+    if (autobadgeEnabled) {
+        [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:@"badge"];
+    }
     
     UALOG("Updating device token (%@) with: %@", token, body);
     
@@ -264,23 +263,18 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
-- (void)setAlias:(NSString *)value {
+- (void)updateAlias:(NSString *)value {
     
     self.alias = value;
     [self updateRegistration];
     
 }
 
-- (void)setTags:(NSMutableArray *)value {
+- (void)updateTags:(NSMutableArray *)value {
     
     self.tags = value;
     [self updateRegistration];
     
-}
-
-- (void)setBadge:(int)value {
-    badge = value;
-    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
@@ -293,11 +287,15 @@ static Class _uiClass;
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
                          [cal components:NSHourCalendarUnit fromDate:from].hour,
                          [cal components:NSMinuteCalendarUnit fromDate:from].minute];
+    
     NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
                        [cal components:NSHourCalendarUnit fromDate:to].hour,
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
-    self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
+    
+    self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                      fromStr, @"start",
                       toStr, @"end", nil];
+    
     self.tz = [timezone name];
     [self updateRegistration];
 }
@@ -369,6 +367,27 @@ static Class _uiClass;
     [request startAsynchronous];
 }
 
+- (void)enableAutobadge:(BOOL)autobadge {
+    autobadgeEnabled = autobadge;
+}
+
+- (void)setAutobadgeNumber:(NSInteger)badgeNumber {
+    UALOG(@"Reset Auto Badge from %d to 0", [[UIApplication sharedApplication] applicationIconBadgeNumber]);
+    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+    
+    // if the device token has already been set then
+    // we are post-registration and will need to make
+    // and update call
+    if (autobadgeEnabled && [UAirship shared].deviceToken) {
+        UALOG(@"Sending autobadge update to UA server");
+        [self updateRegistration];
+    }
+}
+
+- (void)resetAutobadge {
+    [self setAutobadgeNumber:0];
+}
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     
@@ -403,13 +422,14 @@ static Class _uiClass;
 		}
         
         //badge
-        //TODO: set badge, or ..not
-        //[[UIApplication sharedApplication] setApplicationIconBadgeNumber:99];
+        NSString *badgeNumber = [apsDict valueForKey:@"badge"];
+        if (badgeNumber) {
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+        }
         
         //sound
         [delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
         
-
 	}//aps
     
     [delegate handleCustomPayload:notification];
