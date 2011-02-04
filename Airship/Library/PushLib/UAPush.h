@@ -133,6 +133,6 @@ SINGLETON_INTERFACE(UAPush);
 //Handle incoming push notifications
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
-+ (NSString *)pushTypeString;
++ (NSString *)pushTypeString:(UIRemoteNotificationType)types;
 
 @end

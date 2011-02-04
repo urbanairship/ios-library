@@ -104,7 +104,7 @@ static Class _uiClass;
 
 - (void)updateRegistration {
     
-    //if on, but not yet registered, re-register
+    //if on, but not yet registered, re-register -- was likely just enabled
     if (pushEnabled && [UAirship shared].deviceToken == nil) {
         [self registerForRemoteNotificationTypes:notificationTypes];
         
@@ -140,46 +140,8 @@ static Class _uiClass;
     }
 }
 
+//The new token to register, or nil if updating the existing token
 - (void)registerDeviceToken:(NSData *)token {
-    
-    if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
-        UALOG(@"iOS Registered a device token, but nothing is enabled!");
-        
-        if ([UAirship shared].deviceToken != nil) { //already been set this session
-            NSString* okStr = @"OK";
-            NSString* errorMessage =
-            @"Unable to turn on notifications. They may be disabled in the Settings app.";
-            NSString *errorTitle = @"Error";
-            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                                message:errorMessage
-                                                               delegate:nil
-                                                      cancelButtonTitle:okStr
-                                                      otherButtonTitles:nil];
-            
-            [someError show];
-            [someError release];
-        }
-    } else if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] != notificationTypes) {
-        
-        //TODO: UI popup in this case, but only if the user enabled it in the settings screen
-        
-        UALOG(@"Failed to register a device token with the requested services. Your notifications may be turned off.");
-        
-        if ([UAirship shared].deviceToken != nil) { //already been set this session
-            NSString* okStr = @"OK";
-            NSString* errorMessage =
-            @"Unable to turn on some notifications. They may be disabled in the Settings app.";
-            NSString *errorTitle = @"Error";
-            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                                message:errorMessage
-                                                               delegate:nil
-                                                      cancelButtonTitle:okStr
-                                                      otherButtonTitles:nil];
-            
-            [someError show];
-            [someError release];
-        }
-    }
     
     NSMutableDictionary *body = [NSMutableDictionary dictionary];
     if (alias != nil) {
@@ -436,11 +398,11 @@ static Class _uiClass;
     
 }
 
-+ (NSString *)pushTypeString {
++ (NSString *)pushTypeString:(UIRemoteNotificationType)types {
     
     //TODO: Localize
     
-    UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    //UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     
     NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
     

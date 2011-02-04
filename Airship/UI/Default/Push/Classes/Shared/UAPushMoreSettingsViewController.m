@@ -293,7 +293,7 @@ enum {
 - (void)updateCellValues {
     
     deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString];
+    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
     deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
     
     if ([[UAPush shared].tags count] > 0) {
