@@ -141,7 +141,7 @@
 		[self presentModalViewController:mfViewController animated:YES];
 		[mfViewController release];
 	}else {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your phone is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
 		
 		[alert show];
 		[alert release];
