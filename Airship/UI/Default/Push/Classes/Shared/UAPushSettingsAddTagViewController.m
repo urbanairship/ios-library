@@ -28,10 +28,10 @@
 #import "UATagUtils.h"
 
 enum TagSections {
-    TagSectionDesc = 0,
-    TagSectionCustom = 1,
-    TagSectionPreset = 2,
-    TagSectionRowCount = 3
+    //TagSectionDesc = 0,
+    TagSectionCustom = 0,
+    TagSectionPreset = 1,
+    TagSectionCount = 2
 };
 
 
@@ -40,8 +40,7 @@ enum TagSections {
 @synthesize tagDelegate;
 @synthesize tableView;
 @synthesize tagCell;
-@synthesize textCell;
-@synthesize textLabel;
+
 @synthesize tagField;
 @synthesize presetTags;
 
@@ -52,8 +51,6 @@ enum TagSections {
     
     [tableView release];
     [tagCell release];
-    [textCell release];
-    [textLabel release];
     [tagField release];
     
     self.presetTags = nil;
@@ -66,12 +63,7 @@ enum TagSections {
     
     self.title = @"New Tag";
     
-    text = @"Assign tags to a device to simplify "
-    @"the process of sending notifications. Define custom tags, or use UATagUtils to "
-    @"generate commonly used tags.";
-    
     tagField.text = @"";
-    textLabel.text = text;
     
     if (!self.presetTags) {
         self.presetTags = [UATagUtils createTags:
@@ -101,7 +93,7 @@ enum TagSections {
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-#define kCellPaddingHeight 10
+//#define kCellPaddingHeight 10
 
 // TODO: text?
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -111,14 +103,14 @@ enum TagSections {
         case TagSectionPreset:
         case TagSectionCustom:
             return 44;
-        case TagSectionDesc:
-        {
-            CGFloat height = [text sizeWithFont:textLabel.font
-                              constrainedToSize:CGSizeMake(300, 1500)
-                                  lineBreakMode:UILineBreakModeWordWrap].height;
-            return height + kCellPaddingHeight * 4;
-            break;
-        }
+//        case TagSectionDesc:
+//        {
+//            CGFloat height = [text sizeWithFont:textLabel.font
+//                              constrainedToSize:CGSizeMake(300, 1500)
+//                                  lineBreakMode:UILineBreakModeWordWrap].height;
+//            return height + kCellPaddingHeight * 4;
+//            break;
+//        }
         default:
             break;
     }
@@ -153,8 +145,8 @@ enum TagSections {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     switch (section) {
-        case TagSectionDesc:
-            return 1;
+        //case TagSectionDesc:
+        //    return 1;
         case TagSectionCustom:
             return 1;
         case TagSectionPreset:
@@ -167,15 +159,12 @@ enum TagSections {
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return TagSectionRowCount;
+    return TagSectionCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     switch (indexPath.section) {
-        case TagSectionDesc:
-            textLabel.text = text;//TODO: necessary???
-            return textCell;
         case TagSectionCustom:
             return tagCell;
         case TagSectionPreset:

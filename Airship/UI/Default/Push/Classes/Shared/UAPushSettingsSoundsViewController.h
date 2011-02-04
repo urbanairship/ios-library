@@ -30,6 +30,13 @@
 
     NSMutableArray *soundList;
 
+    IBOutlet UITableViewCell *textCell;
+    IBOutlet UILabel *textLabel;
+    NSString *text;
+    
 }
+
+@property (nonatomic, retain) UITableViewCell *textCell;
+@property (nonatomic, retain) UILabel *textLabel;
 
 @end

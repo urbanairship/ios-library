@@ -26,9 +26,23 @@
 #import "UAGlobal.h"
 #import "UAPushSettingsSoundsViewController.h"
 
+#import <AudioToolbox/AudioServices.h>
+
+enum {
+    SectionDesc     = 0,
+    SectionSounds   = 1,
+    SectionCount    = 2
+};
+
+enum {
+    DescSectionText     = 0,
+    DescSectionRowCount = 1
+};
 
 @implementation UAPushSettingsSoundsViewController
 
+@synthesize textCell;
+@synthesize textLabel;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -52,6 +66,11 @@
         [soundList addObjectsFromArray:wavFiles];
         
     }
+    
+    text = @"Notifications can play bundled sounds upon receipt. "
+    @"Send a sound with your push by including the sound's filename in the Urban Airship push form. "
+    @"This sample application includes the sound files below.";
+    textLabel.text = text;
 }
 
 
@@ -89,87 +108,98 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return 1;
+    return SectionCount;
 }
-
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [soundList count];
+    switch (section) {
+        case SectionSounds:
+            return [soundList count];
+        case SectionDesc:
+            return DescSectionRowCount;
+        default:
+            break;
+    }
+    return 0;
 }
-
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    static NSString *CellIdentifier = @"SoundCell";
+    UALOG(@"Section %d Row %d", indexPath.section, indexPath.row);
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+    UITableViewCell *cell;
+    
+    switch (indexPath.section) {
+        case SectionDesc:
+        {
+            cell = textCell;
+            break;
+        }
+        case SectionSounds:
+        {
+            static NSString *CellIdentifier = @"SoundCell";
+            
+            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+            if (cell == nil) {
+                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+            }
+            
+            // Configure the cell...
+            cell.textLabel.text = [[[soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
+            break;
+        }
+        default:
+            break;
     }
-    
-    // Configure the cell...
-    cell.textLabel.text = [[[soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
     
     return cell;
 }
 
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source.
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-    }   
-}
-*/
-
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
+// Customize the appearance of table view cells.
+//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+//    
+//    static NSString *CellIdentifier = @"SoundCell";
+//    
+//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+//    if (cell == nil) {
+//        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+//    }
+//    
+//    // Configure the cell...
+//    cell.textLabel.text = [[[soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
+//    
+//    return cell;
+//}
 
 
 #pragma mark -
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-    // ...
-    // Pass the selected object to the new view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-    [detailViewController release];
-    */
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+    if (indexPath.section == SectionSounds) {
+        SystemSoundID soundID;
+        AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:[soundList objectAtIndex:indexPath.row]], &soundID);
+        AudioServicesPlayAlertSound(soundID);
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
+}
+
+#define kCellPaddingHeight 10
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == SectionDesc) {
+        CGFloat height = [text sizeWithFont:textLabel.font
+                          constrainedToSize:CGSizeMake(240, 1500)
+                              lineBreakMode:UILineBreakModeWordWrap].height;
+        return height + kCellPaddingHeight * 2;
+    } else {
+        return 44;
+    }
 }
 
 
@@ -186,10 +216,16 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    
+    self.textCell = nil;
+    self.textLabel = nil;
 }
 
 
 - (void)dealloc {
+    
+    self.textCell = nil;
+    self.textLabel = nil;
     
     RELEASE_SAFELY(soundList);
     

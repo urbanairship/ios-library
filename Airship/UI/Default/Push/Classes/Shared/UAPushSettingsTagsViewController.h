@@ -31,7 +31,14 @@
     UAPushSettingsAddTagViewController *addTagController;
     UIBarButtonItem *addButton;
     
+    IBOutlet UITableViewCell *textCell;
+    IBOutlet UILabel *textLabel;
+    NSString *text;
+    
 }
+
+@property (nonatomic, retain) UITableViewCell *textCell;
+@property (nonatomic, retain) UILabel *textLabel;
 
 - (void)addItem:(id)sender;
 

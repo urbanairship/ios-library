@@ -27,8 +27,21 @@
 #import "UAPushSettingsAddTagViewController.h"
 #import "UAPush.h"
 
+enum {
+    SectionDesc     = 0,
+    SectionTags     = 1,
+    SectionCount    = 2
+};
+
+enum {
+    DescSectionText     = 0,
+    DescSectionRowCount = 1
+};
+
 @implementation UAPushSettingsTagsViewController
 
+@synthesize textCell;
+@synthesize textLabel;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -37,20 +50,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    
     self.title = @"Tags";
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    
-
-    
     
     //Create an add button in the nav bar
     if (addButton == nil) {
         addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)];
     }
     self.navigationItem.rightBarButtonItem = addButton;
+    
+    text = @"Assign tags to a device to simplify "
+    @"the process of sending notifications. Define custom tags, or use UATagUtils to "
+    @"generate commonly used tags.";
+    textLabel.text = text;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -61,64 +72,63 @@
     
 }
 
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-}
-*/
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations.
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
 
 #pragma mark -
 #pragma mark Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return 1;
+    return SectionCount;
+    
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [[UAPush shared].tags count];//tags plus an "add" row
+    switch (section) {
+        case SectionTags:
+            return [[UAPush shared].tags count];
+        case SectionDesc:
+            return DescSectionRowCount;
+        default:
+            break;
+    }
+    return 0;
 }
 
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    UALOG(@"Section %d Row %d", indexPath.section, indexPath.row);
+    
     UITableViewCell *cell;
     
-    /////////////
-    
-    static NSString *CellIdentifier = @"Cell";
-    
-    cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+    switch (indexPath.section) {
+        case SectionDesc:
+        {
+            cell = textCell;
+            break;
+        }
+        case SectionTags:
+        {
+            static NSString *CellIdentifier = @"TagCell";
+            
+            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+            if (cell == nil) {
+                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+            }
+            
+            // Configure the cell...
+            
+            cell.textLabel.text = [[UAPush shared].tags objectAtIndex:indexPath.row];
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            break;
+        }
+        default:
+            break;
     }
-    
-    // Configure the cell...
-    
-    cell.textLabel.text = [[UAPush shared].tags objectAtIndex:indexPath.row];
-    cell.accessoryType = UITableViewCellAccessoryNone;
-    
+
     return cell;
 }
 
@@ -129,8 +139,13 @@
 
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+
+    if (indexPath.section == SectionTags) {
+        return YES;
+    } else {
+        return NO;
+    }
+    
 }
 
 
@@ -154,36 +169,35 @@
     }
 }
 
-
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    
+    switch (section) {
+        case SectionTags:
+            return @"Current Tags";
+        default:
+            break;
+    }
+    return nil;
 }
-*/
-
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 
 #pragma mark -
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-    // ...
-    // Pass the selected object to the new view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-    [detailViewController release];
-    */
+    // do nothing
+}
+
+#define kCellPaddingHeight 10
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == SectionDesc) {
+        CGFloat height = [text sizeWithFont:textLabel.font
+                          constrainedToSize:CGSizeMake(240, 1500)
+                              lineBreakMode:UILineBreakModeWordWrap].height;
+        return height + kCellPaddingHeight * 2;
+    } else {
+        return 44;
+    }
 }
 
 #pragma mark -
@@ -211,16 +225,15 @@
          return;
      }
      
+     if ([[tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0) {
+         UALOG(@"Tag is an empty string.");
+         return;
+     }
+     
      NSInteger index = [[UAPush shared].tags count];
-     
-     
      [[UAPush shared].tags insertObject:tag atIndex:index];
      
-     NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
-     
-
-     
-     
+     NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
      
      [[UAPush shared] updateRegistration];//update server
@@ -249,6 +262,10 @@
         RELEASE_SAFELY(addTagController);
     }
     
+    self.textCell = nil;
+    self.textLabel = nil;
+    
+    
     RELEASE_SAFELY(addButton);
     
     [super viewDidUnload];
@@ -258,6 +275,9 @@
 - (void)dealloc {
     
     RELEASE_SAFELY(addButton);
+    
+    self.textCell = nil;
+    self.textLabel = nil;
     
     if (addTagController) {
         addTagController.tagDelegate = nil;

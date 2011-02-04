@@ -39,8 +39,8 @@ enum {
 };
 
 enum {
-    DeviceTokenSectionTokenCell = 0,
-    DeviceTokenSectionTypesCell = 1,
+    DeviceTokenSectionTokenCell = 1,
+    DeviceTokenSectionTypesCell = 0,
     DeviceTokenSectionAliasCell = 2,
     DeviceTokenSectionTagsCell  = 3,
     DeviceTokenSectionRowCount  = 4
@@ -152,7 +152,7 @@ enum {
     deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
-    helpSoundsCell.textLabel.text = @"Custom Notification Sounds";
+    helpSoundsCell.textLabel.text = @"Notification Sounds";
     helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell11"];
@@ -188,8 +188,10 @@ enum {
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
     switch (section) {
+        case SectionDeviceToken:
+            return @"Token Settings";
         case SectionHelp:
-            return @"Help";
+            return @"Bundle Info";
         default:
             break;
     }
@@ -254,7 +256,7 @@ enum {
             
         } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!tagsViewController) {
-                tagsViewController = [[UAPushSettingsTagsViewController alloc] init];
+                tagsViewController = [[UAPushSettingsTagsViewController alloc] initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
             }
             [self.navigationController pushViewController:tagsViewController animated:YES];
             
@@ -264,7 +266,7 @@ enum {
     } else if (indexPath.section == SectionHelp) {
         if (indexPath.row == HelpSectionSounds) {
 
-            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] init] autorelease];
+            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil] autorelease];
             [self.navigationController pushViewController:soundsViewController animated:YES];
         } else {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];

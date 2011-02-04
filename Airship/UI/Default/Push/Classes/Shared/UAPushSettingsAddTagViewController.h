@@ -42,10 +42,8 @@
     
     IBOutlet UITableView *tableView;
     IBOutlet UITableViewCell *tagCell;
-    IBOutlet UITableViewCell *textCell;
-    IBOutlet UILabel *textLabel;
+
     IBOutlet UITextField *tagField;
-    NSString *text;
     
     NSArray *presetTags;
 }
@@ -53,8 +51,6 @@
 @property (nonatomic, assign) id<UAPushSettingsAddTagDelegate> tagDelegate;
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) UITableViewCell *tagCell;
-@property (nonatomic, retain) UITableViewCell *textCell;
-@property (nonatomic, retain) UILabel *textLabel;
 @property (nonatomic, retain) UITextField *tagField;
 @property (nonatomic, retain) NSArray *presetTags;
 

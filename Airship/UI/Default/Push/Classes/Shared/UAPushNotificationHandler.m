@@ -25,7 +25,7 @@
 
 #import "UAPushNotificationHandler.h"
 
-#import <AudioToolbox/AudioServices.h> 
+#import <AudioToolbox/AudioServices.h>
 
 @implementation UAPushNotificationHandler
 
@@ -55,8 +55,6 @@
 }
 
 - (void)playNotificationSound:(NSString *)sound {
-    
-    
     
     UALOG(@"Received an alert with a sound: %@", sound);
     

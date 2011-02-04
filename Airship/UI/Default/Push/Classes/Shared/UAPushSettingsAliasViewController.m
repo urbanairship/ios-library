@@ -26,6 +26,21 @@
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPush.h"
 
+enum {
+    SectionDesc        = 0,
+    SectionAlias       = 1,
+    SectionCount       = 2
+};
+
+enum {
+    AliasSectionInputRow = 0,
+    AliasSectionRowCount = 1
+};
+
+enum {
+    DescSectionText   = 0,
+    DescSectionRowCount = 1
+};
 
 @implementation UAPushSettingsAliasViewController
 
@@ -69,37 +84,50 @@
 
 #define kCellPaddingHeight 10
 
-// TODO: text?
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        return 44;
-    } else {
+    if (indexPath.section == SectionDesc) {
         CGFloat height = [text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:UILineBreakModeWordWrap].height;
         return height + kCellPaddingHeight * 2;
+    } else {
+        return 44;
     }
+
 }
 
 #pragma mark -
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    
+    switch (section) {
+        case SectionAlias:
+            return AliasSectionRowCount;
+        case SectionDesc:
+            return DescSectionRowCount;
+        default:
+            break;
+    }
+    
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return SectionCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
+    
+    if (indexPath.section == SectionAlias) {
         aliasField.text = [UAPush shared].alias;
         return aliasCell;
-    } else {
+    } else if (indexPath.section == SectionDesc) {
         textLabel.text = text;
         return textCell;
     }
+    
+    return nil;
 }
 
 #pragma mark -
