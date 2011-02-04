@@ -32,6 +32,8 @@
 
 + (NSString *)udidHash;
 
++ (NSString *)UUID;
+
 + (NSString *)deviceModelName;
 
 + (NSString *)pluralize:(int)count 

@@ -201,8 +201,7 @@ BOOL releaseLogging = false;
     
     //Send Startup Analytics Info
     //init first event
-    [_sharedAirship.analytics addEvent:[_sharedAirship.analytics buildStartupMetadataDictionary] withType:@"app_init"];
-    [_sharedAirship.analytics send];
+    [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
     
     //Handle custom options
     if (options != nil) {
@@ -221,6 +220,9 @@ BOOL releaseLogging = false;
 
 + (void)land {
 
+	// add app_exit event
+    [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
+	
     //Land the modular libaries first
     [NSClassFromString(@"UAInbox") land];
     [NSClassFromString(@"StoreFront") land];
@@ -310,6 +312,7 @@ BOOL releaseLogging = false;
 #pragma mark UA Registration request methods
 
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
+	
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            server, @"/api/device_tokens/",
                            deviceToken];
@@ -361,6 +364,10 @@ BOOL releaseLogging = false;
 #pragma mark Callback for succeed register APN device token
 
 - (void)registerDeviceToken:(NSData *)token {
+	
+	// add device_registration event
+    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
+	
     // succeed register APN device token, then register on UA server
     [self registerDeviceToken:token withExtraInfo:nil];
 }

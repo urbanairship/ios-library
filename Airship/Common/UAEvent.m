@@ -27,7 +27,6 @@
 #import "UAirship.h"
 #import "UAUser.h"
 #import "UAUtils.h"
-#import "UIDevice+machine.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>

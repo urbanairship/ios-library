@@ -26,7 +26,6 @@
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUtils.h"
-#import "UIDevice+machine.h"
 #import "UA_SBJSON.h"
 #import "UA_Reachability.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
@@ -359,7 +358,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     event = [events objectAtIndex:0];
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     [request addRequestHeader:@"X-UA-Library" value:[event objectForKey:@"lib_version"]];
-    [request addRequestHeader:@"X-UA-Device-Model" value:[device machine]];
+    [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
     [request addRequestHeader:@"X-UA-Device-Family" value:device.systemName];
     [request addRequestHeader:@"X-UA-OS-Version" value:[event objectForKey:@"os_version"]];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];

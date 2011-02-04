@@ -71,14 +71,6 @@
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
 		D5A1928712C15A4E006AF4AE /* libInbox-1.5.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.3.a */; };
-		D5BED7BB12FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
-		D5BED7BC12FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
-		D5BED7BD12FC787900057449 /* UAHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B512FC787900057449 /* UAHTTPConnection.m */; };
-		D5BED7BE12FC787900057449 /* UAHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B612FC787900057449 /* UAHTTPConnection.h */; };
-		D5BED7BF12FC787900057449 /* UAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B712FC787900057449 /* UAEvent.m */; };
-		D5BED7C012FC787900057449 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; };
-		D5BED7C112FC787900057449 /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B912FC787900057449 /* UAAnalyticsDBManager.m */; };
-		D5BED7C212FC787900057449 /* UAAnalyticsDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7BA12FC787900057449 /* UAAnalyticsDBManager.h */; };
 		D5BED7C312FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5BED7C412FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
 		D5BED7C512FC787900057449 /* UAHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B512FC787900057449 /* UAHTTPConnection.m */; };
@@ -575,10 +567,6 @@
 				E9F73FB312ADE93A003CF572 /* UA_ASIDataDecompressor.h in Headers */,
 				1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */,
 				1F2B10C512DD01B60020843D /* UATagUtils.h in Headers */,
-				D5BED7BC12FC787900057449 /* UASQLite.h in Headers */,
-				D5BED7BE12FC787900057449 /* UAHTTPConnection.h in Headers */,
-				D5BED7C012FC787900057449 /* UAEvent.h in Headers */,
-				D5BED7C212FC787900057449 /* UAAnalyticsDBManager.h in Headers */,
 				D5BED7C412FC787900057449 /* UASQLite.h in Headers */,
 				D5BED7C612FC787900057449 /* UAHTTPConnection.h in Headers */,
 				D5BED7C812FC787900057449 /* UAEvent.h in Headers */,
@@ -743,10 +731,6 @@
 				1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */,
 				1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */,
 				1F2B10C612DD01B60020843D /* UATagUtils.m in Sources */,
-				D5BED7BB12FC787900057449 /* UASQLite.m in Sources */,
-				D5BED7BD12FC787900057449 /* UAHTTPConnection.m in Sources */,
-				D5BED7BF12FC787900057449 /* UAEvent.m in Sources */,
-				D5BED7C112FC787900057449 /* UAAnalyticsDBManager.m in Sources */,
 				D5BED7C312FC787900057449 /* UASQLite.m in Sources */,
 				D5BED7C512FC787900057449 /* UAHTTPConnection.m in Sources */,
 				D5BED7C712FC787900057449 /* UAEvent.m in Sources */,

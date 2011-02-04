@@ -49,6 +49,17 @@
 
 }
 
++ (NSString *) UUID {
+    //create a new UUID
+	CFUUIDRef uuidObj = CFUUIDCreate(nil);
+    
+	//get the string representation of the UUID
+    NSString *uuidString = (NSString*)CFUUIDCreateString(nil, uuidObj);
+    CFRelease(uuidObj);
+	
+    return [uuidString autorelease];
+}
+
 + (NSString *)deviceModelName {
     size_t size;
     
