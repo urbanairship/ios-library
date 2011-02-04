@@ -141,7 +141,7 @@
 		[self presentModalViewController:mfViewController animated:YES];
 		[mfViewController release];
 	}else {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Status:" message:@"Your phone is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your phone is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
 		
 		[alert show];
 		[alert release];
@@ -152,27 +152,30 @@
 #pragma mark MFMailComposeViewControllerDelegate Methods
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Status:" message:@"" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message Status" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 	
 	switch (result) {
 		case MFMailComposeResultCancelled:
-			alert.message = @"Message Canceled";
+			//alert.message = @"Canceled";
 			break;
 		case MFMailComposeResultSaved:
-			alert.message = @"Message Saved";
+			//alert.message = @"Saved";
 			break;
 		case MFMailComposeResultSent:
-			alert.message = @"Message Sent";
+			alert.message = @"Sent";
+            [alert show];
 			break;
 		case MFMailComposeResultFailed:
-			alert.message = @"Message Failed";
+			//alert.message = @"Message Failed";
 			break;
 		default:
-			alert.message = @"Message Not Sent";
-        break;	}
+			//alert.message = @"Message Not Sent";
+        break;	
+    }
+    
 	[self dismissModalViewControllerAnimated:YES];
 	
-	[alert show];
+
 	[alert release];
 }
 

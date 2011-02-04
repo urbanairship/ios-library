@@ -84,6 +84,8 @@
      * 
      */
     
+    /*
+    
     //Do something when notifications are disabled altogther
     if ([application enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
         UALOG(@"iOS Registered a device token, but nothing is enabled!");
@@ -131,6 +133,8 @@
             [someError release];
         }
     }
+     
+     */
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {

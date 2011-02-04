@@ -67,40 +67,10 @@ enum {
         
     }
     
-    textLabel.text = @"Notifications can play bundled sounds upon receipt. "
+    textLabel.text = @"Notifications can optionally trigger a custom sound upon receipt. "
     @"Send a sound with your push by including the sound's filename in the Urban Airship push form. "
     @"This sample application includes the sound files below.";
 }
-
-
-/*
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-*/
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
-/*
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-}
-*/
-/*
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-}
-*/
-/*
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations.
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-*/
-
 
 #pragma mark -
 #pragma mark Table view data source
@@ -155,24 +125,6 @@ enum {
     
     return cell;
 }
-
-
-// Customize the appearance of table view cells.
-//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    
-//    static NSString *CellIdentifier = @"SoundCell";
-//    
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-//    if (cell == nil) {
-//        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-//    }
-//    
-//    // Configure the cell...
-//    cell.textLabel.text = [[[soundList objectAtIndex:indexPath.row] pathComponents] lastObject];
-//    
-//    return cell;
-//}
-
 
 #pragma mark -
 #pragma mark Table view delegate

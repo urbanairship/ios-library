@@ -245,7 +245,7 @@ enum {
 #pragma mark UITableViewDelegate Methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == 0 ? 60 : 44;
+    return indexPath.section == 0 ? 55 : 44;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
