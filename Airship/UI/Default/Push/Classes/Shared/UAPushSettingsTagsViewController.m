@@ -71,6 +71,10 @@ enum {
     
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return YES;
+}
+
 
 #pragma mark -
 #pragma mark Table view data source

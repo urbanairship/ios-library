@@ -72,6 +72,10 @@ enum {
     @"This sample application includes the sound files below.";
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return YES;
+}
+
 #pragma mark -
 #pragma mark Table view data source
 
