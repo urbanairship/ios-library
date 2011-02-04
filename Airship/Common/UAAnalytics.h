@@ -1,16 +1,16 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
- 
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,33 +23,57 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <Foundation/Foundation.h>
+#import "UAHTTPConnection.h"
+#import "UAAnalyticsDBManager.h"
+#import "UAEvent.h"
+
+// Used for init local size if server didn't response
+#define X_UA_MAX_TOTAL 5*1024*1024
+#define X_UA_MAX_BATCH 5*1024
+#define X_UA_MAX_WAIT  7*24*3600
+#define X_UA_MIN_BATCH_INTERVAL 60
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
 
-@class UA_ASIHTTPRequest;
-
-@interface UAAnalytics : NSObject {
-
+@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
     NSString *server;
-    NSMutableArray *events;
     NSMutableDictionary *session;
-    
+
+    NSDictionary *notificationUserInfo;
+
+    BOOL wasBackgrounded;
+    UAHTTPConnection *connection;
+
+    int x_ua_max_total;
+    int x_ua_max_batch;
+    int x_ua_max_wait;
+    int x_ua_min_batch_interval;
+
+    int databaseSize;
+    UAEvent *oldestEvent;
+    NSDate *lastSendTime;
+    NSTimer *reSendTimer;
 }
 
 @property (retain) NSString *server;
-@property (retain) NSMutableDictionary *session;
+@property (retain, readonly) NSMutableDictionary *session;
+@property (assign, readonly) int databaseSize;
+@property (assign, readonly) int x_ua_max_total;
+@property (assign, readonly) int x_ua_max_batch;
+@property (assign, readonly) int x_ua_max_wait;
+@property (assign, readonly) int x_ua_min_batch_interval;
+@property (retain, readonly) UAEvent *oldestEvent;
+@property (retain, readonly) NSDate *lastSendTime;
 
 - (id)initWithOptions:(NSDictionary *)options;
+- (void)restoreFromDefault;
+- (void)saveDefault;
 
-- (void)send;
-- (void)sendDataSucceeded:(UA_ASIHTTPRequest*)request;
-- (void)sendDataFailed:(UA_ASIHTTPRequest*)request;
+- (void)addEvent:(UAEvent*)event;
+- (void)handleNotification:(NSDictionary*)userInfo;
 
-- (void)addEvent:(NSMutableDictionary *)eventInfo withType:(NSString *)type;
-
-- (NSMutableDictionary *)buildStartupMetadataDictionary;
-
-+ (NSDictionary *)packagePayload:(NSDictionary *)payload withType:(NSString *)typeString;
+- (void)resetEventsDatabaseStatus;
+- (void)sendIfNeeded;
 
 @end
