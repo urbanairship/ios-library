@@ -85,7 +85,7 @@
      */
     
     //Do something when notifications are disabled altogther
-    if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
+    if ([application enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
         UALOG(@"iOS Registered a device token, but nothing is enabled!");
         
         //only alert if this is the first registration, or if push has just been
@@ -106,7 +106,7 @@
         }
         
     //Do something when some notification types are disabled
-    } else if ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] != [UAPush shared].notificationTypes) {
+    } else if ([application enabledRemoteNotificationTypes] != [UAPush shared].notificationTypes) {
         
         UALOG(@"Failed to register a device token with the requested services. Your notifications may be turned off.");
         
@@ -114,7 +114,7 @@
         //re-enabled
         if ([UAirship shared].deviceToken != nil) { //already been set this session
             
-            UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
+            UIRemoteNotificationType disabledTypes = [application enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
             
             
             
