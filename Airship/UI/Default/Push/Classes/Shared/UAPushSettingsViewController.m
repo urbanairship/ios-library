@@ -57,7 +57,6 @@ enum {
 @synthesize quietTimeSwitch;
 @synthesize fromCell;
 @synthesize toCell;
-@synthesize timeFormat;
 
 #pragma mark -
 #pragma mark Lifecycle methods
@@ -74,8 +73,6 @@ enum {
     
     self.tableView = nil;
     self.datePicker = nil;
-    
-    self.timeFormat = nil;
     
     [super dealloc];
 }
@@ -177,10 +174,6 @@ static NSString *cellID = @"QuietTimeCell";
     } else {
         pushEnabledSwitch.on = YES;
     }
-
-    if (self.timeFormat == nil) {
-        self.timeFormat = @"hh:mm aaa";
-    }
     
     fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
     toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
@@ -191,6 +184,8 @@ static NSString *cellID = @"QuietTimeCell";
     NSDate *date1 = nil;
     NSDate *date2 = nil;
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
+    
     
     NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
     [formatter setDateFormat:@"HH:mm"];
@@ -203,13 +198,15 @@ static NSString *cellID = @"QuietTimeCell";
     
     if (date1 == nil || date2 == nil) {
         quietTimeSwitch.on = NO;
-        date1 = [formatter dateFromString:@"00:00"];//default start
-        date2 = [formatter dateFromString:@"06:00"];//default end //TODO: make defaults parameters
+        date1 = [formatter dateFromString:@"22:00"];//default start
+        date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
     }
     
     UALOG(@"Start: %@ End %@", date1, date2);
 
-    [formatter setDateFormat:timeFormat];
+    [formatter setLocale:[NSLocale currentLocale]];
+    [formatter setDateStyle:NSDateFormatterNoStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
     fromCell.detailTextLabel.text = [formatter stringFromDate:date1];
     toCell.detailTextLabel.text = [formatter stringFromDate:date2];
 
@@ -255,7 +252,8 @@ static NSString *cellID = @"QuietTimeCell";
     
     NSDate *date = [datePicker date];
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateFormat:timeFormat];
+    [formatter setDateStyle:NSDateFormatterNoStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
     
     int row = [[self.tableView indexPathForSelectedRow] row];
     if (row == QuietTimeSectionStartCell) {
@@ -296,7 +294,9 @@ static NSString *cellID = @"QuietTimeCell";
     [UIView commitAnimations];
 
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setDateFormat:timeFormat];
+    [formatter setDateStyle:NSDateFormatterNoStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    
     NSString *fromString = fromCell.detailTextLabel.text;
     NSString *toString = toCell.detailTextLabel.text;
 
@@ -315,7 +315,8 @@ static NSString *cellID = @"QuietTimeCell";
     if (quietTimeSwitch.on) {
         
         NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-        [formatter setDateFormat:timeFormat];
+        [formatter setDateStyle:NSDateFormatterNoStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
         
         NSString *fromString = fromCell.detailTextLabel.text;
         NSString *toString = toCell.detailTextLabel.text;

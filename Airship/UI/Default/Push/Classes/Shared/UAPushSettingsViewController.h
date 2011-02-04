@@ -39,8 +39,6 @@
     IBOutlet UIDatePicker *datePicker;
     CGRect pickerShownFrame, pickerHiddenFrame;
     
-    NSString *timeFormat;
-    
     BOOL dirty;
 }
 
@@ -54,7 +52,6 @@
 @property (nonatomic, retain)UISwitch *quietTimeSwitch;
 @property (nonatomic, retain)UITableViewCell *fromCell;
 @property (nonatomic, retain)UITableViewCell *toCell;
-@property (nonatomic, copy)NSString *timeFormat;
 
 
 - (IBAction)quit;
