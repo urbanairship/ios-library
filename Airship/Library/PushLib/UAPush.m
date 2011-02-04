@@ -211,14 +211,19 @@ static Class _uiClass;
 }
 
 - (void)removeTagFromDeviceSucceed:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 204){
-        [self removeTagFromDeviceFailed:request];
-    } else {
-        UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
-        NSString *tag = [self getTagFromUrl:request.url];
-        [tags removeObject:tag];
-        [self saveDefaults];
-        [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
+
+    switch (request.responseStatusCode) {
+        case 204://just removed
+        case 404://already removed
+            UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
+            NSString *tag = [self getTagFromUrl:request.url];
+            [tags removeObject:tag];
+            [self saveDefaults];
+            [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
+            break;
+        default:
+            [self removeTagFromDeviceFailed:request];
+            break;
     }
 }
 
