@@ -67,10 +67,9 @@ enum {
         
     }
     
-    text = @"Notifications can play bundled sounds upon receipt. "
+    textLabel.text = @"Notifications can play bundled sounds upon receipt. "
     @"Send a sound with your push by including the sound's filename in the Urban Airship push form. "
     @"This sample application includes the sound files below.";
-    textLabel.text = text;
 }
 
 
@@ -129,7 +128,7 @@ enum {
     
     UALOG(@"Section %d Row %d", indexPath.section, indexPath.row);
     
-    UITableViewCell *cell;
+    UITableViewCell *cell = nil;
     
     switch (indexPath.section) {
         case SectionDesc:
@@ -193,7 +192,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [text sizeWithFont:textLabel.font
+        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(240, 1500)
                               lineBreakMode:UILineBreakModeWordWrap].height;
         return height + kCellPaddingHeight * 2;

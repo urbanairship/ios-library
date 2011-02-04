@@ -58,10 +58,9 @@ enum {
     }
     self.navigationItem.rightBarButtonItem = addButton;
     
-    text = @"Assign tags to a device to simplify "
+    textLabel.text = @"Assign tags to a device to simplify "
     @"the process of sending notifications. Define custom tags, or use UATagUtils to "
     @"generate commonly used tags.";
-    textLabel.text = text;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -102,7 +101,7 @@ enum {
     
     UALOG(@"Section %d Row %d", indexPath.section, indexPath.row);
     
-    UITableViewCell *cell;
+    UITableViewCell *cell = nil;
     
     switch (indexPath.section) {
         case SectionDesc:
@@ -191,7 +190,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [text sizeWithFont:textLabel.font
+        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(240, 1500)
                               lineBreakMode:UILineBreakModeWordWrap].height;
         return height + kCellPaddingHeight * 2;
@@ -264,7 +263,6 @@ enum {
     
     self.textCell = nil;
     self.textLabel = nil;
-    
     
     RELEASE_SAFELY(addButton);
     

@@ -32,7 +32,6 @@
     IBOutlet UITableViewCell *textCell;
     IBOutlet UILabel *textLabel;
     IBOutlet UITextField *aliasField;
-    NSString *text;
 }
 
 @property (nonatomic, retain) UITableView *tableView;

@@ -32,7 +32,6 @@
 
     IBOutlet UITableViewCell *textCell;
     IBOutlet UILabel *textLabel;
-    NSString *text;
     
 }
 

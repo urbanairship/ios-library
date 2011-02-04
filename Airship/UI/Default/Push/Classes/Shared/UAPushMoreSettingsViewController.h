@@ -33,6 +33,7 @@
 
     UITableViewCell *deviceTokenCell;
     UITableViewCell *deviceTokenTypesCell;
+    UITableViewCell *deviceTokenDisabledTypesCell;
     UITableViewCell *deviceTokenAliasCell;
     UITableViewCell *deviceTokenTagsCell;
     

@@ -39,11 +39,12 @@ enum {
 };
 
 enum {
-    DeviceTokenSectionTokenCell = 1,
     DeviceTokenSectionTypesCell = 0,
-    DeviceTokenSectionAliasCell = 2,
-    DeviceTokenSectionTagsCell  = 3,
-    DeviceTokenSectionRowCount  = 4
+    DeviceTokenSectionDisabledTypesCell = 1,
+    DeviceTokenSectionTokenCell = 2,
+    DeviceTokenSectionAliasCell = 3,
+    DeviceTokenSectionTagsCell  = 4,
+    DeviceTokenSectionRowCount  = 5
 };
 
 enum {
@@ -62,6 +63,7 @@ enum {
 
     RELEASE_SAFELY(deviceTokenCell);
     RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenDisabledTypesCell);
     RELEASE_SAFELY(deviceTokenAliasCell);
     RELEASE_SAFELY(deviceTokenTagsCell);
     RELEASE_SAFELY(helpSoundsCell);
@@ -123,6 +125,7 @@ enum {
     
     RELEASE_SAFELY(deviceTokenCell);
     RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenDisabledTypesCell);
     RELEASE_SAFELY(deviceTokenAliasCell);
     RELEASE_SAFELY(deviceTokenTagsCell);
     RELEASE_SAFELY(helpSoundsCell);
@@ -143,6 +146,9 @@ enum {
     deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenTypesCell"];
     deviceTokenTypesCell.textLabel.text = @"Notification Types";
 
+    deviceTokenDisabledTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenDisabledTypesCell"];
+    deviceTokenDisabledTypesCell.textLabel.text = @"Disabled Notification Types";
+    
     deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
     deviceTokenAliasCell.textLabel.text = @"Alias";
     deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -209,6 +215,9 @@ enum {
             case DeviceTokenSectionTypesCell:
                 cell = deviceTokenTypesCell;
                 break;
+            case DeviceTokenSectionDisabledTypesCell:
+                cell = deviceTokenDisabledTypesCell;
+                break;
             case DeviceTokenSectionAliasCell:
                 cell = deviceTokenAliasCell;
                 break;
@@ -256,7 +265,8 @@ enum {
             
         } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!tagsViewController) {
-                tagsViewController = [[UAPushSettingsTagsViewController alloc] initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
+                tagsViewController = [[UAPushSettingsTagsViewController alloc] 
+                                      initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
             }
             [self.navigationController pushViewController:tagsViewController animated:YES];
             
@@ -266,7 +276,8 @@ enum {
     } else if (indexPath.section == SectionHelp) {
         if (indexPath.row == HelpSectionSounds) {
 
-            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil] autorelease];
+            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] 
+                                                                         initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil] autorelease];
             [self.navigationController pushViewController:soundsViewController animated:YES];
         } else {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -288,6 +299,7 @@ enum {
     
     [deviceTokenCell setNeedsLayout];
     [deviceTokenTypesCell setNeedsLayout];
+    [deviceTokenDisabledTypesCell setNeedsLayout];
     [deviceTokenAliasCell setNeedsLayout];
     [deviceTokenTagsCell setNeedsLayout];
 }
@@ -296,6 +308,10 @@ enum {
     
     deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
     deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
+    
+    UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
+    deviceTokenDisabledTypesCell.detailTextLabel.text = [UAPush pushTypeString:disabledTypes];
+    
     deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
     
     if ([[UAPush shared].tags count] > 0) {

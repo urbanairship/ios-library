@@ -63,12 +63,10 @@ enum {
     [super viewDidLoad];
 
     self.title = @"Device Alias";
-
-    text = @"Assign an alias to a device or a group of devices to simplify "
-           @"the process of sending notifications.";
-
+    
     aliasField.text = [UAPush shared].alias;
-    textLabel.text = text;
+    textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
+                     @"the process of sending notifications.";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -86,7 +84,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [text sizeWithFont:textLabel.font
+        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:UILineBreakModeWordWrap].height;
         return height + kCellPaddingHeight * 2;
@@ -120,10 +118,8 @@ enum {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == SectionAlias) {
-        aliasField.text = [UAPush shared].alias;
         return aliasCell;
     } else if (indexPath.section == SectionDesc) {
-        textLabel.text = text;
         return textCell;
     }
     
