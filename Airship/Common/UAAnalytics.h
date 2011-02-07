@@ -27,11 +27,19 @@
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
 
-// Used for init local size if server didn't response
-#define X_UA_MAX_TOTAL 5*1024*1024
-#define X_UA_MAX_BATCH 5*1024
-#define X_UA_MAX_WAIT  7*24*3600
-#define X_UA_MIN_BATCH_INTERVAL 60
+// Used for init local size if server didn't response, or server sends bad data
+
+//total size in kilobytes that the event queue is allowed to grow to.
+#define X_UA_MAX_TOTAL 5*1024*1024	// local max of 5MB
+
+// total size in kilobytes that a given event post is allowed to send.
+#define X_UA_MAX_BATCH 5*1024		// local max of 500kb
+
+// maximum amount of time in seconds that events should queue for
+#define X_UA_MAX_WAIT 7*24*3600		// local max of 7 days
+
+// minimum amount of time in seconds that should elapse between event-server posts
+#define X_UA_MIN_BATCH_INTERVAL 60	// local min of 60s
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
