@@ -27,6 +27,7 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxAlertProtocol.h"
+#import "UAEvent.h"
 
 @implementation UAInboxPushHandler
 
@@ -36,6 +37,14 @@
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
     [super dealloc];
+}
+
++ (BOOL)isApplicationActive {
+    BOOL isActive = YES;
+	IF_IOS4_OR_GREATER(
+					   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+					   )
+    return isActive;
 }
 
 + (void) showMessageAfterMessageListLoaded {
@@ -55,13 +64,13 @@
 		[[UAInbox shared].pushHandler setViewingMessageID:[mids objectAtIndex:0]];
     }
 	
-    BOOL isActive = YES;
-    
-	IF_IOS4_OR_GREATER(
-        isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-    )
+	BOOL isActive = [self isApplicationActive];
 
     if (isActive) {
+		
+		// add push_received event
+        [[UAirship shared].analytics addEvent:[UAEventPushReceived eventWithContext:userInfo]];
+		
         // only show alert view when the app is active
         // if it's running in background, apple will show a standard notification
         // alertview, so here we no need to show our alert
@@ -71,6 +80,8 @@
         [alertHandler showNewMessageAlert:message];
 		
     } else {
+		[[UAirship shared].analytics handleNotification:userInfo];
+		
         // load message list and show the specified message
         [UAInboxPushHandler showMessageAfterMessageListLoaded];
     }
