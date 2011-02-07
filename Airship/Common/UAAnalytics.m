@@ -84,7 +84,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 			
         case ReachableViaWWAN:
         {
-            connectionTypeString = @"wwan";
+            connectionTypeString = @"cell";
             break;
         }
 			
@@ -126,8 +126,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     } else if (inboxId != nil) {
         [session setValue:inboxId forKey:@"launched_from_push_id"];
     } else if (launchedFromPush) {
-        [session setValue:@"true" forKey:@"launched_from_push_id"];
-    } else {
         [session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
     }
     
@@ -137,13 +135,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     NSMutableArray *notification_types = [NSMutableArray array];
     UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     
-	if ((UIRemoteNotificationTypeBadge | enabledRemoteNotificationTypes) > 0) {
+	if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"badge"];
     }
-    if ((UIRemoteNotificationTypeSound | enabledRemoteNotificationTypes) > 0) {
+    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"sound"];
     }
-    if ((UIRemoteNotificationTypeAlert | enabledRemoteNotificationTypes) > 0) {
+    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"alert"];
     }
     
@@ -425,7 +423,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     NSMutableDictionary *event;
     
 	if ([events count] <=0 ) {
-        UALOG(@"Warning: there is no events.");
+        UALOG(@"Warning: there are no events.");
         return;
     }
     
@@ -437,11 +435,20 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	event = [events objectAtIndex:0];
     
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
-    [request addRequestHeader:@"X-UA-Library" value:[event objectForKey:@"lib_version"]];
-    [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
+    
+    // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:device.systemName];
-    [request addRequestHeader:@"X-UA-OS-Version" value:[event objectForKey:@"os_version"]];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
+    [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
+    [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey]];
+    [request addRequestHeader:@"X-UA-Device-ID" value:[UAUtils udidHash]];
+    [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
+    
+    // Optional Items
+    [request addRequestHeader:@"X-UA-Lib-Version" value:[event objectForKey:@"lib_version"]];
+    [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
+    [request addRequestHeader:@"X-UA-OS-Version" value:[event objectForKey:@"os_version"]];
+    
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
 
     for (event in events) {
