@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,11 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <objc/runtime.h>
-
 #import "UATestGlobal.h"
-#import "UATestCase.h"
-#import "NSObject+UATestMockable.h"
 
 @implementation UATestGlobal
 
@@ -42,27 +38,6 @@ SINGLETON_IMPLEMENTATION(UATestGlobal)
         return self;
     }
     return nil;
-}
-
-+ (void)prepareAllTestCases {
-    int count = objc_getClassList(NULL, 0);
-    NSMutableData *classData = [NSMutableData dataWithLength:sizeof(Class) * count];
-    Class *classes = (Class*)[classData mutableBytes];
-    NSAssert(classes, @"Couldn't allocate class list");
-    objc_getClassList(classes, count);
-
-    Class uaTestCaseClass = [UATestCase class];
-    for (int i = 0; i < count; ++i) {
-        Class currClass = classes[i];
-        if (currClass != uaTestCaseClass && isTestFixtureOfClass(currClass, uaTestCaseClass)) {
-            // mock setUp/setUpClass/tearDown/tearDownClass
-            NSError* err = nil;
-            [currClass swizzleMethod:@selector(setUp) withMethod:@selector(mock_setUp) error:&err];
-            [currClass swizzleMethod:@selector(setUpClass) withMethod:@selector(mock_setUpClass) error:&err];
-            [currClass swizzleMethod:@selector(tearDown) withMethod:@selector(mock_tearDown) error:&err];
-            [currClass swizzleMethod:@selector(tearDownClass) withMethod:@selector(mock_tearDownClass) error:&err];
-        }
-    }
 }
 
 - (void)dealloc {

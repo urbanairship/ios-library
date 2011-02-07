@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,10 +23,46 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <objc/runtime.h>
+
 #import "UATestCase.h"
 #import "UATestGlobal.h"
 
 @implementation UATestCase
+
++ (void)swizzleTestClass:(Class)klass method:(SEL)origSel withMethod:(SEL)altSel {
+    Class uaTestCaseClass = [self class];
+    IMP imp = class_getMethodImplementation(klass, origSel);
+    IMP imp_base = class_getMethodImplementation(uaTestCaseClass, origSel);
+    if (imp == imp_base) {
+        // add method to the sub class
+        class_addMethod(klass, origSel, imp_base,
+                        method_getTypeEncoding(class_getInstanceMethod(uaTestCaseClass, origSel)));
+    }
+    
+    NSError* err = nil;
+    [klass swizzleMethod:origSel withMethod:altSel error:&err];
+}
+
++ (void)prepareAllTestCases {
+    int count = objc_getClassList(NULL, 0);
+    NSMutableData *classData = [NSMutableData dataWithLength:sizeof(Class) * count];
+    Class *classes = (Class*)[classData mutableBytes];
+    NSAssert(classes, @"Couldn't allocate class list");
+    objc_getClassList(classes, count);
+    
+    Class uaTestCaseClass = [self class];
+    for (int i = 0; i < count; ++i) {
+        Class currClass = classes[i];
+        if (currClass != uaTestCaseClass && isTestFixtureOfClass(currClass, uaTestCaseClass)) {
+            // mock setUp/setUpClass/tearDown/tearDownClass
+            [self swizzleTestClass:currClass method:@selector(setUp) withMethod:@selector(mock_setUp)];
+            [self swizzleTestClass:currClass method:@selector(setUpClass) withMethod:@selector(mock_setUpClass)];
+            [self swizzleTestClass:currClass method:@selector(tearDown) withMethod:@selector(mock_tearDown)];
+            [self swizzleTestClass:currClass method:@selector(tearDownClass) withMethod:@selector(mock_tearDownClass)];
+        }
+    }
+}
 
 - (id)init {
     UALOG(@"UATestCase init");
@@ -92,6 +128,13 @@
     return !(*finished);
 }
 
+/*
+ The mock_... methods will be mocked to run before/after the original
+ setUp/setUpClass/tearDown/tearDownClass methods, we use these mocked methods to
+ prepare/clean test envrionment:
+ 1. release the shared value in UATestGlobal
+ 2. init/rollback the mocked methods which are mocked while testing
+ */
 - (void)mock_setUp {
     UALOG(@"UATestCase mock_setUp");
     [UATestGlobal shared].value = nil;
@@ -119,5 +162,10 @@
     [self mock_tearDownClass];
     [self _removeAllMocks:testCaseMocks];
 }
+
+-(void)setUpClass{}
+-(void)tearDownClass{}
+-(void)setUp{}
+-(void)tearDown{}
 
 @end

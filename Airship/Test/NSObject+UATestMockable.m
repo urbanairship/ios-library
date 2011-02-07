@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2010 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -52,29 +52,29 @@ NSLog(@"Swizzle error: %@", errStr); \
             NSStringFromSelector(aSelector)];
 }
 
-+ (BOOL)swizzleMethod:(SEL)origSel_ withMethod:(SEL)altSel_ error:(NSError**)error_ {
-    return [self swizzleMethod:origSel_ withClass:self method:altSel_ error:error_];
++ (BOOL)swizzleMethod:(SEL)origSel withMethod:(SEL)altSel error:(NSError**)error {
+    return [self swizzleMethod:origSel withClass:self method:altSel error:error];
 }
 
-+ (BOOL)swizzleMethod:(SEL)origSel_ withClass:(Class)klass method:(SEL)altSel_ error:(NSError**)error_ {
-    Method origMethod = class_getInstanceMethod(self, origSel_);
++ (BOOL)swizzleMethod:(SEL)origSel withClass:(Class)klass method:(SEL)altSel error:(NSError**)error {
+    Method origMethod = class_getInstanceMethod(self, origSel);
 	if (!origMethod) {
-		SetNSError(error_, @"original method %@ not found for class %@", NSStringFromSelector(origSel_), NSStringFromClass([self class]));
+		SetNSError(error, @"original method %@ not found for class %@", NSStringFromSelector(origSel), NSStringFromClass([self class]));
 		return NO;
 	}
 	
-	Method altMethod = class_getInstanceMethod(klass, altSel_);
+	Method altMethod = class_getInstanceMethod(klass, altSel);
 	if (!altMethod) {
-		SetNSError(error_, @"alternate method %@ not found for class %@", NSStringFromSelector(altSel_), NSStringFromClass(klass));
+		SetNSError(error, @"alternate method %@ not found for class %@", NSStringFromSelector(altSel), NSStringFromClass(klass));
 		return NO;
 	}
 
 	class_addMethod(self,
-					altSel_,
-					class_getMethodImplementation(klass, altSel_),
+					altSel,
+					class_getMethodImplementation(klass, altSel),
 					method_getTypeEncoding(altMethod));
 	
-	method_exchangeImplementations(class_getInstanceMethod(self, origSel_), class_getInstanceMethod(self, altSel_));
+	method_exchangeImplementations(class_getInstanceMethod(self, origSel), class_getInstanceMethod(self, altSel));
 	return YES;
 }
 
