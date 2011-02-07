@@ -12,9 +12,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="151"/>
-			<integer value="139"/>
+			<integer value="153"/>
 			<integer value="88"/>
+			<integer value="139"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -380,6 +380,22 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					</object>
 					<int key="connectionID">158</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">quietTimeLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="331846153"/>
+					</object>
+					<int key="connectionID">159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">pushEnabledLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="195265211"/>
+					</object>
+					<int key="connectionID">160</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -495,7 +511,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>UAPushSettingsViewController</string>
 					<string>UIResponder</string>
-					<string>{{67, 92}, {320, 480}}</string>
+					<string>{{324, 428}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform">
@@ -535,7 +551,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">158</int>
+			<int key="maxID">160</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -588,8 +604,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>datePicker</string>
 							<string>pushEnabledCell</string>
+							<string>pushEnabledLabel</string>
 							<string>pushEnabledSwitch</string>
 							<string>quietTimeEnabledCell</string>
+							<string>quietTimeLabel</string>
 							<string>quietTimeSwitch</string>
 							<string>tableView</string>
 						</object>
@@ -597,8 +615,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>UIDatePicker</string>
 							<string>UITableViewCell</string>
+							<string>UILabel</string>
 							<string>UISwitch</string>
 							<string>UITableViewCell</string>
+							<string>UILabel</string>
 							<string>UISwitch</string>
 							<string>UITableView</string>
 						</object>
@@ -609,8 +629,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>datePicker</string>
 							<string>pushEnabledCell</string>
+							<string>pushEnabledLabel</string>
 							<string>pushEnabledSwitch</string>
 							<string>quietTimeEnabledCell</string>
+							<string>quietTimeLabel</string>
 							<string>quietTimeSwitch</string>
 							<string>tableView</string>
 						</object>
@@ -625,12 +647,20 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 								<string key="candidateClassName">UITableViewCell</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">pushEnabledLabel</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">pushEnabledSwitch</string>
 								<string key="candidateClassName">UISwitch</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">quietTimeEnabledCell</string>
 								<string key="candidateClassName">UITableViewCell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">quietTimeLabel</string>
+								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">quietTimeSwitch</string>

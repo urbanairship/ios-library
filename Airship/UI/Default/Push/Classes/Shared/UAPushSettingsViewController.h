@@ -29,9 +29,11 @@
     IBOutlet UITableView  *tableView;
     
     IBOutlet UITableViewCell *pushEnabledCell;
+    IBOutlet UILabel *pushEnabledLabel;
     IBOutlet UISwitch *pushEnabledSwitch;
     
     IBOutlet UITableViewCell *quietTimeEnabledCell;
+    IBOutlet UILabel *quietTimeLabel;
     IBOutlet UISwitch *quietTimeSwitch;
     UITableViewCell *fromCell;
     UITableViewCell *toCell;
@@ -46,9 +48,11 @@
 @property (nonatomic, retain)UIDatePicker *datePicker;
 
 @property (nonatomic, retain)UITableViewCell *pushEnabledCell;
+@property (nonatomic, retain)UILabel *pushEnabledLabel;
 @property (nonatomic, retain)UISwitch *pushEnabledSwitch;
 
 @property (nonatomic, retain)UITableViewCell *quietTimeEnabledCell;
+@property (nonatomic, retain)UILabel *quietTimeLabel;
 @property (nonatomic, retain)UISwitch *quietTimeSwitch;
 @property (nonatomic, retain)UITableViewCell *fromCell;
 @property (nonatomic, retain)UITableViewCell *toCell;

@@ -54,9 +54,11 @@ enum {
 @synthesize datePicker;
 
 @synthesize pushEnabledCell;
+@synthesize pushEnabledLabel;
 @synthesize pushEnabledSwitch;
 
 @synthesize quietTimeEnabledCell;
+@synthesize quietTimeLabel;
 @synthesize quietTimeSwitch;
 @synthesize fromCell;
 @synthesize toCell;
@@ -67,9 +69,11 @@ enum {
 - (void)dealloc {
 
     self.pushEnabledSwitch = nil;
+    self.pushEnabledLabel = nil;
     self.pushEnabledCell = nil;
     
     self.quietTimeSwitch = nil;
+    self.quietTimeLabel = nil;
     self.quietTimeEnabledCell = nil;
     self.toCell = nil;
     self.fromCell = nil;
@@ -90,10 +94,13 @@ enum {
 }
 
 - (void)viewDidUnload {
+
     self.pushEnabledSwitch = nil;
+    self.pushEnabledLabel = nil;
     self.pushEnabledCell = nil;
     
     self.quietTimeSwitch = nil;
+    self.quietTimeLabel = nil;
     self.quietTimeEnabledCell = nil;
     self.toCell = nil;
     self.fromCell = nil;
@@ -175,6 +182,9 @@ enum {
     } else {
         pushEnabledSwitch.on = YES;
     }
+    
+    pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
+    quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");
     
     fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
     toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
