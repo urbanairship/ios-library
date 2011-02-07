@@ -32,7 +32,7 @@
 
 - (void)displayNotificationAlertMessage:(NSString *)alertMessage {
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Notification" 
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
                                                     message: alertMessage
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
@@ -46,7 +46,7 @@
     
     NSString *body = [alertDict valueForKey:@"body"];
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Notification" 
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
                                                     message: body
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
