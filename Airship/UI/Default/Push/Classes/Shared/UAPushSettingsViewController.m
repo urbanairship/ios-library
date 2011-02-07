@@ -23,9 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPushSettingsViewController.h"
-#import "UAPush.h"
 #import "UAirship.h"
+#import "UAPush.h"
+#import "UAPushUI.h"
+#import "UAPushSettingsViewController.h"
+
+
 
 enum {
     SectionPushEnabled = 0,
@@ -159,10 +162,8 @@ enum {
 #pragma mark -
 #pragma mark logic
 
-static NSString *cellID = @"QuietTimeCell";
-
 - (void)initViews {
-    self.title = @"Push Settings";
+    self.title = UA_PU_TR(@"UA_Push_Settings_Title");
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                             target:self
                                                                                             action:@selector(quit)]
@@ -175,10 +176,10 @@ static NSString *cellID = @"QuietTimeCell";
         pushEnabledSwitch.on = YES;
     }
     
-    fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
-    toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellID];
-    fromCell.textLabel.text = @"From";
-    toCell.textLabel.text = @"To";
+    fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+    toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+    fromCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_From");
+    toCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_To");
 
     
     NSDate *date1 = nil;

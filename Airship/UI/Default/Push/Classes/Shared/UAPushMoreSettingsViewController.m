@@ -139,29 +139,29 @@ enum {
 #pragma mark -
 
 - (void)initCells {
-    deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell00"];
+    deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenCell.textLabel.text = @"Device Token";
     deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenTypesCell"];
+    deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenTypesCell.textLabel.text = @"Notification Types";
 
-    deviceTokenDisabledTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"deviceTokenDisabledTypesCell"];
+    deviceTokenDisabledTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenDisabledTypesCell.textLabel.text = @"Disabled Notification Types";
     
-    deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
+    deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenAliasCell.textLabel.text = @"Alias";
     deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
+    deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenTagsCell.textLabel.text = @"Tags";
     deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
+    helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     helpSoundsCell.textLabel.text = @"Notification Sounds";
     helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell11"];
+    helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     helpLogCell.textLabel.text = @"Device Log";
     helpLogCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
@@ -233,9 +233,7 @@ enum {
         if (indexPath.row == HelpSectionSounds) {
             cell = helpSoundsCell;
         } 
-//        else if (indexPath.row == HelpSectionLog) {
-//            cell = helpLogCell;
-//        }
+        
     }
 
     return cell;

@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAPushUI.h"
 #import "UAPushNotificationHandler.h"
 
 #import <AudioToolbox/AudioServices.h>

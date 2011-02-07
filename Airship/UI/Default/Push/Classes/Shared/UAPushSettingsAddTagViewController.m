@@ -170,10 +170,8 @@ enum TagSections {
         case TagSectionPreset:
         {
             UITableViewCell *cell;
-            
-            /////////////
-            
-            static NSString *CellIdentifier = @"PresetCell";
+
+            static NSString *CellIdentifier = @"PresetTagCell";
             
             cell = [self.tableView dequeueReusableCellWithIdentifier:CellIdentifier];
             if (cell == nil) {

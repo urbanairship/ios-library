@@ -54,6 +54,7 @@
 		1F7FD61A12F8E39900317B96 /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61612F8E39900317B96 /* cow.caf */; };
 		1F7FD61B12F8E39900317B96 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
 		1F7FD61C12F8E39900317B96 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
+		1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -149,6 +150,7 @@
 		1F7FD61612F8E39900317B96 /* cow.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cow.caf; sourceTree = "<group>"; };
 		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
 		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
+		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */,
 				1890BA121251B5E900E6EBF1 /* bottom-detail.png */,
 				1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */,
 				1890BA141251B5E900E6EBF1 /* middle-detail.png */,
@@ -469,6 +472,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -533,6 +537,7 @@
 				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
 				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
 				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
+				1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

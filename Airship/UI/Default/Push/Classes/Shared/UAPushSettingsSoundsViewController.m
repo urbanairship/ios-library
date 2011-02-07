@@ -100,8 +100,6 @@ enum {
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UALOG(@"Section %d Row %d", indexPath.section, indexPath.row);
-    
     UITableViewCell *cell = nil;
     
     switch (indexPath.section) {
