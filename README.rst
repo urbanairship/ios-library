@@ -14,8 +14,8 @@ We do not support i386 or simulator usage.
 Working with the Library
 ------------------------
 
-Copy libUAirship Files
-######################
+Copy libUAirship Files (When Not Building From Source)
+######################################################
 
 Download and unzip the latest version of libUAirship.  If you are using one of our sample
 projects, copy the ``Airship`` directory into the same directory as your project::
@@ -24,6 +24,16 @@ projects, copy the ``Airship`` directory into the same directory as your project
 
 If you are not using a sample project, you'll need to import the source files for the User 
 Interface into your project. These are located under /Airship/UI/Default
+
+Building libUAirship From Source As Part Of A Project
+#####################################################
+
+If you are building from source (an archive or a github clone), you will have an ios-library
+directory. Copy this entire directory into your source tree in a location of your choosing.
+
+Next, you'll need to include the AirshipLib.xcodeproj file as a subproject in your project.
+You'll then need to mark AirshipLib as a direct dependency of your target, and add
+libUAirship-1.0.3.a to the libraries your target links against.
 
 Required Libraries
 ##################
