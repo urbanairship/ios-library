@@ -448,36 +448,39 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
 
+
+    NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
+
+    // Clean up event data for sending.
+    // Loop through events and discard DB-only items, format the JSON data field
+    // as a dictionary
     for (event in events) {
 		
-        NSMutableDictionary *eventData = nil;//(NSMutableDictionary*)[event objectForKey:@"data"];
+        NSMutableDictionary *eventData = (NSMutableDictionary*)[event objectForKey:@"data"];
         
-		if (eventData == nil) {
-            eventData = [[NSMutableDictionary alloc] init];
-            [event setObject:eventData forKey:@"data"];
+        if (eventData) {
+            eventData = (NSMutableDictionary *)[UAUtils parseJSON:[event objectForKey:@"data"]]; 
+        } else {
+            eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
+        [event setObject:eventData forKey:@"data"];
+
 
         for (key in [event allKeys]) {
-            if ([key isEqualToString:@"type"] || [key isEqualToString:@"time"]
-                || [key isEqualToString:@"event_id"] || [key isEqualToString:@"data"]) {
-				
-                // TODO: something?
-				
-            } else {
-				
-                if ([event objectForKey:key] != nil) {
-                    [eventData setObject:[event objectForKey:key] forKey:key];
-				}
-				
+
+            if (![topLevelKeys containsObject:key]) {
                 [event removeObjectForKey:key];
             }
+
         }
     }
 
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    writer.humanReadable = NO;//strip whitespace
     [request appendPostData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
 
+    writer.humanReadable = YES;//turn on formatting for debugging
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);

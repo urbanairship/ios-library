@@ -24,6 +24,7 @@
  */
 
 #import "UASQLite.h"
+#import "UA_SBJSON.h"
 
 
 @implementation UASQLite
@@ -173,6 +174,14 @@
         } else {
             sqlite3_bind_text(stmt, idx, [[obj description] UTF8String], -1, SQLITE_STATIC);
         }
+    } else if ([obj isKindOfClass:[NSDictionary class]]) {
+        
+        UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+        writer.humanReadable = NO;
+        NSString* body = [writer stringWithObject:obj];
+        [writer release];
+        
+        sqlite3_bind_text(stmt, idx, [body UTF8String], -1, SQLITE_STATIC);
     } else {
         sqlite3_bind_text(stmt, idx, [[obj description] UTF8String], -1, SQLITE_STATIC);
     }

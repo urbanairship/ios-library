@@ -75,6 +75,7 @@
     [eventDictionary setObject:self.event_id forKey:@"event_id"];
     [eventDictionary setObject:self.data forKey:@"data"];
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    writer.humanReadable = NO;//strip whitespace
     NSString *jsonString = [writer stringWithObject:eventDictionary];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     [writer release];
