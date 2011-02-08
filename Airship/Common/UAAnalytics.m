@@ -49,7 +49,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize x_ua_max_batch;
 @synthesize x_ua_max_wait;
 @synthesize x_ua_min_batch_interval;
-@synthesize oldestEvent;
+@synthesize oldestEventTime;
 @synthesize lastSendTime;
 
 - (void) dealloc {
@@ -59,7 +59,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	RELEASE_SAFELY(notificationUserInfo);
     RELEASE_SAFELY(session);
     RELEASE_SAFELY(connection);
-    RELEASE_SAFELY(oldestEvent);
     RELEASE_SAFELY(lastSendTime);
     RELEASE_SAFELY(reSendTimer);
     RELEASE_SAFELY(server);
@@ -172,7 +171,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         connection = nil;
 		
         databaseSize = 0;
-        oldestEvent = nil;
+        oldestEventTime = 0;
         lastSendTime = nil;
         reSendTimer = nil;
 		
@@ -292,8 +291,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	databaseSize += [event getEstimateSize];
     
-	if (oldestEvent == nil) {
-        oldestEvent = [event retain];
+	if (oldestEventTime == 0) {
+        oldestEventTime = [event.time doubleValue];
     }
     
 	[self sendIfNeeded];
@@ -390,14 +389,12 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	databaseSize = 0;
     
-	RELEASE_SAFELY(oldestEvent);
-    
 	int eventSize;
 
     for (event in events) {
         
-		if (oldestEvent == nil) {
-            oldestEvent = [event retain];
+		if (oldestEventTime == 0) {
+            oldestEventTime = [[event objectForKey:@"time"] doubleValue];
 		}
 		
         eventSize = [[event objectForKey:@"event_size"] intValue];
@@ -495,6 +492,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (void)send {
 	
+    UALOG(@"Send Analytics");
+    
     if (lastSendTime != nil) {
         NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
     
@@ -542,16 +541,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
     if (databaseSize >= x_ua_max_batch) {
         [self send];
-    } else if (oldestEvent != nil) {
-        NSTimeInterval timeInterval = [oldestEvent.time doubleValue];
-        
-		if (timeInterval <= 0) {
-            return;
-		}
+    } else if (oldestEventTime >= 0) {
         
 		NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
         
-		if (timeInterval + x_ua_max_wait <= now) {
+		if (oldestEventTime + x_ua_max_wait <= now) {
             [self send];
 		}
     }
