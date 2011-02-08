@@ -136,9 +136,8 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    if (delegate && [delegate respondsToSelector:@selector(requestDidSucceed:statusCode:responseData:)]) {
-        [delegate requestDidSucceed:request response:urlResponse
-                       responseData:responseData];
+    if (delegate) {
+        [delegate requestDidSucceed:request response:urlResponse responseData:responseData];
     }
 }
 
