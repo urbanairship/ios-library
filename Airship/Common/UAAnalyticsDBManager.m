@@ -27,7 +27,7 @@
 #import "UAirship.h"
 
 #define DB_NAME @"UAAnalyticsDB"
-#define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data TEXT, os_version VARCHAR(255), lib_version VARCHAR(255), session_id VARCHAR(255), event_size VARCHAR(255))"
+#define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data TEXT, session_id VARCHAR(255), event_size VARCHAR(255))"
 
 @implementation UAAnalyticsDBManager
 
@@ -39,8 +39,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:DB_NAME];
 
     db = [[UASQLite alloc] initWithDBPath:writableDBPath];
-    if (![db tableExists:@"analytics"])
+    if (![db tableExists:@"analytics"]) {
         [db executeUpdate:CREATE_TABLE_CMD];
+    }
 }
 
 - (id)init {
@@ -66,13 +67,11 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
     int estimateSize = [event getEstimateSize];
-    [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, os_version, lib_version, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],
      event.event_id,
      event.time,
      event.data,
-     [[UIDevice currentDevice] systemVersion],
-     [AirshipVersion get],
      [session objectForKey:@"session_id"],
      [NSString stringWithFormat:@"%d", estimateSize]];
 }

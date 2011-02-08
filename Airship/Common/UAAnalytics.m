@@ -149,6 +149,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     NSTimeZone *localtz = [NSTimeZone localTimeZone];
     [session setObject:[NSString stringWithFormat:@"%d", [localtz secondsFromGMT]] forKey:@"time_zone"];
     [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
+    
+    [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
+    [session setObject:[AirshipVersion get] forKey:@"lib_version"];
+    [session setObject:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] forKey:@"package_version"];
 }
 
 - (void)initSession {
@@ -417,24 +421,16 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     }
 
     NSArray *events = [[UAAnalyticsDBManager shared] getEventsBySize:x_ua_max_batch];
-    NSMutableDictionary *event;
-    
-	if ([events count] <=0 ) {
+	if ([events count] <= 0) {
         UALOG(@"Warning: there are no events.");
         return;
     }
     
-	NSString *key;
-
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
-    UIDevice *device = [UIDevice currentDevice];
-    
-	event = [events objectAtIndex:0];
-    
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     
     // Required Items
-    [request addRequestHeader:@"X-UA-Device-Family" value:device.systemName];
+    [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
     [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey]];
@@ -442,9 +438,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
     
     // Optional Items
-    [request addRequestHeader:@"X-UA-Lib-Version" value:[event objectForKey:@"lib_version"]];
+    [request addRequestHeader:@"X-UA-Lib-Version" value:[AirshipVersion get]];
     [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
-    [request addRequestHeader:@"X-UA-OS-Version" value:[event objectForKey:@"os_version"]];
+    [request addRequestHeader:@"X-UA-OS-Version" value:[[UIDevice currentDevice] systemVersion]];
     
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
 
@@ -454,6 +450,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     // Clean up event data for sending.
     // Loop through events and discard DB-only items, format the JSON data field
     // as a dictionary
+    NSString *key;
+    NSMutableDictionary *event;
     for (event in events) {
 		
         NSMutableDictionary *eventData = (NSMutableDictionary*)[event objectForKey:@"data"];

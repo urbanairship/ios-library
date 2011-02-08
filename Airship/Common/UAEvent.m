@@ -186,6 +186,12 @@
     [self addDataFromSessionForKey:@"time_zone"];
     [self addDataFromSessionForKey:@"daylight_savings"];
     [self addDataFromSessionForKey:@"notification_types"];
+    
+    // Component Versions
+    [self addDataFromSessionForKey:@"os_version"];
+    [self addDataFromSessionForKey:@"lib_version"];
+    [self addDataFromSessionForKey:@"package_version"];
+    
 }
 
 @end

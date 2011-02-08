@@ -186,7 +186,7 @@
 @implementation UAAnalyticsDBManager(Mocked)
 
 - (void)addEventMocked:(UAEvent *)event withSession:(NSDictionary *)session {
-    [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, os_version, lib_version, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],
      event.event_id,
      event.time,

@@ -54,7 +54,7 @@ NSString *testAirshipVersion = @"1.0.0";
 - (void)addTestEvents {
     // Note: The parameter8 is event size, can't be 0.
     for (int i=1; i<=TEST_EVENT_MAX; i++) {
-        [[UAAnalyticsDBManager shared].db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, os_version, lib_version, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [[UAAnalyticsDBManager shared].db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          [NSString stringWithFormat:@"type%d", i],
          [NSString stringWithFormat:@"id%d", i],
          [NSString stringWithFormat:@"%d", i],
@@ -88,10 +88,6 @@ NSString *testAirshipVersion = @"1.0.0";
         if (![[NSString stringWithFormat:@"id%d", i] isEqual:[event objectForKey:@"event_id"]])
             GHFail(@"package error.");
         if (![[NSString stringWithFormat:@"%d", i] isEqual:[event objectForKey:@"time"]])
-            GHFail(@"package error.");
-        if (![testSystemVersion isEqual:[eventData objectForKey:@"os_version"]])
-            GHFail(@"package error.");
-        if (![testAirshipVersion isEqual:[eventData objectForKey:@"lib_version"]])
             GHFail(@"package error.");
         if (![@"sessionID" isEqual:[eventData objectForKey:@"session_id"]])
             GHFail(@"package error.");
