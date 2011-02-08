@@ -124,7 +124,7 @@ static Class _uiClass;
 #pragma mark Memory management
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
 
         /* Using custom URLCache */
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);

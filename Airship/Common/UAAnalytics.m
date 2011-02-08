@@ -56,7 +56,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 @synthesize session;
 
 - (id)initWithOptions:(NSDictionary *)options {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         
         //set server to default if not specified in options
         self.server = [options objectForKey:UAAnalyticsOptionsServerKey];

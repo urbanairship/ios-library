@@ -50,7 +50,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList*)i {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.messageID = [message objectForKey: @"message_id"];
         self.inbox = i;
         self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];

@@ -69,7 +69,7 @@ BOOL releaseLogging = false;
 }
 
 - (id)initWithId:(NSString *)appkey identifiedBy:(NSString *)secret {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.appId = appkey;
         self.appSecret = secret;
         deviceTokenHasChanged = NO;

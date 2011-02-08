@@ -39,7 +39,7 @@
 
 -(id)init {
     @synchronized(self) {
-        if(self = [super init]) {
+        if((self = [super init])) {
             observers = [[NSMutableSet alloc] init];
             observerLock = [[NSLock alloc] init];
         }

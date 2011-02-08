@@ -47,7 +47,7 @@
 @synthesize retryTime;
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         self.userInfo = nil;
         self.progressDelegate = nil;
         self.clearBeforeDownload = NO;

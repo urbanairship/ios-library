@@ -270,7 +270,7 @@ static Class _uiClass;
 -(id)init {
     UALOG(@"Initialize StoreFront.");
 
-    if (self = [super init]) {
+    if ((self = [super init])) {
         BOOL uaExists = [self directoryExistsAtPath:kUADirectory orOldPath:kUAOldDirectory];
 
         if (!uaExists) {

@@ -127,7 +127,7 @@ static UAUser *_defaultUser;
 
 - (id)init {
 
-    if (self = [super init]) {
+    if ((self = [super init])) {
 		
         if (![UAirship shared].ready) {
             return self;
