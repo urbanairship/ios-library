@@ -109,7 +109,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)deleteEvent:(NSNumber *)eventId {
-    [db executeUpdate:@"DELETE FROM analytics WHERE _id = ?", eventId];
+    [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
 }
 
 - (void)deleteEvents:(NSArray *)events {
@@ -117,7 +117,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
     [db beginTransaction];
     for (event in events) {
-        [db executeUpdate:@"DELETE FROM analytics WHERE _id = ?", [event objectForKey:@"_id"]];
+        [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
     }
     [db commit];
 }

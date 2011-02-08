@@ -293,8 +293,9 @@
     NSMutableArray *argsArray = [[NSMutableArray alloc] init];
     NSUInteger i;
     for (i = 0; i < [sql length]; ++i) {
-        if ([sql characterAtIndex:i] == '?')
+        if ([sql characterAtIndex:i] == '?') {
             [argsArray addObject:va_arg(args, id)];
+        }
     }
 
     va_end(args);
