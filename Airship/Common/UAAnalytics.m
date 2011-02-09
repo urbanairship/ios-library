@@ -108,17 +108,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	NSString *pushId = [notificationUserInfo objectForKey:@"_"];
     
-	NSArray *inboxIds = [notificationUserInfo objectForKey:@"_uamid"];
-    NSString *inboxId = nil;
-	if (inboxIds.count > 0) {
-        inboxId = [inboxIds objectAtIndex:0];
+	NSArray *richPushIds = [notificationUserInfo objectForKey:@"_uamid"];
+    NSString *richPushId = nil;
+	if (richPushIds.count > 0) {
+        richPushId = [richPushIds objectAtIndex:0];
     }
 	
     //set launched-from-push session values for both push and rich push
     if (pushId != nil) {
         [session setValue:pushId forKey:@"launched_from_push_id"];
-    } else if (inboxId != nil) {
-        [session setValue:inboxId forKey:@"launched_from_rich_push_id"];
+    } else if (richPushId != nil) {
+        [session setValue:richPushId forKey:@"launched_from_rich_push_id"];
     } else if (launchedFromPush) {
         //if the server did not send a push ID (likely because the payload did not have room)
         //generate an ID for the server to use
