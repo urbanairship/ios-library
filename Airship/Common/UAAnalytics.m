@@ -108,10 +108,16 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	NSString *pushId = [notificationUserInfo objectForKey:@"_"];
     
-	NSArray *richPushIds = [notificationUserInfo objectForKey:@"_uamid"];
+    // Get the rich push ID, which can be sent as a one-element array or a string
     NSString *richPushId = nil;
-	if (richPushIds.count > 0) {
-        richPushId = [richPushIds objectAtIndex:0];
+    NSObject *richPushValue = [notificationUserInfo objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
     }
 	
     //set launched-from-push session values for both push and rich push

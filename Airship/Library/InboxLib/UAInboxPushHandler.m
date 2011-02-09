@@ -59,9 +59,20 @@
 
     UALOG(@"remote notification: %@", [userInfo description]);
 
-    NSArray *mids = [userInfo objectForKey:@"_uamid"];
-    if ([mids count] > 0) {
-		[[UAInbox shared].pushHandler setViewingMessageID:[mids objectAtIndex:0]];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [userInfo objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
+    }
+    
+    if (richPushId) {
+        [[UAInbox shared].pushHandler setViewingMessageID:richPushId];
     }
 	
 	BOOL isActive = [self isApplicationActive];
@@ -88,24 +99,30 @@
 }
 
 + (void)handleLaunchOptions:(NSDictionary*)options {
-    if(options == nil)
+    
+    if (options == nil) {
         return;
+    }
 
     UALOG(@"launch options: %@", options);
 
-    NSString *mid = nil;
-    NSArray *mids = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
-    if (mids != nil && [mids count] > 0) {
-        mid = [mids objectAtIndex:0];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
     }
 
-    if(mid != nil) {
-        
+    if (richPushId) {
 		[[UAInbox shared].pushHandler setHasLaunchMessage:YES];
-		[[UAInbox shared].pushHandler setViewingMessageID:mid];
-			       
+		[[UAInbox shared].pushHandler setViewingMessageID:richPushId];
     }
-
+    
 }
 
 

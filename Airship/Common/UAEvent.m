@@ -248,14 +248,27 @@
 
 - (void)gatherIndividualData:(NSDictionary*)context {
     
-    NSArray *richPushIds = [context objectForKey:@"_uamid"];
-    if ([richPushIds count] > 0) {
-        [self addDataWithValue:[richPushIds objectAtIndex:0] forKey:@"rich_push_id"];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [context objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
     }
     
-    NSString *push_id = [context objectForKey:@"_"];
-    if (push_id) {
-        [self addDataWithValue:push_id forKey:@"push_id"];
+    //Add the rich push id, if present
+    if (richPushId) {
+        [self addDataWithValue:richPushId forKey:@"rich_push_id"];
+    }
+    
+    //Add the std push id, if present
+    NSString *pushId = [context objectForKey:@"_"];
+    if (pushId) {
+        [self addDataWithValue:pushId forKey:@"push_id"];
     }
 }
 
