@@ -247,9 +247,10 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary*)context {
-    NSArray *mids = [context objectForKey:@"_uamid"];
-    if ([mids count] > 0) {
-        [self addDataWithValue:[mids objectAtIndex:0] forKey:@"rich_push_id"];
+    
+    NSArray *richPushIds = [context objectForKey:@"_uamid"];
+    if ([richPushIds count] > 0) {
+        [self addDataWithValue:[richPushIds objectAtIndex:0] forKey:@"rich_push_id"];
     }
     
     NSString *push_id = [context objectForKey:@"_"];

@@ -114,11 +114,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         inboxId = [inboxIds objectAtIndex:0];
     }
 	
+    //set launched-from-push session values for both push and rich push
     if (pushId != nil) {
         [session setValue:pushId forKey:@"launched_from_push_id"];
     } else if (inboxId != nil) {
         [session setValue:inboxId forKey:@"launched_from_rich_push_id"];
     } else if (launchedFromPush) {
+        //if the server did not send a push ID (likely because the payload did not have room)
+        //generate an ID for the server to use
         [session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
     }
     
