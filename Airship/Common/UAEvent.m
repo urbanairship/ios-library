@@ -173,7 +173,8 @@
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
-
+    [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
+    
     // Capture carrier info if available
     IF_IOS4_OR_GREATER(
                        CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
@@ -213,6 +214,7 @@
 - (void)gatherIndividualData:(NSDictionary*)context {
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
+    [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
 }
 
 @end
@@ -247,7 +249,12 @@
 - (void)gatherIndividualData:(NSDictionary*)context {
     NSArray *mids = [context objectForKey:@"_uamid"];
     if ([mids count] > 0) {
-        [self addDataWithValue:[mids objectAtIndex:0] forKey:@"push_id"];
+        [self addDataWithValue:[mids objectAtIndex:0] forKey:@"rich_push_id"];
+    }
+    
+    NSString *push_id = [context objectForKey:@"_"];
+    if (push_id) {
+        [self addDataWithValue:push_id forKey:@"push_id"];
     }
 }
 

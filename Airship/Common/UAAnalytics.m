@@ -106,16 +106,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     //setup session with push id
     BOOL launchedFromPush = notificationUserInfo != nil;
     
-	NSArray *pushIds = [notificationUserInfo objectForKey:@"_uaid"];
-	NSString *pushId = nil;
-    
-	if (pushIds.count > 0) {
-        pushId = [pushIds objectAtIndex:0];
-    }
+	NSString *pushId = [notificationUserInfo objectForKey:@"_"];
     
 	NSArray *inboxIds = [notificationUserInfo objectForKey:@"_uamid"];
     NSString *inboxId = nil;
-    
 	if (inboxIds.count > 0) {
         inboxId = [inboxIds objectAtIndex:0];
     }
@@ -123,7 +117,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     if (pushId != nil) {
         [session setValue:pushId forKey:@"launched_from_push_id"];
     } else if (inboxId != nil) {
-        [session setValue:inboxId forKey:@"launched_from_push_id"];
+        [session setValue:inboxId forKey:@"launched_from_rich_push_id"];
     } else if (launchedFromPush) {
         [session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
     }
