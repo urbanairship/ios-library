@@ -30,11 +30,13 @@
     NSURL *url;
     NSMutableDictionary *headers;
     NSMutableData *postData;
+    BOOL compressPostBody;
     id userInfo;
 }
 @property (readonly, nonatomic) NSURL *url;
 @property (readonly, nonatomic) NSDictionary *headers;
 @property (retain, nonatomic) NSData *postData;
+@property (assign, nonatomic) BOOL compressPostBody;
 @property (retain, nonatomic) id userInfo;
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;

@@ -272,6 +272,12 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         RELEASE_SAFELY(lastSendTime);
         lastSendTime = [date retain];
     }
+    
+    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
+    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
+    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
+    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
+    UALOG(@"X-UA-Last-Send-Time: %@", [lastSendTime description]);
 
 }
 
@@ -431,6 +437,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
+    request.compressPostBody = YES;
     
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
