@@ -265,10 +265,12 @@
         [self addDataWithValue:richPushId forKey:@"rich_push_id"];
     }
     
-    //Add the std push id, if present
+    //Add the std push id, if present, else create a UUID
     NSString *pushId = [context objectForKey:@"_"];
     if (pushId) {
         [self addDataWithValue:pushId forKey:@"push_id"];
+    } else {
+        [self addDataWithValue:[UAUtils UUID] forKey:@"push_id"];
     }
 }
 
