@@ -180,10 +180,19 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         connection = nil;
 		
         databaseSize = 0;
-        oldestEventTime = 0;
         lastSendTime = nil;
         reSendTimer = nil;
 		
+        //pull the oldest event from the db -- needed to calc
+        //time between batches
+        NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
+        if ([events count] > 0) {
+            NSDictionary *event = [events objectAtIndex:0];
+            oldestEventTime = [[event objectForKey:@"time"] doubleValue];
+        } else {
+            oldestEventTime = 0;
+        }
+        
         x_ua_max_total = X_UA_MAX_TOTAL;
         x_ua_max_batch = X_UA_MAX_BATCH;
         x_ua_max_wait = X_UA_MAX_WAIT;
