@@ -50,6 +50,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 
 #define Reachability        UA_Reachability
+#define NetworkStatus       UA_NetworkStatus
 
 typedef enum {
 	NotReachable = 0,
