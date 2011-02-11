@@ -422,7 +422,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 		}
 		
         eventSize = [[event objectForKey:@"event_size"] intValue];
-        assert(eventSize > 0); // TODO: do we want an assertion here?
+        NSAssert(eventSize > 0); // TODO: do we want an assertion here?
         databaseSize += eventSize;
     }
 

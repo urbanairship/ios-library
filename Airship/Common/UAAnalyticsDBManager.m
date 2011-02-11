@@ -92,7 +92,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
     for (event in events) {
         int event_size = [[event objectForKey:@"event_size"] intValue];
-        assert(event_size > 0);
+        NSAssert(event_size > 0);
         if (size < event_size)
             break;
         [result addObject:event];
@@ -139,7 +139,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
     NSDictionary *event = [events objectAtIndex:0];
     NSString *sessionId = [event objectForKey:@"session_id"];
-    assert(sessionId != nil);
+    NSAssert(sessionId != nil);
 
     [self deleteBySessionId:sessionId];
 }
