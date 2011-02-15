@@ -365,11 +365,12 @@ BOOL releaseLogging = false;
 
 - (void)registerDeviceToken:(NSData *)token {
 	
-	// add device_registration event
-    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
-	
     // succeed register APN device token, then register on UA server
     [self registerDeviceToken:token withExtraInfo:nil];
+    
+    // add device_registration event
+    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
+	
 }
 
 @end
