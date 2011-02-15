@@ -345,7 +345,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
     if ([response allHeaderFields]) {
 		
-        int tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Total"] intValue] * 1024;
+        int tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Total"] intValue] * 1024;//value returned in KB
         
 		if (tmp > 0) {
 			
@@ -357,7 +357,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 			
         }
  
-		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;
+		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;//value return in KB
         
 		if (tmp > 0) {
 			
@@ -425,7 +425,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 }
 
-- (void)sendImpl {
+- (void)send {
 	
     if (self.server == nil || [self.server length] == 0) {
         UALOG("Analytics disabled.");
@@ -528,67 +528,81 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	[connection start];
 }
 
-- (void)send {
-	
-    UALOG(@"Send Analytics");
-    
-    if (lastSendTime != nil) {
-        NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
-    
-		if (interval < x_ua_min_batch_interval) {
-        
-			if (reSendTimer == nil) {
-            
-				reSendTimer = [[NSTimer scheduledTimerWithTimeInterval:x_ua_min_batch_interval-interval
-                                                                target:self
-                                                              selector:@selector(timerReSend:)
-                                                              userInfo:nil
-                                                               repeats:NO] retain];
-            }
-            return;
-			
-        } else if (reSendTimer) {
-            //TODO: This condition is rare, depends on the hardware OS timer
-            return;
-        }
-    }
-
-    [self sendImpl];
-
-    RELEASE_SAFELY(lastSendTime);
-    lastSendTime = [[NSDate date] retain];
-	
-    [self saveDefault];
-}
-
 - (void)timerReSend:(NSTimer *)timer {
     [reSendTimer invalidate];
 	
     RELEASE_SAFELY(reSendTimer);
     
-	[self send];
+	[self sendIfNeeded];
 }
 
 - (void)sendIfNeeded {
     
-    UALOG(@"DatabaseSize: %d", databaseSize);
-	//Delete should be before send step, otherwise, we may send some delete events.
+    //try sending at this interval if no other thresholds
+    //have been met
+    NSInteger stdInterval = x_ua_min_batch_interval * 2;
+    
+    if (databaseSize <= 0) {
+        UALOG(@"Analytics upload not necessary: no events to send.");
+        return;
+    }
+    
+	//Delete oldest events first, otherwise, we may send some deleted events.
 	while (databaseSize > x_ua_max_total) {
-        UALOG(@"Database exceeds max size of %d... Deleting oldest session.",x_ua_max_total);
+        UALOG(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
-
-    if (databaseSize >= x_ua_max_batch) {
-        [self send];
-    } else if (oldestEventTime >= 0) {
-        
-		NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-        
-		if (oldestEventTime + x_ua_min_batch_interval /*x_ua_max_wait*/ <= now) {
-            [self send];
-		}
+    
+    // Check for a resend timer before checking the 
+    // interval because the timer may be set with an
+    // imprecise time
+    if (reSendTimer != nil) {
+        UALOG(@"Send cancelled - a reset timer is already running.");
+        return;
     }
+
+    // Compare current status to min/max thresholds
+    BOOL databaseWithinBatchLimit = (databaseSize < x_ua_max_batch);
+    BOOL oldestEventWithinLimit = (oldestEventTime + x_ua_max_wait > [[NSDate date] timeIntervalSince1970]);
+    BOOL lastSendWithinLimit = (lastSendTime > 0 && [[NSDate date] timeIntervalSinceDate:lastSendTime] <= stdInterval);
+    
+    
+    if (databaseWithinBatchLimit && oldestEventWithinLimit && lastSendWithinLimit) {
+        UALOG(@"Analytics upload not necessary.");
+        return;
+    }
+    
+    // Ensure that we are not sending too often.
+    // If we're within the minimum interval, set a timer
+    // to retry once the minimum interval is up
+    UALOG(@"Send Analytics");
+    if (lastSendTime != nil) {
+        NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
+        
+		if (interval < x_ua_min_batch_interval) {
+            UALOG(@"Attempted to send too soon. Setting a timer to comply with the min batch interval.");
+            //The synchronization may be overkill here, but would prevent
+            //two timers from running at once, and one leaking
+            @synchronized(self) {
+                if (reSendTimer == nil) {
+                    reSendTimer = [[NSTimer scheduledTimerWithTimeInterval:x_ua_min_batch_interval-interval
+                                                                    target:self
+                                                                  selector:@selector(timerReSend:)
+                                                                  userInfo:nil
+                                                                   repeats:NO] retain];
+                }
+            }
+            return;
+        }
+    }
+    
+    [self send];
+    
+    RELEASE_SAFELY(lastSendTime);
+    lastSendTime = [[NSDate date] retain];
+	
+    [self saveDefault];//save defaults to store lastSendTime
 }
 
 @end
