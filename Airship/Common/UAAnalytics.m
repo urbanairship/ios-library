@@ -152,7 +152,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	[session setObject:notification_types forKey:@"notification_types"];
 	
     NSTimeZone *localtz = [NSTimeZone localTimeZone];
-    [session setObject:[NSString stringWithFormat:@"%d", [localtz secondsFromGMT]] forKey:@"time_zone"];
+    [session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
     [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
     
     [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
@@ -183,15 +183,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         lastSendTime = nil;
         reSendTimer = nil;
 		
-        //pull the oldest event from the db -- needed to calc
-        //time between batches
-        NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
-        if ([events count] > 0) {
-            NSDictionary *event = [events objectAtIndex:0];
-            oldestEventTime = [[event objectForKey:@"time"] doubleValue];
-        } else {
-            oldestEventTime = 0;
-        }
+        [self resetEventsDatabaseStatus];
         
         x_ua_max_total = X_UA_MAX_TOTAL;
         x_ua_max_batch = X_UA_MAX_BATCH;
@@ -313,7 +305,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	[[UAAnalyticsDBManager shared] addEvent:event withSession:session];
     
-	databaseSize += [event getEstimateSize];
+	databaseSize += [event getEstimatedSize];
     
 	if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
@@ -330,7 +322,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
              responseData:(NSData *)responseData {
     
 	UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
-    UALOG(@"responseData=%@, length=%d", [responseData description], [responseData length]);
+    UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
 
     RELEASE_SAFELY(connection);
 	
@@ -339,6 +331,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         [self resetEventsDatabaseStatus];
     } 
 
+    UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
 	// We send headers on all response codes, so let's set those values before checking for != 200
     if ([response allHeaderFields]) {
 		
@@ -401,30 +394,25 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (void)requestDidFail:(UAHTTPRequest *)request {
     UALOG(@"Send analytics data request failed.");
-    //TODO: Deal with retry;
     RELEASE_SAFELY(connection);
 }
 
 #pragma mark -
 
 - (void)resetEventsDatabaseStatus {
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:-1];
-    NSDictionary *event;
-    
-	databaseSize = 0;
-    
-	int eventSize;
 
-    for (event in events) {
-        
-		if (oldestEventTime == 0) {
-            oldestEventTime = [[event objectForKey:@"time"] doubleValue];
-		}
-		
-        eventSize = [[event objectForKey:@"event_size"] intValue];
-        NSAssert(eventSize > 0); // TODO: do we want an assertion here?
-        databaseSize += eventSize;
+	databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
+    
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
+    if ([events count] > 0) {
+        NSDictionary *event = [events objectAtIndex:0];
+        oldestEventTime = [[event objectForKey:@"time"] doubleValue];
+    } else {
+        oldestEventTime = 0;
     }
+    
+    UALOG(@"Database size: %d", databaseSize);
+    UALOG(@"Oldest Event: %f", oldestEventTime);
 
 }
 
@@ -440,11 +428,15 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         return;
     }
 
-    NSArray *events = [[UAAnalyticsDBManager shared] getEventsBySize:x_ua_max_batch];
-	if ([events count] <= 0) {
+    int eventCount = [[UAAnalyticsDBManager shared] eventCount];
+    if (eventCount == 0) {
         UALOG(@"Warning: there are no events.");
         return;
     }
+    
+    int avgEventSize = databaseSize / eventCount;
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:x_ua_max_batch/avgEventSize];
+
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
@@ -468,13 +460,25 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
     NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
 
+    int actualSize = 0;
+    int batchEventCount = 0;
+    
     // Clean up event data for sending.
+    // Enforce max batch limits
     // Loop through events and discard DB-only items, format the JSON data field
     // as a dictionary
     NSString *key;
     NSMutableDictionary *event;
     for (event in events) {
 		
+        actualSize += [[event objectForKey:@"event_size"] intValue];
+        if (actualSize <= x_ua_max_batch) {
+            batchEventCount++; 
+        } else {
+            UALOG(@"Met batch limit.");
+            break;
+        }
+        
         NSMutableDictionary *eventData = (NSMutableDictionary*)[event objectForKey:@"data"];
         
         if (eventData) {
@@ -483,7 +487,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
         [event setObject:eventData forKey:@"data"];
-
 
         for (key in [event allKeys]) {
 
@@ -494,6 +497,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         }
     }
 
+    if (batchEventCount < [events count]) {
+        events = [events subarrayWithRange:NSMakeRange(0, batchEventCount)];
+    }
+             
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     writer.humanReadable = NO;//strip whitespace
     [request appendPostData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -555,8 +562,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (void)sendIfNeeded {
     
+    UALOG(@"DatabaseSize: %d", databaseSize);
 	//Delete should be before send step, otherwise, we may send some delete events.
 	while (databaseSize > x_ua_max_total) {
+        UALOG(@"Database exceeds max size of %d... Deleting oldest session.",x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -567,7 +576,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         
 		NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
         
-		if (oldestEventTime + x_ua_max_wait <= now) {
+		if (oldestEventTime + x_ua_min_batch_interval /*x_ua_max_wait*/ <= now) {
             [self send];
 		}
     }

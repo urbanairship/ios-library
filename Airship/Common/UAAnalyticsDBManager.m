@@ -66,7 +66,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
-    int estimateSize = [event getEstimateSize];
+    int estimateSize = [event getEstimatedSize];
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],
      event.event_id,
@@ -74,6 +74,10 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
      event.data,
      [session objectForKey:@"session_id"],
      [NSString stringWithFormat:@"%d", estimateSize]];
+    
+    
+    UALOG(@"DB Count %d", [self eventCount]);
+    UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.
@@ -84,6 +88,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (NSArray *)getEventsBySize:(int)size {
+
     //TODO: Use DB to get what we want directly
     //select a.*, (select sum(event_size) from analytics as b where b._id <= a._id) as total_size from analytics as a where total_size < 20
     NSArray *events = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id"];
@@ -92,7 +97,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
     for (event in events) {
         int event_size = [[event objectForKey:@"event_size"] intValue];
-        NSAssert(event_size > 0);
+        NSAssert(event_size > 0, @"event size is <= 0");
         if (size < event_size)
             break;
         [result addObject:event];
@@ -122,6 +127,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)deleteBySessionId:(NSString *)sessionId {
+    
+    UALOG(@"Deleting session ID: %@", sessionId);
+    
     if (sessionId == nil) {
         UALOG(@"Warn: sessionId is nil.");
         return;
@@ -133,15 +141,44 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (void)deleteOldestSession {
     NSArray *events = [self getEvents:1];
     if ([events count] <= 0) {
-        UALOG(@"Warn: there is no events.");
+        UALOG(@"Warn: there are no events.");
         return;
     }
 
     NSDictionary *event = [events objectAtIndex:0];
     NSString *sessionId = [event objectForKey:@"session_id"];
-    NSAssert(sessionId != nil);
+    NSAssert(sessionId != nil, @"analytics session id is nil");
 
     [self deleteBySessionId:sessionId];
+}
+
+- (NSInteger)eventCount {
+    
+    NSArray *results = [db executeQuery:@"SELECT COUNT(_id) count FROM analytics"];
+
+    if ([results count] <= 0) {
+        return 0;
+    } else {
+        NSNumber *count = (NSNumber *)[[results objectAtIndex:0] objectForKey:@"count"];
+        if ([count isKindOfClass:[NSNull class]]) {
+            return 0;
+        }
+        return [count intValue];
+    }
+}
+
+- (NSInteger)sizeInBytes {
+    NSArray *results = [db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
+    
+    if ([results count] <= 0) {
+        return 0;
+    } else {
+        NSNumber *count = (NSNumber *)[[results objectAtIndex:0] objectForKey:@"size"];
+        if ([count isKindOfClass:[NSNull class]]) {
+            return 0;
+        }
+        return [count intValue];
+    }
 }
 
 @end

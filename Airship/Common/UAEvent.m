@@ -68,7 +68,7 @@
     return @"base";
 }
 
-- (int)getEstimateSize {
+- (int)getEstimatedSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
     [eventDictionary setObject:[self getType] forKey:@"type"];
     [eventDictionary setObject:self.time forKey:@"time"];
@@ -79,6 +79,9 @@
     NSString *jsonString = [writer stringWithObject:eventDictionary];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     [writer release];
+    
+    UALOG(@"Estimated event size: %d", [jsonData length]);
+    
     return [jsonData length];
 }
 
@@ -195,6 +198,10 @@
     
 }
 
+- (int)getEstimatedSize {
+    return kEventAppInitSize;
+}
+
 @end
 
 @implementation UAEventAppForeground
@@ -217,6 +224,10 @@
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
 }
 
+- (int)getEstimatedSize {
+    return kEventAppExitSize;
+}
+
 @end
 
 @implementation UAEventAppBackground
@@ -236,6 +247,10 @@
 - (void)gatherIndividualData:(NSDictionary*)context {
     [self addDataWithValue:[UAirship shared].deviceToken forKey:@"device_token"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
+}
+
+- (int)getEstimatedSize {
+    return kEventDeviceRegistrationSize;
 }
 
 @end
@@ -272,6 +287,10 @@
     } else {
         [self addDataWithValue:[UAUtils UUID] forKey:@"push_id"];
     }
+}
+
+- (int)getEstimatedSize {
+    return kEventPushReceivedSize;
 }
 
 @end

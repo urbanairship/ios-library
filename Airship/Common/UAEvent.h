@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+#define kEventAppInitSize               450//397 w/ push id, no inbox id
+#define kEventAppExitSize               200//136 w/ only network type
+#define kEventDeviceRegistrationSize    200//153 w/ only user info
+#define kEventPushReceivedSize          200//160 w/ uuid push info
 
 @interface UAEvent : NSObject
 {
@@ -40,7 +44,7 @@
 + (id)eventWithContext:(NSDictionary*)context;
 - (NSString*)getType;
 - (void)gatherData:(NSDictionary*)context;
-- (int)getEstimateSize;
+- (int)getEstimatedSize;
 
 @end
 

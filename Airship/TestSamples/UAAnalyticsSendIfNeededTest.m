@@ -31,7 +31,7 @@
 - (void)setUpClass {
     [self mock:[UAAnalytics class] method:@selector(sendImpl) withMethod:@selector(sendImplMocked)];
     [self mock:[UAAnalytics class] method:@selector(initSession) withMethod:@selector(initSessionMocked)];
-    [self mock:[UAEvent class] method:@selector(getEstimateSize) withMethod:@selector(getEstimateSizeMocked)];
+    [self mock:[UAEvent class] method:@selector(getEstimatedSize) withMethod:@selector(getEstimateSizeMocked)];
     [self mock:[UAAnalyticsDBManager class] method:@selector(addEvent:withSession:) withMethod:@selector(addEventMocked:withSession:)];
     [self mock:[UAAnalyticsDBManager class] method:@selector(deleteOldestSession) withMethod:@selector(deleteOldestSessionMocked)];
 }

@@ -33,7 +33,7 @@
 #define X_UA_MAX_TOTAL 5*1024*1024	// local max of 5MB
 
 // total size in kilobytes that a given event post is allowed to send.
-#define X_UA_MAX_BATCH 5*1024		// local max of 500kb
+#define X_UA_MAX_BATCH 500*1024		// local max of 500kb
 
 // maximum amount of time in seconds that events should queue for
 #define X_UA_MAX_WAIT 7*24*3600		// local max of 7 days
