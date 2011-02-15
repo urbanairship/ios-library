@@ -290,6 +290,12 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_wait forKey:@"X-UA-Max-Wait"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
     [[NSUserDefaults standardUserDefaults] setObject:lastSendTime forKey:@"X-UA-Last-Send-Time"];
+    
+    UALOG(@"Response Headers Saved:");
+    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
+    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
+    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
+    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
 }
 
 #pragma mark -
@@ -301,6 +307,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)addEvent:(UAEvent*)event {
+    
     UALOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
     
 	[[UAAnalyticsDBManager shared] addEvent:event withSession:session];
@@ -310,7 +317,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
     }
-    
+        
 	[self sendIfNeeded];
 }
 
@@ -332,10 +339,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     } 
 
     UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
+    
+    
 	// We send headers on all response codes, so let's set those values before checking for != 200
+    // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
     if ([response allHeaderFields]) {
 		
-        int tmp = [[[response allHeaderFields] objectForKey:@"X-UA-Max-Total"] intValue];
+        int tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Total"] intValue] * 1024;
         
 		if (tmp > 0) {
 			
@@ -347,7 +357,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 			
         }
  
-		tmp = [[[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"] intValue];
+		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;
         
 		if (tmp > 0) {
 			
@@ -358,7 +368,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 			}
         }
         
-		tmp = [[[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"] intValue];
+		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Wait"] intValue];
         
 		if (tmp > 0) {
 			
@@ -369,7 +379,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 			}
         }
         
-		tmp = [[[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"] intValue];
+		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Min-Batch-Interval"] intValue];
         
 		if (tmp > 0) {
 			
@@ -382,9 +392,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         
 		[self saveDefault];
     }
-	
+    
 	if ([response statusCode] != 200) {
-		// TODO: handle specific failure codes
 		return;
     } 
 
@@ -509,7 +518,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     writer.humanReadable = YES;//turn on formatting for debugging
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
-    UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    //UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     
 	[writer release];
 
