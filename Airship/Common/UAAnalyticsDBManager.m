@@ -87,26 +87,6 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     return result;
 }
 
-- (NSArray *)getEventsBySize:(int)size {
-
-    //TODO: Use DB to get what we want directly
-    //select a.*, (select sum(event_size) from analytics as b where b._id <= a._id) as total_size from analytics as a where total_size < 20
-    NSArray *events = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id"];
-    NSDictionary *event;
-    NSMutableArray *result = [[[NSMutableArray alloc] init] autorelease];
-
-    for (event in events) {
-        int event_size = [[event objectForKey:@"event_size"] intValue];
-        NSAssert(event_size > 0, @"event size is <= 0");
-        if (size < event_size)
-            break;
-        [result addObject:event];
-        size -= event_size;
-    }
-
-    return result;
-}
-
 - (NSArray *)getEventByEventId:(NSString *)event_id {
     NSArray *result = [db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
     return result;

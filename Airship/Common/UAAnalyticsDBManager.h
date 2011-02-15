@@ -38,7 +38,6 @@ SINGLETON_INTERFACE(UAAnalyticsDBManager);
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session;
 - (NSArray *)getEvents:(int)max;
-- (NSArray *)getEventsBySize:(int)size;
 - (NSArray *)getEventByEventId:(NSString *)event_id;
 
 - (void)deleteEvent:(NSNumber *)eventId;
