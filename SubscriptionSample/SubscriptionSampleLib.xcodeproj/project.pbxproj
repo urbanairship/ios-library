@@ -91,7 +91,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D5A4B9411300A8F200002F71 /* AirshipTest.app */;
+			remoteGlobalIDString = D5A4B9411300A8F200002F71;
 			remoteInfo = AirshipTest;
 		};
 		6331475F122FAC96008F2D48 /* PBXContainerItemProxy */ = {

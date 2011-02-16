@@ -302,8 +302,18 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark Analytics
 
 - (void)handleNotification:(NSDictionary*)userInfo {
-    RELEASE_SAFELY(notificationUserInfo);
-    notificationUserInfo = [userInfo retain];
+    
+    BOOL isActive = YES;
+IF_IOS4_OR_GREATER(
+                   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+                   )
+    
+    if (isActive) {
+        [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
+    } else {
+        RELEASE_SAFELY(notificationUserInfo);
+        notificationUserInfo = [userInfo retain];
+    }
 }
 
 - (void)addEvent:(UAEvent*)event {

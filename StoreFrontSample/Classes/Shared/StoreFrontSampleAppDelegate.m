@@ -61,6 +61,12 @@
     //Optional if you want to receive StoreFrontDelegate callbacks
     [[UAStoreFront shared] setDelegate:self];
     
+    // Register for notifications
+    [[UIApplication sharedApplication]
+     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                         UIRemoteNotificationTypeSound |
+                                         UIRemoteNotificationTypeAlert)];
+    
     return YES;
 }
 
@@ -89,6 +95,21 @@
     }
 }
 
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    UALOG(@"APN device token: %@", deviceToken);
+    // Updates the device token and registers the token with UA
+    [[UAirship shared] registerDeviceToken:deviceToken];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
+    UALOG(@"did Fail To Register For Remote Notifications With Error: %@", error);
+}
+
+// Copy and paste this method into your AppDelegate to handle push
+// notifications for your application while the app is running.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [[UAirship shared].analytics handleNotification:userInfo];
+}
 
 #pragma mark -
 #pragma mark StoreFrontDelegate

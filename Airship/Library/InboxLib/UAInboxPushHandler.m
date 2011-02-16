@@ -75,13 +75,13 @@
         [[UAInbox shared].pushHandler setViewingMessageID:richPushId];
     }
 	
+    // add push_received event, or handle appropriately
+    [[UAirship shared].analytics handleNotification:userInfo];
+    
 	BOOL isActive = [self isApplicationActive];
 
     if (isActive) {
-		
-		// add push_received event
-        [[UAirship shared].analytics addEvent:[UAEventPushReceived eventWithContext:userInfo]];
-		
+        
         // only show alert view when the app is active
         // if it's running in background, apple will show a standard notification
         // alertview, so here we no need to show our alert
@@ -91,11 +91,12 @@
         [alertHandler showNewMessageAlert:message];
 		
     } else {
-		[[UAirship shared].analytics handleNotification:userInfo];
 		
         // load message list and show the specified message
         [UAInboxPushHandler showMessageAfterMessageListLoaded];
     }
+    
+    
 }
 
 + (void)handleLaunchOptions:(NSDictionary*)options {
