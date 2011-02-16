@@ -36,6 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 
+NSString * const UAirshipTakeOffOptionsAirshipConfig = @"UAirshipTakeOffOptionsAirshipConfig";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
@@ -96,12 +97,21 @@ BOOL releaseLogging = false;
     [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
     
-    //Read configuration information from AirshipConfig.plist
+    
+    // Load configuration
+    // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
+    // override any options defined in AirshipConfig.plist
+    NSMutableDictionary *config;
     NSString *configPath = [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"];
     
     if (configPath) {
-        
-        NSMutableDictionary *config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
+        config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
+        [config addEntriesFromDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfig]];
+    } else {
+        config = [NSMutableDictionary dictionaryWithDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfig]];
+    }
+
+    if ([config count] > 0) {
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
