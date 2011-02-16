@@ -78,8 +78,8 @@ extern NSString * const UAAnalyticsOptionsServerKey;
 - (void)restoreFromDefault;
 - (void)saveDefault;
 
-- (void)addEvent:(UAEvent*)event;
-- (void)handleNotification:(NSDictionary*)userInfo;
+- (void)addEvent:(UAEvent *)event;
+- (void)handleNotification:(NSDictionary *)userInfo;
 
 - (void)resetEventsDatabaseStatus;
 - (void)sendIfNeeded;

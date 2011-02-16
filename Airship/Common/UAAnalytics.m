@@ -318,6 +318,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         oldestEventTime = [event.time doubleValue];
     }
         
+    // Don't try to send if the event indicates the app is losing focus
+    if ([[event getType] isEqualToString:@"app_exit"] || [[event getType] isEqualToString:@"app_background"]) {
+        return;
+    }
+    
 	[self sendIfNeeded];
 }
 
@@ -449,7 +454,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
-    request.compressPostBody = YES;
+    request.compressPostBody = YES;//enable GZIP
     
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
@@ -565,7 +570,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     // Compare current status to min/max thresholds
     BOOL databaseWithinBatchLimit = (databaseSize < x_ua_max_batch);
     BOOL oldestEventWithinLimit = (oldestEventTime + x_ua_max_wait > [[NSDate date] timeIntervalSince1970]);
-    BOOL lastSendWithinLimit = (lastSendTime > 0 && [[NSDate date] timeIntervalSinceDate:lastSendTime] <= stdInterval);
+    BOOL lastSendWithinLimit = (lastSendTime != nil && [[NSDate date] timeIntervalSinceDate:lastSendTime] <= stdInterval);
     
     
     if (databaseWithinBatchLimit && oldestEventWithinLimit && lastSendWithinLimit) {
