@@ -358,6 +358,8 @@ static Class _uiClass;
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     
+    [[UAirship shared].analytics handleNotification:notification];
+    
     if (state != UIApplicationStateActive) {
         UALOG(@"Received a notification for an inactive application state.");
         [delegate handleBackgroundNotification:notification];

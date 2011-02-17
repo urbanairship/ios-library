@@ -85,6 +85,13 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
+		1FC354FD130DE7E200A26179 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D5A4B9411300A8F200002F71 /* AirshipTest.app */;
+			remoteInfo = AirshipTest;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -377,6 +384,7 @@
 			isa = PBXGroup;
 			children = (
 				18C02973124F21B800D49CD5 /* libUAirship-1.0.3.a */,
+				1FC354FE130DE7E200A26179 /* AirshipTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -495,6 +503,13 @@
 			fileType = archive.ar;
 			path = "libUAirship-1.0.3.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1FC354FE130DE7E200A26179 /* AirshipTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = AirshipTest.app;
+			remoteRef = 1FC354FD130DE7E200A26179 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
