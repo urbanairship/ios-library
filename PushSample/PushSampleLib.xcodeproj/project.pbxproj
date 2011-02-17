@@ -399,8 +399,6 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				1F7FD3A812F784E100317B96 /* MessageUI.framework */,
-				1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -420,6 +418,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */,
+				1F7FD3A812F784E100317B96 /* MessageUI.framework */,
 				18C02A08124F250000D49CD5 /* libsqlite3.dylib */,
 				0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */,
 				0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */,

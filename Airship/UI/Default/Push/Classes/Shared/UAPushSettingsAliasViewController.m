@@ -51,11 +51,13 @@ enum {
 @synthesize aliasField;
 
 - (void)dealloc {
-    [tableView release];
-    [aliasCell release];
-    [textCell release];
-    [textLabel release];
-    [aliasField release];
+	
+    RELEASE_SAFELY(tableView);
+    RELEASE_SAFELY(aliasCell);
+    RELEASE_SAFELY(textCell);
+    RELEASE_SAFELY(textLabel);
+    RELEASE_SAFELY(aliasField);
+	
     [super dealloc];
 }
 

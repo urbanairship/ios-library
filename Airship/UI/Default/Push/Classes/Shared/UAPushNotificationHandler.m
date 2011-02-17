@@ -42,6 +42,11 @@
 }
 
 - (void)displayNotificationAlert:(NSDictionary *)alertDict {
+	
+	// The alert is a a dictionary with more details, let's just get the message without localization
+	// This should be customized to fit your message details or usage scenario
+	//message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
+	
     UALOG(@"Got an alert with a body.");
     
     NSString *body = [alertDict valueForKey:@"body"];

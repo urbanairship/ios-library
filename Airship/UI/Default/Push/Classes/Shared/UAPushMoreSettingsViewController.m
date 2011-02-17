@@ -72,7 +72,6 @@ enum {
     self.footerImageView = nil;
     self.tableView = nil;
     
-    
     RELEASE_SAFELY(tokenViewController);
     RELEASE_SAFELY(aliasViewController);
     RELEASE_SAFELY(tagsViewController);

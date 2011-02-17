@@ -33,10 +33,10 @@
 @synthesize tokenLabel;
 
 - (void)dealloc {
-    [copyButton release];
-    [emailButton release];
-    [tokenLabel release];
-    [text release];
+    RELEASE_SAFELY(copyButton);
+    RELEASE_SAFELY(emailButton);
+    RELEASE_SAFELY(tokenLabel);
+    RELEASE_SAFELY(text);
     [super dealloc];
 }
 

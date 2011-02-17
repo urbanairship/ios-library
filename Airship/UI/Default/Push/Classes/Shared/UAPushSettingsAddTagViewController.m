@@ -28,7 +28,6 @@
 #import "UATagUtils.h"
 
 enum TagSections {
-    //TagSectionDesc = 0,
     TagSectionCustom = 0,
     TagSectionPreset = 1,
     TagSectionCount = 2
@@ -103,14 +102,6 @@ enum TagSections {
         case TagSectionPreset:
         case TagSectionCustom:
             return 44;
-//        case TagSectionDesc:
-//        {
-//            CGFloat height = [text sizeWithFont:textLabel.font
-//                              constrainedToSize:CGSizeMake(300, 1500)
-//                                  lineBreakMode:UILineBreakModeWordWrap].height;
-//            return height + kCellPaddingHeight * 4;
-//            break;
-//        }
         default:
             break;
     }
@@ -145,8 +136,6 @@ enum TagSections {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     
     switch (section) {
-        //case TagSectionDesc:
-        //    return 1;
         case TagSectionCustom:
             return 1;
         case TagSectionPreset:
