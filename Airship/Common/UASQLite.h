@@ -1,17 +1,17 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
- 
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -24,16 +24,44 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "sqlite3.h"
+
 #import "UAGlobal.h"
 
-@interface UATestGlobal : NSObject {
-    NSMutableDictionary *calls;
-    id value;
+@interface UASQLite : NSObject {
+    NSInteger busyRetryTimeout;
+    NSString *dbPath;
+    sqlite3 *db;
 }
 
-SINGLETON_INTERFACE(UATestGlobal)
+@property (readwrite) NSInteger busyRetryTimeout;
+@property (readonly) NSString *dbPath;
 
-@property (nonatomic, retain) NSMutableDictionary *calls;
-@property (nonatomic, retain) id value;
+- (id)initWithDBPath:(NSString *)aDBPath;
+
+- (BOOL)open:(NSString *)aDBPath;
+- (void)close;
+
+/*error info*/
+- (NSString*)lastErrorMessage;
+- (NSInteger)lastErrorCode;
+
+/*query, select data*/
+- (NSArray *)executeQuery:(NSString *)sql, ...;
+- (NSArray *)executeQuery:(NSString *)sql arguments:(NSArray *)args;
+
+/*update methods, update/insert/delete data*/
+- (BOOL)executeUpdate:(NSString *)sql, ...;
+- (BOOL)executeUpdate:(NSString *)sql arguments:(NSArray *)args;
+
+/*transaction*/
+- (BOOL)commit;
+- (BOOL)rollback;
+- (BOOL)beginTransaction;
+- (BOOL)beginDeferredTransaction;
+
+/*helper methods*/
+- (BOOL)tableExists:(NSString*)tableName;
+- (BOOL)indexExists:(NSString*)indexName;
 
 @end

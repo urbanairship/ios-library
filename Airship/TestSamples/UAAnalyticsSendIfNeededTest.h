@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2010 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -24,16 +24,26 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+#import "NSObject+UATestMockable.h"
+#import "UATestCase.h"
+#import "UATestGlobal.h"
+#import "UAAnalytics.h"
+#import "UAEvent.h"
 
-@interface UATestGlobal : NSObject {
-    NSMutableDictionary *calls;
-    id value;
+@interface UAAnalyticsSendIfNeededTest : UATestCase {
+    UAAnalytics *analytics;
 }
 
-SINGLETON_INTERFACE(UATestGlobal)
-
-@property (nonatomic, retain) NSMutableDictionary *calls;
-@property (nonatomic, retain) id value;
-
 @end
+
+
+@interface UAAnalytics(Mocked)
+- (void)resetLastSendTimeAndOldestEvent;
+- (void)setBatchInterval:(int)value;
+@end
+
+@interface UAEvent(Mocked)
+- (void)setTimeMocked:(NSString*)t;
+- (int)getEstimateSizeMocked;
+@end
+

@@ -27,6 +27,7 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxAlertProtocol.h"
+#import "UAEvent.h"
 
 @implementation UAInboxPushHandler
 
@@ -36,6 +37,14 @@
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
     [super dealloc];
+}
+
++ (BOOL)isApplicationActive {
+    BOOL isActive = YES;
+	IF_IOS4_OR_GREATER(
+					   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+					   )
+    return isActive;
 }
 
 + (void) showMessageAfterMessageListLoaded {
@@ -50,18 +59,29 @@
 
     UALOG(@"remote notification: %@", [userInfo description]);
 
-    NSArray *mids = [userInfo objectForKey:@"_uamid"];
-    if ([mids count] > 0) {
-		[[UAInbox shared].pushHandler setViewingMessageID:[mids objectAtIndex:0]];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [userInfo objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
+    }
+    
+    if (richPushId) {
+        [[UAInbox shared].pushHandler setViewingMessageID:richPushId];
     }
 	
-    BOOL isActive = YES;
+    // add push_received event, or handle appropriately
+    [[UAirship shared].analytics handleNotification:userInfo];
     
-	IF_IOS4_OR_GREATER(
-        isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-    )
+	BOOL isActive = [self isApplicationActive];
 
     if (isActive) {
+        
         // only show alert view when the app is active
         // if it's running in background, apple will show a standard notification
         // alertview, so here we no need to show our alert
@@ -71,30 +91,39 @@
         [alertHandler showNewMessageAlert:message];
 		
     } else {
+		
         // load message list and show the specified message
         [UAInboxPushHandler showMessageAfterMessageListLoaded];
     }
+    
+    
 }
 
 + (void)handleLaunchOptions:(NSDictionary*)options {
-    if(options == nil)
+    
+    if (options == nil) {
         return;
+    }
 
     UALOG(@"launch options: %@", options);
 
-    NSString *mid = nil;
-    NSArray *mids = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
-    if (mids != nil && [mids count] > 0) {
-        mid = [mids objectAtIndex:0];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
     }
 
-    if(mid != nil) {
-        
+    if (richPushId) {
 		[[UAInbox shared].pushHandler setHasLaunchMessage:YES];
-		[[UAInbox shared].pushHandler setViewingMessageID:mid];
-			       
+		[[UAInbox shared].pushHandler setViewingMessageID:richPushId];
     }
-
+    
 }
 
 

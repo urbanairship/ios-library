@@ -50,12 +50,19 @@ SINGLETON_IMPLEMENTATION(InboxTestPushHandler);
     UALOG(@"remote notification for test: %@", [userInfo description]);
 
 
-    NSArray *mids = [userInfo objectForKey:@"_uamid"];
-    NSString *mid = nil;
-    if ([mids count] > 0) {
-        mid = [mids objectAtIndex:0];
+    // Get the rich push ID, which can be sent as a one-element array or a string
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = [richPushIds objectAtIndex:0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
     }
-    if (mid){
+    
+    if (richPushId) {
         UALOG(@"Retrieving for message: %@", mid);
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@%@%@/", [UAirship shared].server, @"/api/user/", [UAUser defaultUser].username, @"/messages/message/", mid]];
         UA_ASIHTTPRequest *msgReq = [[UA_ASIHTTPRequest alloc] initWithURL:url];

@@ -85,6 +85,7 @@
 // notifications for your application while the app is running.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"did receive remote notification: %@", userInfo);
+    [[UAirship shared].analytics handleNotification:userInfo];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
