@@ -49,6 +49,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize x_ua_max_batch;
 @synthesize x_ua_max_wait;
 @synthesize x_ua_min_batch_interval;
+@synthesize sendInterval;
 @synthesize oldestEventTime;
 @synthesize lastSendTime;
 
@@ -190,7 +191,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         x_ua_max_wait = X_UA_MAX_WAIT;
         x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
 		
+		// Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
+		sendInterval = X_UA_MIN_BATCH_INTERVAL;
+		
         [self restoreFromDefault];
+		[self saveDefault];//save defaults to store lastSendTime if this was an initial condition
 		
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshSessionWhenNetworkChanged)
@@ -245,6 +250,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (void)restoreFromDefault {
 	
+	// If the key is missing the int will end up being 0, which is what these checks are (not actual limits)
     int tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
     
 	if (tmp > 0) {
@@ -268,13 +274,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	if (tmp > 0) {
         x_ua_min_batch_interval = tmp;
     }
+	
+	self.sendInterval = sendInterval;
     
 	NSDate *date = [[NSUserDefaults standardUserDefaults] objectForKey:@"X-UA-Last-Send-Time"];
     
 	if (date != nil) {
         RELEASE_SAFELY(lastSendTime);
         lastSendTime = [date retain];
-    }
+    } else {
+		lastSendTime = [[NSDate date] retain];
+	}
     
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
     UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
@@ -370,7 +380,9 @@ IF_IOS4_OR_GREATER(
 				x_ua_max_total = tmp;
 			}
 			
-        }
+        } else {
+			x_ua_max_total = X_UA_MAX_TOTAL;
+		}
  
 		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;//value return in KB
         
@@ -381,30 +393,29 @@ IF_IOS4_OR_GREATER(
 			} else {
 				x_ua_max_batch = tmp;
 			}
-        }
+			
+        } else {
+			x_ua_max_batch = X_UA_MAX_BATCH;
+		}
         
 		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Wait"] intValue];
-        
-		if (tmp > 0) {
-			
-			if (tmp >= X_UA_MAX_WAIT) {
-				x_ua_max_wait = X_UA_MAX_WAIT;
-			} else {
-				x_ua_max_wait = tmp;
-			}
-        }
+        	
+		if (tmp >= X_UA_MAX_WAIT) {
+			x_ua_max_wait = X_UA_MAX_WAIT;
+		} else {
+			x_ua_max_wait = tmp;
+		}
         
 		tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Min-Batch-Interval"] intValue];
         
-		if (tmp > 0) {
-			
-			if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-				x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-			} else {
-				x_ua_min_batch_interval = tmp;
-			}
-        }
+		if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
+			x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+		} else {
+			x_ua_min_batch_interval = tmp;
+		}
         
+		self.sendInterval = sendInterval;
+		
 		[self saveDefault];
     }
     
@@ -421,7 +432,22 @@ IF_IOS4_OR_GREATER(
     RELEASE_SAFELY(connection);
 }
 
-#pragma mark -
+#pragma mark - Custom Property Setters
+
+- (void)setSendInterval:(int)newVal {
+
+	if(newVal < x_ua_min_batch_interval) {
+		sendInterval = x_ua_min_batch_interval;
+	} else if (newVal > x_ua_max_wait) {
+		sendInterval = x_ua_max_wait;
+	} else {
+		sendInterval = newVal;
+	}
+	
+}
+
+
+#pragma mark - Send Logic
 
 - (void)resetEventsDatabaseStatus {
 
@@ -460,7 +486,6 @@ IF_IOS4_OR_GREATER(
     
     int avgEventSize = databaseSize / eventCount;
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:x_ua_max_batch/avgEventSize];
-
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
@@ -481,7 +506,6 @@ IF_IOS4_OR_GREATER(
     
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
 
-
     NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
 
     int actualSize = 0;
@@ -493,9 +517,11 @@ IF_IOS4_OR_GREATER(
     // as a dictionary
     NSString *key;
     NSMutableDictionary *event;
+	
     for (event in events) {
 		
         actualSize += [[event objectForKey:@"event_size"] intValue];
+		
         if (actualSize <= x_ua_max_batch) {
             batchEventCount++; 
         } else {
@@ -523,8 +549,8 @@ IF_IOS4_OR_GREATER(
         if (!eventData) {
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
+		
         [event setValue:eventData forKey:@"data"];
-        
 
         // Remove unused DB values
         for (key in [event allKeys]) {
@@ -559,10 +585,11 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)timerReSend:(NSTimer *)timer {
-    [reSendTimer invalidate];
+    @synchronized(self) {
+		[reSendTimer invalidate];
+		RELEASE_SAFELY(reSendTimer);
+    }
 	
-    RELEASE_SAFELY(reSendTimer);
-    
 	[self sendIfNeeded];
 }
 
@@ -570,7 +597,7 @@ IF_IOS4_OR_GREATER(
     
     //try sending at this interval if no other thresholds
     //have been met
-    NSInteger stdInterval = x_ua_min_batch_interval * 2;
+    //NSInteger stdInterval = x_ua_min_batch_interval * 2;
     
     if (databaseSize <= 0) {
         UALOG(@"Analytics upload not necessary: no events to send.");
@@ -587,45 +614,38 @@ IF_IOS4_OR_GREATER(
     // Check for a resend timer before checking the 
     // interval because the timer may be set with an
     // imprecise time
-    if (reSendTimer != nil) {
-        UALOG(@"Send cancelled - a reset timer is already running.");
-        return;
-    }
-
-    // Compare current status to min/max thresholds
-    BOOL databaseWithinBatchLimit = (databaseSize < x_ua_max_batch);
-    BOOL oldestEventWithinLimit = (oldestEventTime + x_ua_max_wait > [[NSDate date] timeIntervalSince1970]);
-    BOOL lastSendWithinLimit = (lastSendTime != nil && [[NSDate date] timeIntervalSinceDate:lastSendTime] <= stdInterval);
-    
-    
-    if (databaseWithinBatchLimit && oldestEventWithinLimit && lastSendWithinLimit) {
-        UALOG(@"Analytics upload not necessary.");
-        return;
-    }
-    
+	@synchronized(self) {
+		if (reSendTimer != nil) {
+			UALOG(@"Send cancelled - a reset timer is already running.");
+			return;
+		}
+	}
+	
     // Ensure that we are not sending too often.
     // If we're within the minimum interval, set a timer
     // to retry once the minimum interval is up
     UALOG(@"Send Analytics");
-    if (lastSendTime != nil) {
-        NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
-        
-		if (interval < x_ua_min_batch_interval) {
-            UALOG(@"Attempted to send too soon. Setting a timer to comply with the min batch interval.");
-            //The synchronization may be overkill here, but would prevent
-            //two timers from running at once, and one leaking
-            @synchronized(self) {
-                if (reSendTimer == nil) {
-                    reSendTimer = [[NSTimer scheduledTimerWithTimeInterval:x_ua_min_batch_interval-interval
-                                                                    target:self
-                                                                  selector:@selector(timerReSend:)
-                                                                  userInfo:nil
-                                                                   repeats:NO] retain];
-                }
-            }
-            return;
-        }
-    }
+	
+	NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
+	
+	if (interval < sendInterval) {
+		UALOG(@"Attempted to send too soon. Setting a timer to comply with the min batch interval.");
+		
+		//The synchronization may be overkill here, but would prevent
+		//two timers from running at once, and one leaking
+		@synchronized(self) {
+			if (reSendTimer == nil) {
+				reSendTimer = [[NSTimer scheduledTimerWithTimeInterval:sendInterval-interval
+																target:self
+															  selector:@selector(timerReSend:)
+															  userInfo:nil
+															   repeats:NO] retain];
+			}
+		}
+		
+		return;
+	}
+
     
     [self send];
     

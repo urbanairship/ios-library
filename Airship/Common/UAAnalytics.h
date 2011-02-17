@@ -57,6 +57,8 @@ extern NSString * const UAAnalyticsOptionsServerKey;
     int x_ua_max_batch;
     int x_ua_max_wait;
     int x_ua_min_batch_interval;
+	
+	int sendInterval;
 
     int databaseSize;
     NSTimeInterval oldestEventTime;
@@ -71,6 +73,7 @@ extern NSString * const UAAnalyticsOptionsServerKey;
 @property (assign, readonly) int x_ua_max_batch;
 @property (assign, readonly) int x_ua_max_wait;
 @property (assign, readonly) int x_ua_min_batch_interval;
+@property (assign, nonatomic) int sendInterval;
 @property (assign, readonly) NSTimeInterval oldestEventTime;
 @property (retain, readonly) NSDate *lastSendTime;
 
