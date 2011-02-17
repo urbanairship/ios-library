@@ -158,11 +158,11 @@ static Class _uiClass;
         [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:@"badge"];
     }
     
-    UALOG("Updating device token (%@) with: %@", token, body);
-    
     if (token != nil) {
+		UALOG("Updating device token (%@) with: %@", token, body);
         [[UAirship shared] registerDeviceToken:token withExtraInfo:body];
     } else {
+		UALOG("Updating device existing token with: %@", body);
         [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
     }
 

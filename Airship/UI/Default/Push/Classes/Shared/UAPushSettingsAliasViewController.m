@@ -137,10 +137,19 @@ enum {
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    NSString *newAlias = aliasField.text;
-    if ([newAlias length] != 0) {
-        [[UAPush shared] updateAlias:newAlias];
-    }
+    
+	NSString *newAlias = aliasField.text;
+	
+	// Trim leading whitespace
+	NSRange range = [newAlias rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
+	NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
+	
+    if ([result length] != 0) {
+        [[UAPush shared] updateAlias:result];
+    } else {
+		textField.text = nil;
+		[[UAPush shared] updateAlias:nil];
+	}
 }
 
 @end
