@@ -503,15 +503,30 @@ IF_IOS4_OR_GREATER(
             break;
         }
         
-        NSMutableDictionary *eventData = (NSMutableDictionary*)[event objectForKey:@"data"];
+        // The event data returned by the DB is a binary plist. Deserialize now.
+        NSDictionary *eventData = nil;
+        NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
         
-        if (eventData) {
-            eventData = (NSMutableDictionary *)[UAUtils parseJSON:[event objectForKey:@"data"]]; 
-        } else {
+        if (serializedEventData) {
+            NSError *err = nil;
+            eventData = (NSDictionary *)[NSPropertyListSerialization 
+                                                propertyListWithData:serializedEventData                                                
+                                                options:NSPropertyListImmutable 
+                                                format:NULL /* an out param */
+                                                error:&err];
+            if (err) {
+                UALOG("Deserialization Error: %@", [err localizedDescription]);
+            }
+        }
+        
+        // Always include a data entry, even if it is empty
+        if (!eventData) {
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
-        [event setObject:eventData forKey:@"data"];
+        [event setValue:eventData forKey:@"data"];
+        
 
+        // Remove unused DB values
         for (key in [event allKeys]) {
 
             if (![topLevelKeys containsObject:key]) {
@@ -533,7 +548,7 @@ IF_IOS4_OR_GREATER(
     writer.humanReadable = YES;//turn on formatting for debugging
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
-    //UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     
 	[writer release];
 

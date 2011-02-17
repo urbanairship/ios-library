@@ -36,7 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 
-NSString * const UAirshipTakeOffOptionsAirshipConfig = @"UAirshipTakeOffOptionsAirshipConfig";
+NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
@@ -106,9 +106,9 @@ BOOL releaseLogging = false;
     
     if (configPath) {
         config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
-        [config addEntriesFromDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfig]];
+        [config addEntriesFromDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfigKey]];
     } else {
-        config = [NSMutableDictionary dictionaryWithDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfig]];
+        config = [NSMutableDictionary dictionaryWithDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfigKey]];
     }
 
     if ([config count] > 0) {

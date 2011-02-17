@@ -27,7 +27,7 @@
 #import "UAirship.h"
 
 #define DB_NAME @"UAAnalyticsDB"
-#define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data TEXT, session_id VARCHAR(255), event_size VARCHAR(255))"
+#define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data BLOB, session_id VARCHAR(255), event_size VARCHAR(255))"
 
 @implementation UAAnalyticsDBManager
 
@@ -67,11 +67,22 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
     int estimateSize = [event getEstimatedSize];
+    
+    // Serialize the event data dictionary
+    NSError *err = nil;
+    NSData *serializedData = [NSPropertyListSerialization dataWithPropertyList:event.data 
+                                                                        format:NSPropertyListBinaryFormat_v1_0 
+                                                                       options:0 /* unused, Apple says set to 0 */ 
+                                                                         error:&err];
+    if (err) {
+        UALOG(@"Dictionary Serialization Error: %@", [[err userInfo] description]);
+    }
+    
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],
      event.event_id,
      event.time,
-     event.data,
+     serializedData,
      [session objectForKey:@"session_id"],
      [NSString stringWithFormat:@"%d", estimateSize]];
     
