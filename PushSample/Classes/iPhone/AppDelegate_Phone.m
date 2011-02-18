@@ -53,8 +53,7 @@
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
-    [[UAPush shared] enableAutobadge:YES];
-    [[UAPush shared] resetAutobadge];
+    [[UAPush shared] resetBadge];//zero badge on startup
     
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
@@ -65,7 +64,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     UALOG(@"Application did become active.");
-    [[UAPush shared] resetAutobadge];
+    [[UAPush shared] resetBadge]; //zero badge when resuming from background (iOS 4+)
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -145,7 +144,7 @@
     UALOG(@"Received remote notification: %@", userInfo);
     
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-    [[UAPush shared] resetAutobadge];
+    [[UAPush shared] resetBadge]; // zero badge after push received
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

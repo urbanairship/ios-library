@@ -338,8 +338,13 @@ static Class _uiClass;
     autobadgeEnabled = autobadge;
 }
 
-- (void)setAutobadgeNumber:(NSInteger)badgeNumber {
-    UALOG(@"Reset Auto Badge from %d to 0", [[UIApplication sharedApplication] applicationIconBadgeNumber]);
+- (void)setBadgeNumber:(NSInteger)badgeNumber {
+
+    if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
+        return;
+    }
+    
+    UALOG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
     
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
     
@@ -352,8 +357,8 @@ static Class _uiClass;
     }
 }
 
-- (void)resetAutobadge {
-    [self setAutobadgeNumber:0];
+- (void)resetBadge {
+    [self setBadgeNumber:0];
 }
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {

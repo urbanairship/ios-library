@@ -127,8 +127,8 @@ SINGLETON_INTERFACE(UAPush);
 - (void)disableQuietTime;
 
 - (void)enableAutobadge:(BOOL)enabled;
-- (void)setAutobadgeNumber:(NSInteger)badgeNumber;
-- (void)resetAutobadge;
+- (void)setBadgeNumber:(NSInteger)badgeNumber;
+- (void)resetBadge;
 
 //Handle incoming push notifications
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
