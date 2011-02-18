@@ -42,6 +42,7 @@
     CGRect pickerShownFrame, pickerHiddenFrame;
     
     BOOL dirty;
+    BOOL pickerDisplayed;
 }
 
 @property (nonatomic, retain)UITableView *tableView;
@@ -66,5 +67,6 @@
 - (void)initViews;
 - (void)updateDatePicker:(BOOL)show;
 - (void)updateQuietTime;
+- (void)updatePickerLayout;
 
 @end
