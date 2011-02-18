@@ -28,7 +28,6 @@
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
-#import "UAPushNotificationHandler.h"
 
 #import <UIKit/UIKit.h>
 
@@ -80,7 +79,7 @@ static Class _uiClass;
         }
         
         //init with default delegate implementation
-        defaultPushHandler = [[UAPushNotificationHandler alloc] init];
+        defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.delegate = defaultPushHandler;
 
         [[UAirship shared] addObserver:self];

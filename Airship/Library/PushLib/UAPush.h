@@ -35,6 +35,7 @@
 #define kTimeZone @"UAPushTimeZone"
 
 #define PUSH_UI_CLASS @"UAPushUI"
+#define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
 UA_VERSION_INTERFACE(UAPushVersion)
 
