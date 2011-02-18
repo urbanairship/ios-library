@@ -26,11 +26,16 @@
 #import <Foundation/Foundation.h>
 #import "UAPush.h"
 
+#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
 @interface UAPushUI : NSObject<UAPushUIProtocol> {
     UIViewController *_apnsSettingsViewController;
     UIViewController *_tokenSettingsViewController;
+    
+    NSBundle *localizationBundle;
 }
+
+@property (nonatomic, retain) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAPushUI)
 

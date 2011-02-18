@@ -29,10 +29,19 @@
 #import "UAViewUtils.h"
 #import "UAUtils.h"
 
+#import <UIKit/UIKit.h>
+
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
-@synthesize alias, tags, badge, quietTime, tz;
+
+@synthesize delegate;
+@synthesize pushEnabled;
+@synthesize alias;
+@synthesize tags;
+@synthesize quietTime;
+@synthesize tz;
+@synthesize notificationTypes;
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -40,10 +49,13 @@ static Class _uiClass;
 
 -(void)dealloc {
     [[UAirship shared] removeObserver:self];
+    
+    RELEASE_SAFELY(defaultPushHandler);
     RELEASE_SAFELY(alias);
     RELEASE_SAFELY(tags);
     RELEASE_SAFELY(quietTime);
     RELEASE_SAFELY(tz);
+    
     [super dealloc];
 }
 
@@ -58,7 +70,17 @@ static Class _uiClass;
         }
         quietTime = [[defaults objectForKey:kQuietTime] retain];
         tz = [[defaults objectForKey:kTimeZone] retain];
-        badge = [defaults integerForKey:kBadge];
+        
+        //enable push by default
+        if ([defaults objectForKey:kEnabled]) {
+            pushEnabled = [defaults boolForKey:kEnabled];
+        } else {
+            pushEnabled = YES;
+        }
+        
+        //init with default delegate implementation
+        defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
+        self.delegate = defaultPushHandler;
 
         [[UAirship shared] addObserver:self];
     }
@@ -79,7 +101,47 @@ static Class _uiClass;
     return [[url.relativePath componentsSeparatedByString:@"/"] lastObject];
 }
 
-- (void)updateRegistrationInfo {
+- (void)updateRegistration {
+    
+    //if on, but not yet registered, re-register -- was likely just enabled
+    if (pushEnabled && [UAirship shared].deviceToken == nil) {
+        [self registerForRemoteNotificationTypes:notificationTypes];
+        
+    //if enabled, simply update existing device token
+    } else if (pushEnabled) {
+        [self registerDeviceToken:nil];
+        
+    // unregister token w/ UA
+    } else {
+        [[UAirship shared] unRegisterDeviceToken];
+    }
+}
+
+- (void)saveDefaults {
+    UALOG(@"Save user defaults, enabled: %d, alias: %@; tags: %@; quiettime: %@, tz: %@",
+          pushEnabled, alias, tags, quietTime, tz);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:pushEnabled forKey:kEnabled];
+    [defaults setObject:tags forKey:kTags];
+    [defaults setObject:alias forKey:kAlias];
+    [defaults setObject:quietTime forKey:kQuietTime];
+    [defaults setObject:tz forKey:kTimeZone];
+    [defaults synchronize];
+}
+
+#pragma mark -
+#pragma mark APNS wrapper
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
+    notificationTypes = types;
+    
+    if (pushEnabled) {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+    }
+}
+
+//The new token to register, or nil if updating the existing token
+- (void)registerDeviceToken:(NSData *)token {
+    
     NSMutableDictionary *body = [NSMutableDictionary dictionary];
     if (alias != nil) {
         [body setObject:alias forKey:@"alias"];
@@ -87,30 +149,34 @@ static Class _uiClass;
     if (tags != nil && tags.count != 0) {
         [body setObject:tags forKey:@"tags"];
     }
-    if (tz != nil && quietTime != nil) {
+    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
         [body setObject:tz forKey:@"tz"];
         [body setObject:quietTime forKey:@"quiettime"];
     }
-    [body setObject:[NSNumber numberWithInt:badge] forKey:@"badge"];
-    [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
-}
+    if (autobadgeEnabled) {
+        [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:@"badge"];
+    }
+    
+    if (token != nil) {
+		UALOG("Updating device token (%@) with: %@", token, body);
+        [[UAirship shared] registerDeviceToken:token withExtraInfo:body];
+    } else {
+		UALOG("Updating device existing token with: %@", body);
+        [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
+    }
 
-- (void)saveDefaults {
-    UALOG(@"save user defaults, alias: %@; tags: %@; badge: %d, quiettime: %@, tz: %@",
-          alias, tags, badge, quietTime, tz);
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:tags forKey:kTags];
-    [defaults setObject:alias forKey:kAlias];
-    [defaults setInteger:badge forKey:kBadge];
-    [defaults setObject:quietTime forKey:kQuietTime];
-    [defaults setObject:tz forKey:kTimeZone];
-    [defaults synchronize];
 }
 
 #pragma mark -
 #pragma mark UA Registration Observer methods
 
-- (void)registerDeviceTokenSucceed {
+- (void)registerDeviceTokenSucceeded {
+    UALOG(@"UAPush - Device Token Registration Succeeded");
+    [self saveDefaults];
+}
+
+- (void)unRegisterDeviceTokenSucceeded {
+    UALOG(@"UAPush - Device Token Unregistered Successfully");
     [self saveDefaults];
 }
 
@@ -133,53 +199,53 @@ static Class _uiClass;
             [tags addObject:tag];
         }
         [self saveDefaults];
-        [self notifyObservers:@selector(addTagToDeviceSucceed)];
+        [self notifyObservers:@selector(addTagToDeviceSucceeded)];
     }
 }
 
 - (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Using U/P: %@ / %@", request.username, request.password);
     [UAUtils requestWentWrong:request keyword:@"remove tag from current device"];
-    [self notifyObservers:@selector(addTagToDeviceFailed:) withObject:[request error]];
+    [self notifyObservers:@selector(removeTagFromDeviceFailed:) withObject:[request error]];
 }
 
 - (void)removeTagFromDeviceSucceed:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 204){
-        [self removeTagFromDeviceFailed:request];
-    } else {
-        UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
-        NSString *tag = [self getTagFromUrl:request.url];
-        [tags removeObject:tag];
-        [self saveDefaults];
-        [self notifyObservers:@selector(removeTagFromDeviceSucceed)];
+
+    switch (request.responseStatusCode) {
+        case 204://just removed
+        case 404://already removed
+            UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
+            NSString *tag = [self getTagFromUrl:request.url];
+            [tags removeObject:tag];
+            [self saveDefaults];
+            [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
+            break;
+        default:
+            [self removeTagFromDeviceFailed:request];
+            break;
     }
 }
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
-- (void)setAlias:(NSString *)value {
-    [value retain];
-    [alias release];
-    alias = value;
-    [self updateRegistrationInfo];
+- (void)updateAlias:(NSString *)value {
+    
+    self.alias = value;
+    [self updateRegistration];
+    
 }
 
-- (void)setTags:(NSMutableArray *)value {
-    [value retain];
-    [tags release];
-    tags = value;
-    [self updateRegistrationInfo];
-}
-
-- (void)setBadge:(int)value {
-    badge = value;
-    [self updateRegistrationInfo];
+- (void)updateTags:(NSMutableArray *)value {
+    
+    self.tags = value;
+    [self updateRegistration];
+    
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to || !timezone) {
-        UALOG(@"parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
+        UALOG(@"Set Quiet Time - parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
         return;
     }
 
@@ -187,13 +253,22 @@ static Class _uiClass;
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
                          [cal components:NSHourCalendarUnit fromDate:from].hour,
                          [cal components:NSMinuteCalendarUnit fromDate:from].minute];
+    
     NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
                        [cal components:NSHourCalendarUnit fromDate:to].hour,
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
-    self.quietTime = [NSDictionary dictionaryWithObjectsAndKeys:fromStr, @"start",
+    
+    self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                      fromStr, @"start",
                       toStr, @"end", nil];
+    
     self.tz = [timezone name];
-    [self updateRegistrationInfo];
+    [self updateRegistration];
+}
+
+- (void)disableQuietTime {
+    [self.quietTime removeAllObjects];
+    [self updateRegistration];
 }
 
 #pragma mark -
@@ -256,6 +331,111 @@ static Class _uiClass;
                                          fail:@selector(removeTagFromDeviceFailed:)];
 
     [request startAsynchronous];
+}
+
+- (void)enableAutobadge:(BOOL)autobadge {
+    autobadgeEnabled = autobadge;
+}
+
+- (void)setBadgeNumber:(NSInteger)badgeNumber {
+
+    if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
+        return;
+    }
+    
+    UALOG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
+    
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+    
+    // if the device token has already been set then
+    // we are post-registration and will need to make
+    // and update call
+    if (autobadgeEnabled && [UAirship shared].deviceToken) {
+        UALOG(@"Sending autobadge update to UA server");
+        [self updateRegistration];
+    }
+}
+
+- (void)resetBadge {
+    [self setBadgeNumber:0];
+}
+
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
+    
+    [[UAirship shared].analytics handleNotification:notification];
+    
+    if (state != UIApplicationStateActive) {
+        UALOG(@"Received a notification for an inactive application state.");
+        [delegate handleBackgroundNotification:notification];
+        return;
+    }
+    
+    // Please refer to the following Apple documentation for full details on handling the userInfo payloads
+	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
+	
+	if ([[notification allKeys] containsObject:@"aps"]) { 
+		
+        NSDictionary *apsDict = [notification objectForKey:@"aps"];
+        
+		if ([[apsDict allKeys] containsObject:@"alert"]) {
+
+			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]]) {
+                
+				// The alert is a single string message so we can display it
+                [delegate displayNotificationAlertMessage:[apsDict valueForKey:@"alert"]];
+
+			} else {
+				// The alert is a a dictionary with more details, let's just get the message without localization
+				// This should be customized to fit your message details or usage scenario
+				//message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
+				
+                [delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+			}
+			
+		}
+        
+        //badge
+        NSString *badgeNumber = [apsDict valueForKey:@"badge"];
+        if (badgeNumber) {
+            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+        }
+        
+        //sound
+        [delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+        
+	}//aps
+    
+    [delegate handleCustomPayload:notification];
+    
+}
+
++ (NSString *)pushTypeString:(UIRemoteNotificationType)types {
+    
+    //TODO: Localize
+    
+    //UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    
+    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
+    
+
+    //Use the same order as the Settings->Notifications panel
+    if (types & UIRemoteNotificationTypeBadge) {
+        [typeArray addObject:@"Badges"];
+    }
+    
+    if (types & UIRemoteNotificationTypeAlert) {
+        [typeArray addObject:@"Alerts"];
+    }
+    
+    if (types & UIRemoteNotificationTypeSound) {
+        [typeArray addObject:@"Sounds"];
+    }
+    
+    if ([typeArray count] > 0) {
+        return [typeArray componentsJoinedByString:@", "];
+    }
+    
+    return @"None";
 }
 
 @end

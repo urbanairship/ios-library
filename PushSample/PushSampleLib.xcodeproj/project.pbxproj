@@ -40,7 +40,21 @@
 		18C02A05124F244300D49CD5 /* libUAirship-1.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02973124F21B800D49CD5 /* libUAirship-1.0.3.a */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
+		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
+		1F7FD3A912F784E100317B96 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7FD3A812F784E100317B96 /* MessageUI.framework */; };
+		1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */; };
+		1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */; };
+		1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */; };
+		1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */; };
+		1F7FD5EF12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */; };
+		1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */; };
+		1F7FD61912F8E39900317B96 /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61512F8E39900317B96 /* cat.caf */; };
+		1F7FD61A12F8E39900317B96 /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61612F8E39900317B96 /* cow.caf */; };
+		1F7FD61B12F8E39900317B96 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
+		1F7FD61C12F8E39900317B96 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
+		1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -70,6 +84,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
+		};
+		1FC354FD130DE7E200A26179 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D5A4B9411300A8F200002F71 /* AirshipTest.app */;
+			remoteInfo = AirshipTest;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -118,7 +139,25 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* PushSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1F6DA58512F9F61E00496A5C /* UAPushNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushNotificationHandler.h; sourceTree = "<group>"; };
+		1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushNotificationHandler.m; sourceTree = "<group>"; };
+		1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		1F79711212DE3BFB00D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		1F7FD3A812F784E100317B96 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		1F7FD3F612F79AFF00317B96 /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
+		1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
+		1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsTagsViewController.xib; sourceTree = "<group>"; };
+		1F7FD45212F8956900317B96 /* UAPushSettingsAddTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsAddTagViewController.h; sourceTree = "<group>"; };
+		1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsAddTagViewController.m; sourceTree = "<group>"; };
+		1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsAddTagViewController.xib; sourceTree = "<group>"; };
+		1F7FD5EC12F8DE2200317B96 /* UAPushSettingsSoundsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsSoundsViewController.h; sourceTree = "<group>"; };
+		1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsSoundsViewController.m; sourceTree = "<group>"; };
+		1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsSoundsViewController.xib; sourceTree = "<group>"; };
+		1F7FD61512F8E39900317B96 /* cat.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cat.caf; sourceTree = "<group>"; };
+		1F7FD61612F8E39900317B96 /* cow.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cow.caf; sourceTree = "<group>"; };
+		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
+		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
+		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -151,6 +190,8 @@
 				636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */,
 				18A698BF129F679B00757214 /* Security.framework in Frameworks */,
 				D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */,
+				1F7FD3A912F784E100317B96 /* MessageUI.framework in Frameworks */,
+				1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,12 +247,20 @@
 				1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */,
 				1890BA081251B5E900E6EBF1 /* UAPushSettingsAliasViewController.h */,
 				1890BA091251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m */,
+				1F7FD45212F8956900317B96 /* UAPushSettingsAddTagViewController.h */,
+				1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */,
 				1890BA0A1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.h */,
 				1890BA0B1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m */,
 				1890BA0C1251B5E900E6EBF1 /* UAPushSettingsViewController.h */,
 				1890BA0D1251B5E900E6EBF1 /* UAPushSettingsViewController.m */,
 				1890BA0E1251B5E900E6EBF1 /* UAPushUI.h */,
 				1890BA0F1251B5E900E6EBF1 /* UAPushUI.m */,
+				1F7FD3F612F79AFF00317B96 /* UAPushSettingsTagsViewController.h */,
+				1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */,
+				1F7FD5EC12F8DE2200317B96 /* UAPushSettingsSoundsViewController.h */,
+				1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */,
+				1F6DA58512F9F61E00496A5C /* UAPushNotificationHandler.h */,
+				1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -227,6 +276,7 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */,
 				1890BA121251B5E900E6EBF1 /* bottom-detail.png */,
 				1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */,
 				1890BA141251B5E900E6EBF1 /* middle-detail.png */,
@@ -235,6 +285,9 @@
 				1890BA171251B5E900E6EBF1 /* top-detail@2x.png */,
 				1890BA181251B5E900E6EBF1 /* UAPushMoreSettingsView.xib */,
 				1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */,
+				1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */,
+				1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */,
+				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
 				1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */,
 				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 			);
@@ -313,6 +366,10 @@
 		18C02951124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F7FD61512F8E39900317B96 /* cat.caf */,
+				1F7FD61612F8E39900317B96 /* cow.caf */,
+				1F7FD61712F8E39900317B96 /* frog.caf */,
+				1F7FD61812F8E39900317B96 /* pig.caf */,
 				D5A3F63612C15644009731BE /* iTunesArtwork */,
 				D5C75CBD12BC242F0041239E /* Default@2x.png */,
 				D5C75CBE12BC242F0041239E /* Icon.png */,
@@ -327,6 +384,7 @@
 			isa = PBXGroup;
 			children = (
 				18C02973124F21B800D49CD5 /* libUAirship-1.0.3.a */,
+				1FC354FE130DE7E200A26179 /* AirshipTest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -368,6 +426,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */,
+				1F7FD3A812F784E100317B96 /* MessageUI.framework */,
 				18C02A08124F250000D49CD5 /* libsqlite3.dylib */,
 				0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */,
 				0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */,
@@ -420,6 +480,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
@@ -442,6 +503,13 @@
 			fileType = archive.ar;
 			path = "libUAirship-1.0.3.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1FC354FE130DE7E200A26179 /* AirshipTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = AirshipTest.app;
+			remoteRef = 1FC354FD130DE7E200A26179 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -477,6 +545,14 @@
 				D5A3F63512C15636009731BE /* Icon@2x.png in Resources */,
 				D5A3F63712C15644009731BE /* iTunesArtwork in Resources */,
 				1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */,
+				1F7FD3FA12F79AFF00317B96 /* UAPushSettingsTagsViewController.xib in Resources */,
+				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
+				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
+				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
+				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
+				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
+				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
+				1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,6 +601,10 @@
 				1890BAC01251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m in Sources */,
 				1890BAC11251B5E900E6EBF1 /* UAPushSettingsViewController.m in Sources */,
 				1890BAC21251B5E900E6EBF1 /* UAPushUI.m in Sources */,
+				1F7FD3F912F79AFF00317B96 /* UAPushSettingsTagsViewController.m in Sources */,
+				1F7FD45512F8956900317B96 /* UAPushSettingsAddTagViewController.m in Sources */,
+				1F7FD5EF12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m in Sources */,
+				1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +625,9 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -563,6 +646,8 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = PushSample;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -572,6 +657,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -587,6 +675,8 @@
 					"-all_load",
 				);
 				PRODUCT_NAME = PushSample;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -597,6 +687,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -611,6 +702,8 @@
 					"-all_load",
 				);
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -621,6 +714,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -635,6 +729,8 @@
 					"-all_load",
 				);
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

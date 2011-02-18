@@ -29,7 +29,29 @@
 #import "UAPush.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
+#import "UAPushSettingsTagsViewController.h"
+#import "UAPushSettingsSoundsViewController.h"
 
+enum {
+    SectionDeviceToken = 0,
+    SectionHelp        = 1,
+    SectionCount       = 2
+};
+
+enum {
+    DeviceTokenSectionTypesCell = 0,
+    DeviceTokenSectionDisabledTypesCell = 1,
+    DeviceTokenSectionTokenCell = 2,
+    DeviceTokenSectionAliasCell = 3,
+    DeviceTokenSectionTagsCell  = 4,
+    DeviceTokenSectionRowCount  = 5
+};
+
+enum {
+    HelpSectionSounds   = 0,
+    //HelpSectionLog = 1,
+    HelpSectionRowCount = 1
+};
 
 @implementation UAPushMoreSettingsViewController
 
@@ -38,8 +60,22 @@
 
 - (void)dealloc {
     [[UAirship shared] removeObserver:self];
-    [tableView release];
-    [footerImageView release];
+
+    RELEASE_SAFELY(deviceTokenCell);
+    RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenDisabledTypesCell);
+    RELEASE_SAFELY(deviceTokenAliasCell);
+    RELEASE_SAFELY(deviceTokenTagsCell);
+    RELEASE_SAFELY(helpSoundsCell);
+    RELEASE_SAFELY(helpLogCell);
+    
+    self.footerImageView = nil;
+    self.tableView = nil;
+    
+    RELEASE_SAFELY(tokenViewController);
+    RELEASE_SAFELY(aliasViewController);
+    RELEASE_SAFELY(tagsViewController);
+    
     [super dealloc];
 }
 
@@ -55,7 +91,7 @@
                                               action:nil]
                                              autorelease];
 
-    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc]
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc]
                                               initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                               target:self
                                               action:@selector(quit)]
@@ -69,6 +105,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    
+    [self updateCellValues];
+    
     [self.tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:animated];
 }
 
@@ -82,6 +121,16 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
+    
+    RELEASE_SAFELY(deviceTokenCell);
+    RELEASE_SAFELY(deviceTokenTypesCell);
+    RELEASE_SAFELY(deviceTokenDisabledTypesCell);
+    RELEASE_SAFELY(deviceTokenAliasCell);
+    RELEASE_SAFELY(deviceTokenTagsCell);
+    RELEASE_SAFELY(helpSoundsCell);
+    RELEASE_SAFELY(helpLogCell);
+    
+    
     self.footerImageView = nil;
     self.tableView = nil;
 }
@@ -89,23 +138,33 @@
 #pragma mark -
 
 - (void)initCells {
-    cell00 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell00"];
-    cell00.textLabel.text = @"Device Token";
-    cell00.detailTextLabel.text = [UAirship shared].deviceToken;
-    cell00.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    deviceTokenCell.textLabel.text = @"Device Token";
+    deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    deviceTokenTypesCell.textLabel.text = @"Notification Types";
 
-    cell01 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell01"];
-    cell01.textLabel.text = @"Device-token Alias";
-    cell01.detailTextLabel.text = [UAPush shared].alias;
-    cell01.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    deviceTokenDisabledTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    deviceTokenDisabledTypesCell.textLabel.text = @"Disabled Notification Types";
+    
+    deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    deviceTokenAliasCell.textLabel.text = @"Alias";
+    deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    deviceTokenTagsCell.textLabel.text = @"Tags";
+    deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    cell10 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell10"];
-    cell10.textLabel.text = @"Custom Notification Sounds";
-    cell10.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    helpSoundsCell.textLabel.text = @"Notification Sounds";
+    helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    cell11 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell11"];
-    cell11.textLabel.text = @"Device Log";
-    cell11.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    helpLogCell.textLabel.text = @"Device Log";
+    helpLogCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    [self updateCellValues];
 }
 
 - (void)quit {
@@ -116,57 +175,112 @@
 #pragma mark UITableViewDataSource Methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return SectionCount;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    switch (section) {
+        case SectionDeviceToken:
+            return DeviceTokenSectionRowCount;
+        case SectionHelp:
+            return HelpSectionRowCount;
+        default:
+            break;
+    }
+    return 0;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return section == 0 ? nil : @"Help";
+    
+    switch (section) {
+        case SectionDeviceToken:
+            return @"Token Settings";
+        case SectionHelp:
+            return @"Bundle Info";
+        default:
+            break;
+    }
+    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = nil;
-    if (indexPath.section == 0)
-        if (indexPath.row == 0) {
-            cell00.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-            cell = cell00;
+    if (indexPath.section == SectionDeviceToken) {
+        
+        switch (indexPath.row) {
+            case DeviceTokenSectionTokenCell:
+                cell = deviceTokenCell;
+                break;
+            case DeviceTokenSectionTypesCell:
+                cell = deviceTokenTypesCell;
+                break;
+            case DeviceTokenSectionDisabledTypesCell:
+                cell = deviceTokenDisabledTypesCell;
+                break;
+            case DeviceTokenSectionAliasCell:
+                cell = deviceTokenAliasCell;
+                break;
+            case DeviceTokenSectionTagsCell:
+                cell = deviceTokenTagsCell;
+                break;
+            default:
+                break;
         }
-        else {
-            cell01.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-            cell = cell01;
-        }
-    else
-        if (indexPath.row == 0)
-            cell = cell10;
-        else
-            cell = cell11;
+        
+    } else if (indexPath.section == SectionHelp) {
+
+        if (indexPath.row == HelpSectionSounds) {
+            cell = helpSoundsCell;
+        } 
+        
+    }
 
     return cell;
 }
 
 #pragma mark -
-#pragma mark UITableVieDelegate Methods
+#pragma mark UITableViewDelegate Methods
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == 0 ? 60 : 44;
+    return indexPath.section == 0 ? 55 : 44;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        if (indexPath.row == 0) {
-            if (!tokenViewController)
+    if (indexPath.section == SectionDeviceToken) {
+        if (indexPath.row == DeviceTokenSectionTokenCell) {
+            if (!tokenViewController) {
                 tokenViewController = [[UAPushSettingsTokenViewController alloc]
                                        initWithNibName:@"UAPushSettingsTokenView" bundle:nil];
+            }
             [self.navigationController pushViewController:tokenViewController animated:YES];
-        } else {
-            if (!aliasViewController)
+        } else if (indexPath.row == DeviceTokenSectionAliasCell) {
+            if (!aliasViewController) {
                 aliasViewController = [[UAPushSettingsAliasViewController alloc]
                                        initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
+            }
             [self.navigationController pushViewController:aliasViewController animated:YES];
+            
+        } else if (indexPath.row == DeviceTokenSectionTagsCell) {
+            if (!tagsViewController) {
+                tagsViewController = [[UAPushSettingsTagsViewController alloc] 
+                                      initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
+            }
+            [self.navigationController pushViewController:tagsViewController animated:YES];
+            
+        } else {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
+    } else if (indexPath.section == SectionHelp) {
+        if (indexPath.row == HelpSectionSounds) {
+
+            UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] 
+                                                                         initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil] autorelease];
+            [self.navigationController pushViewController:soundsViewController animated:YES];
+        } else {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        }
+
+
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
@@ -177,10 +291,31 @@
 #pragma mark UA Registration Observer methods
 
 - (void)registerDeviceTokenSucceed {
-    cell00.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-    cell01.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
-    [cell00 setNeedsLayout];
-    [cell01 setNeedsLayout];
+    
+    [self updateCellValues];
+    
+    [deviceTokenCell setNeedsLayout];
+    [deviceTokenTypesCell setNeedsLayout];
+    [deviceTokenDisabledTypesCell setNeedsLayout];
+    [deviceTokenAliasCell setNeedsLayout];
+    [deviceTokenTagsCell setNeedsLayout];
+}
+
+- (void)updateCellValues {
+    
+    deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
+    
+    UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
+    deviceTokenDisabledTypesCell.detailTextLabel.text = [UAPush pushTypeString:disabledTypes];
+    
+    deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
+    
+    if ([[UAPush shared].tags count] > 0) {
+        deviceTokenTagsCell.detailTextLabel.text = [[UAPush shared].tags componentsJoinedByString:@", "];
+    } else {
+        deviceTokenTagsCell.detailTextLabel.text = @"None";
+    }
 }
 
 @end

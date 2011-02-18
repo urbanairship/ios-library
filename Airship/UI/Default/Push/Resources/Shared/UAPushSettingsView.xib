@@ -12,8 +12,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="91"/>
+			<integer value="153"/>
 			<integer value="88"/>
+			<integer value="139"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -62,24 +63,24 @@
 							<object class="IBUILabel" id="195265211">
 								<reference key="NSNextResponder" ref="835749485"/>
 								<int key="NSvFlags">300</int>
-								<string key="NSFrame">{{9, 12}, {94, 21}}</string>
+								<string key="NSFrame">{{9, 12}, {175, 21}}</string>
 								<reference key="NSSuperview" ref="835749485"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">Enabled</string>
-								<object class="NSFont" key="IBUIFont">
+								<string key="IBUIText">Push Notifications</string>
+								<object class="NSFont" key="IBUIFont" id="515444074">
 									<string key="NSName">Helvetica-Bold</string>
 									<double key="NSSize">17</double>
 									<int key="NSfFlags">16</int>
 								</object>
-								<object class="NSColor" key="IBUITextColor">
+								<object class="NSColor" key="IBUITextColor" id="1025541101">
 									<int key="NSColorSpace">1</int>
 									<bytes key="NSRGB">MCAwIDAAA</bytes>
 								</object>
-								<object class="NSColor" key="IBUIHighlightedColor">
+								<object class="NSColor" key="IBUIHighlightedColor" id="678948376">
 									<int key="NSColorSpace">3</int>
 									<bytes key="NSWhite">MQA</bytes>
 								</object>
@@ -102,7 +103,7 @@
 				</object>
 				<string key="NSFrameSize">{320, 44}</string>
 				<reference key="NSSuperview"/>
-				<object class="NSColor" key="IBUIBackgroundColor">
+				<object class="NSColor" key="IBUIBackgroundColor" id="902722250">
 					<int key="NSColorSpace">1</int>
 					<bytes key="NSRGB">MSAxIDEAA</bytes>
 				</object>
@@ -110,6 +111,64 @@
 				<int key="IBUISeparatorStyle">1</int>
 				<int key="IBUISelectionStyle">0</int>
 				<reference key="IBUIContentView" ref="835749485"/>
+				<string key="IBUIReuseIdentifier">enabledCell</string>
+			</object>
+			<object class="IBUITableViewCell" id="66495271">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">292</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="IBUIView" id="558867577">
+						<reference key="NSNextResponder" ref="66495271"/>
+						<int key="NSvFlags">256</int>
+						<object class="NSMutableArray" key="NSSubviews">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBUISwitch" id="65603147">
+								<reference key="NSNextResponder" ref="558867577"/>
+								<int key="NSvFlags">297</int>
+								<string key="NSFrame">{{217, 9}, {94, 27}}</string>
+								<reference key="NSSuperview" ref="558867577"/>
+								<bool key="IBUIOpaque">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<int key="IBUIContentHorizontalAlignment">0</int>
+								<int key="IBUIContentVerticalAlignment">0</int>
+								<bool key="IBUIOn">YES</bool>
+							</object>
+							<object class="IBUILabel" id="331846153">
+								<reference key="NSNextResponder" ref="558867577"/>
+								<int key="NSvFlags">300</int>
+								<string key="NSFrame">{{9, 12}, {94, 21}}</string>
+								<reference key="NSSuperview" ref="558867577"/>
+								<bool key="IBUIOpaque">NO</bool>
+								<bool key="IBUIClipsSubviews">YES</bool>
+								<int key="IBUIContentMode">7</int>
+								<bool key="IBUIUserInteractionEnabled">NO</bool>
+								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+								<string key="IBUIText">Quiet Time</string>
+								<reference key="IBUIFont" ref="515444074"/>
+								<reference key="IBUITextColor" ref="1025541101"/>
+								<reference key="IBUIHighlightedColor" ref="678948376"/>
+								<int key="IBUIBaselineAdjustment">1</int>
+								<float key="IBUIMinimumFontSize">10</float>
+							</object>
+						</object>
+						<string key="NSFrameSize">{320, 44}</string>
+						<reference key="NSSuperview" ref="66495271"/>
+						<reference key="IBUIBackgroundColor" ref="71267356"/>
+						<bool key="IBUIOpaque">NO</bool>
+						<bool key="IBUIClipsSubviews">YES</bool>
+						<int key="IBUIContentMode">4</int>
+						<bool key="IBUIMultipleTouchEnabled">YES</bool>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+					</object>
+				</object>
+				<string key="NSFrameSize">{320, 44}</string>
+				<reference key="NSSuperview"/>
+				<reference key="IBUIBackgroundColor" ref="902722250"/>
+				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+				<int key="IBUISeparatorStyle">1</int>
+				<int key="IBUISelectionStyle">0</int>
+				<reference key="IBUIContentView" ref="558867577"/>
 				<string key="IBUIReuseIdentifier">enabledCell</string>
 			</object>
 			<object class="IBUIView" id="745700954">
@@ -248,14 +307,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">enabledCell</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="587186604"/>
-					</object>
-					<int key="connectionID">106</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">tableView</string>
 						<reference key="source" ref="372490531"/>
 						<reference key="destination" ref="307915983"/>
@@ -280,14 +331,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					<int key="connectionID">146</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">quietTimeSwitch</string>
-						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="505474370"/>
-					</object>
-					<int key="connectionID">147</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">pickerValueChanged:</string>
 						<reference key="source" ref="134988527"/>
@@ -295,6 +338,63 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 						<int key="IBEventType">13</int>
 					</object>
 					<int key="connectionID">148</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">switchValueChanged:</string>
+						<reference key="source" ref="65603147"/>
+						<reference key="destination" ref="372490531"/>
+						<int key="IBEventType">13</int>
+					</object>
+					<int key="connectionID">154</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">pushEnabledSwitch</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="505474370"/>
+					</object>
+					<int key="connectionID">155</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">quietTimeSwitch</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="65603147"/>
+					</object>
+					<int key="connectionID">156</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">pushEnabledCell</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="587186604"/>
+					</object>
+					<int key="connectionID">157</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">quietTimeEnabledCell</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="66495271"/>
+					</object>
+					<int key="connectionID">158</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">quietTimeLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="331846153"/>
+					</object>
+					<int key="connectionID">159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">pushEnabledLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="195265211"/>
+					</object>
+					<int key="connectionID">160</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -326,6 +426,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<reference ref="505474370"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Table View Cell (Push)</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">139</int>
@@ -360,6 +461,27 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 						<reference key="object" ref="195265211"/>
 						<reference key="parent" ref="587186604"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">151</int>
+						<reference key="object" ref="66495271"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="65603147"/>
+							<reference ref="331846153"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Table View Cell (QuietTime)</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">152</int>
+						<reference key="object" ref="65603147"/>
+						<reference key="parent" ref="66495271"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">153</int>
+						<reference key="object" ref="331846153"/>
+						<reference key="parent" ref="66495271"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -371,9 +493,16 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					<string>139.IBEditorWindowLastContentRect</string>
 					<string>139.IBPluginDependency</string>
 					<string>144.IBPluginDependency</string>
+					<string>144.IBViewBoundsToFrameTransform</string>
 					<string>145.IBPluginDependency</string>
+					<string>151.IBEditorWindowLastContentRect</string>
+					<string>151.IBPluginDependency</string>
+					<string>152.IBPluginDependency</string>
+					<string>152.IBViewBoundsToFrameTransform</string>
+					<string>153.IBPluginDependency</string>
 					<string>88.IBEditorWindowLastContentRect</string>
 					<string>88.IBPluginDependency</string>
+					<string>88.IBViewBoundsToFrameTransform</string>
 					<string>91.IBEditorWindowLastContentRect</string>
 					<string>91.IBPluginDependency</string>
 					<string>92.IBPluginDependency</string>
@@ -382,12 +511,25 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>UAPushSettingsViewController</string>
 					<string>UIResponder</string>
-					<string>{{142, 236}, {320, 480}}</string>
+					<string>{{324, 428}, {320, 480}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">AUNZAABBEAAAA</bytes>
+					</object>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-					<string>{{513, 751}, {320, 44}}</string>
+					<string>{{387, 658}, {320, 44}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">AUNZAABBEAAAA</bytes>
+					</object>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<string>{{724, 992}, {320, 44}}</string>
+					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAAAAAAAAwigAAA</bytes>
+					</object>
 					<string>{{834, -666}, {320, 216}}</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -409,7 +551,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">148</int>
+			<int key="maxID">160</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -461,7 +603,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>datePicker</string>
-							<string>enabledCell</string>
+							<string>pushEnabledCell</string>
+							<string>pushEnabledLabel</string>
+							<string>pushEnabledSwitch</string>
+							<string>quietTimeEnabledCell</string>
+							<string>quietTimeLabel</string>
 							<string>quietTimeSwitch</string>
 							<string>tableView</string>
 						</object>
@@ -469,6 +615,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>UIDatePicker</string>
 							<string>UITableViewCell</string>
+							<string>UILabel</string>
+							<string>UISwitch</string>
+							<string>UITableViewCell</string>
+							<string>UILabel</string>
 							<string>UISwitch</string>
 							<string>UITableView</string>
 						</object>
@@ -478,7 +628,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>datePicker</string>
-							<string>enabledCell</string>
+							<string>pushEnabledCell</string>
+							<string>pushEnabledLabel</string>
+							<string>pushEnabledSwitch</string>
+							<string>quietTimeEnabledCell</string>
+							<string>quietTimeLabel</string>
 							<string>quietTimeSwitch</string>
 							<string>tableView</string>
 						</object>
@@ -489,8 +643,24 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 								<string key="candidateClassName">UIDatePicker</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">enabledCell</string>
+								<string key="name">pushEnabledCell</string>
 								<string key="candidateClassName">UITableViewCell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">pushEnabledLabel</string>
+								<string key="candidateClassName">UILabel</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">pushEnabledSwitch</string>
+								<string key="candidateClassName">UISwitch</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">quietTimeEnabledCell</string>
+								<string key="candidateClassName">UITableViewCell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">quietTimeLabel</string>
+								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">quietTimeSwitch</string>

@@ -26,7 +26,6 @@
 #import "UAPushSettingsTokenViewController.h"
 #import "UAirship.h"
 
-
 @implementation UAPushSettingsTokenViewController
 
 @synthesize emailButton;
@@ -34,10 +33,10 @@
 @synthesize tokenLabel;
 
 - (void)dealloc {
-    [copyButton release];
-    [emailButton release];
-    [tokenLabel release];
-    [text release];
+    RELEASE_SAFELY(copyButton);
+    RELEASE_SAFELY(emailButton);
+    RELEASE_SAFELY(tokenLabel);
+    RELEASE_SAFELY(text);
     [super dealloc];
 }
 
@@ -46,9 +45,8 @@
 
     self.title = @"Device Token";
 
-    // TODO: get description from server
-    text = @"This is a very loooooooooooooooooooooooooooooooooooooooooooooooooo"
-           @"ooooooooooooooooooooooooooooooooooooooooooooooooooong description";
+    text = @"Your current device token. Test a push notification at "
+           @"https://go.urbanairship.com";
 
     tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
 }
@@ -90,10 +88,11 @@
     UIImageView *bgImageView = [[UIImageView alloc] initWithImage: stretchableBgImage];
 
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"description-cell"];
-    if (!cell)
+    if (!cell) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                        reuseIdentifier:@"description-cell"] autorelease];
-
+    }
+    
     UIFont *font = [UIFont systemFontOfSize: 17];
 
     UILabel* description = [[UILabel alloc] init];
@@ -117,6 +116,67 @@
     [bgImageView release];
 
     return cell;
+}
+
+#pragma mark -
+#pragma mark UI Button Actions
+- (IBAction)copyDeviceToken {
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = [UAirship shared].deviceToken;
+}
+
+- (IBAction)emailDeviceToken {
+
+    if ([MFMailComposeViewController canSendMail]) {
+		MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
+		mfViewController.mailComposeDelegate = self;
+        
+        
+        
+        NSString *messageBody = [NSString stringWithFormat:@"Your device token is %@\n\nSend a test push at http://go.urbanairship.com", [UAirship shared].deviceToken];
+        
+        [mfViewController setSubject:@"Device Token"];
+        [mfViewController setMessageBody:messageBody isHTML:NO];
+		
+		[self presentModalViewController:mfViewController animated:YES];
+		[mfViewController release];
+	}else {
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+		
+		[alert show];
+		[alert release];
+	}
+}
+
+#pragma mark -
+#pragma mark MFMailComposeViewControllerDelegate Methods
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message Status" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	
+	switch (result) {
+		case MFMailComposeResultCancelled:
+			//alert.message = @"Canceled";
+			break;
+		case MFMailComposeResultSaved:
+			//alert.message = @"Saved";
+			break;
+		case MFMailComposeResultSent:
+			alert.message = @"Sent";
+            [alert show];
+			break;
+		case MFMailComposeResultFailed:
+			//alert.message = @"Message Failed";
+			break;
+		default:
+			//alert.message = @"Message Not Sent";
+        break;	
+    }
+    
+	[self dismissModalViewControllerAnimated:YES];
+	
+
+	[alert release];
 }
 
 @end

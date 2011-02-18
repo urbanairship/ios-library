@@ -26,6 +26,21 @@
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPush.h"
 
+enum {
+    SectionDesc        = 0,
+    SectionAlias       = 1,
+    SectionCount       = 2
+};
+
+enum {
+    AliasSectionInputRow = 0,
+    AliasSectionRowCount = 1
+};
+
+enum {
+    DescSectionText   = 0,
+    DescSectionRowCount = 1
+};
 
 @implementation UAPushSettingsAliasViewController
 
@@ -36,11 +51,13 @@
 @synthesize aliasField;
 
 - (void)dealloc {
-    [tableView release];
-    [aliasCell release];
-    [textCell release];
-    [textLabel release];
-    [aliasField release];
+	
+    RELEASE_SAFELY(tableView);
+    RELEASE_SAFELY(aliasCell);
+    RELEASE_SAFELY(textCell);
+    RELEASE_SAFELY(textLabel);
+    RELEASE_SAFELY(aliasField);
+	
     [super dealloc];
 }
 
@@ -48,13 +65,10 @@
     [super viewDidLoad];
 
     self.title = @"Device Alias";
-
-    // TODO: get description from server
-    text = @"This is a another very loooooooooooooooooooooooooooooooooooooooooo"
-           @"ooooooooooooooooooooooooooooooooooooooooooooooooooong description";
-
+    
     aliasField.text = [UAPush shared].alias;
-    textLabel.text = text;
+    textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
+                     @"the process of sending notifications.";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -70,37 +84,48 @@
 
 #define kCellPaddingHeight 10
 
-// TODO: text?
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        return 44;
-    } else {
-        CGFloat height = [text sizeWithFont:textLabel.font
+    if (indexPath.section == SectionDesc) {
+        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:UILineBreakModeWordWrap].height;
         return height + kCellPaddingHeight * 2;
+    } else {
+        return 44;
     }
+
 }
 
 #pragma mark -
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    
+    switch (section) {
+        case SectionAlias:
+            return AliasSectionRowCount;
+        case SectionDesc:
+            return DescSectionRowCount;
+        default:
+            break;
+    }
+    
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return SectionCount;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0) {
-        aliasField.text = [UAPush shared].alias;
+    
+    if (indexPath.section == SectionAlias) {
         return aliasCell;
-    } else {
-        textLabel.text = text;
+    } else if (indexPath.section == SectionDesc) {
         return textCell;
     }
+    
+    return nil;
 }
 
 #pragma mark -
@@ -112,9 +137,19 @@
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-    NSString *newAlias = aliasField.text;
-    if ([newAlias length] != 0)
-        [UAPush shared].alias = newAlias;
+    
+	NSString *newAlias = aliasField.text;
+	
+	// Trim leading whitespace
+	NSRange range = [newAlias rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];
+	NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
+	
+    if ([result length] != 0) {
+        [[UAPush shared] updateAlias:result];
+    } else {
+		textField.text = nil;
+		[[UAPush shared] updateAlias:nil];
+	}
 }
 
 @end

@@ -31,6 +31,21 @@
 
 SINGLETON_IMPLEMENTATION(UAPushUI)
 
+@synthesize localizationBundle;
+
+- (id)init {
+	
+    if (self = [super init]) {
+        
+        NSString *path = [[[NSBundle mainBundle] resourcePath]
+                          stringByAppendingPathComponent:@"UAPushLocalization.bundle"];
+        
+        self.localizationBundle = [NSBundle bundleWithPath:path];
+    
+    }
+	return self;
+}
+
 - (UIViewController *)apnsSettingsViewController {
     if (_apnsSettingsViewController == nil) {
         UIViewController *root = [[[UAPushSettingsViewController alloc]
@@ -72,6 +87,7 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 }
 
 - (void)dealloc {
+    RELEASE_SAFELY(localizationBundle);
     [_apnsSettingsViewController release];
     [_tokenSettingsViewController release];
     [super dealloc];

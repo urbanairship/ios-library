@@ -25,23 +25,38 @@
 
 #import <UIKit/UIKit.h>
 
-
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource> {
     IBOutlet UITableView  *tableView;
-    IBOutlet UITableViewCell *enabledCell;
+    
+    IBOutlet UITableViewCell *pushEnabledCell;
+    IBOutlet UILabel *pushEnabledLabel;
+    IBOutlet UISwitch *pushEnabledSwitch;
+    
+    IBOutlet UITableViewCell *quietTimeEnabledCell;
+    IBOutlet UILabel *quietTimeLabel;
+    IBOutlet UISwitch *quietTimeSwitch;
     UITableViewCell *fromCell;
     UITableViewCell *toCell;
-    IBOutlet UISwitch *quietTimeSwitch;
+
     IBOutlet UIDatePicker *datePicker;
     CGRect pickerShownFrame, pickerHiddenFrame;
+    
+    BOOL dirty;
 }
 
 @property (nonatomic, retain)UITableView *tableView;
 @property (nonatomic, retain)UIDatePicker *datePicker;
+
+@property (nonatomic, retain)UITableViewCell *pushEnabledCell;
+@property (nonatomic, retain)UILabel *pushEnabledLabel;
+@property (nonatomic, retain)UISwitch *pushEnabledSwitch;
+
+@property (nonatomic, retain)UITableViewCell *quietTimeEnabledCell;
+@property (nonatomic, retain)UILabel *quietTimeLabel;
 @property (nonatomic, retain)UISwitch *quietTimeSwitch;
 @property (nonatomic, retain)UITableViewCell *fromCell;
 @property (nonatomic, retain)UITableViewCell *toCell;
-@property (nonatomic, retain)UITableViewCell *enabledCell;
+
 
 - (IBAction)quit;
 - (IBAction)pickerValueChanged:(id)sender;
@@ -50,5 +65,6 @@
 // Private Methods
 - (void)initViews;
 - (void)updateDatePicker:(BOOL)show;
+- (void)updateQuietTime;
 
 @end

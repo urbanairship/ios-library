@@ -31,18 +31,24 @@
     IBOutlet UITableView *tableView;
     IBOutlet UIImageView *footerImageView;
 
-    UITableViewCell *cell00;
-    UITableViewCell *cell01;
-    UITableViewCell *cell10;
-    UITableViewCell *cell11;
+    UITableViewCell *deviceTokenCell;
+    UITableViewCell *deviceTokenTypesCell;
+    UITableViewCell *deviceTokenDisabledTypesCell;
+    UITableViewCell *deviceTokenAliasCell;
+    UITableViewCell *deviceTokenTagsCell;
+    
+    UITableViewCell *helpSoundsCell;
+    UITableViewCell *helpLogCell;
 
     UIViewController *tokenViewController;
     UIViewController *aliasViewController;
+    UIViewController *tagsViewController;
 }
 
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) UIImageView *footerImageView;
 
 - (void)initCells;
+- (void)updateCellValues;
 
 @end

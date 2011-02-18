@@ -36,6 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 
+NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
@@ -96,12 +97,21 @@ BOOL releaseLogging = false;
     [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
     
-    //Read configuration information from AirshipConfig.plist
+    
+    // Load configuration
+    // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
+    // override any options defined in AirshipConfig.plist
+    NSMutableDictionary *config;
     NSString *configPath = [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"];
     
     if (configPath) {
-        
-        NSMutableDictionary *config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
+        config = [[[NSMutableDictionary alloc] initWithContentsOfFile:configPath] autorelease];
+        [config addEntriesFromDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfigKey]];
+    } else {
+        config = [NSMutableDictionary dictionaryWithDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfigKey]];
+    }
+
+    if ([config count] > 0) {
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
@@ -201,8 +211,7 @@ BOOL releaseLogging = false;
     
     //Send Startup Analytics Info
     //init first event
-    [_sharedAirship.analytics addEvent:[_sharedAirship.analytics buildStartupMetadataDictionary] withType:@"app_init"];
-    [_sharedAirship.analytics send];
+    [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
     
     //Handle custom options
     if (options != nil) {
@@ -221,6 +230,9 @@ BOOL releaseLogging = false;
 
 + (void)land {
 
+	// add app_exit event
+    [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
+	
     //Land the modular libaries first
     [NSClassFromString(@"UAInbox") land];
     [NSClassFromString(@"StoreFront") land];
@@ -302,6 +314,7 @@ BOOL releaseLogging = false;
         [self unRegisterDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token unregistered on Urban Airship successfully.");
+        self.deviceToken = nil;
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
 }
@@ -310,6 +323,7 @@ BOOL releaseLogging = false;
 #pragma mark UA Registration request methods
 
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
+	
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            server, @"/api/device_tokens/",
                            deviceToken];
@@ -344,6 +358,12 @@ BOOL releaseLogging = false;
 }
 
 - (void)unRegisterDeviceToken {
+    
+    if (deviceToken == nil) {
+        UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
+        return;
+    }
+    
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
                            server,
                            deviceToken];
@@ -361,8 +381,13 @@ BOOL releaseLogging = false;
 #pragma mark Callback for succeed register APN device token
 
 - (void)registerDeviceToken:(NSData *)token {
+	
     // succeed register APN device token, then register on UA server
     [self registerDeviceToken:token withExtraInfo:nil];
+    
+    // add device_registration event
+    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
+	
 }
 
 @end

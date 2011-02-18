@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_INTERFACE(AirshipVersion)
 
+extern NSString * const UAirshipTakeOffOptionsAirshipConfigKey;
 extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
 extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;

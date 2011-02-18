@@ -27,6 +27,7 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
+#define kEnabled @"UAPushEnabled"
 #define kAlias @"UAPushAlias"
 #define kTags @"UAPushTags"
 #define kBadge @"UAPushBadge"
@@ -34,6 +35,7 @@
 #define kTimeZone @"UAPushTimeZone"
 
 #define PUSH_UI_CLASS @"UAPushUI"
+#define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
 UA_VERSION_INTERFACE(UAPushVersion)
 
@@ -44,30 +46,50 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @protocol UAPushUIProtocol
 + (void)openApnsSettings:(UIViewController *)viewController
                    animated:(BOOL)animated;
-+ (void)openTokenSettings:(UIViewController *)viewController
++ (void)openTokenSettings:(UIViewController *)viewController //TODO: remove from lib - it's a demo feature
                    animated:(BOOL)animated;
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
-+ (void)closeTokenSettingsAnimated:(BOOL)animated;
++ (void)closeTokenSettingsAnimated:(BOOL)animated;//TODO: remove from lib - it's a demo feature
+@end
+
+/**
+ *
+ *
+ */
+@protocol UAPushNotificationDelegate
+- (void)displayNotificationAlertMessage:(NSString *)alertMessage;
+- (void)displayNotificationAlert:(NSDictionary *)alertDict;
+- (void)playNotificationSound:(NSString *)sound;
+- (void)handleCustomPayload:(NSDictionary *)data;
+- (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end
 
 
 /**
  * 
  */
-@interface UAPush : UAObservable <UARegistrationObserver> {
+@interface UAPush : UAObservable<UARegistrationObserver> {
+    
+    id<UAPushNotificationDelegate> delegate; /**< Push notification delegate. Handles incoming notifications */
+    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /**< A default implementation of the push notification delegate **/
+    
   @private
+    BOOL pushEnabled; /**< Push enabled flag. */
+    BOOL autobadgeEnabled;
+    UIRemoteNotificationType notificationTypes; /**< Requested notification types */
     NSString *alias; /**< Device token alias. */
     NSMutableArray *tags; /**< Device token tags */
-    NSInteger badge; /**< Current badge number. */ //TODO: verify comment
     NSMutableDictionary *quietTime; /**< Quiet time period. */
     NSString *tz; /**< Timezone, for quiet time */
 }
 
+@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
+@property (nonatomic, assign) BOOL pushEnabled;
 @property (nonatomic, retain) NSString *alias;
 @property (nonatomic, retain) NSMutableArray *tags;
 @property (nonatomic, retain) NSMutableDictionary *quietTime;
 @property (nonatomic, retain) NSString *tz;
-@property (nonatomic, assign) int badge;
+@property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -89,11 +111,29 @@ SINGLETON_INTERFACE(UAPush);
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;
 
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
+- (void)registerDeviceToken:(NSData *)token;
+- (void)updateRegistration;
+
 // Change tags for current device token
 - (void)addTagToCurrentDevice:(NSString *)tag;
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
+// Update (replace) token attributes
+- (void)updateAlias:(NSString *)value;
+- (void)updateTags:(NSMutableArray *)value;
+
 // Change quiet time for current device token, only take hh:mm into account
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
+- (void)disableQuietTime;
+
+- (void)enableAutobadge:(BOOL)enabled;
+- (void)setBadgeNumber:(NSInteger)badgeNumber;
+- (void)resetBadge;
+
+//Handle incoming push notifications
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
+
++ (NSString *)pushTypeString:(UIRemoteNotificationType)types;
 
 @end
