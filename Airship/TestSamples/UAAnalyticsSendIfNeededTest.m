@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2010 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -147,7 +147,7 @@
 
 - (void)resetLastSendTimeAndOldestEvent {
     RELEASE_SAFELY(lastSendTime);
-    RELEASE_SAFELY(oldestEvent);
+    oldestEventTime = 0;
 }
 
 - (void)initSessionMocked {
