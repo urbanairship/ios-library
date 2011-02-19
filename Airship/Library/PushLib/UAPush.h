@@ -57,10 +57,11 @@ UA_VERSION_INTERFACE(UAPushVersion)
  *
  */
 @protocol UAPushNotificationDelegate
-- (void)displayNotificationAlertMessage:(NSString *)alertMessage;
-- (void)displayNotificationAlert:(NSDictionary *)alertDict;
+- (void)displayNotificationAlert:(NSString *)alertMessage;
+- (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict;
 - (void)playNotificationSound:(NSString *)sound;
-- (void)handleCustomPayload:(NSDictionary *)data;
+- (void)handleCustomPayload:(NSDictionary *)notification :(NSDictionary *)customPayload;
+- (void)handleBadgeUpdate:(int)badgeNumber;
 - (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end
 

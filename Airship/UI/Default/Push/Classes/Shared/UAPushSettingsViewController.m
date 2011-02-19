@@ -28,8 +28,6 @@
 #import "UAPushUI.h"
 #import "UAPushSettingsViewController.h"
 
-
-
 enum {
     SectionPushEnabled = 0,
     SectionQuietTime   = 1,
@@ -212,8 +210,6 @@ enum {
         date1 = [formatter dateFromString:@"22:00"];//default start
         date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
     }
-    
-    UALOG(@"Start: %@ End %@", date1, date2);
 
     [formatter setLocale:[NSLocale currentLocale]];
     [formatter setDateStyle:NSDateFormatterNoStyle];
