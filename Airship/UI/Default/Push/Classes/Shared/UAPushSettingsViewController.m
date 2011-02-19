@@ -114,10 +114,6 @@ enum {
     //Hide the picker if it was left up last time
     [self updateDatePicker:NO];
     
-    //Reset the selection index
-    //NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
-    //[tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionTop];
-    
     [super viewWillAppear:animated];
 }
 
