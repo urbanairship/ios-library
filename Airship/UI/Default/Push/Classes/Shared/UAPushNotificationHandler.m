@@ -30,7 +30,7 @@
 
 @implementation UAPushNotificationHandler
 
-- (void)displayNotificationAlertMessage:(NSString *)alertMessage {
+- (void)displayNotificationAlert:(NSString *)alertMessage {
 	
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
                                                     message: alertMessage
@@ -41,7 +41,7 @@
 	[alert release];
 }
 
-- (void)displayNotificationAlert:(NSDictionary *)alertDict {
+- (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict {
 	
 	// The alert is a a dictionary with more details, let's just get the message without localization
 	// This should be customized to fit your message details or usage scenario
@@ -62,10 +62,10 @@
 
 - (void)playNotificationSound:(NSString *)sound {
     
-    UALOG(@"Received an alert with a sound: %@", sound);
-    
     if (sound) {
-        
+    
+		UALOG(@"Received an alert with a sound: %@", sound);
+		
         SystemSoundID soundID;
         NSString *path = [[NSBundle mainBundle] pathForResource:[sound stringByDeletingPathExtension] 
                                                          ofType:[sound pathExtension]];
@@ -82,12 +82,23 @@
 
 }
 
-- (void)handleCustomPayload:(NSDictionary *)data {
+- (void)handleBadgeUpdate:(int)badgeNumber {
+	UALOG(@"Received an alert with a new badge");
+	[[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+}
+
+- (void)handleCustomPayload:(NSDictionary *)notification :(NSDictionary *)customData {
     UALOG(@"Received an alert with a custom payload");
+	
+	// Do something with your customData JSON, then entire notification is also available
+	
 }
 
 - (void)handleBackgroundNotification:(NSDictionary *)notification {
     UALOG(@"The application resumed from a notification.");
+	
+	// Do something when launched from the background via a notification
+	
 }
 
 @end

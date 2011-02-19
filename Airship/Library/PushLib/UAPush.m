@@ -382,14 +382,12 @@ static Class _uiClass;
 			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]]) {
                 
 				// The alert is a single string message so we can display it
-                [delegate displayNotificationAlertMessage:[apsDict valueForKey:@"alert"]];
+                [delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
 
 			} else {
-				// The alert is a a dictionary with more details, let's just get the message without localization
+				// The alert is a a dictionary with more localization details
 				// This should be customized to fit your message details or usage scenario
-				//message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
-				
-                [delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [delegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
 			}
 			
 		}
@@ -397,16 +395,41 @@ static Class _uiClass;
         //badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
-            [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+			
+			if(autobadgeEnabled) {
+				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+			} else {
+				[delegate handleBadgeUpdate:[badgeNumber intValue]];
+			}
         }
-        
+		
         //sound
-        [delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+		NSString *soundName = [apsDict valueForKey:@"sound"];
+		if (soundName) {
+			[delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+		}
         
 	}//aps
     
-    [delegate handleCustomPayload:notification];
-    
+	// Now remove all the UA and Apple payload items
+	NSMutableDictionary *customPayload = [[notification mutableCopy] autorelease];
+	
+	if([[customPayload allKeys] containsObject:@"aps"]) {
+		[customPayload removeObjectForKey:@"aps"];
+	}
+	if([[customPayload allKeys] containsObject:@"_uamid"]) {
+		[customPayload removeObjectForKey:@"_uamid"];
+	}
+	if([[customPayload allKeys] containsObject:@"_"]) {
+		[customPayload removeObjectForKey:@"_"];
+	}
+	
+	// If any top level items remain, those are custom payload, pass it to the handler
+	// Note: There is come convenience built into this check, if for some reason there's a key collision
+	//	and we're stripping yours above, it's safe to remove this conditional
+	if([[customPayload allKeys] count] > 0) {
+		[delegate handleCustomPayload:notification :customPayload];
+    }
 }
 
 + (NSString *)pushTypeString:(UIRemoteNotificationType)types {
@@ -416,7 +439,6 @@ static Class _uiClass;
     //UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
     
     NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
-    
 
     //Use the same order as the Settings->Notifications panel
     if (types & UIRemoteNotificationTypeBadge) {

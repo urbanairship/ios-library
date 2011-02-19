@@ -69,13 +69,13 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     int estimateSize = [event getEstimatedSize];
     
     // Serialize the event data dictionary
-    NSError *err = nil;
-    NSData *serializedData = [NSPropertyListSerialization dataWithPropertyList:event.data 
-                                                                        format:NSPropertyListBinaryFormat_v1_0 
-                                                                       options:0 /* unused, Apple says set to 0 */ 
-                                                                         error:&err];
-    if (err) {
-        UALOG(@"Dictionary Serialization Error: %@", [[err userInfo] description]);
+    NSString *errString = nil;
+    NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
+                                                                        format:NSPropertyListBinaryFormat_v1_0
+                                                              errorDescription:&errString];
+    
+    if (errString) {
+        UALOG(@"Dictionary Serialization Error: %@", errString);
     }
     
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",

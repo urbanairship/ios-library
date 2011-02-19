@@ -28,8 +28,6 @@
 #import "UAPushUI.h"
 #import "UAPushSettingsViewController.h"
 
-
-
 enum {
     SectionPushEnabled = 0,
     SectionQuietTime   = 1,
@@ -109,6 +107,22 @@ enum {
     self.datePicker = nil;
 
     [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    //Hide the picker if it was left up last time
+    [self updateDatePicker:NO];
+    
+    [super viewWillAppear:animated];
+}
+
+- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    
+    //if shown, update picker and scroll offset
+    if (pickerDisplayed) {
+        [self updateDatePicker:YES];
+    }
 }
 
 #pragma mark -
@@ -212,8 +226,6 @@ enum {
         date1 = [formatter dateFromString:@"22:00"];//default start
         date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
     }
-    
-    UALOG(@"Start: %@ End %@", date1, date2);
 
     [formatter setLocale:[NSLocale currentLocale]];
     [formatter setDateStyle:NSDateFormatterNoStyle];
@@ -222,22 +234,52 @@ enum {
     toCell.detailTextLabel.text = [formatter stringFromDate:date2];
 
     NSDate *now = [[NSDate alloc] init];
-    [datePicker setDate:now animated:YES];
+    [datePicker setDate:now animated:NO];
     [now release];
 
-    CGRect screenBounds = [UIScreen mainScreen].bounds;
-    CGRect initBounds = datePicker.bounds;
-    CGFloat statusBarOffset = [UIApplication sharedApplication].statusBarHidden ? 0 : 20;
-    CGFloat navBarOffset = 0;
-    if (self.navigationController && self.navigationController.isNavigationBarHidden == NO) {
-        navBarOffset = 44;
-    }
-    pickerShownFrame = CGRectMake(0, screenBounds.size.height-initBounds.size.height-statusBarOffset-navBarOffset,
-                                  screenBounds.size.width, initBounds.size.height);
-    pickerHiddenFrame = CGRectMake(0, screenBounds.size.height-statusBarOffset-navBarOffset,
-                                   screenBounds.size.width, initBounds.size.height);
-    datePicker.frame = pickerHiddenFrame;
+    pickerDisplayed = NO;
+    pickerShownFrame = CGRectZero;
+    pickerHiddenFrame = CGRectZero;
+    
     [self.view setNeedsLayout];
+}
+
+- (void)updatePickerLayout {
+    
+    CGRect viewBounds = self.view.bounds;
+    
+IF_IOS4_OR_GREATER (
+    
+    //Manually set the size of the picker for better landscape experience
+    //Older  devies do not like the custom size. It breaks the picker.
+                    
+    //If the picker is in a portrait container, use std portrait picker dims
+    if (viewBounds.size.height >= viewBounds.size.width) {
+        datePicker.bounds = CGRectMake(0, 0, 320, 216);
+    } else {
+        datePicker.bounds = CGRectMake(0, 0, 480, 162);
+    }
+    
+    // reset picker subviews
+    for (UIView* subview in datePicker.subviews) {
+        subview.frame = datePicker.bounds;
+    }
+                    );
+    
+    // reset the visible/hidden views
+    int viewOffset = self.view.frame.origin.y;
+    CGRect pickerBounds = datePicker.bounds;
+    pickerShownFrame = CGRectMake(0, viewOffset+viewBounds.size.height-pickerBounds.size.height,
+                                  viewBounds.size.width, pickerBounds.size.height);
+    pickerHiddenFrame = CGRectMake(0, viewOffset+viewBounds.size.height,
+                                   viewBounds.size.width, pickerBounds.size.height);
+    
+    //reset actual frame
+    if (pickerDisplayed) {
+        datePicker.frame = pickerShownFrame;
+    } else {
+        datePicker.frame = pickerHiddenFrame;
+    }
 }
 
 - (IBAction)quit {
@@ -294,15 +336,35 @@ enum {
 }
 
 - (void)updateDatePicker:(BOOL)show {
+    
+    [self updatePickerLayout];
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
     if (show) {
+        [self.view addSubview:datePicker];
+        pickerDisplayed = YES;
         datePicker.frame = pickerShownFrame;
+        
+        //Scroll the table view so the "To" field is just above the top of the data picker
+        int scrollOffset = MAX(0, 
+                               toCell.frame.origin.y
+                               + toCell.frame.size.height
+                               + tableView.sectionFooterHeight
+                               - datePicker.frame.origin.y);
+        tableView.contentOffset = CGPointMake(0, scrollOffset);
     } else {
+        pickerDisplayed = NO;
+        tableView.contentOffset = CGPointZero;//reset scroll offset
         datePicker.frame = pickerHiddenFrame;
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:NO];
     }
     [UIView commitAnimations];
+    
+    //remove picker display after animation
+    if (!pickerDisplayed) {
+        [datePicker removeFromSuperview];
+    }
 
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateStyle:NSDateFormatterNoStyle];
