@@ -41,6 +41,7 @@
     IBOutlet UIDatePicker *datePicker;
     CGRect pickerShownFrame, pickerHiddenFrame;
     
+  @private
     BOOL dirty;
     BOOL pickerDisplayed;
 }
@@ -65,8 +66,9 @@
 
 // Private Methods
 - (void)initViews;
+- (void)updatePickerLayout;
 - (void)updateDatePicker:(BOOL)show;
 - (void)updateQuietTime;
-- (void)updatePickerLayout;
+
 
 @end

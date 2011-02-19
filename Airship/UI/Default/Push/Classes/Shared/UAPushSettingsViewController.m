@@ -112,6 +112,9 @@ enum {
 - (void)viewWillAppear:(BOOL)animated {
     
     //Hide the picker if it was left up last time
+    [self updateDatePicker:NO];
+    
+    //Reset the selection index
     NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
     [tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionTop];
     
@@ -119,8 +122,6 @@ enum {
 }
 
 - (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    
-    [self updatePickerLayout];
     
     //if shown, update picker and scroll offset
     if (pickerDisplayed) {
@@ -237,7 +238,7 @@ enum {
     toCell.detailTextLabel.text = [formatter stringFromDate:date2];
 
     NSDate *now = [[NSDate alloc] init];
-    [datePicker setDate:now animated:YES];
+    [datePicker setDate:now animated:NO];
     [now release];
 
     pickerDisplayed = NO;
@@ -333,9 +334,13 @@ enum {
 }
 
 - (void)updateDatePicker:(BOOL)show {
+    
+    [self updatePickerLayout];
+    
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
     if (show) {
+        [self.view addSubview:datePicker];
         pickerDisplayed = YES;
         datePicker.frame = pickerShownFrame;
         
@@ -347,13 +352,17 @@ enum {
                                - datePicker.frame.origin.y);
         tableView.contentOffset = CGPointMake(0, scrollOffset);
     } else {
-        
         pickerDisplayed = NO;
         tableView.contentOffset = CGPointZero;//reset scroll offset
         datePicker.frame = pickerHiddenFrame;
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:NO];
     }
     [UIView commitAnimations];
+    
+    //remove picker display after animation
+    if (!pickerDisplayed) {
+        [datePicker removeFromSuperview];
+    }
 
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
     [formatter setDateStyle:NSDateFormatterNoStyle];
