@@ -115,8 +115,8 @@ enum {
     [self updateDatePicker:NO];
     
     //Reset the selection index
-    NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
-    [tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionTop];
+    //NSIndexPath *path = [NSIndexPath indexPathForRow:0 inSection:0];
+    //[tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionTop];
     
     [super viewWillAppear:animated];
 }
@@ -252,7 +252,12 @@ enum {
     
     CGRect viewBounds = self.view.bounds;
     
-    //if the picker is in a portrait container, use std portrait picker dims
+IF_IOS4_OR_GREATER (
+    
+    //Manually set the size of the picker for better landscape experience
+    //Older  devies do not like the custom size. It breaks the picker.
+                    
+    //If the picker is in a portrait container, use std portrait picker dims
     if (viewBounds.size.height >= viewBounds.size.width) {
         datePicker.bounds = CGRectMake(0, 0, 320, 216);
     } else {
@@ -263,6 +268,7 @@ enum {
     for (UIView* subview in datePicker.subviews) {
         subview.frame = datePicker.bounds;
     }
+                    );
     
     // reset the visible/hidden views
     int viewOffset = self.view.frame.origin.y;

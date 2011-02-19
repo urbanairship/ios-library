@@ -538,14 +538,16 @@ IF_IOS4_OR_GREATER(
         NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
         
         if (serializedEventData) {
-            NSError *err = nil;
-            eventData = (NSDictionary *)[NSPropertyListSerialization 
-                                                propertyListWithData:serializedEventData                                                
-                                                options:NSPropertyListImmutable 
-                                                format:NULL /* an out param */
-                                                error:&err];
-            if (err) {
-                UALOG("Deserialization Error: %@", [err localizedDescription]);
+            
+            NSString *errString = nil;
+            
+            eventData = (NSDictionary *)[NSPropertyListSerialization
+                                         propertyListFromData:serializedEventData
+                                         mutabilityOption:NSPropertyListImmutable
+                                         format:NULL /* an out param */
+                                         errorDescription:&errString];
+            if (errString) {
+                UALOG("Deserialization Error: %@", errString);
             }
         }
         
