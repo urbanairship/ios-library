@@ -295,7 +295,13 @@
     NSUInteger i;
     for (i = 0; i < [sql length]; ++i) {
         if ([sql characterAtIndex:i] == '?') {
-            [argsArray addObject:va_arg(args, id)];
+            id arg = va_arg(args, id);
+            if (!arg) {
+                UALOG(@"Update failed. Attempted to insert a nil value into DB.");
+                [argsArray release];// clean up before bailing
+                return NO;
+            }
+            [argsArray addObject:arg];
         }
     }
 

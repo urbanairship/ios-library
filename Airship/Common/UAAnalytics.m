@@ -247,9 +247,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
-	
-	RELEASE_SAFELY(notificationUserInfo);
-	[session removeAllObjects];
+
+    RELEASE_SAFELY(notificationUserInfo);
+    [session removeAllObjects];
 }
 
 - (void)restoreFromDefault {
@@ -548,6 +548,7 @@ IF_IOS4_OR_GREATER(
                                          errorDescription:&errString];
             if (errString) {
                 UALOG("Deserialization Error: %@", errString);
+                [errString release];//must be relased by caller per docs
             }
         }
         
