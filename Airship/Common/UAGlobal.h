@@ -26,8 +26,8 @@
 #import <UIKit/UIKit.h>
 
 // ALog always displays output regardless of the DEBUG setting
-#define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define BLog(fmt, ...) \
+#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define UA_BLog(fmt, ...) \
     do { \
         if (releaseLogging) { \
             NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
@@ -36,13 +36,13 @@
 
 // DEBUG set in debug build setting's "Other C flags", as -DDEBUG
 #ifdef DEBUG
-#define DLog ALog
+#define UA_DLog UA_ALog
 #else
-#define DLog BLog
+#define UA_DLog UA_BLog
 extern BOOL releaseLogging; // Default is false
 #endif
 
-#define UALOG DLog
+#define UALOG UA_DLog
 
 // constants
 #define kAirshipProductionServer @"https://go.urbanairship.com"
