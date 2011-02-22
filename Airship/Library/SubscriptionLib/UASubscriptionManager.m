@@ -54,7 +54,9 @@ static Class _uiClass;
         _uiClass = NSClassFromString(SUBSCRIPTION_UI_CLASS);
     }
     
-    NSAssert(_uiClass != nil, @"Subscription UI class not found.");
+    if (_uiClass == nil) {
+        UALOG(@"Subscription UI class not found.");
+    }
 	
     return _uiClass;
 }

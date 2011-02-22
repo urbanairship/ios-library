@@ -89,7 +89,9 @@ static Class _uiClass;
         _uiClass = NSClassFromString(STOREFRONT_UI_CLASS);
     }
 
-    NSAssert(_uiClass != nil, @"StoreFront UI class not found.");
+    if (_uiClass == nil) {
+        UALOG(@"StoreFront UI class not found.");
+    }
     
     return _uiClass;
 }
