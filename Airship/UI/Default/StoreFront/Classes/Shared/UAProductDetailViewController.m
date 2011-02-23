@@ -232,7 +232,15 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (CGFloat) tableView: (UITableView *) tableView heightForRowAtIndexPath: (NSIndexPath *) indexPath {
     if([indexPath row] == 0) {
         UIFont *font = [UIFont systemFontOfSize: 16];
+        
+        // calculate the size of the text
+        // note: text cannot be nil as sizeWithFont
+        // returns a struct init'd w/ garbage
         NSString* text = product.productDescription;
+        if (text == nil) {
+            text = @"";
+        }
+        
         CGFloat height = [text sizeWithFont: font
                           constrainedToSize: CGSizeMake(280.0, 1500.0)
                               lineBreakMode: UILineBreakModeWordWrap].height;

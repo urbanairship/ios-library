@@ -52,7 +52,9 @@ static Class _uiClass;
         _uiClass = NSClassFromString(INBOX_UI_CLASS);
     }
     
-    NSAssert(_uiClass != nil, @"Inbox UI class not found.");
+    if (_uiClass == nil) {
+        UALOG(@"Inbox UI class not found.");
+    }
 	
     return _uiClass;
 }

@@ -76,6 +76,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
+        [errString release];//must be relased by caller per docs
     }
     
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",

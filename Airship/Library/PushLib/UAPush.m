@@ -94,6 +94,11 @@ static Class _uiClass;
     if (!_uiClass) {
         _uiClass = NSClassFromString(PUSH_UI_CLASS);
     }
+    
+    if (_uiClass == nil) {
+        UALOG(@"Push UI class not found.");
+    }
+    
     return _uiClass;
 }
 
