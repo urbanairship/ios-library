@@ -150,6 +150,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         if (self.alertDelegate != nil && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
             [self.alertDelegate showAlert:UASubscriptionAlertFailedTransaction for:nil];
         }
+    } else {
+        UALOG(@"Transaction Canceled (%@), product: %@", (int)transaction.error, transaction.payment.productIdentifier);
+        if (self.alertDelegate != nil && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
+            [self.alertDelegate showAlert:UASubscriptionAlertCanceledTransaction for:nil];
+        }
     }
 
     if (transaction)
