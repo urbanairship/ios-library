@@ -1,3 +1,8 @@
+1.5.4 - February 23, 2011
+- Added Analytics to all products and samples. Gathering basic device data and tracking app state
+to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.
+- Added cleaner exits and error handling for missing UI classes.
+
 1.5.3 - January 31, 2011
 - Updated copyrights
 - Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
