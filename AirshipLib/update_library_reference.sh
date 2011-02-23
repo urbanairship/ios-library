@@ -38,8 +38,14 @@ do
     sample_prj_name="$(basename "$sample_prj_root")"
     sample_prj_setting_file="$sample_prj_root/$sample_prj_name.xcodeproj/project.pbxproj"
     echo "update library reference in $sample_prj_setting_file"
-	if [[ -f "$sample_prj_setting_file" ]]; then
-    	sed "s/$lib_base_name[^ ]*\.${EXECUTABLE_EXTENSION}/$lib_name/g" "$sample_prj_setting_file" >"/tmp/$sample_prj_name.tmp"
-	    mv "/tmp/$sample_prj_name.tmp" "$sample_prj_setting_file"
-	fi
+    if [[ -f "$sample_prj_setting_file" ]]; then
+        sed -i ".bak" "s/$lib_base_name[^ ]*\.${EXECUTABLE_EXTENSION}/$lib_name/g" "$sample_prj_setting_file"
+        EXIT_CODE="${?}"
+        if [[ "${EXIT_CODE}" -eq 0 ]]; then
+            [[ -f "${sample_prj_setting_file}.bak" ]] && rm -f "${sample_prj_setting_file}.bak"
+        else
+            echo "sed failed with code: ${EXIT_CODE}"
+        fi
+    fi
 done
+
