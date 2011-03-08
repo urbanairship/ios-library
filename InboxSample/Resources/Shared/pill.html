@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+body { font-family: Helvetica; width: 320px; padding: 0; margin: 0; }
+img { margin: 0; padding: 0; }
+a { text-decoration: none; -webkit-tap-highlight-color:rgba(0,0,0,0); color: #0064be; }
+h2 { margin: 0; padding: 0; }
+div.info { min-height: 65px; float: left; font-size: 13px; padding-left: 5px; margin-top: 5px; }
+div.info p { margin: 0; }
+ul#pill_list { padding: 0; margin: 0; list-style-type: none; margin-top: -4px; }
+ul#pill_list > li { padding: 0; margin: 0; clear: both; border-bottom: 1px solid #a3c3df; position: relative; min-height: 70px; background: url(http://am.mtrichardson.com/pdemo/more_info.png) no-repeat 95% 20px; background-color: #fff; }
+ul#pill_list > li.active { background-color: #e9f4d7; }
+ul#pill_list > li.active a.checkbox { background: url(http://am.mtrichardson.com/pdemo/checkedbox.png) no-repeat 19px 15px !important; }
+ul#pill_list > li.expanded { background-image: url(http://am.mtrichardson.com/pdemo/main_divider.png), url(http://am.mtrichardson.com/pdemo/less_info.png); background-repeat: repeat-y, no-repeat; background-position: 50px 0, 95% 20px; }
+ul#pill_list > li.expanded a.checkbox { border: none !important; width: 51px !important; }
+ul#pill_list > li > img { float: left; padding-top: 5px; }
+ul#pill_list div.more { display: none; }
+a.checkbox { display: block; float: left; height: 62px; width: 50px; border-right: 1px solid #e3edf5; background: url(http://am.mtrichardson.com/pdemo/checkbox.png) no-repeat 19px 20px; }
+#more_information { background-color: #f0f6fb; padding: 15px; }
+div.more { padding-left: 71px; margin-top: 10px; padding-bottom: 20px; clear: both; }
+</style>
+</head>
+<body>
+<img src="http://am.mtrichardson.com/pdemo/header.png" style="height: 83px;" />
+<ul id="pill_list">
+<li id="pill1">
+    <a href="#" class="checkbox"></a>
+    <img src="http://am.mtrichardson.com/pdemo/telmis.png">
+    <div class="info">
+        <h2>Telmisartan</h2>
+        <p>One 40mg tablet</p>
+        <p>Take with food</p>
+    </div>
+    <div class="more">
+        <strong>About Telmisartan</strong>
+        <p>Telmisartan is an Angiotensin Receptor Blocker (ARB) that shows high affinity for the angiotensin II type 1 (AT1) receptors, has a long duration of action, and has the longest half-life of any ARB.</p>
+        <ul>
+        <li>Used for the management of hypertension</li>
+        <li>Do not use during the last six months of pregnancy</li>
+        <li>You may experience dizziness, lightheadedness, blurred vision, or back pain as your body adjusts to the medication.</li>
+        </ul>
+    </div>
+</li>
+<li id="pill2">
+    <a href="#" class="checkbox"></a>
+    <img src="http://am.mtrichardson.com/pdemo/omep.png">
+    <div class="info">
+        <h2>Omeprazole</h2>
+        <p>One 20mg tablet</p>
+        <p>Take with water</p>
+    </div>
+    <div class="more">
+        <strong>About Omeprazole</strong>
+        <p>Each packet contains either 2.8 mg or 11.2 mg of omeprazole magnesium (equivalent to 2.5 mg or 10 mg of omeprazole), in the form of enteric-coated granules.</p>
+        <ul>
+        <li>Omeprazole is used to treat symptoms of gastroesophageal reflux disease (GERD) and other conditions caused by excess stomach acid.</li>
+        <li>Not for immediate relief of heartburn symptoms.</li>
+        <li>Heartburn is often confused with the first symptoms of a heart attack. Seek emergency medical attention if you have chest pain or heavy feeling, dizziness, pain spreading to the arm or shoulder, sweating, nausea or vomiting, and a general ill feeling.</li>
+        </ul>
+    </div>
+</li>
+<li id="pill3">
+    <a href="#" class="checkbox"></a>
+    <img src="http://am.mtrichardson.com/pdemo/reglet.png">
+    <div class="info">
+        <h2>Regletin</h2>
+        <p>Two 30mg tablets</p>
+        <p>Take with water</p>
+    </div>
+    <div class="more">
+        <strong>About Regletin</strong>
+        <p>Regletin is a non-selective beta-blocker used in the treatment of hypertension, edema, ventricular tachycardias, and atrial fibrillation.</p>
+        <ul>
+        <li>One of the adrenergic beta-antagonists used as an antihypertensive, anti-anginal, and anti-arrhythmic agent.</li>
+        <li>Has been used as the hydrochloride in the treatment of cardiac arrhythmias</li>
+        </ul>
+    </div>
+</li>
+</ul>
+<div id="more_information">
+<strong>Some Important Information</strong>
+<p>Be sure to take only the medicine prescribed by your doctor and in the instructed methods.  Do not take expired medicine.  Your medicine is for your use only.</p>
+<ul>
+<li>Get in touch with your doctor immediately if you experience any abnormal side effects.</li>
+<li>If you run low on medicine, please refill your prescription immediately.  You can do this online at <a href="#">your XYZ Medication Alerts account.</a></li>
+</ul>
+<p>For all your medication notes and information, <a href="#">log in to your XYZ Medication Alerts account.</a></p>
+</div>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#pill_list > li").click(function(e) {
+        e.preventDefault();
+        $(this).children(".more").toggle();
+        $(this).toggleClass("expanded");
+    })
+    $("a.checkbox").click(function(e) {
+        e.preventDefault();
+        $(this).parent().toggleClass("active");
+        e.stopPropagation();
+    })
+})
+</script>
+</body>
+</html>

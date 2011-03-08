@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <style type="text/css">
+    body {padding: 0; margin: 0; background-color: #fcecd7; font: 12px/18px 'Helvetica Neue', Helvetica; color: #7b7369;}
+    a {text-decoration: none; -webkit-tap-highlight-color:rgba(0,0,0,0);}
+    img {margin: 0; padding: 0;}
+    p {margin: 0; padding: 0;}
+
+    #header {padding: 0 15px 50px; background: url(http://urbanairship.com/am_demo/coupon_images/coupon_header_bg.jpg); font-size: 14px; color: #fcecd7; text-shadow: rgba(0, 0, 0, .5) 0 1px 0;}
+    #header h1 {height: 75px; margin: 0; padding: 0; text-indent: -999em;}
+    #header h2 {margin: 0 0 5px; padding: 0; font-size: 16px; line-height: 22px;}
+    #header p {margin: 0; padding: 0;}
+
+    #nav {height: 37px; margin: -30px 0 0; padding: 0; background: url(http://urbanairship.com/am_demo/coupon_images/coupon_tabs.png) no-repeat; list-style: none;}
+    #nav:after {content: "."; display: block; height: 0; clear: both; visibility: hidden;}
+    #nav.toggled {background-position: 0 -37px;}
+    #nav li {height: 30px; float: left; text-indent: -999em;}
+    #nav li#nav-coupon {width: 82px; margin-left: 55px;}
+    #nav li#nav-map {width: 131px; margin-left: 3px;}
+    
+    #coupon {padding: 20px 17px; font-size: 11px; line-height: 16px;}
+    #coupon p {padding: 0 6px;}
+    
+    #map {padding: 0 0 20px; display: none;}
+    #map_canvas {height: 250px; margin: 15px 15px 5px; border: 1px solid #b19d80;}
+    #searchresults {height: 250px; width: 300px; border: 1px solid black; display: none;}
+    #open_in_maps {font-family: Georgia; font-style: italic; text-align: center;}
+    #open_in_maps a {color: #51392e; text-decoration: underline;}
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>Stumptown Coffee Roasters</h1>
+    <h2>$1 Off Any Classic Espresso Drink</h2>
+    <p><strong>Good today (Mar. 22) only</strong>, show the coupon below to any barista and instantly save $1 on your order.</p>
+  </div>
+  <ul id="nav">
+    <li id="nav-coupon">Coupon</li>
+    <li id="nav-map">Nearest Coffee</li>
+  </ul>
+  <div id="coupon">
+    <img src="http://urbanairship.com/am_demo/coupon_images/coupon_content.png" width="286" height="309">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+  <div id="map">
+    <div id="map_canvas"></div>
+    <p id="open_in_maps"><a href="#">Open in Maps</a></p>
+    <div id="searchresults"></div>
+  </div>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  <script type="text/javascript">
+    // for desktop testing in Safari with no chrome elements
+    window.resizeTo(335,504);
+    google.load("search", "1");
+    $(document).ready(function() {
+      function noLocation() {
+        alert('Could not find your location, sorry!');
+      }
+      $('#map').hide();
+      $('#nav-map').click(function(event) {
+        event.preventDefault();
+        if (!$('#nav').hasClass('toggled')) {
+          $('#nav').addClass('toggled');
+          $('#coupon').toggle();
+          $('#map').toggle();
+          google.maps.event.trigger(map, 'resize');
+          navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
+        }
+      });
+      $('#nav-coupon').click(function(event) {
+        event.preventDefault();
+        if ($('#nav').hasClass('toggled')) {
+          $('#nav').removeClass('toggled');
+          $('#coupon').toggle();
+          $('#map').toggle();
+        }
+      });
+      
+      // $("a#map_click").click(function(e) {
+      //   e.preventDefault();
+      //   $("#nav").css("background-position", "-320px 0");
+      //   $("#coupon").hide();
+      //   $("#map_area").show();
+      //   google.maps.event.trigger(map, 'resize');
+      //   navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
+      //   // foundLocation({"coords": {"latitude": 45.525848, "longitude": -122.694583}})
+      // })
+      // $("a#click_back").click(function(e) {
+      //   e.preventDefault();
+      //   $("#nav").css("background-position", "0 0");
+      //   $("#map_area").hide();
+      //   $("#coupon").show();
+      // })
+      var lat = 45.525848;
+      var lng = -122.694583;
+      var latlng = new google.maps.LatLng(lat, lng);
+      var defaultOptions = {
+        zoom: 14,
+        center: latlng,
+        disableDefaultUI: true,
+        draggable: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
+      var map = new google.maps.Map(document.getElementById("map_canvas"), defaultOptions);
+      var marker_list = [];
+      function foundLocation(position) {
+        for (var x=0; x<marker_list.length; x++) {
+          var m = marker_list[x];
+          m.setMap();
+        }
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        var latlng = new google.maps.LatLng(lat, lng);
+        map.setCenter(latlng);
+        var marker = new google.maps.Marker({
+          position: latlng,
+          map: map,
+          title: "You"
+        })
+        marker.setIcon("http://urbanairship.com/am_demo/blue.png");
+        marker_list.push(marker);
+        var searchControl = new google.search.SearchControl();
+        var localSearch = new google.search.LocalSearch();
+        searchControl.addSearcher(localSearch);
+        localSearch.setCenterPoint(latlng);
+        searchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+        searchControl.draw(document.getElementById("searchresults"));
+        function gotResults(sc, searcher) {
+          for (var i=0; i<searcher.results.length; i++) {
+            var result = searcher.results[i];
+            var latlng = new google.maps.LatLng(result.lat, result.lng);
+            var marker = new google.maps.Marker({
+              position: latlng,
+              map: map
+            })
+            marker.setIcon("http://urbanairship.com/am_demo/red.png");
+            marker_list.push(marker);
+          }
+        }
+        $("#open_in_maps a").attr("href", "http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=starbucks&sll=" + lat + "," + lng + "&sspn=0.012853,0.033023&ie=UTF8&z=16");
+        searchControl.setSearchCompleteCallback(this, gotResults);
+        searchControl.execute("starbucks");
+      }
+    });
+  </script>
+</body>
+</html>

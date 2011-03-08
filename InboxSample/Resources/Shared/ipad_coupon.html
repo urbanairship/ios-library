@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+  <style type="text/css">
+
+    body {padding: 0; margin: 0; background: #fcecd7 url(images/ipad_coupon_bg_content.png) repeat-y 321px 0; font: 12px/18px Helvetica; color: #7b7369;}
+    a {text-decoration: none; -webkit-tap-highlight-color:rgba(0,0,0,0);}
+    img {margin: 0; padding: 0;}
+    p {margin: 0; padding: 0;}
+
+    #header {height: 164px; background: url(images/ipad_coupon_bg_header.jpg); text-align: center;}
+    #header h1 {width: 352px; height: 103px; margin: 0 auto; padding: 36px 0 0;}
+    #header h1 a {width: 352px; height: 103px; margin: 0; padding: 0; display: block; text-indent: -999em; overflow: hidden; background: url(images/ipad_coupon_logo.png);}
+
+    #content {padding-left: 322px; font-size: 16px; line-height: 20px; font-family: Georgia; font-style: italic; color: #3a260e;}
+    #content:after {}
+    
+    #coupon {width: 286px; margin: 0 0 0 -322px; padding: 0 18px 20px; float: left;}
+    #coupon h2 {height: 36px; margin: 0 -18px 20px; text-indent: -999em; overflow: hidden; background: url(images/ipad_coupon_coupon_tab.png) no-repeat top left;}
+    #coupon p {padding: 15px 6px; border-top: 1px solid #b0a596; text-align: center;}
+    #coupon #price {padding-bottom: 20px; border-top: none;}
+    #coupon #price strong {width: 262px; height: 87px; margin: 0 auto; display: block; text-indent: -999em; overflow: hidden; background: url(images/ipad_coupon_big_price.png) no-repeat top left;}
+    #coupon .sosumi {font: normal 11px/15px Helvetica; color: #7b7369; text-align: left;}
+    
+    #map {padding: 0 18px 20px; font-size: 13px;}
+    #map h2 {height: 36px; margin: 0 -18px 20px; text-indent: -999em; overflow: hidden; background: url(images/ipad_coupon_map_tab.png) no-repeat top left;}
+    
+    #map_canvas {height: 400px; margin: 15px 0 5px; border: 1px solid #b19d80;}
+    #searchresults {height: 250px; width: 300px; border: 1px solid black; display: none;}
+    #open_in_maps {font-family: Georgia; font-style: italic; text-align: center;}
+    #open_in_maps a {color: #51392e; text-decoration: underline;}
+  </style>
+</head>
+<body>
+  <!-- <script type="text/javascript">
+  var admob_vars = {
+    pubid: 'a14b5780c674a0b',
+    bgcolor: '7F90AA',
+    text: 'FFFFFF',
+    test: false
+  };
+  </script>
+  <script type="text/javascript" src="http://mm.admob.com/static/iphone/iadmob.js"></script> -->
+  <div id="header">
+    <h1><a href="http://stumptowncoffee.com/">Stumptown Coffee Roasters</a></h1>
+  </div>
+  <div id="content">
+    <div id="coupon">
+      <h2>Coupon</h2>
+      <p id="price"><strong>$1 off</strong></p>
+      <p>Good for any qualifying classic espresso drink purchased at any Stumptown location on April 16.</p>
+      <p><img src="images/ipad_coupon_bar_code.png" width="167" height="74" alt="Bar Code"></p>
+      <p class="sosumi">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    </div>
+    <div id="map">
+      <h2>Nearest Coffee</h2>
+      <div id="map_canvas"></div>
+      <p id="open_in_maps"><a href="#">Open in Maps</a></p>
+      <div id="searchresults"></div>
+    </div>
+  </div>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  <script type="text/javascript">
+    google.load("search", "1");
+    $(document).ready(function() {
+      window.resizeTo(783,1048);
+      // load the maps
+      navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
+      // set up the maps
+      var lat = 45.525848;
+      var lng = -122.694583;
+      var latlng = new google.maps.LatLng(lat, lng);
+      var defaultOptions = {
+        zoom: 14,
+        center: latlng,
+        disableDefaultUI: true,
+        draggable: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
+      var map = new google.maps.Map(document.getElementById("map_canvas"), defaultOptions);
+      var marker_list = [];
+      function foundLocation(position) {
+        for (var x=0; x<marker_list.length; x++) {
+          var m = marker_list[x];
+          m.setMap();
+        }
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        var latlng = new google.maps.LatLng(lat, lng);
+        map.setCenter(latlng);
+        var marker = new google.maps.Marker({
+          position: latlng,
+          map: map,
+          title: "You"
+        })
+        marker.setIcon("http://am.mtrichardson.com/blue.png");
+        marker_list.push(marker);
+        var searchControl = new google.search.SearchControl();
+        var localSearch = new google.search.LocalSearch();
+        searchControl.addSearcher(localSearch);
+        localSearch.setCenterPoint(latlng);
+        searchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+        searchControl.draw(document.getElementById("searchresults"));
+        function gotResults(sc, searcher) {
+          for (var i=0; i<searcher.results.length; i++) {
+            var result = searcher.results[i];
+            var latlng = new google.maps.LatLng(result.lat, result.lng);
+            var marker = new google.maps.Marker({
+              position: latlng,
+              map: map
+            })
+            marker.setIcon("http://am.mtrichardson.com/sbdemo/red.png");
+            marker_list.push(marker);
+          }
+        }
+        $("#open_in_maps a").attr("href", "http://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&q=starbucks&sll=" + lat + "," + lng + "&sspn=0.012853,0.033023&ie=UTF8&z=16");
+        searchControl.setSearchCompleteCallback(this, gotResults);
+        searchControl.execute("coffee");
+      }
+      function noLocation() {
+        alert('Could not find your location, sorry!');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+body { font-family: Helvetica; width: 320px; padding: 0; margin: 0; background-color: #dbe0e4; }
+img { margin: 0; padding: 0; }
+a { text-decoration: none; }
+h2 { font-size: 21px; text-transform: uppercase; color: #1a6ec7; text-align: center; }
+ul#vote_list { padding: 0; margin: 0; list-style-type: none; margin-top: -4px; width: 300px; margin: auto; }
+ul#vote_list > li { padding: 0; margin: 0; clear: both; height: 76px; border: 1px solid #b6babd; -webkit-border-radius: 5px; margin-bottom: 10px; background: url(http://am.mtrichardson.com/aidemo/choice_bg.png) repeat-x 0 0; display: block; }
+div.more { float: left; margin-left: 250px; height: 62px; }
+#movie_container { width: 300px; margin: auto; color: #595b5c; text-align: center; font-size: 11px; margin-top: 4px; }
+a#submit_button { width: 300px; margin: auto; display: block; background: url(http://am.mtrichardson.com/aidemo/vote_button.png) no-repeat 0 0; height: 44px; margin-bottom: 10px; }
+ul#vote_list li  a { height: 56px; padding: 10px; width: 280px; display: block; }
+ul#vote_list span { margin-left: 85px; display: block; color: #464646; font-size: 13px; margin-top: 5px; }
+ul#vote_list strong { color: #000; font-size: 15px; }
+#choice_1 a { background: url(http://am.mtrichardson.com/aidemo/top_choice.png) no-repeat 13px 10px; }
+#choice_2 a { background: url(http://am.mtrichardson.com/aidemo/middle_choice.png) no-repeat 13px 10px; }
+#choice_3 a { background: url(http://am.mtrichardson.com/aidemo/bottom_choice.png) no-repeat 13px 10px; }
+.active { background-position: 0 -76px !important; border-color: #0076a2 !important; }
+.active span { color: #cae9f1 !important; }
+.active strong { color: #fff !important; }
+#submit_button:active { background-position: 0 -44px; }
+</style>
+</head>
+<body>
+<img src="http://am.mtrichardson.com/aidemo/header.png" style="height: 292px;">
+<div id="movie_container">
+<object width="300" height="243"><param name="movie" value="http://www.youtube.com/v/Hcg3IZPPyhc&hl=en_US&fs=1&"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Hcg3IZPPyhc&hl=en_US&fs=1&" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="300" height="243"></embed></object>
+<small>This movie is on YouTube and lasts 4 minutes.</small>
+</div>
+<h2>Choose Your Favorite</h2>
+<ul id="vote_list">
+<li id="choice_1">
+<a href="#">
+<span>
+<strong>Danny Gokey</strong><br />
+28 years old<br />
+Milwaukee, WI
+</span>
+</a>
+</li>
+<li id="choice_2">
+<a href="#">
+<span>
+<strong>Adam Lambert</strong><br />
+26 years old<br />
+Los Angeles, CA
+</span>
+</a>
+</li>
+<li id="choice_3">
+<a href="#">
+<span>
+<strong>Kris Allen</strong><br />
+23 years old<br />
+Conway, AR
+</span>
+</a>
+</li>
+</ul>
+<a href="#" id="submit_button"></a>
+<h2 style="display: none;" id="thanks">Thanks for voting!</h2>
+<img src="http://am.mtrichardson.com/aidemo/ad.png">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    function link_changes(e) {
+        e.preventDefault();
+        $("li").removeClass("active");
+        $(this).parent().addClass("active");
+    }
+    $("li a").click(link_changes)
+    $("#submit_button").click(function(e) {
+        e.preventDefault();
+        $(this).hide();
+        $("#thanks").show();
+        $("li a").unbind("click", link_changes);
+        $("li a").click(function(e) {
+            e.preventDefault();
+        })
+    })
+})
+</script>
+</body>
+</html>
