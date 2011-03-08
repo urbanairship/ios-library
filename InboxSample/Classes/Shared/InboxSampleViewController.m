@@ -32,8 +32,23 @@
 
 @synthesize version;
 
--(IBAction)mail:(id)sender {
+- (IBAction)mail:(id)sender {
 	[UAInbox displayInbox:self animated:YES];	
+}
+
+- (IBAction)sendRichPush:(id)sender {
+	
+	if(!richPushSender)
+		richPushSender = [RichPushSender new];
+		
+	UIActionSheet *richPushSheet = [[[UIActionSheet new] initWithTitle:@"Select a Rich Push Demo" delegate:richPushSender 
+													 cancelButtonTitle:@"Cancel" 
+												destructiveButtonTitle:nil otherButtonTitles:nil] autorelease];
+	
+	[richPushSheet addButtonWithTitle:@"Button one"];
+	[richPushSheet addButtonWithTitle:@"Button two"];
+	
+	[richPushSheet showInView:self.view];
 }
 
 - (void)viewDidLoad {
@@ -51,6 +66,7 @@
 
 - (void)dealloc {
     RELEASE_SAFELY(version);
+	RELEASE_SAFELY(richPushSender);
     [super dealloc];
 }
 

@@ -1,7 +1,8 @@
 {
+	"AIRSHIP_SERVER" = "https://sgc.urbanairship.com";
 	"APP_STORE_OR_AD_HOC_BUILD" = NO;
-	"DEVELOPMENT_APP_KEY" = "Your Development App Key";
-	"DEVELOPMENT_APP_SECRET" = "Your Development App Secret";
+	"DEVELOPMENT_APP_KEY" = "xlaniWNNSCScMRH2dG7r6w";
+	"DEVELOPMENT_APP_SECRET" = "PuR44aZ2TWK6fPCBs9qkrA";
 	"PRODUCTION_APP_KEY" = "Your Production App Key";
 	"PRODUCTION_APP_SECRET" = "Your Production App Secret";
 }

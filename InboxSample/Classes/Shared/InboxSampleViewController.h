@@ -24,14 +24,17 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "RichPushSender.h"
 
 @interface InboxSampleViewController : UIViewController {
-    IBOutlet UILabel* version;
+    IBOutlet UILabel *version;
+	RichPushSender *richPushSender;
 }
 
-@property(nonatomic, retain) IBOutlet UILabel* version;
+@property(nonatomic, retain) IBOutlet UILabel *version;
 
 -(IBAction)mail:(id)sender;
+-(IBAction)sendRichPush:(id)sender;
 
 @end
 

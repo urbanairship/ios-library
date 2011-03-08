@@ -21,11 +21,15 @@
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+<<<<<<< HEAD
 		1F8EC86E1326BF4F00F8333A /* coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC8691326BF4F00F8333A /* coupon.html */; };
 		1F8EC86F1326BF4F00F8333A /* ipad_coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86A1326BF4F00F8333A /* ipad_coupon.html */; };
 		1F8EC8701326BF4F00F8333A /* nkor.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86B1326BF4F00F8333A /* nkor.html */; };
 		1F8EC8711326BF4F00F8333A /* pill.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86C1326BF4F00F8333A /* pill.html */; };
 		1F8EC8721326BF4F00F8333A /* vote.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86D1326BF4F00F8333A /* vote.html */; };
+=======
+		49390B2E1326BD2D00853427 /* RichPushSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 49390B2D1326BD2D00853427 /* RichPushSender.m */; };
+>>>>>>> Updated xib with "send rich push" button, basic action sheet delegate logic
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -176,6 +180,8 @@
 		1F8EC86C1326BF4F00F8333A /* pill.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = pill.html; sourceTree = "<group>"; };
 		1F8EC86D1326BF4F00F8333A /* vote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = vote.html; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
+		49390B2C1326BD2D00853427 /* RichPushSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichPushSender.h; sourceTree = "<group>"; };
+		49390B2D1326BD2D00853427 /* RichPushSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RichPushSender.m; sourceTree = "<group>"; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		63CB54DC1247122500DF2EBC /* InboxAPITests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxAPITests.h; sourceTree = "<group>"; };
@@ -305,6 +311,8 @@
 				18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */,
 				18A27C86125EDD6E0045D75B /* InboxSampleViewController.h */,
 				18A27C87125EDD6E0045D75B /* InboxSampleViewController.m */,
+				49390B2C1326BD2D00853427 /* RichPushSender.h */,
+				49390B2D1326BD2D00853427 /* RichPushSender.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -799,6 +807,7 @@
 				E9CB35BA12B89AC0002E39EA /* UAInboxNavigationController.m in Sources */,
 				E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */,
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
+				49390B2E1326BD2D00853427 /* RichPushSender.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
