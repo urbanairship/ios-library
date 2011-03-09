@@ -26,25 +26,25 @@
 		NSMutableDictionary *couponDictionary = [NSMutableDictionary dictionary];
 		
 		[couponDictionary setValue:@"New Coupon!" forKey:@"alert"];
-		[couponDictionary setValue:@"Important Message" forKey:@"messageTitle"];
+		[couponDictionary setValue:@"You have a new coupon!" forKey:@"messageTitle"];
 		[couponDictionary setValue:@"coupon" forKey:@"filename"];
 		
 		NSMutableDictionary *pillDictionary = [NSMutableDictionary dictionary];
 		
 		[pillDictionary setValue:@"You have a Pill Reminder!" forKey:@"alert"];
-		[pillDictionary setValue:@"Important Message" forKey:@"messageTitle"];
+		[pillDictionary setValue:@"Pill Reminder" forKey:@"messageTitle"];
 		[pillDictionary setValue:@"pill" forKey:@"filename"];
 		
 		NSMutableDictionary *votingDictionary = [NSMutableDictionary dictionary];
 		
 		[votingDictionary setValue:@"Time to Vote!!" forKey:@"alert"];	
-		[votingDictionary setValue:@"Important Message" forKey:@"messageTitle"];
+		[votingDictionary setValue:@"Vote for Pop Star!" forKey:@"messageTitle"];
 		[votingDictionary setValue:@"vote" forKey:@"filename"];
 		
 		NSMutableDictionary *concertDictionary = [NSMutableDictionary dictionary];
 		
 		[concertDictionary setValue:@"Concert Tonight!" forKey:@"alert"];
-		[concertDictionary setValue:@"Important Message" forKey:@"messageTitle"];
+		[concertDictionary setValue:@"Concert Tonight!" forKey:@"messageTitle"];
 		[concertDictionary setValue:@"nkor" forKey:@"filename"];
 		
 		[messages setValue:couponDictionary forKey:@"Coupon Demo"];
