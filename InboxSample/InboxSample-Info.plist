@@ -24,7 +24,7 @@
 		<string>Icon-Small@2x.png</string>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.urbanairship.airmailtest</string>
+	<string>com.urbanairship.richpush</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>

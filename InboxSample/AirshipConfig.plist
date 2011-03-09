@@ -1,8 +1,10 @@
 {
-	"AIRSHIP_SERVER" = "https://sgc.urbanairship.com";
+	"DELETE_KEYCHAIN_CREDENTIALS" = NO;
+	"DEVELOPMENT_MASTER_SECRET" = "p9BS-iduQ5K62S1Sd0DvDQ";
+	"AIRSHIP_SERVER" = "https://go.urbanairship.com";
 	"APP_STORE_OR_AD_HOC_BUILD" = NO;
-	"DEVELOPMENT_APP_KEY" = "xlaniWNNSCScMRH2dG7r6w";
-	"DEVELOPMENT_APP_SECRET" = "PuR44aZ2TWK6fPCBs9qkrA";
+	"DEVELOPMENT_APP_KEY" = "hwjb1pp7TXypDKzhighUHw";
+	"DEVELOPMENT_APP_SECRET" = "8XEGlizhQAat-OE81Z273w";
 	"PRODUCTION_APP_KEY" = "Your Production App Key";
 	"PRODUCTION_APP_SECRET" = "Your Production App Secret";
 }

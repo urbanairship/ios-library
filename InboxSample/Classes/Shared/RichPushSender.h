@@ -10,8 +10,14 @@
 
 
 @interface RichPushSender : NSObject <UIActionSheetDelegate> {
+	
+	NSArray *buttonTitles;
+	NSMutableDictionary *messages;
 
 }
+
+@property(nonatomic, retain) NSArray *buttonTitles;
+@property(nonatomic, retain) NSDictionary *messages;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)index;
 

@@ -45,8 +45,8 @@
 													 cancelButtonTitle:@"Cancel" 
 												destructiveButtonTitle:nil otherButtonTitles:nil] autorelease];
 	
-	[richPushSheet addButtonWithTitle:@"Button one"];
-	[richPushSheet addButtonWithTitle:@"Button two"];
+	for (NSString *title in richPushSender.buttonTitles)
+		[richPushSheet addButtonWithTitle:title];
 	
 	[richPushSheet showInView:self.view];
 }

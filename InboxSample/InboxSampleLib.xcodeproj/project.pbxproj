@@ -21,15 +21,12 @@
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-<<<<<<< HEAD
 		1F8EC86E1326BF4F00F8333A /* coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC8691326BF4F00F8333A /* coupon.html */; };
 		1F8EC86F1326BF4F00F8333A /* ipad_coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86A1326BF4F00F8333A /* ipad_coupon.html */; };
 		1F8EC8701326BF4F00F8333A /* nkor.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86B1326BF4F00F8333A /* nkor.html */; };
 		1F8EC8711326BF4F00F8333A /* pill.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86C1326BF4F00F8333A /* pill.html */; };
 		1F8EC8721326BF4F00F8333A /* vote.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8EC86D1326BF4F00F8333A /* vote.html */; };
-=======
 		49390B2E1326BD2D00853427 /* RichPushSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 49390B2D1326BD2D00853427 /* RichPushSender.m */; };
->>>>>>> Updated xib with "send rich push" button, basic action sheet delegate logic
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
