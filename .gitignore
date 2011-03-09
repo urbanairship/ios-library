@@ -6,5 +6,6 @@
 *.perspective*
 Debug/
 Release/
+Distribution/
 build/
 Airship/libUAirship-*.a
