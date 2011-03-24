@@ -6,5 +6,8 @@
 *.perspective*
 Debug/
 Release/
+Distribution/
 build/
 Airship/libUAirship-*.a
+xcuserdata/
+*.xcworkspace/
