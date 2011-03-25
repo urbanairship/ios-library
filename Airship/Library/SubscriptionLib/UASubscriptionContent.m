@@ -30,6 +30,7 @@
 
 @synthesize contentName;
 @synthesize subscriptionKey;
+@synthesize productIdentifier;
 @synthesize iconURL;
 @synthesize previewURL;
 @synthesize downloadURL;
@@ -41,6 +42,7 @@
 @dynamic downloading;
 
 - (void)dealloc {
+	RELEASE_SAFELY(productIdentifier);
     RELEASE_SAFELY(contentName);
     RELEASE_SAFELY(iconURL);
     RELEASE_SAFELY(previewURL);
@@ -55,6 +57,7 @@
 
     self.contentName = [dict objectForKey:@"name"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
+	self.productIdentifier = [dict objectForKey:@"product_id"];
     self.iconURL = [NSURL URLWithString:[dict objectForKey:@"icon_url"]];
     self.previewURL = [NSURL URLWithString:[dict objectForKey:@"preview_url"]];
     self.downloadURL = [NSURL URLWithString:[dict objectForKey:@"download_url"]];
