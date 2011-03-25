@@ -40,13 +40,13 @@ extern NSString *UA_ASIHTTPRequestVersion;
 	#define __MAC_10_6 1060
 #endif
 
-typedef enum _ASIAuthenticationState {
+typedef enum _UA_ASIAuthenticationState {
 	ASINoAuthenticationNeededYet = 0,
 	ASIHTTPAuthenticationNeeded = 1,
 	ASIProxyAuthenticationNeeded = 2
 } UA_ASIAuthenticationState;
 
-typedef enum _ASINetworkErrorType {
+typedef enum _UA_ASINetworkErrorType {
     ASIConnectionFailureErrorType = 1,
     ASIRequestTimedOutErrorType = 2,
     ASIAuthenticationErrorType = 3,
