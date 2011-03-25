@@ -41,23 +41,23 @@ extern NSString *UA_ASIHTTPRequestVersion;
 #endif
 
 typedef enum _UA_ASIAuthenticationState {
-	ASINoAuthenticationNeededYet = 0,
-	ASIHTTPAuthenticationNeeded = 1,
-	ASIProxyAuthenticationNeeded = 2
+	UA_ASINoAuthenticationNeededYet = 0,
+	UA_ASIHTTPAuthenticationNeeded = 1,
+	UA_ASIProxyAuthenticationNeeded = 2
 } UA_ASIAuthenticationState;
 
 typedef enum _UA_ASINetworkErrorType {
-    ASIConnectionFailureErrorType = 1,
-    ASIRequestTimedOutErrorType = 2,
-    ASIAuthenticationErrorType = 3,
-    ASIRequestCancelledErrorType = 4,
-    ASIUnableToCreateRequestErrorType = 5,
-    ASIInternalErrorWhileBuildingRequestType  = 6,
-    ASIInternalErrorWhileApplyingCredentialsType  = 7,
-	ASIFileManagementError = 8,
-	ASITooMuchRedirectionErrorType = 9,
-	ASIUnhandledExceptionError = 10,
-	ASICompressionError = 11
+    UA_ASIConnectionFailureErrorType = 1,
+    UA_ASIRequestTimedOutErrorType = 2,
+    UA_ASIAuthenticationErrorType = 3,
+    UA_ASIRequestCancelledErrorType = 4,
+    UA_ASIUnableToCreateRequestErrorType = 5,
+    UA_ASIInternalErrorWhileBuildingRequestType  = 6,
+    UA_ASIInternalErrorWhileApplyingCredentialsType  = 7,
+	UA_ASIFileManagementError = 8,
+	UA_ASITooMuchRedirectionErrorType = 9,
+	UA_ASIUnhandledExceptionError = 10,
+	UA_ASICompressionError = 11
 	
 } UA_ASINetworkErrorType;
 
@@ -182,7 +182,7 @@ typedef void (^UA_ASIDataBlock)(NSData *data);
     BOOL cancelled;
     
 	// If an error occurs, error will contain an NSError
-	// If error code is = ASIConnectionFailureErrorType (1, Connection failure occurred) - inspect [[error userInfo] objectForKey:NSUnderlyingErrorKey] for more information
+	// If error code is = UA_ASIConnectionFailureErrorType (1, Connection failure occurred) - inspect [[error userInfo] objectForKey:NSUnderlyingErrorKey] for more information
 	NSError *error;
 	
 	// Username and password used for authentication

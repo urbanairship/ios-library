@@ -150,10 +150,10 @@ IF_IOS4_OR_GREATER(
     // case, should not finish transaction.
     // when the next time entering foreground, StoreKit will automatically add
     // a transaction to restore this purchasing
-    if (error.code == ASIRequestCancelledErrorType) {
+    if (error.code == UA_ASIRequestCancelledErrorType) {
         return;
     }
-    if (error.code == ASIRequestTimedOutErrorType) {
+    if (error.code == UA_ASIRequestTimedOutErrorType) {
         BOOL running = YES;
         
 IF_IOS4_OR_GREATER(

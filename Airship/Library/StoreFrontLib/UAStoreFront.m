@@ -288,7 +288,7 @@ static Class _uiClass;
 
         // In StoreFront, we set the cache policy to use cache if possible.
         // And currently we only use this download cache in UAAsyncImageView.
-        [[UA_ASIDownloadCache sharedCache] setDefaultCachePolicy:ASICachePermanentlyCacheStoragePolicy];
+        [[UA_ASIDownloadCache sharedCache] setDefaultCachePolicy:UA_ASICachePermanentlyCacheStoragePolicy];
 
         [self loadReceipts];
 
