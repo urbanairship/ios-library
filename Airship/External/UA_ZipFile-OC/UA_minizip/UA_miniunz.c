@@ -96,7 +96,7 @@ int UA_mymkdir(dirname)
 }
 
 int UA_makedir (newdir)
-    char *newdir;
+    const char *newdir;
 {
   char *buffer ;
   char *p;

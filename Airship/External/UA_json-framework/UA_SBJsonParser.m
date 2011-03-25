@@ -76,7 +76,7 @@ static char ctrl[0x22];
     [self clearErrorTrace];
     
     if (!repr) {
-        [self addErrorWithCode:EINPUT description:@"Input was 'nil'"];
+        [self addErrorWithCode:UA_EINPUT description:@"Input was 'nil'"];
         return nil;
     }
     
@@ -90,7 +90,7 @@ static char ctrl[0x22];
     
     // We found some valid JSON. But did it also contain something else?
     if (![self scanIsAtEnd]) {
-        [self addErrorWithCode:ETRAILGARBAGE description:@"Garbage after JSON"];
+        [self addErrorWithCode:UA_ETRAILGARBAGE description:@"Garbage after JSON"];
         return nil;
     }
         
@@ -112,7 +112,7 @@ static char ctrl[0x22];
     
     // Check that the object we've found is a valid JSON container.
     if (![o isKindOfClass:[NSDictionary class]] && ![o isKindOfClass:[NSArray class]]) {
-        [self addErrorWithCode:EFRAGMENT description:@"Valid fragment, but not JSON"];
+        [self addErrorWithCode:UA_EFRAGMENT description:@"Valid fragment, but not JSON"];
         return nil;
     }
 
@@ -151,15 +151,15 @@ static char ctrl[0x22];
             return [self scanNumber:(NSNumber **)o];
             break;
         case '+':
-            [self addErrorWithCode:EPARSENUM description: @"Leading + disallowed in number"];
+            [self addErrorWithCode:UA_EPARSENUM description: @"Leading + disallowed in number"];
             return NO;
             break;
         case 0x0:
-            [self addErrorWithCode:EEOF description:@"Unexpected end of string"];
+            [self addErrorWithCode:UA_EEOF description:@"Unexpected end of string"];
             return NO;
             break;
         default:
-            [self addErrorWithCode:EPARSE description: @"Unrecognised leading character"];
+            [self addErrorWithCode:UA_EPARSE description: @"Unrecognised leading character"];
             return NO;
             break;
     }
@@ -175,7 +175,7 @@ static char ctrl[0x22];
         *o = [NSNumber numberWithBool:YES];
         return YES;
     }
-    [self addErrorWithCode:EPARSE description:@"Expected 'true'"];
+    [self addErrorWithCode:UA_EPARSE description:@"Expected 'true'"];
     return NO;
 }
 
@@ -186,7 +186,7 @@ static char ctrl[0x22];
         *o = [NSNumber numberWithBool:NO];
         return YES;
     }
-    [self addErrorWithCode:EPARSE description: @"Expected 'false'"];
+    [self addErrorWithCode:UA_EPARSE description: @"Expected 'false'"];
     return NO;
 }
 
@@ -196,13 +196,13 @@ static char ctrl[0x22];
         *o = [NSNull null];
         return YES;
     }
-    [self addErrorWithCode:EPARSE description: @"Expected 'null'"];
+    [self addErrorWithCode:UA_EPARSE description: @"Expected 'null'"];
     return NO;
 }
 
 - (BOOL)scanRestOfArray:(NSMutableArray **)o {
     if (maxDepth && ++depth > maxDepth) {
-        [self addErrorWithCode:EDEPTH description: @"Nested too deep"];
+        [self addErrorWithCode:UA_EDEPTH description: @"Nested too deep"];
         return NO;
     }
     
@@ -218,7 +218,7 @@ static char ctrl[0x22];
         }
         
         if (![self scanValue:&v]) {
-            [self addErrorWithCode:EPARSE description:@"Expected value while parsing array"];
+            [self addErrorWithCode:UA_EPARSE description:@"Expected value while parsing array"];
             return NO;
         }
         
@@ -228,20 +228,20 @@ static char ctrl[0x22];
         if (*c == ',' && c++) {
             skipWhitespace(c);
             if (*c == ']') {
-                [self addErrorWithCode:ETRAILCOMMA description: @"Trailing comma disallowed in array"];
+                [self addErrorWithCode:UA_ETRAILCOMMA description: @"Trailing comma disallowed in array"];
                 return NO;
             }
         }        
     }
     
-    [self addErrorWithCode:EEOF description: @"End of input while parsing array"];
+    [self addErrorWithCode:UA_EEOF description: @"End of input while parsing array"];
     return NO;
 }
 
 - (BOOL)scanRestOfDictionary:(NSMutableDictionary **)o 
 {
     if (maxDepth && ++depth > maxDepth) {
-        [self addErrorWithCode:EDEPTH description: @"Nested too deep"];
+        [self addErrorWithCode:UA_EDEPTH description: @"Nested too deep"];
         return NO;
     }
     
@@ -257,20 +257,20 @@ static char ctrl[0x22];
         }    
         
         if (!(*c == '\"' && c++ && [self scanRestOfString:&k])) {
-            [self addErrorWithCode:EPARSE description: @"Object key string expected"];
+            [self addErrorWithCode:UA_EPARSE description: @"Object key string expected"];
             return NO;
         }
         
         skipWhitespace(c);
         if (*c != ':') {
-            [self addErrorWithCode:EPARSE description: @"Expected ':' separating key and value"];
+            [self addErrorWithCode:UA_EPARSE description: @"Expected ':' separating key and value"];
             return NO;
         }
         
         c++;
         if (![self scanValue:&v]) {
             NSString *string = [NSString stringWithFormat:@"Object value expected for key: %@", k];
-            [self addErrorWithCode:EPARSE description: string];
+            [self addErrorWithCode:UA_EPARSE description: string];
             return NO;
         }
         
@@ -280,13 +280,13 @@ static char ctrl[0x22];
         if (*c == ',' && c++) {
             skipWhitespace(c);
             if (*c == '}') {
-                [self addErrorWithCode:ETRAILCOMMA description: @"Trailing comma disallowed in object"];
+                [self addErrorWithCode:UA_ETRAILCOMMA description: @"Trailing comma disallowed in object"];
                 return NO;
             }
         }        
     }
     
-    [self addErrorWithCode:EEOF description: @"End of input while parsing object"];
+    [self addErrorWithCode:UA_EEOF description: @"End of input while parsing object"];
     return NO;
 }
 
@@ -331,13 +331,13 @@ static char ctrl[0x22];
                 case 'u':
                     c++;
                     if (![self scanUnicodeChar:&uc]) {
-                        [self addErrorWithCode:EUNICODE description: @"Broken unicode character"];
+                        [self addErrorWithCode:UA_EUNICODE description: @"Broken unicode character"];
                         return NO;
                     }
                     c--; // hack.
                     break;
                 default:
-                    [self addErrorWithCode:EESCAPE description: [NSString stringWithFormat:@"Illegal escape sequence '0x%x'", uc]];
+                    [self addErrorWithCode:UA_EESCAPE description: [NSString stringWithFormat:@"Illegal escape sequence '0x%x'", uc]];
                     return NO;
                     break;
             }
@@ -345,7 +345,7 @@ static char ctrl[0x22];
             c++;
             
         } else if (*c < 0x20) {
-            [self addErrorWithCode:ECTRL description: [NSString stringWithFormat:@"Unescaped control character '0x%x'", *c]];
+            [self addErrorWithCode:UA_ECTRL description: [NSString stringWithFormat:@"Unescaped control character '0x%x'", *c]];
             return NO;
             
         } else {
@@ -353,7 +353,7 @@ static char ctrl[0x22];
         }
     } while (*c);
     
-    [self addErrorWithCode:EEOF description:@"Unexpected EOF while parsing string"];
+    [self addErrorWithCode:UA_EEOF description:@"Unexpected EOF while parsing string"];
     return NO;
 }
 
@@ -362,7 +362,7 @@ static char ctrl[0x22];
     unichar hi, lo;
     
     if (![self scanHexQuad:&hi]) {
-        [self addErrorWithCode:EUNICODE description: @"Missing hex quad"];
+        [self addErrorWithCode:UA_EUNICODE description: @"Missing hex quad"];
         return NO;        
     }
     
@@ -370,19 +370,19 @@ static char ctrl[0x22];
         if (hi < 0xdc00) {  // yes - expect a low char
             
             if (!(*c == '\\' && ++c && *c == 'u' && ++c && [self scanHexQuad:&lo])) {
-                [self addErrorWithCode:EUNICODE description: @"Missing low character in surrogate pair"];
+                [self addErrorWithCode:UA_EUNICODE description: @"Missing low character in surrogate pair"];
                 return NO;
             }
             
             if (lo < 0xdc00 || lo >= 0xdfff) {
-                [self addErrorWithCode:EUNICODE description:@"Invalid low surrogate char"];
+                [self addErrorWithCode:UA_EUNICODE description:@"Invalid low surrogate char"];
                 return NO;
             }
             
             hi = (hi - 0xd800) * 0x400 + (lo - 0xdc00) + 0x10000;
             
         } else if (hi < 0xe000) {
-            [self addErrorWithCode:EUNICODE description:@"Invalid high character in surrogate pair"];
+            [self addErrorWithCode:UA_EUNICODE description:@"Invalid high character in surrogate pair"];
             return NO;
         }
     }
@@ -402,7 +402,7 @@ static char ctrl[0x22];
         ? (uc - 'a' + 10) : (uc >= 'A' && uc <= 'F')
         ? (uc - 'A' + 10) : -1;
         if (d == -1) {
-            [self addErrorWithCode:EUNICODE description:@"Missing hex digit in quad"];
+            [self addErrorWithCode:UA_EUNICODE description:@"Missing hex digit in quad"];
             return NO;
         }
         *x *= 16;
@@ -424,12 +424,12 @@ static char ctrl[0x22];
     
     if ('0' == *c && c++) {        
         if (isdigit(*c)) {
-            [self addErrorWithCode:EPARSENUM description: @"Leading 0 disallowed in number"];
+            [self addErrorWithCode:UA_EPARSENUM description: @"Leading 0 disallowed in number"];
             return NO;
         }
         
     } else if (!isdigit(*c) && c != ns) {
-        [self addErrorWithCode:EPARSENUM description: @"No digits after initial minus"];
+        [self addErrorWithCode:UA_EPARSENUM description: @"No digits after initial minus"];
         return NO;
         
     } else {
@@ -440,7 +440,7 @@ static char ctrl[0x22];
     if ('.' == *c && c++) {
         
         if (!isdigit(*c)) {
-            [self addErrorWithCode:EPARSENUM description: @"No digits after decimal point"];
+            [self addErrorWithCode:UA_EPARSENUM description: @"No digits after decimal point"];
             return NO;
         }        
         skipDigits(c);
@@ -454,7 +454,7 @@ static char ctrl[0x22];
             c++;
         
         if (!isdigit(*c)) {
-            [self addErrorWithCode:EPARSENUM description: @"No digits after exponent"];
+            [self addErrorWithCode:UA_EPARSENUM description: @"No digits after exponent"];
             return NO;
         }
         skipDigits(c);
@@ -468,7 +468,7 @@ static char ctrl[0x22];
     if (str && (*o = [NSDecimalNumber decimalNumberWithString:str]))
         return YES;
     
-    [self addErrorWithCode:EPARSENUM description: @"Failed creating decimal instance"];
+    [self addErrorWithCode:UA_EPARSENUM description: @"Failed creating decimal instance"];
     return NO;
 }
 

@@ -76,19 +76,19 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	switch (netStatus) {
 			
-		case NotReachable:
+		case UA_NotReachable:
         {
             connectionTypeString = @"none";//this should never be sent
             break;
         }
 			
-        case ReachableViaWWAN:
+        case UA_ReachableViaWWAN:
         {
             connectionTypeString = @"cell";
             break;
         }
 			
-		case ReachableViaWiFi:
+		case UA_ReachableViaWiFi:
         {
             connectionTypeString = @"wifi";
             break;
@@ -201,7 +201,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 		
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshSessionWhenNetworkChanged)
-                                                     name:kReachabilityChangedNotification
+                                                     name:kUA_ReachabilityChangedNotification
                                                    object:nil];
         IF_IOS4_OR_GREATER(
 						   if (&UIApplicationDidEnterBackgroundNotification != NULL) {

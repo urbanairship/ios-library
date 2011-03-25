@@ -149,7 +149,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
     // listen on network changes
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(hostReachStatusChanged:)
-                                                 name:kReachabilityChangedNotification
+                                                 name:kUA_ReachabilityChangedNotification
                                                object:nil];
 
     [products removeAllObjects];
@@ -211,7 +211,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
 
 - (void)reloadInventory {
     // Will keep reloaing Inventory if network is OK but server return with error
-    if ([hostReach currentReachabilityStatus] != NotReachable) {
+    if ([hostReach currentReachabilityStatus] != UA_NotReachable) {
         //limit attempt times
         if (reloadCount <= MAX_RELOAD_TIME) {
             reloadCount++;
