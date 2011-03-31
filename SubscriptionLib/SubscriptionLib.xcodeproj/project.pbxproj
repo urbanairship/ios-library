@@ -260,6 +260,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "Subscription-$(CURRENT_PROJECT_VERSION)";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Debug;
 		};
@@ -277,6 +279,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "Subscription-$(CURRENT_PROJECT_VERSION)";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
 		};
