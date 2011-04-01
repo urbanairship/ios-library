@@ -23,6 +23,13 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+if [ "true" == "${ALREADYINVOKED:-false}" ]
+then
+echo "RECURSION: Not the root invocation, don't recurse"
+else
+# Prevent recursion
+export ALREADYINVOKED="true"
+
 buildConfig="$BUILD_STYLE"
 srcRoot="$SRCROOT"
 
@@ -56,3 +63,4 @@ rm -rf Test
 
 find . -name "*.orig" -delete
 
+fi
