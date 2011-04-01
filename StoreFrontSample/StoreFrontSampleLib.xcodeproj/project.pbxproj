@@ -1293,7 +1293,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -1301,6 +1300,9 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Debug;
 		};
@@ -1324,6 +1326,9 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
 		};

@@ -8,17 +8,8 @@
 	<string>StoreFront</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>Icon files</key>
-	<array>
-		<string>Icon.png</string>
-		<string>Icon@2x.png</string>
-		<string>Icon-72.png</string>
-		<string>Icon-Small-50.png</string>
-		<string>Icon-Small.png</string>
-		<string>Icon-Small@2x.png</string>
-	</array>
 	<key>CFBundleIdentifier</key>
-	<string>com.urbanairship.sampleapp</string>
+	<string>com.urbanairship.iap</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -36,12 +27,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>Icon files</key>
+	<array>
+		<string>Icon.png</string>
+		<string>Icon@2x.png</string>
+		<string>Icon-72.png</string>
+		<string>Icon-Small-50.png</string>
+		<string>Icon-Small.png</string>
+		<string>Icon-Small@2x.png</string>
+	</array>
+	<key>Initial interface orientation</key>
+	<string>UIInterfaceOrientationPortrait</string>
 	<key>NSMainNibFile</key>
 	<string>MainWindow_Phone</string>
 	<key>NSMainNibFile~ipad</key>
 	<string>MainWindow_Pad</string>
-	<key>Initial interface orientation</key>
-	<string>UIInterfaceOrientationPortrait</string>
 	<key>UILaunchImageFile~ipad</key>
 	<string>iPadDefault</string>
 	<key>UIPrerenderedIcon</key>
