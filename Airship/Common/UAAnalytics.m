@@ -623,7 +623,7 @@ IF_IOS4_OR_GREATER(
     // imprecise time
 	@synchronized(self) {
 		if (reSendTimer != nil) {
-			UALOG(@"Send cancelled - a reset timer is already running.");
+			UALOG(@"Send skipped - a reset timer is already running.");
 			return;
 		}
 	}

@@ -927,7 +927,7 @@ static UAUser *_defaultUser;
     UALOG(@"Updating device token");
     
     if ([UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
-		UALOG(@"Canceling device token update: already up to date, in recovery or no user exists yet");
+		UALOG(@"Skipping device token update: already up to date, or user is being updated.");
         return;
     }
     

@@ -31,7 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAKeychainUtils.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
-
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
@@ -235,7 +234,7 @@ BOOL releaseLogging = false;
 	
     //Land the modular libaries first
     [NSClassFromString(@"UAInbox") land];
-    [NSClassFromString(@"StoreFront") land];
+    [NSClassFromString(@"UAStoreFront") land];
     [NSClassFromString(@"UASubscriptionManager") land];
     
     //Land common classes
