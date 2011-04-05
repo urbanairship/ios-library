@@ -34,14 +34,13 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 
 @synthesize rootViewController;
 @synthesize productListViewController;
-@synthesize originalSubviews;
-@synthesize originalWindow;
 @synthesize isiPad;
 @synthesize uaWindow;
 @synthesize isVisible;
 @synthesize localizationBundle;
 
 static BOOL runiPhoneTargetOniPad = NO;
+
 + (void)setRuniPhoneTargetOniPad:(BOOL)value {
     runiPhoneTargetOniPad = value;
 }
@@ -49,8 +48,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 -(void)dealloc {    
     RELEASE_SAFELY(rootViewController);
     RELEASE_SAFELY(productListViewController);
-    RELEASE_SAFELY(originalWindow);
-    RELEASE_SAFELY(originalSubviews);
     RELEASE_SAFELY(uaWindow);
     RELEASE_SAFELY(alertHandler);
     RELEASE_SAFELY(localizationBundle);
@@ -59,31 +56,33 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 -(id)init {
-    UALOG(@"Initialize StoreFront.");
+    UALOG(@"Initialize UAStoreFrontUI.");
 
     if (self = [super init]) {
         NSString* path = [[[NSBundle mainBundle] resourcePath]
                           stringByAppendingPathComponent:@"UAStoreFrontLocalization.bundle"];
+
         self.localizationBundle = [NSBundle bundleWithPath:path];
-        
-        // To partially support rotation when present by displayStoreFront
-        userOrientation = UIInterfaceOrientationPortrait;
-        storeOrientation = UIInterfaceOrientationPortrait;
 
         NSString *deviceType = [UIDevice currentDevice].model;
+
         if ([deviceType hasPrefix:@"iPad"] && !runiPhoneTargetOniPad) {
             isiPad = YES;
             UAStoreFrontSplitViewController *svc = [[UAStoreFrontSplitViewController alloc] init];
             productListViewController = [[svc productListViewController] retain];
             rootViewController = (UIViewController *)svc;
+        
         } else {
             productListViewController = [[UAStoreFrontViewController alloc]
                                          initWithNibName:@"UAStoreFront" bundle:nil];
+            
             rootViewController = [[UINavigationController alloc] initWithRootViewController:productListViewController];
         }
+        
         alertHandler = [[UAStoreFrontAlertHandler alloc] init];
         isVisible = NO;
     }
+    
     return self;
 }
 
@@ -91,16 +90,20 @@ static BOOL runiPhoneTargetOniPad = NO;
     UAStoreFrontUI* ui = [UAStoreFrontUI shared];
     ui->animated = animated;
 
+    // if iPhone/iPod
     if (!ui.isiPad) {
         [viewController presentModalViewController:ui.rootViewController animated:animated];
     } else {
+        // else iPad
         if (ui.uaWindow == nil) {
             ui.uaWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
             [ui.uaWindow addSubview:ui.rootViewController.view];
         }
+        
         [ui.rootViewController viewWillAppear:animated];
         [ui.uaWindow makeKeyAndVisible];
     }
+    
     ui->isVisible = YES;
 }
 
@@ -110,45 +113,26 @@ static BOOL runiPhoneTargetOniPad = NO;
     [ui.productListViewController loadProduct:productID];
 }
 
-
 + (void)quitStoreFront {
     UAStoreFrontUI* ui = [UAStoreFrontUI shared];
 
     if (ui.isiPad) {
+        // if iPad
         [ui.rootViewController viewWillDisappear:ui->animated];
     }
 
     if (ui.rootViewController.parentViewController != nil) {
-        // for iPhone displayStoreFront:animated:
+        // for iPhone/iPod displayStoreFront:animated:
         [ui.rootViewController dismissModalViewControllerAnimated:ui->animated];
 
-        // KEEP in case rotating/positioning bug happens again
-        //UIViewController *con = sf.rootViewController.parentViewController;
-        //[con dismissModalViewControllerAnimated:sf->animated];
-        // Workaround. ModalViewController does not handle resizing correctly if
-        // dismissed in landscape when status bar is visible
-        //if ([UIApplication sharedApplication].statusBarHidden == NO) {
-        //    con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
-        //}
     } else if (ui.rootViewController.view.superview == ui.uaWindow) {
         // for iPad displayStoreFront:animated:
+        [ui.uaWindow resignKeyWindow];
         ui.uaWindow.hidden = YES;
-    } else if (ui.rootViewController.view.superview == ui.originalWindow) {
-        // For displayStoreFront
-        ui->storeOrientation = [UIApplication sharedApplication].statusBarOrientation;
-        [ui.rootViewController.view removeFromSuperview];
-        [UIApplication sharedApplication].statusBarOrientation = ui->userOrientation;
-        for (UIView *view in ui.originalSubviews) {
-            [ui.originalWindow addSubview:view];
-        }
-    } else if (ui.rootViewController.view.superview != nil) {
-        // For makeStoreFrontView
-        [ui.rootViewController.view removeFromSuperview];
+        
     } else {
-        // For other circumstances. e.g custom showing rootViewController
-        // or changed the showing code of StoreFront
-        UALOG(@"StoreFront rootViewController did not add to the application in an official way. \
-              You may want to put your own quiting code here.");
+        // For other circumstances. e.g custom showing rootViewController or changed the showing code of StoreFront
+        UALOG(@"UAStoreFrontUI rootViewController appears to be customized. Add your own quit logic here");
     }
 
     ui->isVisible = NO;
@@ -156,6 +140,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 + (id<UAStoreFrontAlertProtocol>)getAlertHandler {
     UAStoreFrontUI* ui = [UAStoreFrontUI shared];
+    
     return ui->alertHandler;
 }
 
