@@ -33,8 +33,10 @@
     NSMutableDictionary *pendingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
+    BOOL createProductIDSubdir;
 }
 @property (nonatomic, retain) NSString *downloadDirectory;
+@property (assign) BOOL createProductIDSubdir;
 
 - (void)loadPendingProducts;
 - (void)downloadIfValid:(id)parameter;

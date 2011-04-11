@@ -33,6 +33,7 @@
 
 @implementation UAStoreFrontDownloadManager
 @synthesize downloadDirectory;
+@synthesize createProductIDSubdir;
 
 #pragma mark -
 #pragma mark Lefecycle methods
@@ -44,6 +45,8 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
+    self.createProductIDSubdir = YES;
+    
     [self loadPendingProducts];
     
     return self;
@@ -271,8 +274,17 @@
         UAProduct *product = zipDownloadContent.userInfo;
         product.status = UAProductStatusWaiting;
         zipDownloadContent.decompressDelegate = self;
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+        
+        if(self.createProductIDSubdir) {
+            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
                                                       [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
+        } else {
+            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+
+        }
+        
+        UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
+        
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:(UADownloadContent *)downloadContent];

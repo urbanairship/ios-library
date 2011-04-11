@@ -132,7 +132,8 @@ SINGLETON_INTERFACE(UAStoreFront)
 - (void)addReceipt:(UAProduct *)product;
 - (BOOL)hasReceipt:(UAProduct *)product;
 - (BOOL)directoryExistsAtPath:(NSString *)path orOldPath:(NSString *)oldPath;
-- (BOOL)setDownloadDirectory:(NSString *)path;
++ (BOOL)setDownloadDirectory:(NSString *)path;
++ (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir;
 - (Class)uiClass;
 
 /*
