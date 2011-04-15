@@ -34,7 +34,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 static BOOL runiPhoneTargetOniPad = NO;
 
 + (void)setRuniPhoneTargetOniPad:(BOOL)value {
-    self.runiPhoneTargetOniPad = value;
+    runiPhoneTargetOniPad = value;
 }
 
 - (void)dealloc {
