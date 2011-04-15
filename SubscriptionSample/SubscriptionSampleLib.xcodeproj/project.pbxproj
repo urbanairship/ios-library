@@ -582,7 +582,8 @@
 		63314760122FAC96008F2D48 /* libUAirship-1.0.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.0.4.a";
+			name = "libUAirship-1.0.4.a";
+			path = "libUAirship-1.0.5.a";
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
