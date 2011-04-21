@@ -143,7 +143,13 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"Received remote notification: %@", userInfo);
     
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+    // Get application state for iOS4.x+ devices, otherwise assume active
+    UIApplicationState appState = UIApplicationStateActive;
+    if ([application respondsToSelector:@selector(applicationState)]) {
+        appState = application.applicationState;
+    }
+
+    [[UAPush shared] handleNotification:userInfo applicationState:appState];
     [[UAPush shared] resetBadge]; // zero badge after push received
 }
 
