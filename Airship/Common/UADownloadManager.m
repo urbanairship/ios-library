@@ -153,29 +153,6 @@ IF_IOS4_OR_GREATER(
     if (error.code == UA_ASIRequestCancelledErrorType) {
         return;
     }
-    if (error.code == UA_ASIRequestTimedOutErrorType) {
-        BOOL running = YES;
-        
-IF_IOS4_OR_GREATER(
-
-		if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
-			running = NO;
-		}
-
-);
-		
-        if (running) {
-            content = [self getDownloadContent:request];
-            if (content.retryTime < kMaxRetryTime) {
-                content.retryTime++;
-                if (delegate && [delegate respondsToSelector:@selector(requestRetryByTimeOut:)]) {
-                    [delegate requestRetryByTimeOut:content];
-                }
-                [self download:content];
-                return;
-            }
-        }
-    }
     
     content = [self getDownloadContent:request];
     UALOG(@"Access to content: %@ denied in contentWillDownload", [content downloadFileName]);
@@ -259,6 +236,8 @@ IF_IOS4_OR_GREATER(
     
     if (downloadContent.downloadFileName != nil) {
         [request setAllowResumeForFileDownloads:YES];
+        [request setTimeOutSeconds:30];
+        [request setNumberOfTimesToRetryOnTimeout:kMaxRetryTime];
         [request setDownloadDestinationPath:downloadContent.downloadPath];
         [request setTemporaryFileDownloadPath:downloadContent.downloadTmpPath];
         [downloadNetworkQueue addOperation:request];

@@ -47,10 +47,7 @@
     NSDictionary *postData;
     NSString *requestMethod; 
     NSString *responseString;
-    
-    // if a connection times out during a download,
-    // that it will restart at most kMaxRetryTime.
-    int retryTime;
+
 }
 @property (assign, nonatomic) id progressDelegate;
 @property (retain, nonatomic) id userInfo;
@@ -65,7 +62,6 @@
 @property (retain, nonatomic) NSString *downloadPath;
 @property (retain, nonatomic) NSString *downloadTmpPath;
 @property (retain, nonatomic) NSDictionary *postData;
-@property (assign) int retryTime;
 
 @end
 
