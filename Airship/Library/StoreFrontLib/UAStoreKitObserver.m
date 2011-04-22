@@ -164,8 +164,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 }
 
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
-    if (transaction)
+    if (transaction) {
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    }
 }
 
 

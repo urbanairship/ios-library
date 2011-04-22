@@ -90,6 +90,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     UAStoreFrontUI* ui = [UAStoreFrontUI shared];
     ui->animated = animated;
 
+    // reset the view navigation to the product list
+    [ui.productListViewController.navigationController popToRootViewControllerAnimated:NO];
+
     // if iPhone/iPod
     if (!ui.isiPad) {
         [viewController presentModalViewController:ui.rootViewController animated:animated];

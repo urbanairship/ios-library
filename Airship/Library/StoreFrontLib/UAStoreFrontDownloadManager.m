@@ -253,10 +253,14 @@
         [alertHandler showDownloadContentFailedAlert];
     }
 
+    // NOTE: the following block is commented out to prevent a crash
+    // when finishTransaction is called twice. finishTransaction should
+    // already have been called in the verify process
+    //
     // don't invoke failedTransaction, otherwise, will alert user twice
     // also, in failedTransaction will reset product status after a decision,
     // but here we already reset it.
-    [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    // [[UAStoreFront shared].sfObserver finishTransaction:transaction];
 
     [product resetStatus];
     [downloadManager endBackground];
