@@ -25,7 +25,7 @@
 
 #import <UIKit/UIKit.h>
 
-// ALog always displays output regardless of the DEBUG setting
+// ALog always displays output regardless of the UADEBUG setting
 #define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
 #define UA_BLog(fmt, ...) \
     do { \
@@ -34,8 +34,8 @@
         } \
     } while(0)
 
-// DEBUG set in debug build setting's "Other C flags", as -DDEBUG
-#ifdef DEBUG
+// UADEBUG set in debug build setting's "Other C flags", as -DUADEBUG
+#ifdef UADEBUG
 #define UA_DLog UA_ALog
 #else
 #define UA_DLog UA_BLog
