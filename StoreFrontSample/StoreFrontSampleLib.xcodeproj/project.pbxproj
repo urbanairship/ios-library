@@ -1174,7 +1174,7 @@
 				GCC_PREFIX_HEADER = StoreFrontSample_Prefix.pch;
 				INFOPLIST_FILE = "StoreFrontSample-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_CFLAGS = "-Ddebug";
+				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = (
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,

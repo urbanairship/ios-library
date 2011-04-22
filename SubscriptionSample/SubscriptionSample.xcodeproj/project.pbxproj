@@ -550,6 +550,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship\"",
 				);
+				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = (
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,

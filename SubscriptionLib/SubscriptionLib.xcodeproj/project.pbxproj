@@ -50,7 +50,7 @@
 		6398C1531237940C00E69863 /* UASubscriptionInventory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASubscriptionInventory.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* SubscriptionLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libSubscription-1.2.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libSubscription-1.2.4.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libSubscription-1.2.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libSubscription-1.2.4.a"; path = "libSubscription-1.2.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9FD17AE122DB1C800522B4E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		E930E0551282630B003357CD /* UASubscriptionDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASubscriptionDownloadManager.h; sourceTree = "<group>"; };
 		E930E0561282630B003357CD /* UASubscriptionDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASubscriptionDownloadManager.m; sourceTree = "<group>"; };
@@ -253,7 +253,7 @@
 				GCC_PREFIX_HEADER = SubscriptionLib_Prefix.pch;
 				INSTALL_PATH = /Airship;
 				OTHER_CFLAGS = (
-					"-DDEBUG",
+					"-DUADEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
 				OTHER_LDFLAGS = (
