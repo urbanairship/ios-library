@@ -290,12 +290,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 		lastSendTime = [[NSDate date] retain];
 	}
     
+    /*
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
     UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
     UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
     UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
     UALOG(@"X-UA-Last-Send-Time: %@", [lastSendTime description]);
-
+    */
 }
 
 - (void)saveDefault {
@@ -305,11 +306,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
     [[NSUserDefaults standardUserDefaults] setObject:lastSendTime forKey:@"X-UA-Last-Send-Time"];
     
+    /*
     UALOG(@"Response Headers Saved:");
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
     UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
     UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
     UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
+    */
 }
 
 #pragma mark -
@@ -357,9 +360,11 @@ IF_IOS4_OR_GREATER(
                  response:(NSHTTPURLResponse *)response
              responseData:(NSData *)responseData {
     
+    /*
 	UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-
+    */
+     
     RELEASE_SAFELY(connection);
 	
     if ([response statusCode] == 200) {
@@ -367,8 +372,7 @@ IF_IOS4_OR_GREATER(
         [self resetEventsDatabaseStatus];
     } 
 
-    UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
-    
+    //UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
     
 	// We send headers on all response codes, so let's set those values before checking for != 200
     // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
@@ -478,13 +482,13 @@ IF_IOS4_OR_GREATER(
     }
     
 	if (connection != nil) {
-        UALOG("Analytics sending already in progress now.");
+        //UALOG("Analytics sending already in progress now.");
         return;
     }
 
     int eventCount = [[UAAnalyticsDBManager shared] eventCount];
     if (eventCount == 0) {
-        UALOG(@"Warning: there are no events.");
+        //UALOG(@"Warning: there are no events.");
         return;
     }
     
@@ -579,10 +583,13 @@ IF_IOS4_OR_GREATER(
     request.userInfo = events;
 
     writer.humanReadable = YES;//turn on formatting for debugging
+    
+    /*
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
-    
+    */
+     
 	[writer release];
 
     connection = [[UAHTTPConnection connectionWithRequest:request] retain];
@@ -607,7 +614,7 @@ IF_IOS4_OR_GREATER(
     //NSInteger stdInterval = x_ua_min_batch_interval * 2;
     
     if (databaseSize <= 0) {
-        UALOG(@"Analytics upload not necessary: no events to send.");
+        //UALOG(@"Analytics upload not necessary: no events to send.");
         return;
     }
     
@@ -631,7 +638,7 @@ IF_IOS4_OR_GREATER(
     // Ensure that we are not sending too often.
     // If we're within the minimum interval, set a timer
     // to retry once the minimum interval is up
-    UALOG(@"Send Analytics");
+    //UALOG(@"Send Analytics");
 	
 	NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
 	
