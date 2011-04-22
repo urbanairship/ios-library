@@ -240,7 +240,7 @@
 
 - (void)downloadDidFail:(UADownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
-    SKPaymentTransaction *transaction = product.transaction;
+    //SKPaymentTransaction *transaction = product.transaction;
 
     // alert detail error to user
     // ASIHTTPRequest will directly invoke this method when request timeout, so
