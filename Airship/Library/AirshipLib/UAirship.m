@@ -40,9 +40,10 @@ NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptio
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
+NSString * const UAirshipTakeOffOptionsLoggingKey = @"UAirshipTakeOffOptionsLoggingKey";
 
 static UAirship *_sharedAirship;
-BOOL releaseLogging = false;
+BOOL logging = false;
 
 @implementation UAirship
 
@@ -53,8 +54,8 @@ BOOL releaseLogging = false;
 @synthesize ready;
 @synthesize analytics;
 
-+ (void)setReleaseLogging:(BOOL)value {
-    releaseLogging = value;
++ (void)setLogging:(BOOL)value {
+    logging = value;
 }
 
 - (void)dealloc {
@@ -97,6 +98,7 @@ BOOL releaseLogging = false;
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
     
     
+    
     // Load configuration
     // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
     // override any options defined in AirshipConfig.plist
@@ -114,6 +116,20 @@ BOOL releaseLogging = false;
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
+        NSString *loggingOptions = [config objectForKey:UAirshipTakeOffOptionsLoggingKey];
+        
+        if (loggingOptions != nil) {
+            // If it is present, use it
+            [UAirship setLogging:[[config objectForKey:UAirshipTakeOffOptionsLoggingKey] boolValue]];
+        } else {
+            // If it is missing
+            if (inProduction) {
+                [UAirship setLogging:NO];
+            } else {
+                [UAirship setLogging:YES];
+            }
+        }
+        
         NSString *configAppKey;
         NSString *configAppSecret;
         
@@ -125,7 +141,7 @@ BOOL releaseLogging = false;
             configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
             
             //set release logging to yes because static lib is built in release mode
-            [UAirship setReleaseLogging:YES];
+            //[UAirship setLogging:YES];
         }
         
         //Check for a custom UA server value

@@ -34,6 +34,7 @@ extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
 extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
+extern NSString * const UAirshipTakeOffOptionsLoggingKey;
 
 @class UA_ASIHTTPRequest;
 
@@ -74,7 +75,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 // Lifecycle
 + (UAirship *)shared;
-+ (void)setReleaseLogging:(BOOL)value;
++ (void)setLogging:(BOOL)value;
 + (void)takeOff:(NSDictionary *)options;
 + (void)land;
 

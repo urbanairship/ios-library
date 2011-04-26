@@ -26,21 +26,21 @@
 #import <UIKit/UIKit.h>
 
 // ALog always displays output regardless of the UADEBUG setting
-#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+//#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
 #define UA_BLog(fmt, ...) \
     do { \
-        if (releaseLogging) { \
+        if (logging) { \
             NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
         } \
     } while(0)
 
 // UADEBUG set in debug build setting's "Other C flags", as -DUADEBUG
-#ifdef UADEBUG
-#define UA_DLog UA_ALog
-#else
+//#ifdef UADEBUG
+//#define UA_DLog UA_ALog
+//#else
 #define UA_DLog UA_BLog
-extern BOOL releaseLogging; // Default is false
-#endif
+extern BOOL logging; // Default is false
+//#endif
 
 #define UALOG UA_DLog
 
@@ -98,7 +98,7 @@ g/255.0f, b/255.0f, a)
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
-#define UA_VERSION @ "1.0.0"
+#define UA_VERSION @ "1.0.5"
 #endif
 
 #define UA_VERSION_INTERFACE(CLASSNAME)  \
