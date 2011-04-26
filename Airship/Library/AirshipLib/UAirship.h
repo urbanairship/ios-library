@@ -34,7 +34,6 @@ extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
 extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
-extern NSString * const UAirshipTakeOffOptionsLoggingKey;
 
 @class UA_ASIHTTPRequest;
 

@@ -40,7 +40,6 @@ NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptio
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
-NSString * const UAirshipTakeOffOptionsLoggingKey = @"UAirshipTakeOffOptionsLoggingKey";
 
 static UAirship *_sharedAirship;
 BOOL logging = false;
@@ -116,11 +115,11 @@ BOOL logging = false;
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
-        NSString *loggingOptions = [config objectForKey:UAirshipTakeOffOptionsLoggingKey];
+        NSString *loggingOptions = [config objectForKey:@"LOGGING_ENABLED"];
         
         if (loggingOptions != nil) {
             // If it is present, use it
-            [UAirship setLogging:[[config objectForKey:UAirshipTakeOffOptionsLoggingKey] boolValue]];
+            [UAirship setLogging:[[config objectForKey:@"LOGGING_ENABLED"] boolValue]];
         } else {
             // If it is missing
             if (inProduction) {
