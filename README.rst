@@ -92,9 +92,9 @@ App Store and Ad-Hoc builds, set it to YES.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
-Package - License - Copyright / Creator 
-#######################################
-::
+Third party Package - License - Copyright / Creator 
+###################################################
+
 asi-http-request	BSD		Copyright (c) 2007-2010, All-Seeing Interactive.
 
 fmdb	MIT		Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
@@ -105,8 +105,8 @@ Base64	BSD		Copyright 2009-2010 Matt Gallagher.
 
 ZipFile-OC	BSD		Copyright (C) 1998-2005 Gilles Vollant.
 
-GHUnit	Apache2	Copyright 2007 Google Inc.
+GHUnit	Apache 2	Copyright 2007 Google Inc.
 
-Google Toolkit	Apache2	Copyright 2007 Google Inc.
+Google Toolkit	Apache 2	Copyright 2007 Google Inc.
 
 Reachability	BSD		Copyright (C) 2010 Apple Inc.
