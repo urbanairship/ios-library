@@ -649,7 +649,8 @@
 		B6E7F8441239FFD5009BC92D /* libUAirship-1.0.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.0.4.a";
+			name = "libUAirship-1.0.4.a";
+			path = "libUAirship-1.0.5.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -824,10 +825,7 @@
 				BUILD_STYLE = Debug;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Classes/Tests\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -836,7 +834,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-DDEBUG";
+				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = (
 					"-weak_library",
 					/usr/lib/libSystem.B.dylib,
@@ -849,6 +847,8 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Debug;
 		};
@@ -857,12 +857,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Classes/Tests\"",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
@@ -880,6 +877,8 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
 		};
@@ -969,6 +968,9 @@
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Debug;
 		};
@@ -977,7 +979,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -991,8 +993,12 @@
 					"-all_load",
 				);
 				PREBINDING = NO;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
 		};
