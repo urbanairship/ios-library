@@ -8,8 +8,7 @@ Urban Airship's libUArship is a drop-in static library that provides a simple wa
 integrate Urban Airship services into your iOS applications. This entire project will
 allow you to build the library files and all sample projects. If you just want to
 include the library in your app, you can simply download the latest ``libUAirship.zip``
-and a sample project. These zips contain a pre-compiled universal arm6/arm7 library.
-We do not support i386 or simulator usage.
+and a sample project. These zips contain a pre-compiled universal arm6/arm7/i386 library.
 
 Working with the Library
 ------------------------
@@ -30,7 +29,7 @@ Required Libraries
 
 AirMail Inbox requires your application to link against the following Frameworks::
 
-    libUAirship-1.0.3.a
+    libUAirship-1.0.5.a
     CFNetwork.framework
     CoreGraphics.framework
     Foundation.framework
@@ -48,7 +47,7 @@ Build Settings
 
 **Compiler**
     
-LLVM 1.6 is the default compiler for all projects and the static library. GCC 4.2 is also supported.
+LLVM 2.0 is the default compiler for all projects and the static library. GCC 4.2 is also supported.
      
 **Header search path**
                                          
@@ -80,11 +79,11 @@ You can also edit the file as plain-text::
 
         {
                 /* NOTE: DO NOT USE THE MASTER SECRET */
-			"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
-			"DEVELOPMENT_APP_KEY" = "Your development app key";
-			"DEVELOPMENT_APP_SECRET" = "Your development app secret";
-			"PRODUCTION_APP_KEY" = "Your production app key";
-			"PRODUCTION_APP_SECRET" = "Your production app secret";
+		"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
+		"DEVELOPMENT_APP_KEY" = "Your development app key";
+		"DEVELOPMENT_APP_SECRET" = "Your development app secret";
+		"PRODUCTION_APP_KEY" = "Your production app key";
+		"PRODUCTION_APP_SECRET" = "Your production app secret";
         }
 
 If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to false. For
@@ -93,3 +92,14 @@ App Store and Ad-Hoc builds, set it to YES.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
+Package - License - Copyright / Creator 
+#######################################
+
+asi-http-request	BSD		Copyright (c) 2007-2010, All-Seeing Interactive.
+fmdb	MIT		Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
+SBJSON	MIT		Copyright (C) 2007-2010 Stig Brautaset.
+Base64	BSD		Copyright 2009-2010 Matt Gallagher.
+ZipFile-OC	BSD		Copyright (C) 1998-2005 Gilles Vollant.
+GHUnit	Apache2	Copyright 2007 Google Inc.
+Google Toolkit	Apache2	Copyright 2007 Google Inc.
+Reachability	BSD		Copyright (C) 2010 Apple Inc.
