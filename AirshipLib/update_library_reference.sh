@@ -33,12 +33,14 @@ export ALREADYINVOKED="true"
 lib_name="${EXECUTABLE_PREFIX}${PRODUCT_NAME}.${EXECUTABLE_EXTENSION}"
 lib_base_name="$(echo $lib_name | awk -F '-' '{print $1}')"
 dest_lib_root="${SRCROOT}/../Airship"
+dest_package_root="${SRCROOT}/../${BUILD_STYLE}/Airship"
 
 echo "remove old library $lib_base_name*.${EXECUTABLE_EXTENSION}"
 find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec rm {} \;
 echo "copy $lib_name from ${SYMROOT}/${CONFIGURATION}-universal to $dest_lib_root"
 cp "${SYMROOT}/${CONFIGURATION}-universal/$lib_name" "$dest_lib_root"
-
+echo "copy $lib_name from ${SYMROOT}/${CONFIGURATION}-universal to $dest_package_root"
+cp "${SYMROOT}/${CONFIGURATION}-universal/$lib_name" "$dest_package_root"
 
 for sample_prj_root in "${SRCROOT}"/../*Sample
 do
