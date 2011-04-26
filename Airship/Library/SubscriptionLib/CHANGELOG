@@ -1,3 +1,8 @@
+1.2.5 - April 26, 2011
+- Fixed bug where product_id was missing from subscription objects.
+- Fixed bug that could cause downloads to fail on retry and appear stuck.
+- Fixed early SKTransaction finish calls that could cause a crash.
+
 1.2.4 - February 23, 2011
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.
