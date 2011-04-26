@@ -380,8 +380,8 @@
 }
 
 - (void)inboxError:(NSString *)message {
-    loadingLabel.text = message;
     [activity stopAnimating];
+    loadingLabel.hidden = YES;
     UALOG(@"inboxError");
 }
 
