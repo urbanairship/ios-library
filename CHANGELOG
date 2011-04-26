@@ -10,6 +10,7 @@
 - Fixed bug that could cause downloads to fail on retry and appear stuck.
 - Fixed bug where StoreFrontDetails viewcontroller could be pushed twice and crash.
 - Fixed arm6 LLVM bug that would cause crashing on older devices when launching UAirship.
+- Moved UAInboxMessageListCell to shared.
 - Removed extra logging, and changed logs to be triggered by a takeOff options flag LOGGING_ENABLED
 - Removed all non-essential code files from Airship/External directory.
 - Library is now a single arm6/arm7/i386 universal release file.
