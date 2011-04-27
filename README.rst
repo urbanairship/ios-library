@@ -71,7 +71,7 @@ In addition you'll need to include *UAirship.h* in your source files.
 The AirshipConfig File
 ######################
 
-The library uses a .plist configuration file named `Airship.plist` to manage your production and development
+The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com
 
