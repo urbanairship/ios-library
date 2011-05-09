@@ -58,7 +58,7 @@ static UAInboxMessageList *_defaultInbox = nil;
 			
 			// TODO: This is a UI call - shouldn't be in the library
 			
-            [[UIApplication sharedApplication] setApplicationIconBadgeNumber: _defaultInbox.unreadCount];
+            //[[UIApplication sharedApplication] setApplicationIconBadgeNumber: _defaultInbox.unreadCount];
         }
         RELEASE_SAFELY(_defaultInbox);
     }
