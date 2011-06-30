@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0D2E043C11AA5D1E00C4CD8A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */; };
-		0D2E049011AA5D8A00C4CD8A /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E048F11AA5D8A00C4CD8A /* libz.1.2.3.dylib */; };
 		0D2E049A11AA5DB100C4CD8A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */; };
 		0D2E04BE11AA5E9700C4CD8A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */; };
 		0D2E051711AA61F300C4CD8A /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
@@ -55,6 +54,7 @@
 		1F7FD61B12F8E39900317B96 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
 		1F7FD61C12F8E39900317B96 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
 		1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
+		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -96,7 +96,6 @@
 
 /* Begin PBXFileReference section */
 		0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		0D2E048F11AA5D8A00C4CD8A /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0D2E051611AA61F300C4CD8A /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
@@ -158,6 +157,7 @@
 		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
 		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
 		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
+		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -178,11 +178,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				0D2E043C11AA5D1E00C4CD8A /* CFNetwork.framework in Frameworks */,
-				0D2E049011AA5D8A00C4CD8A /* libz.1.2.3.dylib in Frameworks */,
 				0D2E049A11AA5DB100C4CD8A /* MobileCoreServices.framework in Frameworks */,
 				0D2E04BE11AA5E9700C4CD8A /* SystemConfiguration.framework in Frameworks */,
 				18C02A05124F244300D49CD5 /* libUAirship-1.0.4.a in Frameworks */,
@@ -429,10 +429,10 @@
 				1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */,
 				1F7FD3A812F784E100317B96 /* MessageUI.framework */,
 				18C02A08124F250000D49CD5 /* libsqlite3.dylib */,
+				1FF54B2213BD319500F8E5A1 /* libz.dylib */,
 				0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */,
 				0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */,
 				0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */,
-				0D2E048F11AA5D8A00C4CD8A /* libz.1.2.3.dylib */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
@@ -454,7 +454,7 @@
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
 				0D2E053D11AA62C000C4CD8A /* ShellScript */,
-				63B2D9DC12A38135007A0AA2 /* ShellScript */,
+				1FF54B7413BD34B400F8E5A1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -573,7 +573,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/checkConfig.sh\"";
 		};
-		63B2D9DC12A38135007A0AA2 /* ShellScript */ = {
+		1FF54B7413BD34B400F8E5A1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
