@@ -128,7 +128,14 @@ static BOOL runiPhoneTargetOniPad = NO;
         [ui.rootViewController viewWillDisappear:ui->animated];
     }
 
-    if (ui.rootViewController.parentViewController != nil) {
+    UIViewController *presentingViewController = nil;
+    if ([ui.rootViewController respondsToSelector:@selector(presentingViewController)]) {
+        presentingViewController = ui.rootViewController.presentingViewController; //iOS5 method
+    } else {
+        presentingViewController = ui.rootViewController.parentViewController;// <= 4.x
+    }
+    
+    if (presentingViewController != nil) {
         // for iPhone/iPod displayStoreFront:animated:
         [ui.rootViewController dismissModalViewControllerAnimated:ui->animated];
 
