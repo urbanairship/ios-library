@@ -162,7 +162,7 @@ return self;                                        \
 return self;                                        \
 }                                                   \
 \
-- (void)release                                     \
+- (oneway void)release                                     \
 {                                                   \
 }                                                   \
 \
