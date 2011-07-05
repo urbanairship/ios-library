@@ -35,7 +35,6 @@
 		005F093E12B89B3A00DBF4B0 /* UASubscriptionUserProductsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 005F092E12B89B3A00DBF4B0 /* UASubscriptionUserProductsViewController.xib */; };
 		0D5A7DE411CA03A100BE4A57 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */; };
 		0D5A7E0A11CA03FE00BE4A57 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */; };
-		0D5A7E1911CA041D00BE4A57 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */; };
 		0D5A7E2811CA043000BE4A57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */; };
 		0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DE288F311CF310D0013D2F1 /* StoreKit.framework */; };
 		0DF7FF9311CA251D00DD9F96 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */; };
@@ -211,7 +210,6 @@
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				0D5A7DE411CA03A100BE4A57 /* CFNetwork.framework in Frameworks */,
 				0D5A7E0A11CA03FE00BE4A57 /* MobileCoreServices.framework in Frameworks */,
-				0D5A7E1911CA041D00BE4A57 /* libz.1.2.3.dylib in Frameworks */,
 				0D5A7E2811CA043000BE4A57 /* SystemConfiguration.framework in Frameworks */,
 				0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */,
 				B63B5EDA1246383700145424 /* libsqlite3.dylib in Frameworks */,
