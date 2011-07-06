@@ -460,36 +460,46 @@
 
 static float label_width = 0.0;
 - (void)createNavigationBadge {
-//    // Create a label to test the size of the title string, so we can determine
-//    // where to place the unread count badge.
-//    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
-//    UILabel *testLabel = [[[UILabel alloc] init] autorelease];
-//    
-//    testLabel.text = [UAInboxUI shared].messageListTitle;
-//    testLabel.font = [UIFont boldSystemFontOfSize:20];
-//    [testLabel sizeToFit];
-//    label_width = testLabel.frame.size.width;
-//
-//    badgeView = [[UIView alloc] initWithFrame:CGRectMake(badgePosition, 4, 100, 34)];
-//    badgeView.backgroundColor = [UIColor clearColor];
-//    badgeView.clipsToBounds = NO;
-//    [badgeView addSubview:[((UIView *)[tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];
+    // Create a label to test the size of the title string, so we can determine
+    // where to place the unread count badge.
+    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
+
+    UILabel *testLabel = [[[UILabel alloc] init] autorelease];
+
+    testLabel.text = [UAInboxUI shared].messageListTitle;
+    testLabel.font = [UIFont boldSystemFontOfSize:20];
+    [testLabel sizeToFit];
+    label_width = testLabel.frame.size.width;
+
+    badgeView = [[UIView alloc] initWithFrame:CGRectMake(badgePosition, 4, 100, 34)];
+    badgeView.backgroundColor = [UIColor clearColor];
+    badgeView.clipsToBounds = NO;
+
+    //TODO: MACRO-ize this properly
+    if ([tabbarItem respondsToSelector:@selector(finishedSelectedImage)]) { //HACK!!
+        //if ios5
+        [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
+    } else {
+        //if < ios5
+        [badgeView addSubview:[((UIView *)[tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];
+    }
+
     badgeView.hidden = YES;
 }
 
 - (void)updateNavigationBadge {
-//    int count = [UAInbox shared].activeInbox.unreadCount;
-//    NSString *unreadCount = [NSString stringWithFormat:@"%d", count];
-//    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
-//    
-//    if (count < 0)
-//        count = 0;
-//    badgeView.hidden = (count==0);
-//    tabbarItem.badgeValue = unreadCount;
-//    badgeView.frame = CGRectMake(badgePosition + 5.3*([unreadCount length]-1),
-//                                 badgeView.frame.origin.y,
-//                                 badgeView.frame.size.width,
-//                                 badgeView.frame.size.height);
+    int count = [UAInbox shared].activeInbox.unreadCount;
+    NSString *unreadCount = [NSString stringWithFormat:@"%d", count];
+    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
+
+    if (count < 0)
+        count = 0;
+    badgeView.hidden = (count==0);
+    tabbarItem.badgeValue = unreadCount;
+    badgeView.frame = CGRectMake(badgePosition + 5.3*([unreadCount length]-1),
+                                 badgeView.frame.origin.y,
+                                 badgeView.frame.size.width,
+                                 badgeView.frame.size.height);
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
