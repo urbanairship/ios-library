@@ -30,7 +30,6 @@
 
 }
 
-+(NSDate*) localizedDateFromUTC:(NSDate*)sourceDate;
 +(NSString *) formattedDateRelativeToNow:(NSDate *)date;
 
 @end
