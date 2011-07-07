@@ -478,6 +478,7 @@ static float label_width = 0.0;
     //TODO: MACRO-ize this properly
     if ([tabbarItem respondsToSelector:@selector(finishedSelectedImage)]) { //HACK!!
         //if ios5
+        tabbar.tintColor = [UIColor clearColor];
         [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
     } else {
         //if < ios5
