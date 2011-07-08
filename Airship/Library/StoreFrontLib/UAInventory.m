@@ -323,10 +323,10 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
                                                   selector:@selector(localizedCaseInsensitiveCompare:)];
     }
 
-    [sortedProducts release];
-    sortedProducts = [[[self productsForType:ProductTypeOrigin]
-                       sortedArrayUsingDescriptors:[NSArray arrayWithObject:descriptor]]
-                      retain];
+    // replace the contents of the sorted array with updated items
+    [sortedProducts removeAllObjects];
+    [sortedProducts addObjectsFromArray:[[self productsForType:ProductTypeOrigin]
+                                         sortedArrayUsingDescriptors:[NSArray arrayWithObject:descriptor]]];
     [descriptor release];
 }
 

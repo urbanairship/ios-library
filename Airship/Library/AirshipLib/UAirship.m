@@ -221,7 +221,7 @@ BOOL logging = false;
     }
     
     _sharedAirship.ready = true;
-    _sharedAirship.analytics = [[UAAnalytics alloc] initWithOptions:analyticsOptions];
+    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithOptions:analyticsOptions] autorelease];
     
     //Send Startup Analytics Info
     //init first event
