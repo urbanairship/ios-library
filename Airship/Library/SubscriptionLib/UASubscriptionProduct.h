@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class SKProduct;
+
 @interface UASubscriptionProduct : NSObject {
     NSString *productIdentifier;
     NSString *subscriptionKey;
@@ -35,6 +37,7 @@
     int duration;
 
     //property from SKProduct
+    SKProduct *skProduct;
     NSString *title;
     NSString *productDescription;
     NSString *price;
@@ -57,6 +60,7 @@
 @property (nonatomic, retain) NSString *subscriptionKey;
 @property (nonatomic, retain) NSString *subscriptionName;
 
+@property (nonatomic, retain) SKProduct *skProduct;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *productDescription;
 @property (nonatomic, retain) NSString *price;

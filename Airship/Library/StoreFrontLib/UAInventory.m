@@ -346,7 +346,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
        || [[UAStoreFront shared].purchaseReceipts objectForKey:product.productIdentifier] != nil) {
         [[UAStoreFront shared].downloadManager downloadIfValid:product];
     } else {
-        [[UAStoreFront shared].sfObserver payForProduct:productIdentifier];
+        [[UAStoreFront shared].sfObserver payForProduct:product.skProduct];
     }
 }
 

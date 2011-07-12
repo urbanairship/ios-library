@@ -36,6 +36,7 @@
 @synthesize duration;
 @synthesize subscriptionKey;
 @synthesize subscriptionName;
+@synthesize skProduct;
 @synthesize title;
 @synthesize productDescription;
 @synthesize price;
@@ -46,6 +47,7 @@
 @synthesize isPurchasing;
 
 - (void)dealloc {
+    RELEASE_SAFELY(skProduct);
     RELEASE_SAFELY(productIdentifier);
     RELEASE_SAFELY(subscribeURL);
     RELEASE_SAFELY(previewURL);

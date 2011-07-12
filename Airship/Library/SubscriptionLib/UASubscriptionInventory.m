@@ -284,7 +284,7 @@
 
 - (void)purchase:(UASubscriptionProduct *)product {
     [[SKPaymentQueue defaultQueue] addPayment:
-     [SKPayment paymentWithProductIdentifier:product.productIdentifier]];
+     [SKPayment paymentWithProduct:product.skProduct]];
     product.isPurchasing = YES;
 }
 

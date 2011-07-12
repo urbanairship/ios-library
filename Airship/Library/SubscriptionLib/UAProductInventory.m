@@ -131,6 +131,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
             NSString* localizedPrice = [UAProductInventory localizedPrice:skitem];
             uaProduct.price = localizedPrice;
             uaProduct.priceNumber = skitem.price;
+            uaProduct.skProduct = skitem;
         }
     }
 
