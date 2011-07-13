@@ -64,15 +64,24 @@
     
     if (sound) {
     
-		UALOG(@"Received an alert with a sound: %@", sound);
-		
+        // Note: The default sound is not available in the app.
+        //
+        // From http://developer.apple.com/library/ios/#documentation/AudioToolbox/Reference/SystemSoundServicesReference/Reference/reference.html :
+        // System-supplied alert sounds and system-supplied user-interface sound effects are not available to your iOS application.
+        // For example, using the kSystemSoundID_UserPreferredAlert constant as a parameter to the AudioServicesPlayAlertSound
+        // function will not play anything.
+
         SystemSoundID soundID;
         NSString *path = [[NSBundle mainBundle] pathForResource:[sound stringByDeletingPathExtension] 
                                                          ofType:[sound pathExtension]];
-        
-        AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundID);
-        AudioServicesPlayAlertSound(soundID);
-        
+        if (path) {
+            UALOG(@"Received an alert with a sound: %@", sound);
+            AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundID);
+            AudioServicesPlayAlertSound(soundID);
+        } else {
+            UALOG(@"Received an alert with a sound that cannot be found the application bundle: %@", sound);
+        }
+
     } else {
         
         // Vibrates on supported devices, on others, does nothing
