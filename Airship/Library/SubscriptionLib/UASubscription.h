@@ -35,6 +35,7 @@
     NSMutableArray *products;
     // copies of products that have been purchased
     NSMutableArray *purchasedProducts;
+    NSMutableArray *availableProducts;
     NSMutableArray *availableContents;
     NSMutableArray *downloadedContents;
     NSMutableArray *undownloadedContents;
@@ -45,6 +46,7 @@
 @property (nonatomic, assign, readonly) BOOL subscribed;
 @property (nonatomic, retain, readonly) NSMutableArray *products;
 @property (nonatomic, retain, readonly) NSMutableArray *purchasedProducts;
+@property (nonatomic, retain, readonly) NSMutableArray *availableProducts;
 @property (nonatomic, retain, readonly) NSMutableArray *availableContents;
 @property (nonatomic, retain, readonly) NSMutableArray *downloadedContents;
 @property (nonatomic, retain, readonly) NSMutableArray *undownloadedContents;

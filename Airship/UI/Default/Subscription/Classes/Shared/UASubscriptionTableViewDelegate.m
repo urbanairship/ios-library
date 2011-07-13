@@ -108,7 +108,7 @@
 }
 
 - (NSArray *)productsForSection:(NSInteger)section {
-    return [[subscriptions objectAtIndex:section] products];
+    return [[subscriptions objectAtIndex:section] availableProducts];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

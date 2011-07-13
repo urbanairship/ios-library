@@ -131,12 +131,17 @@ static int compareProduct(id productID, id otherProductID, void *context);
             NSString* localizedPrice = [UAProductInventory localizedPrice:skitem];
             uaProduct.price = localizedPrice;
             uaProduct.priceNumber = skitem.price;
+            uaProduct.skProduct = skitem;
+            uaProduct.isForSale = YES;
         }
     }
 
-    for(NSString *invalid in response.invalidProductIdentifiers) {
-        UALOG(@"INVALID PRODUCT ID: %@", invalid);
-        [self removeProduct:invalid];
+    for(NSString *invalidProductId in response.invalidProductIdentifiers) {
+        UALOG(@"INVALID PRODUCT ID: %@", invalidProductId);
+        uaProduct = [self.productDict objectForKey:invalidProductId];
+        if (uaProduct != nil) {
+            uaProduct.isForSale = NO;
+        }
     }
 
     // Wait until inventory is loaded to add an observer
