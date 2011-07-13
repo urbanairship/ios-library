@@ -45,6 +45,7 @@
 @synthesize startDate;
 @synthesize endDate;
 @synthesize isPurchasing;
+@synthesize isForSale;
 
 - (void)dealloc {
     RELEASE_SAFELY(skProduct);
@@ -94,6 +95,7 @@
 	self.previewURL = sp.previewURL;
 	self.iconURL = sp.iconURL;
 	self.duration = sp.duration;
+    self.skProduct = sp.skProduct;
 	self.title = sp.title;
 	self.productDescription = sp.productDescription;
 	self.price = sp.price;
@@ -102,6 +104,7 @@
 	self.startDate = sp.startDate;
 	self.endDate = sp.endDate;
 	self.isPurchasing = sp.isPurchasing;
+    self.isForSale = sp.isForSale;
 	
 	return self;
 }

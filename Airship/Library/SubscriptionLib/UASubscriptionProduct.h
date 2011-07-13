@@ -47,7 +47,9 @@
     BOOL purchased;
     NSDate *startDate;
     NSDate *endDate;
-    
+
+    BOOL isForSale;
+
     // For UI
     BOOL isPurchasing;
 }
@@ -71,6 +73,7 @@
 @property (nonatomic, retain) NSDate *endDate;
 
 @property (nonatomic, assign) BOOL isPurchasing;
+@property (nonatomic, assign) BOOL isForSale;
 
 - (id)initWithDict:(NSDictionary *)dict;
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp;
