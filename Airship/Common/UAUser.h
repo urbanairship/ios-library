@@ -32,7 +32,8 @@ typedef enum _UAUserState {
     UAUserStateEmpty = 0,
     UAUserStateNoEmail = 1,
     UAUserStateWithEmail = 2,
-    UAUserStateInRecovery = 3
+    UAUserStateInRecovery = 3,
+    UAUserStateCreating = 4
 } UAUserState;
 
 @protocol UAUserObserver <NSObject>
@@ -53,7 +54,8 @@ typedef enum _UAUserState {
 @end
 
 @interface UAUser : UAObservable {
-    
+
+  @private
     NSString *username;
     NSString *password;
     NSString *email;
@@ -66,19 +68,29 @@ typedef enum _UAUserState {
     NSString *recoveryStatusUrl;
     UAUserState userState;
     NSTimer* recoveryPoller;
-    BOOL inRecovery, recoveryStarted, sentRecoveryEmail;
+    BOOL inRecovery;
+    BOOL recoveryStarted;
+    BOOL sentRecoveryEmail;
     BOOL retrievingUser;
     
     BOOL isObservingDeviceToken;
     
+    //creation flag
+    BOOL creatingUser;
+
 }
 
-@property (retain, nonatomic) NSString *recoveryEmail, *recoveryStatusUrl;
+@property (retain, nonatomic) NSString *recoveryEmail;
+@property (retain, nonatomic) NSString *recoveryStatusUrl;
 @property (retain, nonatomic) NSTimer *recoveryPoller;
 
 // Public interface
 @property (assign, readonly, nonatomic) UAUserState userState;
-@property (retain, nonatomic) NSString *username, *password, *email, *url, *alias;
+@property (retain, nonatomic) NSString *username;
+@property (retain, nonatomic) NSString *password;
+@property (retain, nonatomic) NSString *email;
+@property (retain, nonatomic) NSString *url;
+@property (retain, nonatomic) NSString *alias;
 @property (retain, nonatomic) NSMutableSet *tags;
 
 + (UAUser *)defaultUser;
