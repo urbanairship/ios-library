@@ -66,16 +66,22 @@
 }
 
 - (id)initWithDict:(NSDictionary *)dict {
-    if (!(self = [super init]))
+    if (!(self = [super init])) {
         return nil;
-	
+    }
+
     self.productIdentifier = [dict objectForKey:@"product_id"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
     self.subscriptionName = [dict objectForKey:@"name"];
     self.subscribeURL = [NSURL URLWithString:[dict objectForKey:@"subscribe_url"]];
     self.previewURL = [NSURL URLWithString:[dict objectForKey:@"preview_url"]];
     self.iconURL = [NSURL URLWithString:[dict objectForKey:@"icon_url"]];
-    self.duration = [[dict objectForKey:@"duration_in_days"] intValue];
+
+    //set the duration if available (not sent for autorenewables)
+    id durationValue = [dict objectForKey:@"duration_in_days"];
+    if (duration && (NSNull *)duration != [NSNull null]) { 
+        self.duration = [(NSNumber *)durationValue intValue];
+    }
 
     for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions])
         if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier])
