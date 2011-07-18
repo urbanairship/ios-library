@@ -164,22 +164,6 @@
     }
 }
 
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    
-    // Accept self-signed ssl certs
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-        [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
-    } else {
-        [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-    }
-
-}
-
 #pragma mark -
 #pragma mark GZIP compression
 

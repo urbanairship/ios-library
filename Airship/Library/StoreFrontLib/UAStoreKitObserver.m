@@ -236,8 +236,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 #pragma mark -
 #pragma mark Pay for product
 
-- (void)payForProduct:(NSString *)productIdentifier {
-    SKPayment *payment = [SKPayment paymentWithProductIdentifier:productIdentifier];
+- (void)payForProduct:(SKProduct *)product {
+    SKPayment *payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 

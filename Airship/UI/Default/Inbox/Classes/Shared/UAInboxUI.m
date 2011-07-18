@@ -193,9 +193,17 @@ static BOOL runiPhoneTargetOniPad = NO;
 	if (self.isiPad) {
         self.uaWindow.hidden = YES;
     } else {
-        UIViewController *con = self.rootViewController.parentViewController;
+        
+        //added iOS 5 parent/presenting view getter
+        UIViewController *con;
+        if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
+            con = self.rootViewController.presentingViewController;
+        } else {
+            con = self.rootViewController.parentViewController;
+        }
+        
         [con dismissModalViewControllerAnimated:YES];
-		
+        
         // BUG: Workaround. ModalViewController does not handle resizing correctly if
         // dismissed in landscape when status bar is visible
         if (![UIApplication sharedApplication].statusBarHidden)

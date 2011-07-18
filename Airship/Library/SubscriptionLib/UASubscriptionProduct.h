@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class SKProduct;
+
 @interface UASubscriptionProduct : NSObject {
     NSString *productIdentifier;
     NSString *subscriptionKey;
@@ -35,6 +37,7 @@
     int duration;
 
     //property from SKProduct
+    SKProduct *skProduct;
     NSString *title;
     NSString *productDescription;
     NSString *price;
@@ -44,7 +47,9 @@
     BOOL purchased;
     NSDate *startDate;
     NSDate *endDate;
-    
+
+    BOOL isForSale;
+
     // For UI
     BOOL isPurchasing;
 }
@@ -57,6 +62,7 @@
 @property (nonatomic, retain) NSString *subscriptionKey;
 @property (nonatomic, retain) NSString *subscriptionName;
 
+@property (nonatomic, retain) SKProduct *skProduct;
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSString *productDescription;
 @property (nonatomic, retain) NSString *price;
@@ -67,6 +73,7 @@
 @property (nonatomic, retain) NSDate *endDate;
 
 @property (nonatomic, assign) BOOL isPurchasing;
+@property (nonatomic, assign) BOOL isForSale;
 
 - (id)initWithDict:(NSDictionary *)dict;
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp;

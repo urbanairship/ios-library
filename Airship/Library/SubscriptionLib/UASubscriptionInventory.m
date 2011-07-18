@@ -110,8 +110,12 @@
  * A full reload on all products, purchased contents and purchasing info
  */
 - (void)loadInventory {
-    if ([UAUser defaultUser].userState == UAUserStateEmpty)
+
+    // do not load the inventory if the user is not fully initialized
+    UAUserState userState = [UAUser defaultUser].userState;
+    if (userState == UAUserStateEmpty || userState == UAUserStateCreating) {
         return;
+    }
 
     hasLoaded = NO;
 
@@ -284,7 +288,7 @@
 
 - (void)purchase:(UASubscriptionProduct *)product {
     [[SKPaymentQueue defaultQueue] addPayment:
-     [SKPayment paymentWithProductIdentifier:product.productIdentifier]];
+     [SKPayment paymentWithProduct:product.skProduct]];
     product.isPurchasing = YES;
 }
 

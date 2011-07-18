@@ -69,7 +69,7 @@
 - (void)updateUI {
     UAUserState userState = [UAUser defaultUser].userState;
     UALOG(@"User state: %d", userState);
-    if (userState == UAUserStateEmpty) {
+    if (userState == UAUserStateEmpty  || userState == UAUserStateCreating) {
         emailHints.text = UA_SS_TR(@"UA_Email_Hints_Empty");
         emailInput.hidden = NO;
         emailInput.enabled = YES;

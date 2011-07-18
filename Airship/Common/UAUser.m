@@ -67,12 +67,21 @@ static UAUser *_defaultUser;
 //User retrieval
 - (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request;
 - (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request;
+
+//User creation
+- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request;
+
 @end
 
 
 @implementation UAUser
 
-@synthesize username, password, email, recoveryEmail, url, alias;
+@synthesize username;
+@synthesize password;
+@synthesize email;
+@synthesize recoveryEmail;
+@synthesize url;
+@synthesize alias;
 @synthesize tags;
 @synthesize userState;
 @synthesize recoveryStatusUrl;
@@ -229,6 +238,13 @@ static UAUser *_defaultUser;
 // TODO: better user state representation
 - (void)loadUser {
 
+    if (creatingUser) {
+        // if we're creating a user, do not load anything now
+        // everything relevant has already beenloaded
+        // and we don't want to step on the in-progress creation
+        return;
+    }
+
 	self.retrievingUser = NO;
     self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
     
@@ -361,8 +377,9 @@ static UAUser *_defaultUser;
 }
 
 - (void)updateUserState {
-    
-    if (username == nil || password == nil) {
+    if (creatingUser) {
+        userState = UAUserStateCreating;
+    } else if (username == nil || password == nil) {
         userState = UAUserStateEmpty;
     } else {
         if (email == nil) {
@@ -419,6 +436,8 @@ static UAUser *_defaultUser;
 
 - (void)createUser {
     
+    creatingUser = YES;
+
     NSString *urlString = [NSString stringWithFormat:@"%@%@",
                            [[UAirship shared] server],
                            @"/api/user/"];
@@ -428,7 +447,7 @@ static UAUser *_defaultUser;
                                                method:@"POST"
                                              delegate:self
                                                finish:@selector(userCreated:)
-                                                 fail:@selector(userRequestWentWrong:)];
+                                                 fail:@selector(userCreationDidFail:)];
 
     NSMutableDictionary *data = [self createUserDictionary];
 
@@ -445,6 +464,10 @@ static UAUser *_defaultUser;
 - (void)userCreated:(UA_ASIHTTPRequest*)request {
     
     UALOG(@"User created: %d:%@", request.responseStatusCode, request.responseString);
+
+    // done creating! or it failed..
+    // wait to update the state enum until the next state is determined below
+    creatingUser = NO;
 
     switch (request.responseStatusCode) {
         case 201://created
@@ -494,10 +517,17 @@ static UAUser *_defaultUser;
         }
         default:
         {
+            [self updateUserState];
             [self userRequestWentWrong:request];
             break;
         }
     }
+}
+
+- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request {
+    creatingUser = NO;
+    [self updateUserState];
+    [self userRequestWentWrong:request];
 }
 
 #pragma mark -

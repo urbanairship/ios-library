@@ -43,7 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)restoreAll;
 - (void)failedTransaction:(SKPaymentTransaction *)transaction;
 - (void)finishTransaction:(SKPaymentTransaction *)transaction;
-- (void)payForProduct:(NSString *)productIdentifier;
+- (void)payForProduct:(SKProduct *)product;
 - (UAProduct *)productFromTransaction:(SKPaymentTransaction *)transaction;
 
 

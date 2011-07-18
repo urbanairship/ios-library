@@ -122,8 +122,9 @@ static int compareProduct(id productID, id otherProductID, void *context);
 #pragma mark SKProductsRequestDelegate
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+
     UASubscriptionProduct *uaProduct = nil;
-    for(SKProduct *skitem in response.products) {
+    for (SKProduct *skitem in response.products) {
         uaProduct = [self.productDict objectForKey:skitem.productIdentifier];
         if(uaProduct != nil) {
             uaProduct.title = [skitem localizedTitle];
@@ -131,12 +132,18 @@ static int compareProduct(id productID, id otherProductID, void *context);
             NSString* localizedPrice = [UAProductInventory localizedPrice:skitem];
             uaProduct.price = localizedPrice;
             uaProduct.priceNumber = skitem.price;
+            uaProduct.skProduct = skitem;
+            uaProduct.isForSale = YES;
+
         }
     }
 
-    for(NSString *invalid in response.invalidProductIdentifiers) {
-        UALOG(@"INVALID PRODUCT ID: %@", invalid);
-        [self removeProduct:invalid];
+    for (NSString *invalidProductId in response.invalidProductIdentifiers) {
+        UALOG(@"INVALID PRODUCT ID: %@", invalidProductId);
+        uaProduct = [self.productDict objectForKey:invalidProductId];
+        if (uaProduct != nil) {
+            uaProduct.isForSale = NO;
+        }
     }
 
     // Wait until inventory is loaded to add an observer
@@ -145,7 +152,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
     hasLoaded = YES;
 
     [[UASubscriptionManager shared].inventory productInventoryUpdated];
-    //[self notifyObservers:@selector(productInventoryUpdated)];
+
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
