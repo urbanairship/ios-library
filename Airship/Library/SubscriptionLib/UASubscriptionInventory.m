@@ -330,17 +330,30 @@
 }
 
 - (void)subscriptionPurchased:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 200) {
-        [self purchaseRequestWentWrong:request];
-        return;
-    }
     
-    UALOG(@"Subscription purchased: %d:%@", request.responseStatusCode, request.responseString);
-    SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    switch (request.responseStatusCode) {
+        case 200:
+        {
+            UALOG(@"Subscription purchased: %d:%@", request.responseStatusCode, request.responseString);
+            SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            // Reload purchased contents and info. No need to reload products
+            [self loadPurchases];
+            break;
+        }
+        case 212:
+        {
+            UALOG(@"Subscription restored from another user!");
+            break;
+        }
+        default:
+        {
+            [self purchaseRequestWentWrong:request];
+            break;
+        }
+    }
 
-    // Reload purchased contents and info. No need to reload products
-    [self loadPurchases];
 }
 
 #pragma mark -
