@@ -82,11 +82,6 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 
-+ (void)setInbox:(UAInboxMessageList *)inbox {
-	if([UAInbox shared].messageList != inbox) {
-		[UAInbox shared].messageList = inbox;	
-	}
-}
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	if([UAInbox shared].messageList == nil) {
@@ -145,9 +140,7 @@ static Class _uiClass;
                                                                     diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
         
-		if([UAInbox shared].messageList == nil) {
-			[UAInbox shared].messageList = [UAInboxMessageList defaultInbox];
-		}
+        self.messageList = [UAInboxMessageList defaultInbox];
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
     }

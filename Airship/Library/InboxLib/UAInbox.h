@@ -69,7 +69,6 @@ SINGLETON_INTERFACE(UAInbox);
 - (Class)uiClass;
 + (void)useCustomUI:(Class)customUIClass;
 + (void)quitInbox;
-+ (void)setInbox:(UAInboxMessageList *)inbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayInboxOnLoad:(UAInboxMessageList *)inbox;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;

@@ -48,10 +48,6 @@
 }
 
 + (void) showMessageAfterMessageListLoaded {
-    if ([UAInbox shared].messageList == nil) {
-        [UAInbox setInbox:[UAInboxMessageList defaultInbox]];
-	}
-	
 	[[UAInbox shared].messageList retrieveMessageList];
 }
 
