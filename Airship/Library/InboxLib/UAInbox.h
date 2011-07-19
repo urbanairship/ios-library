@@ -55,7 +55,7 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 
 @interface UAInbox : NSObject {
 
-    UAInboxMessageList *activeInbox;
+    UAInboxMessageList *messageList;
 	UAInboxPushHandler *pushHandler;
 	
     id<UAInboxJavaScriptDelegate> jsDelegate;
@@ -77,7 +77,7 @@ SINGLETON_INTERFACE(UAInbox);
 + (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 
-@property (nonatomic, assign) UAInboxMessageList *activeInbox;
+@property (nonatomic, assign) UAInboxMessageList *messageList;
 @property (nonatomic, retain) UAInboxPushHandler *pushHandler;
 @property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
 @property(retain) NSURLCache *clientCache, *inboxCache;

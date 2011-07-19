@@ -37,9 +37,9 @@ static UIAlertView *notificationAlert = nil;
 		// If we cancel, clear the pushHandler viewmessageID
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
 		
-		if ([UAInbox shared].activeInbox) {
+		if ([UAInbox shared].messageList) {
 			// Reload the list if we have one
-			[[UAInbox shared].activeInbox retrieveMessageList];
+			[[UAInbox shared].messageList retrieveMessageList];
 		}
 	} else {
 		// User clicked "view" so load the message after the list reloads

@@ -76,7 +76,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)viewDidLoad {
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
     [self loadMessageAtIndex:index];
@@ -110,8 +110,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark UI
 
 - (void)refreshHeader {
-    int count = [[UAInbox shared].activeInbox messageCount];
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int count = [[UAInbox shared].messageList messageCount];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if (index >= 0 && index < count) {
         self.title = [NSString stringWithFormat: @"%d %@ %d", index+1, UA_INBOX_TR(@"UA_Of"), count];
@@ -125,17 +125,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessage *msg = [[UAInbox shared].activeInbox messageForID:mid];
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
         return;
     }
 
-    [self loadMessageAtIndex:[[UAInbox shared].activeInbox indexOfMessage:msg]];
+    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
 }
 
 - (void)loadMessageAtIndex:(int)index {
-    self.message = [[UAInbox shared].activeInbox messageAtIndex:index];
+    self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
         return;
@@ -273,7 +273,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (IBAction)segmentAction:(id)sender {
     UISegmentedControl *segmentedControl = (UISegmentedControl *)sender;
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if(segmentedControl.selectedSegmentIndex == kMessageUp) {
         [self loadMessageAtIndex:index-1];
@@ -283,7 +283,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)updateMessageNavButtons {
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if (message == nil || index == NSNotFound) {
         [messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
@@ -294,14 +294,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         } else {
             [messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
         }
-        if(index >= [[UAInbox shared].activeInbox messageCount] - 1) {
+        if(index >= [[UAInbox shared].messageList messageCount] - 1) {
             [messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
         } else {
             [messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
         }
     }
 
-    UALOG(@"update nav %d, of %d", index, [[UAInbox shared].activeInbox messageCount]);
+    UALOG(@"update nav %d, of %d", index, [[UAInbox shared].messageList messageCount]);
 }
 
 #pragma mark UAInboxMessageListObserver

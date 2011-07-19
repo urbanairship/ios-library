@@ -48,11 +48,11 @@
 }
 
 + (void) showMessageAfterMessageListLoaded {
-    if ([UAInbox shared].activeInbox == nil) {
+    if ([UAInbox shared].messageList == nil) {
         [UAInbox setInbox:[UAInboxMessageList defaultInbox]];
 	}
 	
-	[[UAInbox shared].activeInbox retrieveMessageList];
+	[[UAInbox shared].messageList retrieveMessageList];
 }
 
 + (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox {

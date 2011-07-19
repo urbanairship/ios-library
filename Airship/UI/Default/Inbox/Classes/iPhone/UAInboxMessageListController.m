@@ -224,11 +224,11 @@
     cancelItem.enabled = NO;
 
     if (sender == moveItem) {
-        if ([[UAInbox shared].activeInbox batchUpdate:messageIDs option:UABatchReadMessages] != YES) {
+        if ([[UAInbox shared].messageList batchUpdate:messageIDs option:UABatchReadMessages] != YES) {
             UALOG(@"Server is busy, please try later.");
         }
     } else {
-        if ([[UAInbox shared].activeInbox batchUpdate:messageIDs option:UABatchDeleteMessages] != YES) {
+        if ([[UAInbox shared].messageList batchUpdate:messageIDs option:UABatchDeleteMessages] != YES) {
             UALOG(@"Server is busy, please try later.");
         }
     }
@@ -254,7 +254,7 @@
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
         moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
-        if ([UAInbox shared].activeInbox.isBusying) {
+        if ([UAInbox shared].messageList.isBusying) {
             deleteItem.enabled = NO;
             moveItem.enabled = NO;
         } else {
@@ -269,7 +269,7 @@
     [set addIndex:indexPath.row];
     [selectedIndexPathsForEditing removeAllObjects];
     [selectedIndexPathsForEditing addObject:indexPath];
-    [[UAInbox shared].activeInbox batchUpdate:set
+    [[UAInbox shared].messageList batchUpdate:set
                                        option:UABatchDeleteMessages];
     [self refreshBatchUpdateButtons];
 }
@@ -284,7 +284,7 @@
         cell = [topLevelObjects objectAtIndex:0];
     }
 
-    [cell setData:[[UAInbox shared].activeInbox messageAtIndex:indexPath.row]];
+    [cell setData:[[UAInbox shared].messageList messageAtIndex:indexPath.row]];
 
     cell.editing = tableView.editing;
     if (cell.editing) {
@@ -303,7 +303,7 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    int messageCount = [[UAInbox shared].activeInbox messageCount];
+    int messageCount = [[UAInbox shared].messageList messageCount];
     editItem.enabled = (messageCount == 0) ? NO : YES;
     return messageCount;
 }
@@ -334,7 +334,7 @@
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.editing && ![[UAInbox shared].activeInbox isBatchUpdating]) {
+    if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         if ([selectedIndexPathsForEditing containsObject:indexPath]) {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
             [selectedIndexPathsForEditing removeObject:indexPath];
@@ -369,7 +369,7 @@
 	
     [activity stopAnimating];
     loadingLabel.hidden = YES;
-    int messageCount = [[UAInbox shared].activeInbox messageCount];
+    int messageCount = [[UAInbox shared].messageList messageCount];
     noMessagesLabel.hidden = (messageCount != 0);
 
 	// TODO: add call to pushhandler here to get the messageid we should be viewing????
@@ -434,7 +434,7 @@
 
     [activity stopAnimating];
     loadingLabel.hidden = YES;
-    int messageCount = [[UAInbox shared].activeInbox messageCount];
+    int messageCount = [[UAInbox shared].messageList messageCount];
     noMessagesLabel.hidden = (messageCount != 0);
     
     [selectedIndexPathsForEditing removeAllObjects];
@@ -448,7 +448,7 @@
 }
 
 - (void)singleMessageMarkAsReadFinished:(id)m {
-    int row = [[UAInbox shared].activeInbox indexOfMessage:(UAInboxMessage *)m];
+    int row = [[UAInbox shared].messageList indexOfMessage:(UAInboxMessage *)m];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
     cell.unreadIndicator.hidden = YES;
@@ -489,7 +489,7 @@ static float label_width = 0.0;
 }
 
 - (void)updateNavigationBadge {
-    int count = [UAInbox shared].activeInbox.unreadCount;
+    int count = [UAInbox shared].messageList.unreadCount;
     NSString *unreadCount = [NSString stringWithFormat:@"%d", count];
     float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
 

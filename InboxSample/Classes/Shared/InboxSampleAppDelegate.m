@@ -108,8 +108,8 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.activeInbox != nil) {
-        [inbox.activeInbox retrieveMessageList];
+    if (inbox != nil && inbox.messageList != nil) {
+        [inbox.messageList retrieveMessageList];
     }
     
 	id<UAInboxAlertProtocol> alertHandler = [UAInboxUI getAlertHandler];
@@ -118,8 +118,8 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.activeInbox != nil && inbox.activeInbox.unreadCount >= 0) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.activeInbox.unreadCount];
+    if (inbox != nil && inbox.messageList != nil && inbox.messageList.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.messageList.unreadCount];
     }
 }
 

@@ -35,7 +35,7 @@ UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
 
 @implementation UAInbox
 
-@synthesize activeInbox;
+@synthesize messageList;
 @synthesize jsDelegate;
 @synthesize pushHandler;
 @synthesize clientCache, inboxCache;
@@ -83,19 +83,19 @@ static Class _uiClass;
 #pragma mark Open API, enter/quit Inbox
 
 + (void)setInbox:(UAInboxMessageList *)inbox {
-	if([UAInbox shared].activeInbox != inbox) {
-		[UAInbox shared].activeInbox = inbox;	
+	if([UAInbox shared].messageList != inbox) {
+		[UAInbox shared].messageList = inbox;	
 	}
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-	if([UAInbox shared].activeInbox == nil) {
-		[UAInbox shared].activeInbox = [UAInboxMessageList defaultInbox];
+	if([UAInbox shared].messageList == nil) {
+		[UAInbox shared].messageList = [UAInboxMessageList defaultInbox];
 	}
 	
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 
-    [[UAInbox shared].activeInbox retrieveMessageList];
+    [[UAInbox shared].messageList retrieveMessageList];
 	
     [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
 }
@@ -116,7 +116,7 @@ static Class _uiClass;
 
 + (void) land {
     // Update application badge number
-	[UAInbox shared].activeInbox = nil;
+	[UAInbox shared].messageList = nil;
 	
     [[[UAInbox shared] uiClass] land];
 	
@@ -145,8 +145,8 @@ static Class _uiClass;
                                                                     diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
         
-		if([UAInbox shared].activeInbox == nil) {
-			[UAInbox shared].activeInbox = [UAInboxMessageList defaultInbox];
+		if([UAInbox shared].messageList == nil) {
+			[UAInbox shared].messageList = [UAInboxMessageList defaultInbox];
 		}
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];

@@ -75,9 +75,9 @@
 }
 
 - (void)refreshHeader {
-    int index = [[UAInbox shared].activeInbox indexOfMessage:self.message];
+    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
     
-    if (index >=0 && index < [[UAInbox shared].activeInbox messageCount]
+    if (index >=0 && index < [[UAInbox shared].messageList messageCount]
         && ![UAInboxMessageList defaultInbox].isBatchUpdating && ![UAInboxUI shared].messageListController.editing) {
         self.trashButton.enabled = YES;
     } else {
@@ -93,7 +93,7 @@
 }
 
 - (IBAction)deleteButtonPressed:(id)sender {
-    NSInteger index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    NSInteger index = [[UAInbox shared].messageList indexOfMessage:message];
     if (index == NSNotFound) {
         UALOG(@"message description=%@ is not found.", [message description]);
         return;
