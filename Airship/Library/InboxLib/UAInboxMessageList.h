@@ -50,7 +50,7 @@ typedef enum {
     BOOL isBatchUpdating;
 }
 
-+ (UAInboxMessageList*)defaultInbox;
++ (UAInboxMessageList*)shared;
 + (void)land;
 
 - (void)retrieveMessageList;

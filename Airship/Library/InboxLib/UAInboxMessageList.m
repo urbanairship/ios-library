@@ -39,7 +39,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma mark Create Inbox
 
-static UAInboxMessageList *_defaultInbox = nil;
+static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
     RELEASE_SAFELY(messages);
@@ -47,35 +47,35 @@ static UAInboxMessageList *_defaultInbox = nil;
 }
 
 + (void)land {
-    if (_defaultInbox) {
-        if (_defaultInbox.isRetrieving || _defaultInbox.isBatchUpdating) {
+    if (_messageList) {
+        if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
             UALOG(@"Force quit now may cause crash if UA_ASIRequest is alive.");
             //TODO: kill request?
         }
 
-        if ([_defaultInbox unreadCount] >= 0) {
-            UALOG(@"update badge number: %d", [_defaultInbox unreadCount]);
+        if ([_messageList unreadCount] >= 0) {
+            UALOG(@"update badge number: %d", [_messageList unreadCount]);
 			
 			// TODO: This is a UI call - shouldn't be in the library
 			
-            //[[UIApplication sharedApplication] setApplicationIconBadgeNumber: _defaultInbox.unreadCount];
+            //[[UIApplication sharedApplication] setApplicationIconBadgeNumber: _messageList.unreadCount];
         }
-        RELEASE_SAFELY(_defaultInbox);
+        RELEASE_SAFELY(_messageList);
     }
 }
 
-+ (UAInboxMessageList*)defaultInbox {
++ (UAInboxMessageList*)shared {
     
     @synchronized(self) {
-        if(_defaultInbox == nil) {
-            _defaultInbox = [[UAInboxMessageList alloc] init];
-            _defaultInbox.unreadCount = -1;
-            _defaultInbox.isRetrieving = 0;
-            _defaultInbox.isBatchUpdating = NO;
+        if(_messageList == nil) {
+            _messageList = [[UAInboxMessageList alloc] init];
+            _messageList.unreadCount = -1;
+            _messageList.isRetrieving = 0;
+            _messageList.isBatchUpdating = NO;
         }
     }
     
-    return _defaultInbox;
+    return _messageList;
 }
 
 #pragma mark Update/Delete/Mark Messages

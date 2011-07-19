@@ -78,7 +78,7 @@
     int index = [[UAInbox shared].messageList indexOfMessage:self.message];
     
     if (index >=0 && index < [[UAInbox shared].messageList messageCount]
-        && ![UAInboxMessageList defaultInbox].isBatchUpdating && ![UAInboxUI shared].messageListController.editing) {
+        && ![UAInboxMessageList shared].isBatchUpdating && ![UAInboxUI shared].messageListController.editing) {
         self.trashButton.enabled = YES;
     } else {
         self.trashButton.enabled = NO;

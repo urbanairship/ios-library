@@ -238,7 +238,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 + (void)land {
     [[UAInbox shared].messageList removeObserver:[UAInboxUI shared].messageListController];
     [[UAInbox shared].messageList removeObserver:[UAInboxUI shared].messageViewController];
-	[[UAInboxMessageList defaultInbox] removeObserver:self];
+	[[UAInboxMessageList shared] removeObserver:self];
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {

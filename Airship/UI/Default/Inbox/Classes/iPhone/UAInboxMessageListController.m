@@ -185,7 +185,7 @@
 }
 
 - (void)editButtonPressed:(id)sender {
-    if ([UAInboxMessageList defaultInbox].isBatchUpdating) {
+    if ([UAInboxMessageList shared].isBatchUpdating) {
         return;
     }
     

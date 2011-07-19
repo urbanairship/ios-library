@@ -85,7 +85,7 @@ static Class _uiClass;
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	if([UAInbox shared].messageList == nil) {
-		[UAInbox shared].messageList = [UAInboxMessageList defaultInbox];
+		[UAInbox shared].messageList = [UAInboxMessageList shared];
 	}
 	
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
@@ -140,7 +140,7 @@ static Class _uiClass;
                                                                     diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
         
-        self.messageList = [UAInboxMessageList defaultInbox];
+        self.messageList = [UAInboxMessageList shared];
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
     }
