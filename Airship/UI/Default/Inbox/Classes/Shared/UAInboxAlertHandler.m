@@ -33,19 +33,13 @@ static UIAlertView *notificationAlert = nil;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
 	if (buttonIndex == alertView.cancelButtonIndex) {
-		
 		// If we cancel, clear the pushHandler viewmessageID
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
-		
-		if ([UAInbox shared].messageList) {
-			// Reload the list if we have one
-			[[UAInbox shared].messageList retrieveMessageList];
-		}
-	} else {
-		// User clicked "view" so load the message after the list reloads
-		[UAInboxPushHandler showMessageAfterMessageListLoaded];
-	}
-
+    }
+    
+    //retrieve the message list -- if viewmessageID is non-nil,
+    //the corresponding message will be displayed.
+    [[UAInbox shared].messageList retrieveMessageList];
 }
 
 - (void)showNewMessageAlert:(NSString *)message {

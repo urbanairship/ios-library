@@ -36,7 +36,6 @@
 
 + (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox;
 + (void)handleLaunchOptions:(NSDictionary*)options;
-+ (void)showMessageAfterMessageListLoaded;
 
 @property (nonatomic, retain) NSString *viewingMessageID;
 @property (nonatomic, assign) BOOL hasLaunchMessage;

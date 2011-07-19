@@ -47,9 +47,6 @@
     return isActive;
 }
 
-+ (void) showMessageAfterMessageListLoaded {
-	[[UAInbox shared].messageList retrieveMessageList];
-}
 
 + (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox {
 
@@ -87,9 +84,9 @@
         [alertHandler showNewMessageAlert:message];
 		
     } else {
-		
+        
         // load message list and show the specified message
-        [UAInboxPushHandler showMessageAfterMessageListLoaded];
+        [[UAInbox shared].messageList retrieveMessageList];
     }
     
     
