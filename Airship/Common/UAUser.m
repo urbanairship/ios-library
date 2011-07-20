@@ -557,8 +557,19 @@ static UAUser *_defaultUser;
     self.email = value;
     self.recoveryEmail = value;
     
-    [self updateUserWithDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];
+    //old (PUT) method
+    //[self updateUserWithDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];
     
+    NSDictionary *dict;
+    
+    if(value) {
+        dict = [NSDictionary dictionaryWithObject:value forKey:@"email"];
+    }
+    else {
+        dict = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"email"];
+    }
+   
+    [self updateUserWithDelegate:self dict:dict finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];  
 }
 
 - (void)modifyUserWithEmailFailed:(UA_ASIHTTPRequest*)request {
@@ -961,7 +972,17 @@ static UAUser *_defaultUser;
         return;
     }
     
-    [self updateUserWithDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
+    NSString *token = [[UAirship shared]deviceToken];
+    
+    //I sure wish there were an easier way to construct dictionaries
+    NSDictionary *dict = [NSDictionary dictionaryWithObject:
+                          [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:token] forKey:@"add"] 
+                                                     forKey:@"device_tokens"];
+    
+    [self updateUserWithDelegate:self dict:dict finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
+    
+    //old (PUT) method
+    //[self updateUserWithDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
 }
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
@@ -1011,6 +1032,35 @@ static UAUser *_defaultUser;
 	}	
 }
 
+- (void)updateUserWithDelegate:(id)delegate dict:(NSDictionary *)dictionary finish:(SEL)finishSelector fail:(SEL)failSelector {
+
+    UALOG(@"Updating user");
+    
+    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
+								 [[UAirship shared] server],
+								 @"/api/user/",
+								 [self username]];
+	
+    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
+	
+	// Now do the user update, and pass out "master list" of deviceTokens back to the server
+    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:updateUrl
+                                                      method:@"POST"
+                                                    delegate:delegate
+                                                      finish:finishSelector
+                                                        fail:failSelector];
+	
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter new]autorelease];
+    
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    NSString* body = [writer stringWithObject:dictionary];
+    
+    UALOG(@"Update user with content: %@", body);
+    
+    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    [request startAsynchronous];
+}
 
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
 

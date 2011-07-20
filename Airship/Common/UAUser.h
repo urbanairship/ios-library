@@ -126,6 +126,9 @@ typedef enum _UAUserState {
 - (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
 - (void)userRequestWentWrong:(UA_ASIHTTPRequest*)request;
 
+//POST
+- (void)updateUserWithDelegate:(id)delegate dict:(NSDictionary *)dictionary finish:(SEL)finishSelector fail:(SEL)failSelector;
+//PUT
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
 - (NSMutableDictionary*)createUserDictionary;
 
