@@ -27,6 +27,16 @@
 
 @class SKProduct;
 
+typedef enum _UAAutorenewableDuration {
+    UAAutorenewableDurationNone = 0,
+    UAAutorenewableDuration7Days = 1,
+    UAAutorenewableDuration1Month = 2,
+    UAAutorenewableDuration2Months = 3,
+    UAAutorenewableDuration3Months = 4,
+    UAAutorenewableDuration6Months = 5,
+    UAAutorenewableDuration1Year = 6
+} UAAutorenewableDuration;
+
 @interface UASubscriptionProduct : NSObject {
     NSString *productIdentifier;
     NSString *subscriptionKey;
@@ -37,6 +47,7 @@
     int duration;
     
     BOOL autorenewable;
+    UAAutorenewableDuration autorenewableDuration;
 
     //property from SKProduct
     SKProduct *skProduct;
@@ -77,6 +88,7 @@
 @property (nonatomic, assign) BOOL isPurchasing;
 @property (nonatomic, assign) BOOL isForSale;
 @property(nonatomic, assign, getter=isAutorenewable) BOOL autorenewable;
+@property(nonatomic, assign) UAAutorenewableDuration autorenewableDuration;
 
 - (id)initWithDict:(NSDictionary *)dict;
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp;

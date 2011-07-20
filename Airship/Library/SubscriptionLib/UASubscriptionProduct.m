@@ -47,6 +47,7 @@
 @synthesize isPurchasing;
 @synthesize isForSale;
 @synthesize autorenewable;
+@synthesize autorenewableDuration;
 
 - (void)dealloc {
     RELEASE_SAFELY(skProduct);
@@ -86,6 +87,32 @@
         self.duration = [(NSNumber *)durationValue intValue];
     }
     
+    self.autorenewableDuration = UAAutorenewableDurationNone; // init to none
+    id arDuration = [dict objectForKey:@"ar_duration"];
+    if (arDuration && (NSNull *)arDuration != [NSNull null]) { 
+        NSString *arDurationString = (NSString *)arDuration;
+        if ([@"7 Days" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration7Days;
+            self.duration = 7;
+        } else if ([@"1 Month" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration1Month;
+            self.duration = 30;
+        } else if ([@"2 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration2Months;
+            self.duration = 61;
+        } else if ([@"3 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration3Months;
+            self.duration = 92;
+        } else if ([@"6 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration6Months;
+            self.duration = 183;
+        } else if ([@"1 Year" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration1Year;
+            self.duration = 365;
+        }
+        UALOG(@"Duration value = %d", self.autorenewableDuration);
+    }
+    
     self.autorenewable = ([[dict objectForKey:@"autorenewable"] intValue] == 1) ? YES : NO;
 
     for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions])
@@ -118,6 +145,7 @@
 	self.isPurchasing = sp.isPurchasing;
     self.isForSale = sp.isForSale;
     self.autorenewable = sp.autorenewable;
+    self.autorenewableDuration = sp.autorenewableDuration;
 	
 	return self;
 }
@@ -129,10 +157,12 @@
     UASubscriptionProduct *other = (UASubscriptionProduct *)object;
     return [self.productIdentifier isEqualToString:other.productIdentifier]
            && self.duration == other.duration
+           && self.autorenewableDuration == other.autorenewableDuration
            && [self.title isEqualToString:other.title];
 }
 
 - (NSComparisonResult)compareByDuration:(UASubscriptionProduct *)otherProduct {
+    
     int d = self.duration - otherProduct.duration;
     if (d < 0)
         return NSOrderedAscending;

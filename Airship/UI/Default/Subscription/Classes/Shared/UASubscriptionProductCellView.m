@@ -28,7 +28,12 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UASubscriptionUI.h"
+#import "UASubscriptionUIUtil.h"
 
+// Private methods
+@interface UASubscriptionProductCellView()
+- (void)updateTitle;
+@end
 
 @implementation UASubscriptionProductCellView
 
@@ -117,8 +122,18 @@
     }
 }
 
+- (void)updateTitle {
+    if (product.autorenewable) {
+        NSString *arDurationString = 
+            [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
+        self.title = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+    } else {
+        self.title = product.title;
+    }
+}
+
 - (void)refreshCellView {
-    self.title = product.title;
+    [self updateTitle];
     [self refreshDescriptionLabelView];
     [self refreshPriceLabelView];
     [self setNeedsDisplay];

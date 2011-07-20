@@ -31,6 +31,7 @@
 #import "UAGlobal.h"
 #import "UASubscriptionProduct.h"
 #import "UASubscriptionUI.h"
+#import "UASubscriptionUIUtil.h"
 
 #define kAlreadyAskedUserForEmailInput @"UASubscriptionAlreadyAskedUserForEmailInput"
 
@@ -127,7 +128,17 @@
     buyButton.enabled = !product.isPurchasing;
 
     // table header
-    productTitle.text = product.title;
+    //productTitle.text = product.title;
+    
+    if (product.autorenewable) {
+        NSString *arDurationString = 
+            [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
+        productTitle.text = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+    } else {
+        productTitle.text = product.title;
+    }
+    
+    
     [iconContainer loadImageFromURL:product.iconURL];
     price.text = product.price;
 
