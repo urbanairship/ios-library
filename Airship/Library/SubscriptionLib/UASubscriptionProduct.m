@@ -46,6 +46,7 @@
 @synthesize endDate;
 @synthesize isPurchasing;
 @synthesize isForSale;
+@synthesize autorenewable;
 
 - (void)dealloc {
     RELEASE_SAFELY(skProduct);
@@ -69,7 +70,9 @@
     if (!(self = [super init])) {
         return nil;
     }
-
+    
+    UALOG(@"Product dict: %@",[dict description]);
+    
     self.productIdentifier = [dict objectForKey:@"product_id"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
     self.subscriptionName = [dict objectForKey:@"name"];
@@ -82,6 +85,8 @@
     if (duration && (NSNull *)duration != [NSNull null]) { 
         self.duration = [(NSNumber *)durationValue intValue];
     }
+    
+    self.autorenewable = ([[dict objectForKey:@"autorenewable"] intValue] == 1) ? YES : NO;
 
     for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions])
         if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier])
@@ -91,6 +96,7 @@
 }
 
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp {
+
     if (!(self = [super init]))
         return nil;
 	
@@ -111,6 +117,7 @@
 	self.endDate = sp.endDate;
 	self.isPurchasing = sp.isPurchasing;
     self.isForSale = sp.isForSale;
+    self.autorenewable = sp.autorenewable;
 	
 	return self;
 }

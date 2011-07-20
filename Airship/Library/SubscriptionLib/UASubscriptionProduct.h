@@ -35,6 +35,8 @@
     NSURL *previewURL;
     NSURL *iconURL;
     int duration;
+    
+    BOOL autorenewable;
 
     //property from SKProduct
     SKProduct *skProduct;
@@ -74,6 +76,7 @@
 
 @property (nonatomic, assign) BOOL isPurchasing;
 @property (nonatomic, assign) BOOL isForSale;
+@property(nonatomic, assign, getter=isAutorenewable) BOOL autorenewable;
 
 - (id)initWithDict:(NSDictionary *)dict;
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp;

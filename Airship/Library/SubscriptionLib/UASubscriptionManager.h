@@ -97,4 +97,6 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)setPendingSubscription:(UASubscriptionProduct *)product;
 - (void)purchasePendingSubscription;
 
+- (void)restoreSubscriptions;
+
 @end

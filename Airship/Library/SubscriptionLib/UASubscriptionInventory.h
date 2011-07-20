@@ -23,8 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import "UAObservable.h"
+
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
 @class UAProductInventory;
@@ -49,7 +50,7 @@
     BOOL contentsLoaded;
     BOOL hasLoaded;
 
-    BOOL has_active_subscriptions;
+    BOOL hasActiveSubscriptions;
     NSDate *serverDate;
 }
 
@@ -81,5 +82,7 @@
 
 - (void)productInventoryUpdated;
 - (void)contentInventoryUpdated;
+
+- (void)setUserPurchaseInfo:(NSDictionary *)purchaseInfo;
 
 @end

@@ -51,10 +51,15 @@
                                                                                            target:self
                                                                                            action:@selector(quit)] autorelease];
 	
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Setting")
-                                                                             style:UIBarButtonItemStylePlain
-                                                                            target:self
-                                                                            action:@selector(loadSettingsView)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Setting")
+//                                                                             style:UIBarButtonItemStylePlain
+//                                                                            target:self
+//                                                                            action:@selector(loadSettingsView)];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Restore")
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:self
+                                                                             action:@selector(restore)];
 
     [segment setTitle:UA_SS_TR(@"UA_All") forSegmentAtIndex:0];
     [segment setTitle:UA_SS_TR(@"UA_Subscribed") forSegmentAtIndex:1];
@@ -134,6 +139,10 @@
                                   bundle:nil];
     }
     [self.navigationController pushViewController:settingsViewController animated:YES];
+}
+
+- (void)restore {
+    [[UASubscriptionManager shared] restoreSubscriptions];
 }
 
 

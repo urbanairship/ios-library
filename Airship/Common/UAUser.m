@@ -472,7 +472,7 @@ static UAUser *_defaultUser;
     switch (request.responseStatusCode) {
         case 201://created
         {
-            UA_SBJsonParser *parser = [UA_SBJsonParser new];
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
             NSDictionary *result = [parser objectWithString:request.responseString];
 
             self.username = [result objectForKey:@"user_id"];
@@ -826,6 +826,22 @@ static UAUser *_defaultUser;
         [self requestWentWrong:request];
     }
 }
+
+#pragma mark -
+#pragma mark Merge User (Autorenewables)
+
+
+- (void)didMergeWithUser:(NSDictionary *)userData {
+    
+    self.username = [userData objectForKey:@"user_id"];
+    self.password = [userData objectForKey:@"password"];
+    self.url = [userData objectForKey:@"user_url"];
+    self.alias = [userData objectForKey:@"alias"];
+    self.tags = [userData objectForKey:@"tags"];
+    
+    [self saveUserData];
+}
+
 
 #pragma mark -
 #pragma mark Retrieve User

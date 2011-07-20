@@ -237,33 +237,47 @@
 }
 
 - (void)userPurchasingInfoLoaded:(UA_ASIHTTPRequest *)request {
-    UALOG(@"User products loaded: %d\n%@\n", request.responseStatusCode,
-          request.responseString);
-    if (request.responseStatusCode != 200)
+    
+    UALOG(@"User products loaded: %d\n%@\n", request.responseStatusCode, request.responseString);
+    
+    if (request.responseStatusCode != 200) {
+        //TODO: handle error case - send an event to observer
+        
+        if (request.responseStatusCode == 404) {
+            //replace the current user with a freshone from the server
+            [[UAUser defaultUser] createUser];
+        }
         return;
+    }
 
-    UA_SBJsonParser *parser = [UA_SBJsonParser new];
+    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
     NSDictionary *result = [parser objectWithString:request.responseString];
     [parser release];
 
-    [userPurchasingInfo release];
-    userPurchasingInfo = [[result objectForKey:@"subscriptions"] retain];
-    has_active_subscriptions = ([[result objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
+    [self setUserPurchaseInfo:result];
+}
 
+- (void)setUserPurchaseInfo:(NSDictionary *)userInfo {
+    
+    [userPurchasingInfo release];
+    userPurchasingInfo = [[userInfo objectForKey:@"subscriptions"] retain];
+    
+    hasActiveSubscriptions = ([[userInfo objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
+    
     NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	
 	[generateDateFormatter setLocale:enUSPOSIXLocale];
 	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
 	[generateDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-
+    
     // refs http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
     // Date Format Patterns 'ZZZ' is for date strings like '-0800' and 'ZZZZ'
     // is used for 'GMT-08:00', so i just set the timezone string as '+0000' which
     // is equal to 'UTC'
-    NSString *str = [NSString stringWithFormat: @"%@%@", [result objectForKey:@"server_time"], @" +0000"];
+    NSString *str = [NSString stringWithFormat: @"%@%@", [userInfo objectForKey:@"server_time"], @" +0000"];
     self.serverDate = [generateDateFormatter dateFromString: str];
-
+    
     userPurchasingInfoLoaded = YES;
     [self createUserSubscription];
 }
@@ -313,7 +327,9 @@
 
     request.userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
+    writer.humanReadable = NO;
+    
     NSMutableDictionary* data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  product_id,
                                  @"product_id",
@@ -331,10 +347,11 @@
 
 - (void)subscriptionPurchased:(UA_ASIHTTPRequest *)request {
     
+    UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
+    
     switch (request.responseStatusCode) {
         case 200:
         {
-            UALOG(@"Subscription purchased: %d:%@", request.responseStatusCode, request.responseString);
             SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
@@ -345,6 +362,36 @@
         case 212:
         {
             UALOG(@"Subscription restored from another user!");
+            
+            // Sample response:
+            /*
+             {"user_data": 
+             {"has_active_subscription": true, 
+             "user_url": "https://sgc.urbanairship.com/api/user/4e20bc17a9ee251feb000001/", 
+             "subscriptions": [
+             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:20:13", "product_id": "com.urbanairship.artest.7days", "is_active": false, "start": "2011-07-15 22:17:13", "purchased": "2011-07-15 22:17:13"},
+             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:27:59", "product_id": "com.urbanairship.artest.7days", "is_active": true, "start": "2011-07-15 22:24:59", "purchased": "2011-07-15 22:24:59"}
+             ],
+             "user_id": "4e20bc17a9ee251feb000001",
+             "server_time": "2011-07-15 22:25:00",
+             "password": "-4GNBzU5RA2sAt0B2TPLNA",
+             "device_tokens": ["BF58148F2142DF6A843710BBEADC513916DB26B015EBA610BF86C457FD171B37"]
+             }
+             }
+             */
+            
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+            NSDictionary *responseDictionary = [parser objectWithString:request.responseString];
+            [parser release];
+            
+            NSDictionary *userData = [responseDictionary objectForKey:@"user_data"];
+            [[UAUser defaultUser] didMergeWithUser:userData];
+            [self setUserPurchaseInfo:userData];
+            
+            // close the transaction
+            SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
             break;
         }
         default:

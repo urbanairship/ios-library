@@ -24,8 +24,10 @@
  */
 
 #import "UASubscriptionManager.h"
-#import "UASubscriptionObserver.h"
+
 #import <StoreKit/StoreKit.h>
+
+#import "UASubscriptionObserver.h"
 #import "UAProductInventory.h"
 #import "UAContentInventory.h"
 #import "UASubscriptionInventory.h"
@@ -230,4 +232,10 @@ IF_IOS4_OR_GREATER(
 	[self loadSubscription];
 }
 
+#pragma mark -
+#pragma mark Restore Subscriptions
+
+- (void)restoreSubscriptions {
+    [transactionObserver restoreAll];
+}
 @end

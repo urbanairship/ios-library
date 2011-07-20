@@ -119,12 +119,15 @@ typedef enum _UAUserState {
 - (void)stopRecoveryPoller;
 - (void)checkRecoveryStatus:(NSTimer *)timer;
 
+- (void)didMergeWithUser:(NSDictionary *)userData;
+
 - (void)saveUserData;
 - (void)updateUserState;
 - (void)notifyObserversUserUpdated;
 
 - (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
 - (void)userRequestWentWrong:(UA_ASIHTTPRequest*)request;
+
 
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
 - (NSMutableDictionary*)createUserDictionary;

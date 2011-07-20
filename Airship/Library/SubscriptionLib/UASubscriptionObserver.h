@@ -25,28 +25,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+
 #import "UA_ASIHTTPRequest.h"
 #import "UA_ASINetworkQueue.h"
 #import "UASubscriptionAlertProtocol.h"
 
-@class UAProduct;
-@interface UASubscriptionRequest : UA_ASIHTTPRequest {
-    UAProduct *product;
-    SKPaymentTransaction *transaction;
-}
-@property (nonatomic, retain) SKPaymentTransaction *transaction;
-@property (nonatomic, retain) UAProduct *product;
-@end
-
-
 @interface UASubscriptionObserver : NSObject <SKPaymentTransactionObserver> {
     UA_ASINetworkQueue *networkQueue;
     NSMutableDictionary *pendingProducts;
-    NSMutableArray *unRestoredTransactions;
+    NSMutableArray *unrestoredTransactions;
     id<UASubscriptionAlertProtocol> alertDelegate;
+    
+    BOOL restoring;
 }
 
 @property (nonatomic, assign) id<UASubscriptionAlertProtocol> alertDelegate;
+
+- (void)restoreAll;
 
 - (void)startTransaction:(SKPaymentTransaction *)transaction;
 - (void)completeTransaction:(SKPaymentTransaction *)transaction;
