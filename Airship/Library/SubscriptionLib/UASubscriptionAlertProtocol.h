@@ -27,7 +27,8 @@
 
 typedef enum {
     UASubscriptionAlertShowUserEmail = 0,
-    UASubscriptionAlertFailedTransaction
+    UASubscriptionAlertFailedTransaction,
+    UASubscriptionAlertFailedRestore
 } UASubscriptionAlertType;
 
 @protocol UASubscriptionAlertProtocol <NSObject>

@@ -30,22 +30,37 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_ASINetworkQueue.h"
 #import "UASubscriptionAlertProtocol.h"
 
+/**
+ * This class is a transaction observer and the primary interface to StoreKit.
+ *
+ */
 @interface UASubscriptionObserver : NSObject <SKPaymentTransactionObserver> {
-    UA_ASINetworkQueue *networkQueue;
-    NSMutableDictionary *pendingProducts;
-    NSMutableArray *unrestoredTransactions;
+    
+    
     id<UASubscriptionAlertProtocol> alertDelegate;
     
+    /** A network queue for sequentially submitting receipts */
+    UA_ASINetworkQueue *networkQueue;
+    
+    /** An array of in-progress SKPaymentTransaction objects */
+    NSMutableArray *unrestoredTransactions;
+    
+    /** An array of the autorenewable products restored */
+    NSMutableArray *restoredProducts;
+
+    /** YES if currently restoring autorenewables, otherwise NO */
     BOOL restoring;
 }
 
+/**
+ * An alert delegate provided by the implementing library. This delegate is
+ * not retained.
+ */
 @property (nonatomic, assign) id<UASubscriptionAlertProtocol> alertDelegate;
 
-- (void)restoreAll;
-
-- (void)startTransaction:(SKPaymentTransaction *)transaction;
-- (void)completeTransaction:(SKPaymentTransaction *)transaction;
-- (void)failedTransaction:(SKPaymentTransaction *)transaction;
-- (void)restoreTransaction:(SKPaymentTransaction *)transaction;
+/**
+ * Restore all autorenewable transactions.
+ */
+- (void)restoreAutorenewables;
 
 @end

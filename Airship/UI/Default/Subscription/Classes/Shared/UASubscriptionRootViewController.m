@@ -142,7 +142,7 @@
 }
 
 - (void)restore {
-    [[UASubscriptionManager shared] restoreSubscriptions];
+    [[UASubscriptionManager shared] restoreAutorenewables];
 }
 
 
@@ -178,6 +178,14 @@
     if (segment.selectedSegmentIndex == SubscriptionTypeAll) {
         [self setLoading:NO];
     }
+}
+
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored {
+    UALOG(@"Autorenewable restore finished. %d products restored.",[productsRestored count]);
+}
+
+- (void)restoreAutorenewablesFailed {
+    UALOG(@"Autorenewable restore failed. Try again later.");
 }
 
 @end

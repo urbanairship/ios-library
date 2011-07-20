@@ -36,11 +36,27 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Private methods
 @interface UASubscriptionObserver()
-- (void)submitRestoredTransaction:(SKPaymentTransaction *)transaction;
-- (void)subscriptionRestoredWithRequest:(UA_ASIHTTPRequest *)request;
-- (void)subscriptionRestoreRequestDidFail:(UA_ASIHTTPRequest *)request;
-- (void)subscriptionRestoreRequestsCompleted;
+
+/**
+ * Creates and initializes a network queue for sequentially submitting
+ * receipts to Urban Airship. Max concurrent connections = 1, calls
+ * autorenewableRestoreRequestsCompleted on success
+ */
 - (void)createNetworkQueue;
+
+/**
+ * Submits an autorenewable transaction receipt to Urban Airship.
+ */
+- (void)submitRestoredTransaction:(SKPaymentTransaction *)transaction;
+- (void)autorenewableRestoredWithRequest:(UA_ASIHTTPRequest *)request;
+- (void)autorenewableRestoreRequestDidFail:(UA_ASIHTTPRequest *)request;
+- (void)autorenewableRestoreRequestsCompleted;
+
+
+- (void)startTransaction:(SKPaymentTransaction *)transaction;
+- (void)completeTransaction:(SKPaymentTransaction *)transaction;
+- (void)failedTransaction:(SKPaymentTransaction *)transaction;
+- (void)restoreTransaction:(SKPaymentTransaction *)transaction;
 @end
 
 @implementation UASubscriptionObserver
@@ -48,13 +64,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize alertDelegate;
 
 - (id)init {
-    if (!(self = [super init])) {;
+    if (!(self = [super init])) {
         return nil;
     }
 
-    [self createNetworkQueue];
-
     unrestoredTransactions = [[NSMutableArray alloc] init];
+    restoredProducts = [[NSMutableArray alloc] init];
     
     return self;
 }
@@ -62,23 +77,27 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)dealloc {
     [networkQueue cancelAllOperations];
     RELEASE_SAFELY(networkQueue);
-    RELEASE_SAFELY(pendingProducts);
     RELEASE_SAFELY(unrestoredTransactions);
+    RELEASE_SAFELY(restoredProducts);
     alertDelegate = nil;
+    
     [super dealloc];
 }
 
 #pragma mark -
 #pragma mark Restore All Subscriptions
-- (void)restoreAll {
+- (void)restoreAutorenewables {
     if (restoring) {
         UALOG(@"A restore is already in progress.");
         return;
     }
     
-    UALOG(@"Restoring all subscriptions");
+    UALOG(@"Restoring all autorenewable subscriptions");
     restoring = YES;
+    [self createNetworkQueue];
     [unrestoredTransactions removeAllObjects];
+    [restoredProducts removeAllObjects];
+    
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
@@ -109,6 +128,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 break;
             case SKPaymentTransactionStateRestored:
                 [self restoreTransaction:transaction];
+                break;
             default:
                 break;
         }
@@ -116,6 +136,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
+
+        UALOG(@"Restore Failed");
+        if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
+            [self.alertDelegate showAlert:UASubscriptionAlertFailedRestore for:nil];
+        }
     
     //close any of the transactions that were passed back and clear out the list to try again
     for (SKPaymentTransaction *transaction in unrestoredTransactions) {
@@ -132,11 +157,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UALOG(@"paymentQueueRestoreCompletedTransactionsFinished:%@", queue);
 
     if ([unrestoredTransactions count] > 0) {
-        //TODO: notify some listener whether or not autorenewable receipts exist
         UALOG(@"Starting queue. Request count: %d", networkQueue.requestsCount);
         [networkQueue go];
     } else {
-        restoring = NO;
+        [self autorenewableRestoreRequestsCompleted];
     }
 }
 
@@ -217,8 +241,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
                                                       method:@"POST"
                                                     delegate:self
-                                                      finish:@selector(subscriptionRestoredWithRequest:)
-                                                        fail:@selector(subscriptionRestoreRequestDidFail:)];
+                                                      finish:@selector(autorenewableRestoredWithRequest:)
+                                                        fail:@selector(autorenewableRestoreRequestDidFail:)];
     
     request.userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
     
@@ -241,19 +265,26 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [networkQueue addOperation:request];
 }
 
-- (void)subscriptionRestoredWithRequest:(UA_ASIHTTPRequest *)request {
+- (void)autorenewableRestoredWithRequest:(UA_ASIHTTPRequest *)request {
     
     UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
     
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
     
     switch (request.responseStatusCode) {
         case 200:
         {
+            // close the transaction
+            [unrestoredTransactions removeObject:transaction];
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
-            // Reload purchased contents and info. No need to reload products
-            //[[UASubscriptionManager shared].inventory loadPurchases];
+            if (![restoredProducts containsObject:product]) {
+                [restoredProducts addObject:product];
+            }
+            
+            // Purchases will be reloaded when the last transaction is complete
+            
             break;
         }
         case 212:
@@ -287,8 +318,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             
             // close the transaction
             [unrestoredTransactions removeObject:transaction];
-            SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            if (![restoredProducts containsObject:product]) {
+                [restoredProducts addObject:product];
+            }
             
             UALOG(@"Request count: %d", networkQueue.requestsCount);
             if (networkQueue.requestsCount > 1) {
@@ -312,24 +346,33 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         }
         default:
         {
-            [self subscriptionRestoreRequestDidFail:request];
+            [self autorenewableRestoreRequestDidFail:request];
             break;
         }
     }
     
 }
 
-- (void)subscriptionRestoreRequestDidFail:(UA_ASIHTTPRequest *)request {
+- (void)autorenewableRestoreRequestDidFail:(UA_ASIHTTPRequest *)request {
     
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+    
+    //notify observers
+    [[UASubscriptionManager shared] restoreAutorenewablesFailed];
+    [restoredProducts removeAllObjects];
     
 	// Do not finish the transaction here, leave it open for iOS to re-deliver until it explicitly fails or works
 	UALOG(@"Restore product failed: %@", transaction.payment.productIdentifier);
     
 }
 
-- (void)subscriptionRestoreRequestsCompleted {
+- (void)autorenewableRestoreRequestsCompleted {
     restoring = NO;
+    
+    //notify observers
+    [[UASubscriptionManager shared] restoreAutorenewablesFinished:restoredProducts];
+    [restoredProducts removeAllObjects];//remove references
+    
     [[UASubscriptionManager shared].inventory loadPurchases];
 }
 
@@ -340,7 +383,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     RELEASE_SAFELY(networkQueue);
     networkQueue = [[UA_ASINetworkQueue queue] retain];
     [networkQueue setDelegate:self];
-    [networkQueue setQueueDidFinishSelector:@selector(subscriptionRestoreRequestsCompleted)];
+    [networkQueue setQueueDidFinishSelector:@selector(autorenewableRestoreRequestsCompleted)];
     [networkQueue setMaxConcurrentOperationCount:1];
 }
 

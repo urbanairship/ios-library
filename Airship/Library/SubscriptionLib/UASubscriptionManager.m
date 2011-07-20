@@ -194,6 +194,14 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(downloadContentFailed:) withObject:content];
 }
 
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored {
+    [self notifyObservers:@selector(restoreAutorenewablesFinished:) withObject:productsRestored];
+}
+
+- (void)restoreAutorenewablesFailed {
+    [self notifyObservers:@selector(restoreAutorenewablesFailed)];
+}
+
 #pragma mark -
 #pragma mark Purchase
 
@@ -233,9 +241,9 @@ IF_IOS4_OR_GREATER(
 }
 
 #pragma mark -
-#pragma mark Restore Subscriptions
+#pragma mark Restore Autorenewable Subscriptions
 
-- (void)restoreSubscriptions {
-    [transactionObserver restoreAll];
+- (void)restoreAutorenewables {
+    [transactionObserver restoreAutorenewables];
 }
 @end

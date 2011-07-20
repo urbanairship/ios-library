@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UAGlobal.h"
 #import "UAUser.h"
 #import "UASubscriptionProduct.h"
@@ -58,6 +59,21 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
+
+/**
+ * This method is called when a restore process completes without error.
+ *
+ * @param productsRestored An array of the products for which receipts were
+ *   found, nil if no autorenewables were found.
+ *
+ */
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
+
+/**
+ * This method is called when a restore fails due to a StoreKit or
+ * Urban Airship error.
+ */
+- (void)restoreAutorenewablesFailed;
 @end
 
 
@@ -92,11 +108,13 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
+- (void)restoreAutorenewablesFailed;
 
 - (void)purchase:(UASubscriptionProduct *)product;
 - (void)setPendingSubscription:(UASubscriptionProduct *)product;
 - (void)purchasePendingSubscription;
 
-- (void)restoreSubscriptions;
+- (void)restoreAutorenewables;
 
 @end
