@@ -137,11 +137,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
 
-        UALOG(@"Restore Failed");
-        if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
-            [self.alertDelegate showAlert:UASubscriptionAlertFailedRestore for:nil];
-        }
-    
+    UALOG(@"Restore Failed");
+    if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
+        [self.alertDelegate showAlert:UASubscriptionAlertFailedRestore for:nil];
+    }
+
     //close any of the transactions that were passed back and clear out the list to try again
     for (SKPaymentTransaction *transaction in unrestoredTransactions) {
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -149,6 +149,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [unrestoredTransactions removeAllObjects];
     
     restoring = NO;
+    
+    //notify observers
+    [[UASubscriptionManager shared] restoreAutorenewablesFailed];
     
     UALOG(@"paymentQueue:%@ restoreCompletedTransactionsFailedWithError:%@", queue, error);
 }
