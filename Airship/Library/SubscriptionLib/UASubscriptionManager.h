@@ -76,6 +76,7 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 
 /**
  * This method is called when a restore fails due to a StoreKit error.
+ * Note that this method will not be called if the restore is canceled.
  */
 - (void)restoreAutorenewablesFailed;
 
