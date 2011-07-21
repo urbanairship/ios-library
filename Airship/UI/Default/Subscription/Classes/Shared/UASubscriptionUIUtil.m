@@ -41,7 +41,6 @@
 
 + (NSString *)localizedAutorenewableDuration:(UAAutorenewableDuration)duration {
     NSString *arDurationString = nil;
-    UALOG(@"Duration %d",duration);
     switch (duration) {
         case UAAutorenewableDuration7Days:
             arDurationString = @"7 Days";
