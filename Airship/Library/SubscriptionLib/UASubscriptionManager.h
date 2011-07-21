@@ -83,6 +83,8 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
  * This is called when a specific autorenewable receipt verification fails due
  * to an invalid receipt or network issues. A success message may still follow
  * for other products.
+ * 
+ * @param product The product that failed during receipt verification.
  */
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 @end
