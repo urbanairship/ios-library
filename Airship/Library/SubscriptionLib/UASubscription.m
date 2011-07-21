@@ -95,6 +95,7 @@
     
     NSPredicate *forSalePredicate = [NSPredicate predicateWithFormat:@"isForSale == YES"];
     [availableProducts setArray:[productArray filteredArrayUsingPredicate:forSalePredicate]];
+    [availableProducts sortUsingSelector:@selector(compareByDuration:)];
     
     UALOG(@"Available: %@", [availableProducts description]);
 }
