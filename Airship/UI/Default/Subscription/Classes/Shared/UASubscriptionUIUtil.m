@@ -25,6 +25,7 @@
 
 #import "UASubscriptionUIUtil.h"
 
+#import "UASubscriptionUI.h"
 #import "UAGlobal.h"
 
 @implementation UASubscriptionUIUtil
@@ -43,22 +44,22 @@
     NSString *arDurationString = nil;
     switch (duration) {
         case UAAutorenewableDuration7Days:
-            arDurationString = @"7 Days";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_7_Days");
             break;
         case UAAutorenewableDuration1Month:
-            arDurationString = @"1 Month";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_1_Month");
             break;
         case UAAutorenewableDuration2Months:
-            arDurationString = @"2 Months";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_2_Months");
             break;
         case UAAutorenewableDuration3Months:
-            arDurationString = @"3 Months";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_3_Months");
             break;
         case UAAutorenewableDuration6Months:
-            arDurationString = @"6 Months";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_6_Months");
             break;
         case UAAutorenewableDuration1Year:
-            arDurationString = @"1 Year";
+            arDurationString = UA_SS_TR(@"UA_AR_Duration_1_Year");
             break;
         case UAAutorenewableDurationNone:
         default:
