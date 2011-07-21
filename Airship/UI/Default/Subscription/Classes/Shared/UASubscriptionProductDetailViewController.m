@@ -82,7 +82,9 @@
 
     [self refreshUI];
     
-    [self showUserEmailAlertOnce];
+    // Uncomment the following line to show an email entry form for the 
+    // email-based restore process (non-autorenewables)
+    // [self showUserEmailAlertOnce];
 }
 
 - (void)viewDidUnload {
