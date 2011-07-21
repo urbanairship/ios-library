@@ -188,4 +188,8 @@
     UALOG(@"Autorenewable restore failed. Try again later.");
 }
 
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product {
+    UALOG(@"Autorenewable restore failed for product ID %@", product.productIdentifier);
+}
+
 @end

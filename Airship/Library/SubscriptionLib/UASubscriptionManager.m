@@ -198,6 +198,10 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(restoreAutorenewablesFinished:) withObject:productsRestored];
 }
 
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product {
+    [self notifyObservers:@selector(restoreAutorenewableProductFailed:) withObject:product];
+}
+
 - (void)restoreAutorenewablesFailed {
     [self notifyObservers:@selector(restoreAutorenewablesFailed)];
 }

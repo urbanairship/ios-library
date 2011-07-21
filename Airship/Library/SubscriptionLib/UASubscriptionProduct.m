@@ -115,9 +115,11 @@
     
     self.autorenewable = ([[dict objectForKey:@"autorenewable"] intValue] == 1) ? YES : NO;
 
-    for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions])
-        if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier])
+    for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions]) {
+        if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier]) {
             self.isPurchasing = YES;
+        }
+    }
 
     return self;
 }

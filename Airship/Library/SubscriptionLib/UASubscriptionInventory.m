@@ -349,36 +349,26 @@
     
     UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
     
+    SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+    UASubscriptionProduct *product =
+        [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
+    
     switch (request.responseStatusCode) {
         case 200:
         {
-            SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
+            //close the transaction
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            //notify the observers
+            [[UASubscriptionManager shared] purchaseProductFinished:product];
             
             // Reload purchased contents and info. No need to reload products
             [self loadPurchases];
             break;
         }
-        case 212:
+        case 212: // user merged
         {
             UALOG(@"Subscription restored from another user!");
-            
-            // Sample response:
-            /*
-             {"user_data": 
-             {"has_active_subscription": true, 
-             "user_url": "https://sgc.urbanairship.com/api/user/4e20bc17a9ee251feb000001/", 
-             "subscriptions": [
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:20:13", "product_id": "com.urbanairship.artest.7days", "is_active": false, "start": "2011-07-15 22:17:13", "purchased": "2011-07-15 22:17:13"},
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:27:59", "product_id": "com.urbanairship.artest.7days", "is_active": true, "start": "2011-07-15 22:24:59", "purchased": "2011-07-15 22:24:59"}
-             ],
-             "user_id": "4e20bc17a9ee251feb000001",
-             "server_time": "2011-07-15 22:25:00",
-             "password": "-4GNBzU5RA2sAt0B2TPLNA",
-             "device_tokens": ["BF58148F2142DF6A843710BBEADC513916DB26B015EBA610BF86C457FD171B37"]
-             }
-             }
-             */
             
             UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
             NSDictionary *responseDictionary = [parser objectWithString:request.responseString];
@@ -389,8 +379,10 @@
             [self setUserPurchaseInfo:userData];
             
             // close the transaction
-            SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            // notify the observers
+            [[UASubscriptionManager shared] purchaseProductFinished:product];
             
             break;
         }

@@ -54,11 +54,16 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 @optional
 - (void)subscriptionWillEnterForeground;
 - (void)subscriptionWillEnterBackground;
+
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
-- (void)purchaseProductFinished:(UASubscriptionProduct *)product;
+- (void)userSubscriptionsUpdateFailed;//TODO: stub - will indicate inventory failure reason (storekit/ua connectivity)
+
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
+
+- (void)purchaseProductFinished:(UASubscriptionProduct *)product; //TODO: stub
+- (void)purchaseProductFailed:(UASubscriptionProduct *)product; //TODO: stub - will indicate reason (storekit/ua connectivity)
 
 /**
  * This method is called when a restore process completes without error.
@@ -70,10 +75,16 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
 
 /**
- * This method is called when a restore fails due to a StoreKit or
- * Urban Airship error.
+ * This method is called when a restore fails due to a StoreKit error.
  */
 - (void)restoreAutorenewablesFailed;
+
+/**
+ * This is called when a specific autorenewable receipt verification fails due
+ * to an invalid receipt or network issues. A success message may still follow
+ * for other products.
+ */
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 @end
 
 
@@ -109,6 +120,7 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 - (void)restoreAutorenewablesFailed;
 
 - (void)purchase:(UASubscriptionProduct *)product;

@@ -110,7 +110,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     for (SKPaymentTransaction *transaction in transactions) {
         UASubscriptionProduct *product = [manager.inventory productForKey:transaction.payment.productIdentifier];
         product.isPurchasing = NO;
-        [manager purchaseProductFinished:product];
     }
 }
 
@@ -360,12 +359,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
     
-    //notify observers
-    [[UASubscriptionManager shared] restoreAutorenewablesFailed];
-    [restoredProducts removeAllObjects];
+    // close the transaction
+    [unrestoredTransactions removeObject:transaction];
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     
-	// Do not finish the transaction here, leave it open for iOS to re-deliver until it explicitly fails or works
-	UALOG(@"Restore product failed: %@", transaction.payment.productIdentifier);
+    //notify observers
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
+    [[UASubscriptionManager shared] restoreAutorenewableProductFailed:product];
     
 }
 
