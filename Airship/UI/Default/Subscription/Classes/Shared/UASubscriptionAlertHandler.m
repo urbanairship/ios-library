@@ -180,6 +180,7 @@
             [self failedTransactionAlert:sender];
             break;
         case UASubscriptionAlertFailedRestore:
+            [self failedRestoreAlert:sender];
             break;
         default:
             break;
