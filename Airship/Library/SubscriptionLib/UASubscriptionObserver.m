@@ -136,8 +136,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
 
+    BOOL canceled = NO;
+    if ((int)error.code == SKErrorPaymentCancelled) {
+        canceled = YES;
+    }
+    
     UALOG(@"Restore Failed");
-    if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
+    if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)] && !canceled) {
         [self.alertDelegate showAlert:UASubscriptionAlertFailedRestore for:nil];
     }
 
@@ -150,7 +155,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     restoring = NO;
     
     //notify observers
-    [[UASubscriptionManager shared] restoreAutorenewablesFailed];
+    if (!canceled) {
+        [[UASubscriptionManager shared] restoreAutorenewablesFailed];
+    }
     
     UALOG(@"paymentQueue:%@ restoreCompletedTransactionsFailedWithError:%@", queue, error);
 }
