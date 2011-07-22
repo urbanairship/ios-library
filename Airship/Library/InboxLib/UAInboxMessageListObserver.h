@@ -28,7 +28,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @optional
 - (void)messageListWillLoad;
 - (void)messageListLoaded;
-- (void)inboxCreatedWithUser:(NSString*)user andPassword:(NSString*)password;
 - (void)inboxError:(NSString*)message;
 - (void)inboxLoadFailed;
 - (void)messagesDidUpateWithOption:(id)option;

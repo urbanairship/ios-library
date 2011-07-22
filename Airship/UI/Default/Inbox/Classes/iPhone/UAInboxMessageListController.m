@@ -400,10 +400,6 @@
     [alert release];
 }
 
-- (void)inboxCreatedWithUser:(NSString*)user andPassword:(NSString*)password {
-    UALOG(@"InboxCreatedWithUser: %@ andPassword: %@", user, password);
-}
-
 - (void)messagesDidUpateWithOption:(id)option {
     if ([option intValue] == UABatchDeleteMessagesSuccess) {
         [messageTable beginUpdates];
