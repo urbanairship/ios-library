@@ -32,13 +32,13 @@
 #import "UASubscriptionProduct.h"
 #import "UASubscriptionUI.h"
 #import "UASubscriptionUIUtil.h"
+#import "UASubscriptionInventory.h"
 
 #define kAlreadyAskedUserForEmailInput @"UASubscriptionAlreadyAskedUserForEmailInput"
 
 @implementation UASubscriptionProductDetailViewController
 
-
-@synthesize product;
+@synthesize productId;
 @synthesize productTitle;
 @synthesize iconContainer;
 @synthesize price;
@@ -48,7 +48,7 @@
 @synthesize alertDelegate;
 
 - (void)dealloc {
-    product = nil;
+    self.productId = nil;
     [[UASubscriptionManager shared] removeObserver:self];
 
     RELEASE_SAFELY(productTitle);
@@ -58,7 +58,8 @@
     RELEASE_SAFELY(previewImage);
     RELEASE_SAFELY(previewImageCell);
     RELEASE_SAFELY(buyButton);
-    alertDelegate = nil;
+    
+    self.alertDelegate = nil;//assigned
     
     [super dealloc];
 }
@@ -88,7 +89,7 @@
 }
 
 - (void)viewDidUnload {
-    self.product = nil;
+    
     self.productTitle = nil;
     self.iconContainer = nil;
     self.price = nil;
@@ -96,6 +97,7 @@
     self.previewImage = nil;
     self.previewImageCell = nil;
     self.alertDelegate = nil;
+    
     RELEASE_SAFELY(buyButton);
 }
 
@@ -106,10 +108,12 @@
 #pragma mark -
 #pragma mark Modal/Controller Update Methods
 
-- (void)setProduct:(UASubscriptionProduct *)value {
-    if (value == product)
+- (void)setProduct:(UASubscriptionProduct *)product {
+    if ([product.productIdentifier isEqual:self.productId]) {
         return;
-    product = value;
+    }
+    
+    self.productId = product.productIdentifier;
     [self refreshUI];
 }
 
@@ -117,11 +121,13 @@
 
 - (void)refreshUI {
     // empty UI when no product associated
-    if (product == nil) {
+    if (!productId) {
         detailTable.hidden = YES;
         self.navigationItem.rightBarButtonItem = nil;
         return;
     }
+    
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
 
     // reset UI for product
     detailTable.hidden = NO;
@@ -129,9 +135,7 @@
     self.navigationItem.rightBarButtonItem = buyButton;
     buyButton.enabled = !product.isPurchasing;
 
-    // table header
-    //productTitle.text = product.title;
-    
+    // table header    
     if (product.autorenewable) {
         NSString *arDurationString = 
             [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
@@ -162,7 +166,7 @@
 
 - (void)purchase:(id)sender {
     
-    [[UASubscriptionManager shared] purchase:product];
+    [[UASubscriptionManager shared] purchaseProductWithId:productId];
     
     buyButton.enabled = NO;
 
@@ -195,7 +199,10 @@
 - (CGFloat) tableView: (UITableView *) tableView heightForRowAtIndexPath: (NSIndexPath *) indexPath {
     if([indexPath row] == 0) {
         UIFont *font = [UIFont systemFontOfSize: 16];
+        
+        UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
         NSString* text = product.productDescription;
+        
         CGFloat height = [text sizeWithFont:font
                           constrainedToSize:CGSizeMake(280.0, 1500.0)
                               lineBreakMode:UILineBreakModeWordWrap].height;
@@ -210,6 +217,8 @@
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
     if (product.previewURL == nil) {
         return 1;
     } else {
@@ -218,6 +227,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
+    
     UITableViewCell* cell = nil;
     UIImage *bgImage = [UIImage imageNamed:@"middle-detail.png"];
     UIImage *stretchableBgImage = [bgImage stretchableImageWithLeftCapWidth:20 topCapHeight:0];
@@ -257,7 +269,7 @@
 #pragma mark UASubscriptionManager Callbacks
 
 - (void)purchaseProductFinished:(UASubscriptionProduct *)aProduct {
-    if ([product isEqual:aProduct]) {
+    if ([productId isEqual:aProduct.productIdentifier]) {
         buyButton.enabled = YES;
     }
 }

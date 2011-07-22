@@ -117,7 +117,7 @@
                                 initWithNibName:@"UASubscriptionProductDetailView"
                                 bundle:nil];
     }
-    ((UASubscriptionProductDetailViewController *)detailViewController).product = [self productAtIndexPath:indexPath];
+    [((UASubscriptionProductDetailViewController *)detailViewController) setProduct:[self productAtIndexPath:indexPath]];
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 

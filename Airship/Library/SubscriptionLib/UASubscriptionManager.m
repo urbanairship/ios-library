@@ -215,6 +215,11 @@ IF_IOS4_OR_GREATER(
 
 }
 
+- (void)purchaseProductWithId:(NSString *)productId {
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
+    [self purchase:product];
+}
+
 - (void)setPendingSubscription:(UASubscriptionProduct *)product {
     self.pendingProduct = product;
 }

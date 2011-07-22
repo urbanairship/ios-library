@@ -127,6 +127,7 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)restoreAutorenewablesFailed;
 
 - (void)purchase:(UASubscriptionProduct *)product;
+- (void)purchaseProductWithId:(NSString *)productId;
 - (void)setPendingSubscription:(UASubscriptionProduct *)product;
 - (void)purchasePendingSubscription;
 
