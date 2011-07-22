@@ -150,7 +150,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)markAsReadFailed:(UA_ASIHTTPRequest*)request {
     [self requestWentWrong:request];
-    [inbox notifyObservers:@selector(markAsReadFailed:) withObject:self];
+    [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 }
 
 + (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
