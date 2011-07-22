@@ -28,5 +28,6 @@
 #import "UASubscriptionProduct.h"
 
 @interface UASubscriptionUIUtil : NSObject
++ (BOOL)date:(NSDate*)date isBetweenDate:(NSDate*)beginDate andDate:(NSDate*)endDate;
 + (NSString *)localizedAutorenewableDuration:(UAAutorenewableDuration)duration;
 @end

@@ -108,6 +108,7 @@
 }
 
 - (NSArray *)productsForSection:(NSInteger)section {
+    //SLOW!
     return [[subscriptions objectAtIndex:section] availableProducts];
 }
 
@@ -135,7 +136,7 @@
 }
 
 - (NSArray *)productsForSection:(NSInteger)section {
-    return [[subscriptions objectAtIndex:section] purchasedProducts];
+    return [[ [[subscriptions objectAtIndex:section] purchasedProducts] reverseObjectEnumerator] allObjects];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

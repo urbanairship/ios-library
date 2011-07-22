@@ -87,15 +87,23 @@
 #pragma mark -
 #pragma mark Refresh UI
 
+
+
 - (void)refreshPriceLabelView {
     //update color
     NSString *text;
     UIColor *textColor, *bgColor, *borderColor;
 
-    if (product.purchased) {
+    NSDate *now = [NSDate date];
+    
+    if (product.purchased && [UASubscriptionUIUtil date:now isBetweenDate:product.startDate andDate:product.endDate]) {
         text = UA_SS_TR(@"UA_Subscribed");
         borderColor = textColor = kInstalledFGColor;
         bgColor = kInstalledBGColor;
+    } else if (product.purchased) {
+        text = UA_SS_TR(@"UA_Expired");
+        borderColor = textColor = kUpdateFGColor;
+        bgColor = kUpdateBGColor;
     } else {
         text = product.price;
         textColor = kPriceFGColor;
