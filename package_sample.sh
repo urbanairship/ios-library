@@ -23,25 +23,25 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#buildConfig="$BUILD_STYLE"
-#samplePath="$SRCROOT"
-#sampleName=`basename "$SRCROOT"`
-#dstPath="$samplePath"/../"$buildConfig"/"$sampleName"
+buildConfig="$CONFIGURATION"
+samplePath="$SRCROOT"
+sampleName=`basename "$SRCROOT"`
+dstPath="$samplePath"/../"$buildConfig"/"$sampleName"
 
-#if [ -z "$buildConfig" ] || [ -z "$samplePath" ]; then
-#	echo "Error: This script is only meant to be run within AirshipLib build phase."
-#	exit -1
-#fi
+if [ -z "$buildConfig" ] || [ -z "$samplePath" ]; then
+	echo "Error: This script is only meant to be run within AirshipLib build phase."
+	exit -1
+fi
 
-#rm -rf "$dstPath"
-#mkdir -p "$dstPath"
-#echo "cp -R "$samplePath" `dirname "$dstPath"`"
-#cp -R "$samplePath" `dirname "$dstPath"`
+rm -rf "$dstPath"
+mkdir -p "$dstPath"
+echo "cp -R "$samplePath" `dirname "$dstPath"`"
+cp -R "$samplePath" `dirname "$dstPath"`
 
-#cd "$dstPath"
-#rm -rf `find . -name "build"`
-#rm -rf `find . -name "*SampleLib.xcodeproj"`
-#rm -rf `find . -name "*Tests"`
-#rm -rf `find . -name "*Test*.plist"`
-#rm -rf `find . -name "*Test*.pch"`
-#rm -rf `find . -name "*.orig" `
+cd "$dstPath"
+rm -rf `find . -name "build"`
+rm -rf `find . -name "*SampleLib.xcodeproj"`
+rm -rf `find . -name "*Tests"`
+rm -rf `find . -name "*Test*.plist"`
+rm -rf `find . -name "*Test*.pch"`
+rm -rf `find . -name "*.orig" `
