@@ -186,6 +186,10 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(purchaseProductFinished:) withObject:product];
 }
 
+- (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error {
+    [self notifyObservers:@selector(purchaseProductFailed:withError:) withObject:product withObject:error];
+}
+
 - (void)downloadContentFinished:(UASubscriptionContent *)content {
     [self notifyObservers:@selector(downloadContentFinished:) withObject:content];
 }
@@ -202,8 +206,8 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(restoreAutorenewableProductFailed:) withObject:product];
 }
 
-- (void)restoreAutorenewablesFailed {
-    [self notifyObservers:@selector(restoreAutorenewablesFailed)];
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error {
+    [self notifyObservers:@selector(restoreAutorenewablesFailedWithError:) withObject:error];
 }
 
 #pragma mark -

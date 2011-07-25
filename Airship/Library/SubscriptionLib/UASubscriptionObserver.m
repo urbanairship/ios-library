@@ -155,9 +155,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     restoring = NO;
     
     //notify observers
-    if (!canceled) {
-        [[UASubscriptionManager shared] restoreAutorenewablesFailed];
-    }
+    [[UASubscriptionManager shared] restoreAutorenewablesFailedWithError:error];
     
     UALOG(@"paymentQueue:%@ restoreCompletedTransactionsFailedWithError:%@", queue, error);
 }
@@ -219,16 +217,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
+    
+    NSString *productIdentifier = transaction.payment.productIdentifier;
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productIdentifier];
+    
     if ((int)transaction.error.code != SKErrorPaymentCancelled) {
-        UALOG(@"Transaction Failed (%@), product: %@", (int)transaction.error, transaction.payment.productIdentifier);
+        UALOG(@"Transaction Failed (%@), product: %@", (int)transaction.error, productIdentifier);
         if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
             [self.alertDelegate showAlert:UASubscriptionAlertFailedTransaction for:nil];
         }
     }
 
-    if (transaction) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    }
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [[UASubscriptionManager shared] purchaseProductFailed:product withError:transaction.error];
+
 }
 
 #pragma mark -

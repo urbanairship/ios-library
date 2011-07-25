@@ -63,7 +63,7 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product; //TODO: stub
-- (void)purchaseProductFailed:(UASubscriptionProduct *)product; //TODO: stub - will indicate reason (storekit/ua connectivity)
+- (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 
 /**
  * This method is called when a restore process completes without error.
@@ -75,10 +75,10 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
 
 /**
- * This method is called when a restore fails due to a StoreKit error.
- * Note that this method will not be called if the restore is canceled.
+ * This method is called when a restore fails due to a StoreKit error,
+ * including cancellation.
  */
-- (void)restoreAutorenewablesFailed;
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error;
 
 /**
  * This is called when a specific autorenewable receipt verification fails due
@@ -120,11 +120,12 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
+- (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
-- (void)restoreAutorenewablesFailed;
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error;
 
 - (void)purchase:(UASubscriptionProduct *)product;
 - (void)purchaseProductWithId:(NSString *)productId;

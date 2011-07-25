@@ -274,6 +274,12 @@
     }
 }
 
+- (void)purchaseProductFailed:(UASubscriptionProduct *)failedProduct withError:(NSError *)error {
+    if ([productId isEqual:failedProduct.productIdentifier]) {
+        buyButton.enabled = YES;
+    }
+}
+
 #pragma mark UAUserObserver
 
 //- (void)userRecoveryFinished {

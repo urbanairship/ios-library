@@ -184,12 +184,16 @@
     UALOG(@"Autorenewable restore finished. %d products restored.",[productsRestored count]);
 }
 
-- (void)restoreAutorenewablesFailed {
-    UALOG(@"Autorenewable restore failed. Try again later.");
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error {
+    UALOG(@"Autorenewable restore failed with error code %d and reason=%@. Try again later.", [error code], [error localizedDescription]);
 }
 
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product {
     UALOG(@"Autorenewable restore failed for product ID %@", product.productIdentifier);
+}
+
+- (void)purchaseProductFailed:(UASubscriptionProduct *)failedProduct withError:(NSError *)error {
+    UALOG(@"Purchase product failed with error code %d and reason=%@. Try again later.", [error code], [error localizedDescription]);
 }
 
 @end
