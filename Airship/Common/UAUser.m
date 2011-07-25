@@ -97,7 +97,6 @@ static UAUser *_defaultUser;
             _defaultUser = [[UAUser alloc] init];
         }
     }
-    
     return _defaultUser;
 }
 
@@ -123,6 +122,7 @@ static UAUser *_defaultUser;
     RELEASE_SAFELY(alias);
     RELEASE_SAFELY(tags);
     RELEASE_SAFELY(recoveryPoller);
+    
     [super dealloc];
 }
 
@@ -135,30 +135,45 @@ static UAUser *_defaultUser;
 }
 
 - (id)init {
+    self = [super init];
+    if (self) {
+        // init
+        // no action required for now..
+    }
+    
+    return self;
+}
 
-    if (self = [super init]) {
-		
+- (void)initializeUser {
+    
+    @synchronized(self) {
+        
+        if (initialized) {
+            return;
+        }
+        
         if (![UAirship shared].ready) {
-            return self;
+            return;
         }
         
         [self migrateUser];
         
-		NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
-		NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
-		
-		if (storedUsername != nil && storedPassword != nil) {
-			self.username = storedUsername;
-			self.password = storedPassword;
-		}
+        NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
+        NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
+        
+        if (storedUsername != nil && storedPassword != nil) {
+            self.username = storedUsername;
+            self.password = storedPassword;
+        }
         
         // Boot strap - including processing our user recovery status
         [self loadUser];
-
+        
         [self performSelector:@selector(listenForDeviceTokenReg) withObject:nil afterDelay:0];
+        
+        initialized = YES;
+                
     }
-    
-    return self;
 }
 
 - (void)migrateUser {

@@ -30,8 +30,7 @@
 
 @implementation UASubscriptionUIUtil
 
-- (id)init
-{
+- (id)init {
     self = [super init];
     if (self) {
         // Initialization code here.

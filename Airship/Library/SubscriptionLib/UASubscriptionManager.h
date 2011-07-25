@@ -57,12 +57,12 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
-- (void)userSubscriptionsUpdateFailed;//TODO: stub - will indicate inventory failure reason (storekit/ua connectivity)
+- (void)userSubscriptionsUpdateFailedWithError:(NSError *)error;//TODO: stub - will indicate inventory failure reason (storekit/ua connectivity)
 
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 
-- (void)purchaseProductFinished:(UASubscriptionProduct *)product; //TODO: stub
+- (void)purchaseProductFinished:(UASubscriptionProduct *)product;
 - (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 
 /**

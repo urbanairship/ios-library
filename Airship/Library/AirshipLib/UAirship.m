@@ -239,7 +239,7 @@ BOOL logging = false;
     }
     
     //create/setup user (begin listening for device token changes)
-    [UAUser defaultUser];
+    [[UAUser defaultUser] initializeUser];
 }
 
 + (void)land {

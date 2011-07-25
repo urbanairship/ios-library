@@ -56,6 +56,7 @@ typedef enum _UAUserState {
 @interface UAUser : UAObservable {
 
   @private
+    BOOL initialized;
     NSString *username;
     NSString *password;
     NSString *email;
@@ -63,11 +64,12 @@ typedef enum _UAUserState {
     NSString *alias;
     NSMutableSet *tags;
     
+    UAUserState userState;
+    
     //recovery
     NSString *recoveryEmail;
     NSString *recoveryStatusUrl;
-    UAUserState userState;
-    NSTimer* recoveryPoller;
+    NSTimer *recoveryPoller;
     BOOL inRecovery;
     BOOL recoveryStarted;
     BOOL sentRecoveryEmail;
@@ -100,13 +102,16 @@ typedef enum _UAUserState {
 - (void)cancelRecovery;
 
 // Private interface
-@property (assign, nonatomic) BOOL inRecovery, recoveryStarted, sentRecoveryEmail;
+@property (assign, nonatomic) BOOL inRecovery;
+@property (assign, nonatomic) BOOL recoveryStarted;
+@property (assign, nonatomic) BOOL sentRecoveryEmail;
 @property (assign, nonatomic) BOOL retrievingUser;
 
 //Specifies a default PRE-EXISTING username and password to use in the case a new user would 
 //otherwise be created by [UAUser defaultUser]
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword;
 
+- (void)initializeUser;
 - (void)loadUser;
 
 - (void)createUser;
