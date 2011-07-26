@@ -119,7 +119,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     statusLabel.text = UA_SF_TR(@"UA_Loading");
     statusLabel.hidden = NO;
     [activityView startAnimating];
-
+    
     filteredProducts = [[NSMutableArray alloc] init];
 
     [self customTableViewContentOffset];
@@ -139,8 +139,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 // App is returning to foreground, so reregister observers and reload data
 - (void)enterForeground {
-
-    [activityView startAnimating];
 
     // Things other than a backgrounding can trigger this message, only recover
     // if it is truly from being backgrounded
@@ -400,6 +398,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)showLoading {
     loadingView.hidden = NO;
     activityView.hidden = NO;
+    [activityView startAnimating];
 
     productTable.hidden = YES;
 
@@ -412,6 +411,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)hideLoading {
     loadingView.hidden = YES;
     activityView.hidden = YES;
+    [activityView stopAnimating];
 
     productTable.hidden = NO;
 
