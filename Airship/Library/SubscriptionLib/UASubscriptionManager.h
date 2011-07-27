@@ -33,6 +33,10 @@
 
 UA_VERSION_INTERFACE(SubscriptionVersion)
 
+extern NSString * const UASubscriptionPurchaseInventoryFailure;
+extern NSString * const UASubscriptionContentInventoryFailure;
+extern NSString * const UASubscriptionProductInventoryFailure;
+
 @class UASubscriptionObserver;
 @class UASubscriptionInventory;
 @class UASubscriptionContent;
@@ -64,6 +68,15 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
+
+/**
+ * This method is called if a StoreKit purchase fails. The purchase may be
+ * retried.
+ *
+ * @param product The UASubscriptionProduct
+ * @param error The StoreKit error returned with the transaction
+ *
+ */
 - (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 
 /**
@@ -78,6 +91,9 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 /**
  * This method is called when a restore fails due to a StoreKit error,
  * including cancellation.
+ * 
+ * @param error The StoreKit error passed back with the failed transaction.
+ *
  */
 - (void)restoreAutorenewablesFailedWithError:(NSError *)error;
 

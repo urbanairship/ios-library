@@ -184,11 +184,10 @@
 }
 
 - (void)inventoryUpdateFailedWithError:(NSError *)error {
-    UALOG(@"Inventory update failed with error code %d and domain %@",error.code, error.domain);
+    UALOG(@"Inventory update failed with error code %d and domain %@ and description: %@",error.code, error.domain, error.localizedDescription);
     if ([error.domain isEqualToString:@"com.urbanairship"]) {
         NSDictionary *userInfo = error.userInfo;
-        NSURL *failedUrl = (NSURL *)[userInfo objectForKey:NSURLErrorKey];
-        UALOG(@"URL Failed: %@", [failedUrl absoluteString]);
+        UALOG(@"URL Failed: %@", [userInfo objectForKey:NSErrorFailingURLStringKey]);
     }
 }
 

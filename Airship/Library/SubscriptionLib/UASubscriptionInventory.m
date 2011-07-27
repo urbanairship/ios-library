@@ -262,8 +262,9 @@
         default:
         {
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:request.url forKey:NSURLErrorKey];
-            //TODO: reason enum
+            [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+            [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
+            
             NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
             [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
             break;
@@ -277,8 +278,9 @@
     UALOG(@"Purchase info request failed.");
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:request.url forKey:NSURLErrorKey];
-    //TODO: reason enum
+    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
+    
     NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
     [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }

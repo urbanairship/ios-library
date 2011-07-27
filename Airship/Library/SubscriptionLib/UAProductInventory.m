@@ -101,8 +101,9 @@ static int compareProduct(id productID, id otherProductID, void *context);
         }
     } else {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:request.url forKey:NSURLErrorKey];
-        //TODO: reason enum
+        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
+        
         NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
         [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
     }
@@ -111,8 +112,9 @@ static int compareProduct(id productID, id otherProductID, void *context);
 - (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Product inventory request failed.");
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:request.url forKey:NSURLErrorKey];
-    //TODO: reason enum
+    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
+    
     NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
     [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }

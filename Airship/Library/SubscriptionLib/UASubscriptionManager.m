@@ -39,6 +39,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 UA_VERSION_IMPLEMENTATION(SubscriptionVersion, UA_VERSION)
 
+// Subscription error messages
+NSString * const UASubscriptionPurchaseInventoryFailure = @"UA Subscription Purchases Failed to Load";
+NSString * const UASubscriptionContentInventoryFailure = @"UA Subscription Content Inventory Failed to Load";
+NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Product Inventory Failed to Load";
+
 @implementation UASubscriptionManager
 @synthesize transactionObserver;
 @synthesize inventory;

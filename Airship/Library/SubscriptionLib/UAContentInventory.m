@@ -81,8 +81,9 @@
               request.responseStatusCode, request.responseString);
         
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:request.url forKey:NSURLErrorKey];
-        //TODO: reason enum
+        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
+        
         NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
         [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
         
@@ -107,8 +108,9 @@
     UALOG(@"Content inventory request failed.");
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:request.url forKey:NSURLErrorKey];
-    //TODO: reason enum
+    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
+    
     NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
     [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
