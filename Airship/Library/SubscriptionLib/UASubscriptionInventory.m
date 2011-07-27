@@ -232,7 +232,8 @@
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:url
                                                    method:@"GET"
                                                  delegate:self
-                                                   finish:@selector(userPurchasingInfoLoaded:)];
+                                                   finish:@selector(userPurchasingInfoLoaded:)
+                                                        fail:@selector(purchaseInfoRequestFailed:)];
     [request startAsynchronous];
 }
 
@@ -240,21 +241,46 @@
     
     UALOG(@"User products loaded: %d\n%@\n", request.responseStatusCode, request.responseString);
     
-    if (request.responseStatusCode != 200) {
-        //TODO: handle error case - send an event to observer
-        
-        if (request.responseStatusCode == 404) {
+    switch (request.responseStatusCode) {
+        case 200:
+        {
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+            NSDictionary *result = [parser objectWithString:request.responseString];
+            [parser release];
+            
+            [self setUserPurchaseInfo:result];
+            break;
+        }
+        case 404://current status, will be removed
+        case 401://replacement status
+        {
             //replace the current user with a freshone from the server
             [[UAUser defaultUser] createUser];
+            break;
+            
         }
-        return;
+        default:
+        {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            [userInfo setObject:request.url forKey:NSURLErrorKey];
+            //TODO: reason enum
+            NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+            [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+            break;
+        }
     }
+    
+}
 
-    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
-    NSDictionary *result = [parser objectWithString:request.responseString];
-    [parser release];
-
-    [self setUserPurchaseInfo:result];
+- (void)purchaseInfoRequestFailed:(UA_ASIHTTPRequest *)request {
+    
+    UALOG(@"Purchase info request failed.");
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:request.url forKey:NSURLErrorKey];
+    //TODO: reason enum
+    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 
 - (void)setUserPurchaseInfo:(NSDictionary *)userInfo {

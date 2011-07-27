@@ -67,18 +67,29 @@
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
                                                    method:@"GET"
                                                  delegate:self
-                                                   finish:@selector(inventoryLoaded:)];
+                                                   finish:@selector(inventoryLoaded:)
+                                                        fail:@selector(inventoryRequestFailed:)];
 
     [request startAsynchronous];
 }
 
 - (void)inventoryLoaded:(UA_ASIHTTPRequest *)request {
+    
+    // if the request failed
     if (request.responseStatusCode != 200) {
         UALOG(@"retrieving user subscription content failed, response: %d-%@",
               request.responseStatusCode, request.responseString);
+        
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+        [userInfo setObject:request.url forKey:NSURLErrorKey];
+        //TODO: reason enum
+        NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+        [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+        
         return;
     }
 
+    // Contents successfully loaded
     UALOG(@"User contents loaded: %d\n%@\n", request.responseStatusCode,
           request.responseString);
 
@@ -88,7 +99,18 @@
     [self loadWithArray:contents];
 
     [[UASubscriptionManager shared].inventory contentInventoryUpdated];
-    //[self notifyObservers:@selector(contentInventoryUpdated)];
+
+}
+
+- (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
+    
+    UALOG(@"Content inventory request failed.");
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:request.url forKey:NSURLErrorKey];
+    //TODO: reason enum
+    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 
 - (void)loadWithArray:(NSArray *)array {

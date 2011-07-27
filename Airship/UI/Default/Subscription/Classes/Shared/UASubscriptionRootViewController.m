@@ -23,6 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 #import "UASubscriptionManager.h"
 #import "UASubscriptionSettingsViewController.h"
 #import "UASubscriptionRootViewController.h"
@@ -30,6 +32,7 @@
 #import "UAGlobal.h"
 #import "UAUser.h"
 #import "UASubscriptionUI.h"
+
 
 @implementation UASubscriptionRootViewController
 
@@ -177,6 +180,15 @@
     UALOG(@"Observer notified : subscriptionsUpdated");
     if (segment.selectedSegmentIndex == SubscriptionTypeAll) {
         [self setLoading:NO];
+    }
+}
+
+- (void)inventoryUpdateFailedWithError:(NSError *)error {
+    UALOG(@"Inventory update failed with error code %d and domain %@",error.code, error.domain);
+    if ([error.domain isEqualToString:@"com.urbanairship"]) {
+        NSDictionary *userInfo = error.userInfo;
+        NSURL *failedUrl = (NSURL *)[userInfo objectForKey:NSURLErrorKey];
+        UALOG(@"URL Failed: %@", [failedUrl absoluteString]);
     }
 }
 

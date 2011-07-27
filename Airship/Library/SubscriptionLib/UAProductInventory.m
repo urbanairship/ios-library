@@ -76,26 +76,45 @@ static int compareProduct(id productID, id otherProductID, void *context);
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
                                                    method:@"GET"
                                                  delegate:self
-                                                   finish:@selector(inventoryLoaded:)];
+                                                   finish:@selector(inventoryLoaded:)
+                                                        fail:@selector(inventoryRequestFailed:)];
     [request startAsynchronous];
 }
 
 - (void)inventoryLoaded:(UA_ASIHTTPRequest *)request {
-    UA_SBJsonParser *parser = [UA_SBJsonParser new];
-    NSArray *optionsArray = [parser objectWithString:request.responseString];
-    [parser release];
+    
+    if (request.responseStatusCode == 200) {
+        UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+        NSArray *optionsArray = [parser objectWithString:request.responseString];
+        [parser release];
 
-    [self loadWithArray:optionsArray];
+        [self loadWithArray:optionsArray];
 
-    UALOG(@"Available products loaded: %d\n%@\n",
-          request.responseStatusCode, optionsArray);
+        UALOG(@"Available products loaded: %d\n%@\n",
+              request.responseStatusCode, optionsArray);
 
-    if ([productIDArray count] > 0) {
-        SKProductsRequest *productsRequest = [[SKProductsRequest alloc]
-                                              initWithProductIdentifiers:[NSSet setWithArray:productIDArray]];
-        productsRequest.delegate = self;
-        [productsRequest start];
+        if ([productIDArray count] > 0) {
+            SKProductsRequest *productsRequest = [[SKProductsRequest alloc]
+                                                  initWithProductIdentifiers:[NSSet setWithArray:productIDArray]];
+            productsRequest.delegate = self;
+            [productsRequest start];
+        }
+    } else {
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+        [userInfo setObject:request.url forKey:NSURLErrorKey];
+        //TODO: reason enum
+        NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+        [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
     }
+}
+
+- (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
+    UALOG(@"Product inventory request failed.");
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:request.url forKey:NSURLErrorKey];
+    //TODO: reason enum
+    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 
 - (void)loadWithArray:(NSArray *)invArray {
@@ -157,6 +176,9 @@ static int compareProduct(id productID, id otherProductID, void *context);
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     UALOG(@"Connection to Apple server ERROR: NSError query result: %@", error);
+    
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+    
     RELEASE_SAFELY(request);
 }
 

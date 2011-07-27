@@ -197,12 +197,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     
-    //UALOG(@"Restore Transaction: %@", transaction);
-    //UALOG(@"id: %@ ||| original transaction: %@ ||| original receipt: %@\n", 
-    //      transaction.payment.productIdentifier,
-    //      transaction.originalTransaction, 
-    //      transaction.originalTransaction.transactionReceipt);
-    
     NSString *productIdentifier = transaction.payment.productIdentifier;
     UALOG(@"Restoring Transaction for Product ID: %@", productIdentifier);
     
@@ -369,6 +363,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
     
     // close the transaction
+    if ([request isCancelled]) {
+        return;//if it was cancelled, it will be retried after the merge
+    }
+    
     [unrestoredTransactions removeObject:transaction];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     

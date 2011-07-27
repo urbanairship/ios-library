@@ -57,7 +57,8 @@ UA_VERSION_INTERFACE(SubscriptionVersion)
 
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
-- (void)userSubscriptionsUpdateFailedWithError:(NSError *)error;//TODO: stub - will indicate inventory failure reason (storekit/ua connectivity)
+
+- (void)inventoryUpdateFailedWithError:(NSError *)error;
 
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
@@ -113,12 +114,15 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 @property (retain, readonly) UASubscriptionObserver *transactionObserver;
 
 - (void)loadSubscription;
+
+// Private observer notifiers - do not use
 - (void)enterForeground;
 - (void)enterBackground;
 - (void)subscriptionWillEnterForeground;
 - (void)subscriptionWillEnterBackground;
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
+- (void)inventoryUpdateFailedWithError:(NSError *)error;
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
 - (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
@@ -127,6 +131,7 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 - (void)restoreAutorenewablesFailedWithError:(NSError *)error;
 
+// Public purchase methods
 - (void)purchase:(UASubscriptionProduct *)product;
 - (void)purchaseProductWithId:(NSString *)productId;
 - (void)setPendingSubscription:(UASubscriptionProduct *)product;

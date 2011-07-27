@@ -182,6 +182,10 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(userSubscriptionsUpdated:) withObject:userSubscriptions];
 }
 
+- (void)inventoryUpdateFailedWithError:(NSError *)error {
+    [self notifyObservers:@selector(inventoryUpdateFailedWithError:) withObject:error];
+}
+
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product {
     [self notifyObservers:@selector(purchaseProductFinished:) withObject:product];
 }
