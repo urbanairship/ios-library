@@ -203,12 +203,12 @@
 #pragma mark Alert View
 
 - (void)showRecoveryAlert {
-    self.recoveryAlert = [[UIAlertView alloc] initWithTitle: UA_SS_TR(@"UA_Recovering_Account")
+    self.recoveryAlert = [[[UIAlertView alloc] initWithTitle: UA_SS_TR(@"UA_Recovering_Account")
                                                message: UA_SS_TR(@"UA_Recovery_Alert")
                                               delegate: nil
                                      cancelButtonTitle: nil
                                      otherButtonTitles: UA_SS_TR(@"UA_OK"),
-                          nil];
+                          nil] autorelease];
     [recoveryAlert show];
 }
 
