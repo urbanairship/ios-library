@@ -74,9 +74,9 @@ static int compareProduct(id productID, id otherProductID, void *context);
                            [UAUser defaultUser].username];
 
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
-                                                   method:@"GET"
-                                                 delegate:self
-                                                   finish:@selector(inventoryLoaded:)
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(inventoryLoaded:)
                                                         fail:@selector(inventoryRequestFailed:)];
     [request startAsynchronous];
 }
@@ -131,12 +131,6 @@ static int compareProduct(id productID, id otherProductID, void *context);
 
     // sort
     [productIDArray sortUsingSelector:@selector(caseInsensitiveCompare:)];
-}
-
-#pragma mark HTTP Request Failure Handler
-
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
-    [UAUtils requestWentWrong:request];
 }
 
 #pragma mark -

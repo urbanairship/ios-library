@@ -65,9 +65,9 @@
                            [UAUser defaultUser].username];
 
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
-                                                   method:@"GET"
-                                                 delegate:self
-                                                   finish:@selector(inventoryLoaded:)
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(inventoryLoaded:)
                                                         fail:@selector(inventoryRequestFailed:)];
 
     [request startAsynchronous];
@@ -126,13 +126,6 @@
     }
     
     [contentArray sortUsingSelector:@selector(compare:)];
-}
-
-#pragma mark -
-#pragma mark HTTP Request Failure Handler
-
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
-    [UAUtils requestWentWrong:request];
 }
 
 @end

@@ -230,9 +230,9 @@
     NSURL *url = [NSURL URLWithString:urlString];
 
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:url
-                                                   method:@"GET"
-                                                 delegate:self
-                                                   finish:@selector(userPurchasingInfoLoaded:)
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(userPurchasingInfoLoaded:)
                                                         fail:@selector(purchaseInfoRequestFailed:)];
     [request startAsynchronous];
 }
