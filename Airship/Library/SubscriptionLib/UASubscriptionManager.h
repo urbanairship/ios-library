@@ -62,6 +62,19 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
 
+/**
+ * Called if an inventory update fails when retrieving purchase, product
+ * or contents information from UA or Apple. If the error occurs when
+ * requesting the inventory from Apple, the original StoreKit error will
+ * be passed as the parameter. If the error occurs when contacting UA,
+ * the error code will be an HTTP response code (or 0 if no response),
+ * the failure URL will be available in the userInfo dictionary
+ * using NSErrorFailingURLStringKey or NSURLErrorFailingURLStringErrorKey (4.0+)
+ * and the localizedDescription will be one of:
+ *       UASubscriptionPurchaseInventoryFailure
+ *       UASubscriptionContentInventoryFailure
+ *       UASubscriptionProductInventoryFailure
+ */
 - (void)inventoryUpdateFailedWithError:(NSError *)error;
 
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
