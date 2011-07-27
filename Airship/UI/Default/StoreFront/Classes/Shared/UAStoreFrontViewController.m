@@ -238,8 +238,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         [UAViewUtils roundView:cell.iconContainer borderRadius:10 borderWidth:1 color:[UIColor darkGrayColor]];
     }
 
-    UAProduct *product = [[self productsForTableView:tableView] objectAtIndex:indexPath.row];
-    cell.product = product;
+    NSArray *tableProducts = [self productsForTableView:tableView];
+    if (indexPath.row < [tableProducts count]) {
+        cell.product = [tableProducts objectAtIndex:indexPath.row];
+    }
     [self customizeAccessoryViewForCell:cell];
 
     return cell;
