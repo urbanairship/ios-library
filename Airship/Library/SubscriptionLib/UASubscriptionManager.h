@@ -33,6 +33,7 @@
 
 UA_VERSION_INTERFACE(SubscriptionVersion)
 
+// Error failure messages for use with inventoryUpdateFailedWithError:
 extern NSString * const UASubscriptionPurchaseInventoryFailure;
 extern NSString * const UASubscriptionContentInventoryFailure;
 extern NSString * const UASubscriptionProductInventoryFailure;
@@ -139,10 +140,20 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 + (void)hideSubscription;
 + (void)land;
 
-// private
-@property (retain, readonly) UASubscriptionObserver *transactionObserver;
+// Public purchase and restore methods
+- (void)purchase:(UASubscriptionProduct *)product;
+- (void)purchaseProductWithId:(NSString *)productId;
+- (void)setPendingSubscription:(UASubscriptionProduct *)product;
+- (void)purchasePendingSubscription;
+- (void)restoreAutorenewables;
 
+/**
+ * Loads the product inventory, the available content and a user's purchases
+ */
 - (void)loadSubscription;
+
+// Private
+@property (retain, readonly) UASubscriptionObserver *transactionObserver;
 
 // Private observer notifiers - do not use
 - (void)enterForeground;
@@ -159,13 +170,5 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored;
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 - (void)restoreAutorenewablesFailedWithError:(NSError *)error;
-
-// Public purchase methods
-- (void)purchase:(UASubscriptionProduct *)product;
-- (void)purchaseProductWithId:(NSString *)productId;
-- (void)setPendingSubscription:(UASubscriptionProduct *)product;
-- (void)purchasePendingSubscription;
-
-- (void)restoreAutorenewables;
 
 @end
