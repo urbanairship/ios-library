@@ -34,8 +34,13 @@
 UA_VERSION_INTERFACE(SubscriptionVersion)
 
 // Error failure messages for use with inventoryUpdateFailedWithError:
+/** This value indicates that the list of purchased products failed to load */
 extern NSString * const UASubscriptionPurchaseInventoryFailure;
+
+/** This value indicates that the list of available content failed to load */
 extern NSString * const UASubscriptionContentInventoryFailure;
+
+/** This value indicates that the list of available products failed to load */
 extern NSString * const UASubscriptionProductInventoryFailure;
 
 @class UASubscriptionObserver;
@@ -60,10 +65,23 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 - (void)subscriptionWillEnterForeground;
 - (void)subscriptionWillEnterBackground;
 
+/**
+ * The subscription, subscription product and content inventory has been updated.
+ *
+ * @param subscriptions The list of available subscriptions.
+ */
 - (void)subscriptionsUpdated:(NSArray *)subscriptions;
-- (void)userSubscriptionsUpdated:(NSArray *)userSubscritions;
 
 /**
+ * The user's subscription purchase list has been updated.
+ * 
+ * @param subscriptions The array of subscriptions for which the user has purchased products.  
+ */
+- (void)userSubscriptionsUpdated:(NSArray *)subscriptions;
+
+/** 
+ * Inventory update callback.
+ *
  * Called if an inventory update fails when retrieving purchase, product
  * or contents information from UA or Apple. If the error occurs when
  * requesting the inventory from Apple, the original StoreKit error will
@@ -72,19 +90,26 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * the failure URL will be available in the userInfo dictionary
  * using NSErrorFailingURLStringKey or NSURLErrorFailingURLStringErrorKey (4.0+)
  * and the localizedDescription will be one of:
- *       UASubscriptionPurchaseInventoryFailure
- *       UASubscriptionContentInventoryFailure
- *       UASubscriptionProductInventoryFailure
+ *       
+ *       - UASubscriptionPurchaseInventoryFailure
+ *       - UASubscriptionContentInventoryFailure
+ *       - UASubscriptionProductInventoryFailure
+ *
+ * @param error The StoreKit or UA error
  */
 - (void)inventoryUpdateFailedWithError:(NSError *)error;
 
 - (void)downloadContentFinished:(UASubscriptionContent *)content;
 - (void)downloadContentFailed:(UASubscriptionContent *)content;
 
+/**
+ * A product has been successfully purchased, including receipt verification.
+ *
+ * @param product The purchased product
+ */
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product;
 
-/**
- * This method is called if a StoreKit purchase fails. The purchase may be
+/** This method is called if a StoreKit purchase fails. The purchase may be
  * retried.
  *
  * @param product The UASubscriptionProduct
@@ -121,18 +146,34 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 - (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product;
 @end
 
-
+/**
+ * This class provides the primary interface for interacting with the Urban Airship
+ * subscription functionality.
+ *
+ * It provides support for both autorenewable and non-autorenewable subscriptions.
+ *
+ * Register a UASubscriptionManagerObserver to receive notifications when products,
+ * subsriptions or their contents change.
+ */
 @interface UASubscriptionManager : UAObservable {
     UASubscriptionInventory *inventory;
     UASubscriptionObserver *transactionObserver;
-    UASubscriptionProduct *pendingProduct;
+    UASubscriptionProduct *pendingProduct;//should be deprecated
 }
 
-// public
+///---------------------------------------------------------------------------------------
+/// @name Inventory
+///---------------------------------------------------------------------------------------
+
+/** The inventory of subscriptions (and their products and contents) */
 @property (retain, readonly) UASubscriptionInventory *inventory;
-@property (retain, nonatomic) UASubscriptionProduct *pendingProduct;
+@property (retain, nonatomic) UASubscriptionProduct *pendingProduct;//this should be deprecated
 
 SINGLETON_INTERFACE(UASubscriptionManager)
+
+///---------------------------------------------------------------------------------------
+/// @name UI and Initialization
+///---------------------------------------------------------------------------------------
 
 - (Class)uiClass;
 + (void)useCustomUI:(Class)customUIClass;
@@ -141,14 +182,52 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 + (void)land;
 
 // Public purchase and restore methods
+
+///---------------------------------------------------------------------------------------
+/// @name Purchase and Restore Subscriptions
+///---------------------------------------------------------------------------------------
+
+/**
+ * Purchase a subscription product.
+ * 
+ * Register a UASubscriptionManagerObserver to receive status updates for this process.
+ *
+ * @param product The subscription product to purchase
+ */
 - (void)purchase:(UASubscriptionProduct *)product;
+
+/**
+ * Purchase a subscription product.
+ * 
+ * Register a UASubscriptionManagerObserver to receive status updates for this process.
+ *
+ * @param product The product ID to purchase
+ */
 - (void)purchaseProductWithId:(NSString *)productId;
+
+// The following methods (pending subs) should be deprecated
 - (void)setPendingSubscription:(UASubscriptionProduct *)product;
 - (void)purchasePendingSubscription;
+
+/**
+ * Restores all autorenewable purchases for this user.
+ *
+ * This triggers a StoreKit restore process, which requests receipts for all
+ * the autorenewable subscription products that this user has ever purchased.
+ *
+ * Once received, the receipts are submitted to Urban Airship so that the appropriate
+ * access may be granted. If the user is restoring purchases from another device,
+ * this device's user will be merged into the original UA user based on their iTunes account.
+ *
+ * Register a UASubscriptionManagerObserver to receive status updates for this process.
+ */
 - (void)restoreAutorenewables;
 
 /**
- * Loads the product inventory, the available content and a user's purchases
+ * Loads the product inventory, the available content and the user's purchases. 
+ * 
+ * This is an asynchronous task. Register a UASubscriptionManagerObserver to
+ * receive status updates for this process.
  */
 - (void)loadSubscription;
 
