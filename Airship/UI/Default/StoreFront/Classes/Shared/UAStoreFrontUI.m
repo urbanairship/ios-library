@@ -109,6 +109,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
         [ui.rootViewController viewWillAppear:animated];
         [ui.uaWindow makeKeyAndVisible];
+        ui.originalWindow.hidden = YES;
     }
     
     ui->isVisible = YES;
@@ -145,6 +146,9 @@ static BOOL runiPhoneTargetOniPad = NO;
         // Return control to original window
         [ui.originalWindow makeKeyAndVisible];
         ui.originalWindow = nil;
+
+        [ui.rootViewController.view removeFromSuperview];
+        ui.uaWindow = nil;
 
     } else {
         // For other circumstances. e.g custom showing rootViewController or changed the showing code of StoreFront
