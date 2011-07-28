@@ -140,11 +140,19 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark Modal/Controller Update Methods
 
 - (void)setProduct:(UAProduct *)value {
-    if (value == product)
+    if (value == product) {
         return;
+    }
+    
+    //remove old product
     [product removeObserver:self];
-    product = value;
+    [product autorelease];
+    
+    //replace with new product
+    product = [value retain];
     [product addObserver:self];
+    
+    //update UI
     [self refreshUI];
 }
 
