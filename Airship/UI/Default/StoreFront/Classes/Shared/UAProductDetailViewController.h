@@ -44,7 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UAProduct* product;
 }
 
-@property (nonatomic, assign) UAProduct* product;
+@property (nonatomic, retain) UAProduct *product;
 @property (nonatomic, retain) IBOutlet UILabel* productTitle;
 @property (nonatomic, retain) IBOutlet UAAsyncImageView* iconContainer;
 @property (nonatomic, retain) IBOutlet UILabel* price;
