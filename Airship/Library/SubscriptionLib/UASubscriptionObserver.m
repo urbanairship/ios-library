@@ -34,6 +34,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_SBJSON.h"
 #import "UA_ZipArchive.h"
 
+#pragma mark -
+#pragma mark Private Category
 // Private methods
 @interface UASubscriptionObserver()
 
@@ -59,6 +61,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction;
 @end
 
+#pragma mark -
+#pragma mark UASubscriptionObserver implementation
 @implementation UASubscriptionObserver
 
 @synthesize alertDelegate;

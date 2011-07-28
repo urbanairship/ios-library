@@ -41,6 +41,12 @@
 #import "UASubscriptionManager.h"
 #import "UASubscriptionDownloadManager.h"
 
+@interface UASubscriptionInventory()
+- (void)createSubscription;
+- (void)createUserSubscription;
+- (void)loadUserPurchasingInfo;
+@end
+
 @implementation UASubscriptionInventory
 @synthesize subscriptions;
 @synthesize userSubscriptions;
