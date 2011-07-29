@@ -26,16 +26,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
-#import "UA_ASIHTTPRequest.h"
-#import "UA_ASINetworkQueue.h"
-#import "UASubscriptionAlertProtocol.h"
+@class UA_ASIHTTPRequest;
+@class UA_ASINetworkQueue;
+@protocol UASubscriptionAlertProtocol;
 
 /**
  * This class is a transaction observer and the primary interface to StoreKit.
  *
  */
 @interface UASubscriptionObserver : NSObject <SKPaymentTransactionObserver> {
-    
+  @private
     
     id<UASubscriptionAlertProtocol> alertDelegate;
     

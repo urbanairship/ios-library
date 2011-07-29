@@ -26,13 +26,14 @@
 #import <Foundation/Foundation.h>
 
 #import "UASubscriptionManager.h"
-#import "UASubscriptionSettingsViewController.h"
-#import "UASubscriptionRootViewController.h"
+#import "UASubscriptionProduct.h"
 #import "UASubscriptionInventory.h"
 #import "UAGlobal.h"
 #import "UAUser.h"
 #import "UASubscriptionUI.h"
 
+#import "UASubscriptionSettingsViewController.h"
+#import "UASubscriptionRootViewController.h"
 
 @implementation UASubscriptionRootViewController
 

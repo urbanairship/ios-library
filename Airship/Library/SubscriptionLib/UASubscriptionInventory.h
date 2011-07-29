@@ -23,10 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAObservable.h"
-
 #import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
+
+#import "UAObservable.h"
 
 @class UAProductInventory;
 @class UAContentInventory;
@@ -35,11 +34,15 @@
 @class UASubscription;
 @class UASubscriptionDownloadManager;
 
+@class SKPaymentTransaction;
+
+
 /**
  * This class provides access to the full inventory
  * of subscriptions offered for sale in this application.
  */
 @interface UASubscriptionInventory : UAObservable {
+  @private
     UASubscriptionDownloadManager *downloadManager;
     NSMutableArray *subscriptions;
     NSMutableArray *userSubscriptions;

@@ -23,13 +23,19 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import "UASubscriptionObserver.h"
+
 #import "UAirship.h"
 #import "UAUtils.h"
-#import "UASubscriptionObserver.h"
+#import "UAUser.h"
 #import "UASubscriptionManager.h"
 #import "UAProductInventory.h"
 #import "UASubscriptionProduct.h"
 #import "UASubscriptionInventory.h"
+
+#import "UA_ASIHTTPRequest.h"
+#import "UA_ASINetworkQueue.h"
+#import "UASubscriptionAlertProtocol.h"
 
 #import "UA_SBJSON.h"
 #import "UA_ZipArchive.h"

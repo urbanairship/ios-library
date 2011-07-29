@@ -24,6 +24,7 @@
  */
 
 #import "UASubscriptionDownloadManager.h"
+#import "UASubscriptionContent.h"
 #import "UA_SBJsonParser.h"
 #import "UAGlobal.h"
 #import "UAUser.h"

@@ -26,8 +26,12 @@
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
-#import "UAUser.h"
-#import "UASubscriptionProduct.h"
+#import "UAObservable.h"
+
+@class UASubscriptionProduct;
+@class UASubscriptionObserver;
+@class UASubscriptionInventory;
+@class UASubscriptionContent;
 
 #define SUBSCRIPTION_UI_CLASS @"UASubscriptionUI"
 
@@ -42,10 +46,6 @@ extern NSString * const UASubscriptionContentInventoryFailure;
 
 /** This value indicates that the list of available products failed to load */
 extern NSString * const UASubscriptionProductInventoryFailure;
-
-@class UASubscriptionObserver;
-@class UASubscriptionInventory;
-@class UASubscriptionContent;
 
 @protocol UASubscriptionUIProtocol
 + (void)displaySubscription:(UIViewController *)viewController
@@ -156,6 +156,7 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * subsriptions or their contents change.
  */
 @interface UASubscriptionManager : UAObservable {
+  @private
     UASubscriptionInventory *inventory;
     UASubscriptionObserver *transactionObserver;
     UASubscriptionProduct *pendingProduct;//should be deprecated

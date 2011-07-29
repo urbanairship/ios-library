@@ -25,6 +25,9 @@
 
 #import "UASubscriptionInventory.h"
 
+#import <Foundation/Foundation.h>
+#import <StoreKit/StoreKit.h>
+
 #import "UA_SBJSON.h"
 #import "UA_ASIHTTPRequest.h"
 

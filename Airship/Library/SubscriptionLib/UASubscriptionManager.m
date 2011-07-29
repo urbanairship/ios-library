@@ -25,6 +25,7 @@
 
 #import "UASubscriptionManager.h"
 
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
 #import "UASubscriptionObserver.h"
@@ -32,6 +33,8 @@
 #import "UAContentInventory.h"
 #import "UASubscriptionInventory.h"
 #import "UASubscriptionProduct.h"
+
+#import "UAUser.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));

@@ -38,6 +38,7 @@ typedef enum _UAAutorenewableDuration {
 } UAAutorenewableDuration;
 
 @interface UASubscriptionProduct : NSObject {
+  @private
     NSString *productIdentifier;
     NSString *subscriptionKey;
     NSString *subscriptionName;

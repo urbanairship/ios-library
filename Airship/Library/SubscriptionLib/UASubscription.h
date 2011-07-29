@@ -29,6 +29,7 @@
 @class UASubscriptionContent;
 
 @interface UASubscription : NSObject {
+  @private
     NSString *key;
     NSString *name;
     BOOL subscribed;

@@ -24,10 +24,13 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UADownloadManager.h"
-#import "UASubscriptionContent.h"
+
+@class UASubscriptionContent;
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
+  @private
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
 }
