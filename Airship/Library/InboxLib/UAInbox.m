@@ -23,7 +23,14 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
+
 #import "UAInbox.h"
+
+#import "UAirship.h"
+#import "UA_Base64.h"
+#import "UAInboxMessageList.h"
+#import "UAInboxPushHandler.h"
 #import "UAInboxURLCache.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"

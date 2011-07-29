@@ -25,6 +25,9 @@
 
 #import "UAInboxUI.h"
 
+#import "UAInboxMessageList.h"
+#import "UAInboxPushHandler.h"
+
 @implementation UAInboxUI
 @synthesize rootViewController, messageViewController, inboxParentController, messageListController, localizationBundle, messageListTitle;
 @synthesize isVisible, uaWindow, isiPad;

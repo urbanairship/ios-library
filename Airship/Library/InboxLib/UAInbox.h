@@ -24,12 +24,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #import <Foundation/Foundation.h>
 
-#import "UAirship.h"
 #import "UAGlobal.h"
-#import "UA_Base64.h"
-#import "UAInboxMessageList.h"
-#import "UAInboxPushHandler.h"
-#import "UAInboxAlertProtocol.h"
+
+@class UAInboxMessageList;
+@class UAInboxPushHandler;
+@protocol UAInboxAlertProtocol;
 
 #define INBOX_UI_CLASS @"UAInboxUI"
 

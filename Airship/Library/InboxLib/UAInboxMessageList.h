@@ -24,8 +24,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInbox.h"
-#import "UAInboxMessageListObserver.h"
-#import "UAInboxMessage.h"
 #import "UAUser.h"
 
 typedef enum {

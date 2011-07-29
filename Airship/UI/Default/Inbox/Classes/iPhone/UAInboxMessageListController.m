@@ -25,11 +25,13 @@
 
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageListCell.h"
+#import "UABarButtonSegmentedControl.h"
+#import "UAInboxUI.h"
+
 #import "UAInbox.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
-#import "UABarButtonSegmentedControl.h"
-#import "UAInboxUI.h"
+#import "UAInboxMessageList.h"
 
 @implementation UAInboxMessageListController
 

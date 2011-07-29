@@ -26,6 +26,9 @@
 #import "UAInboxAlertHandler.h"
 #import "UAInboxUI.h"
 
+#import "UAInboxPushHandler.h"
+#import "UAInboxMessageList.h"
+
 @implementation UAInboxAlertHandler
 
 static UIAlertView *notificationAlert = nil;

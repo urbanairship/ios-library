@@ -26,6 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInbox.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxUI.h"
+#import "UAInboxMessageList.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
