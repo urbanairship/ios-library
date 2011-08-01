@@ -132,10 +132,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
-    }
-
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
     [self.navigationController.navigationBar addSubview:badgeView];
 }
 
@@ -171,9 +168,7 @@
 
 - (void)tableReloadData {
     [messageTable reloadData];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
-    }
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
 }
 
 #pragma mark -
@@ -435,9 +430,8 @@
     [selectedIndexPathsForEditing removeAllObjects];
     cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
-    }
+    
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
     
     [self refreshBatchUpdateButtons];
 }
