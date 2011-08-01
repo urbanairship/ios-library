@@ -26,7 +26,7 @@
 #import "UAInboxUI.h"
 
 @implementation UAInboxUI
-@synthesize rootViewController, messageViewController, inboxParentController, messageListController, localizationBundle, messageListTitle;
+@synthesize rootViewController, messageViewController, inboxParentController, messageListController, localizationBundle;
 @synthesize isVisible, uaWindow, isiPad;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
@@ -42,7 +42,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(messageViewController);
     RELEASE_SAFELY(messageListController);
     RELEASE_SAFELY(localizationBundle);
-    RELEASE_SAFELY(messageListTitle);
 	RELEASE_SAFELY(alertHandler);
 	RELEASE_SAFELY(inboxParentController);
     [super dealloc];
@@ -53,7 +52,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
-
+        
         // Dynamically create root view controller for iPad
         NSString *deviceType = [UIDevice currentDevice].model;
 		
@@ -79,6 +78,9 @@ static BOOL runiPhoneTargetOniPad = NO;
             self.isiPad = NO;
             self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:
                                  @"UAInboxMessageListController" bundle: nil] autorelease];
+            
+            messageListController.title = @"Inbox";
+            
             self.messageViewController = [[[UAInboxMessageViewController alloc] initWithNibName:
                                  @"UAInboxMessageViewController" bundle: nil] autorelease];
             self.rootViewController = [[[UAInboxNavigationController alloc] initWithRootViewController:messageListController] autorelease];
@@ -90,7 +92,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
 		alertHandler = [[UAInboxAlertHandler alloc] init];
 		
-        self.messageListTitle = @"Inbox";
         self.isVisible = NO;
 		
     }

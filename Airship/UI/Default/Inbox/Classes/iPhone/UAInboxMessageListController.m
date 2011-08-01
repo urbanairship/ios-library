@@ -71,8 +71,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = [UAInboxUI shared].messageListTitle;
-
+    
     loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     noMessagesLabel.text = UA_INBOX_TR(@"UA_No_Messages");
 
@@ -462,7 +461,7 @@ static float label_width = 0.0;
 
     UILabel *testLabel = [[[UILabel alloc] init] autorelease];
 
-    testLabel.text = [UAInboxUI shared].messageListTitle;
+    testLabel.text = self.title;
     testLabel.font = [UIFont boldSystemFontOfSize:20];
     [testLabel sizeToFit];
     label_width = testLabel.frame.size.width;

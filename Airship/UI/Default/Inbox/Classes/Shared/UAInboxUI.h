@@ -50,7 +50,6 @@ typedef enum {
     NSBundle *localizationBundle;
     BOOL isVisible;
     BOOL isiPad;
-    NSString *messageListTitle;
     UIWindow *uaWindow;
 	UAInboxAlertHandler *alertHandler;
 	UIViewController *inboxParentController;
@@ -62,7 +61,6 @@ typedef enum {
 @property (nonatomic, retain) UIViewController* inboxParentController;
 @property (nonatomic, retain) NSBundle *localizationBundle;
 @property (assign) BOOL isVisible, isiPad;
-@property (nonatomic, retain) NSString *messageListTitle;
 @property (nonatomic, retain) UIWindow *uaWindow;
 
 SINGLETON_INTERFACE(UAInboxUI);
