@@ -343,9 +343,9 @@
 }
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [[UAInboxUI shared].messageViewController loadMessageAtIndex:indexPath.row];
-    [(UINavigationController *)[UAInboxUI shared].rootViewController pushViewController:[UAInboxUI shared].messageViewController
-                                                                             animated:YES];
+    UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+    [mvc loadMessageAtIndex:indexPath.row];
+    [self.navigationController pushViewController:mvc animated:YES];
 }
 
 #pragma mark -

@@ -87,7 +87,6 @@ static BOOL runiPhoneTargetOniPad = NO;
         }
 
         [[UAInbox shared].messageList addObserver:messageListController];
-        [[UAInbox shared].messageList addObserver:messageViewController];
 		[[UAInbox shared].messageList addObserver:self];
 		
 		alertHandler = [[UAInboxAlertHandler alloc] init];
@@ -142,15 +141,16 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
         // For iPhone
         UINavigationController *navController = (UINavigationController *)viewController;
+        UAInboxMessageViewController *mvc;
         
 		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
-            [[UAInboxUI shared].messageViewController loadMessageForID:messageID];
+            mvc = (UAInboxMessageViewController *) navController.topViewController;
+            [mvc loadMessageForID:messageID];
         } else {
 			
-			// if ([navController.topViewController class] == [InboxMessageListController class])
-			
-            [[UAInboxUI shared].messageViewController loadMessageForID:messageID];
-            [navController pushViewController:[UAInboxUI shared].messageViewController animated:YES];
+            mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
+            [mvc loadMessageForID:messageID];
+            [navController pushViewController:mvc animated:YES];
         }
     } else {
         // For iPad
@@ -238,7 +238,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 + (void)land {
     [[UAInbox shared].messageList removeObserver:[UAInboxUI shared].messageListController];
-    [[UAInbox shared].messageList removeObserver:[UAInboxUI shared].messageViewController];
 	[[UAInboxMessageList shared] removeObserver:self];
 }
 
