@@ -39,8 +39,8 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 @required
 + (void)quitInbox;
 + (void)loadLaunchMessage;
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayInbox;
++ (void)displayMessage:(NSString*)messageID;
 + (id<UAInboxAlertProtocol>)getAlertHandler;
 @end
 
@@ -69,9 +69,8 @@ SINGLETON_INTERFACE(UAInbox);
 - (Class)uiClass;
 + (void)useCustomUI:(Class)customUIClass;
 + (void)quitInbox;
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-+ (void)displayInboxOnLoad:(UAInboxMessageList *)inbox;
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayInbox;
++ (void)displayMessage:(NSString*)messageID;
 + (void)land;
 + (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
