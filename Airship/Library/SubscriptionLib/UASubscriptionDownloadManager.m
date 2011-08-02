@@ -35,6 +35,11 @@
 #import "UASubscriptionManager.h"
 #import "UASubscriptionInventory.h"
 
+//private methods
+@interface UASubscriptionDownloadManager()
+- (void)downloadDidFail:(UADownloadContent *)downloadContent;
+@end
+
 @implementation UASubscriptionDownloadManager
 
 @synthesize downloadDirectory;

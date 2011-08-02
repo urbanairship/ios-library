@@ -40,7 +40,8 @@
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
 - (void)download:(UASubscriptionContent *)content;
+
+//private library method
 - (void)checkDownloading:(UASubscriptionContent *)content;
 
-- (void)downloadDidFail:(UADownloadContent *)downloadContent;
 @end
