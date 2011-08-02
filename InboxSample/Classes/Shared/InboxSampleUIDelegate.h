@@ -1,13 +1,9 @@
-//
-//  InboxSampleUIDelegate.h
-//  InboxSampleLib
-//
-//  Created by Marc Sciglimpaglia on 8/2/11.
-//  Copyright 2011 Urban Airship. All rights reserved.
-//
 
-#import <Foundation/Foundation.h>
+#import "UAInboxUI.h"
 
-@interface InboxSampleUIDelegate : NSObject
+@interface InboxSampleUIDelegate : NSObject <UAInboxUIDelegateProtocol>
+
+- (void)displayInbox;
+- (void)displayMessage:(NSString *)messageID;
 
 @end

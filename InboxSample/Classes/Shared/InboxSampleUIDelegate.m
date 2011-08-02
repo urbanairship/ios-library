@@ -20,4 +20,12 @@
     return self;
 }
 
+- (void)displayInbox {
+    NSLog(@"DISPLAY INBOX!");
+}
+
+- (void)displayMessage:(NSString *)messageID {
+    NSLog(@"DISPLAY MESSAGE: %@!", messageID);
+}
+
 @end
