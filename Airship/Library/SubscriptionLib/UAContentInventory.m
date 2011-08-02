@@ -31,6 +31,7 @@
 #import "UAUtils.h"
 #import "UA_SBJSON.h"
 #import "UASubscriptionManager.h"
+#import "UASubscriptionDownloadManager.h"
 #import "UASubscriptionInventory.h"
 
 
@@ -120,7 +121,7 @@
     
     for (NSDictionary *contentDict in array) {
         UASubscriptionContent *content = [[UASubscriptionContent alloc] initWithDict:contentDict];
-        [[UASubscriptionManager shared].inventory checkDownloading:content];
+        [[UASubscriptionManager shared].downloadManager checkDownloading:content];
         [contentArray addObject:content];
         [content release];
     }

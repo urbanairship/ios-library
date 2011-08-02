@@ -33,6 +33,7 @@
 #import "UAContentInventory.h"
 #import "UASubscriptionInventory.h"
 #import "UASubscriptionProduct.h"
+#import "UASubscriptionDownloadManager.h"
 
 #import "UAUser.h"
 
@@ -51,6 +52,7 @@ NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Produ
 @synthesize transactionObserver;
 @synthesize inventory;
 @synthesize pendingProduct;
+@synthesize downloadManager;
 
 SINGLETON_IMPLEMENTATION(UASubscriptionManager)
 
@@ -94,6 +96,40 @@ static Class _uiClass;
     [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
 }
 
+#pragma mark -
+#pragma mark Custom DL Directory Class Methods
++ (BOOL)setDownloadDirectory:(NSString *)path {
+    return [self setDownloadDirectory:path withProductIDSubdir:YES];
+}
+
++ (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir {
+    
+    BOOL success = YES;
+    
+    // It'll be used default dir when path is nil.
+    if (path == nil) {
+        // The default is created in sfObserver's init
+        UALOG(@"Using Default Download Directory: %@", [UASubscriptionManager shared].downloadManager.downloadDirectory);
+        return success;
+    }
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        success = [[NSFileManager defaultManager] createDirectoryAtPath:path
+                                            withIntermediateDirectories:YES
+                                                             attributes:nil
+                                                                  error:nil];
+    }
+    
+    if (success) {
+        [UASubscriptionManager shared].downloadManager.downloadDirectory = path;
+        [UASubscriptionManager shared].downloadManager.createProductIDSubdir = makeSubdir;
+        
+        UALOG(@"New Download Directory: %@", [UASubscriptionManager shared].downloadManager.downloadDirectory);
+    }
+    
+    return success;
+}
+
 #pragma mark Lifecycle Methods
 
 - (id)init {
@@ -133,6 +169,7 @@ IF_IOS4_OR_GREATER(
 
         transactionObserver = [[UASubscriptionObserver alloc] init];
         inventory = [[UASubscriptionInventory alloc] init];
+        downloadManager = [[UASubscriptionDownloadManager alloc] init];
 		
 		// Check to see if the defaultUser is good to go, if it is we can load our subscription data
 		if([[UAUser defaultUser] defaultUserCreated]) {
@@ -148,6 +185,7 @@ IF_IOS4_OR_GREATER(
     RELEASE_SAFELY(pendingProduct);
     RELEASE_SAFELY(inventory);
     RELEASE_SAFELY(transactionObserver);
+    self.downloadManager = nil;
     [super dealloc];
 }
 

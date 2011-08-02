@@ -33,9 +33,11 @@
   @private
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
+    BOOL createProductIDSubdir;
 }
 
 @property (nonatomic, retain) NSString *downloadDirectory;
+@property (nonatomic, assign) BOOL createProductIDSubdir;
 
 - (void)download:(UASubscriptionContent *)content;
 - (void)checkDownloading:(UASubscriptionContent *)content;

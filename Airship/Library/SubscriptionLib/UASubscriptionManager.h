@@ -32,6 +32,7 @@
 @class UASubscriptionObserver;
 @class UASubscriptionInventory;
 @class UASubscriptionContent;
+@class UASubscriptionDownloadManager;
 
 #define SUBSCRIPTION_UI_CLASS @"UASubscriptionUI"
 
@@ -157,6 +158,7 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  */
 @interface UASubscriptionManager : UAObservable {
   @private
+    UASubscriptionDownloadManager *downloadManager;
     UASubscriptionInventory *inventory;
     UASubscriptionObserver *transactionObserver;
     UASubscriptionProduct *pendingProduct;//should be deprecated
@@ -170,6 +172,11 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 @property (retain, readonly) UASubscriptionInventory *inventory;
 @property (retain, nonatomic) UASubscriptionProduct *pendingProduct;//this should be deprecated
 
+///---------------------------------------------------------------------------------------
+/// @name Downloads
+///---------------------------------------------------------------------------------------
+@property (nonatomic, retain) UASubscriptionDownloadManager *downloadManager;
+
 SINGLETON_INTERFACE(UASubscriptionManager)
 
 ///---------------------------------------------------------------------------------------
@@ -181,6 +188,9 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 + (void)displaySubscription:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)hideSubscription;
 + (void)land;
+
++ (BOOL)setDownloadDirectory:(NSString *)path;
++ (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir;
 
 // Public purchase and restore methods
 

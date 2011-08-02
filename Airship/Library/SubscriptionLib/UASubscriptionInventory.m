@@ -64,7 +64,6 @@
     RELEASE_SAFELY(products);
     RELEASE_SAFELY(contents);
     RELEASE_SAFELY(serverDate);
-    RELEASE_SAFELY(downloadManager);
     [super dealloc];
 }
 
@@ -75,7 +74,6 @@
     subscriptions = [[NSMutableArray alloc] init];
     userSubscriptions = [[NSMutableArray alloc] init];
     subscriptionDict = [[NSMutableDictionary alloc] init];
-    downloadManager = [[UASubscriptionDownloadManager alloc] init];
 
     products = [[UAProductInventory alloc] init];
     contents = [[UAContentInventory alloc] init];
@@ -441,11 +439,7 @@
 #pragma mark Download Subscription Product
 
 - (void)download:(UASubscriptionContent *)content {
-    [downloadManager download:content];
-}
-
-- (void)checkDownloading:(UASubscriptionContent *)content {
-    [downloadManager checkDownloading:content];
+    [[UASubscriptionManager shared].downloadManager download:content];
 }
 
 @end

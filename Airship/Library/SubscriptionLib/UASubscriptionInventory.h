@@ -43,7 +43,6 @@
  */
 @interface UASubscriptionInventory : UAObservable {
   @private
-    UASubscriptionDownloadManager *downloadManager;
     NSMutableArray *subscriptions;
     NSMutableArray *userSubscriptions;
     NSMutableDictionary *subscriptionDict;
@@ -110,10 +109,6 @@
  * @param content The content to download
  */
 - (void)download:(UASubscriptionContent *)content;
-
-// private method - updates download status after content has been refreshed
-// as the content objects are replaced, not updated
-- (void)checkDownloading:(UASubscriptionContent *)content;
 
 ///---------------------------------------------------------------------------------------
 /// @name Query Subscriptions
