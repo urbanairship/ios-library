@@ -28,6 +28,7 @@
 @implementation UAInboxUI
 @synthesize rootViewController, messageViewController, inboxParentController, messageListController, localizationBundle;
 @synthesize isVisible, uaWindow, isiPad;
+@synthesize delegate;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -37,6 +38,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     runiPhoneTargetOniPad = value;
 }
 
+
 - (void)dealloc {
     RELEASE_SAFELY(rootViewController);
     RELEASE_SAFELY(messageViewController);
@@ -44,8 +46,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
 	RELEASE_SAFELY(inboxParentController);
+    self.delegate = nil;
     [super dealloc];
-}
+} 
 
 - (id)init {
     if (self = [super init]) {
@@ -97,6 +100,15 @@ static BOOL runiPhoneTargetOniPad = NO;
     return self;
 }
 
++ (void)displayInbox {
+    [[UAInboxUI shared].delegate displayInbox];
+}
+
++ (void)displayMessage:(NSString *)messageID {
+    [[UAInboxUI shared].delegate displayMessage:messageID];
+}
+
+/*
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	
     if ([viewController isKindOfClass:[UINavigationController class]]) {
@@ -126,8 +138,10 @@ static BOOL runiPhoneTargetOniPad = NO;
 		UALOG(@"present modal");
         [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
     }
-}
+} */
 
+
+/*
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
 	
     if(![UAInboxUI shared].isVisible) {
@@ -156,7 +170,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         // For iPad
         [[UAInboxUI shared].messageViewController loadMessageForID:messageID];
     }
-}
+} */
 
 + (void)quitInbox {
     [[UAInboxUI shared] quitInbox:NORMAL_QUIT];
@@ -218,7 +232,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 
-+ (void) loadLaunchMessage {
++ (void)loadLaunchMessage {
 	
 	// if pushhandler has a messageID load it
 	if([[UAInbox shared].pushHandler viewingMessageID] != nil) {
@@ -228,7 +242,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 			return;
 		}
 		
-		[UAInboxUI displayMessage:[UAInboxUI shared].rootViewController message:[[UAInbox shared].pushHandler viewingMessageID]];
+		[UAInboxUI displayMessage:[[UAInbox shared].pushHandler viewingMessageID]];
 		
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];

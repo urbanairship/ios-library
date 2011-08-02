@@ -43,6 +43,12 @@ typedef enum {
 @class UAInboxMessageViewController;
 @class UAInboxAlertProtocol;
 
+@protocol UAInboxUIDelegateProtocol
+@required
+- (void)displayInbox;
+- (void)displayMessage:(NSString*)messageID;
+@end
+
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
     UIViewController *rootViewController;
     UAInboxMessageViewController* messageViewController;
@@ -53,6 +59,7 @@ typedef enum {
     UIWindow *uaWindow;
 	UAInboxAlertHandler *alertHandler;
 	UIViewController *inboxParentController;
+    id <UAInboxUIDelegateProtocol> delegate;
 }
 
 @property (nonatomic, retain) UIViewController* rootViewController;
@@ -62,13 +69,14 @@ typedef enum {
 @property (nonatomic, retain) NSBundle *localizationBundle;
 @property (assign) BOOL isVisible, isiPad;
 @property (nonatomic, retain) UIWindow *uaWindow;
+@property (nonatomic, retain) id delegate;
 
 SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
 - (void)quitInbox:(QuitReason)reason;
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayInbox;
++ (void)displayMessage:(NSString*)messageID;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;
