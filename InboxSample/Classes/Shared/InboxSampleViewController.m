@@ -33,7 +33,7 @@
 @synthesize version;
 
 -(IBAction)mail:(id)sender {
-	[UAInbox displayInbox:self animated:YES];	
+	[UAInbox displayInbox];	
 }
 
 - (void)viewDidLoad {

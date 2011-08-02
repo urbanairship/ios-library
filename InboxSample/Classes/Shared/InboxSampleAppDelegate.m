@@ -28,6 +28,7 @@
 #import "UAInboxUI.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
+#import "InboxSampleUIDelegate.h"
 
 @implementation InboxSampleAppDelegate
 
@@ -39,8 +40,12 @@
     [window makeKeyAndVisible];
 
     [self failIfSimulator];
-
+    
     [UAInbox useCustomUI:[UAInboxUI class]];
+    
+    //set a UI delegate to receive callbacks for inbox and message display
+    InboxSampleUIDelegate *uiDelegate = [[InboxSampleUIDelegate new]autorelease];
+    [UAInboxUI shared].delegate = uiDelegate;
     
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
