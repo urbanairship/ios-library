@@ -156,7 +156,12 @@
     // create subscriptions from products
     NSArray *keyArray = [[products.productDict allValues] valueForKeyPath:@"@distinctUnionOfObjects.subscriptionKey"];
     for (NSString *subscriptionKey in keyArray) {
+        
         NSArray *productArray = [products productsForSubscription:subscriptionKey];
+        if ([productArray count] == 0) {
+            UALOG(@"No products found for subscription key=%@", subscriptionKey);
+            continue;
+        }
 
         UASubscription *subscription = [subscriptionDict valueForKey:subscriptionKey];
         if (!subscription) {
