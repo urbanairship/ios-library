@@ -36,9 +36,12 @@
 @synthesize activity;
 @synthesize loadingLabel, noMessagesLabel;
 @synthesize messageTable;
-@synthesize tabbar, tabbarItem, doneItem;
+@synthesize tabbar, tabbarItem;
 
 - (void)dealloc {
+    
+    [UAInbox quitInbox];
+
     RELEASE_SAFELY(cellNibName);
     RELEASE_SAFELY(cellReusableId);
     RELEASE_SAFELY(messageTable);
@@ -50,10 +53,10 @@
     RELEASE_SAFELY(moveItem);
     RELEASE_SAFELY(editItem);
     RELEASE_SAFELY(cancelItem);
-    RELEASE_SAFELY(doneItem);
     RELEASE_SAFELY(tabbar);
     RELEASE_SAFELY(tabbarItem);
     RELEASE_SAFELY(badgeView);
+    
     [super dealloc];
 }
 
@@ -66,6 +69,9 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [self initNibNames];
     }
+    
+    [UAInbox loadInbox];
+    
     return self;
 }
 
@@ -75,11 +81,12 @@
     loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     noMessagesLabel.text = UA_INBOX_TR(@"UA_No_Messages");
 
-
+    
+    /*
 	doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                  target:self
                                                                  action:@selector(done:)];
-	self.navigationItem.leftBarButtonItem = doneItem;
+	self.navigationItem.leftBarButtonItem = doneItem; */
     
     editItem = [[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
@@ -97,6 +104,8 @@
     [self createNavigationBadge];
 
     selectedIndexPathsForEditing = [[NSMutableSet alloc] init];
+    
+    [UAInbox loadInbox];
 }
 
 - (void)createToolbarItems {
@@ -161,8 +170,6 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editing animated:animated];
     [self.navigationController setToolbarHidden:!editing animated:animated];
-    doneItem.enabled = !editing;
-
     [messageTable setEditing:editing animated:animated];
 }
 
@@ -173,10 +180,6 @@
 
 #pragma mark -
 #pragma mark Button Action Methods
-
-- (void)done:(id)sender {
-    [UAInbox quitInbox];
-}
 
 - (void)editButtonPressed:(id)sender {
     if ([UAInboxMessageList shared].isBatchUpdating) {
@@ -314,12 +317,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath {
-    doneItem.enabled = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
 - (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
-    doneItem.enabled = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
