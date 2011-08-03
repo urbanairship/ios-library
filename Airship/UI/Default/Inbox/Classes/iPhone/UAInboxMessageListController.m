@@ -42,6 +42,7 @@
 - (void)dealloc {
     
     [UAInbox quitInbox];
+    [[UAInbox shared].messageList removeObserver:self];
 
     RELEASE_SAFELY(cellNibName);
     RELEASE_SAFELY(cellReusableId);
@@ -72,6 +73,7 @@
     }
     
     [UAInbox loadInbox];
+    [[UAInbox shared].messageList addObserver:self];
     
     return self;
 }
@@ -183,6 +185,9 @@
 #pragma mark Button Action Methods
 
 - (void)editButtonPressed:(id)sender {
+    
+    self.navigationItem.leftBarButtonItem.enabled = NO;
+    
     if ([UAInboxMessageList shared].isBatchUpdating) {
         return;
     }
@@ -196,6 +201,9 @@
 }
 
 - (void)cancelButtonPressed:(id)sender {
+    
+    self.navigationItem.leftBarButtonItem.enabled = YES;
+    
     self.navigationItem.rightBarButtonItem = editItem;
 
     if ([selectedIndexPathsForEditing count] > 0) {
