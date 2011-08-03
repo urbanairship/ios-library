@@ -26,9 +26,7 @@
 #import "UAInboxUI.h"
 
 @implementation UAInboxUI
-@synthesize rootViewController, messageViewController, inboxParentController, messageListController, localizationBundle;
-@synthesize isVisible, uaWindow, isiPad;
-@synthesize delegate;
+@synthesize localizationBundle, delegate;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -38,14 +36,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     runiPhoneTargetOniPad = value;
 }
 
-
 - (void)dealloc {
-    RELEASE_SAFELY(rootViewController);
-    RELEASE_SAFELY(messageViewController);
-    RELEASE_SAFELY(messageListController);
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
-	RELEASE_SAFELY(inboxParentController);
     self.delegate = nil;
     [super dealloc];
 } 
@@ -56,6 +49,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
         
+        /*
         // Dynamically create root view controller for iPad
         NSString *deviceType = [UIDevice currentDevice].model;
 		
@@ -90,11 +84,12 @@ static BOOL runiPhoneTargetOniPad = NO;
         }
 
         [[UAInbox shared].messageList addObserver:messageListController];
-		[[UAInbox shared].messageList addObserver:self];
+		[[UAInbox shared].messageList addObserver:self]; */
 		
-		alertHandler = [[UAInboxAlertHandler alloc] init];
-		
-        self.isVisible = NO;
+        //self.isVisible = NO;
+        
+        alertHandler = [[UAInboxAlertHandler alloc] init];
+        [[UAInbox shared].messageList addObserver:self];
 		
     }
     return self;
@@ -194,6 +189,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     } else {
         NSLog(@"reason=%d", reason);
     }
+    
+    /*
 
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
@@ -219,7 +216,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         // dismissed in landscape when status bar is visible
         if (![UIApplication sharedApplication].statusBarHidden)
             con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
-    }
+    } */
 }
 
 // handle both in app notification and launching notification
@@ -247,8 +244,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)land {
-    [[UAInbox shared].messageList removeObserver:[UAInboxUI shared].messageListController];
-	[[UAInboxMessageList shared] removeObserver:self];
+	[[UAInboxMessageList shared] removeObserver:self];  
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {

@@ -24,13 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInboxMessageViewController.h"
-#import "UAInboxMessageListController.h"
-#import "UAInboxNavigationController.h"
-#import "UAInboxMessageListControllerPad.h"
-#import "UAInboxMessageViewControllerPad.h"
+
 #import "UAViewUtils.h"
 #import "UAInboxAlertHandler.h"
+#import "UAInbox.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
@@ -40,7 +37,6 @@ typedef enum {
     USER_ERROR,
 } QuitReason;
 
-@class UAInboxMessageViewController;
 @class UAInboxAlertProtocol;
 
 @protocol UAInboxUIDelegateProtocol
@@ -49,25 +45,12 @@ typedef enum {
 @end
 
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
-    UIViewController *rootViewController;
-    UAInboxMessageViewController* messageViewController;
-    UAInboxMessageListController* messageListController;
     NSBundle *localizationBundle;
-    BOOL isVisible;
-    BOOL isiPad;
-    UIWindow *uaWindow;
 	UAInboxAlertHandler *alertHandler;
-	UIViewController *inboxParentController;
     id <UAInboxUIDelegateProtocol> delegate;
 }
 
-@property (nonatomic, retain) UIViewController* rootViewController;
-@property (nonatomic, retain) UAInboxMessageListController* messageListController;
-@property (nonatomic, retain) UAInboxMessageViewController* messageViewController;
-@property (nonatomic, retain) UIViewController* inboxParentController;
 @property (nonatomic, retain) NSBundle *localizationBundle;
-@property (assign) BOOL isVisible, isiPad;
-@property (nonatomic, retain) UIWindow *uaWindow;
 @property (nonatomic, retain) id delegate;
 
 SINGLETON_INTERFACE(UAInboxUI);

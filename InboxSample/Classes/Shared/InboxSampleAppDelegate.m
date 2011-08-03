@@ -28,7 +28,6 @@
 #import "UAInboxUI.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
-#import "InboxSampleUIDelegate.h"
 
 @implementation InboxSampleAppDelegate
 
@@ -42,11 +41,9 @@
     [self failIfSimulator];
     
     [UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInboxUI shared].delegate = viewController;
     
-    //set a UI delegate to receive callbacks for inbox and message display
-    InboxSampleUIDelegate *uiDelegate = [[InboxSampleUIDelegate new]autorelease];
-    [UAInboxUI shared].delegate = uiDelegate;
+    //delegate to the viewController for message display
+    [UAInboxUI shared].delegate = viewController;
     
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
@@ -78,8 +75,6 @@
     [UAInbox shared].jsDelegate = jsDelegate;
 
     // If the application gets an UAInbox message id on launch open it up immediately.
-    // Only works for the default inbox
-	[UAInboxUI shared].inboxParentController = viewController;
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {

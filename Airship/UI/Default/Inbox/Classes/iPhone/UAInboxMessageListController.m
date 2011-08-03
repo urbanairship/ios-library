@@ -25,6 +25,7 @@
 
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageListCell.h"
+#import "UAInboxMessageViewController.h"
 #import "UAInbox.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
