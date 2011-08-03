@@ -26,15 +26,31 @@
 #import "InboxSampleAppDelegate.h"
 #import "UAirship.h"
 #import "UAInbox.h"
+#import "UAInboxMessageListController.h"
 
 @implementation InboxSampleViewController
 
 @synthesize version;
 
 -(IBAction)mail:(id)sender {
-	//do it.
+	
+    UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
+    
+    mlc.title = @"Inbox";
+    mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
+                                                                                          target:self 
+                                                                                          action:@selector(inboxDone:)]autorelease];
+    
+    UINavigationController *nav = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
+    
+    [self presentModalViewController:nav animated:YES];
 }
 
+- (void)inboxDone:(id)sender {
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+//<UAInboxUIDelegate>
 - (void)displayMessage:(NSString *)messageID {
     NSLog(@"InboxSampleViewController/displayMessage: %@", messageID);
 }
