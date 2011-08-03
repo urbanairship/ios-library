@@ -189,7 +189,30 @@ SINGLETON_INTERFACE(UASubscriptionManager)
 + (void)hideSubscription;
 + (void)land;
 
+/**
+ * Set a custom download directory, creating it if necessary. Creates a
+ * product ID subdirectory if the product ID is specified in the
+ * Urban Airship content information.
+ *
+ * The default directory is defined as kUADownloadDirectory:
+ * <library directory>/ua/downloads/
+ *
+ * @param path The custom download directory (with trailing slash)
+ * @returns YES if the path was successfully set (exists or created)
+ */
 + (BOOL)setDownloadDirectory:(NSString *)path;
+
+/**
+ * Set a custom download directory. Optionally creates a product ID subdirectory if
+ * the product ID is specified in the Urban Airship content information.
+ *
+ * The default directory is defined as kUADownloadDirectory:
+ * <library directory>/ua/downloads/
+ *
+ * @param path The custom download directory (with trailing slash)
+ * @param makeSubdir If YES, creates a subdirectory with the product ID name, if available.
+ * @returns YES if the path was successfully set (exists or created)
+ */
 + (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir;
 
 // Public purchase and restore methods

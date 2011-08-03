@@ -63,6 +63,7 @@ NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
 #define kUAOldDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
 
+/** The default download directory for IAP and Subscription content. */
 #define kUADownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/downloads/"]
 

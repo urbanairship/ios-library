@@ -99,27 +99,12 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Custom DL Directory Class Methods
 
-/**
- * Set a custom download directory. Creates a product ID subdirectory if
- * the product ID is specified in the Urban Airship content information.
- *
- * The default directory is defined as kUADownloadDirectory.
- *
- * @param path The custom download directory (with trailing slash)
- */
+
 + (BOOL)setDownloadDirectory:(NSString *)path {
     return [self setDownloadDirectory:path withProductIDSubdir:YES];
 }
 
-/**
- * Set a custom download directory. Optionally creates a product ID subdirectory if
- * the product ID is specified in the Urban Airship content information.
- *
- * The default directory is defined as kUADownloadDirectory.
- *
- * @param path The custom download directory (with trailing slash)
- * @param makeSubdir If YES, creates a subdirectory with the product ID name, if available.
- */
+
 + (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir {
     
     BOOL success = YES;
