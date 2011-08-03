@@ -39,7 +39,6 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 @required
 + (void)quitInbox;
 + (void)loadLaunchMessage;
-+ (void)displayInbox;
 + (void)displayMessage:(NSString*)messageID;
 + (id<UAInboxAlertProtocol>)getAlertHandler;
 @end
@@ -69,7 +68,7 @@ SINGLETON_INTERFACE(UAInbox);
 - (Class)uiClass;
 + (void)useCustomUI:(Class)customUIClass;
 + (void)quitInbox;
-+ (void)displayInbox;
++ (void)loadInbox;
 + (void)displayMessage:(NSString*)messageID;
 + (void)land;
 + (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
