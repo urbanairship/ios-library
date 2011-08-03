@@ -100,10 +100,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     return self;
 }
 
-+ (void)displayInbox {
-    [[UAInboxUI shared].delegate displayInbox];
-}
-
 + (void)displayMessage:(NSString *)messageID {
     [[UAInboxUI shared].delegate displayMessage:messageID];
 }

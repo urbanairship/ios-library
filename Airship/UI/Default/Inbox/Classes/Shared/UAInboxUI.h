@@ -45,7 +45,6 @@ typedef enum {
 
 @protocol UAInboxUIDelegateProtocol
 @required
-- (void)displayInbox;
 - (void)displayMessage:(NSString*)messageID;
 @end
 
@@ -75,7 +74,6 @@ SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
 - (void)quitInbox:(QuitReason)reason;
-+ (void)displayInbox;
 + (void)displayMessage:(NSString*)messageID;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
