@@ -24,8 +24,9 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "UAInboxUI.h"
 
-@interface InboxSampleViewController : UIViewController {
+@interface InboxSampleViewController : UIViewController <UAInboxUIDelegateProtocol> {
     IBOutlet UILabel* version;
 }
 

@@ -27,13 +27,16 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 
-
 @implementation InboxSampleViewController
 
 @synthesize version;
 
 -(IBAction)mail:(id)sender {
-	[UAInbox displayInbox];	
+	//do it.
+}
+
+- (void)displayMessage:(NSString *)messageID {
+    NSLog(@"InboxSampleViewController/displayMessage: %@", messageID);
 }
 
 - (void)viewDidLoad {

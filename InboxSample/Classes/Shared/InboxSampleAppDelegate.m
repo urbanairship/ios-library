@@ -42,6 +42,7 @@
     [self failIfSimulator];
     
     [UAInbox useCustomUI:[UAInboxUI class]];
+    [UAInboxUI shared].delegate = viewController;
     
     //set a UI delegate to receive callbacks for inbox and message display
     InboxSampleUIDelegate *uiDelegate = [[InboxSampleUIDelegate new]autorelease];
