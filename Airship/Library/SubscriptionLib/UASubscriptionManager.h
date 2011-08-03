@@ -177,7 +177,19 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 ///---------------------------------------------------------------------------------------
 @property (nonatomic, retain) UASubscriptionDownloadManager *downloadManager;
 
-SINGLETON_INTERFACE(UASubscriptionManager)
+///---------------------------------------------------------------------------------------
+/// @name Singleton
+///---------------------------------------------------------------------------------------
+
+/** 
+ * Singleton initializer.
+ * 
+ * @returns The singleton instance.
+ */
++ (UASubscriptionManager*)shared;
+- (void)forceRelease;
+// ^ The above singleton declarations were inlined for documentation purproses
+// from SINGLETON_INTERFACE(UASubscriptionManager)
 
 ///---------------------------------------------------------------------------------------
 /// @name UI and Initialization
