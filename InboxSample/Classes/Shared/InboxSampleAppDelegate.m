@@ -42,7 +42,7 @@
     
     [UAInbox useCustomUI:[UAInboxUI class]];
     
-    //delegate to the viewController for message display
+    //Delegate to the viewController for message display
     [UAInboxUI shared].delegate = viewController;
     
     // Inbox uses SplitViewController on iPad target, but you could customize to

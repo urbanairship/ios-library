@@ -27,32 +27,66 @@
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 
 @implementation InboxSampleViewController
 
-@synthesize version;
+@synthesize version, isShowingInbox, nav;
 
--(IBAction)mail:(id)sender {
-	
-    UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
+
+- (void)showInboxWithMessage:(NSString *)messageID {
     
-    mlc.title = @"Inbox";
-    mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
-                                                                                          target:self 
-                                                                                          action:@selector(inboxDone:)]autorelease];
+    if (!isShowingInbox) {
+        
+        self.isShowingInbox = YES;
     
-    UINavigationController *nav = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
+        UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
+        
+        mlc.title = @"Inbox";
+        mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
+                                                                                              target:self 
+                                                                                              action:@selector(inboxDone:)]autorelease];
+        
+        self.nav = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
+        
+        if(messageID) {
+            UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+            [mvc loadMessageForID:messageID];
+            [nav pushViewController:mvc animated:NO];
+        }
+        
+        [self presentModalViewController:nav animated:YES];
     
-    [self presentModalViewController:nav animated:YES];
+    }
+    
+    else {
+        if ([nav.topViewController class] == [UAInboxMessageViewController class]) {
+            [(UAInboxMessageViewController *)nav.topViewController loadMessageForID:messageID];
+        } else {
+            UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+            [mvc loadMessageForID:messageID];
+            [nav pushViewController:mvc animated:YES];
+        }
+    }
+    
+}
+
+- (void)showInbox {
+    [self showInboxWithMessage:nil];
 }
 
 - (void)inboxDone:(id)sender {
     [self dismissModalViewControllerAnimated:YES];
+    self.isShowingInbox = NO;
+}
+
+-(IBAction)mail:(id)sender {
+    [self showInbox];   
 }
 
 //<UAInboxUIDelegate>
 - (void)displayMessage:(NSString *)messageID {
-    NSLog(@"InboxSampleViewController/displayMessage: %@", messageID);
+    [self showInboxWithMessage:messageID];
 }
 
 - (void)viewDidLoad {
@@ -70,6 +104,7 @@
 
 - (void)dealloc {
     RELEASE_SAFELY(version);
+    self.nav = nil;
     [super dealloc];
 }
 
