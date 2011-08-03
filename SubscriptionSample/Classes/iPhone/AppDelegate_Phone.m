@@ -51,7 +51,7 @@
     [window addSubview:controller.view];
 
     [self failIfSimulator];
-
+    
     [UASubscriptionManager useCustomUI:[UASubscriptionUI class]];
     
     //Init Airship launch options

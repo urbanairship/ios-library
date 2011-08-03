@@ -24,10 +24,12 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UAObservable.h"
 #import "UA_ASIProgressDelegate.h"
 
 @interface UASubscriptionContent : UAObservable <UA_ASIProgressDelegate> {
+  @private
     NSString *contentName;
     NSString *subscriptionKey;
 	NSString *productIdentifier;

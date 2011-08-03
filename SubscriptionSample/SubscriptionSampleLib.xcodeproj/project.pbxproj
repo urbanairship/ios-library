@@ -45,6 +45,7 @@
 		1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
 		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FB9B89D13C3BBDF002BB424 /* libz.dylib */; };
+		1FC77F4513D78ECE00E37B0E /* UASubscriptionUIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC77F4413D78ECE00E37B0E /* UASubscriptionUIUtil.m */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		63314727122FAB0E008F2D48 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6331471E122FAB0E008F2D48 /* Icon-Small-50.png */; };
 		63314729122FAB0E008F2D48 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63314720122FAB0E008F2D48 /* MainWindow_Pad.xib */; };
@@ -165,6 +166,8 @@
 		1F79714C12DE3DB000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F7D037F12B8362000B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1FB9B89D13C3BBDF002BB424 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1FC77F4313D78ECE00E37B0E /* UASubscriptionUIUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASubscriptionUIUtil.h; sourceTree = "<group>"; };
+		1FC77F4413D78ECE00E37B0E /* UASubscriptionUIUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASubscriptionUIUtil.m; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* SubscriptionSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
 		6331471E122FAB0E008F2D48 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -263,6 +266,8 @@
 				005F091112B89B2E00DBF4B0 /* UASubscriptionTableViewDelegate.m */,
 				005F091212B89B2E00DBF4B0 /* UASubscriptionUI.h */,
 				005F091312B89B2E00DBF4B0 /* UASubscriptionUI.m */,
+				1FC77F4313D78ECE00E37B0E /* UASubscriptionUIUtil.h */,
+				1FC77F4413D78ECE00E37B0E /* UASubscriptionUIUtil.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -691,6 +696,7 @@
 				005F091B12B89B2E00DBF4B0 /* UASubscriptionSettingsViewController.m in Sources */,
 				005F091C12B89B2E00DBF4B0 /* UASubscriptionTableViewDelegate.m in Sources */,
 				005F091D12B89B2E00DBF4B0 /* UASubscriptionUI.m in Sources */,
+				1FC77F4513D78ECE00E37B0E /* UASubscriptionUIUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -831,6 +837,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -843,6 +850,7 @@
 					"-all_load",
 					"-ObjC",
 				);
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -856,7 +864,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -868,6 +877,7 @@
 					"-all_load",
 					"-ObjC",
 				);
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

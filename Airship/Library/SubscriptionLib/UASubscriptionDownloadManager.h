@@ -24,18 +24,24 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UADownloadManager.h"
-#import "UASubscriptionContent.h"
+
+@class UASubscriptionContent;
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
+  @private
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
+    BOOL createProductIDSubdir;
 }
 
 @property (nonatomic, retain) NSString *downloadDirectory;
+@property (nonatomic, assign) BOOL createProductIDSubdir;
 
 - (void)download:(UASubscriptionContent *)content;
+
+//private library method
 - (void)checkDownloading:(UASubscriptionContent *)content;
 
-- (void)downloadDidFail:(UADownloadContent *)downloadContent;
 @end

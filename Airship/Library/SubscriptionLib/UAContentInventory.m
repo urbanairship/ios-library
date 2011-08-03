@@ -31,6 +31,7 @@
 #import "UAUtils.h"
 #import "UA_SBJSON.h"
 #import "UASubscriptionManager.h"
+#import "UASubscriptionDownloadManager.h"
 #import "UASubscriptionInventory.h"
 
 
@@ -65,20 +66,32 @@
                            [UAUser defaultUser].username];
 
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:[NSURL URLWithString:urlString]
-                                                   method:@"GET"
-                                                 delegate:self
-                                                   finish:@selector(inventoryLoaded:)];
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(inventoryLoaded:)
+                                                        fail:@selector(inventoryRequestFailed:)];
 
     [request startAsynchronous];
 }
 
 - (void)inventoryLoaded:(UA_ASIHTTPRequest *)request {
+    
+    // if the request failed
     if (request.responseStatusCode != 200) {
         UALOG(@"retrieving user subscription content failed, response: %d-%@",
               request.responseStatusCode, request.responseString);
+        
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
+        
+        NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+        [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+        
         return;
     }
 
+    // Contents successfully loaded
     UALOG(@"User contents loaded: %d\n%@\n", request.responseStatusCode,
           request.responseString);
 
@@ -88,7 +101,19 @@
     [self loadWithArray:contents];
 
     [[UASubscriptionManager shared].inventory contentInventoryUpdated];
-    //[self notifyObservers:@selector(contentInventoryUpdated)];
+
+}
+
+- (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
+    
+    UALOG(@"Content inventory request failed.");
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
+    
+    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 
 - (void)loadWithArray:(NSArray *)array {
@@ -96,19 +121,12 @@
     
     for (NSDictionary *contentDict in array) {
         UASubscriptionContent *content = [[UASubscriptionContent alloc] initWithDict:contentDict];
-        [[UASubscriptionManager shared].inventory checkDownloading:content];
+        [[UASubscriptionManager shared].downloadManager checkDownloading:content];
         [contentArray addObject:content];
         [content release];
     }
     
     [contentArray sortUsingSelector:@selector(compare:)];
-}
-
-#pragma mark -
-#pragma mark HTTP Request Failure Handler
-
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
-    [UAUtils requestWentWrong:request];
 }
 
 @end

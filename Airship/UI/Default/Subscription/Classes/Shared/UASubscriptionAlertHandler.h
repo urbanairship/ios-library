@@ -36,6 +36,7 @@
 - (void)showUserEmailAlert:(id) sender;
 - (void)updateUserEmailAlert:(NSTimer *) timer;
 - (void)failedTransactionAlert:(id) sender;
+- (void)failedRestoreAlert:(id) sender;
 - (void)onUpdateOrientation:(NSNotification *) notification;
 
 @end

@@ -28,7 +28,12 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UASubscriptionUI.h"
+#import "UASubscriptionUIUtil.h"
 
+// Private methods
+@interface UASubscriptionProductCellView()
+- (void)updateTitle;
+@end
 
 @implementation UASubscriptionProductCellView
 
@@ -82,15 +87,23 @@
 #pragma mark -
 #pragma mark Refresh UI
 
+
+
 - (void)refreshPriceLabelView {
     //update color
     NSString *text;
     UIColor *textColor, *bgColor, *borderColor;
 
-    if (product.purchased) {
+    NSDate *now = [NSDate date];
+    
+    if (product.purchased && [UASubscriptionUIUtil date:now isBetweenDate:product.startDate andDate:product.endDate]) {
         text = UA_SS_TR(@"UA_Subscribed");
         borderColor = textColor = kInstalledFGColor;
         bgColor = kInstalledBGColor;
+    } else if (product.purchased) {
+        text = UA_SS_TR(@"UA_Expired");
+        borderColor = textColor = kUpdateFGColor;
+        bgColor = kUpdateBGColor;
     } else {
         text = product.price;
         textColor = kPriceFGColor;
@@ -117,8 +130,18 @@
     }
 }
 
+- (void)updateTitle {
+    if (product.autorenewable) {
+        NSString *arDurationString = 
+            [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
+        self.title = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+    } else {
+        self.title = product.title;
+    }
+}
+
 - (void)refreshCellView {
-    self.title = product.title;
+    [self updateTitle];
     [self refreshDescriptionLabelView];
     [self refreshPriceLabelView];
     [self setNeedsDisplay];

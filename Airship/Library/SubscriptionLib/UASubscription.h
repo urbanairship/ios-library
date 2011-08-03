@@ -29,6 +29,7 @@
 @class UASubscriptionContent;
 
 @interface UASubscription : NSObject {
+  @private
     NSString *key;
     NSString *name;
     BOOL subscribed;
@@ -41,16 +42,61 @@
     NSMutableArray *undownloadedContents;
 }
 
+///---------------------------------------------------------------------------------------
+/// @name Subscription Properties
+///---------------------------------------------------------------------------------------
+
+/** The subscription key */
 @property (nonatomic, retain, readonly) NSString *key;
+
+/** The subscription name */
 @property (nonatomic, retain, readonly) NSString *name;
+
+//TODO: is this currently subscribed?
+/** YES if the user subscribed, otherwise NO */
 @property (nonatomic, assign, readonly) BOOL subscribed;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Products and Content
+///---------------------------------------------------------------------------------------
+
+/**
+ * Array of all products available for this subscription, including
+ * promotional/default/extension subscriptions not for sale.
+ */
 @property (nonatomic, retain, readonly) NSMutableArray *products;
+
+/**
+ * Array of all products purchased by this user.
+ *
+ * Note that these products are _copies_ of the products available
+ * through the products property. Only these copies have the 
+ * [UASubscriptionProduct purchased] flag set and  valid 
+ * [UASubscriptionProduct startDate] and [UASubscriptionProduct endDate]
+ * values.
+ */
 @property (nonatomic, retain, readonly) NSMutableArray *purchasedProducts;
+
+/**
+ * Array of all products available for purchase on this subscription.
+ * This array only includes products currently for sale in the App Store
+ * and will not include "free"/default/extension products.
+ */
 @property (nonatomic, retain, readonly) NSMutableArray *availableProducts;
+
+/**
+ * Array of all the content available to this user via their purchased products.
+ */
 @property (nonatomic, retain, readonly) NSMutableArray *availableContents;
+
+/** Array of all of the content that the user has downloaded. */
 @property (nonatomic, retain, readonly) NSMutableArray *downloadedContents;
+
+/** Array of all the content that the user has not yet downloaded */
 @property (nonatomic, retain, readonly) NSMutableArray *undownloadedContents;
 
+// Private methods
 - (id)initWithKey:(NSString *)aKey name:(NSString *)aName;
 - (void)setProductsWithArray:(NSArray *)productArray;
 - (void)setPurchasedProductsWithArray:(NSArray *)infos;

@@ -46,6 +46,8 @@
 @synthesize endDate;
 @synthesize isPurchasing;
 @synthesize isForSale;
+@synthesize autorenewable;
+@synthesize autorenewableDuration;
 
 - (void)dealloc {
     RELEASE_SAFELY(skProduct);
@@ -66,25 +68,64 @@
 }
 
 - (id)initWithDict:(NSDictionary *)dict {
-    if (!(self = [super init]))
+    if (!(self = [super init])) {
         return nil;
-	
+    }
+    
+    UALOG(@"Product dict: %@",[dict description]);
+    
     self.productIdentifier = [dict objectForKey:@"product_id"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
     self.subscriptionName = [dict objectForKey:@"name"];
     self.subscribeURL = [NSURL URLWithString:[dict objectForKey:@"subscribe_url"]];
     self.previewURL = [NSURL URLWithString:[dict objectForKey:@"preview_url"]];
     self.iconURL = [NSURL URLWithString:[dict objectForKey:@"icon_url"]];
-    self.duration = [[dict objectForKey:@"duration_in_days"] intValue];
 
-    for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions])
-        if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier])
+    //set the duration if available (not sent for autorenewables)
+    id durationValue = [dict objectForKey:@"duration_in_days"];
+    if (duration && (NSNull *)duration != [NSNull null]) { 
+        self.duration = [(NSNumber *)durationValue intValue];
+    }
+    
+    self.autorenewableDuration = UAAutorenewableDurationNone; // init to none
+    id arDuration = [dict objectForKey:@"ar_duration"];
+    if (arDuration && (NSNull *)arDuration != [NSNull null]) { 
+        NSString *arDurationString = (NSString *)arDuration;
+        if ([@"7 Days" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration7Days;
+            self.duration = 7;
+        } else if ([@"1 Month" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration1Month;
+            self.duration = 30;
+        } else if ([@"2 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration2Months;
+            self.duration = 61;
+        } else if ([@"3 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration3Months;
+            self.duration = 92;
+        } else if ([@"6 Months" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration6Months;
+            self.duration = 183;
+        } else if ([@"1 Year" isEqualToString:arDurationString]) {
+            self.autorenewableDuration = UAAutorenewableDuration1Year;
+            self.duration = 365;
+        }
+        UALOG(@"Duration value = %d", self.autorenewableDuration);
+    }
+    
+    self.autorenewable = ([[dict objectForKey:@"autorenewable"] intValue] == 1) ? YES : NO;
+
+    for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions]) {
+        if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier]) {
             self.isPurchasing = YES;
+        }
+    }
 
     return self;
 }
 
 - (id)initWithSubscriptionProduct:(UASubscriptionProduct *)sp {
+
     if (!(self = [super init]))
         return nil;
 	
@@ -105,6 +146,8 @@
 	self.endDate = sp.endDate;
 	self.isPurchasing = sp.isPurchasing;
     self.isForSale = sp.isForSale;
+    self.autorenewable = sp.autorenewable;
+    self.autorenewableDuration = sp.autorenewableDuration;
 	
 	return self;
 }
@@ -116,10 +159,12 @@
     UASubscriptionProduct *other = (UASubscriptionProduct *)object;
     return [self.productIdentifier isEqualToString:other.productIdentifier]
            && self.duration == other.duration
+           && self.autorenewableDuration == other.autorenewableDuration
            && [self.title isEqualToString:other.title];
 }
 
 - (NSComparisonResult)compareByDuration:(UASubscriptionProduct *)otherProduct {
+    
     int d = self.duration - otherProduct.duration;
     if (d < 0)
         return NSOrderedAscending;

@@ -24,12 +24,14 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UAObservable.h"
 
 @class UA_ASIHTTPRequest;
 @class UASubscriptionContent;
 
 @interface UAContentInventory : UAObservable {
+  @private
     NSMutableArray *contentArray;
 }
 
