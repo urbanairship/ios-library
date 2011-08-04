@@ -71,7 +71,6 @@
 		E9CB35BD12B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A012B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib */; };
 		E9CB35BF12B89AC0002E39EA /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A312B89AC0002E39EA /* UAInboxMessageListController.xib */; };
 		E9CB35C012B89AC0002E39EA /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A412B89AC0002E39EA /* UAInboxMessageViewController.xib */; };
-		E9CB35C112B89AC0002E39EA /* AirMail.db in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A612B89AC0002E39EA /* AirMail.db */; };
 		E9CB35C212B89AC0002E39EA /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A712B89AC0002E39EA /* check.png */; };
 		E9CB35C312B89AC0002E39EA /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A812B89AC0002E39EA /* check@2x.png */; };
 		E9CB35C412B89AC0002E39EA /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A912B89AC0002E39EA /* down.png */; };
@@ -91,7 +90,6 @@
 		E9CB35D812B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A012B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib */; };
 		E9CB35DA12B89AC0002E39EA /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A312B89AC0002E39EA /* UAInboxMessageListController.xib */; };
 		E9CB35DB12B89AC0002E39EA /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A412B89AC0002E39EA /* UAInboxMessageViewController.xib */; };
-		E9CB35DC12B89AC0002E39EA /* AirMail.db in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A612B89AC0002E39EA /* AirMail.db */; };
 		E9CB35DD12B89AC0002E39EA /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A712B89AC0002E39EA /* check.png */; };
 		E9CB35DE12B89AC0002E39EA /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A812B89AC0002E39EA /* check@2x.png */; };
 		E9CB35DF12B89AC0002E39EA /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A912B89AC0002E39EA /* down.png */; };
@@ -215,7 +213,6 @@
 		E9CB35A012B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageViewController_Pad.xib; sourceTree = "<group>"; };
 		E9CB35A312B89AC0002E39EA /* UAInboxMessageListController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageListController.xib; sourceTree = "<group>"; };
 		E9CB35A412B89AC0002E39EA /* UAInboxMessageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageViewController.xib; sourceTree = "<group>"; };
-		E9CB35A612B89AC0002E39EA /* AirMail.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = AirMail.db; sourceTree = "<group>"; };
 		E9CB35A712B89AC0002E39EA /* check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check.png; sourceTree = "<group>"; };
 		E9CB35A812B89AC0002E39EA /* check@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check@2x.png"; sourceTree = "<group>"; };
 		E9CB35A912B89AC0002E39EA /* down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = down.png; sourceTree = "<group>"; };
@@ -538,7 +535,6 @@
 			isa = PBXGroup;
 			children = (
 				1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */,
-				E9CB35A612B89AC0002E39EA /* AirMail.db */,
 				E9CB35A712B89AC0002E39EA /* check.png */,
 				E9CB35A812B89AC0002E39EA /* check@2x.png */,
 				E9CB35A912B89AC0002E39EA /* down.png */,
@@ -673,7 +669,6 @@
 				E9CB35BD12B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */,
 				E9CB35BF12B89AC0002E39EA /* UAInboxMessageListController.xib in Resources */,
 				E9CB35C012B89AC0002E39EA /* UAInboxMessageViewController.xib in Resources */,
-				E9CB35C112B89AC0002E39EA /* AirMail.db in Resources */,
 				E9CB35C212B89AC0002E39EA /* check.png in Resources */,
 				E9CB35C312B89AC0002E39EA /* check@2x.png in Resources */,
 				E9CB35C412B89AC0002E39EA /* down.png in Resources */,
@@ -705,7 +700,6 @@
 				E9CB35D812B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */,
 				E9CB35DA12B89AC0002E39EA /* UAInboxMessageListController.xib in Resources */,
 				E9CB35DB12B89AC0002E39EA /* UAInboxMessageViewController.xib in Resources */,
-				E9CB35DC12B89AC0002E39EA /* AirMail.db in Resources */,
 				E9CB35DD12B89AC0002E39EA /* check.png in Resources */,
 				E9CB35DE12B89AC0002E39EA /* check@2x.png in Resources */,
 				E9CB35DF12B89AC0002E39EA /* down.png in Resources */,

@@ -59,28 +59,46 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
-- (void)createEditableCopyOfDatabaseIfNeeded {
-    // First, test for existence.
-    BOOL success;
+- (void)moveLegacyDatabase {
+    
+    NSArray *docPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [docPaths objectAtIndex:0];
+    NSString *oldDbPath = [documentsDirectory stringByAppendingPathComponent:OLD_DB_NAME];
+
+    NSArray *libPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = [libPaths objectAtIndex:0];
+    NSString *newDbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
     
-    NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:DB_NAME];
-    success = [fileManager fileExistsAtPath:writableDBPath];
-    if (!success) {
-        // The writable database does not exist, so copy the default to the appropriate location.
-        UALOG(@"copy db into document directory.");
-        NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:DB_NAME];
-        success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error];
-        if (!success) {
-            NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
+    if (![fileManager fileExistsAtPath:newDbPath] && [fileManager fileExistsAtPath:oldDbPath]) {
+        UALOG(@"Moving legacy AirMail database.");
+        [fileManager moveItemAtPath:oldDbPath toPath:newDbPath error:&error];
+        
+        if (error) {
+            UALOG(@"Failed to move the database. %@", [error localizedDescription]);
         }
     }
-    db = [[UA_FMDatabase databaseWithPath:writableDBPath] retain];
+    
+}
+
+- (void)createEditableCopyOfDatabaseIfNeeded {
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
+    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
+    
+    if (![fileManager fileExistsAtPath:dbPath]) {
+        //move old db
+        [self moveLegacyDatabase];
+    }
+
+    db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
     if (![db open]) {
-        UALOG(@"Faile to open database");
+        UALOG(@"Failed to open database");
     }
 }
 
