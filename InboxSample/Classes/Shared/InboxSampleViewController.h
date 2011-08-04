@@ -26,15 +26,11 @@
 #import <UIKit/UIKit.h>
 #import "UAInboxUI.h"
 
-@interface InboxSampleViewController : UIViewController <UAInboxUIDelegateProtocol> {
+@interface InboxSampleViewController : UIViewController {
     IBOutlet UILabel* version;
-    BOOL isShowingInbox;
-    UINavigationController *nav;
 }
 
 @property(nonatomic, retain) IBOutlet UILabel* version;
-@property(nonatomic, assign) BOOL isShowingInbox;
-@property(nonatomic, retain) UINavigationController *nav;
 
 -(IBAction)mail:(id)sender;
 

@@ -31,62 +31,10 @@
 
 @implementation InboxSampleViewController
 
-@synthesize version, isShowingInbox, nav;
-
-
-- (void)showInboxWithMessage:(NSString *)messageID {
-    
-    if (!isShowingInbox) {
-        
-        self.isShowingInbox = YES;
-    
-        UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
-        
-        mlc.title = @"Inbox";
-        mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
-                                                                                              target:self 
-                                                                                              action:@selector(inboxDone:)]autorelease];
-        
-        self.nav = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
-        
-        if(messageID) {
-            UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
-            [mvc loadMessageForID:messageID];
-            [nav pushViewController:mvc animated:NO];
-        }
-        
-        [self presentModalViewController:nav animated:YES];
-    
-    }
-    
-    else {
-        if ([nav.topViewController class] == [UAInboxMessageViewController class]) {
-            [(UAInboxMessageViewController *)nav.topViewController loadMessageForID:messageID];
-        } else {
-            UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
-            [mvc loadMessageForID:messageID];
-            [nav pushViewController:mvc animated:YES];
-        }
-    }
-    
-}
-
-- (void)showInbox {
-    [self showInboxWithMessage:nil];
-}
-
-- (void)inboxDone:(id)sender {
-    [self dismissModalViewControllerAnimated:YES];
-    self.isShowingInbox = NO;
-}
+@synthesize version;
 
 -(IBAction)mail:(id)sender {
-    [self showInbox];   
-}
-
-//<UAInboxUIDelegate>
-- (void)displayMessage:(NSString *)messageID {
-    [self showInboxWithMessage:messageID];
+    [UAInbox displayInbox:self animated:YES];   
 }
 
 - (void)viewDidLoad {
@@ -104,7 +52,6 @@
 
 - (void)dealloc {
     RELEASE_SAFELY(version);
-    self.nav = nil;
     [super dealloc];
 }
 
