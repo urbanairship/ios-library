@@ -82,7 +82,6 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 
-
 + (void)loadInbox {
 	if([UAInbox shared].messageList == nil) {
 		[UAInbox shared].messageList = [UAInboxMessageList shared];
@@ -93,8 +92,13 @@ static Class _uiClass;
     [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
 }
 
-+(void)displayMessage:(NSString*)messageID {
-    [[[UAInbox shared] uiClass] displayMessage:messageID];
++ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
+    [UAInbox loadInbox];
+    [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
+}
+
++ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID {
+    [[[UAInbox shared] uiClass] displayMessage:(UIViewController *)viewController message:messageID];
 }
 
 
