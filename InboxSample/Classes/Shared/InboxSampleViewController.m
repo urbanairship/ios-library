@@ -26,14 +26,15 @@
 #import "InboxSampleAppDelegate.h"
 #import "UAirship.h"
 #import "UAInbox.h"
-
+#import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 
 @implementation InboxSampleViewController
 
 @synthesize version;
 
 -(IBAction)mail:(id)sender {
-	[UAInbox displayInbox:self animated:YES];	
+    [UAInbox displayInbox:self animated:YES];   
 }
 
 - (void)viewDidLoad {

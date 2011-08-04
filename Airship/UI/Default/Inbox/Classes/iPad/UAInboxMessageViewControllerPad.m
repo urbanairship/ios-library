@@ -26,8 +26,7 @@
 #import "UAInboxMessageViewControllerPad.h"
 #import "UAInboxUI.h"
 
-#import "UAInboxMessageList.h"
-
+/*
 @implementation UAInboxMessageViewControllerPad
 @synthesize toolbar;
 @synthesize landscapeToolbarItems;
@@ -143,4 +142,4 @@
     toolbar.items = landscapeToolbarItems;
 }
 
-@end
+@end */

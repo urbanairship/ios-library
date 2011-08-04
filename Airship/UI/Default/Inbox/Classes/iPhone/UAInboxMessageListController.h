@@ -44,7 +44,6 @@
     UIBarButtonItem *moveItem;
     UIBarButtonItem *editItem;
     UIBarButtonItem *cancelItem;
-    UIBarButtonItem *doneItem;
 
     NSString *cellReusableId;
     NSString *cellNibName;
@@ -56,11 +55,9 @@
 @property (nonatomic, retain) UILabel *noMessagesLabel;
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
-@property (nonatomic, retain, readonly) UIBarButtonItem *doneItem;
 
 - (void)updateNavigationBadge;      // indicate title and unread count
 - (void)refreshBatchUpdateButtons;  // indicate edit mode view
-- (IBAction)done:(id)sender;
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath;
 
 // Private Method

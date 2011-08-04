@@ -41,6 +41,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize message;
 
 - (void)dealloc {
+    [[UAInbox shared].messageList removeObserver:self];
     RELEASE_SAFELY(message);
     RELEASE_SAFELY(webView);
     RELEASE_SAFELY(activity);
@@ -52,6 +53,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
     if (self = [super initWithNibName:nibName bundle:nibBundle]) {
+        
+        [[UAInbox shared].messageList addObserver:self];
+        
         self.title = UA_INBOX_TR(@"UA_Message");
 
         // "Segmented" up/down control to the right

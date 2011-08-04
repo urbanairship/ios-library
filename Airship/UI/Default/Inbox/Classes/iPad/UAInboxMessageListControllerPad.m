@@ -27,6 +27,8 @@
 #import "UAInbox.h"
 #import "UAInboxUI.h"
 
+/*
+
 @implementation UAInboxMessageListControllerPad
 
 @synthesize popoverController;
@@ -162,4 +164,4 @@
     self.navigationItem.leftBarButtonItem = nil;
 }
 
-@end
+@end */

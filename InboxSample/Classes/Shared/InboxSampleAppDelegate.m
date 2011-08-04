@@ -44,9 +44,9 @@
     [window makeKeyAndVisible];
 
     [self failIfSimulator];
-
-    [UAInbox useCustomUI:[UAInboxUI class]];
     
+    [UAInbox useCustomUI:[UAInboxUI class]];
+        
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
     //UAInboxUI.runiPhoneTargetOniPad = YES;
@@ -75,10 +75,9 @@
     // Optional: Delegate for JavaScript callback
     jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = jsDelegate;
-
+    
     // If the application gets an UAInbox message id on launch open it up immediately.
-    // Only works for the default inbox
-	[UAInboxUI shared].inboxParentController = viewController;
+    [UAInboxUI shared].inboxParentController = viewController;
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
