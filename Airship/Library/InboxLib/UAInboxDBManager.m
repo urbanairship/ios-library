@@ -49,13 +49,13 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (void)resetDB {
     [db executeUpdate:@"DROP TABLE messages"];
     [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)initDBIfNeeded {
     if (![db tableExists:@"messages"]) {
         [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
-        FMDBLogError
+        UA_FMDBLogError
     }
 }
 
@@ -66,6 +66,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSError *error;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
+    
     NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:DB_NAME];
     success = [fileManager fileExistsAtPath:writableDBPath];
     if (!success) {
@@ -131,7 +132,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          userId];
     }
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)deleteMessages:(NSArray *)messages {
@@ -144,12 +145,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)updateMessageAsRead:(UAInboxMessage *)msg {
     [db executeUpdate:@"UPDATE messages SET unread = 0 WHERE id = ?", msg.messageID];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)updateMessagesAsRead:(NSArray *)messages {
@@ -162,7 +163,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 @end

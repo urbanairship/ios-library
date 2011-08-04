@@ -28,7 +28,7 @@
 #import "UA_FMDatabase.h"
 #import "UA_FMDatabaseAdditions.h"
 
-#define FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
+#define UA_FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
 #define DB_NAME @"AirMail.db"
 
 
