@@ -56,8 +56,9 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
         mlc.title = @"Inbox";
+        mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease]; 
+        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
         
         alertHandler = [[UAInboxAlertHandler alloc] init];
         
@@ -65,6 +66,10 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
     }
     return self;
+}
+
+- (void)inboxDone:(id)sender {
+    [self quitInbox:NORMAL_QUIT];
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
@@ -141,8 +146,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     }
 	
     self.isVisible = NO;
-
-	
     
     //added iOS 5 parent/presenting view getter
     UIViewController *con;
