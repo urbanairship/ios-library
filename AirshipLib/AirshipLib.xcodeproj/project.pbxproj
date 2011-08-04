@@ -34,8 +34,6 @@
 		B69DB4CB12533B280037AF7F /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		B6DFC09212505131004E6D93 /* UA_FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07212505131004E6D93 /* UA_FMDatabase.h */; };
 		B6DFC09312505131004E6D93 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		B6DFC09412505131004E6D93 /* UA_FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */; };
-		B6DFC09512505131004E6D93 /* UA_FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */; };
 		B6DFC09712505131004E6D93 /* UA_FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07712505131004E6D93 /* UA_FMResultSet.h */; };
 		B6DFC09812505131004E6D93 /* UA_FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07812505131004E6D93 /* UA_FMResultSet.m */; };
 		B6DFC09912505131004E6D93 /* UA_SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07A12505131004E6D93 /* UA_SBJSON.h */; };
@@ -113,7 +111,6 @@
 		D5A4B9811300AAB800002F71 /* UA_ASIDownloadCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE222124F3FBB00A46CB1 /* UA_ASIDownloadCache.m */; };
 		D5A4B9821300AAB800002F71 /* UA_unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25512507CEA004E6D93 /* UA_unzip.c */; };
 		D5A4B9831300AAB800002F71 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		D5A4B9841300AAB900002F71 /* UA_FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */; };
 		D5A4B9851300AABA00002F71 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		D5A4B9861300AAC000002F71 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5A4B9871300AAC000002F71 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
@@ -282,8 +279,6 @@
 		B69DB4C912533B280037AF7F /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Base64.m; sourceTree = "<group>"; };
 		B6DFC07212505131004E6D93 /* UA_FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMDatabase.h; sourceTree = "<group>"; };
 		B6DFC07312505131004E6D93 /* UA_FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMDatabase.m; sourceTree = "<group>"; };
-		B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMDatabaseAdditions.h; sourceTree = "<group>"; };
-		B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMDatabaseAdditions.m; sourceTree = "<group>"; };
 		B6DFC07712505131004E6D93 /* UA_FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMResultSet.h; sourceTree = "<group>"; };
 		B6DFC07812505131004E6D93 /* UA_FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMResultSet.m; sourceTree = "<group>"; };
 		B6DFC07A12505131004E6D93 /* UA_SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJSON.h; sourceTree = "<group>"; };
@@ -503,8 +498,6 @@
 			children = (
 				B6DFC07212505131004E6D93 /* UA_FMDatabase.h */,
 				B6DFC07312505131004E6D93 /* UA_FMDatabase.m */,
-				B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */,
-				B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */,
 				B6DFC07712505131004E6D93 /* UA_FMResultSet.h */,
 				B6DFC07812505131004E6D93 /* UA_FMResultSet.m */,
 			);
@@ -721,7 +714,6 @@
 				B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */,
 				B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */,
 				B6DFC09212505131004E6D93 /* UA_FMDatabase.h in Headers */,
-				B6DFC09412505131004E6D93 /* UA_FMDatabaseAdditions.h in Headers */,
 				B6DFC09712505131004E6D93 /* UA_FMResultSet.h in Headers */,
 				B6DFC09912505131004E6D93 /* UA_SBJSON.h in Headers */,
 				B6DFC09C12505131004E6D93 /* UA_SBJsonBase.h in Headers */,
@@ -920,7 +912,6 @@
 				B6EFE235124F3FBB00A46CB1 /* UA_ASIInputStream.m in Sources */,
 				B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */,
 				B6DFC09312505131004E6D93 /* UA_FMDatabase.m in Sources */,
-				B6DFC09512505131004E6D93 /* UA_FMDatabaseAdditions.m in Sources */,
 				B6DFC09812505131004E6D93 /* UA_FMResultSet.m in Sources */,
 				B6DFC09A12505131004E6D93 /* UA_SBJSON.m in Sources */,
 				B6DFC09D12505131004E6D93 /* UA_SBJsonBase.m in Sources */,
@@ -979,7 +970,6 @@
 				D5A4B9811300AAB800002F71 /* UA_ASIDownloadCache.m in Sources */,
 				D5A4B9821300AAB800002F71 /* UA_unzip.c in Sources */,
 				D5A4B9831300AAB800002F71 /* UA_FMDatabase.m in Sources */,
-				D5A4B9841300AAB900002F71 /* UA_FMDatabaseAdditions.m in Sources */,
 				D5A4B9851300AABA00002F71 /* UA_Reachability.m in Sources */,
 				D5A4B9861300AAC000002F71 /* UASQLite.m in Sources */,
 				D5A4B9871300AAC000002F71 /* UAUser.m in Sources */,
