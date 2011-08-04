@@ -43,11 +43,13 @@ typedef enum {
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
     UIViewController *rootViewController;
+    UIViewController *inboxParentController;
     BOOL isVisible;
 }
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
 @property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, retain) UIViewController *inboxParentController;
 @property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxUI);

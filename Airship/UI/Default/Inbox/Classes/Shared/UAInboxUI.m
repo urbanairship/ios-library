@@ -28,7 +28,7 @@
 #import "UAInboxMessageViewController.h"
 
 @implementation UAInboxUI
-@synthesize localizationBundle, rootViewController, isVisible;
+@synthesize localizationBundle, rootViewController, inboxParentController, isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -42,6 +42,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
     RELEASE_SAFELY(rootViewController);
+    RELEASE_SAFELY(inboxParentController);
     [super dealloc];
 } 
 
@@ -50,47 +51,12 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
-        
-        /*
-        // Dynamically create root view controller for iPad
-        NSString *deviceType = [UIDevice currentDevice].model;
-		
-        if ([deviceType hasPrefix:@"iPad"] && !runiPhoneTargetOniPad) {
-            
-			self.isiPad = YES;
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 30200
-            self.messageListController = [[[UAInboxMessageListControllerPad alloc] initWithNibName:
-                                 @"UAInboxMessageListController_Pad" bundle: nil] autorelease];
-            self.messageViewController = [[[UAInboxMessageViewControllerPad alloc] initWithNibName:
-                                 @"UAInboxMessageViewController_Pad" bundle: nil] autorelease];
-
-            UINavigationController *navController = [[[UINavigationController alloc]
-                                                      initWithRootViewController:messageListController] autorelease];
-            self.rootViewController = [[[NSClassFromString(@"UISplitViewController") alloc] init] autorelease];
-            [rootViewController performSelector:@selector(setViewControllers:)
-                                     withObject:[NSArray arrayWithObjects:navController, messageViewController, nil]];
-            [rootViewController performSelector:@selector(setDelegate:) withObject:messageListController];
-#endif
-
-        } else {
-            self.isiPad = NO;
-            self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:
-                                 @"UAInboxMessageListController" bundle: nil] autorelease];
-            
-            messageListController.title = @"Inbox";
-            
-            self.messageViewController = [[[UAInboxMessageViewController alloc] initWithNibName:
-                                 @"UAInboxMessageViewController" bundle: nil] autorelease];
-            self.rootViewController = [[[UAInboxNavigationController alloc] initWithRootViewController:messageListController] autorelease];
-        }
-
-        [[UAInbox shared].messageList addObserver:messageListController];
-		[[UAInbox shared].messageList addObserver:self]; */
 		
         self.isVisible = NO;
         
         UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+        mlc.title = @"Inbox";
+        
         self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease]; 
         
         alertHandler = [[UAInboxAlertHandler alloc] init];
@@ -109,32 +75,12 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 	[UAInboxUI shared].isVisible = YES;
     
-    /*
-	if ([UAInboxUI shared].isiPad) {
-        if ([UAInboxUI shared].uaWindow == nil) {
-            [UAInboxUI shared].uaWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-			
-            CGRect frame = viewController.view.frame;
-			UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-            
-			if (UIInterfaceOrientationIsLandscape(orientation)) {
-                viewController.view.frame = CGRectMake(frame.origin.x, frame.origin.y, frame.size.height, frame.size.width);
-            }
-            
-			[[UAInboxUI shared].uaWindow addSubview:[UAInboxUI shared].rootViewController.view];
-			
-        }
-		
-        [[UAInboxUI shared].uaWindow makeKeyAndVisible];
-		
-    }*/ 
-    
     UALOG(@"present modal");
     [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
 } 
 
 
-/*
+
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
 	
     if(![UAInboxUI shared].isVisible) {
@@ -159,11 +105,8 @@ static BOOL runiPhoneTargetOniPad = NO;
             [mvc loadMessageForID:messageID];
             [navController pushViewController:mvc animated:YES];
         }
-    } else {
-        // For iPad
-        [[UAInboxUI shared].messageViewController loadMessageForID:messageID];
     }
-} */
+}
 
 + (void)quitInbox {
     [[UAInboxUI shared] quitInbox:NORMAL_QUIT];
@@ -192,7 +135,6 @@ static BOOL runiPhoneTargetOniPad = NO;
         NSLog(@"reason=%d", reason);
     }
     
-    /*
 
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
@@ -200,25 +142,22 @@ static BOOL runiPhoneTargetOniPad = NO;
 	
     self.isVisible = NO;
 
-	if (self.isiPad) {
-        self.uaWindow.hidden = YES;
+	
+    
+    //added iOS 5 parent/presenting view getter
+    UIViewController *con;
+    if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
+        con = self.rootViewController.presentingViewController;
     } else {
-        
-        //added iOS 5 parent/presenting view getter
-        UIViewController *con;
-        if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-            con = self.rootViewController.presentingViewController;
-        } else {
-            con = self.rootViewController.parentViewController;
-        }
-        
-        [con dismissModalViewControllerAnimated:YES];
-        
-        // BUG: Workaround. ModalViewController does not handle resizing correctly if
-        // dismissed in landscape when status bar is visible
-        if (![UIApplication sharedApplication].statusBarHidden)
-            con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
-    } */
+        con = self.rootViewController.parentViewController;
+    }
+    
+    [con dismissModalViewControllerAnimated:YES];
+    
+    // BUG: Workaround. ModalViewController does not handle resizing correctly if
+    // dismissed in landscape when status bar is visible
+    if (![UIApplication sharedApplication].statusBarHidden)
+        con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
 }
 
 // handle both in app notification and launching notification
@@ -236,10 +175,10 @@ static BOOL runiPhoneTargetOniPad = NO;
 		if (msg == nil) {
 			return;
 		}
-		
-        UINavigationController *nav 
         
-		[UAInboxUI displayMessage:vc message:[[UAInbox shared].pushHandler viewingMessageID]];
+        UIViewController *rvc = [UAInboxUI shared].rootViewController;
+		        
+		[UAInboxUI displayMessage:rvc message:[[UAInbox shared].pushHandler viewingMessageID]];
 		
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
