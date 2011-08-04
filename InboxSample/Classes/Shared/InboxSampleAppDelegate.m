@@ -70,8 +70,9 @@
     // Optional: Delegate for JavaScript callback
     jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = jsDelegate;
-
+    
     // If the application gets an UAInbox message id on launch open it up immediately.
+    [UAInboxUI shared].inboxParentController = viewController;
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
