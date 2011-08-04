@@ -39,25 +39,19 @@ typedef enum {
 
 @class UAInboxAlertProtocol;
 
-@protocol UAInboxUIDelegateProtocol
-@required
-- (void)displayMessage:(NSString*)messageID;
-@end
-
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
-    id <UAInboxUIDelegateProtocol> delegate;
 }
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
-@property (nonatomic, retain) id delegate;
 
 SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
 - (void)quitInbox:(QuitReason)reason;
-+ (void)displayMessage:(NSString*)messageID;
++ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
++ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;

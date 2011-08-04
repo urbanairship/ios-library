@@ -26,7 +26,7 @@
 #import "UAInboxUI.h"
 
 @implementation UAInboxUI
-@synthesize localizationBundle, delegate;
+@synthesize localizationBundle;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -39,7 +39,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 - (void)dealloc {
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
-    self.delegate = nil;
     [super dealloc];
 } 
 
@@ -95,8 +94,12 @@ static BOOL runiPhoneTargetOniPad = NO;
     return self;
 }
 
-+ (void)displayMessage:(NSString *)messageID {
-    [[UAInboxUI shared].delegate displayMessage:messageID];
++ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
+    //do it;
+}
+
++ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID {
+    //do it;
 }
 
 /*
