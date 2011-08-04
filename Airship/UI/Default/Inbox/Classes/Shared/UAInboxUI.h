@@ -42,9 +42,13 @@ typedef enum {
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
+    UIViewController *rootViewController;
+    BOOL isVisible;
 }
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
+@property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxUI);
 

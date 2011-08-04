@@ -24,9 +24,11 @@
  */
 
 #import "UAInboxUI.h"
+#import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 
 @implementation UAInboxUI
-@synthesize localizationBundle;
+@synthesize localizationBundle, rootViewController, isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -39,6 +41,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 - (void)dealloc {
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
+    RELEASE_SAFELY(rootViewController);
     [super dealloc];
 } 
 
@@ -85,9 +88,13 @@ static BOOL runiPhoneTargetOniPad = NO;
         [[UAInbox shared].messageList addObserver:messageListController];
 		[[UAInbox shared].messageList addObserver:self]; */
 		
-        //self.isVisible = NO;
+        self.isVisible = NO;
+        
+        UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease]; 
         
         alertHandler = [[UAInboxAlertHandler alloc] init];
+        
         [[UAInbox shared].messageList addObserver:self];
 		
     }
@@ -95,22 +102,14 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    //do it;
-}
-
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID {
-    //do it;
-}
-
-/*
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	
     if ([viewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
     }
 
 	[UAInboxUI shared].isVisible = YES;
-
+    
+    /*
 	if ([UAInboxUI shared].isiPad) {
         if ([UAInboxUI shared].uaWindow == nil) {
             [UAInboxUI shared].uaWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -128,11 +127,11 @@ static BOOL runiPhoneTargetOniPad = NO;
 		
         [[UAInboxUI shared].uaWindow makeKeyAndVisible];
 		
-    } else {
-		UALOG(@"present modal");
-        [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
-    }
-} */
+    }*/ 
+    
+    UALOG(@"present modal");
+    [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
+} 
 
 
 /*
@@ -238,7 +237,9 @@ static BOOL runiPhoneTargetOniPad = NO;
 			return;
 		}
 		
-		[UAInboxUI displayMessage:[[UAInbox shared].pushHandler viewingMessageID]];
+        UINavigationController *nav 
+        
+		[UAInboxUI displayMessage:vc message:[[UAInbox shared].pushHandler viewingMessageID]];
 		
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
