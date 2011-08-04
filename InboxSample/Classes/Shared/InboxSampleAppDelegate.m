@@ -41,10 +41,7 @@
     [self failIfSimulator];
     
     [UAInbox useCustomUI:[UAInboxUI class]];
-    
-    //Delegate to the viewController for message display
-    [UAInboxUI shared].delegate = viewController;
-    
+        
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
     //UAInboxUI.runiPhoneTargetOniPad = YES;
