@@ -65,7 +65,6 @@
 		E9CB35B412B89AC0002E39EA /* UAInboxMessageViewControllerPad.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB358E12B89AC0002E39EA /* UAInboxMessageViewControllerPad.m */; };
 		E9CB35B612B89AC0002E39EA /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359312B89AC0002E39EA /* UAInboxMessageListController.m */; };
 		E9CB35B712B89AC0002E39EA /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359512B89AC0002E39EA /* UAInboxMessageViewController.m */; };
-		E9CB35BA12B89AC0002E39EA /* UAInboxNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359A12B89AC0002E39EA /* UAInboxNavigationController.m */; };
 		E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
 		E9CB35BC12B89AC0002E39EA /* UAInboxMessageListController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB359F12B89AC0002E39EA /* UAInboxMessageListController_Pad.xib */; };
 		E9CB35BD12B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A012B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib */; };
@@ -85,7 +84,6 @@
 		E9CB35CF12B89AC0002E39EA /* UAInboxMessageViewControllerPad.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB358E12B89AC0002E39EA /* UAInboxMessageViewControllerPad.m */; };
 		E9CB35D112B89AC0002E39EA /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359312B89AC0002E39EA /* UAInboxMessageListController.m */; };
 		E9CB35D212B89AC0002E39EA /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359512B89AC0002E39EA /* UAInboxMessageViewController.m */; };
-		E9CB35D512B89AC0002E39EA /* UAInboxNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359A12B89AC0002E39EA /* UAInboxNavigationController.m */; };
 		E9CB35D612B89AC0002E39EA /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
 		E9CB35D712B89AC0002E39EA /* UAInboxMessageListController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB359F12B89AC0002E39EA /* UAInboxMessageListController_Pad.xib */; };
 		E9CB35D812B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A012B89AC0002E39EA /* UAInboxMessageViewController_Pad.xib */; };
@@ -207,8 +205,6 @@
 		E9CB359312B89AC0002E39EA /* UAInboxMessageListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListController.m; sourceTree = "<group>"; };
 		E9CB359412B89AC0002E39EA /* UAInboxMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageViewController.h; sourceTree = "<group>"; };
 		E9CB359512B89AC0002E39EA /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
-		E9CB359912B89AC0002E39EA /* UAInboxNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavigationController.h; sourceTree = "<group>"; };
-		E9CB359A12B89AC0002E39EA /* UAInboxNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavigationController.m; sourceTree = "<group>"; };
 		E9CB359B12B89AC0002E39EA /* UAInboxUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUI.h; sourceTree = "<group>"; };
 		E9CB359C12B89AC0002E39EA /* UAInboxUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUI.m; sourceTree = "<group>"; };
 		E9CB359F12B89AC0002E39EA /* UAInboxMessageListController_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageListController_Pad.xib; sourceTree = "<group>"; };
@@ -496,8 +492,6 @@
 			children = (
 				1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */,
 				1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */,
-				E9CB359912B89AC0002E39EA /* UAInboxNavigationController.h */,
-				E9CB359A12B89AC0002E39EA /* UAInboxNavigationController.m */,
 				D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */,
 				D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */,
 				E9CB359B12B89AC0002E39EA /* UAInboxUI.h */,
@@ -775,7 +769,6 @@
 				E9CB35B412B89AC0002E39EA /* UAInboxMessageViewControllerPad.m in Sources */,
 				E9CB35B612B89AC0002E39EA /* UAInboxMessageListController.m in Sources */,
 				E9CB35B712B89AC0002E39EA /* UAInboxMessageViewController.m in Sources */,
-				E9CB35BA12B89AC0002E39EA /* UAInboxNavigationController.m in Sources */,
 				E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */,
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
@@ -795,7 +788,6 @@
 				E9CB35CF12B89AC0002E39EA /* UAInboxMessageViewControllerPad.m in Sources */,
 				E9CB35D112B89AC0002E39EA /* UAInboxMessageListController.m in Sources */,
 				E9CB35D212B89AC0002E39EA /* UAInboxMessageViewController.m in Sources */,
-				E9CB35D512B89AC0002E39EA /* UAInboxNavigationController.m in Sources */,
 				E9CB35D612B89AC0002E39EA /* UAInboxUI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

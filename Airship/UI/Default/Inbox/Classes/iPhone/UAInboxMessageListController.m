@@ -27,7 +27,7 @@
 #import "UAInboxMessageListCell.h"
 #import "UABarButtonSegmentedControl.h"
 #import "UAInboxUI.h"
-
+#import "UAInboxMessageViewController.h"
 #import "UAInbox.h"
 #import "UAGlobal.h"
 #import "UAInboxMessage.h"
@@ -38,9 +38,13 @@
 @synthesize activity;
 @synthesize loadingLabel, noMessagesLabel;
 @synthesize messageTable;
-@synthesize tabbar, tabbarItem, doneItem;
+@synthesize tabbar, tabbarItem;
 
 - (void)dealloc {
+    
+    [UAInbox quitInbox];
+    [[UAInbox shared].messageList removeObserver:self];
+
     RELEASE_SAFELY(cellNibName);
     RELEASE_SAFELY(cellReusableId);
     RELEASE_SAFELY(messageTable);
@@ -52,10 +56,10 @@
     RELEASE_SAFELY(moveItem);
     RELEASE_SAFELY(editItem);
     RELEASE_SAFELY(cancelItem);
-    RELEASE_SAFELY(doneItem);
     RELEASE_SAFELY(tabbar);
     RELEASE_SAFELY(tabbarItem);
     RELEASE_SAFELY(badgeView);
+    
     [super dealloc];
 }
 
@@ -68,21 +72,18 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [self initNibNames];
     }
+    
+    [UAInbox loadInbox];
+    [[UAInbox shared].messageList addObserver:self];
+    
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = [UAInboxUI shared].messageListTitle;
-
+    
     loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     noMessagesLabel.text = UA_INBOX_TR(@"UA_No_Messages");
-
-
-	doneItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                 target:self
-                                                                 action:@selector(done:)];
-	self.navigationItem.leftBarButtonItem = doneItem;
     
     editItem = [[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
@@ -100,6 +101,8 @@
     [self createNavigationBadge];
 
     selectedIndexPathsForEditing = [[NSMutableSet alloc] init];
+    
+    [UAInbox loadInbox];
 }
 
 - (void)createToolbarItems {
@@ -135,10 +138,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
-    }
-
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
     [self.navigationController.navigationBar addSubview:badgeView];
 }
 
@@ -167,26 +167,21 @@
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editing animated:animated];
     [self.navigationController setToolbarHidden:!editing animated:animated];
-    doneItem.enabled = !editing;
-
     [messageTable setEditing:editing animated:animated];
 }
 
 - (void)tableReloadData {
     [messageTable reloadData];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
-    }
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
 }
 
 #pragma mark -
 #pragma mark Button Action Methods
 
-- (void)done:(id)sender {
-    [UAInbox quitInbox];
-}
-
 - (void)editButtonPressed:(id)sender {
+    
+    self.navigationItem.leftBarButtonItem.enabled = NO;
+    
     if ([UAInboxMessageList shared].isBatchUpdating) {
         return;
     }
@@ -200,6 +195,9 @@
 }
 
 - (void)cancelButtonPressed:(id)sender {
+    
+    self.navigationItem.leftBarButtonItem.enabled = YES;
+    
     self.navigationItem.rightBarButtonItem = editItem;
 
     if ([selectedIndexPathsForEditing count] > 0) {
@@ -322,12 +320,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath {
-    doneItem.enabled = NO;
     self.navigationItem.rightBarButtonItem.enabled = NO;
 }
 
 - (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
-    doneItem.enabled = YES;
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
@@ -351,9 +347,9 @@
 }
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [[UAInboxUI shared].messageViewController loadMessageAtIndex:indexPath.row];
-    [(UINavigationController *)[UAInboxUI shared].rootViewController pushViewController:[UAInboxUI shared].messageViewController
-                                                                             animated:YES];
+    UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+    [mvc loadMessageAtIndex:indexPath.row];
+    [self.navigationController pushViewController:mvc animated:YES];
 }
 
 #pragma mark -
@@ -438,9 +434,8 @@
     [selectedIndexPathsForEditing removeAllObjects];
     cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
-    if ([[UAInboxUI shared].rootViewController isKindOfClass:[UINavigationController class]]) {
-        [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
-    }
+    
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
     
     [self refreshBatchUpdateButtons];
 }
@@ -464,7 +459,7 @@ static float label_width = 0.0;
 
     UILabel *testLabel = [[[UILabel alloc] init] autorelease];
 
-    testLabel.text = [UAInboxUI shared].messageListTitle;
+    testLabel.text = self.title;
     testLabel.font = [UIFont boldSystemFontOfSize:20];
     [testLabel sizeToFit];
     label_width = testLabel.frame.size.width;
