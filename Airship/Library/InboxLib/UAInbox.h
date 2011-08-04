@@ -39,7 +39,8 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 @required
 + (void)quitInbox;
 + (void)loadLaunchMessage;
-+ (void)displayMessage:(NSString*)messageID;
++ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
++ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (id<UAInboxAlertProtocol>)getAlertHandler;
 @end
 
