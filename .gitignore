@@ -11,3 +11,4 @@ build/
 Airship/libUAirship-*.a
 xcuserdata/
 *.xcworkspace/
+AirshipConfig.plist
