@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import <Foundation/Foundation.h>
 
 #import "UAGlobal.h"
@@ -34,16 +35,45 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_INTERFACE(UAInboxVersion)
 
+/**
+ * All UIs should implement this protocol to interact with the UAInbox object.
+ */
 @protocol UAInboxUIProtocol
 @required
+
+/** Exits the inbox UI and performs any resource cleanup. */
 + (void)quitInbox;
+
+/** */
 + (void)loadLaunchMessage;
+
+/**
+ * Displays the inbox UI.
+ *
+ * TODO:
+ * @param viewController The parent view controller
+ * @param animated
+ */
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
+
+/**
+ * Displays the inbox UI and opens a specific message.
+ *
+ * TODO:
+ * @param viewController The parent view controller
+ * @param messageID
+ */
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (id<UAInboxAlertProtocol>)getAlertHandler;
 @end
 
 
+/**
+ * A standard protocol for accessing native Objective-C functionality from your
+ * Rich Push messages.
+ *
+ * UAInboxDefaultJSDelegate is a reference implementation of this protocol.
+ */
 @protocol UAInboxJavaScriptDelegate <NSObject>
 
 // Template implementation in UAInboxDefaultJSDelegate.m
@@ -52,32 +82,60 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 @end
 
 
+/**
+ * The main class for interacting with the Rich Push Inbox.
+ *
+ * This class bridges library functionaly and UI and is the main point of interaction.
+ * Most implementations will only use functionality found in this class.
+ */
 @interface UAInbox : NSObject {
 
     UAInboxMessageList *messageList;
 	UAInboxPushHandler *pushHandler;
 	
     id<UAInboxJavaScriptDelegate> jsDelegate;
-	
     
-	NSURLCache *clientCache, *inboxCache;
+	NSURLCache *clientCache;
+    NSURLCache *inboxCache;
 }
 
 SINGLETON_INTERFACE(UAInbox);
 
+///---------------------------------------------------------------------------------------
+/// @name Custom UI Specification
+///---------------------------------------------------------------------------------------
+
 - (Class)uiClass;
 + (void)useCustomUI:(Class)customUIClass;
+
+
 + (void)quitInbox;
 + (void)loadInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (void)land;
+
+// internal functionality - can this be private?
 + (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
+
+// do away with this - it should be dictated by idiom
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 
 @property (nonatomic, assign) UAInboxMessageList *messageList;
 @property (nonatomic, retain) UAInboxPushHandler *pushHandler;
+
+/**
+ * The Javascript delegate.
+ * 
+ * NOTE: this delegate is not retained.
+ */
 @property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
-@property(retain) NSURLCache *clientCache, *inboxCache;
+
+///---------------------------------------------------------------------------------------
+/// @name URL Caches
+///---------------------------------------------------------------------------------------
+
+@property(retain) NSURLCache *clientCache;
+@property(retain) NSURLCache *inboxCache;
 
 @end

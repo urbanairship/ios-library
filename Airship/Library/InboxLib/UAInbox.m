@@ -47,7 +47,8 @@ UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
 @synthesize messageList;
 @synthesize jsDelegate;
 @synthesize pushHandler;
-@synthesize clientCache, inboxCache;
+@synthesize clientCache;
+@synthesize inboxCache;
 
 SINGLETON_IMPLEMENTATION(UAInbox)
 
