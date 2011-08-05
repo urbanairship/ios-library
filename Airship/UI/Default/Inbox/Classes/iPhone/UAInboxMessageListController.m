@@ -440,8 +440,8 @@
     [self refreshBatchUpdateButtons];
 }
 
-- (void)singleMessageMarkAsReadFinished:(id)m {
-    int row = [[UAInbox shared].messageList indexOfMessage:(UAInboxMessage *)m];
+- (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)m {
+    int row = [[UAInbox shared].messageList indexOfMessage:m];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
     cell.unreadIndicator.hidden = YES;
