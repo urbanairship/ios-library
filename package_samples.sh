@@ -41,3 +41,8 @@ rm -rf `find . -name "*Tests"`
 rm -rf `find . -name "*Test*.plist"`
 rm -rf `find . -name "*Test*.pch"`
 rm -rf `find . -name "*.orig" `
+
+# copy the sample plist into place
+for sample in InboxSample PushSample StoreFrontSample SubscriptionSample; do
+    mv -f $sample/AirshipConfig.plist.sample $sample/AirshipConfig.plist
+done
