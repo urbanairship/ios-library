@@ -41,29 +41,39 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 @protocol UAInboxUIProtocol
 @required
 
-/** Exits the inbox UI and performs any resource cleanup. */
+/** 
+ * Hide the inbox UI and perform any resource cleanup.
+ */
 + (void)quitInbox;
 
-/** */
+/**
+ * Open the Rich Push Inbox directly to the message associated with
+ * the push notification that launched or foregrounded the application.
+ */
 + (void)loadLaunchMessage;
 
 /**
- * Displays the inbox UI.
+ * Display the inbox UI.
  *
- * TODO:
  * @param viewController The parent view controller
- * @param animated
+ * @param animated YES to animate the transition
  */
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 
 /**
- * Displays the inbox UI and opens a specific message.
+ * Display the inbox UI and open a specific message.
  *
- * TODO:
  * @param viewController The parent view controller
- * @param messageID
+ * @param messageID The ID for the message to display
  */
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
+
+/**
+ * Get the the custom UI's alert handler. The alert handler is used to display errors
+ * and informational messages from within the library. May be nil.
+ *
+ * @return The custom UI's alert handler. May be nil.
+ */
 + (id<UAInboxAlertProtocol>)getAlertHandler;
 @end
 
@@ -105,14 +115,52 @@ SINGLETON_INTERFACE(UAInbox);
 /// @name Custom UI Specification
 ///---------------------------------------------------------------------------------------
 
+/** Get the current UI class. Defaults to UAInboxUI. */
 - (Class)uiClass;
+
+/**
+ * Set a custom UI class. Defaults to UAInboxUI.
+ *
+ * @param customUIClass The custom UI class. The class must implement the UAInboxUIProtocol.
+ */
 + (void)useCustomUI:(Class)customUIClass;
 
-
+/**
+ * Hides the Rich Push Inbox UI and cleans up as necessary.
+ *
+ * Calls [UAInboxUIProtocol quitInbox] on the UI class.
+ */
 + (void)quitInbox;
+
+/**
+ * Retrieve the latest inbox messages from the server and switch to the inboxCache.
+ */
 + (void)loadInbox;
+
+/**
+ * Display the inbox UI.
+ *
+ * Calls [UAInboxUIProtocol displayInbox: animated:] on the UI class.
+ *
+ * @param viewController The parent view controller
+ * @param animated YES to animate the transition
+ */
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
+
+/**
+ * Display the inbox UI and open a specific message.
+ *
+ * @param viewController The parent view controller
+ * @param messageID The ID for the message to display
+ *
+ * Calls [UAInboxUIProtocol displayMessage: message:] on the UI class.
+ */
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
+
+/**
+ * Tear down and clean up any resources. This method should be called when the inbox is no
+ * longer needed.
+ */
 + (void)land;
 
 // do away with this - it should be dictated by idiom
@@ -132,7 +180,16 @@ SINGLETON_INTERFACE(UAInbox);
 /// @name URL Caches
 ///---------------------------------------------------------------------------------------
 
+/**
+ * The default URL Cache ([NSURLCache sharedURLCache]).
+ * This is saved prior to switching the URL Cache to the inboxCache.
+ */
 @property(retain) NSURLCache *clientCache;
+
+/**
+ * An Inbox-specific URL cache used to cache the contents of 
+ * Rich Push messages.
+ */
 @property(retain) NSURLCache *inboxCache;
 
 @end
