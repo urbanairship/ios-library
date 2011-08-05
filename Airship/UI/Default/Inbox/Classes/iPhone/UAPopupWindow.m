@@ -3,8 +3,10 @@
 
 #import "UAPopupWindow.h"
 #import "UAInboxMessage.h"
+#import "UAInboxMessageList.h"
 #import "UAInbox.h"
-#import "UAINboxUI.h"
+#import "UAInboxUI.h"
+#import "UAUtils.h"
 
 #define kShadeViewTag 1000
 
@@ -26,12 +28,15 @@
  * @param UIView* view provide a UIViewController's view here (or other view)
  */
 
-+ (void)showWindowWithMessageID:(NSString *)messageID {
-    //add root view logic here
-}
-
 + (void)showWindowInsideView:(UIView *)view withMessageID:(NSString *)messageID {
     [[UAPopupWindow alloc] initWithSuperview:view andMessageID:messageID];
+}
+
++ (void)showWindowWithMessageID:(NSString *)messageID {
+    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
+    UIViewController *rvc = window.rootViewController;
+    [UAPopupWindow showWindowInsideView:rvc.view withMessageID:messageID];
+    
 }
 
 /**
@@ -57,27 +62,27 @@
 }    
 
 - (void)loadMessageAtIndex:(int)index {
-    self.message = [[UAInbox shared].activeInbox messageAtIndex:index];
+    self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
         return;
     }
     
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
-    [UAInbox addAuthToWebRequest:requestObj];
+    [UAUtils addUserAuthToWebRequest:requestObj];
     [requestObj setTimeoutInterval:5];
     [webView stopLoading];
     [webView loadRequest:requestObj];
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessage *msg = [[UAInbox shared].activeInbox messageForID:mid];
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
         return;
     }
     
-    [self loadMessageAtIndex:[[UAInbox shared].activeInbox indexOfMessage:msg]];
+    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
 }
 
 /**

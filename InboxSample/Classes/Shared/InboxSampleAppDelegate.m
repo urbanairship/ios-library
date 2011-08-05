@@ -24,7 +24,8 @@
  */
 #import "InboxSampleAppDelegate.h"
 
-#import "UAInboxUI.h"
+//#import "UAInboxUI.h"
+#import "UAInboxUIPopup.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
@@ -45,7 +46,8 @@
 
     [self failIfSimulator];
     
-    [UAInbox useCustomUI:[UAInboxUI class]];
+    //[UAInbox useCustomUI:[UAInboxUI class]];
+    [UAInbox useCustomUI: [UAInboxUIPopup class]];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
