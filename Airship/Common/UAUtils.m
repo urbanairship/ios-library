@@ -23,12 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CommonCrypto/CommonDigest.h>
 #import "UAUtils.h"
+
+// Frameworks
+#import <CommonCrypto/CommonDigest.h>
+
+// UA external libraries
+#import "UA_SBJSON.h"
+#import "UA_Base64.h"
+#import "UA_ASIHTTPRequest.h"
+
+// UALib
 #import "UAUser.h"
 #import "UAirship.h"
-#import "UA_SBJSON.h"
 
+// C includes
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
@@ -197,6 +206,15 @@
           request.url, request.requestHeaders, request.requestMethod, request.postBody,
           request.responseStatusCode, request.responseHeaders, request.responseString,
           request.username, request.password);
+}
+
++ (void)addUserAuthToWebRequest:(NSMutableURLRequest *)requestObj {
+    NSString *username = [UAUser defaultUser].username;
+    NSString *password = [UAUser defaultUser].password;
+    NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
+	
+    authString = [NSString stringWithFormat: @"Basic %@", authString];
+    [requestObj setValue:authString forHTTPHeaderField:@"Authorization"];
 }
 
 @end

@@ -115,9 +115,6 @@ SINGLETON_INTERFACE(UAInbox);
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (void)land;
 
-// internal functionality - can this be private?
-+ (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
-
 // do away with this - it should be dictated by idiom
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 

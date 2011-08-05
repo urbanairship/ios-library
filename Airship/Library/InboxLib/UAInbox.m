@@ -29,7 +29,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UA_ASINetworkQueue.h"
 #import "UA_ASIHTTPRequest.h"
-#import "UA_Base64.h"
 
 #import "UAirship.h"
 #import "UAInboxMessageList.h"
@@ -78,15 +77,6 @@ static Class _uiClass;
 
 + (void)setRuniPhoneTargetOniPad:(BOOL)value {
 	[[[UAInbox shared] uiClass] setRuniPhoneTargetOniPad:value];
-}
-
-+ (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj {
-    NSString *username = [UAUser defaultUser].username;
-    NSString *password = [UAUser defaultUser].password;
-    NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
-	
-    authString = [NSString stringWithFormat: @"Basic %@", authString];
-    [requestObj setValue:authString forHTTPHeaderField:@"Authorization"];
 }
 
 #pragma mark -

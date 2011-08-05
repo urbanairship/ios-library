@@ -28,6 +28,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxUI.h"
 #import "UAInboxMessageList.h"
 
+#import "UAUtils.h"
+
 #define kMessageUp 0
 #define kMessageDown 1
 
@@ -149,7 +151,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self refreshHeader];
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
-    [UAInbox addAuthToWebRequest:requestObj];
+    [UAUtils addUserAuthToWebRequest:requestObj];
     [requestObj setTimeoutInterval:5];
     [webView stopLoading];
     [webView loadRequest:requestObj];

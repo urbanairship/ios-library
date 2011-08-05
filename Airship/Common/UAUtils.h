@@ -24,7 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UA_ASIHTTPRequest.h"
+
+@class UA_ASIHTTPRequest;
 
 @interface UAUtils : NSObject {
 
@@ -55,10 +56,17 @@
 + (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
                              delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
 
+/**
+ * Adds the UAUser username and password to an NSMutableURLRequest.
+ *
+ * @param request The request needing authentication credentials
+ */
++ (void)addUserAuthToWebRequest:(NSMutableURLRequest *)request;
+
 //HTTP Response Helpers
 + (id)responseFromRequest:(UA_ASIHTTPRequest *)request;
 + (id)parseJSON:(NSString *)responseString;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request keyword:(NSString *)keyword;
++ (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
++ (void)requestWentWrong:(UA_ASIHTTPRequest *)request keyword:(NSString *)keyword;
 
 @end
