@@ -83,10 +83,7 @@ static Class _uiClass;
 #pragma mark Open API, enter/quit Inbox
 
 + (void)loadInbox {
-	if([UAInbox shared].messageList == nil) {
-		[UAInbox shared].messageList = [UAInboxMessageList shared];
-	}
-	
+
     [[UAInbox shared].messageList retrieveMessageList];
 	
     [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
