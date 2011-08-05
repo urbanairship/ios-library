@@ -45,3 +45,4 @@ rm -rf `find . -name "*Tests"`
 rm -rf `find . -name "*Test*.plist"`
 rm -rf `find . -name "*Test*.pch"`
 rm -rf `find . -name "*.orig" `
+mv -f AirshipConfig.plist.sample AirshipConfig.plist
