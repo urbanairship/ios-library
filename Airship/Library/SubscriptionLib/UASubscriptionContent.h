@@ -39,6 +39,7 @@
     int revision;
     int fileSize;
     NSString *description;
+    NSDate *publishDate;
 
     BOOL downloaded;
     float progress;
@@ -53,6 +54,14 @@
 @property (nonatomic, assign) int revision;
 @property (nonatomic, assign) int fileSize;
 @property (nonatomic, retain) NSString *description;
+
+/**
+ * The time and date the content was published.
+ *
+ * Note that the publish date may be outside of the purchased
+ * subscription range if this is default content.
+ */
+@property (nonatomic, retain) NSDate *publishDate;
 @property (nonatomic, assign) float progress;
 @property (nonatomic, assign) BOOL downloaded;
 @property (nonatomic, readonly, assign) BOOL downloading;
