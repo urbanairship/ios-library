@@ -31,19 +31,20 @@
 
 }
 
+///---------------------------------------------------------------------------------------
+/// @name Device ID Utils
+///---------------------------------------------------------------------------------------
+
 + (NSString *)udidHash;
 
 + (NSString *)UUID;
 
 + (NSString *)deviceModelName;
 
-+ (NSString *)pluralize:(int)count 
-             singularForm:(NSString*)singular
-             pluralForm:(NSString*)plural;
+///---------------------------------------------------------------------------------------
+/// @name HTTP Authenticated Request Helpers
+///---------------------------------------------------------------------------------------
 
-+ (NSString *)getReadableFileSizeFromBytes:(double)bytes;
-
-//HTTP Request Helpers
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)selector;
 
@@ -63,10 +64,21 @@
  */
 + (void)addUserAuthToWebRequest:(NSMutableURLRequest *)request;
 
-//HTTP Response Helpers
+///---------------------------------------------------------------------------------------
+/// @name HTTP Response Helpers
+///---------------------------------------------------------------------------------------
 + (id)responseFromRequest:(UA_ASIHTTPRequest *)request;
 + (id)parseJSON:(NSString *)responseString;
 + (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
 + (void)requestWentWrong:(UA_ASIHTTPRequest *)request keyword:(NSString *)keyword;
 
+///---------------------------------------------------------------------------------------
+/// @name UI Formatting Helpers
+///---------------------------------------------------------------------------------------
+
++ (NSString *)pluralize:(int)count 
+           singularForm:(NSString*)singular
+             pluralForm:(NSString*)plural;
+
++ (NSString *)getReadableFileSizeFromBytes:(double)bytes;
 @end
