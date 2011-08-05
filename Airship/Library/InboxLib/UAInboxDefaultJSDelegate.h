@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UAInbox.h"
 
 @interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate> {

@@ -27,15 +27,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInbox.h"
 
-#import "UAirship.h"
+#import "UA_ASINetworkQueue.h"
+#import "UA_ASIHTTPRequest.h"
 #import "UA_Base64.h"
+
+#import "UAirship.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxURLCache.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-#import "UA_ASINetworkQueue.h"
-#import "UA_ASIHTTPRequest.h"
+
 #import "UAInboxMessageListObserver.h"
 
 UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)

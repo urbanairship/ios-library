@@ -24,6 +24,8 @@
  */
 
 #import "UAInboxDBManager.h"
+#import "UA_FMDatabase.h"
+
 #import "UAInboxMessage.h"
 
 @implementation UAInboxDBManager

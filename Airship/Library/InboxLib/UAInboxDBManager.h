@@ -23,16 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGlobal.h"
 #import <Foundation/Foundation.h>
-#import "UA_FMDatabase.h"
+
+#import "UAGlobal.h"
+
+@class UA_FMDatabase;
+@class UAInboxMessage;
 
 #define UA_FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
 #define OLD_DB_NAME @"AirMail.db"
 #define DB_NAME @"UAInbox.db"
 
-
-@class UAInboxMessage;
 @interface UAInboxDBManager : NSObject {
     UA_FMDatabase *db;
 }

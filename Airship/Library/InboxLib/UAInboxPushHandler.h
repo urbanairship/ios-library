@@ -24,7 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+
 #import "UAInboxMessageListObserver.h"
 
 @class UAInboxMessageList;

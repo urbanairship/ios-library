@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGlobal.h"
 #import <Foundation/Foundation.h>
 
 @interface UAInboxURLCache : NSURLCache {

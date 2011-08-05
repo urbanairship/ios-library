@@ -26,6 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessage.h"
 
 #import "UAirship.h"
+#import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxDBManager.h"
 #import "UA_ASIHTTPRequest.h"

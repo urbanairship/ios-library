@@ -23,8 +23,11 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInbox.h"
+#import <Foundation/Foundation.h>
+
 #import "UAUser.h"
+
+@class UAInboxMessage;
 
 typedef enum {
     UABatchReadMessages,
@@ -37,8 +40,6 @@ typedef enum {
     UABatchReadMessagesFailed,
     UABatchDeleteMessagesFailed,
 } UABatchUpdateResult;
-
-@class UAInboxMessage;
 
 @interface UAInboxMessageList : UAObservable <UAUserObserver> {
     NSMutableArray* messages;

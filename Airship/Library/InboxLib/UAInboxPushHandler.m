@@ -26,9 +26,12 @@
 
 #import "UAInboxPushHandler.h"
 #import "UAirship.h"
+
+#import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxAlertProtocol.h"
 #import "UAEvent.h"
+
 
 @implementation UAInboxPushHandler
 
