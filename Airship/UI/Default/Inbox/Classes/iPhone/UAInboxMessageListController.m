@@ -398,7 +398,7 @@
     [alert release];
 }
 
-- (void)messagesDidUpateWithOption:(id)option {
+- (void)messagesDidUpdateWithOption:(id)option {
     if ([option intValue] == UABatchDeleteMessagesSuccess) {
         [messageTable beginUpdates];
         [messageTable deleteRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]

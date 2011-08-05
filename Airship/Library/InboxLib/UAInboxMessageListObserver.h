@@ -25,16 +25,69 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 
+@class UAInboxMessage;
+
+/**
+ * The UAInboxMessageListObserver protocol declares methods that
+ * are implemented by observers of a UAInboxMessageList object.
+ *
+ * An observer is notified when messages are modified, loaded or
+ * fail to load or update.
+ */
 @protocol UAInboxMessageListObserver <NSObject>
 
 @optional
+
+/**
+ * Tells an observer when a message list reload or update 
+ * is initiated.
+ */
 - (void)messageListWillLoad;
+
+/**
+ * Tells an observer when the message list has successfully loaded
+ * the latest information from Urban Airship's servers.
+ */
 - (void)messageListLoaded;
+
+/**
+ * TODO: deprecate/rename -- it's only called when a user update fails,
+ * and a message is never passed along.
+ */
 - (void)inboxError:(NSString*)message;
+
+/**
+ * Tells the observer that a request for inbox messages failed.
+ */
 - (void)inboxLoadFailed;
-- (void)messagesDidUpateWithOption:(id)option;
-- (void)singleMessageMarkAsReadFinished:(id)m;
-- (void)singleMessageMarkAsReadFailed:(id)m;
+
+/**
+ * Tells the observer when a message or group of messages has been updated.
+ * 
+ * TODO: wrap the option in an NSValue, as the observer calls notifyObserver withObject
+ * 
+ @ @param option A UABatchUpdateCommand indicating the type 
+ * of update performed. 
+ */
+- (void)messagesDidUpdateWithOption:(id)option;
+
+/**
+ * Tells the observer that a message has been marked as read.
+ *
+ * @param message The message marked as read
+ */
+- (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)message;
+
+/**
+ * Tells the observer that a mark-as-read request failed.
+ *
+ * @param message The message that failed to update
+ */
+- (void)singleMessageMarkAsReadFailed:(UAInboxMessage *)message;
+
+/**
+ * TODO: unused -- necessary?
+ */
 - (void)newMessageArrived:(id)message delegate:(id)delegate;
 
 @end

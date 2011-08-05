@@ -236,7 +236,7 @@ static UAInboxMessageList *_messageList = nil;
             option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
         }
         self.isBatchUpdating = NO;
-        [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+        [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
         return;
     }
 
@@ -258,7 +258,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 
     self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+    [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
 }
 
 - (void)batchUpdateFailed:(UA_ASIHTTPRequest*)request {
@@ -271,7 +271,7 @@ static UAInboxMessageList *_messageList = nil;
         option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
     }
     self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+    [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
 }
 
 - (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
