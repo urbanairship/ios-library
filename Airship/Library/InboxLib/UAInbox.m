@@ -82,15 +82,9 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 
-+ (void)loadInbox {
-
-    [[UAInbox shared].messageList retrieveMessageList];
-	
-    [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
-}
-
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    [UAInbox loadInbox];
+    [[UAInbox shared].messageList retrieveMessageList];
+    [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 }
 

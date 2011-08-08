@@ -133,11 +133,6 @@ SINGLETON_INTERFACE(UAInbox);
 + (void)quitInbox;
 
 /**
- * Retrieve the latest inbox messages from the server and switch to the inboxCache.
- */
-+ (void)loadInbox;
-
-/**
  * Display the inbox UI.
  *
  * Calls [UAInboxUIProtocol displayInbox: animated:] on the UI class.
