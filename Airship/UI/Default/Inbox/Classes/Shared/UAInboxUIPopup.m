@@ -25,6 +25,7 @@
 
 #import "UAInboxUIPopup.h"
 #import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 #import "UAPopupWindow.h"
 
 #import "UAInboxMessageList.h"
@@ -49,7 +50,30 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-    [UAPopupWindow showWindowWithMessageID:messageID];    
+    
+    if(![UAInboxUI shared].isVisible) {
+        [UAPopupWindow showWindowWithMessageID:messageID];
+        return;
+    }
+    
+    // If the message view is already open, just load the first message.
+    if ([viewController isKindOfClass:[UINavigationController class]]) {
+		
+        // For iPhone
+        UINavigationController *navController = (UINavigationController *)viewController;
+        UAInboxMessageViewController *mvc;
+        
+		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+            mvc = (UAInboxMessageViewController *) navController.topViewController;
+            [mvc loadMessageForID:messageID];
+        } else {
+			
+            mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+            [mvc loadMessageForID:messageID];
+            [navController pushViewController:mvc animated:YES];
+        }
+    }
+
 }
 
 + (void)quitInbox {
