@@ -23,7 +23,7 @@
 @synthesize webView, message;
 
 /**
- * This is the only public method, it opens a popup window and loads the given content
+ * Opens a popup window and loads the given content within a particular view
  * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page
  * @param UIView* view provide a UIViewController's view here (or other view)
  */
@@ -32,10 +32,15 @@
     [[UAPopupWindow alloc] initWithSuperview:view andMessageID:messageID];
 }
 
+/**
+ * Opens a popup window and loads the given content in the app delegate's window
+ * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page
+ * @param UIView* view provide a UIViewController's view here (or other view)
+ */
+
 + (void)showWindowWithMessageID:(NSString *)messageID {
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-    UIViewController *rvc = window.rootViewController;
-    [UAPopupWindow showWindowInsideView:rvc.view withMessageID:messageID];
+    [UAPopupWindow showWindowInsideView:window withMessageID:messageID];
     
 }
 
