@@ -42,9 +42,6 @@
 
 - (void)dealloc {
     
-    [UAInbox quitInbox];
-    [[UAInbox shared].messageList removeObserver:self];
-
     RELEASE_SAFELY(cellNibName);
     RELEASE_SAFELY(cellReusableId);
     RELEASE_SAFELY(messageTable);
@@ -72,9 +69,6 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [self initNibNames];
     }
-    
-    [UAInbox loadInbox];
-    [[UAInbox shared].messageList addObserver:self];
     
     return self;
 }
@@ -138,12 +132,18 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    [[UAInbox shared].messageList addObserver:self];
+    
     [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
     [self.navigationController.navigationBar addSubview:badgeView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
+    [[UAInbox shared].messageList removeObserver:self];
+    
     [badgeView removeFromSuperview];
 }
 
