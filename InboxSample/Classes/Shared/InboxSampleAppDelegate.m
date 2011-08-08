@@ -25,10 +25,10 @@
 #import "InboxSampleAppDelegate.h"
 
 //#import "UAInboxUI.h"
-#import "UAInboxUIPopup.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
+#import "UAInboxUIPopup.h"
 
 #import "UAirship.h"
 #import "UAInbox.h"
@@ -47,7 +47,7 @@
     [self failIfSimulator];
     
     //[UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox useCustomUI: [UAInboxUIPopup class]];
+    [UAInbox useCustomUI: UAInboxUIPopup class];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
@@ -79,11 +79,11 @@
     [UAInbox shared].jsDelegate = jsDelegate;
     
     // If the application gets an UAInbox message id on launch open it up immediately.
-    [UAInboxUI shared].inboxParentController = viewController;
+    [[[UAInbox shared] uiClass] shared].inboxParentController = viewController;
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
-		[UAInboxUI loadLaunchMessage];
+		[[[UAInbox shared] uiClass] loadLaunchMessage];
 	}
 
     // Return value is ignored for push notifications, so it's safer to return
@@ -118,7 +118,7 @@
         [inbox.messageList retrieveMessageList];
     }
     
-	id<UAInboxAlertProtocol> alertHandler = [UAInboxUI getAlertHandler];
+	id<UAInboxAlertProtocol> alertHandler = [[[UAInbox shared] uiClass] getAlertHandler];
 	[alertHandler cancelPreviousAlertAndShowMessage];
 }
 
