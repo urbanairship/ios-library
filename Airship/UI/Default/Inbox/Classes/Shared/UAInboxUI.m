@@ -63,11 +63,9 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
         
-        alertHandler = [[UAInboxAlertHandler alloc] init];
-        
-        [[UAInbox shared].messageList addObserver:self];
-		
+        alertHandler = [[UAInboxAlertHandler alloc] init];        		
     }
+    
     return self;
 }
 
@@ -90,7 +88,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-	
+    	
     if(![UAInboxUI shared].isVisible) {
         UALOG(@"UI needs to be brought up!");
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
@@ -166,12 +164,6 @@ static BOOL runiPhoneTargetOniPad = NO;
         con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
 }
 
-// handle both in app notification and launching notification
-- (void)messageListLoaded {
-	[UAInboxUI loadLaunchMessage];
-}
-
-
 + (void)loadLaunchMessage {
 	
 	// if pushhandler has a messageID load it
@@ -193,7 +185,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)land {
-	[[UAInboxMessageList shared] removeObserver:self];  
+    //do any necessary teardown here
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {

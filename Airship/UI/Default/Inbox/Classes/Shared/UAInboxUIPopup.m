@@ -64,9 +64,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
         
         alertHandler = [[UAInboxAlertHandler alloc] init];
-        
-        [[UAInbox shared].messageList addObserver:self];
-		
+        		
     }
     return self;
 }
@@ -143,14 +141,8 @@ static BOOL runiPhoneTargetOniPad = NO;
         con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
 }
 
-// handle both in app notification and launching notification
-- (void)messageListLoaded {
-	[UAInboxUIPopup loadLaunchMessage];
-}
-
-
 + (void)loadLaunchMessage {
-	
+    	
 	// if pushhandler has a messageID load it
 	if([[UAInbox shared].pushHandler viewingMessageID] != nil) {
         
@@ -170,7 +162,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)land {
-	[[UAInboxMessageList shared] removeObserver:self];  
+    //do any necessary teardown here
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {
