@@ -96,7 +96,6 @@
 
     selectedIndexPathsForEditing = [[NSMutableSet alloc] init];
     
-    [UAInbox loadInbox];
 }
 
 - (void)createToolbarItems {
@@ -133,7 +132,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    
     [[UAInbox shared].messageList addObserver:self];
+    [[UAInbox shared].messageList retrieveMessageList];
     
     [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
     [self.navigationController.navigationBar addSubview:badgeView];
