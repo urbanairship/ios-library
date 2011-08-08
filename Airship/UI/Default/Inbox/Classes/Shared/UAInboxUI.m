@@ -31,7 +31,11 @@
 #import "UAInboxPushHandler.h"
 
 @implementation UAInboxUI
-@synthesize localizationBundle, rootViewController, inboxParentController, isVisible;
+
+@synthesize localizationBundle;
+@synthesize rootViewController;
+@synthesize inboxParentController;
+@synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
@@ -167,19 +171,20 @@ static BOOL runiPhoneTargetOniPad = NO;
 + (void)loadLaunchMessage {
 	
 	// if pushhandler has a messageID load it
-	if([[UAInbox shared].pushHandler viewingMessageID] != nil) {
+    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
+	if (pushHandler.viewingMessageID && pushHandler.hasLaunchMessage) {
 
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:[[UAInbox shared].pushHandler viewingMessageID]];
-		if (msg == nil) {
+		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
+		if (!msg) {
 			return;
 		}
         
         UIViewController *rvc = [UAInboxUI shared].rootViewController;
-		        
-		[UAInboxUI displayMessage:rvc message:[[UAInbox shared].pushHandler viewingMessageID]];
 		
-		[[UAInbox shared].pushHandler setViewingMessageID:nil];
-		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
+		[UAInboxUI displayMessage:rvc message:pushHandler.viewingMessageID];
+		
+		pushHandler.viewingMessageID = nil;
+		pushHandler.hasLaunchMessage = NO;
 	}
 
 }

@@ -41,6 +41,7 @@ typedef enum {
 @class UAInboxAlertProtocol;
 
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
+  @private
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
     UIViewController *rootViewController;
