@@ -32,27 +32,10 @@
 
 @class UAInboxAlertProtocol;
 
-@interface UAInboxUIPopup : NSObject <UAInboxUIProtocol> {
-    NSBundle *localizationBundle;
-	UAInboxAlertHandler *alertHandler;
-    UIViewController *rootViewController;
-    UIViewController *inboxParentController;
-    BOOL isVisible;
+@interface UAInboxUIPopup : UAInboxUI {
+
 }
 
-@property (nonatomic, retain) NSBundle *localizationBundle;
-@property (nonatomic, retain) UIViewController *rootViewController;
-@property (nonatomic, retain) UIViewController *inboxParentController;
-@property (nonatomic, assign) BOOL isVisible;
-
 SINGLETON_INTERFACE(UAInboxUIPopup);
-
-+ (void)quitInbox;
-- (void)quitInbox:(QuitReason)reason;
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value;
-+ (void)land;
-+ (void)loadLaunchMessage;
 
 @end

@@ -31,47 +31,8 @@
 #import "UAInboxPushHandler.h"
 
 @implementation UAInboxUIPopup
-@synthesize localizationBundle, rootViewController, inboxParentController, isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
-
-static BOOL runiPhoneTargetOniPad = NO;
-
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value {
-    runiPhoneTargetOniPad = value;
-}
-
-- (void)dealloc {
-    RELEASE_SAFELY(localizationBundle);
-	RELEASE_SAFELY(alertHandler);
-    RELEASE_SAFELY(rootViewController);
-    RELEASE_SAFELY(inboxParentController);
-    [super dealloc];
-} 
-
-- (id)init {
-    if (self = [super init]) {
-		
-        NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
-        self.localizationBundle = [NSBundle bundleWithPath:path];
-		
-        self.isVisible = NO;
-        
-        UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
-        mlc.title = @"Inbox";
-        mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
-        
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
-        
-        alertHandler = [[UAInboxAlertHandler alloc] init];
-        		
-    }
-    return self;
-}
-
-- (void)inboxDone:(id)sender {
-    [self quitInbox:NORMAL_QUIT];
-}
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	
@@ -95,52 +56,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     [[UAInboxUIPopup shared] quitInbox:NORMAL_QUIT];
 }
 
-- (void)quitInbox:(QuitReason)reason {
-    if (reason == DEVICE_TOKEN_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Get_Device_Token")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else if (reason == USER_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Inbox_Not_Ready")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else {
-        NSLog(@"reason=%d", reason);
-    }
-    
-    
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
-    }
-	
-    self.isVisible = NO;
-    
-    //added iOS 5 parent/presenting view getter
-    UIViewController *con;
-    if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-        con = self.rootViewController.presentingViewController;
-    } else {
-        con = self.rootViewController.parentViewController;
-    }
-    
-    [con dismissModalViewControllerAnimated:YES];
-    
-    // BUG: Workaround. ModalViewController does not handle resizing correctly if
-    // dismissed in landscape when status bar is visible
-    if (![UIApplication sharedApplication].statusBarHidden)
-        con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
-}
-
 + (void)loadLaunchMessage {
     	
 	// if pushhandler has a messageID load it
@@ -159,10 +74,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
 	}
     
-}
-
-+ (void)land {
-    //do any necessary teardown here
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {
