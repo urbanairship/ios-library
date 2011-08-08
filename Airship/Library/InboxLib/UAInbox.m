@@ -98,7 +98,7 @@ static Class _uiClass;
     [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
 }
 
-+ (void) land {
++ (void)land {
     // Update application badge number
     [[UAInbox shared].messageList removeObserver:self];
 	[UAInbox shared].messageList = nil;
