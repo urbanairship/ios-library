@@ -52,7 +52,7 @@
 }
 
 
-+ (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox {
++ (void)handleNotification:(NSDictionary*)userInfo{
 
     UALOG(@"remote notification: %@", [userInfo description]);
 
@@ -69,7 +69,7 @@
     }
     
     if (richPushId) {
-        [[UAInbox shared].pushHandler setViewingMessageID:richPushId];
+        [UAInbox shared].pushHandler.viewingMessageID = richPushId;
     }
 	
     // add push_received event, or handle appropriately
@@ -88,6 +88,8 @@
         [alertHandler showNewMessageAlert:message];
 		
     } else {
+        
+        [UAInbox shared].pushHandler.hasLaunchMessage = YES;
         
         // load message list and show the specified message
         [[UAInbox shared].messageList retrieveMessageList];
