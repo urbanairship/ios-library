@@ -64,12 +64,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Tells the observer when a message or group of messages has been updated.
  * 
- * TODO: wrap the option in an NSValue, as the observer calls notifyObserver withObject
- * 
- @ @param option A UABatchUpdateCommand indicating the type 
+ @ @param option A UABatchUpdateCommand wrapped in an NSNumber indicating the type 
  * of update performed. 
  */
-- (void)messagesDidUpdateWithOption:(id)option;
+- (void)messagesDidUpdateWithOption:(NSNumber *)option;
 
 /**
  * Tells the observer that a message has been marked as read.
@@ -88,6 +86,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * TODO: unused -- necessary?
  */
-- (void)newMessageArrived:(id)message delegate:(id)delegate;
+- (void)newMessageArrived:(NSDictionary *)message;
 
 @end
