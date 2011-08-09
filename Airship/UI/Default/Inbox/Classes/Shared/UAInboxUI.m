@@ -35,6 +35,7 @@
 @synthesize localizationBundle;
 @synthesize rootViewController;
 @synthesize inboxParentController;
+@synthesize alertHandler;
 @synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
@@ -89,8 +90,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
 } 
 
-
-
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
     	
     if(![UAInboxUI shared].isVisible) {
@@ -114,6 +113,13 @@ static BOOL runiPhoneTargetOniPad = NO;
         [mvc loadMessageForID:messageID];
         [navController pushViewController:mvc animated:YES];
     }
+}
+
++ (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    [[UAInboxUI shared].alertHandler showNewMessageAlert:alertText];
 }
 
 + (void)quitInbox {
@@ -188,16 +194,5 @@ static BOOL runiPhoneTargetOniPad = NO;
 + (void)land {
     //do any necessary teardown here
 }
-
-//temporarily adding this so it will compile
-- (UAInboxAlertHandler *)getAlertHandler {
-    return alertHandler;
-}
-
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    return [[UAInboxUI shared] getAlertHandler];
-}
-
-
 
 @end

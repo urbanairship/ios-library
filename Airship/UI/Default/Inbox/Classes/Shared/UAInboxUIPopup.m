@@ -47,8 +47,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
     [viewController presentModalViewController:[UAInboxUIPopup shared].rootViewController animated:animated];
 } 
 
-
-
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
     
     //if the inbox is not displaying, show the message in an overlay window
@@ -76,6 +74,13 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
     }
 }
 
++ (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    [[UAInboxUIPopup shared].alertHandler showNewMessageAlert:alertText];
+}
+
 + (void)quitInbox {
     [[UAInboxUIPopup shared] quitInbox:NORMAL_QUIT];
 }
@@ -96,10 +101,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
 	}
     
-}
-
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    return [[UAInboxUIPopup shared] getAlertHandler];
 }
 
 @end

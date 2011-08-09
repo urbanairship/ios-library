@@ -52,15 +52,16 @@ typedef enum {
 @property (nonatomic, retain) NSBundle *localizationBundle;
 @property (nonatomic, retain) UIViewController *rootViewController;
 @property (nonatomic, retain) UIViewController *inboxParentController;
+@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
 @property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
 - (void)quitInbox:(QuitReason)reason;
-- (UAInboxAlertHandler *)getAlertHandler;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)newMessageArrived:(NSDictionary *)message;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;
