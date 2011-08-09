@@ -40,6 +40,7 @@
 
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
+    [[[UAInbox shared] messageList] removeObserver:self];
     [super dealloc];
 }
 
@@ -125,10 +126,30 @@
     
 }
 
+- (void)messageListLoaded {
+    
+    //only take action is there's a new message
+    if(viewingMessageID) {
+        
+        Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
+        
+        //if the app received the notification in the foreground, display it
+        if(hasLaunchMessage) {
+            [uiClass displayMessage:nil message:viewingMessageID];
+            [self setViewingMessageID:nil];
+        }
+        //otherwise let the UI class decide what to do with it
+        else {
+            [uiClass loadLaunchMessage]; 
+        }
+    }
+}
+
 
 - (id)init {
     if (self = [super init]) {
 		hasLaunchMessage = NO;
+        [[[UAInbox shared] messageList] addObserver:self];
 	}
 	return self;
 }
