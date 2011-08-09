@@ -77,22 +77,20 @@
     [[UAirship shared].analytics handleNotification:userInfo];
     
 	BOOL isActive = [self isApplicationActive];
-
+    
+    //if the app is in the foreground, let the UI class decide how it
+    //wants to respond to the incoming push
     if (isActive) {
-        
-        // only show alert view when the app is active
-        // if it's running in background, apple will show a standard notification
-        // alertview, so here we no need to show our alert
-        NSString* message = [[userInfo objectForKey: @"aps"] objectForKey: @"alert"];
-		
-		id<UAInboxAlertProtocol> alertHandler = [[[UAInbox shared] uiClass] getAlertHandler];
-        [alertHandler showNewMessageAlert:message];
-		
-    } else {
-        
+        Class <UAInboxUIProtocol> uiClass = [UAInbox shared].uiClass;
+        [uiClass newMessageArrived:userInfo];
+    }
+    
+    //otherwise, load the message list
+    else {
+        //this will result in calling loadLaunchMessage on the UI class
+        //once the request is complete
         [UAInbox shared].pushHandler.hasLaunchMessage = YES;
         
-        // load message list and show the specified message
         [[UAInbox shared].messageList retrieveMessageList];
     }
     
@@ -138,7 +136,7 @@
             [uiClass displayMessage:nil message:viewingMessageID];
             [self setViewingMessageID:nil];
         }
-        //otherwise let the UI class decide what to do with it
+        //otherwise treat it as a launch message
         else {
             [uiClass loadLaunchMessage]; 
         }
