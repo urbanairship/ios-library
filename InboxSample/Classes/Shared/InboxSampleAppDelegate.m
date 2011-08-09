@@ -108,7 +108,6 @@
     [UAInboxPushHandler handleNotification:userInfo];
 }
 
-
 - (void)applicationWillTerminate:(UIApplication *)application {
     [UAirship land];
 }
