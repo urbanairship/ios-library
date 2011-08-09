@@ -57,12 +57,4 @@ static UIAlertView *notificationAlert = nil;
 	
 }
 
-// TODO: we can only cancel one message now.
-- (void)cancelPreviousAlertAndShowMessage {
-//    if (notificationAlert != nil) {
-//        [notificationAlert dismissWithClickedButtonIndex:1 animated:NO];
-//        notificationAlert = nil;
-//    }
-}
-
 @end
