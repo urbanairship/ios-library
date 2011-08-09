@@ -82,7 +82,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 }
 
 + (void)quitInbox {
-    [[UAInboxUIPopup shared] quitInbox:NORMAL_QUIT];
+    [[UAInboxUIPopup shared] quitInbox];
 }
 
 + (void)loadLaunchMessage {

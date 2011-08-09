@@ -32,12 +32,6 @@
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
-typedef enum {
-    NORMAL_QUIT,
-    DEVICE_TOKEN_ERROR,
-    USER_ERROR,
-} QuitReason;
-
 @class UAInboxAlertProtocol;
 
 @interface UAInboxUI : NSObject <UAInboxUIProtocol> {
@@ -58,7 +52,7 @@ typedef enum {
 SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
-- (void)quitInbox:(QuitReason)reason;
+- (void)quitInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (void)newMessageArrived:(NSDictionary *)message;

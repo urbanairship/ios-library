@@ -75,7 +75,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)inboxDone:(id)sender {
-    [self quitInbox:NORMAL_QUIT];
+    [self quitInbox];
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
@@ -122,33 +122,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     [[UAInboxUI shared].alertHandler showNewMessageAlert:alertText];
 }
 
-+ (void)quitInbox {
-    [[UAInboxUI shared] quitInbox:NORMAL_QUIT];
-}
-
-- (void)quitInbox:(QuitReason)reason {
-    if (reason == DEVICE_TOKEN_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Get_Device_Token")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else if (reason == USER_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Inbox_Not_Ready")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else {
-        NSLog(@"reason=%d", reason);
-    }
-    
+- (void)quitInbox {
 
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
@@ -170,6 +144,10 @@ static BOOL runiPhoneTargetOniPad = NO;
     // dismissed in landscape when status bar is visible
     if (![UIApplication sharedApplication].statusBarHidden)
         con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
+}
+
++ (void)quitInbox {
+    [[UAInboxUI shared] quitInbox];
 }
 
 + (void)loadLaunchMessage {
