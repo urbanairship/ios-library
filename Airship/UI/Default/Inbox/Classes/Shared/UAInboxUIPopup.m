@@ -77,7 +77,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 }
 
 + (void)quitInbox {
-    [[UAInboxUIPopup shared] quitInbox:NORMAL_QUIT];
+    [[UAInboxUIPopup shared] quitInbox];
 }
 
 + (void)loadLaunchMessage {
@@ -100,9 +100,9 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
     
 }
 
+//TODO: remove
 + (id<UAInboxAlertProtocol>)getAlertHandler {
-    UAInboxUIPopup* ui = [UAInboxUIPopup shared];
-    return ui->alertHandler;
+    return nil;
 }
 
 @end

@@ -74,7 +74,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)inboxDone:(id)sender {
-    [self quitInbox:NORMAL_QUIT];
+    [self quitInbox];
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
@@ -119,32 +119,10 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)quitInbox {
-    [[UAInboxUI shared] quitInbox:NORMAL_QUIT];
+    [[UAInboxUI shared] quitInbox];
 }
 
-- (void)quitInbox:(QuitReason)reason {
-    if (reason == DEVICE_TOKEN_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Get_Device_Token")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else if (reason == USER_ERROR) {
-        UALOG(@"Inbox not initialized. Waiting for Device Token.");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Inbox_Not_Ready_Title")
-                                                        message:UA_INBOX_TR(@"UA_Inbox_Not_Ready")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    } else {
-        NSLog(@"reason=%d", reason);
-    }
-    
+- (void)quitInbox {
 
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
@@ -164,8 +142,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     
     // BUG: Workaround. ModalViewController does not handle resizing correctly if
     // dismissed in landscape when status bar is visible
-    if (![UIApplication sharedApplication].statusBarHidden)
+    if (![UIApplication sharedApplication].statusBarHidden) {
         con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
+    }
 }
 
 + (void)loadLaunchMessage {
