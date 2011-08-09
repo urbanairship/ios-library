@@ -100,7 +100,6 @@ static Class _uiClass;
 
 + (void)land {
     // Update application badge number
-    [[UAInbox shared].messageList removeObserver:self];
 	[UAInbox shared].messageList = nil;
 	
     [[[UAInbox shared] uiClass] land];
@@ -131,20 +130,12 @@ static Class _uiClass;
         self.clientCache = [NSURLCache sharedURLCache];
         
         self.messageList = [UAInboxMessageList shared];
-        [self.messageList addObserver:self];
-
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
     }
 
     return self;
 }
-
-//if the message ID is non-nil, this will result in a message display
-- (void)messageListLoaded {
-    [_uiClass loadLaunchMessage];
-}
-
 
 - (void)dealloc {
     RELEASE_SAFELY(clientCache);
