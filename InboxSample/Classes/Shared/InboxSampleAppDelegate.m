@@ -105,7 +105,7 @@
 // Copy and paste this method into your AppDelegate to recieve push
 // notifications for your application while the app is running.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [UAInboxPushHandler handleNotification:userInfo forInbox:[UAInboxMessageList shared]];
+    [UAInboxPushHandler handleNotification:userInfo];
 }
 
 
