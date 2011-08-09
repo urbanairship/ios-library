@@ -51,29 +51,29 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
     
+    //if the inbox is not displaying, show the message in an overlay window
     if(![UAInboxUI shared].isVisible) {
         [UAPopupWindow showWindowWithMessageID:messageID];
-        return;
     }
     
-    // If the message view is already open, just load the first message.
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
-		
+    else {
         // For iPhone
-        UINavigationController *navController = (UINavigationController *)viewController;
+        UINavigationController *navController = (UINavigationController *)[UAInboxUIPopup shared].rootViewController;
         UAInboxMessageViewController *mvc;
         
-		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+        //if a message view is displaying, just load the new message
+        if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
             mvc = (UAInboxMessageViewController *) navController.topViewController;
             [mvc loadMessageForID:messageID];
-        } else {
-			
+        } 
+        
+        //otherwise, push over a new message view
+        else {
             mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
             [mvc loadMessageForID:messageID];
             [navController pushViewController:mvc animated:YES];
         }
     }
-
 }
 
 + (void)quitInbox {
@@ -89,10 +89,8 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 		if (msg == nil) {
 			return;
 		}
-        
-        UIViewController *rvc = [UAInboxUIPopup shared].rootViewController;
-        
-		[UAInboxUIPopup displayMessage:rvc message:[[UAInbox shared].pushHandler viewingMessageID]];
+                
+		[UAInboxUIPopup displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
 		
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
 		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
@@ -101,8 +99,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 }
 
 + (id<UAInboxAlertProtocol>)getAlertHandler {
-    UAInboxUIPopup* ui = [UAInboxUIPopup shared];
-    return ui->alertHandler;
+    return [[UAInboxUIPopup shared] getAlertHandler];
 }
 
 @end

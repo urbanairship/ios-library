@@ -98,23 +98,21 @@ static BOOL runiPhoneTargetOniPad = NO;
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
 		[UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
 	}
-	
-    // If the message view is already open, just load the first message.
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
 		
-        // For iPhone
-        UINavigationController *navController = (UINavigationController *)viewController;
-        UAInboxMessageViewController *mvc;
-        
-		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
-            mvc = (UAInboxMessageViewController *) navController.topViewController;
-            [mvc loadMessageForID:messageID];
-        } else {
-			
-            mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
-            [mvc loadMessageForID:messageID];
-            [navController pushViewController:mvc animated:YES];
-        }
+    // For iPhone
+    UINavigationController *navController = (UINavigationController *)[UAInboxUI shared].rootViewController;
+    UAInboxMessageViewController *mvc;
+    
+    //if a message view is displaying, just load the new message
+    if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+        mvc = (UAInboxMessageViewController *) navController.topViewController;
+        [mvc loadMessageForID:messageID];
+    } 
+    //otherwise, push over a new message view
+    else {
+        mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
+        [mvc loadMessageForID:messageID];
+        [navController pushViewController:mvc animated:YES];
     }
 }
 
@@ -178,10 +176,8 @@ static BOOL runiPhoneTargetOniPad = NO;
 		if (!msg) {
 			return;
 		}
-        
-        UIViewController *rvc = [UAInboxUI shared].rootViewController;
-		
-		[UAInboxUI displayMessage:rvc message:pushHandler.viewingMessageID];
+        		
+		[UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
 		
 		pushHandler.viewingMessageID = nil;
 		pushHandler.hasLaunchMessage = NO;
@@ -193,9 +189,15 @@ static BOOL runiPhoneTargetOniPad = NO;
     //do any necessary teardown here
 }
 
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    UAInboxUI* ui = [UAInboxUI shared];
-    return ui->alertHandler;
+//temporarily adding this so it will compile
+- (UAInboxAlertHandler *)getAlertHandler {
+    return alertHandler;
 }
+
++ (id<UAInboxAlertProtocol>)getAlertHandler {
+    return [[UAInboxUI shared] getAlertHandler];
+}
+
+
 
 @end

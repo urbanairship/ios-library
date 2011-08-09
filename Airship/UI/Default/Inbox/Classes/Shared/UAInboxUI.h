@@ -58,6 +58,7 @@ SINGLETON_INTERFACE(UAInboxUI);
 
 + (void)quitInbox;
 - (void)quitInbox:(QuitReason)reason;
+- (UAInboxAlertHandler *)getAlertHandler;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
