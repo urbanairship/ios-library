@@ -88,19 +88,18 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
 + (void)loadLaunchMessage {
     	
 	// if pushhandler has a messageID load it
-	if([[UAInbox shared].pushHandler viewingMessageID] != nil) {
-        
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:[[UAInbox shared].pushHandler viewingMessageID]];
-		if (msg == nil) {
-			return;
-		}
-                
-		[UAInboxUIPopup displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
-		
-		[[UAInbox shared].pushHandler setViewingMessageID:nil];
-		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
-	}
+    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
     
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:[pushHandler viewingMessageID]];
+    
+    if (!msg) {
+        return;
+    }
+            
+    [UAInboxUIPopup displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
+    
+    [[UAInbox shared].pushHandler setViewingMessageID:nil];
+    [[UAInbox shared].pushHandler setHasLaunchMessage:NO];    
 }
 
 @end

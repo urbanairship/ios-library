@@ -176,19 +176,17 @@ static BOOL runiPhoneTargetOniPad = NO;
 	
 	// if pushhandler has a messageID load it
     UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
-	if (pushHandler.viewingMessageID && pushHandler.hasLaunchMessage) {
 
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
-		if (!msg) {
-			return;
-		}
-        		
-		[UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
-		
-		pushHandler.viewingMessageID = nil;
-		pushHandler.hasLaunchMessage = NO;
-	}
-
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
+    
+    if (!msg) {
+        return;
+    }
+            
+    [UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
+    
+    pushHandler.viewingMessageID = nil;
+    pushHandler.hasLaunchMessage = NO;
 }
 
 + (void)land {
