@@ -29,8 +29,8 @@
 		4979987113EC6577002B9100 /* popupCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */; };
 		4979987213EC6577002B9100 /* popupWindowBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986E13EC6577002B9100 /* popupWindowBack.png */; };
 		4979987313EC6577002B9100 /* popupWindowBack@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986F13EC6577002B9100 /* popupWindowBack@2x.png */; };
-		4979987613EC65CE002B9100 /* UAPopupWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987513EC65CE002B9100 /* UAPopupWindow.m */; };
-		4979987913EC6927002B9100 /* UAInboxUIPopup.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIPopup.m */; };
+		4979987613EC65CE002B9100 /* UAOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987513EC65CE002B9100 /* UAOverlayWindow.m */; };
+		4979987913EC6927002B9100 /* UAInboxUIOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIOverlay.m */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -174,10 +174,10 @@
 		4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popupCloseBtn@2x.png"; sourceTree = "<group>"; };
 		4979986E13EC6577002B9100 /* popupWindowBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popupWindowBack.png; sourceTree = "<group>"; };
 		4979986F13EC6577002B9100 /* popupWindowBack@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popupWindowBack@2x.png"; sourceTree = "<group>"; };
-		4979987413EC65CE002B9100 /* UAPopupWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPopupWindow.h; sourceTree = "<group>"; };
-		4979987513EC65CE002B9100 /* UAPopupWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPopupWindow.m; sourceTree = "<group>"; };
-		4979987713EC6926002B9100 /* UAInboxUIPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUIPopup.h; sourceTree = "<group>"; };
-		4979987813EC6926002B9100 /* UAInboxUIPopup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUIPopup.m; sourceTree = "<group>"; };
+		4979987413EC65CE002B9100 /* UAOverlayWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UAOverlayWindow.h; sourceTree = "<group>"; };
+		4979987513EC65CE002B9100 /* UAOverlayWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAOverlayWindow.m; sourceTree = "<group>"; };
+		4979987713EC6926002B9100 /* UAInboxUIOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UAInboxUIOverlay.h; sourceTree = "<group>"; };
+		4979987813EC6926002B9100 /* UAInboxUIOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUIOverlay.m; sourceTree = "<group>"; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		63CB54DC1247122500DF2EBC /* InboxAPITests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxAPITests.h; sourceTree = "<group>"; };
@@ -501,8 +501,8 @@
 		E9CB358F12B89AC0002E39EA /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				4979987413EC65CE002B9100 /* UAPopupWindow.h */,
-				4979987513EC65CE002B9100 /* UAPopupWindow.m */,
+				4979987413EC65CE002B9100 /* UAOverlayWindow.h */,
+				4979987513EC65CE002B9100 /* UAOverlayWindow.m */,
 				E9CB359212B89AC0002E39EA /* UAInboxMessageListController.h */,
 				E9CB359312B89AC0002E39EA /* UAInboxMessageListController.m */,
 				E9CB359412B89AC0002E39EA /* UAInboxMessageViewController.h */,
@@ -520,8 +520,8 @@
 				D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */,
 				E9CB359B12B89AC0002E39EA /* UAInboxUI.h */,
 				E9CB359C12B89AC0002E39EA /* UAInboxUI.m */,
-				4979987713EC6926002B9100 /* UAInboxUIPopup.h */,
-				4979987813EC6926002B9100 /* UAInboxUIPopup.m */,
+				4979987713EC6926002B9100 /* UAInboxUIOverlay.h */,
+				4979987813EC6926002B9100 /* UAInboxUIOverlay.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -800,8 +800,8 @@
 				E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */,
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
-				4979987613EC65CE002B9100 /* UAPopupWindow.m in Sources */,
-				4979987913EC6927002B9100 /* UAInboxUIPopup.m in Sources */,
+				4979987613EC65CE002B9100 /* UAOverlayWindow.m in Sources */,
+				4979987913EC6927002B9100 /* UAInboxUIOverlay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

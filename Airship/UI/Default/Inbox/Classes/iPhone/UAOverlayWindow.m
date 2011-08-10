@@ -1,7 +1,7 @@
 //  Based on MTPopupWindow by Marin Todorov
 //  http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
 
-#import "UAPopupWindow.h"
+#import "UAOverlayWindow.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInbox.h"
@@ -12,7 +12,7 @@
 
 #define kShadeViewTag 1000
 
-@interface UAPopupWindow(Private)
+@interface UAOverlayWindow(Private)
 
 - (id)initWithSuperview:(UIView*)sview andMessageID:(NSString*)fName;
 - (void)loadMessageAtIndex:(int)index;
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation UAPopupWindow
+@implementation UAOverlayWindow
 
 @synthesize webView, message;
 
@@ -31,7 +31,7 @@
  */
 
 + (void)showWindowInsideView:(UIView *)view withMessageID:(NSString *)messageID {
-    [[UAPopupWindow alloc] initWithSuperview:view andMessageID:messageID];
+    [[UAOverlayWindow alloc] initWithSuperview:view andMessageID:messageID];
 }
 
 /**
@@ -42,7 +42,7 @@
 
 + (void)showWindowWithMessageID:(NSString *)messageID {
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-    [UAPopupWindow showWindowInsideView:window withMessageID:messageID];
+    [UAOverlayWindow showWindowInsideView:window withMessageID:messageID];
     
 }
 

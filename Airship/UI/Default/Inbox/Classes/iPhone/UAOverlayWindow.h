@@ -4,7 +4,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInboxMessage.h"
 
-@interface UAPopupWindow : NSObject <UIWebViewDelegate>
+@interface UAOverlayWindow : NSObject <UIWebViewDelegate>
 
 {
     UIView *bgView;

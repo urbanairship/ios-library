@@ -32,10 +32,10 @@
 
 @class UAInboxAlertProtocol;
 
-@interface UAInboxUIPopup : UAInboxUI {
+@interface UAInboxUIOverlay : UAInboxUI {
 
 }
 
-SINGLETON_INTERFACE(UAInboxUIPopup);
+SINGLETON_INTERFACE(UAInboxUIOverlay);
 
 @end
