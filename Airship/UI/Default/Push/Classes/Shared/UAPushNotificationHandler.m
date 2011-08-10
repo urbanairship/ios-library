@@ -69,9 +69,13 @@
         SystemSoundID soundID;
         NSString *path = [[NSBundle mainBundle] pathForResource:[sound stringByDeletingPathExtension] 
                                                          ofType:[sound pathExtension]];
-        
-        AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundID);
-        AudioServicesPlayAlertSound(soundID);
+		
+		if (path) {
+			AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundID);
+			AudioServicesPlayAlertSound(soundID);
+		} else {
+			UALOG(@"Sound not found");
+		}        
         
     } else {
         
