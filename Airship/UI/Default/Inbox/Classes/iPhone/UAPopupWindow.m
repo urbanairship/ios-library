@@ -58,7 +58,19 @@
         //set the frame later
         webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         webView.backgroundColor = [UIColor clearColor];
+        webView.opaque = NO;
         webView.delegate = self;
+        
+        //hack to hide the ugly webview gradient
+        for (UIView* subView in [webView subviews]) {
+            if ([subView isKindOfClass:[UIScrollView class]]) {
+                for (UIView* shadowView in [subView subviews]) {
+                    if ([shadowView isKindOfClass:[UIImageView class]]) {
+                        [shadowView setHidden:YES];
+                    }
+                }
+            }
+        }
         
         [self loadMessageForID:messageID];
 }
