@@ -28,7 +28,6 @@
 #import "UAViewUtils.h"
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
-#import "UAInboxUI.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
