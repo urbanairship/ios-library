@@ -133,7 +133,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     //added iOS 5 parent/presenting view getter
     UIViewController *con;
     if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-        con = self.rootViewController.presentingViewController;
+        con = [self.rootViewController presentingViewController];
     } else {
         con = self.rootViewController.parentViewController;
     }
