@@ -8,6 +8,8 @@
 #import "UAInboxUI.h"
 #import "UAUtils.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 #define kShadeViewTag 1000
 
 @interface UAPopupWindow(Private)
@@ -116,12 +118,16 @@
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
-    UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
+    //UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
+    UIView *background = [[[UIView alloc] initWithFrame:CGRectMake(0,0,293,431)] autorelease];
+    background.backgroundColor = [UIColor whiteColor];
+    background.layer.borderColor = [[UIColor blackColor] CGColor];
+    background.layer.borderWidth = 2;
     background.center = CGPointMake(bigPanelView.frame.size.width/2, bigPanelView.frame.size.height/2);
     [bigPanelView addSubview: background];
     
     //add the web view
-    int webOffset = 10;
+    int webOffset = 2;
     webView.frame = CGRectInset(background.frame, webOffset, webOffset);
     
     [bigPanelView addSubview: webView];
