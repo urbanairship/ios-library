@@ -24,11 +24,10 @@
  */
 #import "InboxSampleAppDelegate.h"
 
-//#import "UAInboxUI.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
-#import "UAInboxUIPopup.h"
+#import "UAInboxNavUI.h"
 
 #import "UAirship.h"
 #import "UAInbox.h"
@@ -41,13 +40,16 @@
 @synthesize viewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [window addSubview:[viewController view]];
+    
+    UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
+    [navigationController pushViewController:viewController animated:NO];
+    [window addSubview:navigationController.view];
     [window makeKeyAndVisible];
 
     [self failIfSimulator];
     
     //[UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox useCustomUI: [UAInboxUIPopup class]];
+    [UAInbox useCustomUI: [UAInboxNavUI class]];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
@@ -80,7 +82,9 @@
     
     // If the application gets an UAInbox message id on launch open it up immediately.
     Class uiClass = [[UAInbox shared] uiClass];
-    ((UAInboxUI *)[uiClass shared]).inboxParentController = viewController;
+    if ([[uiClass shared] respondsToSelector:@selector(setParentInboxController:)]) {
+        [[uiClass shared] performSelector:@selector(setParentInboxController:) withObject:navigationController];
+    }
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {

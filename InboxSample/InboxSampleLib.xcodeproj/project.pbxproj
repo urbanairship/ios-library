@@ -22,6 +22,7 @@
 		1F69B10513BD1A41002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
+		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
@@ -165,6 +166,8 @@
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F69B10413BD1A41002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
+		1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
 		1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
@@ -514,6 +517,8 @@
 		E9CB359612B89AC0002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */,
+				1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */,
 				1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */,
 				1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */,
 				D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */,
@@ -802,6 +807,7 @@
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
 				4979987613EC65CE002B9100 /* UAPopupWindow.m in Sources */,
 				4979987913EC6927002B9100 /* UAInboxUIPopup.m in Sources */,
+				1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
