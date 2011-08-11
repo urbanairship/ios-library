@@ -36,7 +36,7 @@
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+    if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil])) {
         UAProductDetailiPadViewController *c = [[UAProductDetailiPadViewController alloc]
                                 initWithNibName:@"UAProductDetailiPad" bundle:nil];
         self.detailViewController = c;

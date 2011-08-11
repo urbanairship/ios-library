@@ -87,7 +87,7 @@ static Class _uiClass;
 #pragma mark Lifecycle Methods
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
 
 IF_IOS4_OR_GREATER(
             // Register notification to reload when moving from background to foreground

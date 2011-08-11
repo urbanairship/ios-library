@@ -43,7 +43,7 @@
 }
 
 - (id)initWithDBPath:(NSString *)aDBPath {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         [self open:aDBPath];
     }
 
