@@ -50,7 +50,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
-    if (self = [super initWithNibName:nibName bundle:nibBundle]) {
+    if ((self = [super initWithNibName:nibName bundle:nibBundle])) {
         self.title = UA_INBOX_TR(@"UA_Message");
 
         // "Segmented" up/down control to the right

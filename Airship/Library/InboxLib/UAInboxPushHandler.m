@@ -128,7 +128,7 @@
 
 
 - (id)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
 		hasLaunchMessage = NO;
 	}
 	return self;

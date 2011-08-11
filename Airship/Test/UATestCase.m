@@ -66,7 +66,7 @@
 
 - (id)init {
     UALOG(@"UATestCase init");
-    if (self = [super init]) {
+    if ((self = [super init])) {
         testCaseMocks = [[NSMutableSet alloc] init];
         singleTestMocks = [[NSMutableSet alloc] init];
     }

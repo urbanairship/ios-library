@@ -61,7 +61,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
 }
 
 - (UAInventory*)init {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         products = [[NSMutableDictionary alloc] init];
         keys = [[NSMutableArray alloc] init];
         sortedProducts = [[NSMutableArray alloc] init];

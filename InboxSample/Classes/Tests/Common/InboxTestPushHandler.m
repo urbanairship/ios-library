@@ -33,7 +33,7 @@
 SINGLETON_IMPLEMENTATION(InboxTestPushHandler);
 
 - (id)init {
-    if (self = [super init]){
+    if ((self = [super init])) {
         callbackDelegates = [[NSMutableDictionary alloc] init];
         NSString *path = [[NSBundle mainBundle]
                           pathForResource:@"AirshipConfig" ofType:@"plist"];

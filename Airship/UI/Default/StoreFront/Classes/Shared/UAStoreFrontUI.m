@@ -60,7 +60,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 -(id)init {
     UALOG(@"Initialize UAStoreFrontUI.");
 
-    if (self = [super init]) {
+    if ((self = [super init])) {
         NSString* path = [[[NSBundle mainBundle] resourcePath]
                           stringByAppendingPathComponent:@"UAStoreFrontLocalization.bundle"];
 
