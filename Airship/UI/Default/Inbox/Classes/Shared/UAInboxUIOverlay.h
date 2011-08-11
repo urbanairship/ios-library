@@ -30,8 +30,6 @@
 #import "UAInbox.h"
 #import "UAInboxUI.h"
 
-@class UAInboxAlertProtocol;
-
 @interface UAInboxUIOverlay : UAInboxUI {
 
 }

@@ -29,12 +29,11 @@
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
 #import "UAInboxUI.h"
+#import "UAInboxPushHandler.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
-@class UAInboxAlertProtocol;
-
-@interface UAInboxUI : NSObject <UAInboxUIProtocol> {
+@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> {
   @private
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
@@ -55,7 +54,7 @@ SINGLETON_INTERFACE(UAInboxUI);
 - (void)quitInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-+ (void)newMessageArrived:(NSDictionary *)message;
+- (void)newMessageArrived:(NSDictionary *)message;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;

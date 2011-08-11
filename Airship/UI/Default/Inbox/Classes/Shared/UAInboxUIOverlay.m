@@ -74,13 +74,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
     }
 }
 
-+ (void)newMessageArrived:(NSDictionary *)message {
-    
-    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
-    
-    [[UAInboxUIOverlay shared].alertHandler showNewMessageAlert:alertText];
-}
-
 + (void)quitInbox {
     [[UAInboxUIOverlay shared] quitInbox];
 }

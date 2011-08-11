@@ -29,7 +29,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAInboxMessageList;
 @class UAInboxPushHandler;
-@protocol UAInboxAlertProtocol;
 
 #define INBOX_UI_CLASS @"UAInboxUI"
 
@@ -67,12 +66,6 @@ UA_VERSION_INTERFACE(UAInboxVersion)
  * @param messageID The ID for the message to display
  */
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-
-/**
- * Handle an incoming push message.
- * @param message An NSDictionary with the push contents.
- */
-+ (void)newMessageArrived:(NSDictionary *)message;
 
 @end
 

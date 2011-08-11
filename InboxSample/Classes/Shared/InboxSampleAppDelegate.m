@@ -48,6 +48,7 @@
     
     //[UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox useCustomUI: [UAInboxUIOverlay class]];
+    [UAInbox shared].pushHandler.delegate = [UAInboxUIOverlay shared];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
