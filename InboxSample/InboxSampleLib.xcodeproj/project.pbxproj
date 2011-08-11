@@ -22,15 +22,16 @@
 		1F69B10513BD1A41002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
+		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1FC01F6F13F362C90098BE55 /* UAOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987513EC65CE002B9100 /* UAOverlayWindow.m */; };
+		1FC01F7013F362FE0098BE55 /* UAInboxUIOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIOverlay.m */; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
 		4979987013EC6577002B9100 /* popupCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986C13EC6577002B9100 /* popupCloseBtn.png */; };
 		4979987113EC6577002B9100 /* popupCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */; };
 		4979987213EC6577002B9100 /* popupWindowBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986E13EC6577002B9100 /* popupWindowBack.png */; };
 		4979987313EC6577002B9100 /* popupWindowBack@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986F13EC6577002B9100 /* popupWindowBack@2x.png */; };
-		4979987613EC65CE002B9100 /* UAOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987513EC65CE002B9100 /* UAOverlayWindow.m */; };
-		4979987913EC6927002B9100 /* UAInboxUIOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIOverlay.m */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -165,6 +166,8 @@
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F69B10413BD1A41002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
+		1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
 		1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
@@ -514,6 +517,8 @@
 		E9CB359612B89AC0002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */,
+				1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */,
 				1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */,
 				1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */,
 				D5E60C8B12C2A86500E61EC0 /* UAInboxAlertHandler.h */,
@@ -790,6 +795,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FC01F7013F362FE0098BE55 /* UAInboxUIOverlay.m in Sources */,
+				1FC01F6F13F362C90098BE55 /* UAOverlayWindow.m in Sources */,
 				18A27CA5125EDD6E0045D75B /* InboxSampleAppDelegate.m in Sources */,
 				18A27CA6125EDD6E0045D75B /* InboxSampleViewController.m in Sources */,
 				18A27CA7125EDD6E0045D75B /* main.m in Sources */,
@@ -800,8 +807,7 @@
 				E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */,
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
-				4979987613EC65CE002B9100 /* UAOverlayWindow.m in Sources */,
-				4979987913EC6927002B9100 /* UAInboxUIOverlay.m in Sources */,
+				1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

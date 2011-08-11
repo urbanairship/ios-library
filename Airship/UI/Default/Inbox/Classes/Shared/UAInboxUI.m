@@ -91,7 +91,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 } 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-    	
+
     if(![UAInboxUI shared].isVisible) {
         UALOG(@"UI needs to be brought up!");
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
@@ -133,7 +133,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     //added iOS 5 parent/presenting view getter
     UIViewController *con;
     if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-        con = self.rootViewController.presentingViewController;
+        con = [self.rootViewController presentingViewController];
     } else {
         con = self.rootViewController.parentViewController;
     }
@@ -142,8 +142,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     
     // BUG: Workaround. ModalViewController does not handle resizing correctly if
     // dismissed in landscape when status bar is visible
-    if (![UIApplication sharedApplication].statusBarHidden)
+    if (![UIApplication sharedApplication].statusBarHidden) {
         con.view.frame = UAFrameForCurrentOrientation(con.view.frame);
+    }
 }
 
 + (void)quitInbox {

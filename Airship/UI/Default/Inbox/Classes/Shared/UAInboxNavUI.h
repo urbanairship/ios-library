@@ -28,32 +28,52 @@
 #import "UAViewUtils.h"
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
-#import "UAInboxPushHandler.h"
 
-#define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
+#import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 
-@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> {
+#ifndef UA_INBOX_TR
+
+#define UA_INBOX_TR(key) [[UAInboxNavUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
+
+#endif
+
+@class UAInboxAlertProtocol;
+
+@interface UAInboxNavUI : NSObject <UAInboxUIProtocol, UIPopoverControllerDelegate> {
   @private
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
     UIViewController *rootViewController;
+    
     UIViewController *inboxParentController;
+    UINavigationController *navigationController;
+    UAInboxMessageViewController *messageViewController;
+    UAInboxMessageListController *messageListController;
+    
+    UIPopoverController *popoverController;
+    
     BOOL isVisible;
 }
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
 @property (nonatomic, retain) UIViewController *rootViewController;
 @property (nonatomic, retain) UIViewController *inboxParentController;
-@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+@property (nonatomic, retain) UINavigationController *navigationController;
+
+@property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
+@property (nonatomic, retain) UAInboxMessageListController *messageListController;
+
+@property (nonatomic, retain) UIPopoverController *popoverController;
+
 @property (nonatomic, assign) BOOL isVisible;
 
-SINGLETON_INTERFACE(UAInboxUI);
+SINGLETON_INTERFACE(UAInboxNavUI);
 
 + (void)quitInbox;
 - (void)quitInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-- (void)newMessageArrived:(NSDictionary *)message;
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;

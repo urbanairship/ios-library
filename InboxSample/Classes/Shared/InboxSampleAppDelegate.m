@@ -24,10 +24,11 @@
  */
 #import "InboxSampleAppDelegate.h"
 
-//#import "UAInboxUI.h"
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
 #import "UAInboxPushHandler.h"
+#import "UAInboxNavUI.h"
+#import "UAInboxUI.h"
 #import "UAInboxUIOverlay.h"
 
 #import "UAirship.h"
@@ -39,9 +40,13 @@
 
 @synthesize window;
 @synthesize viewController;
+@synthesize navigationController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [window addSubview:[viewController view]];
+    
+    self.navigationController = [[[UINavigationController alloc] init] autorelease];
+    [navigationController pushViewController:viewController animated:NO];
+    [window addSubview:navigationController.view];
     [window makeKeyAndVisible];
 
     [self failIfSimulator];
@@ -49,6 +54,7 @@
     //[UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox useCustomUI: [UAInboxUIOverlay class]];
     [UAInbox shared].pushHandler.delegate = [UAInboxUIOverlay shared];
+    //[UAInbox useCustomUI: [UAInboxNavUI class]];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
     // use NavigationController on iPad device by uncommenting below line.
@@ -81,7 +87,9 @@
     
     // If the application gets an UAInbox message id on launch open it up immediately.
     Class uiClass = [[UAInbox shared] uiClass];
-    ((UAInboxUI *)[uiClass shared]).inboxParentController = viewController;
+    if ([[uiClass shared] respondsToSelector:@selector(setInboxParentController:)]) {
+        [[uiClass shared] performSelector:@selector(setInboxParentController:) withObject:navigationController];
+    }
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
@@ -128,9 +136,11 @@
 }
 
 - (void)dealloc {
-    [jsDelegate release];
-    [viewController release];
-    [window release];
+    RELEASE_SAFELY(jsDelegate);
+    self.viewController = nil;
+    self.navigationController = nil;
+    self.window = nil;
+    
     [super dealloc];
 }
 
