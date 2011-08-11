@@ -188,21 +188,16 @@ static BOOL runiPhoneTargetOniPad = NO;
     //do any necessary teardown here
 }
 
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    return nil;
-}
-
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)dismissedPopoverController {
     if (self.popoverController == dismissedPopoverController) {
         [UAInbox quitInbox];
     }
 }
 
-+ (void)newMessageArrived:(NSDictionary *)message {
+- (void)newMessageArrived:(NSDictionary *)message {
     
     NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
-    
-    //[[UAInboxNavUI shared].alertHandler showNewMessageAlert:alertText];
+    [alertHandler showNewMessageAlert:alertText];
 }
 
 
