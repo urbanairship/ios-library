@@ -29,17 +29,18 @@
 
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxAlertProtocol.h"
 #import "UAEvent.h"
 
 
 @implementation UAInboxPushHandler
 
 @synthesize viewingMessageID;
+@synthesize delegate;
 @synthesize hasLaunchMessage;
 
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
+    RELEASE_SAFELY(delegate);
     [[[UAInbox shared] messageList] removeObserver:self];
     [super dealloc];
 }
@@ -81,8 +82,7 @@
     //if the app is in the foreground, let the UI class decide how it
     //wants to respond to the incoming push
     if (isActive) {
-        Class <UAInboxUIProtocol> uiClass = [UAInbox shared].uiClass;
-        [uiClass newMessageArrived:userInfo];
+        [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
     }
     
     //otherwise, load the message list
