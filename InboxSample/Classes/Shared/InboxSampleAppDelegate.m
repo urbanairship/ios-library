@@ -38,10 +38,11 @@
 
 @synthesize window;
 @synthesize viewController;
+@synthesize navigationController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
+    self.navigationController = [[[UINavigationController alloc] init] autorelease];
     [navigationController pushViewController:viewController animated:NO];
     [window addSubview:navigationController.view];
     [window makeKeyAndVisible];
@@ -82,8 +83,8 @@
     
     // If the application gets an UAInbox message id on launch open it up immediately.
     Class uiClass = [[UAInbox shared] uiClass];
-    if ([[uiClass shared] respondsToSelector:@selector(setParentInboxController:)]) {
-        [[uiClass shared] performSelector:@selector(setParentInboxController:) withObject:navigationController];
+    if ([[uiClass shared] respondsToSelector:@selector(setInboxParentController:)]) {
+        [[uiClass shared] performSelector:@selector(setInboxParentController:) withObject:navigationController];
     }
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
@@ -131,9 +132,11 @@
 }
 
 - (void)dealloc {
-    [jsDelegate release];
-    [viewController release];
-    [window release];
+    RELEASE_SAFELY(jsDelegate);
+    self.viewController = nil;
+    self.navigationController = nil;
+    self.window = nil;
+    
     [super dealloc];
 }
 

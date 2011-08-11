@@ -87,16 +87,13 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-	
-    UALOG(@"Nav display inbox");
-    
+
     if ([UAInboxNavUI shared].isVisible) {
         //don't display twice
         return;
     }
-    
+
     if ([viewController isKindOfClass:[UINavigationController class]]) {
-        
         [UAInboxNavUI shared].isVisible = YES;
         [UAInboxNavUI shared].inboxParentController = viewController;
         
@@ -114,6 +111,8 @@ static BOOL runiPhoneTargetOniPad = NO;
             [UAInboxNavUI shared].navigationController = (UINavigationController *)viewController;
             [[UAInboxNavUI shared].navigationController pushViewController:[UAInboxNavUI shared].messageListController animated:animated];
         }
+    } else {
+        UALOG(@"Not a navigation controller");
     }
 
 } 
@@ -121,7 +120,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-    
+
     if(![UAInboxNavUI shared].isVisible) {
         UALOG(@"UI needs to be brought up!");
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
@@ -151,12 +150,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)quitInbox {
-
-//    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-//        [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
-//    }
-
-	
     
     self.isVisible = NO;
     [self.navigationController popToViewController:messageListController animated:YES];
@@ -203,6 +196,13 @@ static BOOL runiPhoneTargetOniPad = NO;
     if (self.popoverController == dismissedPopoverController) {
         [UAInbox quitInbox];
     }
+}
+
++ (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    //[[UAInboxNavUI shared].alertHandler showNewMessageAlert:alertText];
 }
 
 

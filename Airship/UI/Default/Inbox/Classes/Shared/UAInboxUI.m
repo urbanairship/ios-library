@@ -91,7 +91,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 } 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-    	
+
     if(![UAInboxUI shared].isVisible) {
         UALOG(@"UI needs to be brought up!");
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
