@@ -23,17 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxUIPopup.h"
+#import "UAInboxUIOverlay.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UAPopupWindow.h"
+#import "UAOverlayWindow.h"
 
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 
-@implementation UAInboxUIPopup
+@implementation UAInboxUIOverlay
 
-SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
+SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	
@@ -41,68 +41,65 @@ SINGLETON_IMPLEMENTATION(UAInboxUIPopup)
         [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
     }
     
-	[UAInboxUIPopup shared].isVisible = YES;
+	[UAInboxUIOverlay shared].isVisible = YES;
     
     UALOG(@"present modal");
-    [viewController presentModalViewController:[UAInboxUIPopup shared].rootViewController animated:animated];
+    [viewController presentModalViewController:[UAInboxUIOverlay shared].rootViewController animated:animated];
 } 
-
-
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
     
+    //if the inbox is not displaying, show the message in an overlay window
     if(![UAInboxUI shared].isVisible) {
-        [UAPopupWindow showWindowWithMessageID:messageID];
-        return;
+        [UAOverlayWindow showWindowWithMessageID:messageID];
     }
     
-    // If the message view is already open, just load the first message.
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
-		
+    else {
         // For iPhone
-        UINavigationController *navController = (UINavigationController *)viewController;
+        UINavigationController *navController = (UINavigationController *)[UAInboxUIOverlay shared].rootViewController;
         UAInboxMessageViewController *mvc;
         
-		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+        //if a message view is displaying, just load the new message
+        if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
             mvc = (UAInboxMessageViewController *) navController.topViewController;
             [mvc loadMessageForID:messageID];
-        } else {
-			
+        } 
+        
+        //otherwise, push over a new message view
+        else {
             mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
             [mvc loadMessageForID:messageID];
             [navController pushViewController:mvc animated:YES];
         }
     }
+}
 
++ (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    [[UAInboxUIOverlay shared].alertHandler showNewMessageAlert:alertText];
 }
 
 + (void)quitInbox {
-    [[UAInboxUIPopup shared] quitInbox];
+    [[UAInboxUIOverlay shared] quitInbox];
 }
 
 + (void)loadLaunchMessage {
     	
 	// if pushhandler has a messageID load it
-	if([[UAInbox shared].pushHandler viewingMessageID] != nil) {
-        
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:[[UAInbox shared].pushHandler viewingMessageID]];
-		if (msg == nil) {
-			return;
-		}
-        
-        UIViewController *rvc = [UAInboxUIPopup shared].rootViewController;
-        
-		[UAInboxUIPopup displayMessage:rvc message:[[UAInbox shared].pushHandler viewingMessageID]];
-		
-		[[UAInbox shared].pushHandler setViewingMessageID:nil];
-		[[UAInbox shared].pushHandler setHasLaunchMessage:NO];
-	}
+    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
     
-}
-
-//TODO: remove
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    return nil;
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:[pushHandler viewingMessageID]];
+    
+    if (!msg) {
+        return;
+    }
+            
+    [UAInboxUIOverlay displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
+    
+    [[UAInbox shared].pushHandler setViewingMessageID:nil];
+    [[UAInbox shared].pushHandler setHasLaunchMessage:NO];    
 }
 
 @end

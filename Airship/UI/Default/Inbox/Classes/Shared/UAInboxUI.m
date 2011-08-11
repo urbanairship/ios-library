@@ -35,6 +35,7 @@
 @synthesize localizationBundle;
 @synthesize rootViewController;
 @synthesize inboxParentController;
+@synthesize alertHandler;
 @synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
@@ -89,8 +90,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
 } 
 
-
-
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
     	
     if(![UAInboxUI shared].isVisible) {
@@ -98,28 +97,29 @@ static BOOL runiPhoneTargetOniPad = NO;
 		// We're not inside the modal/navigationcontroller setup so lets start with the parent
 		[UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
 	}
-	
-    // If the message view is already open, just load the first message.
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
 		
-        // For iPhone
-        UINavigationController *navController = (UINavigationController *)viewController;
-        UAInboxMessageViewController *mvc;
-        
-		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
-            mvc = (UAInboxMessageViewController *) navController.topViewController;
-            [mvc loadMessageForID:messageID];
-        } else {
-			
-            mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
-            [mvc loadMessageForID:messageID];
-            [navController pushViewController:mvc animated:YES];
-        }
+    // For iPhone
+    UINavigationController *navController = (UINavigationController *)[UAInboxUI shared].rootViewController;
+    UAInboxMessageViewController *mvc;
+    
+    //if a message view is displaying, just load the new message
+    if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+        mvc = (UAInboxMessageViewController *) navController.topViewController;
+        [mvc loadMessageForID:messageID];
+    } 
+    //otherwise, push over a new message view
+    else {
+        mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
+        [mvc loadMessageForID:messageID];
+        [navController pushViewController:mvc animated:YES];
     }
 }
 
-+ (void)quitInbox {
-    [[UAInboxUI shared] quitInbox];
++ (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    [[UAInboxUI shared].alertHandler showNewMessageAlert:alertText];
 }
 
 - (void)quitInbox {
@@ -147,34 +147,29 @@ static BOOL runiPhoneTargetOniPad = NO;
     }
 }
 
++ (void)quitInbox {
+    [[UAInboxUI shared] quitInbox];
+}
+
 + (void)loadLaunchMessage {
 	
 	// if pushhandler has a messageID load it
     UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
-	if (pushHandler.viewingMessageID && pushHandler.hasLaunchMessage) {
 
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
-		if (!msg) {
-			return;
-		}
-        
-        UIViewController *rvc = [UAInboxUI shared].rootViewController;
-		
-		[UAInboxUI displayMessage:rvc message:pushHandler.viewingMessageID];
-		
-		pushHandler.viewingMessageID = nil;
-		pushHandler.hasLaunchMessage = NO;
-	}
-
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
+    
+    if (!msg) {
+        return;
+    }
+            
+    [UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
+    
+    pushHandler.viewingMessageID = nil;
+    pushHandler.hasLaunchMessage = NO;
 }
 
 + (void)land {
     //do any necessary teardown here
-}
-
-+ (id<UAInboxAlertProtocol>)getAlertHandler {
-    UAInboxUI* ui = [UAInboxUI shared];
-    return ui->alertHandler;
 }
 
 @end

@@ -112,7 +112,6 @@
     [UAInboxPushHandler handleNotification:userInfo];
 }
 
-
 - (void)applicationWillTerminate:(UIApplication *)application {
     [UAirship land];
 }
@@ -122,9 +121,6 @@
     if (inbox != nil && inbox.messageList != nil) {
         [inbox.messageList retrieveMessageList];
     }
-    
-	id<UAInboxAlertProtocol> alertHandler = [[[UAInbox shared] uiClass] getAlertHandler];
-	[alertHandler cancelPreviousAlertAndShowMessage];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

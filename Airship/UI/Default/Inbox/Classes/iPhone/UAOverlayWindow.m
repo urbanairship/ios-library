@@ -1,16 +1,18 @@
 //  Based on MTPopupWindow by Marin Todorov
 //  http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
 
-#import "UAPopupWindow.h"
+#import "UAOverlayWindow.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInbox.h"
 #import "UAInboxUI.h"
 #import "UAUtils.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 #define kShadeViewTag 1000
 
-@interface UAPopupWindow(Private)
+@interface UAOverlayWindow(Private)
 
 - (id)initWithSuperview:(UIView*)sview andMessageID:(NSString*)fName;
 - (void)loadMessageAtIndex:(int)index;
@@ -18,7 +20,7 @@
 
 @end
 
-@implementation UAPopupWindow
+@implementation UAOverlayWindow
 
 @synthesize webView, message;
 
@@ -29,7 +31,7 @@
  */
 
 + (void)showWindowInsideView:(UIView *)view withMessageID:(NSString *)messageID {
-    [[UAPopupWindow alloc] initWithSuperview:view andMessageID:messageID];
+    [[UAOverlayWindow alloc] initWithSuperview:view andMessageID:messageID];
 }
 
 /**
@@ -40,7 +42,7 @@
 
 + (void)showWindowWithMessageID:(NSString *)messageID {
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-    [UAPopupWindow showWindowInsideView:window withMessageID:messageID];
+    [UAOverlayWindow showWindowInsideView:window withMessageID:messageID];
     
 }
 
@@ -58,7 +60,19 @@
         //set the frame later
         webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         webView.backgroundColor = [UIColor clearColor];
+        webView.opaque = NO;
         webView.delegate = self;
+        
+        //hack to hide the ugly webview gradient
+        for (UIView* subView in [webView subviews]) {
+            if ([subView isKindOfClass:[UIScrollView class]]) {
+                for (UIView* shadowView in [subView subviews]) {
+                    if ([shadowView isKindOfClass:[UIImageView class]]) {
+                        [shadowView setHidden:YES];
+                    }
+                }
+            }
+        }
         
         [self loadMessageForID:messageID];
 }
@@ -104,12 +118,16 @@
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
-    UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
+    //UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
+    UIView *background = [[[UIView alloc] initWithFrame:CGRectMake(0,0,293,431)] autorelease];
+    background.backgroundColor = [UIColor whiteColor];
+    background.layer.borderColor = [[UIColor blackColor] CGColor];
+    background.layer.borderWidth = 2;
     background.center = CGPointMake(bigPanelView.frame.size.width/2, bigPanelView.frame.size.height/2);
     [bigPanelView addSubview: background];
     
     //add the web view
-    int webOffset = 10;
+    int webOffset = 2;
     webView.frame = CGRectInset(background.frame, webOffset, webOffset);
     
     [bigPanelView addSubview: webView];

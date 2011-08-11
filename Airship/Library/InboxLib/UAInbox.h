@@ -69,12 +69,11 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 
 /**
- * Get the the custom UI's alert handler. The alert handler is used to display errors
- * and informational messages from within the library. May be nil.
- *
- * @return The custom UI's alert handler. May be nil.
+ * Handle an incoming push message.
+ * @param message An NSDictionary with the push contents.
  */
-+ (id<UAInboxAlertProtocol>)getAlertHandler;
++ (void)newMessageArrived:(NSDictionary *)message;
+
 @end
 
 
