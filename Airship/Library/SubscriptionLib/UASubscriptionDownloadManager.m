@@ -34,6 +34,7 @@
 #import "UAContentInventory.h"
 #import "UASubscriptionManager.h"
 #import "UASubscriptionInventory.h"
+#import "UADownloadContent.h"
 
 //private methods
 @interface UASubscriptionDownloadManager()

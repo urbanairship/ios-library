@@ -25,8 +25,8 @@
 
 #import <Foundation/Foundation.h>
 #import "UAObservable.h"
-#import "UA_ASIHTTPRequest.h"
-#import "UASubscriptionAlertProtocol.h"
+
+@class UA_ASIHTTPRequest;
 
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,

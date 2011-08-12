@@ -25,6 +25,7 @@
 
 #import "UAStoreFrontDownloadManager.h"
 #import "UAStoreFront.h"
+#import "UADownloadContent.h"
 #import "UAUtils.h"
 #import "UAInventory.h"
 #import "UAStoreKitObserver.h"
