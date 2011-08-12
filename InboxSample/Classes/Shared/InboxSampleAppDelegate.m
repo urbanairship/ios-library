@@ -85,11 +85,18 @@
     jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = jsDelegate;
     
-    // If the application gets an UAInbox message id on launch open it up immediately.
-    Class uiClass = [[UAInbox shared] uiClass];
-    if ([[uiClass shared] respondsToSelector:@selector(setInboxParentController:)]) {
-        [[uiClass shared] performSelector:@selector(setInboxParentController:) withObject:navigationController];
-    }
+    // For modal UI:
+    [UAInboxUI shared].inboxParentController = navigationController;
+    
+    // For Navigation UI:
+    [UAInboxNavUI shared].inboxParentController = navigationController;
+    
+    
+    
+    //TODO: think about clean up / dealloc for multiple UI classes
+    
+    
+    
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
@@ -118,6 +125,9 @@
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    
+    //TODO: clean up all UI classes
+    
     [UAirship land];
 }
 

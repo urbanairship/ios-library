@@ -29,11 +29,21 @@
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
 
+#import "UAInboxNavUI.h"
+#import "UAInboxUI.h"
+
 @implementation InboxSampleViewController
 
 @synthesize version;
 
--(IBAction)mail:(id)sender {
+- (IBAction)mail:(id)sender {
+    [UAInbox useCustomUI:[UAInboxNavUI class]];
+    [UAInbox displayInbox:self.navigationController animated:YES];   
+}
+
+- (IBAction)launchModalInbox:(id)sender {
+    
+    [UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox displayInbox:self.navigationController animated:YES];   
 }
 
@@ -44,10 +54,9 @@
     self.navigationItem.rightBarButtonItem 
         = [[[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)] autorelease];
     
-    Class uiClass = [[UAInbox shared] uiClass];
-    if ([[uiClass shared] respondsToSelector:@selector(setPopoverButton:)]) {
-        [[uiClass shared] performSelector:@selector(setPopoverButton:) withObject:self.navigationItem.rightBarButtonItem];
-    }
+    // For UINavigationController UI
+    [UAInboxNavUI shared].popoverButton = self.navigationItem.rightBarButtonItem;
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

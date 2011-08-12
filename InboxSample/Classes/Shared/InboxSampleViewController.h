@@ -32,7 +32,8 @@
 
 @property(nonatomic, retain) IBOutlet UILabel* version;
 
--(IBAction)mail:(id)sender;
+- (IBAction)mail:(id)sender;
+- (IBAction)launchModalInbox:(id)sender;
 
 @end
 
