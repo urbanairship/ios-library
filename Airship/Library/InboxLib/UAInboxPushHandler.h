@@ -27,10 +27,21 @@
 
 #import "UAInboxMessageListObserver.h"
 
+@protocol UAInboxPushHandlerDelegate <NSObject>
+
+@required
+/**
+ * Handle an incoming push message.
+ * @param message An NSDictionary with the push contents.
+ */
+- (void)newMessageArrived:(NSDictionary *)message;
+@end
+
 @class UAInboxMessageList;
 
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver> {
     NSString *viewingMessageID;
+    id <UAInboxPushHandlerDelegate> delegate;
 	BOOL hasLaunchMessage;
 }
 
@@ -39,5 +50,6 @@
 
 @property (nonatomic, retain) NSString *viewingMessageID;
 @property (nonatomic, assign) BOOL hasLaunchMessage;
+@property (nonatomic, retain) id <UAInboxPushHandlerDelegate> delegate;
 
 @end

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
-		D56859D812C2882800BBF31A /* UAInboxAlertProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */; };
 		E9AED96812B7931500441700 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AED95912B7931500441700 /* UAInbox.h */; };
 		E9AED96912B7931500441700 /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AED95A12B7931500441700 /* UAInbox.m */; };
 		E9AED96A12B7931500441700 /* UAInboxDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AED95B12B7931500441700 /* UAInboxDBManager.h */; };
@@ -30,7 +29,6 @@
 /* Begin PBXFileReference section */
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libInbox-1.5.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libInbox-1.5.4.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertProtocol.h; sourceTree = "<group>"; };
 		E9AED95912B7931500441700 /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInbox.h; sourceTree = "<group>"; };
 		E9AED95A12B7931500441700 /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInbox.m; sourceTree = "<group>"; };
 		E9AED95B12B7931500441700 /* UAInboxDBManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxDBManager.h; sourceTree = "<group>"; };
@@ -101,7 +99,6 @@
 			children = (
 				E9AED95912B7931500441700 /* UAInbox.h */,
 				E9AED95A12B7931500441700 /* UAInbox.m */,
-				D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */,
 				E9AED95B12B7931500441700 /* UAInboxDBManager.h */,
 				E9AED95C12B7931500441700 /* UAInboxDBManager.m */,
 				E9AED95D12B7931500441700 /* UAInboxDefaultJSDelegate.h */,
@@ -136,7 +133,6 @@
 				E9AED97212B7931500441700 /* UAInboxMessageListObserver.h in Headers */,
 				E9AED97312B7931500441700 /* UAInboxPushHandler.h in Headers */,
 				E9AED97512B7931500441700 /* UAInboxURLCache.h in Headers */,
-				D56859D812C2882800BBF31A /* UAInboxAlertProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

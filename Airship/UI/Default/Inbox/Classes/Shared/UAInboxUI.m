@@ -115,11 +115,11 @@ static BOOL runiPhoneTargetOniPad = NO;
     }
 }
 
-+ (void)newMessageArrived:(NSDictionary *)message {
+- (void)newMessageArrived:(NSDictionary *)message {
     
     NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
     
-    [[UAInboxUI shared].alertHandler showNewMessageAlert:alertText];
+    [alertHandler showNewMessageAlert:alertText];
 }
 
 - (void)quitInbox {
