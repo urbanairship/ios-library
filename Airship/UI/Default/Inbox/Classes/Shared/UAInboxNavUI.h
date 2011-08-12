@@ -52,6 +52,7 @@
     UAInboxMessageListController *messageListController;
     
     UIPopoverController *popoverController;
+    UIBarButtonItem *popoverButton;
     
     BOOL isVisible;
 }
@@ -65,6 +66,7 @@
 @property (nonatomic, retain) UAInboxMessageListController *messageListController;
 
 @property (nonatomic, retain) UIPopoverController *popoverController;
+@property (nonatomic, retain) UIBarButtonItem *popoverButton;
 
 @property (nonatomic, assign) BOOL isVisible;
 

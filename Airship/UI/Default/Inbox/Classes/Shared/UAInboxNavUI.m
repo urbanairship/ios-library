@@ -39,6 +39,7 @@
 @synthesize messageListController;
 @synthesize messageViewController;
 @synthesize popoverController;
+@synthesize popoverButton;
 @synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxNavUI)
@@ -55,6 +56,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(rootViewController);
     RELEASE_SAFELY(inboxParentController);
     self.popoverController = nil;
+    self.popoverButton = nil;
     self.navigationController = nil;
     self.messageListController = nil;
     self.messageViewController = nil;
@@ -95,16 +97,17 @@ static BOOL runiPhoneTargetOniPad = NO;
 
     if ([viewController isKindOfClass:[UINavigationController class]]) {
         [UAInboxNavUI shared].isVisible = YES;
-        [UAInboxNavUI shared].inboxParentController = viewController;
+        if (viewController) {
+            [UAInboxNavUI shared].inboxParentController = viewController;
+        }
         
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             [UAInboxNavUI shared].navigationController = [[[UINavigationController alloc] initWithRootViewController:[UAInboxNavUI shared].messageListController] autorelease];
             [UAInboxNavUI shared].popoverController = [[[UIPopoverController alloc] initWithContentViewController:[UAInboxNavUI shared].navigationController] autorelease];
             [UAInboxNavUI shared].popoverController.delegate = [UAInboxNavUI shared];
-            //[[UAInboxNavUI shared].navigationController pushViewController:[UAInboxNavUI shared].messageListController animated:animated];
             
             [[UAInboxNavUI shared].popoverController 
-                presentPopoverFromBarButtonItem:((UINavigationController *)viewController).topViewController.navigationItem.rightBarButtonItem
+                presentPopoverFromBarButtonItem:[UAInboxNavUI shared].popoverButton
                        permittedArrowDirections:UIPopoverArrowDirectionAny
                                        animated:animated];
         } else {
@@ -123,8 +126,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
     if(![UAInboxNavUI shared].isVisible) {
         UALOG(@"UI needs to be brought up!");
-		// We're not inside the modal/navigationcontroller setup so lets start with the parent
-		[UAInboxNavUI displayInbox:[UAInboxNavUI shared].inboxParentController animated:NO]; // BUG?
+		[UAInboxNavUI displayInbox:viewController animated:NO];
 	}
 	
     // If the message view is already open, just load the first message.

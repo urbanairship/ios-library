@@ -43,6 +43,11 @@
     
     self.navigationItem.rightBarButtonItem 
         = [[[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)] autorelease];
+    
+    Class uiClass = [[UAInbox shared] uiClass];
+    if ([[uiClass shared] respondsToSelector:@selector(setPopoverButton:)]) {
+        [[uiClass shared] performSelector:@selector(setPopoverButton:) withObject:self.navigationItem.rightBarButtonItem];
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
