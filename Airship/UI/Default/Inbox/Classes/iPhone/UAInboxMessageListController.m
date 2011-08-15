@@ -476,12 +476,12 @@ static float label_width = 0.0;
     badgeView.clipsToBounds = NO;
 
     //TODO: MACRO-ize this properly
-    if ([tabbarItem respondsToSelector:@selector(finishedSelectedImage)]) { //HACK!!
-        //if ios5
-        tabbar.tintColor = [UIColor clearColor];
+    if ([tabbar respondsToSelector:@selector(setTintColor:)]) {
+        //if iOS5
+        [tabbar setTintColor:[UIColor clearColor]];
         [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
     } else {
-        //if < ios5
+        //if < iOS5
         [badgeView addSubview:[((UIView *)[tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];
     }
 
