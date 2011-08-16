@@ -33,6 +33,8 @@
 #import "UAInboxUI.h"
 #import "UAInboxUIOverlay.h"
 
+#import "UAUtils.h"
+
 @implementation InboxSampleViewController
 
 @synthesize version;
@@ -43,10 +45,21 @@
 
 - (IBAction)selectInboxStyle:(id)sender {
     
+    NSString *popoverOrNav;
+    
+    if ([UAUtils isiPad]) {
+        popoverOrNav = @"Popover";
+    }
+    
+    else {
+        popoverOrNav = @"Navigation Controller";
+    }
+    
+    
     UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
                         cancelButtonTitle:@"Cancel" 
                    destructiveButtonTitle:nil 
-                        otherButtonTitles:@"Modal", @"Popover", @"Overlay", nil] autorelease];
+                        otherButtonTitles:@"Modal", popoverOrNav, @"Overlay", nil] autorelease];
     
     [sheet showInView:self.view];
     
