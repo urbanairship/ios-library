@@ -114,6 +114,7 @@
 /// @name Query Subscriptions
 ///---------------------------------------------------------------------------------------
 
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey;
 - (UASubscription *)subscriptionForKey:(NSString *)subscriptionKey;
 - (UASubscription *)subscriptionForProduct:(UASubscriptionProduct *)product;
 - (UASubscription *)subscriptionForContent:(UASubscriptionContent *)content;

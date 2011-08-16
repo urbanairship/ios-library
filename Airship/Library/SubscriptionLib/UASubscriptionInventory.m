@@ -94,6 +94,10 @@
     return [products containsProduct:productID];
 }
 
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey {
+    return [contents contentForKey:contentKey];
+}
+
 - (UASubscriptionProduct *)productForKey:(NSString *)productKey {
     return [products productForKey:productKey];
 }

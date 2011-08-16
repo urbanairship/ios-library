@@ -33,6 +33,7 @@
 @interface UAContentInventory : UAObservable {
   @private
     NSMutableArray *contentArray;
+    NSMutableDictionary *contentDict;
 }
 
 @property (nonatomic, retain, readonly) NSMutableArray *contentArray;
@@ -41,5 +42,6 @@
 - (void)loadWithArray:(NSArray *)array;
 - (void)loadInventory;
 - (NSArray *)contentsForSubscription:(NSString *)subscriptionKey;
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey;
 
 @end
