@@ -209,7 +209,7 @@
             [userSubscriptions addObject:subscription];
 
             // set user available contents
-            [subscription setContentsWithArray:[contents contentsForSubscription:subscriptionKey]];
+            [subscription setContentWithArray:[contents contentForSubscription:subscriptionKey]];
         }
     }
 

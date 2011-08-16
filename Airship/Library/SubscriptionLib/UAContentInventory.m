@@ -54,7 +54,7 @@
     return self;
 }
 
-- (NSArray *)contentsForSubscription:(NSString *)subscriptionKey {
+- (NSArray *)contentForSubscription:(NSString *)subscriptionKey {
     return [contentArray filteredArrayUsingPredicate:
             [NSPredicate predicateWithFormat:@"subscriptionKey like[c] %@", subscriptionKey]];
 }
