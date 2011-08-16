@@ -145,11 +145,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"badge"];
     }
+    
     if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"sound"];
     }
+    
     if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"alert"];
+    }
+    
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
     }
     
 	[session setObject:notification_types forKey:@"notification_types"];
