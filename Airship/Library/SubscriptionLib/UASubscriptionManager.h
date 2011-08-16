@@ -222,7 +222,8 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * <library directory>/ua/downloads/
  *
  * @param path The custom download directory (with trailing slash)
- * @param makeSubdir If YES, creates a subdirectory with the product ID name, if available.
+ * @param makeSubdir If YES, creates a subdirectory named with the content key
+ * *OR* the product ID, if available
  * @returns YES if the path was successfully set (exists or created)
  */
 + (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir;

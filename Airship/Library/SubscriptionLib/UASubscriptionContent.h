@@ -31,6 +31,7 @@
 @interface UASubscriptionContent : UAObservable <UA_ASIProgressDelegate> {
   @private
     NSString *contentName;
+    NSString *contentKey;
     NSString *subscriptionKey;
 	NSString *productIdentifier;
     NSURL *iconURL;
@@ -46,6 +47,7 @@
 }
 
 @property (nonatomic, retain) NSString *contentName;
+@property (nonatomic, retain) NSString *contentKey;
 @property (nonatomic, retain) NSString *subscriptionKey;
 @property (nonatomic, retain) NSString *productIdentifier;
 @property (nonatomic, retain) NSURL *iconURL;

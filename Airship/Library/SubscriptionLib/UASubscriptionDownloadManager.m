@@ -107,9 +107,17 @@
         zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
                                                       [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.subscriptionKey]];
 
-        if (self.createProductIDSubdir && subscriptionContent.productIdentifier) {
+        if (self.createProductIDSubdir) {
+            
+            // Use the content key as the subdirectory unless the
+            // product ID is available
+            NSString *subdirectory = subscriptionContent.contentKey;
+            if ([subscriptionContent.productIdentifier length] > 0) {
+                subdirectory = subscriptionContent.productIdentifier;
+            }
+            
             zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                          [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subscriptionContent.productIdentifier]];
+                                                          [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
         }
         
         

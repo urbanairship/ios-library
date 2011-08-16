@@ -30,6 +30,7 @@
 
 @synthesize contentName;
 @synthesize subscriptionKey;
+@synthesize contentKey;
 @synthesize productIdentifier;
 @synthesize iconURL;
 @synthesize previewURL;
@@ -45,6 +46,7 @@
 - (void)dealloc {
 
     self.contentName = nil;
+    self.contentKey = nil;
     self.subscriptionKey = nil;
     self.productIdentifier = nil;
     self.iconURL = nil;
@@ -63,6 +65,7 @@
         return nil;
 
     self.contentName = [dict objectForKey:@"name"];
+    self.contentKey = [dict objectForKey:@"content_key"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
 	self.productIdentifier = [dict objectForKey:@"product_id"];
     self.iconURL = [NSURL URLWithString:[dict objectForKey:@"icon_url"]];
