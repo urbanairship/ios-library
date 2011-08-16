@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1813EDE412796188009DEB29 /* libStoreFront-2.2.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.4.a */; };
+		1813EDE412796188009DEB29 /* libStoreFront-2.2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */; };
 		1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
 		1890B8A712519FCD00E6EBF1 /* libPush-1.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
@@ -71,7 +71,7 @@
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
 		D51846851300B6FC00A40CAC /* libInbox-1.5.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */; };
-		D51846861300B70100A40CAC /* libStoreFront-2.2.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.4.a */; };
+		D51846861300B70100A40CAC /* libStoreFront-2.2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */; };
 		D51846871300B70900A40CAC /* libPush-1.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */; };
 		D51846881300B70F00A40CAC /* libSubscription-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */; };
 		D51846AD1300B8C200A40CAC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846AC1300B8C200A40CAC /* CFNetwork.framework */; };
@@ -389,7 +389,7 @@
 				B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */,
 				63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */,
 				1890B8A712519FCD00E6EBF1 /* libPush-1.2.2.a in Frameworks */,
-				1813EDE412796188009DEB29 /* libStoreFront-2.2.4.a in Frameworks */,
+				1813EDE412796188009DEB29 /* libStoreFront-2.2.5.a in Frameworks */,
 				1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */,
 				D5A4B8DF13008BFE00002F71 /* GHUnitIOS.framework in Frameworks */,
 			);
@@ -400,7 +400,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D51846851300B6FC00A40CAC /* libInbox-1.5.5.a in Frameworks */,
-				D51846861300B70100A40CAC /* libStoreFront-2.2.4.a in Frameworks */,
+				D51846861300B70100A40CAC /* libStoreFront-2.2.5.a in Frameworks */,
 				D51846871300B70900A40CAC /* libPush-1.2.2.a in Frameworks */,
 				D51846881300B70F00A40CAC /* libSubscription-1.2.6.a in Frameworks */,
 				D5A4B95B1300A9A100002F71 /* Foundation.framework in Frameworks */,
@@ -474,7 +474,7 @@
 		1890B89F12519FC400E6EBF1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1890B8A612519FC400E6EBF1 /* libPush-1.2.1.a */,
+				1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -493,7 +493,7 @@
 		63314698122FA34B008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6331469C122FA34B008F2D48 /* libSubscription-1.2.5.a */,
+				6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -580,7 +580,7 @@
 		D5A1927412C158A8006AF4AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D5A1927812C158A8006AF4AE /* libInbox-1.5.4.a */,
+				D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -850,25 +850,25 @@
 		1813EDE312796185009DEB29 /* libStoreFront-2.2.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libStoreFront-2.2.4.a";
+			path = "libStoreFront-2.2.5.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1890B8A612519FC400E6EBF1 /* libPush-1.2.1.a */ = {
+		1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libPush-1.2.2.a";
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6331469C122FA34B008F2D48 /* libSubscription-1.2.5.a */ = {
+		6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libSubscription-1.2.6.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		D5A1927812C158A8006AF4AE /* libInbox-1.5.4.a */ = {
+		D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libInbox-1.5.5.a";
