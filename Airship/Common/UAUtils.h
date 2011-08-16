@@ -81,4 +81,11 @@
              pluralForm:(NSString*)plural;
 
 + (NSString *)getReadableFileSizeFromBytes:(double)bytes;
+
+/**
+ * Detects whether the device is an iPad.
+ * @return a boolean indicating whether the device is an iPad.
+ */
++ (BOOL)isiPad;
+    
 @end
