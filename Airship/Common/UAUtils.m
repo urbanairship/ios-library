@@ -208,13 +208,18 @@
           request.username, request.password);
 }
 
-+ (void)addUserAuthToWebRequest:(NSMutableURLRequest *)requestObj {
++ (NSString *)userAuthHeaderString {
     NSString *username = [UAUser defaultUser].username;
     NSString *password = [UAUser defaultUser].password;
     NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
-	
+    
+    //strip carriage return and linefeed characters
+    authString = [authString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    authString = [authString stringByReplacingOccurrencesOfString:@"\r" withString:@""];
     authString = [NSString stringWithFormat: @"Basic %@", authString];
-    [requestObj setValue:authString forHTTPHeaderField:@"Authorization"];
+    
+    return authString;
 }
+
 
 @end

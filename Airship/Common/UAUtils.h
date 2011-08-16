@@ -58,11 +58,12 @@
                              delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
 
 /**
- * Adds the UAUser username and password to an NSMutableURLRequest.
+ * Returns a basic auth header string
  *
- * @param request The request needing authentication credentials
+ * @return A basic auth header string encoded in base64 with the user's credentials
  */
-+ (void)addUserAuthToWebRequest:(NSMutableURLRequest *)request;
+
++ (NSString *)userAuthHeaderString;
 
 ///---------------------------------------------------------------------------------------
 /// @name HTTP Response Helpers
