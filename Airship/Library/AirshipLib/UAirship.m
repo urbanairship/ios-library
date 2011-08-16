@@ -24,10 +24,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAirship.h"
-#import "UAUser.h"
-#import "UAUtils.h"
+
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
+
+#import "UAUser.h"
+#import "UAEvent.h"
+#import "UAUtils.h"
 #import "UAKeychainUtils.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"

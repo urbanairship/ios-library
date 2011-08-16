@@ -24,9 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "sqlite3.h"
 
-#import "UAGlobal.h"
+#import "sqlite3.h"
 
 @interface UASQLite : NSObject {
     NSInteger busyRetryTimeout;

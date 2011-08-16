@@ -25,11 +25,16 @@
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+
 #import "UAAnalytics.h"
-#import "UAirship.h"
-#import "UAUtils.h"
+
 #import "UA_SBJSON.h"
 #import "UA_Reachability.h"
+
+#import "UAirship.h"
+#import "UAUtils.h"
+#import "UAAnalyticsDBManager.h"
+#import "UAEvent.h"
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 

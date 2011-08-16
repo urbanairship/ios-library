@@ -24,8 +24,8 @@
  */
 #import <Foundation/Foundation.h>
 #import "UAHTTPConnection.h"
-#import "UAAnalyticsDBManager.h"
-#import "UAEvent.h"
+
+@class UAEvent;
 
 // Used for init local size if server didn't response, or server sends bad data
 
