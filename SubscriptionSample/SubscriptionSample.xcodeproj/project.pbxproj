@@ -106,7 +106,6 @@
 		005F08C912B89AF000DBF4B0 /* UASubscriptionUserProductsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UASubscriptionUserProductsViewController.xib; sourceTree = "<group>"; };
 		0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0DE288F311CF310D0013D2F1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
@@ -240,7 +239,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1F51F2EF13D9026800932853 /* libz.dylib */,
 				181A7701129E494A0061547A /* Support */,
 				63EFBBA41230E7B900A3B55D /* Airship */,
 				63314730122FAB2D008F2D48 /* Classes */,
@@ -268,13 +266,13 @@
 			children = (
 				0DE288F311CF310D0013D2F1 /* StoreKit.framework */,
 				0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */,
-				0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */,
 				0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */,
 				0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				B63B5ED91246383700145424 /* libsqlite3.dylib */,
+				1F51F2EF13D9026800932853 /* libz.dylib */,
 				18F4D8D01287DC0100FE3508 /* Security.framework */,
 				E9CB329312B85C7E002E39EA /* CoreTelephony.framework */,
 			);
