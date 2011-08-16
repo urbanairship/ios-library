@@ -31,20 +31,39 @@
 
 #import "UAInboxNavUI.h"
 #import "UAInboxUI.h"
+#import "UAInboxUIOverlay.h"
 
 @implementation InboxSampleViewController
 
 @synthesize version;
 
 - (IBAction)mail:(id)sender {
-    [UAInbox useCustomUI:[UAInboxNavUI class]];
     [UAInbox displayInbox:self.navigationController animated:YES];   
 }
 
 - (IBAction)selectInboxStyle:(id)sender {
     
-    [UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox displayInbox:self.navigationController animated:YES];   
+    UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
+                        cancelButtonTitle:@"Cancel" 
+                   destructiveButtonTitle:nil 
+                        otherButtonTitles:@"Modal", @"Popover", @"Overlay", nil] autorelease];
+    
+    [sheet showInView:self.view];
+    
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (buttonIndex) {
+        case 0:
+            [UAInbox useCustomUI:[UAInboxUI class]];
+            break;
+        case 1:
+            [UAInbox useCustomUI:[UAInboxNavUI class]];
+            break;
+        case 2:
+            [UAInbox useCustomUI:[UAInboxUIOverlay class]];
+            break;
+    }
 }
 
 - (void)viewDidLoad {
