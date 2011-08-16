@@ -88,8 +88,11 @@
     }
     
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
-    [UAUtils addUserAuthToWebRequest:requestObj];
+    NSString *auth = [UAUtils userAuthHeaderString];
+    
+    [requestObj setValue:auth forHTTPHeaderField:@"Authentication"];
     [requestObj setTimeoutInterval:5];
+    
     [webView stopLoading];
     [webView loadRequest:requestObj];
 }

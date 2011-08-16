@@ -151,8 +151,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self refreshHeader];
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
-    [UAUtils addUserAuthToWebRequest:requestObj];
+    
     [requestObj setTimeoutInterval:5];
+    
+    NSString *auth = [UAUtils userAuthHeaderString];
+    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
+    
     [webView stopLoading];
     [webView loadRequest:requestObj];
 }
