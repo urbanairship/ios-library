@@ -41,7 +41,7 @@
     [UAInbox displayInbox:self.navigationController animated:YES];   
 }
 
-- (IBAction)launchModalInbox:(id)sender {
+- (IBAction)selectInboxStyle:(id)sender {
     
     [UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox displayInbox:self.navigationController animated:YES];   
