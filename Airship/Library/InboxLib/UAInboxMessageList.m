@@ -289,10 +289,6 @@ static UAInboxMessageList *_messageList = nil;
         
 }
 
-- (BOOL)isBusying {
-    return isBatchUpdating;
-}
-
 #pragma mark Get messages
 
 - (int)messageCount {

@@ -54,7 +54,6 @@ typedef enum {
 
 - (void)retrieveMessageList;
 - (BOOL)batchUpdate:(NSIndexSet *)messageIDs option:(UABatchUpdateCommand)option;
-- (BOOL)isBusying;
 
 - (int)messageCount;
 - (UAInboxMessage *)messageForID:(NSString *)mid;
