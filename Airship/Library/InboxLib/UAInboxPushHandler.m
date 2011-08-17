@@ -131,14 +131,15 @@
         
         Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
         
-        //if the app received the notification in the foreground, display it
-        if(hasLaunchMessage) {
+        //if the notification came in while the app was backgrounded, treat it as a launch message
+        if (hasLaunchMessage) {
+            [uiClass loadLaunchMessage];
+        }
+        
+        //otherwise, have the UI class display it
+        else {
             [uiClass displayMessage:nil message:viewingMessageID];
             [self setViewingMessageID:nil];
-        }
-        //otherwise treat it as a launch message
-        else {
-            [uiClass loadLaunchMessage]; 
         }
     }
 }
