@@ -90,7 +90,7 @@
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
     NSString *auth = [UAUtils userAuthHeaderString];
     
-    [requestObj setValue:auth forHTTPHeaderField:@"Authentication"];
+    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
     [requestObj setTimeoutInterval:5];
     
     [webView stopLoading];
