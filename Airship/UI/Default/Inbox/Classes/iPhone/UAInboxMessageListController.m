@@ -255,7 +255,7 @@
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
         moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
-        if ([UAInbox shared].messageList.isBusying) {
+        if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
             moveItem.enabled = NO;
         } else {
