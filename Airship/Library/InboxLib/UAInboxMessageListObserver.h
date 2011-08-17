@@ -83,9 +83,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 - (void)singleMessageMarkAsReadFailed:(UAInboxMessage *)message;
 
-/**
- * TODO: unused -- necessary?
- */
+
 - (void)newMessageArrived:(NSDictionary *)message;
 
 @end
