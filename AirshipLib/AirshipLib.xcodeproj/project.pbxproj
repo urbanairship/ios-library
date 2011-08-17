@@ -466,7 +466,7 @@
 		1813EDDC12796185009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813EDE312796185009DEB29 /* libStoreFront-2.2.4.a */,
+				1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -847,7 +847,7 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813EDE312796185009DEB29 /* libStoreFront-2.2.4.a */ = {
+		1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libStoreFront-2.2.5.a";
