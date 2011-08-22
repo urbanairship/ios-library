@@ -51,7 +51,8 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
     
     //if the inbox is not displaying, show the message in an overlay window
     if(![UAInboxUI shared].isVisible) {
-        [UAOverlayWindow showWindowWithMessageID:messageID];
+        //[UAOverlayWindow showWindowWithMessageID:messageID];
+        [UAOverlayWindow showWindowInsideView:[UAInboxUIOverlay shared].inboxParentController.view withMessageID:messageID];
     }
     
     else {

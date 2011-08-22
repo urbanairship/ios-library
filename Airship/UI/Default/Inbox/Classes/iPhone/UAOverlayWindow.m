@@ -55,6 +55,9 @@
     if (self) {
         // Initialization code here.
         bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];
+        bgView.autoresizesSubviews = YES;
+        bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        
         [sview addSubview: bgView];
         
         //set the frame later
@@ -114,10 +117,14 @@
 -(void)doTransition {
     //faux view
     UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
+    fauxView.autoresizesSubviews = YES;
+    fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [bgView addSubview: fauxView];
     
     //the new panel
     bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width, bgView.frame.size.height)] autorelease];
+    bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    bigPanelView.autoresizesSubviews = YES;
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
@@ -157,6 +164,7 @@
         
         //dim the contents behind the popup window
         UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.frame] autorelease];
+        shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         shadeView.backgroundColor = [UIColor blackColor];
         shadeView.alpha = 0.3;
         shadeView.tag = kShadeViewTag;
