@@ -37,6 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize messageID;
 @synthesize messageBodyURL;
 @synthesize messageURL;
+@synthesize contentType;
 @synthesize unread;
 @synthesize messageSent;
 @synthesize title;
@@ -59,6 +60,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.inbox = i;
         self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];
         self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
+        self.contentType = [message objectForKey:@"content_type"];
         self.unread = NO;
         if([message objectForKey: @"unread"] != [NSNull null] && [[message objectForKey: @"unread"] intValue] != 0) {
             self.unread = YES;

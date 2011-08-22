@@ -31,6 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString* messageID;
     NSURL* messageBodyURL;
     NSURL* messageURL;
+    NSString *contentType;
     BOOL unread;
     NSDate* messageSent;
     NSString* title;
@@ -48,6 +49,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) NSString* messageID;
 @property (nonatomic, retain) NSURL* messageBodyURL;
 @property (nonatomic, retain) NSURL* messageURL;
+@property (nonatomic, copy) NSString *contentType;
 @property (assign) BOOL unread;
 @property (nonatomic, retain) NSDate* messageSent;
 @property (nonatomic, retain) NSString* title;
