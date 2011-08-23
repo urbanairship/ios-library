@@ -304,6 +304,16 @@ static UAInboxMessageList *_messageList = nil;
     return nil;
 }
 
+
+- (UAInboxMessage *)messageForBodyURL:(NSURL *)url {
+    for (UAInboxMessage *msg in messages) {
+        if ([msg.messageBodyURL isEqual:url]) {
+            return msg;
+        }
+    }
+    return nil;
+}
+
 - (UAInboxMessage*)messageAtIndex:(int)index {
     if (index < 0 || index >= [messages count]) {
         UALOG("Load message(index=%d, count=%d) error.", index, [messages count]);

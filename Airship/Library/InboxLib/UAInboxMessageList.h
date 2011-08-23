@@ -57,6 +57,7 @@ typedef enum {
 
 - (int)messageCount;
 - (UAInboxMessage *)messageForID:(NSString *)mid;
+- (UAInboxMessage *)messageForBodyURL:(NSURL *)url;
 - (UAInboxMessage*)messageAtIndex:(int)index;
 - (int)indexOfMessage:(UAInboxMessage *)message;
 
