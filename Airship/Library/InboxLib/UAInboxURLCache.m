@@ -27,6 +27,9 @@
 #import "UA_ASIHTTPRequest.h"
 #import "UAInbox.h"
 #import "UAUser.h"
+#import "UAInbox.h"
+#import "UAInboxMessageList.h"
+#import "UAInboxMessage.h"
 
 @implementation UAInboxURLCache
 
@@ -88,8 +91,21 @@
         NSData* content;
         if ([[NSFileManager defaultManager] fileExistsAtPath:storagePath]) {
             UALOG(@"CACHE FOUND at %@", storagePath);
+            
             content = [NSData dataWithContentsOfFile:storagePath];
-            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html"
+           
+            UAInboxMessage *msg = [[[UAInbox shared] messageList] messageForBodyURL:request.URL];
+            
+            NSString *mimeType;
+            
+            if (msg.contentType) {
+                mimeType = msg.contentType;
+            }
+            else {
+                mimeType = @"text/html";
+            }
+            
+            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:mimeType
                                                     expectedContentLength:[content length]
                                                          textEncodingName:nil]
                                        autorelease];
