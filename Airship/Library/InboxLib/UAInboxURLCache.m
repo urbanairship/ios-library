@@ -81,13 +81,8 @@
         BOOL ok = [content writeToFile:contentPath atomically:YES];
         UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
         
-        NSError *error;
-        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentTypePath, ok?@"OK":@"FAILED");
-        
-        if(error) {
-            UALOG(@"storeContent: %@", error.localizedDescription);
-        }
     }
 } 
 
@@ -101,7 +96,7 @@
 
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
-    NSCachedURLResponse* cachedResponse;
+    NSCachedURLResponse* cachedResponse = nil;
     
     //not sure what this is accomplishing, but leaving it in for now
     NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
@@ -135,11 +130,10 @@
             //retrieve it
             NSData *content = [NSData dataWithContentsOfFile:contentPath];
             
-            NSError *error;
-            NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:&error];
+            NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:NULL];
             
-            if(error) {
-                UALOG(@"cachedResponseForRequest: %@", error.localizedDescription);
+            if(!contentType) {
+                UALOG(@"cachedResponseForRequest: unable to fetch content type for %@", [request.URL absoluteString]);
                 //if there was a problem pulling out the content type, text/html is better than nothing
                 contentType = @"text/html";
             }
@@ -189,6 +183,9 @@
     } else {
         NSDictionary *headers = request.responseHeaders;
         NSString *contentType = [headers valueForKey:@"Content-type"];
+        if(!contentType) {
+            contentType = @"text/html";
+        }
         [self storeContent:request.responseData withURL:req.URL contentType:contentType];
     }
 
@@ -210,6 +207,9 @@
     } else {
         NSDictionary *headers = request.responseHeaders;
         NSString *contentType = [headers valueForKey:@"Content-type"];
+        if(!contentType) {
+            contentType = @"text/html";
+        }
         [self storeContent:request.responseData withURL:req.URL contentType:contentType];
     }
     
