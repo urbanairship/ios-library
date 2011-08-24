@@ -94,37 +94,57 @@
     [self storeContent:content withURL:request.URL contentType:cachedResponse.response.MIMEType];    
 }
 
-- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
+   
+    NSRange range = [contentType rangeOfString:@"charset="];
     
-    NSCachedURLResponse* cachedResponse = nil;
+    NSString *contentSubType;
+    NSString *charset;
     
-    //not sure what this is accomplishing, but leaving it in for now
+    if (range.location != NSNotFound) {
+        contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
+                     stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        charset = [[contentType substringFromIndex:(range.location + range.length)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        return [NSArray arrayWithObjects:contentSubType, charset, nil];
+    }
+    
+    else {
+        return [NSArray arrayWithObjects:contentType, nil];
+    }    
+}
+
+- (NSString *)resourceTypeForRequest:(NSURLRequest *)request {
+    
     NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
     if (tokens == nil) {
-        UALOG(@"IGNORE CACHE for %@", request);
         return nil;
     }
     
     NSString *lastToken = [tokens objectAtIndex:[tokens count]-1];
     NSString *resourceType;
     
-    BOOL ignoreCache = YES;
-    
     for (NSString *type in [resourceTypes allKeys]) {
         if ([lastToken rangeOfString:type].location != NSNotFound) {
             resourceType = [resourceTypes objectForKey:type];
-            ignoreCache = NO;
-            break;
+            return resourceType;
         }
     }
     
-    if (ignoreCache) {
+    return nil;
+}
+
+- (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+    
+    NSCachedURLResponse* cachedResponse = nil;
+    
+    NSString *resourceType = [self resourceTypeForRequest:request];
+        
+    if (!resourceType) {
         UALOG(@"IGNORE CACHE for %@", request);
     }
         
     else {
         //retrieve resource from cache or populate if needed
-        
         NSString *contentPath = [self getStoragePathForURL:request.URL];
         NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
         
@@ -133,66 +153,45 @@
             NSData *content = [NSData dataWithContentsOfFile:contentPath];
             
             NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:NULL];
+            NSString *charset;
             
             if(!contentType) {
                 UALOG(@"cachedResponseForRequest: unable to fetch content type for %@", [request.URL absoluteString]);
                 //if there was a problem pulling out the content type, try to set it by looking up the resource, using text/html as a last resort
                 contentType = [resourceTypes objectForKey:resourceType]?:@"text/html";
+                charset = @"utf-8";
+            }
+            
+            //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
+            //into separate arguments so UIWebView doesn't get confused
+            else {
+                NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
+                contentType = [subTypes objectAtIndex:0];
+                if(subTypes.count > 1) {
+                    charset = [subTypes objectAtIndex:1];
+                }
             }
             
             NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
                                                     expectedContentLength:[content length]
-                                                         textEncodingName:nil]
+                                                         textEncodingName:@"utf-8"]
                                        autorelease];
             // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
             cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
                                                                       data:content];
         }
         
-        //evidently, UIWebView only actively tries to cache the main request body
+        //evidently, UIWebView only tries to cache the main request body through the shared URLCache,
+        //though it appears to be doing some additional resource caching internally.  this won't make
+        //much of a difference for UIWebview, but will ensure we can transparently retrieved the cached
+        //URL by other means
         else {
-            //anything that's not the message body
-            if (![resourceType isEqualToString:@"body"]) {
-                [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
-                                         toTarget:self withObject:request];
-            } 
-            
-            //this probably won't be called since we're using storeCachedResponse above, but leaving it for now
-            else {
-                [NSThread detachNewThreadSelector:@selector(populateAuthNeededCacheFor:)
-                                         toTarget:self withObject:request];
-            }
-        }
+            [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
+                         toTarget:self withObject:request];
+        } 
     }
     
     return cachedResponse;
-}
-
-- (void)populateAuthNeededCacheFor:(NSURLRequest*)req {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
-    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
-    request.timeOutSeconds = 60;
-    request.username = [UAUser defaultUser].username;
-    request.password = [UAUser defaultUser].password;
-    request.requestMethod = @"GET";
-    [request startSynchronous];
-
-    NSError *error = [request error];
-    if (error) {
-        UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
-    } else {
-        NSDictionary *headers = request.responseHeaders;
-        NSString *contentType = [headers valueForKey:@"Content-type"];
-        if(!contentType) {
-            //default to text/html if none is provided
-            contentType = @"text/html";
-        }
-        [self storeContent:request.responseData withURL:req.URL contentType:contentType];
-    }
-
-    [pool release];
 }
 
 - (void)populateCacheFor:(NSURLRequest*)req {
@@ -202,14 +201,18 @@
     UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
     request.timeOutSeconds = 60;
     request.requestMethod = @"GET";
-    [request startSynchronous];
     
+    //piggyback on whatever authorization was set for the original NSURLRequest
+    [request.requestHeaders setObject:[req.allHTTPHeaderFields objectForKey:@"Authorization"] forKey:@"Authorization"];
+    
+    [request startSynchronous];
+        
     NSError *error = [request error];
     if (error) {
         UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
     } else {
         NSDictionary *headers = request.responseHeaders;
-        NSString *contentType = [headers valueForKey:@"Content-type"];
+        NSString *contentType = [headers valueForKey:@"Content-Type"];
         if(!contentType) {
             //default to text/html if none is provided
             contentType = @"text/html";
