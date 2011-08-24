@@ -339,10 +339,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 [restoredProducts addObject:product];
             }
             
-            UALOG(@"Request count: %d", networkQueue.requestsCount);
+            //UALOG(@"Request count: %d", networkQueue.requestsCount);
             if (networkQueue.requestsCount > 1) {
                 //rebuild the other transactions
-                UALOG(@"Rebuilding receipt submission request: %d more requests", networkQueue.requestsCount);
+                //UALOG(@"Rebuilding receipt submission request: %d more requests", networkQueue.requestsCount);
                 
                 [networkQueue setDelegate:nil];//remove delegate to prevent cancel events
                 [networkQueue cancelAllOperations];

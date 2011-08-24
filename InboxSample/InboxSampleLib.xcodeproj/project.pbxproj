@@ -650,7 +650,8 @@
 		B6E7F8441239FFD5009BC92D /* libUAirship-1.0.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.0.5.a";
+			name = "libUAirship-1.0.5.a";
+			path = "libUAirship-1.0.6.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -955,8 +956,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-ObjC",
 					"-all_load",
 				);
@@ -981,8 +981,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-ObjC",
 					"-all_load",
 				);
