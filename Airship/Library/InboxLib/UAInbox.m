@@ -115,9 +115,11 @@ static Class _uiClass;
     if (self = [super init]) {
 
         /* Using custom URLCache */
+        NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesDirectory = [paths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
+        //append bundle name to cache directory to make it app-unique
+        NSString *cacheDirectory = [[paths objectAtIndex:0]stringByAppendingPathComponent:bundleName];
+        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
         NSError *error;
 
         [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
