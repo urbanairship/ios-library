@@ -27,9 +27,10 @@
 
 @interface UAInboxURLCache : NSURLCache {
     NSString *cacheDirectory;
+    NSDictionary *resourceTypes;
 }
-@property(nonatomic, retain)NSString *cacheDirectory;
 
-- (void)saveContentIfNecessary:(NSData *)content forRequestURL:(NSURL *)url;
+@property(nonatomic, retain) NSString *cacheDirectory;
+@property(nonatomic, retain) NSDictionary *resourceTypes;
 
 @end

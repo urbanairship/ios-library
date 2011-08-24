@@ -30,104 +30,150 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
+#import "UAUtils.h"
 
 @implementation UAInboxURLCache
 
 @synthesize cacheDirectory;
+@synthesize resourceTypes;
 
 - (id)initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity diskPath:(NSString *)path {
     if (self = [super initWithMemoryCapacity:memoryCapacity diskCapacity:diskCapacity diskPath:path]) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        self.cacheDirectory = [paths objectAtIndex:0];
+        self.cacheDirectory = path;
+        
+        self.resourceTypes = [NSDictionary dictionaryWithObjectsAndKeys:
+                              @"image/png", @".png",
+                              @"image/gif", @".gif",
+                              @"image/jpeg", @".jpg",
+                              @"image/jpeg", @".jpeg",
+                              @"application/javascript", @".js",
+                              @"text/css", @".css", 
+                              @"text/html", @"body", nil];
     }
     return self;
 }
 
 - (void)dealloc {
     RELEASE_SAFELY(cacheDirectory);
+    RELEASE_SAFELY(resourceTypes);
     [super dealloc];
 }
 
-- (NSString *)getStoragePath:(NSURL *)url {
-    NSString *result = [NSString stringWithFormat:@"%@/UAInboxCache%@", cacheDirectory, url.relativePath];
-    if (url.query != nil) {
-        result = [NSString stringWithFormat:@"%@?%@", result, url.query];
-    }
-    return result;
+- (NSString *)getStoragePathForURL:(NSURL *)url {    
+    NSString *hashedURLString = [UAUtils md5:[url absoluteString]];
+    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, hashedURLString];
 }
 
-- (NSString *)getAbsolutePath:(NSURL *)url {
-    NSArray *tokens = [url.relativePath componentsSeparatedByString:@"/"];
-    NSString *pathWithoutRessourceName = @"";
-    for (int i = 0; i < [tokens count]-1; i++) {
-        pathWithoutRessourceName = [pathWithoutRessourceName stringByAppendingString:[NSString stringWithFormat:@"%@%@", [tokens objectAtIndex:i], @"/"]];
-    }
-    return [NSString stringWithFormat:@"%@/UAInboxCache%@", cacheDirectory, pathWithoutRessourceName];
+- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url {
+    return [NSString stringWithFormat:@"%@%@", [self getStoragePathForURL:url], @".contentType"];
 }
+
+- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
+    
+    NSString *contentPath = [self getStoragePathForURL:url];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+        UALOG(@"File exists %@", contentPath);
+    }
+    
+    else {
+        BOOL ok = [content writeToFile:contentPath atomically:YES];
+        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
+        
+        NSError *error;
+        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentTypePath, ok?@"OK":@"FAILED");
+        
+        if(error) {
+            UALOG(@"storeContent: %@", error.localizedDescription);
+        }
+    }
+} 
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
+    
     UALOG(@"storeCachedResponse: %@", cachedResponse);
+    
+    NSData *content = cachedResponse.data;
+    [self storeContent:content withURL:request.URL contentType:cachedResponse.response.MIMEType];    
 }
 
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
+    
+    NSCachedURLResponse* cachedResponse;
+    
+    //not sure what this is accomplishing, but leaving it in for now
     NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
     if (tokens == nil) {
         UALOG(@"IGNORE CACHE for %@", request);
         return nil;
     }
-    NSString* absolutePath = [self getAbsolutePath:request.URL];
-    NSString* absolutePathWithResourceName = [NSString stringWithFormat:@"%@%@", cacheDirectory, request.URL.relativePath];
-    NSString* resourceName = [absolutePathWithResourceName stringByReplacingOccurrencesOfString:absolutePath withString:@""];
-    NSCachedURLResponse* cachedResponse = nil;
-    if (
-        [resourceName rangeOfString:@".png"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".gif"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".jpg"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".js"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".css"].location!=NSNotFound ||
-        [resourceName rangeOfString:@"body"].location!=NSNotFound //This is for message content
-        ) {
-        NSString* storagePath = [self getStoragePath:request.URL];
-        NSData* content;
-        if ([[NSFileManager defaultManager] fileExistsAtPath:storagePath]) {
-            UALOG(@"CACHE FOUND at %@", storagePath);
+    
+    NSString *resourceName = [tokens objectAtIndex:[tokens count]-1];
+    
+    BOOL ignoreCache = YES;
+    
+    for (NSString *type in [resourceTypes allKeys]) {
+        if ([resourceName rangeOfString:type].location != NSNotFound) {
+            ignoreCache = NO;
+            break;
+        }
+    }
+    
+    if (ignoreCache) {
+        UALOG(@"IGNORE CACHE for %@", request);
+    }
+        
+    else {
+        //retrieve resource from cache or populate if needed
+        
+        NSString *contentPath = [self getStoragePathForURL:request.URL];
+        NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
+        
+        if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+            //retrieve it
+            NSData *content = [NSData dataWithContentsOfFile:contentPath];
             
-            content = [NSData dataWithContentsOfFile:storagePath];
-           
-            UAInboxMessage *msg = [[[UAInbox shared] messageList] messageForBodyURL:request.URL];
+            NSError *error;
+            NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:&error];
             
-            NSString *mimeType;
-            
-            if (msg.contentType) {
-                mimeType = msg.contentType;
+            if(error) {
+                UALOG(@"cachedResponseForRequest: %@", error.localizedDescription);
+                //if there was a problem pulling out the content type, text/html is better than nothing
+                contentType = @"text/html";
             }
-            else {
-                mimeType = @"text/html";
-            }
             
-            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:mimeType
+            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
                                                     expectedContentLength:[content length]
                                                          textEncodingName:nil]
                                        autorelease];
             // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
             cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
                                                                       data:content];
-        } else {
+        }
+        
+        //evidently, UIWebView only actively tries to cache the main request body
+        else {
+            //anything that's not the message body
             if ([resourceName rangeOfString:@"body"].location == NSNotFound) {
                 [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
                                          toTarget:self withObject:request];
-            } else {
+            } 
+            
+            //this probably won't be called since we're using storeCachedResponse above, but leaving it for now
+            else {
                 [NSThread detachNewThreadSelector:@selector(populateAuthNeededCacheFor:)
                                          toTarget:self withObject:request];
             }
         }
-    } else {
-        UALOG(@"IGNORE CACHE for %@", request);
     }
+    
     return cachedResponse;
 }
 
 - (void)populateAuthNeededCacheFor:(NSURLRequest*)req {
+    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
     UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
@@ -141,38 +187,33 @@
     if (error) {
         UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
     } else {
-        [self saveContentIfNecessary:request.responseData forRequestURL:req.URL];
+        NSDictionary *headers = request.responseHeaders;
+        NSString *contentType = [headers valueForKey:@"Content-type"];
+        [self storeContent:request.responseData withURL:req.URL contentType:contentType];
     }
 
     [pool release];
 }
 
-- (void)populateCacheFor:(NSURLRequest*)request {
+- (void)populateCacheFor:(NSURLRequest*)req {
+    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
-    NSData *content;
-    NSError *error = nil;
-    content = [NSData dataWithContentsOfURL:request.URL options:1 error:&error];
-    if (error != nil) {
-        UALOG(@"Cache not populated for %@, error: %@", request.URL, error);
+    
+    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
+    request.timeOutSeconds = 60;
+    request.requestMethod = @"GET";
+    [request startSynchronous];
+    
+    NSError *error = [request error];
+    if (error) {
+        UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
     } else {
-        [self saveContentIfNecessary:content forRequestURL:request.URL];
+        NSDictionary *headers = request.responseHeaders;
+        NSString *contentType = [headers valueForKey:@"Content-type"];
+        [self storeContent:request.responseData withURL:req.URL contentType:contentType];
     }
-
+    
     [pool release];
-}
-
-- (void)saveContentIfNecessary:(NSData *)content forRequestURL:(NSURL *)url {
-    NSString* absolutePath = [self getAbsolutePath:url];
-    NSString* storagePath = [self getStoragePath:url];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:storagePath]) {
-        UALOG(@"File exists %@", storagePath);
-    } else {
-        [[NSFileManager defaultManager] createDirectoryAtPath:absolutePath
-                                  withIntermediateDirectories:YES attributes:nil error:nil];
-        BOOL ok = [content writeToFile:storagePath atomically:YES];
-        UALOG(@"Caching %@ : %@", storagePath , ok?@"OK":@"FAILED");
-    }
 }
 
 @end
