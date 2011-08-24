@@ -503,7 +503,8 @@ IF_IOS4_OR_GREATER(
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
-    request.compressPostBody = YES;//enable GZIP
+    request.compressBody = YES;//enable GZIP
+    request.HTTPMethod = @"POST";
     
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
@@ -585,7 +586,7 @@ IF_IOS4_OR_GREATER(
              
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     writer.humanReadable = NO;//strip whitespace
-    [request appendPostData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
 
     writer.humanReadable = YES;//turn on formatting for debugging
