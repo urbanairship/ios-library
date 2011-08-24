@@ -105,12 +105,14 @@
         return nil;
     }
     
-    NSString *resourceName = [tokens objectAtIndex:[tokens count]-1];
+    NSString *lastToken = [tokens objectAtIndex:[tokens count]-1];
+    NSString *resourceType;
     
     BOOL ignoreCache = YES;
     
     for (NSString *type in [resourceTypes allKeys]) {
-        if ([resourceName rangeOfString:type].location != NSNotFound) {
+        if ([lastToken rangeOfString:type].location != NSNotFound) {
+            resourceType = [resourceTypes objectForKey:type];
             ignoreCache = NO;
             break;
         }
@@ -134,8 +136,8 @@
             
             if(!contentType) {
                 UALOG(@"cachedResponseForRequest: unable to fetch content type for %@", [request.URL absoluteString]);
-                //if there was a problem pulling out the content type, text/html is better than nothing
-                contentType = @"text/html";
+                //if there was a problem pulling out the content type, try to set it by looking up the resource, using text/html as a last resort
+                contentType = [resourceTypes objectForKey:resourceType]?:@"text/html";
             }
             
             NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
@@ -150,7 +152,7 @@
         //evidently, UIWebView only actively tries to cache the main request body
         else {
             //anything that's not the message body
-            if ([resourceName rangeOfString:@"body"].location == NSNotFound) {
+            if (![resourceType isEqualToString:@"body"]) {
                 [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
                                          toTarget:self withObject:request];
             } 
@@ -184,6 +186,7 @@
         NSDictionary *headers = request.responseHeaders;
         NSString *contentType = [headers valueForKey:@"Content-type"];
         if(!contentType) {
+            //default to text/html if none is provided
             contentType = @"text/html";
         }
         [self storeContent:request.responseData withURL:req.URL contentType:contentType];
@@ -208,6 +211,7 @@
         NSDictionary *headers = request.responseHeaders;
         NSString *contentType = [headers valueForKey:@"Content-type"];
         if(!contentType) {
+            //default to text/html if none is provided
             contentType = @"text/html";
         }
         [self storeContent:request.responseData withURL:req.URL contentType:contentType];
