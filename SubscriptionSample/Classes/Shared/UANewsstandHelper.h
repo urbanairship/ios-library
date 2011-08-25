@@ -31,7 +31,29 @@
 #import "UAHTTPConnection.h"
 #import "UADownloadContent.h"
 
-
+/**
+ * UANewsstandHelper is a fully contained helper class that processes
+ * newsstand pushes, retrieves the download URL, downloads and unzips
+ * your content.
+ *
+ * In addition to making code changes, the following items must be
+ * added to your app's Info.plist file:
+ *
+ * To enable newsstand:
+ *   <key>UINewsstandApp</key>
+ *   <true/>
+ *
+ * To enable background downloads:
+ *   <key>UIBackgroundModes</key>
+ *   <array>
+ *     <string>newsstand-content</string>
+ *   </array>
+ *
+ * You must also register for Newsstand pushes by adding 
+ * UIRemoteNotificationTypeNewsstandContentAvailability to your 
+ * registerForRemoteNotificationTypes: call.
+ *
+ */
 @interface UANewsstandHelper : NSObject<NSURLConnectionDownloadDelegate,
                                         UAHTTPConnectionDelegate,
                                         UASubscriptionManagerObserver,
@@ -43,6 +65,12 @@
 
 @property (nonatomic, copy) NSString *contentIdentifier;
 
+/**
+ * Process a push notification dictionary and start the
+ * newsstand download process if the push contains
+ * a content-available item in the aps portion of the
+ * payload.
+ */
 - (void)handleNewsstandPushInfo:(NSDictionary *)userInfo;
 
 @end
