@@ -616,6 +616,15 @@ IF_IOS4_OR_GREATER(
 
 - (void)sendIfNeeded {
     
+    
+    IF_IOS4_OR_GREATER(
+                       // if the application is not active, do not attempt to send
+                       // this will typically be the case for headless newsstant launches
+                       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+                           return;
+                       }
+                       )
+    
     //try sending at this interval if no other thresholds
     //have been met
     //NSInteger stdInterval = x_ua_min_batch_interval * 2;
