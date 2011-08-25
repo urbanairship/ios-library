@@ -24,34 +24,35 @@
  */
 
 #import "AppDelegate_Phone.h"
+
+#import <NewsstandKit/NewsstandKit.h>
+
 #import "UAirship.h"
-#import "UAProductInventory.h"
-#import "UAContentInventory.h"
-#import "UASubscription.h"
 #import "UASubscriptionUI.h"
-#import "UASubscriptionManager.h"
+#import "UANewsstandHelper.h"
 
 @implementation AppDelegate_Phone
 
 @synthesize window;
 @synthesize controller;
 
-
 - (void)dealloc {
     [controller release];
     [window release];
+    [newsstand release];
     [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Override point for customization after application launch
-
     [window makeKeyAndVisible];
     [window addSubview:controller.view];
 
+    // Purchase functionality is not supported in the Simulator - fail now
     [self failIfSimulator];
     
+    // Initialize the UI class
     [UASubscriptionManager useCustomUI:[UASubscriptionUI class]];
     
     //Init Airship launch options
@@ -62,12 +63,31 @@
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
+    // Set up newsstand helper
+    newsstand = [[UANewsstandHelper alloc] init];
+    
+    // Add newsstand helper as observer
+    [[UASubscriptionManager shared] addObserver:newsstand];
+    
+    // Resume existing downloads
+    for (NKAssetDownload *asset in [[NKLibrary sharedLibrary] downloadingAssets]) {
+        [asset downloadWithDelegate:newsstand];
+    }
+    
     // Register for notifications
     [[UIApplication sharedApplication]
-     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeNewsstandContentAvailability | // Newsstand type <---
+                                         UIRemoteNotificationTypeBadge |
                                          UIRemoteNotificationTypeSound |
                                          UIRemoteNotificationTypeAlert)];
+    
+    // For debugging - allow multiple pushes per day
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
 
+    // Handle incoming pushes
+    NSDictionary *userInfo = [launchOptions valueForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
+    [newsstand handleNewsstandPushInfo:userInfo];
+    
     return YES;
 }
 
@@ -86,12 +106,13 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"did receive remote notification: %@", userInfo);
     [[UAirship shared].analytics handleNotification:userInfo];
+    
+    [newsstand handleNewsstandPushInfo:userInfo];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
 	[[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
-
 
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] compare:@"iPhone Simulator"] == NSOrderedSame) {
@@ -100,14 +121,15 @@
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil];
-
         [someError show];
         [someError release];
     }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    
     [UAirship land];
+    
 }
 
 @end

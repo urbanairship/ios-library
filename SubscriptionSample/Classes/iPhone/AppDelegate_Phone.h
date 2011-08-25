@@ -24,11 +24,15 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UAProductInventory.h"
+
+@class UANewsstandHelper;
 
 @interface AppDelegate_Phone : NSObject <UIApplicationDelegate> {
     UIWindow *window;
     UIViewController *controller;
+    
+    UANewsstandHelper *newsstand;
+    
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
