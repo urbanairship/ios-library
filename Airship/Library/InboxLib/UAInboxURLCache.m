@@ -151,7 +151,7 @@
             NSData *content = [NSData dataWithContentsOfFile:contentPath];
             
             NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:NULL];
-            NSString *charset;
+            NSString *charset = nil;
             
             if(!contentType) {
                 UALOG(@"cachedResponseForRequest: unable to fetch content type for %@", [request.URL absoluteString]);
@@ -172,7 +172,7 @@
             
             NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
                                                     expectedContentLength:[content length]
-                                                         textEncodingName:@"utf-8"]
+                                                         textEncodingName:charset]
                                        autorelease];
             // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
             cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
