@@ -28,8 +28,6 @@
 #import "UAInbox.h"
 #import "UAUser.h"
 #import "UAInbox.h"
-#import "UAInboxMessageList.h"
-#import "UAInboxMessage.h"
 #import "UAUtils.h"
 
 @implementation UAInboxURLCache
