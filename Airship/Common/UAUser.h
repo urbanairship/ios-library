@@ -56,7 +56,6 @@ typedef enum _UAUserState {
 @interface UAUser : UAObservable {
 
   @private
-    BOOL initialized;
     NSString *username;
     NSString *password;
     NSString *email;
