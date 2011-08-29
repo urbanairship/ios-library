@@ -1,3 +1,8 @@
+-------------------------
+1.0.7 - August 29, 2011
+-------------------------
+- Rebuilt 1.0.6 in Xcode 4.1 to address an armv7 issue in the Xcode 4.2 generated static library
+
 -----------------------
 1.0.6 - August 26, 2011
 -----------------------
