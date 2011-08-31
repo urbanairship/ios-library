@@ -247,17 +247,28 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return YES;
 }
 
+- (void)populateJavascriptEnvironment {
+    
+    //this will inject the current device orientation
+    [self willRotateToInterfaceOrientation:[[UIDevice currentDevice] orientation] duration:0];
+
+    NSString *model = [UIDevice currentDevice].model;
+    NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [statusBar setHidden: NO];
     [activity startAnimating];
     statusBarTitle.text = message.title;
+    
+    [self populateJavascriptEnvironment];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [statusBar setHidden: YES];
     [activity stopAnimating];
 
-    [self willRotateToInterfaceOrientation:[[UIDevice currentDevice] orientation] duration:0];
     // Mark message as read after it has finished loading
     if(message.unread) {
         [message markAsRead];
