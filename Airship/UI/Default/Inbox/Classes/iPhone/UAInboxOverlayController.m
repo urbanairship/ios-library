@@ -55,6 +55,7 @@
         
         //set the frame later
         webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+        webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         webView.backgroundColor = [UIColor clearColor];
         webView.opaque = NO;
         webView.delegate = self;
@@ -117,20 +118,22 @@
  */
 -(void)doTransition {
     //faux view
-    UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
+    UIView* fauxView = [[[UIView alloc] initWithFrame: bgView.bounds] autorelease];
     fauxView.autoresizesSubviews = YES;
     fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [bgView addSubview: fauxView];
     
     //the new panel
     bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width, bgView.frame.size.height)] autorelease];
-    bigPanelView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
+    bigPanelView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     bigPanelView.autoresizesSubviews = YES;
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
     //UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
-    UIView *background = [[[UIView alloc] initWithFrame:CGRectMake(0,0,293,431)] autorelease];
+    UIView *background = [[[UIView alloc] initWithFrame:CGRectInset
+                           (bigPanelView.bounds, 10, 20)] autorelease];
+    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
     background.layer.borderColor = [[UIColor blackColor] CGColor];
     background.layer.borderWidth = 2;
@@ -147,6 +150,7 @@
     int closeBtnOffset = 10;
     UIImage* closeBtnImg = [UIImage imageNamed:@"popupCloseBtn.png"];
     UIButton* closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake( background.frame.origin.x + background.frame.size.width - closeBtnImg.size.width - closeBtnOffset, 
                                   background.frame.origin.y ,
