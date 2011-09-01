@@ -55,7 +55,6 @@
         
         //set the frame later
         webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         webView.backgroundColor = [UIColor clearColor];
         webView.opaque = NO;
         webView.delegate = self;
@@ -125,14 +124,14 @@
     
     //the new panel
     bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width, bgView.frame.size.height)] autorelease];
-    bigPanelView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     bigPanelView.autoresizesSubviews = YES;
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
     //UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
     UIView *background = [[[UIView alloc] initWithFrame:CGRectInset
-                           (bigPanelView.bounds, 10, 20)] autorelease];
+                           (bigPanelView.bounds, 15, 30)] autorelease];
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
     background.layer.borderColor = [[UIColor blackColor] CGColor];
@@ -143,6 +142,7 @@
     //add the web view
     int webOffset = 2;
     webView.frame = CGRectInset(background.frame, webOffset, webOffset);
+    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     [bigPanelView addSubview: webView];
     
@@ -150,7 +150,7 @@
     int closeBtnOffset = 10;
     UIImage* closeBtnImg = [UIImage imageNamed:@"popupCloseBtn.png"];
     UIButton* closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
     [closeBtn setFrame:CGRectMake( background.frame.origin.x + background.frame.size.width - closeBtnImg.size.width - closeBtnOffset, 
                                   background.frame.origin.y ,
