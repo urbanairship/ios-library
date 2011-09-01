@@ -129,7 +129,6 @@
     bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
     
     //add the window background
-    //UIImageView* background = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"popupWindowBack.png"]] autorelease];
     UIView *background = [[[UIView alloc] initWithFrame:CGRectInset
                            (bigPanelView.bounds, 15, 30)] autorelease];
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -148,7 +147,7 @@
     
     //add the close button
     int closeBtnOffset = 10;
-    UIImage* closeBtnImg = [UIImage imageNamed:@"popupCloseBtn.png"];
+    UIImage* closeBtnImg = [UIImage imageNamed:@"overlayCloseBtn.png"];
     UIButton* closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
     [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
