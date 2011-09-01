@@ -1,7 +1,7 @@
 //  Based on MTPopupWindow by Marin Todorov
 //  http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
 
-#import "UAOverlayWindow.h"
+#import "UAInboxOverlayController.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 #import "UAInbox.h"
@@ -12,48 +12,41 @@
 
 #define kShadeViewTag 1000
 
-@interface UAOverlayWindow(Private)
+@interface UAInboxOverlayController(Private)
 
-- (id)initWithSuperview:(UIView*)sview andMessageID:(NSString*)fName;
+- (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
 - (void)loadMessageAtIndex:(int)index;
 - (void)loadMessageForID:(NSString *)mid;
 
 @end
 
-@implementation UAOverlayWindow
+@implementation UAInboxOverlayController
 
 @synthesize webView, message;
 
 /**
  * Opens a popup window and loads the given content within a particular view
- * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page
+ * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page 
  * @param UIView* view provide a UIViewController's view here (or other view)
  */
 
-+ (void)showWindowInsideView:(UIView *)view withMessageID:(NSString *)messageID {
-    [[UAOverlayWindow alloc] initWithSuperview:view andMessageID:messageID];
++ (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
+    [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
 }
 
-/**
- * Opens a popup window and loads the given content in the app delegate's window
- * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page
- * @param UIView* view provide a UIViewController's view here (or other view)
- */
-
-+ (void)showWindowWithMessageID:(NSString *)messageID {
-    UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
-    [UAOverlayWindow showWindowInsideView:window withMessageID:messageID];
-    
-}
 
 /**
  * Initializes the class instance, gets a view where the window will pop up in
  * and a file name/ URL
  */
-- (id)initWithSuperview:(UIView*)sview andMessageID:(NSString*)messageID {
+- (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
     self = [super init];
     if (self) {
         // Initialization code here.
+        
+        parentViewController = [parent retain];
+        UIView *sview = parent.view;
+        
         bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];
         bgView.autoresizesSubviews = YES;
         bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -78,7 +71,15 @@
         }
         
         [self loadMessageForID:messageID];
-}
+        
+        //required to receive orientation updates from NSNotifcationCenter
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(orientationChanged:) 
+                                                     name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+    }
     
     return self;
 }    
@@ -260,7 +261,47 @@
     return YES;
 }
 
+- (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
+    
+    if(![parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
+        return;
+    }
+    
+    switch (toInterfaceOrientation) {
+        case UIDeviceOrientationPortrait:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)orientationChanged:(NSNotification *)notification {
+    [self onRotationChange:[UIDevice currentDevice].orientation];
+}
+
+- (void)populateJavascriptEnvironment {
+    
+    //this will inject the current device orientation
+    [self onRotationChange:[UIDevice currentDevice].orientation];
+    
+    NSString *model = [UIDevice currentDevice].model;
+    NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)wv {
+    [self populateJavascriptEnvironment];
+    
     [self doTransition];
 }
 
@@ -332,6 +373,10 @@
 - (void)dealloc {
     self.message = nil;
     self.webView = nil;
+    [parentViewController release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self 
+                                                    name:UIDeviceOrientationDidChangeNotification 
+                                                  object:nil];
 }
 
 @end

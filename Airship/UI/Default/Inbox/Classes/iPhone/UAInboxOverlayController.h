@@ -4,9 +4,11 @@
 #import <Foundation/Foundation.h>
 #import "UAInboxMessage.h"
 
-@interface UAOverlayWindow : NSObject <UIWebViewDelegate>
+@interface UAInboxOverlayController : NSObject <UIWebViewDelegate>
 
 {
+    
+    UIViewController *parentViewController;
     UIView *bgView;
     UIView *bigPanelView;
     UIWebView *webView;
@@ -16,7 +18,6 @@
 @property(nonatomic, retain) UIWebView *webView;
 @property(nonatomic, retain) UAInboxMessage *message;
 
-+ (void)showWindowInsideView:(UIView *)view withMessageID:(NSString *)messageId;
-+ (void)showWindowWithMessageID:(NSString *)messageId;
++ (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageId;
 
 @end

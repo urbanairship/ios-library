@@ -26,7 +26,7 @@
 #import "UAInboxUIOverlay.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UAOverlayWindow.h"
+#import "UAInboxOverlayController.h"
 
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
@@ -52,7 +52,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
     //if the inbox is not displaying, show the message in an overlay window
     if(![UAInboxUI shared].isVisible) {
         //[UAOverlayWindow showWindowWithMessageID:messageID];
-        [UAOverlayWindow showWindowInsideView:[UAInboxUIOverlay shared].inboxParentController.view withMessageID:messageID];
+        [UAInboxOverlayController showWindowInsideViewController:[UAInboxUIOverlay shared].inboxParentController withMessageID:messageID];
     }
     
     else {
