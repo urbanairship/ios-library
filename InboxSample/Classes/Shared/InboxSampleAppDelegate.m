@@ -91,6 +91,9 @@
     // For Navigation UI:
     [UAInboxNavUI shared].inboxParentController = navigationController;
     
+    // For overlay UI:
+    [UAInboxUIOverlay shared].inboxParentController = navigationController;
+    
     
     
     //TODO: think about clean up / dealloc for multiple UI classes
