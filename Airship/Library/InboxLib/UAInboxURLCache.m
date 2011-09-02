@@ -25,16 +25,37 @@
 
 #import "UAInboxURLCache.h"
 #import "UA_ASIHTTPRequest.h"
-#import "UAInbox.h"
-#import "UAUser.h"
-#import "UAInbox.h"
+
+#import "UAGlobal.h"
 #import "UAUtils.h"
+
+/**
+ * Private methods
+ */
+@interface UAInboxURLCache()
+
+//get the locations for content and content type files
+- (NSString *)getStoragePathForURL:(NSURL *)url;
+- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url;
+
+//lookup methods
+- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType;
+- (NSString *)resourceTypeForRequest:(NSURLRequest *)request;
+
+//store content (after retrieved)
+- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType;
+
+//retrieve content (run in new thread)
+- (void)populateCacheFor:(NSURLRequest*)req;
+@end
 
 @implementation UAInboxURLCache
 
 @synthesize cacheDirectory;
 @synthesize resourceTypes;
 
+#pragma mark -
+#pragma mark NSURLCache methods
 - (id)initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity diskPath:(NSString *)path {
     if (self = [super initWithMemoryCapacity:memoryCapacity diskCapacity:diskCapacity diskPath:path]) {
         self.cacheDirectory = path;
@@ -57,33 +78,6 @@
     [super dealloc];
 }
 
-- (NSString *)getStoragePathForURL:(NSURL *)url {    
-    NSString *hashedURLString = [UAUtils md5:[url absoluteString]];
-    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, hashedURLString];
-}
-
-- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url {
-    return [NSString stringWithFormat:@"%@%@", [self getStoragePathForURL:url], @".contentType"];
-}
-
-- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
-    
-    NSString *contentPath = [self getStoragePathForURL:url];
-    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
-        UALOG(@"File exists %@", contentPath);
-    }
-    
-    else {
-        BOOL ok = [content writeToFile:contentPath atomically:YES];
-        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
-        
-        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentTypePath, ok?@"OK":@"FAILED");
-    }
-} 
-
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
     
     UALOG(@"storeCachedResponse: %@", cachedResponse);
@@ -92,55 +86,16 @@
     [self storeContent:content withURL:request.URL contentType:cachedResponse.response.MIMEType];    
 }
 
-- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
-   
-    NSRange range = [contentType rangeOfString:@"charset="];
-    
-    NSString *contentSubType;
-    NSString *charset;
-    
-    if (range.location != NSNotFound) {
-        contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
-                     stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        charset = [[contentType substringFromIndex:(range.location + range.length)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        return [NSArray arrayWithObjects:contentSubType, charset, nil];
-    }
-    
-    else {
-        return [NSArray arrayWithObjects:contentType, nil];
-    }    
-}
-
-- (NSString *)resourceTypeForRequest:(NSURLRequest *)request {
-    
-    NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
-    if (tokens == nil) {
-        return nil;
-    }
-    
-    NSString *lastToken = [tokens objectAtIndex:[tokens count]-1];
-    NSString *resourceType;
-    
-    for (NSString *type in [resourceTypes allKeys]) {
-        if ([lastToken rangeOfString:type].location != NSNotFound) {
-            resourceType = [resourceTypes objectForKey:type];
-            return resourceType;
-        }
-    }
-    
-    return nil;
-}
-
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
     NSCachedURLResponse* cachedResponse = nil;
     
     NSString *resourceType = [self resourceTypeForRequest:request];
-        
+    
     if (!resourceType) {
         UALOG(@"IGNORE CACHE for %@", request);
     }
-        
+    
     else {
         //retrieve resource from cache or populate if needed
         NSString *contentPath = [self getStoragePathForURL:request.URL];
@@ -185,11 +140,80 @@
         //URL by other means
         else {
             [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
-                         toTarget:self withObject:request];
+                                     toTarget:self withObject:request];
         } 
     }
     
     return cachedResponse;
+}
+
+#pragma mark -
+#pragma mark Private, Custom Cache Methods
+
+- (NSString *)getStoragePathForURL:(NSURL *)url {    
+    NSString *hashedURLString = [UAUtils md5:[url absoluteString]];
+    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, hashedURLString];
+}
+
+- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url {
+    return [NSString stringWithFormat:@"%@%@", [self getStoragePathForURL:url], @".contentType"];
+}
+
+- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
+    
+    NSString *contentPath = [self getStoragePathForURL:url];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+        UALOG(@"File exists %@", contentPath);
+    }
+    
+    else {
+        BOOL ok = [content writeToFile:contentPath atomically:YES];
+        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
+        
+        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentTypePath, ok?@"OK":@"FAILED");
+    }
+}
+
+- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
+   
+    NSRange range = [contentType rangeOfString:@"charset="];
+    
+    NSString *contentSubType;
+    NSString *charset;
+    
+    if (range.location != NSNotFound) {
+        contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
+                     stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        charset = [[contentType substringFromIndex:(range.location + range.length)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        return [NSArray arrayWithObjects:contentSubType, charset, nil];
+    }
+    
+    else {
+        return [NSArray arrayWithObjects:contentType, nil];
+    }    
+}
+
+- (NSString *)resourceTypeForRequest:(NSURLRequest *)request {
+    
+    NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
+    if (tokens == nil) {
+        return nil;
+    }
+
+    NSString *lastToken = [tokens objectAtIndex:[tokens count]-1];
+    NSString *resourceType;
+    
+    for (NSString *type in [resourceTypes allKeys]) {
+        if ([lastToken rangeOfString:type].location != NSNotFound) {
+            resourceType = [resourceTypes objectForKey:type];
+            return resourceType;
+        }
+    }
+    
+    return nil;
 }
 
 - (void)populateCacheFor:(NSURLRequest*)req {
