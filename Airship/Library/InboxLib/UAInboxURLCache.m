@@ -80,6 +80,8 @@
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
     
+    UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
+    
     UALOG(@"storeCachedResponse: %@", cachedResponse);
     
     NSData *content = cachedResponse.data;
@@ -92,11 +94,16 @@
     
     NSString *resourceType = [self resourceTypeForRequest:request];
     
+    
+    
     if (!resourceType) {
         UALOG(@"IGNORE CACHE for %@", request);
-    }
-    
-    else {
+    } else if ([[request allHTTPHeaderFields] objectForKey:@"Referer"]) {
+        UALOG(@"Do not cache items with Referer= %@", [[request allHTTPHeaderFields] objectForKey:@"Referer"]);
+    } else {
+        
+        
+        
         //retrieve resource from cache or populate if needed
         NSString *contentPath = [self getStoragePathForURL:request.URL];
         NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
@@ -125,7 +132,7 @@
                 }
             }
             
-            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
+            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
                                                     expectedContentLength:[content length]
                                                          textEncodingName:charset]
                                        autorelease];
@@ -173,7 +180,7 @@
         UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
         
         ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentTypePath, ok?@"OK":@"FAILED");
+        UALOG(@"Caching %@ at %@: %@", contentType, contentTypePath, ok?@"OK":@"FAILED");
     }
 }
 
@@ -198,7 +205,10 @@
 
 - (NSString *)resourceTypeForRequest:(NSURLRequest *)request {
     
-    NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
+    // could it just be this? default is already text/html so does body matter?
+    // return [resourceTypes objectForKey:[request.URL.relativePath pathExtension]];
+    
+    NSArray *tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
     if (tokens == nil) {
         return nil;
     }
