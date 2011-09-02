@@ -175,7 +175,7 @@
 		4979986D13EC6577002B9100 /* overlayCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlayCloseBtn@2x.png"; sourceTree = "<group>"; };
 		4979987413EC65CE002B9100 /* UAInboxOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxOverlayController.h; sourceTree = "<group>"; };
 		4979987513EC65CE002B9100 /* UAInboxOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayController.m; sourceTree = "<group>"; };
-		4979987713EC6926002B9100 /* UAInboxOverlayUI.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UAInboxOverlayUI.h; sourceTree = "<group>"; };
+		4979987713EC6926002B9100 /* UAInboxOverlayUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxOverlayUI.h; sourceTree = "<group>"; };
 		4979987813EC6926002B9100 /* UAInboxOverlayUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayUI.m; sourceTree = "<group>"; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
@@ -670,7 +670,8 @@
 		B6E7F8441239FFD5009BC92D /* libUAirship-1.0.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.0.5.a";
+			name = "libUAirship-1.0.5.a";
+			path = "libUAirship-1.0.7.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -974,8 +975,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-ObjC",
 					"-all_load",
 				);
@@ -1000,8 +1000,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
+					"-weak-lSystem",
 					"-ObjC",
 					"-all_load",
 				);

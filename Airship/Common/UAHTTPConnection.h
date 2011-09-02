@@ -27,22 +27,30 @@
 
 
 @interface UAHTTPRequest : NSObject {
+    
+  @private
     NSURL *url;
+    NSString *HTTPMethod;
     NSMutableDictionary *headers;
-    NSMutableData *postData;
-    BOOL compressPostBody;
+    NSString *username;
+    NSString *password;
+    NSMutableData *body;
+    BOOL compressBody;
     id userInfo;
 }
 @property (readonly, nonatomic) NSURL *url;
+@property (copy, nonatomic) NSString *HTTPMethod;
 @property (readonly, nonatomic) NSDictionary *headers;
-@property (retain, nonatomic) NSData *postData;
-@property (assign, nonatomic) BOOL compressPostBody;
+@property (copy, nonatomic) NSString *username;
+@property (copy, nonatomic) NSString *password;
+@property (retain, nonatomic) NSData *body;
+@property (assign, nonatomic) BOOL compressBody;
 @property (retain, nonatomic) id userInfo;
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
 - (id)initWithURLString:(NSString *)urlString;
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value;
-- (void)appendPostData:(NSData *)data;
+- (void)appendBodyData:(NSData *)data;
 
 @end
 

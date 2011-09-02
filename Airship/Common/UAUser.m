@@ -496,18 +496,28 @@ static UAUser *_defaultUser;
             
             [self saveUserData];
             
+            // Make sure we do a full user update with any device tokens, we'll unset this if it is not needed
+            [UAirship shared].deviceTokenHasChanged = YES;
+            
             // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
             if (request.postBody != nil) {
+                
                 NSString *requestString = [[NSString alloc] initWithData:request.postBody encoding:NSUTF8StringEncoding];
                 NSDictionary *requestDict = [parser objectWithString:requestString];
+                
                 [requestString release];
+                
                 if (requestDict != nil && [requestDict objectForKey:@"device_tokens"] != nil) {
+                    
                     //created a user w/ a device token
                     UALOG(@"Created a user with a device token.");
+                    
                     NSArray *deviceTokens = [requestDict objectForKey:@"device_tokens"];
                     NSString *deviceToken = [deviceTokens objectAtIndex:0];
+                    
                     if ([[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
                         UALOG(@"Device token is unchanged");
+                        
                         [UAirship shared].deviceTokenHasChanged = NO;
                     }
                 }

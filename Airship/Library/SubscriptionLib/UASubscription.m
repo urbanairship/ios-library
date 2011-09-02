@@ -100,12 +100,12 @@
     UALOG(@"Available: %@", [availableProducts description]);
 }
 
-- (void)setContentsWithArray:(NSArray *)contents {
-    if (!contents) {
+- (void)setContentWithArray:(NSArray *)content {
+    if (!content) {
         return;
     }
 
-    [availableContents setArray:contents];
+    [availableContents setArray:content];
     [availableContents sortUsingSelector:@selector(compare:)];
 
     [self filterDownloadedContents];

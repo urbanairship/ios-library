@@ -100,7 +100,7 @@
 - (id)initWithKey:(NSString *)aKey name:(NSString *)aName;
 - (void)setProductsWithArray:(NSArray *)productArray;
 - (void)setPurchasedProductsWithArray:(NSArray *)infos;
-- (void)setContentsWithArray:(NSArray *)contents;
+- (void)setContentWithArray:(NSArray *)content;
 - (void)filterDownloadedContents;
 
 @end
