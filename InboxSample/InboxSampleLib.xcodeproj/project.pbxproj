@@ -25,7 +25,7 @@
 		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1FC01F6F13F362C90098BE55 /* UAInboxOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987513EC65CE002B9100 /* UAInboxOverlayController.m */; };
-		1FC01F7013F362FE0098BE55 /* UAInboxUIOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIOverlay.m */; };
+		1FC01F7013F362FE0098BE55 /* UAInboxOverlayUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxOverlayUI.m */; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
 		4979987013EC6577002B9100 /* overlayCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986C13EC6577002B9100 /* overlayCloseBtn.png */; };
@@ -175,8 +175,8 @@
 		4979986D13EC6577002B9100 /* overlayCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlayCloseBtn@2x.png"; sourceTree = "<group>"; };
 		4979987413EC65CE002B9100 /* UAInboxOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxOverlayController.h; sourceTree = "<group>"; };
 		4979987513EC65CE002B9100 /* UAInboxOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayController.m; sourceTree = "<group>"; };
-		4979987713EC6926002B9100 /* UAInboxUIOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUIOverlay.h; sourceTree = "<group>"; };
-		4979987813EC6926002B9100 /* UAInboxUIOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUIOverlay.m; sourceTree = "<group>"; };
+		4979987713EC6926002B9100 /* UAInboxOverlayUI.h */ = {isa = PBXFileReference; fileEncoding = 4; path = UAInboxOverlayUI.h; sourceTree = "<group>"; };
+		4979987813EC6926002B9100 /* UAInboxOverlayUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayUI.m; sourceTree = "<group>"; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		63CB54DC1247122500DF2EBC /* InboxAPITests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxAPITests.h; sourceTree = "<group>"; };
@@ -520,8 +520,8 @@
 				D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */,
 				E9CB359B12B89AC0002E39EA /* UAInboxUI.h */,
 				E9CB359C12B89AC0002E39EA /* UAInboxUI.m */,
-				4979987713EC6926002B9100 /* UAInboxUIOverlay.h */,
-				4979987813EC6926002B9100 /* UAInboxUIOverlay.m */,
+				4979987713EC6926002B9100 /* UAInboxOverlayUI.h */,
+				4979987813EC6926002B9100 /* UAInboxOverlayUI.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -788,7 +788,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FC01F7013F362FE0098BE55 /* UAInboxUIOverlay.m in Sources */,
+				1FC01F7013F362FE0098BE55 /* UAInboxOverlayUI.m in Sources */,
 				1FC01F6F13F362C90098BE55 /* UAInboxOverlayController.m in Sources */,
 				18A27CA5125EDD6E0045D75B /* InboxSampleAppDelegate.m in Sources */,
 				18A27CA6125EDD6E0045D75B /* InboxSampleViewController.m in Sources */,

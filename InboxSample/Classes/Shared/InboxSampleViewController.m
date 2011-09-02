@@ -31,7 +31,7 @@
 
 #import "UAInboxNavUI.h"
 #import "UAInboxUI.h"
-#import "UAInboxUIOverlay.h"
+#import "UAInboxOverlayUI.h"
 
 #import "UAUtils.h"
 
@@ -74,7 +74,7 @@
             [UAInbox useCustomUI:[UAInboxNavUI class]];
             break;
         case 2:
-            [UAInbox useCustomUI:[UAInboxUIOverlay class]];
+            [UAInbox useCustomUI:[UAInboxOverlayUI class]];
             break;
     }
 }

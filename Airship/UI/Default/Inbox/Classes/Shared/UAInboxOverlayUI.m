@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxUIOverlay.h"
+#import "UAInboxOverlayUI.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxOverlayController.h"
@@ -31,9 +31,9 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 
-@implementation UAInboxUIOverlay
+@implementation UAInboxOverlayUI
 
-SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
+SINGLETON_IMPLEMENTATION(UAInboxOverlayUI)
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
 	
@@ -41,10 +41,10 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
         [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
     }
     
-	[UAInboxUIOverlay shared].isVisible = YES;
+	[UAInboxOverlayUI shared].isVisible = YES;
     
     UALOG(@"present modal");
-    [viewController presentModalViewController:[UAInboxUIOverlay shared].rootViewController animated:animated];
+    [viewController presentModalViewController:[UAInboxOverlayUI shared].rootViewController animated:animated];
 } 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
@@ -52,12 +52,12 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
     //if the inbox is not displaying, show the message in an overlay window
     if(![UAInboxUI shared].isVisible) {
         //[UAOverlayWindow showWindowWithMessageID:messageID];
-        [UAInboxOverlayController showWindowInsideViewController:[UAInboxUIOverlay shared].inboxParentController withMessageID:messageID];
+        [UAInboxOverlayController showWindowInsideViewController:[UAInboxOverlayUI shared].inboxParentController withMessageID:messageID];
     }
     
     else {
         // For iPhone
-        UINavigationController *navController = (UINavigationController *)[UAInboxUIOverlay shared].rootViewController;
+        UINavigationController *navController = (UINavigationController *)[UAInboxOverlayUI shared].rootViewController;
         UAInboxMessageViewController *mvc;
         
         //if a message view is displaying, just load the new message
@@ -76,7 +76,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
 }
 
 + (void)quitInbox {
-    [[UAInboxUIOverlay shared] quitInbox];
+    [[UAInboxOverlayUI shared] quitInbox];
 }
 
 + (void)loadLaunchMessage {
@@ -90,7 +90,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUIOverlay)
         return;
     }
             
-    [UAInboxUIOverlay displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
+    [UAInboxOverlayUI displayMessage:nil message:[[UAInbox shared].pushHandler viewingMessageID]];
     
     [[UAInbox shared].pushHandler setViewingMessageID:nil];
     [[UAInbox shared].pushHandler setHasLaunchMessage:NO];    

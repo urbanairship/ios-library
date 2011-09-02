@@ -30,10 +30,10 @@
 #import "UAInbox.h"
 #import "UAInboxUI.h"
 
-@interface UAInboxUIOverlay : UAInboxUI {
+@interface UAInboxOverlayUI : UAInboxUI {
 
 }
 
-SINGLETON_INTERFACE(UAInboxUIOverlay);
+SINGLETON_INTERFACE(UAInboxOverlayUI);
 
 @end
