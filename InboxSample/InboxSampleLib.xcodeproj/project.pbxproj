@@ -28,10 +28,8 @@
 		1FC01F7013F362FE0098BE55 /* UAInboxUIOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 4979987813EC6926002B9100 /* UAInboxUIOverlay.m */; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
-		4979987013EC6577002B9100 /* popupCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986C13EC6577002B9100 /* popupCloseBtn.png */; };
-		4979987113EC6577002B9100 /* popupCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */; };
-		4979987213EC6577002B9100 /* popupWindowBack.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986E13EC6577002B9100 /* popupWindowBack.png */; };
-		4979987313EC6577002B9100 /* popupWindowBack@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986F13EC6577002B9100 /* popupWindowBack@2x.png */; };
+		4979987013EC6577002B9100 /* overlayCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986C13EC6577002B9100 /* overlayCloseBtn.png */; };
+		4979987113EC6577002B9100 /* overlayCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4979986D13EC6577002B9100 /* overlayCloseBtn@2x.png */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -173,10 +171,8 @@
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
-		4979986C13EC6577002B9100 /* popupCloseBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popupCloseBtn.png; sourceTree = "<group>"; };
-		4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popupCloseBtn@2x.png"; sourceTree = "<group>"; };
-		4979986E13EC6577002B9100 /* popupWindowBack.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = popupWindowBack.png; sourceTree = "<group>"; };
-		4979986F13EC6577002B9100 /* popupWindowBack@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "popupWindowBack@2x.png"; sourceTree = "<group>"; };
+		4979986C13EC6577002B9100 /* overlayCloseBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlayCloseBtn.png; sourceTree = "<group>"; };
+		4979986D13EC6577002B9100 /* overlayCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlayCloseBtn@2x.png"; sourceTree = "<group>"; };
 		4979987413EC65CE002B9100 /* UAInboxOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxOverlayController.h; sourceTree = "<group>"; };
 		4979987513EC65CE002B9100 /* UAInboxOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayController.m; sourceTree = "<group>"; };
 		4979987713EC6926002B9100 /* UAInboxUIOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxUIOverlay.h; sourceTree = "<group>"; };
@@ -391,14 +387,13 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
-		4979986B13EC6577002B9100 /* UAPopupWindow */ = {
+		4979986B13EC6577002B9100 /* UAInboxOverlay */ = {
 			isa = PBXGroup;
 			children = (
-				4979986C13EC6577002B9100 /* popupCloseBtn.png */,
-				4979986D13EC6577002B9100 /* popupCloseBtn@2x.png */,
-				4979986E13EC6577002B9100 /* popupWindowBack.png */,
-				4979986F13EC6577002B9100 /* popupWindowBack@2x.png */,
+				4979986C13EC6577002B9100 /* overlayCloseBtn.png */,
+				4979986D13EC6577002B9100 /* overlayCloseBtn@2x.png */,
 			);
+			name = UAInboxOverlay;
 			path = UAPopupWindow;
 			sourceTree = "<group>";
 		};
@@ -562,7 +557,7 @@
 		E9CB35A512B89AC0002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				4979986B13EC6577002B9100 /* UAPopupWindow */,
+				4979986B13EC6577002B9100 /* UAInboxOverlay */,
 				1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */,
 				E9CB35A712B89AC0002E39EA /* check.png */,
 				E9CB35A812B89AC0002E39EA /* check@2x.png */,
@@ -717,10 +712,8 @@
 				D5A3F5D612C1533D009731BE /* Icon@2x.png in Resources */,
 				1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */,
 				1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */,
-				4979987013EC6577002B9100 /* popupCloseBtn.png in Resources */,
-				4979987113EC6577002B9100 /* popupCloseBtn@2x.png in Resources */,
-				4979987213EC6577002B9100 /* popupWindowBack.png in Resources */,
-				4979987313EC6577002B9100 /* popupWindowBack@2x.png in Resources */,
+				4979987013EC6577002B9100 /* overlayCloseBtn.png in Resources */,
+				4979987113EC6577002B9100 /* overlayCloseBtn@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
