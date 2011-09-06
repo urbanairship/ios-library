@@ -31,20 +31,19 @@
 - (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options {
     UALOG(@"JS default delegate arguments: %@ \n options: %@", args, options);
 
-    // do something with args and dictionary
-
-    // invoke JS callback
-    NSString *script = nil;
     BOOL hasError = NO;
+    
+    // do something with the args and options, set error if necessary
+    // ...
+    
+    // invoke JS callback w/ result
+    NSString *script = nil;
     if (!hasError) {
-        script = @"UADelegate.result = 'Callback from iPhone succeeded'; UADelegate.iPhoneCallbackDidSucceed();";
+        script = @"UADelegate.result = 'Callback from ObjC succeeded'; UADelegate.iOSCallbackDidSucceed();";
     } else {
-        script = @"UADelegate.error = 'Callback from iPhone failed'; UADelegate.iPhoneCallbackDidFail();";
+        script = @"UADelegate.error = 'Callback from ObjC failed'; UADelegate.iOSCallbackDidFail();";
     }
     return script;
-
-    // otherwise
-    // return nil;
 }
 
 @end

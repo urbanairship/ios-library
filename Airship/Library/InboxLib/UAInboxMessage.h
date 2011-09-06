@@ -28,15 +28,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAInboxMessageList;
 
 @interface UAInboxMessage : NSObject {
-    NSString* messageID;
-    NSURL* messageBodyURL;
-    NSURL* messageURL;
+  @private
+    NSString *messageID;
+    NSURL *messageBodyURL;
+    NSURL *messageURL;
     NSString *contentType;
     BOOL unread;
-    NSDate* messageSent;
-    NSString* title;
-    NSDictionary* extra;
-    UAInboxMessageList* inbox;
+    NSDate *messageSent;
+    NSString *title;
+    NSDictionary *extra;
+    UAInboxMessageList *inbox;
 }
 
 
@@ -44,17 +45,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /******************************************************************************/
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList*)inbox;
 - (BOOL)markAsRead;
+
+/**
+ * 
+ */
 + (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url;
 
-@property (nonatomic, retain) NSString* messageID;
-@property (nonatomic, retain) NSURL* messageBodyURL;
-@property (nonatomic, retain) NSURL* messageURL;
+@property (nonatomic, retain) NSString *messageID;
+@property (nonatomic, retain) NSURL *messageBodyURL;
+@property (nonatomic, retain) NSURL *messageURL;
 @property (nonatomic, copy) NSString *contentType;
 @property (assign) BOOL unread;
-@property (nonatomic, retain) NSDate* messageSent;
-@property (nonatomic, retain) NSString* title;
-@property (nonatomic, retain) NSDictionary* extra;
-@property (assign) UAInboxMessageList* inbox;
+@property (nonatomic, retain) NSDate *messageSent;
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSDictionary *extra;
+@property (assign) UAInboxMessageList *inbox;
 
 -(NSString*)description;
 
