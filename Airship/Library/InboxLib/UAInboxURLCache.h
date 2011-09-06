@@ -27,10 +27,10 @@
 
 @interface UAInboxURLCache : NSURLCache {
     NSString *cacheDirectory;
-    NSDictionary *resourceTypes;
+    NSArray *resourceTypes;
 }
 
 @property(nonatomic, retain) NSString *cacheDirectory;
-@property(nonatomic, retain) NSDictionary *resourceTypes;
+@property(nonatomic, retain) NSArray *resourceTypes;
 
 @end

@@ -28,6 +28,7 @@
 
 #import "UAGlobal.h"
 #import "UAUtils.h"
+#import "UAirship.h"
 
 /**
  * Private methods
@@ -40,13 +41,12 @@
 
 //lookup methods
 - (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType;
-- (NSString *)resourceTypeForRequest:(NSURLRequest *)request;
 
-//store content (after retrieved)
+//store content on disk
 - (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType;
 
-//retrieve content (run in new thread)
-- (void)populateCacheFor:(NSURLRequest*)req;
+- (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request;
+
 @end
 
 @implementation UAInboxURLCache
@@ -59,15 +59,9 @@
 - (id)initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity diskPath:(NSString *)path {
     if (self = [super initWithMemoryCapacity:memoryCapacity diskCapacity:diskCapacity diskPath:path]) {
         self.cacheDirectory = path;
-        
-        self.resourceTypes = [NSDictionary dictionaryWithObjectsAndKeys:
-                              @"image/png", @".png",
-                              @"image/gif", @".gif",
-                              @"image/jpeg", @".jpg",
-                              @"image/jpeg", @".jpeg",
-                              @"application/javascript", @".js",
-                              @"text/css", @".css", 
-                              @"text/html", @"body", nil];
+
+        self.resourceTypes = [NSArray arrayWithObjects:
+                              @"image/png", @"image/gif", @"image/jpg", @"text/javascript", @"application/javascript", @"text/css", nil];
     }
     return self;
 }
@@ -80,75 +74,58 @@
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
     
-    UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
+    if ([self shouldStoreCachedResponse:cachedResponse forRequest:request]) {
+        
+        UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
+        UALOG(@"storeCachedResponse: %@", cachedResponse);
+        
+        NSData *content = cachedResponse.data;
+        
+        //default to "text/html" if the server doesn't provide a content type
+        NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
+        
+        [self storeContent:content withURL:request.URL contentType:contentType];
+    }
     
-    UALOG(@"storeCachedResponse: %@", cachedResponse);
-    
-    NSData *content = cachedResponse.data;
-    [self storeContent:content withURL:request.URL contentType:cachedResponse.response.MIMEType];    
+    else {
+        UALOG(@"IGNORE CACHE for %@", request);
+    }
 }
 
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
     NSCachedURLResponse* cachedResponse = nil;
     
-    NSString *resourceType = [self resourceTypeForRequest:request];
+    //retrieve resource from cache or populate if needed
+    NSString *contentPath = [self getStoragePathForURL:request.URL];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
     
-    
-    
-    if (!resourceType) {
-        UALOG(@"IGNORE CACHE for %@", request);
-    } else if ([[request allHTTPHeaderFields] objectForKey:@"Referer"]) {
-        UALOG(@"Do not cache items with Referer= %@", [[request allHTTPHeaderFields] objectForKey:@"Referer"]);
-    } else {
+    if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+        //retrieve it
+        NSData *content = [NSData dataWithContentsOfFile:contentPath];
         
+        NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath 
+                                                          encoding:NSUTF8StringEncoding 
+                                                             error:NULL];
+        NSString *charset = nil;
         
-        
-        //retrieve resource from cache or populate if needed
-        NSString *contentPath = [self getStoragePathForURL:request.URL];
-        NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
-        
-        if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
-            //retrieve it
-            NSData *content = [NSData dataWithContentsOfFile:contentPath];
-            
-            NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath encoding:NSUTF8StringEncoding error:NULL];
-            NSString *charset = nil;
-            
-            if(!contentType) {
-                UALOG(@"cachedResponseForRequest: unable to fetch content type for %@", [request.URL absoluteString]);
-                //if there was a problem pulling out the content type, try to set it by looking up the resource, using text/html as a last resort
-                contentType = [resourceTypes objectForKey:resourceType]?:@"text/html";
-                charset = @"utf-8";
-            }
-            
-            //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
-            //into separate arguments so UIWebView doesn't get confused
-            else {
-                NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
-                contentType = [subTypes objectAtIndex:0];
-                if(subTypes.count > 1) {
-                    charset = [subTypes objectAtIndex:1];
-                }
-            }
-            
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
-                                                    expectedContentLength:[content length]
-                                                         textEncodingName:charset]
-                                       autorelease];
-            // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
-            cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
-                                                                      data:content];
+        //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
+        //into separate arguments so UIWebView doesn't get confused
+        NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
+        contentType = [subTypes objectAtIndex:0];
+        if(subTypes.count > 1) {
+            charset = [subTypes objectAtIndex:1];
         }
         
-        //evidently, UIWebView only tries to cache the main request body through the shared URLCache,
-        //though it appears to be doing some additional resource caching internally.  this won't make
-        //much of a difference for UIWebview, but will ensure we can transparently retrieved the cached
-        //URL by other means
-        else {
-            [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
-                                     toTarget:self withObject:request];
-        } 
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
+                                                expectedContentLength:[content length]
+                                                     textEncodingName:charset]
+                                   autorelease];
+        // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
+        cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
+                                                                  data:content];
+        
+        UALOG(@"Uncaching request %@", request);
     }
     
     return cachedResponse;
@@ -156,6 +133,19 @@
 
 #pragma mark -
 #pragma mark Private, Custom Cache Methods
+
+- (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request {
+    
+    NSString *referer = [[request allHTTPHeaderFields] objectForKey:@"Referer"];
+    BOOL whitelisted = [resourceTypes containsObject:response.response.MIMEType];
+    NSString *host = request.URL.host;
+    NSString  *airshipHost = [[NSURL URLWithString:[UAirship shared].server] host];
+    
+    //only cache responses to requests for content from the airship server, 
+    //or content types in the whitelist with no referer
+    
+    return [airshipHost isEqualToString:host] || (whitelisted && !referer);
+}
 
 - (NSString *)getStoragePathForURL:(NSURL *)url {    
     NSString *hashedURLString = [UAUtils md5:[url absoluteString]];
@@ -201,58 +191,6 @@
     else {
         return [NSArray arrayWithObjects:contentType, nil];
     }    
-}
-
-- (NSString *)resourceTypeForRequest:(NSURLRequest *)request {
-    
-    // could it just be this? default is already text/html so does body matter?
-    // return [resourceTypes objectForKey:[request.URL.relativePath pathExtension]];
-    
-    NSArray *tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
-    if (tokens == nil) {
-        return nil;
-    }
-
-    NSString *lastToken = [tokens objectAtIndex:[tokens count]-1];
-    NSString *resourceType;
-    
-    for (NSString *type in [resourceTypes allKeys]) {
-        if ([lastToken rangeOfString:type].location != NSNotFound) {
-            resourceType = [resourceTypes objectForKey:type];
-            return resourceType;
-        }
-    }
-    
-    return nil;
-}
-
-- (void)populateCacheFor:(NSURLRequest*)req {
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
-    request.timeOutSeconds = 60;
-    request.requestMethod = @"GET";
-    
-    //piggyback on whatever authorization was set for the original NSURLRequest
-    [request.requestHeaders setObject:[req.allHTTPHeaderFields objectForKey:@"Authorization"] forKey:@"Authorization"];
-    
-    [request startSynchronous];
-        
-    NSError *error = [request error];
-    if (error) {
-        UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
-    } else {
-        NSDictionary *headers = request.responseHeaders;
-        NSString *contentType = [headers valueForKey:@"Content-Type"];
-        if(!contentType) {
-            //default to text/html if none is provided
-            contentType = @"text/html";
-        }
-        [self storeContent:request.responseData withURL:req.URL contentType:contentType];
-    }
-    
-    [pool release];
 }
 
 @end
