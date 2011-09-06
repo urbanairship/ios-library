@@ -24,7 +24,6 @@
  */
 
 #import "UAInboxURLCache.h"
-#import "UA_ASIHTTPRequest.h"
 
 #import "UAGlobal.h"
 #import "UAUtils.h"
