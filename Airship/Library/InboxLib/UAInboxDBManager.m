@@ -72,7 +72,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSString *newDbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
+    NSError *error = nil;
     
     if (![fileManager fileExistsAtPath:newDbPath] && [fileManager fileExistsAtPath:oldDbPath]) {
         UALOG(@"Moving legacy AirMail database.");
