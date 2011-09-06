@@ -248,6 +248,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
             NSString* localizedPrice = [UAInventory localizedPrice: skitem];
             uaitem.price = localizedPrice;
             uaitem.priceNumber = skitem.price;
+            uaitem.skProduct = skitem;
         }
     }
 

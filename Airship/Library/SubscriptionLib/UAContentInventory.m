@@ -41,6 +41,7 @@
 
 - (void)dealloc {
     [contentArray release];
+    [contentDict release];
     [super dealloc];
 }
 
@@ -49,12 +50,17 @@
         return nil;
 
     contentArray = [[NSMutableArray alloc] init];
+    contentDict = [[NSMutableDictionary alloc] init];
     return self;
 }
 
-- (NSArray *)contentsForSubscription:(NSString *)subscriptionKey {
+- (NSArray *)contentForSubscription:(NSString *)subscriptionKey {
     return [contentArray filteredArrayUsingPredicate:
             [NSPredicate predicateWithFormat:@"subscriptionKey like[c] %@", subscriptionKey]];
+}
+
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey {
+    return [contentDict objectForKey:contentKey];
 }
 
 #pragma mark -
@@ -118,11 +124,13 @@
 
 - (void)loadWithArray:(NSArray *)array {
     [contentArray removeAllObjects];
+    [contentDict removeAllObjects];
     
-    for (NSDictionary *contentDict in array) {
-        UASubscriptionContent *content = [[UASubscriptionContent alloc] initWithDict:contentDict];
+    for (NSDictionary *contentInfo in array) {
+        UASubscriptionContent *content = [[UASubscriptionContent alloc] initWithDict:contentInfo];
         [[UASubscriptionManager shared].downloadManager checkDownloading:content];
         [contentArray addObject:content];
+        [contentDict setObject:content forKey:content.contentKey];
         [content release];
     }
     

@@ -4,7 +4,7 @@
 <plist version="1.0">
 <dict>
     <key>--output</key>
-    <string>~/ua_appledoc/</string>
+    <string>docs/</string>
 	<key>--ignore</key>
 	<array>
 		<string>External</string>
@@ -28,7 +28,7 @@
     <key>--repeat-first-par</key>
     <false/>
 	<key>--verbose</key>
-	<integer>5</integer>
+	<integer>3</integer>
 	<key>--logformat</key>
 	<integer>1</integer>
 </dict>

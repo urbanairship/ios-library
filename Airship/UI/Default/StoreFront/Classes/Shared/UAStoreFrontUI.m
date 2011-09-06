@@ -131,7 +131,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
     UIViewController *presentingViewController = nil;
     if ([ui.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-        presentingViewController = ui.rootViewController.presentingViewController; //iOS5 method
+        presentingViewController = [ui.rootViewController presentingViewController]; //iOS5 method
     } else {
         presentingViewController = ui.rootViewController.parentViewController;// <= 4.x
     }

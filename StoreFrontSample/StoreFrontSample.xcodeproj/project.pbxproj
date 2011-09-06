@@ -43,8 +43,9 @@
 		1827ED4512364571004001E2 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3612364571004001E2 /* Default.png */; };
 		1827ED4612364571004001E2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3712364571004001E2 /* Icon-Small.png */; };
 		1827ED4712364571004001E2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3812364571004001E2 /* Icon.png */; };
-		184E3F77129E4CB6004465C8 /* libUAirship-1.0.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F76129E4CB6004465C8 /* libUAirship-1.0.5.a */; };
+		184E3F77129E4CB6004465C8 /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F76129E4CB6004465C8 /* libUAirship-1.0.7.a */; };
 		1F79713412DE3D2600D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79713312DE3D2600D4937F /* AirshipConfig.plist */; };
+		1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EC613FB33BB00DBC45F /* libz.dylib */; };
 		636CB320128D0CB300481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
 		636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C009A71279871D00E5A656 /* libsqlite3.dylib */; };
 		638EA09711C4D50B009F6B9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09611C4D50B009F6B9C /* UIKit.framework */; };
@@ -52,7 +53,6 @@
 		63F3544D11B50A7C00A02182 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
-		9A50FAED0FCA819A0007E1BE /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9AFD0459109FB58800A8D440 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */; };
 		D5A192CF12C15B04006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192CE12C15B04006AF4AE /* iTunesArtwork */; };
@@ -112,15 +112,15 @@
 		1827ED3612364571004001E2 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		1827ED3712364571004001E2 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
 		1827ED3812364571004001E2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		184E3F76129E4CB6004465C8 /* libUAirship-1.0.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.5.a"; path = "../Airship/libUAirship-1.0.5.a"; sourceTree = SOURCE_ROOT; };
+		184E3F76129E4CB6004465C8 /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.7.a"; path = "../Airship/libUAirship-1.0.7.a"; sourceTree = SOURCE_ROOT; };
 		1D6058910D05DD3D006BFB54 /* StoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F79713312DE3D2600D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		1FD26EC613FB33BB00DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* StoreFrontSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFrontSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
 		638EA09611C4D50B009F6B9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		638EA09911C4D515009F6B9C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -141,8 +141,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
-				9A50FAED0FCA819A0007E1BE /* libz.1.2.3.dylib in Frameworks */,
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
 				9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */,
 				9AFD0459109FB58800A8D440 /* SystemConfiguration.framework in Frameworks */,
@@ -151,7 +151,7 @@
 				638EA09A11C4D515009F6B9C /* StoreKit.framework in Frameworks */,
 				636CB320128D0CB300481EFC /* Security.framework in Frameworks */,
 				636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */,
-				184E3F77129E4CB6004465C8 /* libUAirship-1.0.5.a in Frameworks */,
+				184E3F77129E4CB6004465C8 /* libUAirship-1.0.7.a in Frameworks */,
 				E9CB327D12B85C44002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,7 +340,7 @@
 		184E3F75129E4CA9004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3F76129E4CB6004465C8 /* libUAirship-1.0.5.a */,
+				184E3F76129E4CB6004465C8 /* libUAirship-1.0.7.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -385,11 +385,11 @@
 				9A50FAE80FCA81810007E1BE /* CFNetwork.framework */,
 				9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */,
 				9A50FAEE0FCA81A40007E1BE /* Foundation.framework */,
-				9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */,
 				63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */,
 				9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */,
 				638EA09611C4D50B009F6B9C /* UIKit.framework */,
 				638EA09911C4D515009F6B9C /* StoreKit.framework */,
+				1FD26EC613FB33BB00DBC45F /* libz.dylib */,
 				B6C009A71279871D00E5A656 /* libsqlite3.dylib */,
 				B638661E128813390020C00F /* Security.framework */,
 				E9CB327C12B85C44002E39EA /* CoreTelephony.framework */,

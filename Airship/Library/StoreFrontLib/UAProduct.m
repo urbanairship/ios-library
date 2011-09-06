@@ -80,6 +80,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (id)copyWithZone:(NSZone *)zone {
     UAProduct *copy = [[[self class] allocWithZone:zone] init];
+    copy.skProduct = self.skProduct;
     copy.productIdentifier = self.productIdentifier;
     copy.previewURL = self.previewURL;
     copy.preview = self.preview;

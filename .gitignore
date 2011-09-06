@@ -4,6 +4,7 @@
 *.mode1v3
 *.pbxuser
 *.perspective*
+docs/
 Debug/
 Release/
 Distribution/

@@ -33,7 +33,7 @@ export ALREADYINVOKED="true"
 lib_name="${EXECUTABLE_PREFIX}${PRODUCT_NAME}.${EXECUTABLE_EXTENSION}"
 lib_base_name="$(echo $lib_name | awk -F '-' '{print $1}')"
 dest_lib_root="${SRCROOT}/../Airship"
-dest_package_root="${SRCROOT}/../${BUILD_STYLE}/Airship"
+dest_package_root="${SRCROOT}/../${CONFIGURATION}/Airship"
 
 echo "remove old library $lib_base_name*.${EXECUTABLE_EXTENSION}"
 find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec rm {} \;
@@ -48,7 +48,8 @@ do
     sample_prj_setting_file="$sample_prj_root/$sample_prj_name.xcodeproj/project.pbxproj"
     echo "update library reference in $sample_prj_setting_file"
 	if [[ -f "$sample_prj_setting_file" ]]; then
-    	sed "s/$lib_base_name[^ ]*\.${EXECUTABLE_EXTENSION}/$lib_name/g" "$sample_prj_setting_file" >"/tmp/$sample_prj_name.tmp"
+    	sed "s/$lib_base_name[^ ]*\.${EXECUTABLE_EXTENSION}/$lib_name/g" "$sample_prj_setting_file" > "/tmp/$sample_prj_name.tmp"
+        chgrp staff "/tmp/$sample_prj_name.tmp"
 	    mv "/tmp/$sample_prj_name.tmp" "$sample_prj_setting_file"
 	fi
 done

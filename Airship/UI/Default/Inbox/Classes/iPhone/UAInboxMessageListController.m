@@ -471,11 +471,11 @@ static float label_width = 0.0;
 
     //TODO: MACRO-ize this properly
     if ([tabbar respondsToSelector:@selector(setTintColor:)]) {
-        //if ios5
+        //if iOS5
         [tabbar setTintColor:[UIColor clearColor]];
         [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
     } else {
-        //if < ios5
+        //if < iOS5
         [badgeView addSubview:[((UIView *)[tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];
     }
 
