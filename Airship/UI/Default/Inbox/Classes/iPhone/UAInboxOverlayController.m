@@ -25,19 +25,19 @@
 @synthesize webView, message;
 
 /**
- * Opens a popup window and loads the given content within a particular view
- * @param NSString* fileName provide a file name to load a file from the app resources, or a URL to load a web page 
- * @param UIView* view provide a UIViewController's view here (or other view)
+ * Convenience constructor.
+ * @param UIViewController* viewController the view controller to display the overlay in
+ * @param NSString* messageID the message ID of the rich push message to display
  */
-
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
     [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
 }
 
 
 /**
- * Initializes the class instance, gets a view where the window will pop up in
- * and a file name/ URL
+ * Initializer, creates an overlay window and loads the given content within a particular view controller.
+ * @param UIViewController* viewController the view controller to display the overlay in
+ * @param NSString* messageID the message ID of the rich push message to display
  */
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
     self = [super init];
@@ -82,7 +82,16 @@
     }
     
     return self;
-}    
+}
+
+- (void)dealloc {
+    self.message = nil;
+    self.webView = nil;
+    [parentViewController release];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIDeviceOrientationDidChangeNotification
+                                                  object:nil];
+}
 
 - (void)loadMessageAtIndex:(int)index {
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
@@ -111,16 +120,11 @@
     [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
 }
 
-/**
- * Afrer the window background is added to the UI the window can animate in
- * and load the UIWebView
- */
--(void)doTransition {
-    //faux view
-    UIView* fauxView = [[[UIView alloc] initWithFrame: bgView.bounds] autorelease];
-    fauxView.autoresizesSubviews = YES;
-    fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [bgView addSubview: fauxView];
+- (BOOL)shouldTransition {
+    return [UIView respondsToSelector:@selector(transitionFromView:toView:duration:options:completion:)];
+}
+
+- (void)constructWindow {
     
     //the new panel
     bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width, bgView.frame.size.height)] autorelease];
@@ -158,23 +162,142 @@
     [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
     [bigPanelView addSubview: closeBtn];
     
-    //animation options
-    UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromRight |
-    UIViewAnimationOptionAllowUserInteraction    |
-    UIViewAnimationOptionBeginFromCurrentState;
+}
+
+/**
+ * Afrer the window background is added to the UI the window can animate in
+ * and load the UIWebView
+ */
+-(void)displayWindow {
     
-    //run the animation
-    [UIView transitionFromView:fauxView toView:bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
+    if ([self shouldTransition]) {
+        //faux view
+        UIView* fauxView = [[[UIView alloc] initWithFrame: bgView.bounds] autorelease];
+        fauxView.autoresizesSubviews = YES;
+        fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [bgView addSubview: fauxView];
         
-        //dim the contents behind the popup window
-        UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.frame] autorelease];
-        shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        shadeView.backgroundColor = [UIColor blackColor];
-        shadeView.alpha = 0.3;
-        shadeView.tag = kShadeViewTag;
-        [bigPanelView addSubview: shadeView];
-        [bigPanelView sendSubviewToBack: shadeView];
-    }];
+        //animation options
+        UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromRight |
+        UIViewAnimationOptionAllowUserInteraction    |
+        UIViewAnimationOptionBeginFromCurrentState;
+        
+        [self constructWindow];
+        
+        //run the animation
+        [UIView transitionFromView:fauxView toView:bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
+            
+            //dim the contents behind the popup window
+            UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.frame] autorelease];
+            shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            shadeView.backgroundColor = [UIColor blackColor];
+            shadeView.alpha = 0.3;
+            shadeView.tag = kShadeViewTag;
+            [bigPanelView addSubview: shadeView];
+            [bigPanelView sendSubviewToBack: shadeView];
+        }];
+    }
+    
+    else {
+        [self constructWindow];
+        [bgView addSubview:bigPanelView];
+    }
+}
+
+- (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
+    
+    if(![parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
+        return;
+    }
+    
+    switch (toInterfaceOrientation) {
+        case UIDeviceOrientationPortrait:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationLandscapeLeft:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationLandscapeRight:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
+            break;
+        case UIDeviceOrientationPortraitUpsideDown:
+            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)orientationChanged:(NSNotification *)notification {
+    [self onRotationChange:[UIDevice currentDevice].orientation];
+}
+
+- (void)populateJavascriptEnvironment {
+    
+    //this will inject the current device orientation
+    [self onRotationChange:[UIDevice currentDevice].orientation];
+    
+    NSString *model = [UIDevice currentDevice].model;
+    NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
+/**
+ * Removes the shade background and calls the finish selector
+ */
+- (void)closePopupWindow {
+    //remove the shade
+    [[bigPanelView viewWithTag: kShadeViewTag] removeFromSuperview];
+    [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];
+    
+}
+
+/**
+ * Removes child views from bigPanelView and bgView
+ */
+- (void)removeChildViews {
+    for (UIView* child in bigPanelView.subviews) {
+        [child removeFromSuperview];
+    }
+    for (UIView* child in bgView.subviews) {
+        [child removeFromSuperview];
+    }
+}
+
+
+/**
+ * Removes all views from the hierarchy and releases self
+ */
+-(void)finish {
+    
+    if ([self shouldTransition]) {
+        
+        //faux view
+        __block UIView* fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
+        [bgView addSubview: fauxView];
+        
+        //run the animation
+        UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromLeft |
+        UIViewAnimationOptionAllowUserInteraction    |
+        UIViewAnimationOptionBeginFromCurrentState;
+        
+        //hold to the bigPanelView, because it'll be removed during the animation
+        [bigPanelView retain];
+        
+        [UIView transitionFromView:bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
+            
+            [self removeChildViews];
+            [bigPanelView release];
+            [bgView removeFromSuperview];
+            [self release];
+        }];
+    }
+    
+    else {
+        [self removeChildViews];
+        [bgView removeFromSuperview];
+        [self release];
+    }
 }
 
 
@@ -264,48 +387,11 @@
     return YES;
 }
 
-- (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
-    
-    if(![parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
-        return;
-    }
-    
-    switch (toInterfaceOrientation) {
-        case UIDeviceOrientationPortrait:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)orientationChanged:(NSNotification *)notification {
-    [self onRotationChange:[UIDevice currentDevice].orientation];
-}
-
-- (void)populateJavascriptEnvironment {
-    
-    //this will inject the current device orientation
-    [self onRotationChange:[UIDevice currentDevice].orientation];
-    
-    NSString *model = [UIDevice currentDevice].model;
-    NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
-    [webView stringByEvaluatingJavaScriptFromString:js];
-}
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self populateJavascriptEnvironment];
     
-    [self doTransition];
+    [self displayWindow];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
@@ -325,61 +411,5 @@
     [someError release];
 }
 
-
-/**
- * Removes the window background and calls the animation of the window
- */
--(void)closePopupWindow
-{
-    //remove the shade
-    [[bigPanelView viewWithTag: kShadeViewTag] removeFromSuperview];    
-    [self performSelector:@selector(closePopupWindowAnimate) withObject:nil afterDelay:0.1];
-    
-}
-
-/**
- * Animates the window and when done removes all views from the view hierarchy
- * since they are all only retained by their superview this also deallocates them
- * finally deallocate the class instance
- */
--(void)closePopupWindowAnimate
-{
-    
-    //faux view
-    __block UIView* fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
-    [bgView addSubview: fauxView];
-
-    //run the animation
-    UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromLeft |
-    UIViewAnimationOptionAllowUserInteraction    |
-    UIViewAnimationOptionBeginFromCurrentState;
-    
-    //hold to the bigPanelView, because it'll be removed during the animation
-    [bigPanelView retain];
-    
-    [UIView transitionFromView:bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
-
-        //when popup is closed, remove all the views
-        for (UIView* child in bigPanelView.subviews) {
-            [child removeFromSuperview];
-        }
-        for (UIView* child in bgView.subviews) {
-            [child removeFromSuperview];
-        }
-        [bigPanelView release];
-        [bgView removeFromSuperview];
-        
-        [self release];
-    }];
-}
-
-- (void)dealloc {
-    self.message = nil;
-    self.webView = nil;
-    [parentViewController release];
-    [[NSNotificationCenter defaultCenter] removeObserver:self 
-                                                    name:UIDeviceOrientationDidChangeNotification 
-                                                  object:nil];
-}
 
 @end
