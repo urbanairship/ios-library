@@ -32,7 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_ASIHTTPRequest.h"
 #import "UAUtils.h"
 
-/**
+/*
  * Private methods
  */
 @interface UAInboxMessage()
@@ -41,7 +41,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)markAsReadFailed:(UA_ASIHTTPRequest *)request;
 @end
 
-/**
+/*
  * Implementation
  */
 @implementation UAInboxMessage
@@ -67,7 +67,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         if([message objectForKey: @"unread"] != [NSNull null] && [[message objectForKey: @"unread"] intValue] != 0) {
             self.unread = YES;
         }
-        NSString* dateString = [message objectForKey: @"message_sent"];
+        NSString *dateString = [message objectForKey: @"message_sent"];
         NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
 		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 		[dateFormatter setLocale:enUSPOSIXLocale];
