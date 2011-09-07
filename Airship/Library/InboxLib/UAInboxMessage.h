@@ -27,6 +27,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAInboxMessageList;
 
+/**
+ * This class represents a Rich Push Inbox message. It contains all
+ * the available information about a message, including the URLs where
+ * the message can be retrieved.
+ */
 @interface UAInboxMessage : NSObject {
   @private
     NSString *messageID;
@@ -37,30 +42,66 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSDate *messageSent;
     NSString *title;
     NSDictionary *extra;
-    UAInboxMessageList *inbox;
+    UAInboxMessageList *inbox;//not retained - see property
 }
 
 
 // Supported methods
 /******************************************************************************/
-- (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList*)inbox;
+- (id)initWithDict:(NSDictionary *)message inbox:(UAInboxMessageList *)inbox;
 - (BOOL)markAsRead;
 
 /**
- * 
+ * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
  */
-+ (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url;
++ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
+
+///---------------------------------------------------------------------------------------
+/// @name Message Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The Urban Airship message ID.
+ * This ID may be used to match an incoming push notification to a specific message.
+ */
 @property (nonatomic, retain) NSString *messageID;
-@property (nonatomic, retain) NSURL *messageBodyURL;
-@property (nonatomic, retain) NSURL *messageURL;
-@property (nonatomic, copy) NSString *contentType;
-@property (assign) BOOL unread;
-@property (nonatomic, retain) NSDate *messageSent;
-@property (nonatomic, retain) NSString *title;
-@property (nonatomic, retain) NSDictionary *extra;
-@property (assign) UAInboxMessageList *inbox;
 
--(NSString*)description;
+/**
+ * The URL for the message body itself.
+ * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ */
+@property (nonatomic, retain) NSURL *messageBodyURL;
+
+/** The URL for the message.
+ * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ */
+@property (nonatomic, retain) NSURL *messageURL;
+
+/** The MIME content type for the message (e.g., text/html */
+@property (nonatomic, copy) NSString *contentType;
+
+/** YES if the message is unread, otherwise NO. */
+@property (assign) BOOL unread;
+
+/** The date and time the message was sent (UTC) */
+@property (nonatomic, retain) NSDate *messageSent;
+
+/** The message title */
+@property (nonatomic, retain) NSString *title;
+
+/**
+ * The message's extra dictionary. This dictionary can be populated
+ * with arbitrary key-value data at the time the message is composed.
+ */
+@property (nonatomic, retain) NSDictionary *extra;
+
+/**
+ * The parent inbox.
+ * 
+ * Note that this object is not retained by the message.
+ * TODO: this could be removed and replaced with a singleton reference
+ */
+@property (assign) UAInboxMessageList *inbox;
 
 @end

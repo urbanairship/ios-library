@@ -32,6 +32,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_ASIHTTPRequest.h"
 #import "UAUtils.h"
 
+/**
+ * Private methods
+ */
+@interface UAInboxMessage()
+- (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
+- (void)markAsReadFinished:(UA_ASIHTTPRequest *)request;
+- (void)markAsReadFailed:(UA_ASIHTTPRequest *)request;
+@end
+
 @implementation UAInboxMessage
 
 @synthesize messageID;
@@ -44,17 +53,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize extra;
 @synthesize inbox;
 
-- (void)dealloc {
-    RELEASE_SAFELY(messageID);
-    RELEASE_SAFELY(messageBodyURL);
-    RELEASE_SAFELY(messageURL);
-    RELEASE_SAFELY(messageSent);
-    RELEASE_SAFELY(title);
-    RELEASE_SAFELY(extra);
-    [super dealloc];
-}
-
-- (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList*)i {
+- (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
     if (self = [super init]) {
         self.messageID = [message objectForKey: @"message_id"];
         self.inbox = i;
@@ -81,26 +80,46 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return self;
 }
 
-- (BOOL)isEqual:(id)anObject {
-    if (self == anObject)
-        return YES;
+- (void)dealloc {
+    RELEASE_SAFELY(messageID);
+    RELEASE_SAFELY(messageBodyURL);
+    RELEASE_SAFELY(messageURL);
+    RELEASE_SAFELY(messageSent);
+    RELEASE_SAFELY(title);
+    RELEASE_SAFELY(extra);
+    [super dealloc];
+}
 
-    if (anObject == nil || ![anObject isKindOfClass:[UAInboxMessage class]])
+
+#pragma mark -
+#pragma mark NSObject methods
+
+// NSObject override
+- (BOOL)isEqual:(id)anObject {
+    if (self == anObject) {
+        return YES;
+    }
+
+    if (anObject == nil || ![anObject isKindOfClass:[UAInboxMessage class]]) {
         return NO;
+    }
 
     UAInboxMessage *other = (UAInboxMessage *)anObject;
     return [self.messageID isEqualToString:other.messageID];
 }
 
+// NSObject override
 - (NSUInteger)hash {
     return [messageID hash];
 }
 
+// NSObject override
 -(NSString*)description {
     return [NSString stringWithFormat: @"%@ - %@", messageID, title];
 }
 
-#pragma mark Mark & delete
+#pragma mark -
+#pragma mark Mark As Read Delegate Methods
 
 - (void)requestWentWrong:(UA_ASIHTTPRequest *)request {
     NSError *error = [request error];
@@ -110,18 +129,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)markAsRead {
+    
     if(!unread) {
         return YES;
     }
+    
     if (inbox.isBatchUpdating) {
         return NO;
     }
+    
     inbox.isBatchUpdating = YES;
 
-    NSString* urlString = [NSString stringWithFormat: @"%@%@",
-                           self.messageURL,
-                           @"read/"];
-    NSURL* url = [NSURL URLWithString: urlString];
+    NSString *urlString = [NSString stringWithFormat: @"%@%@", self.messageURL, @"read/"];
+    NSURL *url = [NSURL URLWithString: urlString];
     UALOG(@"MARK AS READ %@", urlString);
     
     UA_ASIHTTPRequest *request = 
@@ -129,35 +149,45 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                              method:@"POST" 
                            delegate:self 
                              finish:@selector(markAsReadFinished:) 
-                               fail:@selector(requestWentWrong:)];
+                               fail:@selector(markAsReadFailed:)];
     [request startAsynchronous];
     return YES;
 }
 
-- (void)markAsReadFinished:(UA_ASIHTTPRequest*)request {
+- (void)markAsReadFinished:(UA_ASIHTTPRequest *)request {
+    
     if (request.responseStatusCode != 200) {
+        
         UALOG(@"Server error when setting message as read, response: %d - %@",
               request.responseStatusCode,
               request.responseString);
+        [self markAsReadFailed:request];
+        
+    } else {
+        UALOG(@"Finished: %@ - %d - %@", [[request url] absoluteString],
+              [request responseStatusCode],
+              request.responseString);
+        
+        if (self.unread) {
+            
+            [inbox setUnreadCount:([inbox unreadCount] - 1)];
+            self.unread = NO;
+            [[UAInboxDBManager shared] updateMessageAsRead:self];
+        
+        }
+        
         inbox.isBatchUpdating = NO;
-        return;
+        [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
     }
-    UALOG(@"Finished: %@ - %d - %@", [[request url] absoluteString],
-          [request responseStatusCode],
-          request.responseString);
-    if (self.unread) {
-        [inbox setUnreadCount: [inbox unreadCount] - 1];
-        self.unread = NO;
-        [[UAInboxDBManager shared] updateMessageAsRead:self];
-    }
-    inbox.isBatchUpdating = NO;
-    [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 }
 
 - (void)markAsReadFailed:(UA_ASIHTTPRequest*)request {
     [self requestWentWrong:request];
     [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 }
+
+#pragma mark -
+#pragma mark JavaScript Delegate
 
 + (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
     
