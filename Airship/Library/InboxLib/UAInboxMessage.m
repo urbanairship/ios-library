@@ -41,6 +41,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)markAsReadFailed:(UA_ASIHTTPRequest *)request;
 @end
 
+/**
+ * Implementation
+ */
 @implementation UAInboxMessage
 
 @synthesize messageID;
@@ -114,7 +117,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 // NSObject override
--(NSString*)description {
+- (NSString*)description {
     return [NSString stringWithFormat: @"%@ - %@", messageID, title];
 }
 
@@ -130,7 +133,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (BOOL)markAsRead {
     
-    if(!unread) {
+    if (!unread) {
         return YES;
     }
     

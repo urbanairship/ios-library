@@ -46,13 +46,33 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-// Supported methods
-/******************************************************************************/
+/**
+ * Initialize the message.
+ *
+ * @param message A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ * @param inbox The inbox containing this message.
+ *
+ * @return A message, populated with data from the message dictionary.
+ */
 - (id)initWithDict:(NSDictionary *)message inbox:(UAInboxMessageList *)inbox;
+
+/**
+ * Mark the message as read.
+ * 
+ * @return YES if the request was submitted or already complete, otherwise NO.
+ */
 - (BOOL)markAsRead;
 
 /**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
+ *
+ * This method returns null, but a callback to the UIWebView may be made via
+ * [UIWebView stringByEvaluatingJavaScriptFromString:] if the delegate returns
+ * a Javascript string for evaluation.
+ *
+ * @param webView The UIWebView generating the request
+ * @param url The URL requested by the webView
  */
 + (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
