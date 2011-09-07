@@ -255,6 +255,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString *model = [UIDevice currentDevice].model;
     NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
     [webView stringByEvaluatingJavaScriptFromString:js];
+    
+    NSString *userID = [UAUser defaultUser].username;
+    js = [NSString stringWithFormat:@"userID=\"%@\"", userID];
+    [webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
