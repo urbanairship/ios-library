@@ -7,14 +7,14 @@ UADelegate = {
         // implement your own successCallback here
         // retrieve result created in iPhone callback
         // e.g. var res0 = this.result[0];
-        alert("Original success callback: "+UADelegate.result);
+        alert("Success callback: "+UADelegate.result);
     },
     iOSCallbackDidFail : function() {
         // implement your own errorCallback here
         // you can set error info in iPhone callback and reference it from here
         // e.g. document.write(this.error);
         
-        alert("Original failure callback: "+UADelegate.result);
+        alert("Failure callback: "+UADelegate.result);
     }
 };
 
@@ -61,7 +61,7 @@ UADelegate.invokeIPhoneCallback = function() {
     document.location = url;
 };
 
-// This is a demo function that illustrate how to invoke iOS side callback
+// This is a demo function that illustrates how to invoke iOS side callback
 function demoFunction() {
 
     // Customize UADelegate

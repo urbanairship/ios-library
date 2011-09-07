@@ -27,18 +27,27 @@
 
 #import "UAInboxMessageListObserver.h"
 
+@class UAInboxMessageList;
+
+/**
+ * This protocol defines a delegate method that is called
+ * when a push notification arrives with a rich push message ID
+ * embedded in its payload.
+ */
 @protocol UAInboxPushHandlerDelegate <NSObject>
 
 @required
 /**
  * Handle an incoming push message.
- * @param message An NSDictionary with the push contents.
+ * @param message An NSDictionary with the push notification contents.
  */
 - (void)newMessageArrived:(NSDictionary *)message;
 @end
 
-@class UAInboxMessageList;
-
+/**
+ * This class handles incoming rich push messages that are sent with
+ * an APNS notification.
+ */
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver> {
     NSString *viewingMessageID;
     id <UAInboxPushHandlerDelegate> delegate;
@@ -50,6 +59,6 @@
 
 @property (nonatomic, retain) NSString *viewingMessageID;
 @property (nonatomic, assign) BOOL hasLaunchMessage;
-@property (nonatomic, retain) id <UAInboxPushHandlerDelegate> delegate;
+@property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate;
 
 @end
