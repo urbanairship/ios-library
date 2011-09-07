@@ -61,7 +61,7 @@ UADelegate.invokeIPhoneCallback = function() {
     document.location = url;
 };
 
-// This is a demo function that illustrate how to invoke iPhone side callback
+// This is a demo function that illustrate how to invoke iOS side callback
 function demoFunction() {
 
     // Customize UADelegate
@@ -69,7 +69,7 @@ function demoFunction() {
 
     UADelegate.iOSCallbackDidSucceed = function(){
         console.log("iOS callback succeeded");
-        alert("Result: "+UADelegate.result);
+        alert("UADelegate.iOSCallbackDidSucceed: "+UADelegate.result);
     };
     
     UADelegate.iOSCallbackDidFail = function(){
