@@ -31,7 +31,6 @@
 
 #import "UAInboxNavUI.h"
 #import "UAInboxUI.h"
-#import "UAInboxOverlayUI.h"
 
 #import "UAUtils.h"
 
@@ -59,7 +58,7 @@
     UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
                         cancelButtonTitle:@"Cancel" 
                    destructiveButtonTitle:nil 
-                        otherButtonTitles:@"Modal", popoverOrNav, @"Overlay", nil] autorelease];
+                        otherButtonTitles:@"Modal", popoverOrNav, nil] autorelease];
     
     [sheet showInView:self.view];
     
@@ -69,12 +68,11 @@
     switch (buttonIndex) {
         case 0:
             [UAInbox useCustomUI:[UAInboxUI class]];
+            [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
             break;
         case 1:
             [UAInbox useCustomUI:[UAInboxNavUI class]];
-            break;
-        case 2:
-            [UAInbox useCustomUI:[UAInboxOverlayUI class]];
+            [UAInbox shared].pushHandler.delegate = [UAInboxNavUI shared];
             break;
     }
 }

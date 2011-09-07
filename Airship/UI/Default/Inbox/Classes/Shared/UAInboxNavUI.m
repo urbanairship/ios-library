@@ -26,6 +26,7 @@
 #import "UAInboxNavUI.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
+#import "UAInboxOverlayController.h"
 
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
@@ -40,6 +41,7 @@
 @synthesize messageViewController;
 @synthesize popoverController;
 @synthesize popoverButton;
+@synthesize useOverlay;
 @synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxNavUI)
@@ -69,6 +71,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
 		
+        self.useOverlay = NO;
         self.isVisible = NO;
         
         UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
@@ -121,13 +124,20 @@ static BOOL runiPhoneTargetOniPad = NO;
 } 
 
 
-
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
 
     if(![UAInboxNavUI shared].isVisible) {
-        UALOG(@"UI needs to be brought up!");
-		[UAInboxNavUI displayInbox:viewController animated:NO];
-	}
+        
+        if ([UAInboxNavUI shared].useOverlay) {
+            [UAInboxOverlayController showWindowInsideViewController:[UAInboxNavUI shared].inboxParentController withMessageID:messageID];
+            return;
+        }
+
+        else {
+            UALOG(@"UI needs to be brought up!");
+            [UAInboxNavUI displayInbox:viewController?:[UAInboxNavUI shared].inboxParentController animated:NO];
+        }
+    }
 	
     // If the message view is already open, just load the first message.
     if ([viewController isKindOfClass:[UINavigationController class]]) {

@@ -29,7 +29,6 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxNavUI.h"
 #import "UAInboxUI.h"
-#import "UAInboxOverlayUI.h"
 
 #import "UAirship.h"
 #import "UAInbox.h"
@@ -51,9 +50,8 @@
 
     [self failIfSimulator];
     
-    //[UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox useCustomUI: [UAInboxOverlayUI class]];
-    [UAInbox shared].pushHandler.delegate = [UAInboxOverlayUI shared];
+    [UAInbox useCustomUI:[UAInboxUI class]];
+    [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
         
     // Inbox uses SplitViewController on iPad target, but you could customize to
@@ -87,13 +85,11 @@
     
     // For modal UI:
     [UAInboxUI shared].inboxParentController = navigationController;
+    [UAInboxUI shared].useOverlay = YES;
     
     // For Navigation UI:
     [UAInboxNavUI shared].inboxParentController = navigationController;
-    
-    // For overlay UI:
-    [UAInboxOverlayUI shared].inboxParentController = navigationController;
-    
+    [UAInboxNavUI shared].useOverlay = YES;
     
     
     //TODO: think about clean up / dealloc for multiple UI classes

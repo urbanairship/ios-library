@@ -56,6 +56,7 @@
     UIPopoverController *popoverController;
     UIBarButtonItem *popoverButton;
     
+    BOOL useOverlay;
     BOOL isVisible;
 }
 
@@ -70,6 +71,7 @@
 @property (nonatomic, retain) UIPopoverController *popoverController;
 @property (nonatomic, retain) UIBarButtonItem *popoverButton;
 
+@property (nonatomic, assign) BOOL useOverlay;
 @property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxNavUI);

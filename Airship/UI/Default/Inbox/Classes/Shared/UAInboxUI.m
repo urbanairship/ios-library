@@ -26,6 +26,7 @@
 #import "UAInboxUI.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
+#import "UAInboxOverlayController.h"
 
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
@@ -36,6 +37,7 @@
 @synthesize rootViewController;
 @synthesize inboxParentController;
 @synthesize alertHandler;
+@synthesize useOverlay;
 @synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
@@ -60,6 +62,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
 		
+        self.useOverlay = NO;
         self.isVisible = NO;
         
         UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
@@ -93,9 +96,17 @@ static BOOL runiPhoneTargetOniPad = NO;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
 
     if(![UAInboxUI shared].isVisible) {
-        UALOG(@"UI needs to be brought up!");
-		// We're not inside the modal/navigationcontroller setup so lets start with the parent
-		[UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
+        
+        if ([UAInboxUI shared].useOverlay) {
+           [UAInboxOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withMessageID:messageID];
+            return;
+        }
+        
+        else {
+            UALOG(@"UI needs to be brought up!");
+            // We're not inside the modal/navigationcontroller setup so lets start with the parent
+            [UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
+        }
 	}
 		
     // For iPhone

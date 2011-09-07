@@ -38,6 +38,7 @@
 	UAInboxAlertHandler *alertHandler;
     UIViewController *rootViewController;
     UIViewController *inboxParentController;
+    BOOL useOverlay;
     BOOL isVisible;
 }
 
@@ -45,6 +46,7 @@
 @property (nonatomic, retain) UIViewController *rootViewController;
 @property (nonatomic, retain) UIViewController *inboxParentController;
 @property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+@property (nonatomic, assign) BOOL useOverlay;
 @property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxUI);
