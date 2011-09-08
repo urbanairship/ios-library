@@ -30,6 +30,8 @@
 
 @interface UAInboxMessageListController : UIViewController <UITableViewDelegate, UITableViewDataSource, UAInboxMessageListObserver> {
     IBOutlet UITableView *messageTable;
+    
+    IBOutlet UIView *loadingView;
     IBOutlet UIActivityIndicatorView *activity;
     IBOutlet UILabel *loadingLabel;
     IBOutlet UILabel *noMessagesLabel;
@@ -50,9 +52,12 @@
 }
 
 @property (nonatomic, retain) UITableView *messageTable;
+
+@property (nonatomic, retain) UIView *loadingView;
 @property (nonatomic, retain) UIActivityIndicatorView *activity;
 @property (nonatomic, retain) UILabel *loadingLabel;
 @property (nonatomic, retain) UILabel *noMessagesLabel;
+
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
 

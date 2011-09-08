@@ -36,6 +36,7 @@
 @implementation UAInboxMessageListController
 
 @synthesize activity;
+@synthesize loadingView;
 @synthesize loadingLabel, noMessagesLabel;
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
@@ -357,6 +358,7 @@
 #pragma mark UAInboxMessageListObserver
 
 - (void)messageListWillLoad {
+    loadingView.hidden = NO;
     [activity startAnimating];
     loadingLabel.hidden = NO;
     noMessagesLabel.hidden = YES;
@@ -365,11 +367,11 @@
 - (void)messageListLoaded {
 	
 	UALOG(@"got messageListLoaded");
-	
+	loadingView.hidden = YES;
     [activity stopAnimating];
     loadingLabel.hidden = YES;
     int messageCount = [[UAInbox shared].messageList messageCount];
-    noMessagesLabel.hidden = (messageCount != 0);
+    loadingView.hidden = noMessagesLabel.hidden = (messageCount != 0);
 
 	// TODO: add call to pushhandler here to get the messageid we should be viewing????
 	//[UAInboxUI displayMessage:viewingMessageID];
@@ -379,12 +381,14 @@
 }
 
 - (void)inboxError:(NSString *)message {
+    loadingView.hidden = YES;
     [activity stopAnimating];
     loadingLabel.hidden = YES;
     UALOG(@"inboxError");
 }
 
 - (void)inboxLoadFailed {
+    loadingView.hidden = YES;
     [activity stopAnimating];
     loadingLabel.hidden = YES;
     [self tableReloadData];
@@ -430,7 +434,8 @@
     [activity stopAnimating];
     loadingLabel.hidden = YES;
     int messageCount = [[UAInbox shared].messageList messageCount];
-    noMessagesLabel.hidden = (messageCount != 0);
+    
+    loadingView.hidden = noMessagesLabel.hidden = (messageCount != 0);
     
     [selectedIndexPathsForEditing removeAllObjects];
     cancelItem.enabled = YES;
