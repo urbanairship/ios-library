@@ -98,7 +98,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     if(![UAInboxUI shared].isVisible) {
         
         if ([UAInboxUI shared].useOverlay) {
-           [UAInboxOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withMessageID:messageID];
+            [UAInboxOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withMessageID:messageID];
             return;
         }
         

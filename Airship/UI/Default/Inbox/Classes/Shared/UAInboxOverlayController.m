@@ -229,13 +229,17 @@
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
-    [self onRotationChange:[UIDevice currentDevice].orientation];
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self onRotationChange:(UIInterfaceOrientation)[UIDevice currentDevice].orientation];
 }
 
 - (void)populateJavascriptEnvironment {
     
-    //this will inject the current device orientation
-    [self onRotationChange:[UIDevice currentDevice].orientation];
+    // This will inject the current device orientation
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self onRotationChange:(UIInterfaceOrientation)[UIDevice currentDevice].orientation];
     
     NSString *model = [UIDevice currentDevice].model;
     NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];

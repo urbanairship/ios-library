@@ -249,8 +249,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)populateJavascriptEnvironment {
     
-    //this will inject the current device orientation
-    [self willRotateToInterfaceOrientation:[[UIDevice currentDevice] orientation] duration:0];
+    // This will inject the current device orientation
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
 
     NSString *model = [UIDevice currentDevice].model;
     NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
