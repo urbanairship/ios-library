@@ -37,7 +37,7 @@
 
 @synthesize activity;
 @synthesize loadingView;
-@synthesize loadingLabel, noMessagesLabel;
+@synthesize loadingLabel;
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
 
@@ -48,7 +48,6 @@
     RELEASE_SAFELY(messageTable);
     RELEASE_SAFELY(activity);
     RELEASE_SAFELY(loadingLabel);
-    RELEASE_SAFELY(noMessagesLabel);
     RELEASE_SAFELY(selectedIndexPathsForEditing);
     RELEASE_SAFELY(deleteItem);
     RELEASE_SAFELY(moveItem);
@@ -78,7 +77,6 @@
     [super viewDidLoad];
     
     loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
-    noMessagesLabel.text = UA_INBOX_TR(@"UA_No_Messages");
     
     editItem = [[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
@@ -153,7 +151,6 @@
     // Release any retained subviews of the main view.
     self.activity = nil;
     self.loadingLabel = nil;
-    self.noMessagesLabel = nil;
     self.messageTable = nil;
     [selectedIndexPathsForEditing removeAllObjects];
     RELEASE_SAFELY(selectedIndexPathsForEditing);
@@ -359,20 +356,23 @@
 
 - (void)messageListWillLoad {
     loadingView.hidden = NO;
+    loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     [activity startAnimating];
     loadingLabel.hidden = NO;
-    noMessagesLabel.hidden = YES;
 }
 
 - (void)messageListLoaded {
 	
 	UALOG(@"got messageListLoaded");
-	loadingView.hidden = YES;
     [activity stopAnimating];
-    loadingLabel.hidden = YES;
     int messageCount = [[UAInbox shared].messageList messageCount];
-    loadingView.hidden = noMessagesLabel.hidden = (messageCount != 0);
-
+    
+    loadingView.hidden = (messageCount != 0);
+    
+    if (messageCount == 0) {
+        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
+    }
+    
 	// TODO: add call to pushhandler here to get the messageid we should be viewing????
 	//[UAInboxUI displayMessage:viewingMessageID];
 	
@@ -381,26 +381,17 @@
 }
 
 - (void)inboxError:(NSString *)message {
-    loadingView.hidden = YES;
     [activity stopAnimating];
-    loadingLabel.hidden = YES;
+    loadingLabel.text = UA_INBOX_TR(@"UA_Mailbox_Error_Title");
     UALOG(@"inboxError");
 }
 
 - (void)inboxLoadFailed {
-    loadingView.hidden = YES;
     [activity stopAnimating];
-    loadingLabel.hidden = YES;
     [self tableReloadData];
     [self updateNavigationBadge];
-
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                    message:UA_INBOX_TR(@"UA_Error_Fetching_Message_List")
-                                                   delegate:nil
-                                          cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                          otherButtonTitles:nil];
-    [alert show];
-    [alert release];
+    
+    loadingLabel.text = UA_INBOX_TR(@"UA_Error_Fetching_Message_List");
 }
 
 - (void)messagesDidUpdateWithOption:(id)option {
@@ -432,10 +423,13 @@
     }
 
     [activity stopAnimating];
-    loadingLabel.hidden = YES;
     int messageCount = [[UAInbox shared].messageList messageCount];
     
-    loadingView.hidden = noMessagesLabel.hidden = (messageCount != 0);
+    loadingView.hidden = (messageCount != 0);
+    
+    if (messageCount == 0) {
+        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
+    }
     
     [selectedIndexPathsForEditing removeAllObjects];
     cancelItem.enabled = YES;

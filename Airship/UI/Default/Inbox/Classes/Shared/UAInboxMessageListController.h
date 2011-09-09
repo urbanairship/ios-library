@@ -34,7 +34,6 @@
     IBOutlet UIView *loadingView;
     IBOutlet UIActivityIndicatorView *activity;
     IBOutlet UILabel *loadingLabel;
-    IBOutlet UILabel *noMessagesLabel;
 
     // navigation badge
     IBOutlet UITabBar *tabbar;
@@ -56,7 +55,6 @@
 @property (nonatomic, retain) UIView *loadingView;
 @property (nonatomic, retain) UIActivityIndicatorView *activity;
 @property (nonatomic, retain) UILabel *loadingLabel;
-@property (nonatomic, retain) UILabel *noMessagesLabel;
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
