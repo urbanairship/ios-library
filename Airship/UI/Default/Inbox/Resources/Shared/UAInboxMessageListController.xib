@@ -133,7 +133,7 @@
 							<object class="IBUIActivityIndicatorView" id="657281702">
 								<reference key="NSNextResponder" ref="119407132"/>
 								<int key="NSvFlags">301</int>
-								<string key="NSFrame">{{150, 178}, {20, 20}}</string>
+								<string key="NSFrame">{{150, 191}, {20, 20}}</string>
 								<reference key="NSSuperview" ref="119407132"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
@@ -388,7 +388,6 @@
 							<string>loadingLabel</string>
 							<string>loadingView</string>
 							<string>messageTable</string>
-							<string>noMessagesLabel</string>
 							<string>tabbar</string>
 							<string>tabbarItem</string>
 						</object>
@@ -398,7 +397,6 @@
 							<string>UILabel</string>
 							<string>UIView</string>
 							<string>UITableView</string>
-							<string>UILabel</string>
 							<string>UITabBar</string>
 							<string>UITabBarItem</string>
 						</object>
@@ -411,7 +409,6 @@
 							<string>loadingLabel</string>
 							<string>loadingView</string>
 							<string>messageTable</string>
-							<string>noMessagesLabel</string>
 							<string>tabbar</string>
 							<string>tabbarItem</string>
 						</object>
@@ -432,10 +429,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">messageTable</string>
 								<string key="candidateClassName">UITableView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">noMessagesLabel</string>
-								<string key="candidateClassName">UILabel</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">tabbar</string>
