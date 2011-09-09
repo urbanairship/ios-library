@@ -231,14 +231,30 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 																			name:UIApplicationDidEnterBackgroundNotification
 																		  object:nil];
 						   }
-						   
-						   if (&UIApplicationDidBecomeActiveNotification != NULL) {
+                           
+                           if (&UIApplicationWillEnterForegroundNotification != NULL) {
 							   [[NSNotificationCenter defaultCenter] addObserver:self
 																		selector:@selector(enterForeground)
-																			name:UIApplicationDidBecomeActiveNotification
+																			name:UIApplicationWillEnterForegroundNotification
 																		  object:nil];
 						   }
+                           
 						   );
+        
+        // App inactive/active for incoming calls, notification center, and taskbar 
+        if (&UIApplicationDidBecomeActiveNotification != NULL) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(didBecomeActive)
+                                                         name:UIApplicationDidBecomeActiveNotification
+                                                       object:nil];
+        }
+        
+        if (&UIApplicationWillResignActiveNotification != NULL) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(willResignActive)
+                                                         name:UIApplicationWillResignActiveNotification
+                                                       object:nil];
+        }
 		
         wasBackgrounded = NO;
         notificationUserInfo = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] retain];
@@ -250,6 +266,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)enterForeground {
+    UALOG(@"Enter Foreground.");
+    
+    //TODO: the wasBackgrounded logic may not be necessary now that we're using a real foreground event
     if (wasBackgrounded) {
 		wasBackgrounded = NO;
         
@@ -264,6 +283,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)enterBackground {
+    UALOG(@"Enter Background.");
     wasBackgrounded = YES;
 	
     // add app_background event
@@ -271,6 +291,20 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
+}
+
+- (void)didBecomeActive {
+    UALOG(@"Application did become active.");
+    
+    //add activity_started / AppActive event
+    [self addEvent:[UAEventAppActive eventWithContext:nil]];
+}
+
+- (void)willResignActive {
+    UALOG(@"Application will resign active.");
+    
+    //add activity_stopped / AppInactive event
+    [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
 
 - (void)restoreFromDefault {

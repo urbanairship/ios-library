@@ -173,10 +173,12 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary*)context {
+    [self addDataFromSessionForKey:@"session_id"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
+    
     
     // Capture carrier info if available
     IF_IOS4_OR_GREATER(
@@ -219,6 +221,7 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary*)context {
+    [self addDataFromSessionForKey:@"session_id"];
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
@@ -234,6 +237,39 @@
 
 - (NSString*)getType {
     return @"app_background";
+}
+
+@end
+
+@implementation UAEventAppActive
+
+- (NSString *)getType {
+    return @"activity_started";
+}
+
+- (void)gatherIndividualData:(NSDictionary*)context {
+    [self addDataFromSessionForKey:@"session_id"];
+}
+
+- (int)getEstimatedSize {
+    return kEventAppActiveSize;
+}
+
+@end
+
+@implementation UAEventAppInactive
+ 
+- (NSString *)getType {
+    return @"activity_stopped";
+}
+
+
+- (void)gatherIndividualData:(NSDictionary*)context {
+    [self addDataFromSessionForKey:@"session_id"];
+}
+
+- (int)getEstimatedSize {
+    return kEventAppInactiveSize;
 }
 
 @end

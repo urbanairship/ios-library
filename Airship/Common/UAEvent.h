@@ -29,9 +29,10 @@
 #define kEventAppExitSize               200//136 w/ only network type
 #define kEventDeviceRegistrationSize    200//153 w/ only user info
 #define kEventPushReceivedSize          200//160 w/ uuid push info
+#define kEventAppActiveSize             120
+#define kEventAppInactiveSize           120
 
-@interface UAEvent : NSObject
-{
+@interface UAEvent : NSObject {
     NSString *time, *event_id;
     NSMutableDictionary *data;
 }
@@ -48,8 +49,7 @@
 
 @end
 
-@interface UAEventCustom : UAEvent
-{
+@interface UAEventCustom : UAEvent {
     NSString *type;
 }
 - (id)initWithType:(NSString*)aType;
@@ -80,5 +80,23 @@
 @end
 
 @interface UAEventPushReceived : UAEvent
+{}
+@end
+
+/**
+ * This event is recorded when the app becomes active: on foreground
+ * or when resuming after losing focus for any of the reasons that would
+ * trigger a UAEventAppInactive event.
+ */
+@interface UAEventAppActive : UAEvent
+{}
+@end
+
+/**
+ * This event is recorded when the app resigns its active state. This will happen
+ * prior to backgrounding and when there is an incoming call, the user opens the
+ * notification center in iOS5+, the user launches the task-bar, etc.
+ */
+@interface UAEventAppInactive : UAEvent
 {}
 @end
