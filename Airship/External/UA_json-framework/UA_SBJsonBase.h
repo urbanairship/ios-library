@@ -33,18 +33,18 @@ extern NSString * UA_SBJSONErrorDomain;
 
 
 enum {
-    EUNSUPPORTED = 1,
-    EPARSENUM,
-    EPARSE,
-    EFRAGMENT,
-    ECTRL,
-    EUNICODE,
-    EDEPTH,
-    EESCAPE,
-    ETRAILCOMMA,
-    ETRAILGARBAGE,
-    EEOF,
-    EINPUT
+    UA_EUNSUPPORTED = 1,
+    UA_EPARSENUM,
+    UA_EPARSE,
+    UA_EFRAGMENT,
+    UA_ECTRL,
+    UA_EUNICODE,
+    UA_EDEPTH,
+    UA_EESCAPE,
+    UA_ETRAILCOMMA,
+    UA_ETRAILGARBAGE,
+    UA_EEOF,
+    UA_EINPUT
 };
 
 /**

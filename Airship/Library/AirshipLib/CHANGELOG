@@ -1,3 +1,12 @@
+1.0.5 - April 26, 2011
+- Fixed enum collisions with external libraries.
+- Fixed bug that would append trailing slashes to tags.
+- Fixed arm6 LLVM bug that would cause crashing on older devices when launching UAirship.
+- Removed extra logging, and changed logs to be triggered by a takeOff options flag LOGGING_ENABLED
+- Removed all non-essential code files from Airship/External directory.
+- Library is now a single arm6/arm7/i386 universal release file.
+- Xcode4 support for all projects.
+
 1.0.4 - February 23, 2011
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.

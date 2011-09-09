@@ -26,14 +26,18 @@
 #import "UAHTTPConnection.h"
 #import "UAGlobal.h"
 
+#import "UA_Base64.h"
 #import <zlib.h>
 
 @implementation UAHTTPRequest
 
 @synthesize url;
+@synthesize HTTPMethod;
 @synthesize headers;
-@synthesize postData;
-@synthesize compressPostBody;
+@synthesize username;
+@synthesize password;
+@synthesize body;
+@synthesize compressBody;
 @synthesize userInfo;
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
@@ -44,15 +48,19 @@
     if ((self = [super init])) {
         url = [[NSURL URLWithString:urlString] retain];
         headers = [[NSMutableDictionary alloc] init];
-        postData = nil;
+        body = nil;
+        self.HTTPMethod = @"GET";
     }
     return self;
 }
 
 - (void) dealloc {
     RELEASE_SAFELY(url);
+    RELEASE_SAFELY(HTTPMethod);
     RELEASE_SAFELY(headers);
-    RELEASE_SAFELY(postData);
+    RELEASE_SAFELY(username);
+    RELEASE_SAFELY(password);
+    RELEASE_SAFELY(body);
     RELEASE_SAFELY(userInfo);
     [super dealloc];
 }
@@ -61,11 +69,11 @@
     [headers setValue:value forKey:header];
 }
 
-- (void)appendPostData:(NSData *)data {
-    if (postData == nil) {
-        postData = [[NSMutableData alloc] init];
+- (void)appendBodyData:(NSData *)data {
+    if (body == nil) {
+        body = [[NSMutableData alloc] init];
     }
-    [postData appendData:data];
+    [body appendData:data];
 }
 
 
@@ -110,26 +118,48 @@
         for (NSString *header in [request.headers allKeys]) {
             [urlRequest setValue:[request.headers valueForKey:header] forHTTPHeaderField:header];
         }
-        if (request.postData != nil) {
+        
+        [urlRequest setHTTPMethod:request.HTTPMethod];
+        [urlRequest setHTTPShouldHandleCookies:NO];
+        
+        //Set Auth
+        if (request.username && request.password) {
+            NSString *toEncode = [NSString stringWithFormat:@"%@:%@", request.username, request.password];
             
-            [urlRequest setHTTPMethod:@"POST"];
+            // base64 encode credentials
+            NSString *authString = UA_base64EncodedStringFromData([toEncode dataUsingEncoding:NSUTF8StringEncoding]);
             
-            NSData *postBody = request.postData;
-            if (request.compressPostBody) {
-                postBody = [self gzipCompress:request.postData]; //returns nil if compression fails
-                if (postBody) {
+            // strip CRLF sequences
+            authString = [authString stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
+            
+            // add Basic auth prefix
+            authString = [NSString stringWithFormat: @"Basic %@", authString];
+            
+            // set header
+            [urlRequest setValue:authString  forHTTPHeaderField:@"Authorization"];
+        }
+        
+        
+        if (request.body != nil) {
+            
+            NSData *body = request.body;
+            
+            if (request.compressBody) {
+                
+                body = [self gzipCompress:request.body]; //returns nil if compression fails
+                if (body) {
                     [urlRequest setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-                    UALOG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.postData length], [postBody length]);
+                    UALOG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
                 } else {
-                    UALOG(@"Post body compression failed.");
+                    UALOG(@"Body compression failed.");
                 }
 
             }
-            [urlRequest setHTTPBody:postBody];
             
-        } else {
-            [urlRequest setHTTPMethod:@"GET"];
+            [urlRequest setHTTPBody:body];
+            
         }
+        
 		responseData = [[NSMutableData alloc] init];
         urlConnection = [[NSURLConnection connectionWithRequest:urlRequest delegate:self] retain];
         return YES;
@@ -162,22 +192,6 @@
     if (delegate) {
         [delegate requestDidSucceed:request response:urlResponse responseData:responseData];
     }
-}
-
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    
-    // Accept self-signed ssl certs
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-        [challenge.sender useCredential:credential forAuthenticationChallenge:challenge];
-    } else {
-        [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-    }
-
 }
 
 #pragma mark -

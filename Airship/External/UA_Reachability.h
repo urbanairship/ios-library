@@ -45,7 +45,7 @@
  
 */
 
-
+#import <netinet/in.h>
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
@@ -53,11 +53,11 @@
 #define NetworkStatus       UA_NetworkStatus
 
 typedef enum {
-	NotReachable = 0,
-	ReachableViaWiFi,
-	ReachableViaWWAN
+	UA_NotReachable = 0,
+	UA_ReachableViaWiFi,
+	UA_ReachableViaWWAN
 } NetworkStatus;
-#define kReachabilityChangedNotification @"kNetworkReachabilityChangedNotification"
+#define kUA_ReachabilityChangedNotification @"kNetworkReachabilityChangedNotification"
 
 @interface Reachability: NSObject
 {

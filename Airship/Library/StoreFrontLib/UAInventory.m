@@ -149,7 +149,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
     // listen on network changes
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(hostReachStatusChanged:)
-                                                 name:kReachabilityChangedNotification
+                                                 name:kUA_ReachabilityChangedNotification
                                                object:nil];
 
     [products removeAllObjects];
@@ -211,7 +211,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
 
 - (void)reloadInventory {
     // Will keep reloaing Inventory if network is OK but server return with error
-    if ([hostReach currentReachabilityStatus] != NotReachable) {
+    if ([hostReach currentReachabilityStatus] != UA_NotReachable) {
         //limit attempt times
         if (reloadCount <= MAX_RELOAD_TIME) {
             reloadCount++;
@@ -248,6 +248,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
             NSString* localizedPrice = [UAInventory localizedPrice: skitem];
             uaitem.price = localizedPrice;
             uaitem.priceNumber = skitem.price;
+            uaitem.skProduct = skitem;
         }
     }
 
@@ -323,10 +324,10 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
                                                   selector:@selector(localizedCaseInsensitiveCompare:)];
     }
 
-    [sortedProducts release];
-    sortedProducts = [[[self productsForType:ProductTypeOrigin]
-                       sortedArrayUsingDescriptors:[NSArray arrayWithObject:descriptor]]
-                      retain];
+    // replace the contents of the sorted array with updated items
+    [sortedProducts removeAllObjects];
+    [sortedProducts addObjectsFromArray:[[self productsForType:ProductTypeOrigin]
+                                         sortedArrayUsingDescriptors:[NSArray arrayWithObject:descriptor]]];
     [descriptor release];
 }
 
@@ -346,7 +347,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
        || [[UAStoreFront shared].purchaseReceipts objectForKey:product.productIdentifier] != nil) {
         [[UAStoreFront shared].downloadManager downloadIfValid:product];
     } else {
-        [[UAStoreFront shared].sfObserver payForProduct:productIdentifier];
+        [[UAStoreFront shared].sfObserver payForProduct:product.skProduct];
     }
 }
 

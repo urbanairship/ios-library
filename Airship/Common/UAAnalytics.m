@@ -25,6 +25,7 @@
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
+
 #import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAUtils.h"
@@ -76,19 +77,19 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
 	switch (netStatus) {
 			
-		case NotReachable:
+		case UA_NotReachable:
         {
             connectionTypeString = @"none";//this should never be sent
             break;
         }
 			
-        case ReachableViaWWAN:
+        case UA_ReachableViaWWAN:
         {
             connectionTypeString = @"cell";
             break;
         }
 			
-		case ReachableViaWiFi:
+		case UA_ReachableViaWiFi:
         {
             connectionTypeString = @"wifi";
             break;
@@ -145,12 +146,28 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"badge"];
     }
+    
     if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"sound"];
     }
+    
     if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"alert"];
     }
+    
+// Allow the lib to be built in Xcode 4.1 w/ the iOS 5 newsstand type
+// The two blocks below are functionally identical, but they're separated
+// for clarity. Once we can build against a stable SDK the second option
+// should be removed.
+#ifdef __IPHONE_5_0
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
+    }
+#else
+    if (((1 << 3) & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
+    }
+#endif
     
 	[session setObject:notification_types forKey:@"notification_types"];
 	
@@ -201,7 +218,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 		
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshSessionWhenNetworkChanged)
-                                                     name:kReachabilityChangedNotification
+                                                     name:kUA_ReachabilityChangedNotification
                                                    object:nil];
         IF_IOS4_OR_GREATER(
 						   if (&UIApplicationDidEnterBackgroundNotification != NULL) {
@@ -290,12 +307,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 		lastSendTime = [[NSDate date] retain];
 	}
     
+    /*
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
     UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
     UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
     UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
     UALOG(@"X-UA-Last-Send-Time: %@", [lastSendTime description]);
-
+    */
 }
 
 - (void)saveDefault {
@@ -305,11 +323,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
     [[NSUserDefaults standardUserDefaults] setObject:lastSendTime forKey:@"X-UA-Last-Send-Time"];
     
+    /*
     UALOG(@"Response Headers Saved:");
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
     UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
     UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
     UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
+    */
 }
 
 #pragma mark -
@@ -357,9 +377,11 @@ IF_IOS4_OR_GREATER(
                  response:(NSHTTPURLResponse *)response
              responseData:(NSData *)responseData {
     
+    /*
 	UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-
+    */
+     
     RELEASE_SAFELY(connection);
 	
     if ([response statusCode] == 200) {
@@ -367,8 +389,7 @@ IF_IOS4_OR_GREATER(
         [self resetEventsDatabaseStatus];
     } 
 
-    UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
-    
+    //UALOG(@"Response Headers: %@", [[response allHeaderFields] description]);
     
 	// We send headers on all response codes, so let's set those values before checking for != 200
     // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
@@ -478,13 +499,13 @@ IF_IOS4_OR_GREATER(
     }
     
 	if (connection != nil) {
-        UALOG("Analytics sending already in progress now.");
+        //UALOG("Analytics sending already in progress now.");
         return;
     }
 
     int eventCount = [[UAAnalyticsDBManager shared] eventCount];
     if (eventCount == 0) {
-        UALOG(@"Warning: there are no events.");
+        //UALOG(@"Warning: there are no events.");
         return;
     }
     
@@ -493,7 +514,8 @@ IF_IOS4_OR_GREATER(
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
-    request.compressPostBody = YES;//enable GZIP
+    request.compressBody = YES;//enable GZIP
+    request.HTTPMethod = @"POST";
     
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
@@ -575,14 +597,17 @@ IF_IOS4_OR_GREATER(
              
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     writer.humanReadable = NO;//strip whitespace
-    [request appendPostData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
 
     writer.humanReadable = YES;//turn on formatting for debugging
+    
+    /*
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
-    
+    */
+     
 	[writer release];
 
     connection = [[UAHTTPConnection connectionWithRequest:request] retain];
@@ -602,12 +627,20 @@ IF_IOS4_OR_GREATER(
 
 - (void)sendIfNeeded {
     
+    IF_IOS4_OR_GREATER(
+                       // if the application is not active, do not attempt to send
+                       // this will typically be the case for headless newsstant launches
+                       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+                           return;
+                       }
+    )
+    
     //try sending at this interval if no other thresholds
     //have been met
     //NSInteger stdInterval = x_ua_min_batch_interval * 2;
     
     if (databaseSize <= 0) {
-        UALOG(@"Analytics upload not necessary: no events to send.");
+        //UALOG(@"Analytics upload not necessary: no events to send.");
         return;
     }
     
@@ -623,7 +656,7 @@ IF_IOS4_OR_GREATER(
     // imprecise time
 	@synchronized(self) {
 		if (reSendTimer != nil) {
-			UALOG(@"Send cancelled - a reset timer is already running.");
+			UALOG(@"Send skipped - a reset timer is already running.");
 			return;
 		}
 	}
@@ -631,7 +664,7 @@ IF_IOS4_OR_GREATER(
     // Ensure that we are not sending too often.
     // If we're within the minimum interval, set a timer
     // to retry once the minimum interval is up
-    UALOG(@"Send Analytics");
+    //UALOG(@"Send Analytics");
 	
 	NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
 	

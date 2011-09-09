@@ -74,7 +74,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 // Lifecycle
 + (UAirship *)shared;
-+ (void)setReleaseLogging:(BOOL)value;
++ (void)setLogging:(BOOL)value;
 + (void)takeOff:(NSDictionary *)options;
 + (void)land;
 

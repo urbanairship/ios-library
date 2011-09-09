@@ -308,7 +308,7 @@ static Class _uiClass;
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@/",
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
                            tag];
@@ -323,7 +323,7 @@ static Class _uiClass;
 }
 
 - (void)removeTagFromCurrentDevice:(NSString *)tag {
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@/",
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
                            tag];

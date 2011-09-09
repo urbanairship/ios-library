@@ -1,3 +1,7 @@
+1.5.5 - April 26, 2011
+- Fixed bad property assignment in UAInboxUI.
+- Moved UAInboxMessageListCell to shared.
+
 1.5.4 - February 23, 2011
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.

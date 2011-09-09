@@ -138,6 +138,16 @@
     [failureAlert release];
 }
 
+- (void)failedRestoreAlert:(id)sender {
+    UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle:UA_SS_TR(@"UA_Autorenewable_Restore_Error_Title")
+                                                           message:UA_SS_TR(@"UA_Autorenewable_Restore_Error")
+                                                          delegate:nil
+                                                 cancelButtonTitle:UA_SS_TR(@"UA_OK")
+                                                 otherButtonTitles:nil];
+    [failureAlert show];
+    [failureAlert release];
+}
+
 
 - (void)emailFieldDone:(id)sender {
     [sender resignFirstResponder];
@@ -168,6 +178,11 @@
             break;
         case UASubscriptionAlertFailedTransaction:
             [self failedTransactionAlert:sender];
+            break;
+        case UASubscriptionAlertFailedRestore:
+            [self failedRestoreAlert:sender];
+            break;
+        default:
             break;
     }
 }

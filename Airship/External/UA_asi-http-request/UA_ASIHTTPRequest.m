@@ -250,11 +250,11 @@ static NSOperationQueue *sharedQueue = nil;
 		sessionCredentialsLock = [[NSRecursiveLock alloc] init];
 		delegateAuthenticationLock = [[NSRecursiveLock alloc] init];
 		bandwidthUsageTracker = [[NSMutableArray alloc] initWithCapacity:5];
-		ASIRequestTimedOutError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:ASIRequestTimedOutErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request timed out",NSLocalizedDescriptionKey,nil]];  
-		ASIAuthenticationError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:ASIAuthenticationErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Authentication needed",NSLocalizedDescriptionKey,nil]];
-		ASIRequestCancelledError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:ASIRequestCancelledErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request was cancelled",NSLocalizedDescriptionKey,nil]];
-		ASIUnableToCreateRequestError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:ASIUnableToCreateRequestErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create request (bad url?)",NSLocalizedDescriptionKey,nil]];
-		ASITooMuchRedirectionError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:ASITooMuchRedirectionErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request failed because it redirected too many times",NSLocalizedDescriptionKey,nil]];
+		ASIRequestTimedOutError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIRequestTimedOutErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request timed out",NSLocalizedDescriptionKey,nil]];  
+		ASIAuthenticationError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIAuthenticationErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Authentication needed",NSLocalizedDescriptionKey,nil]];
+		ASIRequestCancelledError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIRequestCancelledErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request was cancelled",NSLocalizedDescriptionKey,nil]];
+		ASIUnableToCreateRequestError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIUnableToCreateRequestErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create request (bad url?)",NSLocalizedDescriptionKey,nil]];
+		ASITooMuchRedirectionError = [[NSError alloc] initWithDomain:UA_NetworkRequestErrorDomain code:UA_ASITooMuchRedirectionErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"The request failed because it redirected too many times",NSLocalizedDescriptionKey,nil]];
 		sharedQueue = [[NSOperationQueue alloc] init];
 		[sharedQueue setMaxConcurrentOperationCount:4];
 
@@ -304,7 +304,7 @@ static NSOperationQueue *sharedQueue = nil;
 
 + (id)requestWithURL:(NSURL *)newURL usingCache:(id <UA_ASICacheDelegate>)cache
 {
-	return [self requestWithURL:newURL usingCache:cache andCachePolicy:ASIUseDefaultCachePolicy];
+	return [self requestWithURL:newURL usingCache:cache andCachePolicy:UA_ASIUseDefaultCachePolicy];
 }
 
 + (id)requestWithURL:(NSURL *)newURL usingCache:(id <UA_ASICacheDelegate>)cache andCachePolicy:(UA_ASICachePolicy)policy
@@ -317,7 +317,7 @@ static NSOperationQueue *sharedQueue = nil;
 
 - (void)dealloc
 {
-	[self setAuthenticationNeeded:ASINoAuthenticationNeededYet];
+	[self setAuthenticationNeeded:UA_ASINoAuthenticationNeededYet];
 	if (requestAuthentication) {
 		CFRelease(requestAuthentication);
 	}
@@ -499,7 +499,7 @@ static NSOperationQueue *sharedQueue = nil;
 		NSError *err = nil;
 		[self setPostLength:[[[[[NSFileManager alloc] init] autorelease] attributesOfItemAtPath:path error:&err] fileSize]];
 		if (err) {
-			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to get attributes for file at path '%@'",path],NSLocalizedDescriptionKey,error,NSUnderlyingErrorKey,nil]]];
+			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to get attributes for file at path '%@'",path],NSLocalizedDescriptionKey,error,NSUnderlyingErrorKey,nil]]];
 			return;
 		}
 		
@@ -878,7 +878,7 @@ static NSOperationQueue *sharedQueue = nil;
 			}
 
 			// If cached data is stale, or we have been told to ask the server if it has been modified anyway, we need to add headers for a conditional GET
-			if ([self cachePolicy] & (ASIAskServerIfModifiedWhenStaleCachePolicy|ASIAskServerIfModifiedCachePolicy)) {
+			if ([self cachePolicy] & (UA_ASIAskServerIfModifiedWhenStaleCachePolicy|UA_ASIAskServerIfModifiedCachePolicy)) {
 
 				NSDictionary *cachedHeaders = [[self downloadCache] cachedResponseHeadersForURL:[self url]];
 				if (cachedHeaders) {
@@ -905,8 +905,8 @@ static NSOperationQueue *sharedQueue = nil;
 		[self startRequest];
 		
 	} @catch (NSException *exception) {
-		NSError *underlyingError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIUnhandledExceptionError userInfo:[exception userInfo]];
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIUnhandledExceptionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[exception name],NSLocalizedDescriptionKey,[exception reason],NSLocalizedFailureReasonErrorKey,underlyingError,NSUnderlyingErrorKey,nil]]];
+		NSError *underlyingError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIUnhandledExceptionError userInfo:[exception userInfo]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIUnhandledExceptionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[exception name],NSLocalizedDescriptionKey,[exception reason],NSLocalizedFailureReasonErrorKey,underlyingError,NSUnderlyingErrorKey,nil]]];
 
 	} @finally {
 		[[self cancelledLock] unlock];
@@ -1047,7 +1047,7 @@ static NSOperationQueue *sharedQueue = nil;
 		NSError *err = nil;
 		[self setPartialDownloadSize:[[fileManager attributesOfItemAtPath:[self temporaryFileDownloadPath] error:&err] fileSize]];
 		if (err) {
-			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to get attributes for file at path '%@'",[self temporaryFileDownloadPath]],NSLocalizedDescriptionKey,error,NSUnderlyingErrorKey,nil]]];
+			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to get attributes for file at path '%@'",[self temporaryFileDownloadPath]],NSLocalizedDescriptionKey,error,NSUnderlyingErrorKey,nil]]];
 			return;
 		}
 	}
@@ -1118,7 +1118,7 @@ static NSOperationQueue *sharedQueue = nil;
 	}
 
 	if (![self readStream]) {
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to create read stream",NSLocalizedDescriptionKey,nil]]];
         return;
     }
 
@@ -1194,7 +1194,7 @@ static NSOperationQueue *sharedQueue = nil;
 		
 		if (!proxies) {
 			[self setReadStream:nil];
-			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to obtain information on proxy servers needed for request",NSLocalizedDescriptionKey,nil]]];
+			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to obtain information on proxy servers needed for request",NSLocalizedDescriptionKey,nil]]];
 			return;			
 		}
 		// I don't really understand why the dictionary returned by CFNetworkCopyProxiesForURL uses different key names from CFNetworkCopySystemProxySettings/SCDynamicStoreCopyProxies
@@ -1350,7 +1350,7 @@ static NSOperationQueue *sharedQueue = nil;
 	if (!streamSuccessfullyOpened) {
 		[self setConnectionCanBeReused:NO];
 		[self destroyReadStream];
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to start HTTP connection",NSLocalizedDescriptionKey,nil]]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileBuildingRequestType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Unable to start HTTP connection",NSLocalizedDescriptionKey,nil]]];
 		return;	
 	}
 	
@@ -1995,7 +1995,7 @@ static NSOperationQueue *sharedQueue = nil;
 	[self setComplete:YES];
 	
 	// Invalidate the current connection so subsequent requests don't attempt to reuse it
-	if (theError && [theError code] != ASIAuthenticationErrorType && [theError code] != ASITooMuchRedirectionErrorType) {
+	if (theError && [theError code] != UA_ASIAuthenticationErrorType && [theError code] != UA_ASITooMuchRedirectionErrorType) {
 		[connectionsLock lock];
 		#if DEBUG_PERSISTENT_CONNECTIONS
 		NSLog(@"Request #%@ failed and will invalidate connection #%@",[self requestID],[[self connectionInfo] objectForKey:@"id"]);
@@ -2013,7 +2013,7 @@ static NSOperationQueue *sharedQueue = nil;
 		return;
 	}
 	
-	if ([self downloadCache] && ([self cachePolicy] & ASIFallbackToCacheIfLoadFailsCachePolicy)) {
+	if ([self downloadCache] && ([self cachePolicy] & UA_ASIFallbackToCacheIfLoadFailsCachePolicy)) {
 		[self useDataFromCache];
 		return;
 	}
@@ -2044,7 +2044,7 @@ static NSOperationQueue *sharedQueue = nil;
 
 - (void)readResponseHeaders
 {
-	[self setAuthenticationNeeded:ASINoAuthenticationNeededYet];
+	[self setAuthenticationNeeded:UA_ASINoAuthenticationNeededYet];
 
 	CFHTTPMessageRef message = (CFHTTPMessageRef)CFReadStreamCopyProperty((CFReadStreamRef)[self readStream], kCFStreamPropertyHTTPResponseHeader);
 	if (!message) {
@@ -2082,9 +2082,9 @@ static NSOperationQueue *sharedQueue = nil;
 
 	// Is the server response a challenge for credentials?
 	if ([self responseStatusCode] == 401) {
-		[self setAuthenticationNeeded:ASIHTTPAuthenticationNeeded];
+		[self setAuthenticationNeeded:UA_ASIHTTPAuthenticationNeeded];
 	} else if ([self responseStatusCode] == 407) {
-		[self setAuthenticationNeeded:ASIProxyAuthenticationNeeded];
+		[self setAuthenticationNeeded:UA_ASIProxyAuthenticationNeeded];
 	}
 		
 	// Authentication succeeded, or no authentication was required
@@ -2602,7 +2602,7 @@ static NSOperationQueue *sharedQueue = nil;
 	// If we haven't got a CFHTTPAuthenticationRef by now, something is badly wrong, so we'll have to give up
 	if (!proxyAuthentication) {
 		[self cancelLoad];
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to get authentication object from response headers",NSLocalizedDescriptionKey,nil]]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to get authentication object from response headers",NSLocalizedDescriptionKey,nil]]];
 		return;
 	}
 	
@@ -2680,7 +2680,7 @@ static NSOperationQueue *sharedQueue = nil;
 			
 		// Something went wrong, we'll have to give up
 		} else {
-			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply proxy credentials to request",NSLocalizedDescriptionKey,nil]]];
+			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply proxy credentials to request",NSLocalizedDescriptionKey,nil]]];
 		}
 		
 	// Are a user name & password needed?
@@ -2715,7 +2715,7 @@ static NSOperationQueue *sharedQueue = nil;
 				[self startRequest];
 			} else {
 				[delegateAuthenticationLock unlock];
-				[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply proxy credentials to request",NSLocalizedDescriptionKey,nil]]];
+				[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply proxy credentials to request",NSLocalizedDescriptionKey,nil]]];
 			}
 			
 			return;
@@ -2761,7 +2761,7 @@ static NSOperationQueue *sharedQueue = nil;
 		return;
 	}
 	
-	if ([self authenticationNeeded] == ASIProxyAuthenticationNeeded) {
+	if ([self authenticationNeeded] == UA_ASIProxyAuthenticationNeeded) {
 		[self attemptToApplyProxyCredentialsAndResume];
 		return;
 	}
@@ -2776,7 +2776,7 @@ static NSOperationQueue *sharedQueue = nil;
 	
 	if (!requestAuthentication) {
 		[self cancelLoad];
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to get authentication object from response headers",NSLocalizedDescriptionKey,nil]]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to get authentication object from response headers",NSLocalizedDescriptionKey,nil]]];
 		return;
 	}
 	
@@ -2850,7 +2850,7 @@ static NSOperationQueue *sharedQueue = nil;
 			[self failWithError:ASIAuthenticationError];
 			
 		} else {
-			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply credentials to request",NSLocalizedDescriptionKey,nil]]];
+			[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply credentials to request",NSLocalizedDescriptionKey,nil]]];
 		}
 		
 		// Are a user name & password needed?
@@ -2886,7 +2886,7 @@ static NSOperationQueue *sharedQueue = nil;
 				[self startRequest];
 			} else {
 				[delegateAuthenticationLock unlock];
-				[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply credentials to request",NSLocalizedDescriptionKey,nil]]];
+				[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIInternalErrorWhileApplyingCredentialsType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Failed to apply credentials to request",NSLocalizedDescriptionKey,nil]]];
 			}
 			return;
 		}
@@ -3188,7 +3188,7 @@ static NSOperationQueue *sharedQueue = nil;
 				NSError *moveError = nil;
 				[[[[NSFileManager alloc] init] autorelease] moveItemAtPath:[self temporaryUncompressedDataDownloadPath] toPath:[self downloadDestinationPath] error:&moveError];
 				if (moveError) {
-					fileError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to move file from '%@' to '%@'",[self temporaryFileDownloadPath],[self downloadDestinationPath]],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
+					fileError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to move file from '%@' to '%@'",[self temporaryFileDownloadPath],[self downloadDestinationPath]],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
 				}
 				[self setTemporaryUncompressedDataDownloadPath:nil];
 
@@ -3208,7 +3208,7 @@ static NSOperationQueue *sharedQueue = nil;
 			if (!fileError) {
 				[[[[NSFileManager alloc] init] autorelease] moveItemAtPath:[self temporaryFileDownloadPath] toPath:[self downloadDestinationPath] error:&moveError];
 				if (moveError) {
-					fileError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to move file from '%@' to '%@'",[self temporaryFileDownloadPath],[self downloadDestinationPath]],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
+					fileError = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to move file from '%@' to '%@'",[self temporaryFileDownloadPath],[self downloadDestinationPath]],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
 				}
 				[self setTemporaryFileDownloadPath:nil];
 			}
@@ -3404,7 +3404,7 @@ static NSOperationQueue *sharedQueue = nil;
 			}
 		}
 		
-		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIConnectionFailureErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:reason,NSLocalizedDescriptionKey,underlyingError,NSUnderlyingErrorKey,nil]]];
+		[self failWithError:[NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIConnectionFailureErrorType userInfo:[NSDictionary dictionaryWithObjectsAndKeys:reason,NSLocalizedDescriptionKey,underlyingError,NSUnderlyingErrorKey,nil]]];
 	}
 	[self checkRequestStatus];
 }
@@ -3524,7 +3524,7 @@ static NSOperationQueue *sharedQueue = nil;
 		[fileManager removeItemAtPath:path error:&removeError];
 		if (removeError) {
 			if (err) {
-				*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to delete file at path '%@'",path],NSLocalizedDescriptionKey,removeError,NSUnderlyingErrorKey,nil]];
+				*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to delete file at path '%@'",path],NSLocalizedDescriptionKey,removeError,NSUnderlyingErrorKey,nil]];
 			}
 			return NO;
 		}
@@ -3853,7 +3853,7 @@ static NSOperationQueue *sharedQueue = nil;
 	[[[self class] sessionCredentialsStore] removeAllObjects];
 	[sessionCredentialsLock unlock];
 	[[self class] setSessionCookies:nil];
-	[[[self class] defaultCache] clearCachedResponsesForStoragePolicy:ASICacheForSessionDurationCacheStoragePolicy];
+	[[[self class] defaultCache] clearCachedResponsesForStoragePolicy:UA_ASICacheForSessionDurationCacheStoragePolicy];
 }
 
 #pragma mark get user agent
@@ -4157,18 +4157,18 @@ static NSOperationQueue *sharedQueue = nil;
 + (void)registerForNetworkReachabilityNotifications
 {
 	[[UA_Reachability reachabilityForInternetConnection] startNotifier];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kUA_ReachabilityChangedNotification object:nil];
 }
 
 
 + (void)unsubscribeFromNetworkReachabilityNotifications
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:kReachabilityChangedNotification object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:kUA_ReachabilityChangedNotification object:nil];
 }
 
 + (BOOL)isNetworkReachableViaWWAN
 {
-	return ([[UA_Reachability reachabilityForInternetConnection] currentReachabilityStatus] == ReachableViaWWAN);	
+	return ([[UA_Reachability reachabilityForInternetConnection] currentReachabilityStatus] == UA_ReachableViaWWAN);	
 }
 
 + (void)reachabilityChanged:(NSNotification *)note

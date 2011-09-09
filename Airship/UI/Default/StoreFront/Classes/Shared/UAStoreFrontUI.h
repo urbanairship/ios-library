@@ -35,28 +35,30 @@
 @class UAStoreFrontAlertProtocol;
 
 @interface UAStoreFrontUI : NSObject <UAStoreFrontUIProtocol> {
-    // Essential StoreFront component
+
+    UIWindow *uaWindow;
+
     UIViewController *rootViewController;
     UAStoreFrontViewController *productListViewController;
+    
     BOOL isVisible;
+    BOOL isiPad;
     BOOL animated;
-    NSArray *originalSubviews;
-    UIWindow *originalWindow;
-    UIInterfaceOrientation userOrientation;
-    UIInterfaceOrientation storeOrientation;
-    UIWindow *uaWindow;
+
     UAStoreFrontAlertHandler *alertHandler;
 
-    BOOL isiPad;
     NSBundle *localizationBundle;
+
+@private
+    UIWindow *originalWindow;
+
 }
 
+@property (nonatomic, retain) UIWindow *uaWindow;
+@property (nonatomic, retain) UIWindow *originalWindow;
 @property (nonatomic, retain, readonly) UIViewController *rootViewController;
 @property (nonatomic, retain, readonly) UAStoreFrontViewController *productListViewController;
 @property (nonatomic, assign, readonly) BOOL isVisible;
-@property (nonatomic, retain) NSArray *originalSubviews;
-@property (nonatomic, retain) UIWindow *originalWindow;
-@property (nonatomic, retain) UIWindow *uaWindow;
 @property (nonatomic, assign, readonly) BOOL isiPad;
 @property (nonatomic, retain) NSBundle *localizationBundle;
 

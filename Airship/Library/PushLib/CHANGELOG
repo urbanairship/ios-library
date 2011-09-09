@@ -1,3 +1,6 @@
+1.2.1 - April 26, 2011
+- Fixed bug that would append trailing slashes to tags.
+
 1.2.0 - February 23, 2011
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.

@@ -30,23 +30,34 @@
 
 @synthesize contentName;
 @synthesize subscriptionKey;
+@synthesize contentKey;
+@synthesize productIdentifier;
 @synthesize iconURL;
 @synthesize previewURL;
 @synthesize downloadURL;
 @synthesize revision;
 @synthesize fileSize;
 @synthesize description;
+@synthesize publishDate;
 @synthesize progress;
 @synthesize downloaded;
 @dynamic downloading;
 
 - (void)dealloc {
-    RELEASE_SAFELY(contentName);
-    RELEASE_SAFELY(iconURL);
-    RELEASE_SAFELY(previewURL);
-    RELEASE_SAFELY(downloadURL);
-    RELEASE_SAFELY(description);
+
+    self.contentName = nil;
+    self.contentKey = nil;
+    self.subscriptionKey = nil;
+    self.productIdentifier = nil;
+    self.iconURL = nil;
+    self.previewURL = nil;
+    self.downloadURL = nil;
+    
+    self.description = nil;
+    self.publishDate = nil;
+    
     [super dealloc];
+    
 }
 
 - (id)initWithDict:(NSDictionary *)dict {
@@ -54,7 +65,9 @@
         return nil;
 
     self.contentName = [dict objectForKey:@"name"];
+    self.contentKey = [dict objectForKey:@"content_key"];
     self.subscriptionKey = [dict objectForKey:@"subscription_key"];
+	self.productIdentifier = [dict objectForKey:@"product_id"];
     self.iconURL = [NSURL URLWithString:[dict objectForKey:@"icon_url"]];
     self.previewURL = [NSURL URLWithString:[dict objectForKey:@"preview_url"]];
     self.downloadURL = [NSURL URLWithString:[dict objectForKey:@"download_url"]];
@@ -63,6 +76,22 @@
     self.fileSize = [[dict objectForKey:@"file_size"] intValue];
     self.downloaded = [[NSUserDefaults standardUserDefaults] boolForKey:[downloadURL description]];
     progress = 0;
+    
+    // Parse and set the publish date
+    NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    
+	[generateDateFormatter setLocale:enUSPOSIXLocale];
+	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
+	[generateDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+	
+    // refs http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
+    // Date Format Patterns 'ZZZ' is for date strings like '-0800' and 'ZZZZ'
+    // is used for 'GMT-08:00', so i just set the timezone string as '+0000' which
+    // is equal to 'UTC'
+    NSString *publishDateStr = [NSString stringWithFormat: @"%@%@", [dict objectForKey:@"publish_date"], @" +0000"];
+    self.publishDate = [generateDateFormatter dateFromString:publishDateStr];
+    
     return self;
 }
 

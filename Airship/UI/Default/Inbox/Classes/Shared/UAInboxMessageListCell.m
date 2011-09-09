@@ -47,8 +47,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)setData:(UAInboxMessage*)message {
-    NSDate* localizedDate = [UADateUtils localizedDateFromUTC:message.messageSent];
-    dateView.text = [UADateUtils formattedDateRelativeToNow:localizedDate];
+
+    dateView.text = [UADateUtils formattedDateRelativeToNow:message.messageSent];
 
     [title setText: message.title];
 

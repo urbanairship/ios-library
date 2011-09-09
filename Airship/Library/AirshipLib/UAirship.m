@@ -31,7 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAKeychainUtils.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
-
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
@@ -43,7 +42,7 @@ NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOpt
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
 
 static UAirship *_sharedAirship;
-BOOL releaseLogging = false;
+BOOL logging = false;
 
 @implementation UAirship
 
@@ -54,8 +53,8 @@ BOOL releaseLogging = false;
 @synthesize ready;
 @synthesize analytics;
 
-+ (void)setReleaseLogging:(BOOL)value {
-    releaseLogging = value;
++ (void)setLogging:(BOOL)value {
+    logging = value;
 }
 
 - (void)dealloc {
@@ -98,6 +97,7 @@ BOOL releaseLogging = false;
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
     
     
+    
     // Load configuration
     // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
     // override any options defined in AirshipConfig.plist
@@ -115,6 +115,20 @@ BOOL releaseLogging = false;
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
+        NSString *loggingOptions = [config objectForKey:@"LOGGING_ENABLED"];
+        
+        if (loggingOptions != nil) {
+            // If it is present, use it
+            [UAirship setLogging:[[config objectForKey:@"LOGGING_ENABLED"] boolValue]];
+        } else {
+            // If it is missing
+            if (inProduction) {
+                [UAirship setLogging:NO];
+            } else {
+                [UAirship setLogging:YES];
+            }
+        }
+        
         NSString *configAppKey;
         NSString *configAppSecret;
         
@@ -126,7 +140,7 @@ BOOL releaseLogging = false;
             configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
             
             //set release logging to yes because static lib is built in release mode
-            [UAirship setReleaseLogging:YES];
+            //[UAirship setLogging:YES];
         }
         
         //Check for a custom UA server value
@@ -207,7 +221,7 @@ BOOL releaseLogging = false;
     }
     
     _sharedAirship.ready = true;
-    _sharedAirship.analytics = [[UAAnalytics alloc] initWithOptions:analyticsOptions];
+    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithOptions:analyticsOptions] autorelease];
     
     //Send Startup Analytics Info
     //init first event
@@ -225,7 +239,7 @@ BOOL releaseLogging = false;
     }
     
     //create/setup user (begin listening for device token changes)
-    [UAUser defaultUser];
+    [[UAUser defaultUser] initializeUser];
 }
 
 + (void)land {
@@ -235,7 +249,7 @@ BOOL releaseLogging = false;
 	
     //Land the modular libaries first
     [NSClassFromString(@"UAInbox") land];
-    [NSClassFromString(@"StoreFront") land];
+    [NSClassFromString(@"UAStoreFront") land];
     [NSClassFromString(@"UASubscriptionManager") land];
     
     //Land common classes

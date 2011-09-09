@@ -35,7 +35,7 @@
 // When the shop button is clicked, display storefront.
 -(IBAction)shop:(id)sender {
     // Recommended way to present StoreFront. Alternatively you can open to a specific product detail.
-    //[StoreFront displayStoreFront:self withProductID:@"oxygen34"];
+    //[UAStoreFront displayStoreFront:self withProductID:@"com.product.id" animated:YES];
 	[UAStoreFront displayStoreFront:self animated:YES];
     
 	// Specify the sorting of the list of products.

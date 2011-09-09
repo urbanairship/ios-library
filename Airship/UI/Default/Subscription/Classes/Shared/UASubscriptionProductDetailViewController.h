@@ -32,26 +32,29 @@
 @class UASubscriptionProduct;
 @interface UASubscriptionProductDetailViewController : UIViewController
 <UITableViewDelegate, UITableViewDataSource> {
-    UILabel* productTitle;
-    UAAsyncImageView* iconContainer;
-    UILabel* price;
+    
+    UILabel *productTitle;
+    UAAsyncImageView *iconContainer;
+    UILabel *price;
     UITableView *detailTable;
     UITableViewCell *previewImageCell;
     UAAsyncImageView *previewImage;
     UIBarButtonItem *buyButton;
-    UASubscriptionProduct *product;
+    NSString *productId;
+    
     id<UASubscriptionAlertProtocol> alertDelegate;
 }
 
-@property (nonatomic, assign) UASubscriptionProduct *product;
-@property (nonatomic, retain) IBOutlet UILabel* productTitle;
-@property (nonatomic, retain) IBOutlet UAAsyncImageView* iconContainer;
-@property (nonatomic, retain) IBOutlet UILabel* price;
+@property (nonatomic, copy) NSString *productId;
+@property (nonatomic, retain) IBOutlet UILabel *productTitle;
+@property (nonatomic, retain) IBOutlet UAAsyncImageView *iconContainer;
+@property (nonatomic, retain) IBOutlet UILabel *price;
 @property (nonatomic, retain) IBOutlet UITableView *detailTable;
 @property (nonatomic, retain) IBOutlet UITableViewCell *previewImageCell;
 @property (nonatomic, retain) IBOutlet UAAsyncImageView *previewImage;
 @property (nonatomic, assign) id<UASubscriptionAlertProtocol> alertDelegate;
 
+- (void)setProduct:(UASubscriptionProduct *)product;
 - (void)purchase:(id)sender;
 - (void)refreshUI;
 - (BOOL)showUserEmailAlertOnce;

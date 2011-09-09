@@ -23,7 +23,14 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-buildConfig="$BUILD_STYLE"
+if [ "true" == "${ALREADYINVOKED:-false}" ]
+then
+echo "RECURSION: Not the root invocation, don't recurse"
+else
+# Prevent recursion
+export ALREADYINVOKED="true"
+
+buildConfig="$CONFIGURATION"
 srcRoot="$SRCROOT"
 
 srcPath="${srcRoot}/../Airship"
@@ -44,15 +51,22 @@ cd "${destPath}"
 # Remove all non .h files from /Library and /Common
 # Remove all non UA_ items & dirs from Airship/External
 
-find Library \! '(' -name "*.h" -o -name "CHANGELOG*" -o -name "README*" ')' -type f -delete
+find Library \! -name "*.h" -type f -delete
 find Common \! -name "*.h" -type f -delete
-find External \! '(' -name "UA_*" -o -name "LICENSE*" -o -name "README*" ')' -type f -delete
+find External \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
 find External -type d -empty -delete
 rm -rf External/GHUnitIOS.framework
 rm -rf External/asi-http-request
 rm -rf External/fmdb
 rm -rf External/json-framework
+rm -rf External/google-toolbox-for-mac
+rm -rf External/ZipFile-OC
+rm -rf TestSamples
 rm -rf Test
+
+#Remove the Appledoc documenation settings from the distribution
+rm AppledocSettings.plist
 
 find . -name "*.orig" -delete
 
+fi

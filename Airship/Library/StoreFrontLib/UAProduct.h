@@ -23,8 +23,10 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+
 #import "UAAsycImageView.h"
 #import "UAObservable.h"
 #import "UA_ASIProgressDelegate.h"
@@ -49,11 +51,12 @@ typedef enum UAProductStatus {
     NSURL *downloadURL;
     int revision;
     double fileSize;
-    NSString* price;
-    NSDecimalNumber* priceNumber;
-    NSString* productDescription;
-    NSString* title;
-    NSString* receipt;
+    NSString *price;
+    NSDecimalNumber *priceNumber;
+    NSString *productDescription;
+    NSString *title;
+    NSString *receipt;
+    SKProduct *skProduct;
     BOOL isFree;
 
     UAProductStatus status;
@@ -63,6 +66,7 @@ typedef enum UAProductStatus {
     SKPaymentTransaction *transaction;
 }
 
+@property (nonatomic, retain) SKProduct *skProduct;
 @property (nonatomic, retain) NSString *productIdentifier;
 @property (nonatomic, retain) NSURL *previewURL;
 @property (nonatomic, retain) UAAsyncImageView *preview;

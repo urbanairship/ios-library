@@ -25,6 +25,9 @@
 
 #import "UASubscriptionInventory.h"
 
+#import <Foundation/Foundation.h>
+#import <StoreKit/StoreKit.h>
+
 #import "UA_SBJSON.h"
 #import "UA_ASIHTTPRequest.h"
 
@@ -41,6 +44,12 @@
 #import "UASubscriptionManager.h"
 #import "UASubscriptionDownloadManager.h"
 
+@interface UASubscriptionInventory()
+- (void)createSubscription;
+- (void)createUserSubscription;
+- (void)loadUserPurchasingInfo;
+@end
+
 @implementation UASubscriptionInventory
 @synthesize subscriptions;
 @synthesize userSubscriptions;
@@ -55,7 +64,6 @@
     RELEASE_SAFELY(products);
     RELEASE_SAFELY(contents);
     RELEASE_SAFELY(serverDate);
-    RELEASE_SAFELY(downloadManager);
     [super dealloc];
 }
 
@@ -66,7 +74,6 @@
     subscriptions = [[NSMutableArray alloc] init];
     userSubscriptions = [[NSMutableArray alloc] init];
     subscriptionDict = [[NSMutableDictionary alloc] init];
-    downloadManager = [[UASubscriptionDownloadManager alloc] init];
 
     products = [[UAProductInventory alloc] init];
     contents = [[UAContentInventory alloc] init];
@@ -85,6 +92,10 @@
 
 - (BOOL)containsProduct:(NSString *)productID {
     return [products containsProduct:productID];
+}
+
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey {
+    return [contents contentForKey:contentKey];
 }
 
 - (UASubscriptionProduct *)productForKey:(NSString *)productKey {
@@ -110,8 +121,12 @@
  * A full reload on all products, purchased contents and purchasing info
  */
 - (void)loadInventory {
-    if ([UAUser defaultUser].userState == UAUserStateEmpty)
+
+    // do not load the inventory if the user is not fully initialized
+    UAUserState userState = [UAUser defaultUser].userState;
+    if (userState == UAUserStateEmpty || userState == UAUserStateCreating) {
         return;
+    }
 
     hasLoaded = NO;
 
@@ -143,7 +158,12 @@
     // create subscriptions from products
     NSArray *keyArray = [[products.productDict allValues] valueForKeyPath:@"@distinctUnionOfObjects.subscriptionKey"];
     for (NSString *subscriptionKey in keyArray) {
+        
         NSArray *productArray = [products productsForSubscription:subscriptionKey];
+        if ([productArray count] == 0) {
+            UALOG(@"No products found for subscription key=%@", subscriptionKey);
+            continue;
+        }
 
         UASubscription *subscription = [subscriptionDict valueForKey:subscriptionKey];
         if (!subscription) {
@@ -189,7 +209,7 @@
             [userSubscriptions addObject:subscription];
 
             // set user available contents
-            [subscription setContentsWithArray:[contents contentsForSubscription:subscriptionKey]];
+            [subscription setContentWithArray:[contents contentForSubscription:subscriptionKey]];
         }
     }
 
@@ -226,40 +246,82 @@
     NSURL *url = [NSURL URLWithString:urlString];
 
     UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:url
-                                                   method:@"GET"
-                                                 delegate:self
-                                                   finish:@selector(userPurchasingInfoLoaded:)];
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(userPurchasingInfoLoaded:)
+                                                        fail:@selector(purchaseInfoRequestFailed:)];
     [request startAsynchronous];
 }
 
 - (void)userPurchasingInfoLoaded:(UA_ASIHTTPRequest *)request {
-    UALOG(@"User products loaded: %d\n%@\n", request.responseStatusCode,
-          request.responseString);
-    if (request.responseStatusCode != 200)
-        return;
+    
+    UALOG(@"User products loaded: %d\n%@\n", request.responseStatusCode, request.responseString);
+    
+    switch (request.responseStatusCode) {
+        case 200:
+        {
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+            NSDictionary *result = [parser objectWithString:request.responseString];
+            [parser release];
+            
+            [self setUserPurchaseInfo:result];
+            break;
+        }
+        case 404://current status, will be removed
+        case 401://replacement status
+        {
+            //replace the current user with a freshone from the server
+            [[UAUser defaultUser] createUser];
+            break;
+            
+        }
+        default:
+        {
+            NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+            [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+            [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
+            
+            NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+            [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+            break;
+        }
+    }
+    
+}
 
-    UA_SBJsonParser *parser = [UA_SBJsonParser new];
-    NSDictionary *result = [parser objectWithString:request.responseString];
-    [parser release];
+- (void)purchaseInfoRequestFailed:(UA_ASIHTTPRequest *)request {
+    
+    UALOG(@"Purchase info request failed.");
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
+    
+    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
+}
 
+- (void)setUserPurchaseInfo:(NSDictionary *)userInfo {
+    
     [userPurchasingInfo release];
-    userPurchasingInfo = [[result objectForKey:@"subscriptions"] retain];
-    has_active_subscriptions = ([[result objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
-
+    userPurchasingInfo = [[userInfo objectForKey:@"subscriptions"] retain];
+    
+    hasActiveSubscriptions = ([[userInfo objectForKey:@"has_active_subscription"] intValue] == 1) ? YES : NO;
+    
     NSDateFormatter *generateDateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	
 	[generateDateFormatter setLocale:enUSPOSIXLocale];
 	[generateDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss ZZZ"]; //2010-07-20 15:48:46
 	[generateDateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-
+    
     // refs http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
     // Date Format Patterns 'ZZZ' is for date strings like '-0800' and 'ZZZZ'
     // is used for 'GMT-08:00', so i just set the timezone string as '+0000' which
     // is equal to 'UTC'
-    NSString *str = [NSString stringWithFormat: @"%@%@", [result objectForKey:@"server_time"], @" +0000"];
+    NSString *str = [NSString stringWithFormat: @"%@%@", [userInfo objectForKey:@"server_time"], @" +0000"];
     self.serverDate = [generateDateFormatter dateFromString: str];
-
+    
     userPurchasingInfoLoaded = YES;
     [self createUserSubscription];
 }
@@ -284,7 +346,7 @@
 
 - (void)purchase:(UASubscriptionProduct *)product {
     [[SKPaymentQueue defaultQueue] addPayment:
-     [SKPayment paymentWithProductIdentifier:product.productIdentifier]];
+     [SKPayment paymentWithProduct:product.skProduct]];
     product.isPurchasing = YES;
 }
 
@@ -309,7 +371,9 @@
 
     request.userInfo = [NSDictionary dictionaryWithObject:transaction forKey:@"transaction"];
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
+    writer.humanReadable = NO;
+    
     NSMutableDictionary* data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  product_id,
                                  @"product_id",
@@ -326,28 +390,60 @@
 }
 
 - (void)subscriptionPurchased:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 200) {
-        [self purchaseRequestWentWrong:request];
-        return;
-    }
     
-    UALOG(@"Subscription purchased: %d:%@", request.responseStatusCode, request.responseString);
+    UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
+    
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    UASubscriptionProduct *product =
+        [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
+    
+    switch (request.responseStatusCode) {
+        case 200:
+        {
+            //close the transaction
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            //notify the observers
+            [[UASubscriptionManager shared] purchaseProductFinished:product];
+            
+            // Reload purchased contents and info. No need to reload products
+            [self loadPurchases];
+            break;
+        }
+        case 212: // user merged
+        {
+            UALOG(@"Subscription restored from another user!");
+            
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+            NSDictionary *responseDictionary = [parser objectWithString:request.responseString];
+            [parser release];
+            
+            NSDictionary *userData = [responseDictionary objectForKey:@"user_data"];
+            [[UAUser defaultUser] didMergeWithUser:userData];
+            [self setUserPurchaseInfo:userData];
+            
+            // close the transaction
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            
+            // notify the observers
+            [[UASubscriptionManager shared] purchaseProductFinished:product];
+            
+            break;
+        }
+        default:
+        {
+            [self purchaseRequestWentWrong:request];
+            break;
+        }
+    }
 
-    // Reload purchased contents and info. No need to reload products
-    [self loadPurchases];
 }
 
 #pragma mark -
 #pragma mark Download Subscription Product
 
 - (void)download:(UASubscriptionContent *)content {
-    [downloadManager download:content];
-}
-
-- (void)checkDownloading:(UASubscriptionContent *)content {
-    [downloadManager checkDownloading:content];
+    [[UASubscriptionManager shared].downloadManager download:content];
 }
 
 @end

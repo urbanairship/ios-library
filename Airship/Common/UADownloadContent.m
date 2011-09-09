@@ -44,7 +44,6 @@
 @synthesize responseString;
 @synthesize downloadPath;
 @synthesize downloadTmpPath;
-@synthesize retryTime;
 
 - (id)init {
     if (self = [super init]) {
@@ -52,7 +51,6 @@
         self.progressDelegate = nil;
         self.clearBeforeDownload = NO;
         self.downloadFileName = nil;
-        self.retryTime = 0;
 
         return self;
     }

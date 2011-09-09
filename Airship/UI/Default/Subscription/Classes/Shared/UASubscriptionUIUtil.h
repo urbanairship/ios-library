@@ -1,17 +1,17 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -25,23 +25,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAObservable.h"
+#import "UASubscriptionProduct.h"
 
-@class UA_ASIHTTPRequest;
-@class UASubscriptionContent;
-
-@interface UAContentInventory : UAObservable {
-  @private
-    NSMutableArray *contentArray;
-    NSMutableDictionary *contentDict;
-}
-
-@property (nonatomic, retain, readonly) NSMutableArray *contentArray;
-
-- (id)init;
-- (void)loadWithArray:(NSArray *)array;
-- (void)loadInventory;
-- (NSArray *)contentForSubscription:(NSString *)subscriptionKey;
-- (UASubscriptionContent *)contentForKey:(NSString *)contentKey;
-
+@interface UASubscriptionUIUtil : NSObject
++ (BOOL)date:(NSDate*)date isBetweenDate:(NSDate*)beginDate andDate:(NSDate*)endDate;
++ (NSString *)localizedAutorenewableDuration:(UAAutorenewableDuration)duration;
 @end

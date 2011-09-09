@@ -92,6 +92,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     product = nil;
 }
 
+- (void)prepareForReuse { 
+    product = nil; 
+    cellView.product = nil;
+    
+    [super prepareForReuse]; 
+}
+
+
 - (void)setFrame:(CGRect)frame {
     if (self.frame.size.width != frame.size.width) {
         cellView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);

@@ -1,3 +1,11 @@
+2.2.4 - April 26, 2011
+- Fixed bug where the StoreFront sample UI would not return control to the original window.
+- Fixed multiple exec_bad_access crashes in StoreFront UI.
+- Fixed bug that would append product_id to download custom download directories.
+- Fixed early SKTransaction finish calls that could cause a crash.
+- Fixed bug that could cause downloads to fail on retry and appear stuck.
+- Fixed bug where StoreFrontDetails viewcontroller could be pushed twice and crash.
+
 2.2.3 - February 23, 2011
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.

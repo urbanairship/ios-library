@@ -34,7 +34,6 @@
 @optional
 - (void)requestDidSucceed:(UADownloadContent *)downloadContent;
 - (void)requestDidFail:(UADownloadContent *)downloadContent;
-- (void)requestRetryByTimeOut:(UADownloadContent *)downloadContent;
 - (void)downloadQueueProgress:(float)progress count:(int)count;
 @end
 

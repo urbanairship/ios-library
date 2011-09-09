@@ -23,13 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
+
 #import "UASubscriptionManager.h"
-#import "UASubscriptionSettingsViewController.h"
-#import "UASubscriptionRootViewController.h"
+#import "UASubscriptionProduct.h"
 #import "UASubscriptionInventory.h"
 #import "UAGlobal.h"
 #import "UAUser.h"
 #import "UASubscriptionUI.h"
+
+#import "UASubscriptionSettingsViewController.h"
+#import "UASubscriptionRootViewController.h"
 
 @implementation UASubscriptionRootViewController
 
@@ -51,10 +55,15 @@
                                                                                            target:self
                                                                                            action:@selector(quit)] autorelease];
 	
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Setting")
-                                                                             style:UIBarButtonItemStylePlain
-                                                                            target:self
-                                                                            action:@selector(loadSettingsView)];
+//    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Setting")
+//                                                                             style:UIBarButtonItemStylePlain
+//                                                                            target:self
+//                                                                            action:@selector(loadSettingsView)] autorelease];
+    
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:UA_SS_TR(@"UA_Restore")
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:self
+                                                                             action:@selector(restore)] autorelease];
 
     [segment setTitle:UA_SS_TR(@"UA_All") forSegmentAtIndex:0];
     [segment setTitle:UA_SS_TR(@"UA_Subscribed") forSegmentAtIndex:1];
@@ -136,6 +145,10 @@
     [self.navigationController pushViewController:settingsViewController animated:YES];
 }
 
+- (void)restore {
+    [[UASubscriptionManager shared] restoreAutorenewables];
+}
+
 
 #pragma mark -
 #pragma mark UASubscriptionManagerObserver
@@ -169,6 +182,30 @@
     if (segment.selectedSegmentIndex == SubscriptionTypeAll) {
         [self setLoading:NO];
     }
+}
+
+- (void)inventoryUpdateFailedWithError:(NSError *)error {
+    UALOG(@"Inventory update failed with error code %d and domain %@ and description: %@",error.code, error.domain, error.localizedDescription);
+    if ([error.domain isEqualToString:@"com.urbanairship"]) {
+        NSDictionary *userInfo = error.userInfo;
+        UALOG(@"URL Failed: %@", [userInfo objectForKey:NSErrorFailingURLStringKey]);
+    }
+}
+
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored {
+    UALOG(@"Autorenewable restore finished. %d products restored.",[productsRestored count]);
+}
+
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error {
+    UALOG(@"Autorenewable restore failed with error code %d and reason=%@. Try again later.", [error code], [error localizedDescription]);
+}
+
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product {
+    UALOG(@"Autorenewable restore failed for product ID %@", product.productIdentifier);
+}
+
+- (void)purchaseProductFailed:(UASubscriptionProduct *)failedProduct withError:(NSError *)error {
+    UALOG(@"Purchase product failed with error code %d and reason=%@. Try again later.", [error code], [error localizedDescription]);
 }
 
 @end

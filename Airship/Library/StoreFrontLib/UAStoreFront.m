@@ -125,13 +125,21 @@ static Class _uiClass;
     _uiClass = customUIClass;
 }
 
-- (BOOL)setDownloadDirectory:(NSString *)path {
++ (BOOL)setDownloadDirectory:(NSString *)path {
+    [UAStoreFront shared].downloadManager.createProductIDSubdir = YES;
+    BOOL ret = [self setDownloadDirectory:path withProductIDSubdir:YES];
+    
+    return ret;
+}
+
++ (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir {
+
     BOOL success = YES;
 
     // It'll be used default dir when path is nil.
     if (path == nil) {
         // The default is created in sfObserver's init
-        UALOG(@"Using Default Download Directory: %@", self.downloadManager.downloadDirectory);
+        UALOG(@"Using Default Download Directory: %@", [UAStoreFront shared].downloadManager.downloadDirectory);
         return success;
     }
 
@@ -143,8 +151,10 @@ static Class _uiClass;
     }
 
     if (success) {
-        self.downloadManager.downloadDirectory = path;
-        UALOG(@"New Download Directory: %@", self.downloadManager.downloadDirectory);
+        [UAStoreFront shared].downloadManager.downloadDirectory = path;
+        [UAStoreFront shared].downloadManager.createProductIDSubdir = makeSubdir;
+        
+        UALOG(@"New Download Directory: %@", [UAStoreFront shared].downloadManager.downloadDirectory);
     }
 
     return success;
@@ -288,7 +298,7 @@ static Class _uiClass;
 
         // In StoreFront, we set the cache policy to use cache if possible.
         // And currently we only use this download cache in UAAsyncImageView.
-        [[UA_ASIDownloadCache sharedCache] setDefaultCachePolicy:ASICachePermanentlyCacheStoragePolicy];
+        [[UA_ASIDownloadCache sharedCache] setDefaultCachePolicy:UA_ASIAskServerIfModifiedWhenStaleCachePolicy|UA_ASIFallbackToCacheIfLoadFailsCachePolicy];
 
         [self loadReceipts];
 

@@ -75,7 +75,7 @@
     }
 
     [self clearErrorTrace];
-    [self addErrorWithCode:EFRAGMENT description:@"Not valid type for JSON"];
+    [self addErrorWithCode:UA_EFRAGMENT description:@"Not valid type for JSON"];
     return nil;
 }
 
@@ -107,7 +107,7 @@
         [json appendString:@"null"];
         
     } else {
-        [self addErrorWithCode:EUNSUPPORTED description:[NSString stringWithFormat:@"JSON serialisation not supported for %@", [fragment class]]];
+        [self addErrorWithCode:UA_EUNSUPPORTED description:[NSString stringWithFormat:@"JSON serialisation not supported for %@", [fragment class]]];
         return NO;
     }
     return YES;
@@ -159,7 +159,7 @@
             [json appendString:[self indent]];
         
         if (![value isKindOfClass:[NSString class]]) {
-            [self addErrorWithCode:EUNSUPPORTED description: @"JSON object key must be string"];
+            [self addErrorWithCode:UA_EUNSUPPORTED description: @"JSON object key must be string"];
             return NO;
         }
         
@@ -168,7 +168,7 @@
         
         [json appendString:colon];
         if (![self appendValue:[fragment objectForKey:value] into:json]) {
-            [self addErrorWithCode:EUNSUPPORTED description:[NSString stringWithFormat:@"Unsupported value for key %@ in object", value]];
+            [self addErrorWithCode:UA_EUNSUPPORTED description:[NSString stringWithFormat:@"Unsupported value for key %@ in object", value]];
             return NO;
         }
     }

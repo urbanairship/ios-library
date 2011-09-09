@@ -33,6 +33,7 @@
 
 @implementation UAStoreFrontDownloadManager
 @synthesize downloadDirectory;
+@synthesize createProductIDSubdir;
 
 #pragma mark -
 #pragma mark Lefecycle methods
@@ -44,6 +45,8 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
+    self.createProductIDSubdir = YES;
+    
     [self loadPendingProducts];
     
     return self;
@@ -209,6 +212,7 @@
     if ([downloadManager isDownloading:zipDownloadContent]) {
         product.status = UAProductStatusDownloading;
         [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+        product.transaction = nil;
         return;
     }
     
@@ -222,6 +226,7 @@
     
     [self addPendingProduct:product];
     [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    product.transaction = nil;
     // Refresh inventory and UI just before downloading start
     product.status = UAProductStatusDownloading;
     [[UAStoreFront shared].inventory groupInventory];
@@ -237,7 +242,7 @@
 
 - (void)downloadDidFail:(UADownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
-    SKPaymentTransaction *transaction = product.transaction;
+    //SKPaymentTransaction *transaction = product.transaction;
 
     // alert detail error to user
     // ASIHTTPRequest will directly invoke this method when request timeout, so
@@ -250,10 +255,14 @@
         [alertHandler showDownloadContentFailedAlert];
     }
 
+    // NOTE: the following block is commented out to prevent a crash
+    // when finishTransaction is called twice. finishTransaction should
+    // already have been called in the verify process
+    //
     // don't invoke failedTransaction, otherwise, will alert user twice
     // also, in failedTransaction will reset product status after a decision,
     // but here we already reset it.
-    [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    // [[UAStoreFront shared].sfObserver finishTransaction:transaction];
 
     [product resetStatus];
     [downloadManager endBackground];
@@ -271,8 +280,17 @@
         UAProduct *product = zipDownloadContent.userInfo;
         product.status = UAProductStatusWaiting;
         zipDownloadContent.decompressDelegate = self;
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+        
+        if(self.createProductIDSubdir) {
+            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
                                                       [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
+        } else {
+            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+
+        }
+        
+        UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
+        
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:(UADownloadContent *)downloadContent];

@@ -34,6 +34,7 @@
 @synthesize subscribed;
 @synthesize products;
 @synthesize purchasedProducts;
+@synthesize availableProducts;
 @synthesize availableContents;
 @synthesize downloadedContents;
 @synthesize undownloadedContents;
@@ -43,6 +44,7 @@
     RELEASE_SAFELY(name);
     RELEASE_SAFELY(products);
     RELEASE_SAFELY(purchasedProducts);
+    RELEASE_SAFELY(availableProducts);
     RELEASE_SAFELY(availableContents);
     RELEASE_SAFELY(downloadedContents);
     RELEASE_SAFELY(undownloadedContents);
@@ -58,6 +60,7 @@
     name = [aName copy];
     products = [[NSMutableArray alloc] init];
     purchasedProducts = [[NSMutableArray alloc] init];
+    availableProducts = [[NSMutableArray alloc] init];
     availableContents = [[NSMutableArray alloc] init];
     downloadedContents = [[NSMutableArray alloc] init];
     undownloadedContents = [[NSMutableArray alloc] init];
@@ -89,28 +92,40 @@
 - (void)setProductsWithArray:(NSArray *)productArray {
     [products setArray:productArray];
     [products sortUsingSelector:@selector(compareByDuration:)];
+    
+    NSPredicate *forSalePredicate = [NSPredicate predicateWithFormat:@"isForSale == YES"];
+    [availableProducts setArray:[productArray filteredArrayUsingPredicate:forSalePredicate]];
+    [availableProducts sortUsingSelector:@selector(compareByDuration:)];
+    
+    UALOG(@"Available: %@", [availableProducts description]);
 }
 
-- (void)setContentsWithArray:(NSArray *)contents {
-    if (!contents)
+- (void)setContentWithArray:(NSArray *)content {
+    if (!content) {
         return;
+    }
 
-    [availableContents setArray:contents];
+    [availableContents setArray:content];
     [availableContents sortUsingSelector:@selector(compare:)];
 
     [self filterDownloadedContents];
 }
 
 - (void)setPurchasedProduct:(NSDictionary *)purchasingInfo {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"productIdentifier like[c] %@",
-                              [purchasingInfo objectForKey:@"product_id"]];
-    UASubscriptionProduct *product = [[products filteredArrayUsingPredicate:predicate] objectAtIndex:0];
+    NSPredicate *predicate = 
+        [NSPredicate predicateWithFormat:@"productIdentifier like[c] %@", [purchasingInfo objectForKey:@"product_id"]];
+    NSArray *filteredProducts = [products filteredArrayUsingPredicate:predicate];
     
-	if (product) {
+	if ([filteredProducts count] > 0) {
+        UASubscriptionProduct *product = [filteredProducts objectAtIndex:0];
         UASubscriptionProduct *purchasedProduct = [[UASubscriptionProduct alloc] initWithSubscriptionProduct:product];
         [purchasedProduct setPurchasingInfo:purchasingInfo];
         [purchasedProducts addObject:purchasedProduct];
+        UALOG(@"Adding purchased product %@ isForSale=%@",
+            purchasedProduct.productIdentifier, (purchasedProduct.isForSale ?  @"YES" : @"NO"));
         [purchasedProduct release];
+    } else {
+        UALOG(@"Skipping purchased product with invalid product ID=%@", [purchasingInfo objectForKey:@"product_id"]);
     }
 }
 
@@ -123,6 +138,8 @@
     }
 
     [purchasedProducts sortUsingSelector:@selector(compareByDate:)];
+    
+    UALOG(@"Purchased: %@", [purchasedProducts description]);
 }
 
 - (void)filterDownloadedContents {

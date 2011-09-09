@@ -24,12 +24,18 @@
  */
 
 #import "UASubscriptionManager.h"
-#import "UASubscriptionObserver.h"
+
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+
+#import "UASubscriptionObserver.h"
 #import "UAProductInventory.h"
 #import "UAContentInventory.h"
 #import "UASubscriptionInventory.h"
 #import "UASubscriptionProduct.h"
+#import "UASubscriptionDownloadManager.h"
+
+#import "UAUser.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
@@ -37,10 +43,16 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 UA_VERSION_IMPLEMENTATION(SubscriptionVersion, UA_VERSION)
 
+// Subscription error messages
+NSString * const UASubscriptionPurchaseInventoryFailure = @"UA Subscription Purchases Failed to Load";
+NSString * const UASubscriptionContentInventoryFailure = @"UA Subscription Content Inventory Failed to Load";
+NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Product Inventory Failed to Load";
+
 @implementation UASubscriptionManager
 @synthesize transactionObserver;
 @synthesize inventory;
 @synthesize pendingProduct;
+@synthesize downloadManager;
 
 SINGLETON_IMPLEMENTATION(UASubscriptionManager)
 
@@ -84,6 +96,43 @@ static Class _uiClass;
     [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
 }
 
+#pragma mark -
+#pragma mark Custom DL Directory Class Methods
+
+
++ (BOOL)setDownloadDirectory:(NSString *)path {
+    return [self setDownloadDirectory:path withProductIDSubdir:YES];
+}
+
+
++ (BOOL)setDownloadDirectory:(NSString *)path withProductIDSubdir:(BOOL)makeSubdir {
+    
+    BOOL success = YES;
+    
+    // It'll be used default dir when path is nil.
+    if (path == nil) {
+        // The default is created in sfObserver's init
+        UALOG(@"Using Default Download Directory: %@", [UASubscriptionManager shared].downloadManager.downloadDirectory);
+        return success;
+    }
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        success = [[NSFileManager defaultManager] createDirectoryAtPath:path
+                                            withIntermediateDirectories:YES
+                                                             attributes:nil
+                                                                  error:nil];
+    }
+    
+    if (success) {
+        [UASubscriptionManager shared].downloadManager.downloadDirectory = path;
+        [UASubscriptionManager shared].downloadManager.createProductIDSubdir = makeSubdir;
+        
+        UALOG(@"New Download Directory: %@", [UASubscriptionManager shared].downloadManager.downloadDirectory);
+    }
+    
+    return success;
+}
+
 #pragma mark Lifecycle Methods
 
 - (id)init {
@@ -123,6 +172,7 @@ IF_IOS4_OR_GREATER(
 
         transactionObserver = [[UASubscriptionObserver alloc] init];
         inventory = [[UASubscriptionInventory alloc] init];
+        downloadManager = [[UASubscriptionDownloadManager alloc] init];
 		
 		// Check to see if the defaultUser is good to go, if it is we can load our subscription data
 		if([[UAUser defaultUser] defaultUserCreated]) {
@@ -138,6 +188,7 @@ IF_IOS4_OR_GREATER(
     RELEASE_SAFELY(pendingProduct);
     RELEASE_SAFELY(inventory);
     RELEASE_SAFELY(transactionObserver);
+    self.downloadManager = nil;
     [super dealloc];
 }
 
@@ -180,8 +231,16 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(userSubscriptionsUpdated:) withObject:userSubscriptions];
 }
 
+- (void)inventoryUpdateFailedWithError:(NSError *)error {
+    [self notifyObservers:@selector(inventoryUpdateFailedWithError:) withObject:error];
+}
+
 - (void)purchaseProductFinished:(UASubscriptionProduct *)product {
     [self notifyObservers:@selector(purchaseProductFinished:) withObject:product];
+}
+
+- (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error {
+    [self notifyObservers:@selector(purchaseProductFailed:withError:) withObject:product withObject:error];
 }
 
 - (void)downloadContentFinished:(UASubscriptionContent *)content {
@@ -192,6 +251,18 @@ IF_IOS4_OR_GREATER(
     [self notifyObservers:@selector(downloadContentFailed:) withObject:content];
 }
 
+- (void)restoreAutorenewablesFinished:(NSArray *)productsRestored {
+    [self notifyObservers:@selector(restoreAutorenewablesFinished:) withObject:productsRestored];
+}
+
+- (void)restoreAutorenewableProductFailed:(UASubscriptionProduct *)product {
+    [self notifyObservers:@selector(restoreAutorenewableProductFailed:) withObject:product];
+}
+
+- (void)restoreAutorenewablesFailedWithError:(NSError *)error {
+    [self notifyObservers:@selector(restoreAutorenewablesFailedWithError:) withObject:error];
+}
+
 #pragma mark -
 #pragma mark Purchase
 
@@ -199,6 +270,11 @@ IF_IOS4_OR_GREATER(
     
     [[UASubscriptionManager shared].inventory purchase:product];
 
+}
+
+- (void)purchaseProductWithId:(NSString *)productId {
+    UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productId];
+    [self purchase:product];
 }
 
 - (void)setPendingSubscription:(UASubscriptionProduct *)product {
@@ -230,4 +306,10 @@ IF_IOS4_OR_GREATER(
 	[self loadSubscription];
 }
 
+#pragma mark -
+#pragma mark Restore Autorenewable Subscriptions
+
+- (void)restoreAutorenewables {
+    [transactionObserver restoreAutorenewables];
+}
 @end
