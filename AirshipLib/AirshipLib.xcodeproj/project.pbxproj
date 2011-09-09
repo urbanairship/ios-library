@@ -1091,6 +1091,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/AirshipLib.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1108,6 +1109,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

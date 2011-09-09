@@ -244,6 +244,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
 				PRODUCT_NAME = "Inbox-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

@@ -13,6 +13,8 @@
 	
 	NSArray *buttonTitles;
 	NSMutableDictionary *messages;
+    
+    UIBackgroundTaskIdentifier bgTask;
 
 }
 
@@ -22,5 +24,8 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)index;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)index;
+
+- (void)sendBackgroundPush;
+- (void)endBackground;
 
 @end

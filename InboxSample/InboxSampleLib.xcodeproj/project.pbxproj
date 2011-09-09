@@ -21,6 +21,12 @@
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F69B10513BD1A41002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
+		1F785042141A8A9600EF796F /* coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F78503D141A8A9600EF796F /* coupon.html */; };
+		1F785043141A8A9600EF796F /* ipad_coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F78503E141A8A9600EF796F /* ipad_coupon.html */; };
+		1F785044141A8A9600EF796F /* nkor.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F78503F141A8A9600EF796F /* nkor.html */; };
+		1F785045141A8A9600EF796F /* pill.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F785040141A8A9600EF796F /* pill.html */; };
+		1F785046141A8A9600EF796F /* vote.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F785041141A8A9600EF796F /* vote.html */; };
+		1F785047141A8BCC00EF796F /* RichPushSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 49390B2D1326BD2D00853427 /* RichPushSender.m */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
@@ -161,10 +167,15 @@
 		18A27CA4125EDD6E0045D75B /* UACallback.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UACallback.js; sourceTree = "<group>"; };
 		18A27CBB125EDDB60045D75B /* InboxSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "InboxSample-Info.plist"; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1F24096B1327F90B0051EA8B /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F69B10413BD1A41002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1F78503D141A8A9600EF796F /* coupon.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = coupon.html; sourceTree = "<group>"; };
+		1F78503E141A8A9600EF796F /* ipad_coupon.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ipad_coupon.html; sourceTree = "<group>"; };
+		1F78503F141A8A9600EF796F /* nkor.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = nkor.html; sourceTree = "<group>"; };
+		1F785040141A8A9600EF796F /* pill.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = pill.html; sourceTree = "<group>"; };
+		1F785041141A8A9600EF796F /* vote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = vote.html; sourceTree = "<group>"; };
 		1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		1FED2774141A96C5009B85F9 /* InboxSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = InboxSample.entitlements; sourceTree = "<group>"; };
 		1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
@@ -339,6 +350,11 @@
 		18A27CA1125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F78503D141A8A9600EF796F /* coupon.html */,
+				1F78503E141A8A9600EF796F /* ipad_coupon.html */,
+				1F78503F141A8A9600EF796F /* nkor.html */,
+				1F785040141A8A9600EF796F /* pill.html */,
+				1F785041141A8A9600EF796F /* vote.html */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -361,6 +377,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				1FED2774141A96C5009B85F9 /* InboxSample.entitlements */,
 				B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -368,7 +385,6 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				9A9CBA1E0FCC559100435BCB /* Frameworks */,
-				1F24096B1327F90B0051EA8B /* Entitlements.plist */,
 			);
 			name = CustomTemplate;
 			sourceTree = "<group>";
@@ -700,6 +716,11 @@
 				D5A3F5D612C1533D009731BE /* Icon@2x.png in Resources */,
 				1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */,
 				1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */,
+				1F785042141A8A9600EF796F /* coupon.html in Resources */,
+				1F785043141A8A9600EF796F /* ipad_coupon.html in Resources */,
+				1F785044141A8A9600EF796F /* nkor.html in Resources */,
+				1F785045141A8A9600EF796F /* pill.html in Resources */,
+				1F785046141A8A9600EF796F /* vote.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +796,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F785047141A8BCC00EF796F /* RichPushSender.m in Sources */,
 				18A27CA5125EDD6E0045D75B /* InboxSampleAppDelegate.m in Sources */,
 				18A27CA6125EDD6E0045D75B /* InboxSampleViewController.m in Sources */,
 				18A27CA7125EDD6E0045D75B /* main.m in Sources */,
@@ -828,8 +850,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
-				CODE_SIGN_ENTITLEMENTS = "~/UrbanAirship/code/git/ios-library/InboxSample/Entitlements.plist";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = InboxSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -850,6 +873,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -863,6 +887,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
+				CODE_SIGN_ENTITLEMENTS = InboxSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -880,8 +906,10 @@
 					"-cclib",
 				);
 				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
@@ -952,7 +980,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Urban Airship Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Urban Airship Inc.";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -967,6 +996,8 @@
 					"-ObjC",
 					"-all_load",
 				);
+				PROVISIONING_PROFILE = "8CE09381-FAC9-4D6F-A6A4-D51C3525A6D0";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8CE09381-FAC9-4D6F-A6A4-D51C3525A6D0";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -980,7 +1011,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Urban Airship Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Urban Airship Inc.";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -992,8 +1024,10 @@
 					"-ObjC",
 					"-all_load",
 				);
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "8CE09381-FAC9-4D6F-A6A4-D51C3525A6D0";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8CE09381-FAC9-4D6F-A6A4-D51C3525A6D0";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";

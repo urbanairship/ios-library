@@ -287,7 +287,7 @@ IF_IOS4_OR_GREATER(
                     // Synchronize the cleanup call on the main thread in case
                     // the task actually finishes at around the same time.
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        UIApplication *app = [UIApplication sharedApplication];
+                        //UIApplication *app = [UIApplication sharedApplication];
                         if (bgTask != UIBackgroundTaskInvalid) {
                             // We've hit the maximum time and didn't exit before, so end background processing.
                             [app endBackgroundTask:bgTask];

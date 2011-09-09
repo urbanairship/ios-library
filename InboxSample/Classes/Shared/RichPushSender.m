@@ -51,6 +51,30 @@
 		[messages setValue:pillDictionary forKey:@"Pill Demo"];
 		[messages setValue:votingDictionary forKey:@"Voting Demo"];
 		[messages setValue:concertDictionary forKey:@"Concert Demo"];
+        
+        
+        
+IF_IOS4_OR_GREATER(
+                   
+       if (&UIApplicationDidEnterBackgroundNotification != NULL) {
+           
+           [[NSNotificationCenter defaultCenter] addObserver:self
+                                                    selector:@selector(enterBackground)
+                                                        name:UIApplicationDidEnterBackgroundNotification
+                                                      object:nil];
+       }
+       
+       if (&UIApplicationDidEnterBackgroundNotification != NULL && 
+           [[UIDevice currentDevice] respondsToSelector:@selector(isMultitaskingSupported)]) {
+           
+           bgTask = UIBackgroundTaskInvalid;
+           
+           [[NSNotificationCenter defaultCenter] addObserver:self
+                                                    selector:@selector(doBackground:)
+                                                        name:UIApplicationDidEnterBackgroundNotification 
+                                                      object:nil];
+       }
+);
 		
 	}
 	
@@ -86,8 +110,8 @@
     request.password = masterSecret;
     //request.delegate = self;
     request.timeOutSeconds = 60;
-    //[request setDidFinishSelector:finishSelector];
-    //[request setDidFailSelector:failSelector];
+    [request setDidFinishSelector:@selector(endBackground)];
+    [request setDidFailSelector:@selector(endBackground)];
 	
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -123,17 +147,84 @@
 	
 	[data setValue:message forKey:@"message"];
 	
-	[self sendRichPush:data];
+	[self performSelector:@selector(sendRichPush:) withObject:data afterDelay:(NSTimeInterval)10.0];
     	
 }
+
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)index {
 }
 
 - (void)dealloc {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
 	self.messages = nil;
 	self.buttonTitles = nil;
 	[super dealloc];
+}
+
+
+
+
+
+
+
+
+
+
+
+#pragma mark -
+#pragma mark Memory management
+
+- (void)enterBackground {
+    // do nothing
+}
+
+- (void)endBackground {
+    UIApplication *app = [UIApplication sharedApplication];
+    
+IF_IOS4_OR_GREATER(
+                   
+    if ([app respondsToSelector:@selector(endBackgroundTask:)]) {
+       if (bgTask != UIBackgroundTaskInvalid) {
+           UALOG(@"End Background Downloads");
+           [app endBackgroundTask:bgTask]; // We're done, so end background execution now.
+           bgTask = UIBackgroundTaskInvalid;
+       }
+    }
+
+);
+    
+}
+
+
+
+- (void)doBackground:(NSNotification *)aNotification {
+    
+IF_IOS4_OR_GREATER(
+                   
+
+   UIApplication *app = [UIApplication sharedApplication];
+   
+   if ([app respondsToSelector:@selector(beginBackgroundTaskWithExpirationHandler:)]) {
+       
+       bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+           // Synchronize the cleanup call on the main thread in case
+           // the task actually finishes at around the same time.
+           dispatch_async(dispatch_get_main_queue(), ^{
+               UIApplication *app = [UIApplication sharedApplication];
+               if (bgTask != UIBackgroundTaskInvalid) {
+                   // We've hit the maximum time and didn't exit before, so end background processing.
+                   [app endBackgroundTask:bgTask];
+                   bgTask = UIBackgroundTaskInvalid;
+               }
+           });
+       }];
+   }
+                   
+);
+    
 }
 	
 @end
