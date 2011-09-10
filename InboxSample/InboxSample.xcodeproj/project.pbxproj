@@ -13,6 +13,9 @@
 		18A27CB6125EDD6E0045D75B /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA0125EDD6E0045D75B /* MainWindow.xib */; };
 		18A27CB7125EDD6E0045D75B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA2125EDD6E0045D75B /* Default.png */; };
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
+		1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B12313BD1D8C002CA606 /* libz.dylib */; };
+		1F69B12713BD1DDD002CA606 /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */; };
+		1F69B12913BD1DF4002CA606 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */; };
 		1F79710112DE3B7100D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79710012DE3B7100D4937F /* AirshipConfig.plist */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -20,21 +23,18 @@
 		63CB563A1247164900DF2EBC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB56381247163D00DF2EBC /* StoreKit.framework */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
-		9A50FAED0FCA819A0007E1BE /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
 		C14786001164675600F17AB8 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = C14785FF1164675600F17AB8 /* checkConfig.sh */; };
 		D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */; };
 		D56858D812C1923000BBF31A /* UAInboxMessageListControllerPad.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858D512C1923000BBF31A /* UAInboxMessageListControllerPad.m */; };
 		D56858D912C1923000BBF31A /* UAInboxMessageViewControllerPad.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858D712C1923000BBF31A /* UAInboxMessageViewControllerPad.m */; };
-		D56858E012C1923C00BBF31A /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858DB12C1923C00BBF31A /* UAInboxMessageListCell.m */; };
 		D56858E112C1923C00BBF31A /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858DD12C1923C00BBF31A /* UAInboxMessageListController.m */; };
 		D56858E212C1923C00BBF31A /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858DF12C1923C00BBF31A /* UAInboxMessageViewController.m */; };
 		D56858E712C1924800BBF31A /* UAInboxNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858E412C1924800BBF31A /* UAInboxNavigationController.m */; };
 		D56858E812C1924800BBF31A /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = D56858E612C1924800BBF31A /* UAInboxUI.m */; };
 		D56858EB12C1925500BBF31A /* UAInboxMessageListController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56858E912C1925500BBF31A /* UAInboxMessageListController_Pad.xib */; };
 		D56858EC12C1925500BBF31A /* UAInboxMessageViewController_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56858EA12C1925500BBF31A /* UAInboxMessageViewController_Pad.xib */; };
-		D56858F012C1926300BBF31A /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56858ED12C1926300BBF31A /* UAInboxMessageListCell.xib */; };
 		D56858F112C1926300BBF31A /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56858EE12C1926300BBF31A /* UAInboxMessageListController.xib */; };
 		D56858F212C1926300BBF31A /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56858EF12C1926300BBF31A /* UAInboxMessageViewController.xib */; };
 		D5A192A812C15AA6006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192A712C15AA6006AF4AE /* iTunesArtwork */; };
@@ -47,7 +47,7 @@
 		D5C75C9B12BC23C80041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9A12BC23C80041239E /* Icon-Small@2x.png */; };
 		D5C75C9E12BC23D20041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9C12BC23D20041239E /* Default@2x.png */; };
 		D5C75C9F12BC23D20041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9D12BC23D20041239E /* Icon.png */; };
-		D5F1AB3F1367397900A1DFA5 /* libUAirship-1.0.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F3B129E4C1A004465C8 /* libUAirship-1.0.5.a */; };
+		D5F1AB3F1367397900A1DFA5 /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F3B129E4C1A004465C8 /* libUAirship-1.0.7.a */; };
 		E9CB326612B85A87002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E9CB367112B89BA5002E39EA /* AirMail.db in Resources */ = {isa = PBXBuildFile; fileRef = E9CB365612B89BA5002E39EA /* AirMail.db */; };
 		E9CB367212B89BA5002E39EA /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB365712B89BA5002E39EA /* check.png */; };
@@ -78,7 +78,7 @@
 		0D27C1CA1165E9440086F66D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		0D5F511011744AF5004AE48F /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		0D962FB51169952C008D18A2 /* fmdb.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = fmdb.xcodeproj; path = "/Users/yuchao/iphone-research/flycode-read-only/fmdb/fmdb.xcodeproj"; sourceTree = "<absolute>"; };
-		184E3F3B129E4C1A004465C8 /* libUAirship-1.0.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.5.a"; path = "../Airship/libUAirship-1.0.5.a"; sourceTree = SOURCE_ROOT; };
+		184E3F3B129E4C1A004465C8 /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.7.a"; path = "../Airship/libUAirship-1.0.7.a"; sourceTree = SOURCE_ROOT; };
 		1872674C1287C6200064C41B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		18A27C88125EDD6E0045D75B /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/Shared/main.m; sourceTree = "<group>"; };
 		18A27C9A125EDD6E0045D75B /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
@@ -88,11 +88,14 @@
 		18A27CA4125EDD6E0045D75B /* UACallback.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = UACallback.js; sourceTree = "<group>"; };
 		18A27CBB125EDDB60045D75B /* InboxSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "InboxSample-Info.plist"; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F69B12313BD1D8C002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1F69B12513BD1DDD002CA606 /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
+		1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
+		1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1F79710012DE3B7100D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		63CB56381247163D00DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FAF50FCA81BD0007E1BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -116,7 +119,6 @@
 		D56858E612C1924800BBF31A /* UAInboxUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxUI.m; sourceTree = "<group>"; };
 		D56858E912C1925500BBF31A /* UAInboxMessageListController_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageListController_Pad.xib; sourceTree = "<group>"; };
 		D56858EA12C1925500BBF31A /* UAInboxMessageViewController_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageViewController_Pad.xib; sourceTree = "<group>"; };
-		D56858ED12C1926300BBF31A /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		D56858EE12C1926300BBF31A /* UAInboxMessageListController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageListController.xib; sourceTree = "<group>"; };
 		D56858EF12C1926300BBF31A /* UAInboxMessageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAInboxMessageViewController.xib; sourceTree = "<group>"; };
 		D5A192A712C15AA6006AF4AE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -152,8 +154,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
-				9A50FAED0FCA819A0007E1BE /* libz.1.2.3.dylib in Frameworks */,
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
 				9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */,
 				9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */,
@@ -162,7 +164,7 @@
 				63CB563A1247164900DF2EBC /* StoreKit.framework in Frameworks */,
 				1872674D1287C6200064C41B /* Security.framework in Frameworks */,
 				636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */,
-				D5F1AB3F1367397900A1DFA5 /* libUAirship-1.0.5.a in Frameworks */,
+				D5F1AB3F1367397900A1DFA5 /* libUAirship-1.0.7.a in Frameworks */,
 				E9CB326612B85A87002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,7 +183,7 @@
 		184E3F3A129E4C0D004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3F3B129E4C1A004465C8 /* libUAirship-1.0.5.a */,
+				184E3F3B129E4C1A004465C8 /* libUAirship-1.0.7.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -293,13 +295,13 @@
 				0D5F511011744AF5004AE48F /* MobileCoreServices.framework */,
 				9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */,
 				9A50FAE80FCA81810007E1BE /* CFNetwork.framework */,
-				9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */,
 				9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */,
 				9A50FAEE0FCA81A40007E1BE /* Foundation.framework */,
 				9A50FAF50FCA81BD0007E1BE /* UIKit.framework */,
 				0D27C1CA1165E9440086F66D /* libsqlite3.dylib */,
 				63CB56381247163D00DF2EBC /* StoreKit.framework */,
 				1872674C1287C6200064C41B /* Security.framework */,
+				1F69B12313BD1D8C002CA606 /* libz.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -381,6 +383,8 @@
 				D56858E412C1924800BBF31A /* UAInboxNavigationController.m */,
 				D56858E512C1924800BBF31A /* UAInboxUI.h */,
 				D56858E612C1924800BBF31A /* UAInboxUI.m */,
+				1F69B12513BD1DDD002CA606 /* UAInboxMessageListCell.h */,
+				1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -407,7 +411,6 @@
 		E9CB365112B89BA5002E39EA /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
-				D56858ED12C1926300BBF31A /* UAInboxMessageListCell.xib */,
 				D56858EE12C1926300BBF31A /* UAInboxMessageListController.xib */,
 				D56858EF12C1926300BBF31A /* UAInboxMessageViewController.xib */,
 			);
@@ -417,6 +420,7 @@
 		E9CB365512B89BA5002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */,
 				E9CB365612B89BA5002E39EA /* AirMail.db */,
 				E9CB365712B89BA5002E39EA /* check.png */,
 				E9CB365812B89BA5002E39EA /* check@2x.png */,
@@ -525,10 +529,10 @@
 				D5A192AA12C15AAE006AF4AE /* Icon@2x.png in Resources */,
 				D56858EB12C1925500BBF31A /* UAInboxMessageListController_Pad.xib in Resources */,
 				D56858EC12C1925500BBF31A /* UAInboxMessageViewController_Pad.xib in Resources */,
-				D56858F012C1926300BBF31A /* UAInboxMessageListCell.xib in Resources */,
 				D56858F112C1926300BBF31A /* UAInboxMessageListController.xib in Resources */,
 				D56858F212C1926300BBF31A /* UAInboxMessageViewController.xib in Resources */,
 				1F79710112DE3B7100D4937F /* AirshipConfig.plist in Resources */,
+				1F69B12913BD1DF4002CA606 /* UAInboxMessageListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,12 +564,12 @@
 				E9CB368112B89BCA002E39EA /* InboxSampleViewController.m in Sources */,
 				D56858D812C1923000BBF31A /* UAInboxMessageListControllerPad.m in Sources */,
 				D56858D912C1923000BBF31A /* UAInboxMessageViewControllerPad.m in Sources */,
-				D56858E012C1923C00BBF31A /* UAInboxMessageListCell.m in Sources */,
 				D56858E112C1923C00BBF31A /* UAInboxMessageListController.m in Sources */,
 				D56858E212C1923C00BBF31A /* UAInboxMessageViewController.m in Sources */,
 				D56858E712C1924800BBF31A /* UAInboxNavigationController.m in Sources */,
 				D56858E812C1924800BBF31A /* UAInboxUI.m in Sources */,
 				D5624D6912C2E68400A962EE /* UAInboxAlertHandler.m in Sources */,
+				1F69B12713BD1DDD002CA606 /* UAInboxMessageListCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

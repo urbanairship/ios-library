@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+	"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>--output</key>
+    <string>docs/</string>
+	<key>--ignore</key>
+	<array>
+		<string>External</string>
+		<string>Test</string>
+		<string>TestSamples</string>
+	</array>
+	<key>--project-company</key>
+	<string>Urban Airship</string>
+	<key>--company-id</key>
+	<string>com.urbanairship</string>
+    <key>--project-name</key>
+    <string>Urban Airship iOS Library</string>
+	<key>--create-docset</key>
+	<true/>
+    <key>--create-html</key>
+    <true/>
+	<key>--install-docset</key>
+	<false/>
+    <key>--keep-intermediate-files</key>
+    <true/>
+    <key>--repeat-first-par</key>
+    <false/>
+	<key>--verbose</key>
+	<integer>3</integer>
+	<key>--logformat</key>
+	<integer>1</integer>
+</dict>
+</plist>

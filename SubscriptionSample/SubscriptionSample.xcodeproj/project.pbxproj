@@ -35,14 +35,15 @@
 		005F08D912B89AF000DBF4B0 /* UASubscriptionUserProductsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 005F08C912B89AF000DBF4B0 /* UASubscriptionUserProductsViewController.xib */; };
 		0D5A7DE411CA03A100BE4A57 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */; };
 		0D5A7E0A11CA03FE00BE4A57 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */; };
-		0D5A7E1911CA041D00BE4A57 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */; };
 		0D5A7E2811CA043000BE4A57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */; };
 		0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DE288F311CF310D0013D2F1 /* StoreKit.framework */; };
 		0DF7FF9311CA251D00DD9F96 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */; };
-		181A7703129E495C0061547A /* libUAirship-1.0.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 181A7702129E495C0061547A /* libUAirship-1.0.5.a */; };
+		181A7703129E495C0061547A /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 181A7702129E495C0061547A /* libUAirship-1.0.7.a */; };
 		18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		1F51F2F013D9026800932853 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F51F2EF13D9026800932853 /* libz.dylib */; };
+		1F51F30C13D902ED00932853 /* UASubscriptionUIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F51F30B13D902ED00932853 /* UASubscriptionUIUtil.m */; };
 		1F79715212DE3DEB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79715112DE3DEB00D4937F /* AirshipConfig.plist */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		63314727122FAB0E008F2D48 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6331471E122FAB0E008F2D48 /* Icon-Small-50.png */; };
@@ -105,15 +106,17 @@
 		005F08C912B89AF000DBF4B0 /* UASubscriptionUserProductsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UASubscriptionUserProductsViewController.xib; sourceTree = "<group>"; };
 		0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0DE288F311CF310D0013D2F1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
-		181A7702129E495C0061547A /* libUAirship-1.0.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.5.a"; path = "../Airship/libUAirship-1.0.5.a"; sourceTree = SOURCE_ROOT; };
+		181A7702129E495C0061547A /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.7.a"; path = "../Airship/libUAirship-1.0.7.a"; sourceTree = SOURCE_ROOT; };
 		18F4D8D01287DC0100FE3508 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubscriptionSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1F51F2EF13D9026800932853 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1F51F30A13D902ED00932853 /* UASubscriptionUIUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASubscriptionUIUtil.h; sourceTree = "<group>"; };
+		1F51F30B13D902ED00932853 /* UASubscriptionUIUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASubscriptionUIUtil.m; sourceTree = "<group>"; };
 		1F79715112DE3DEB00D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* SubscriptionSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
@@ -147,17 +150,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F51F2F013D9026800932853 /* libz.dylib in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				0D5A7DE411CA03A100BE4A57 /* CFNetwork.framework in Frameworks */,
 				0D5A7E0A11CA03FE00BE4A57 /* MobileCoreServices.framework in Frameworks */,
-				0D5A7E1911CA041D00BE4A57 /* libz.1.2.3.dylib in Frameworks */,
 				0D5A7E2811CA043000BE4A57 /* SystemConfiguration.framework in Frameworks */,
 				0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */,
 				B63B5EDA1246383700145424 /* libsqlite3.dylib in Frameworks */,
 				18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */,
-				181A7703129E495C0061547A /* libUAirship-1.0.5.a in Frameworks */,
+				181A7703129E495C0061547A /* libUAirship-1.0.7.a in Frameworks */,
 				E9CB329412B85C7E002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,6 +171,8 @@
 		005F089A12B89AE600DBF4B0 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F51F30A13D902ED00932853 /* UASubscriptionUIUtil.h */,
+				1F51F30B13D902ED00932853 /* UASubscriptionUIUtil.m */,
 				005F089B12B89AE600DBF4B0 /* UASubscriptionAlertHandler.h */,
 				005F089C12B89AE600DBF4B0 /* UASubscriptionAlertHandler.m */,
 				005F089D12B89AE600DBF4B0 /* UASubscriptionContentDetailViewController.h */,
@@ -218,7 +223,7 @@
 		181A7701129E494A0061547A /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				181A7702129E495C0061547A /* libUAirship-1.0.5.a */,
+				181A7702129E495C0061547A /* libUAirship-1.0.7.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -261,13 +266,13 @@
 			children = (
 				0DE288F311CF310D0013D2F1 /* StoreKit.framework */,
 				0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */,
-				0D5A7E1811CA041D00BE4A57 /* libz.1.2.3.dylib */,
 				0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */,
 				0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				B63B5ED91246383700145424 /* libsqlite3.dylib */,
+				1F51F2EF13D9026800932853 /* libz.dylib */,
 				18F4D8D01287DC0100FE3508 /* Security.framework */,
 				E9CB329312B85C7E002E39EA /* CoreTelephony.framework */,
 			);
@@ -527,6 +532,7 @@
 				005F08B612B89AE600DBF4B0 /* UASubscriptionSettingsViewController.m in Sources */,
 				005F08B712B89AE600DBF4B0 /* UASubscriptionTableViewDelegate.m in Sources */,
 				005F08B812B89AE600DBF4B0 /* UASubscriptionUI.m in Sources */,
+				1F51F30C13D902ED00932853 /* UASubscriptionUIUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,7 +566,7 @@
 				PRODUCT_NAME = SubscriptionSample;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv7 armv6";
+				VALID_ARCHS = "armv7 armv6 i386";
 			};
 			name = Debug;
 		};
@@ -595,6 +601,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -608,6 +615,7 @@
 					"-ObjC",
 				);
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -621,7 +629,8 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -634,6 +643,7 @@
 					"-ObjC",
 				);
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

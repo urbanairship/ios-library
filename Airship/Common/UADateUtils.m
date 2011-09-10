@@ -28,28 +28,27 @@
 
 @implementation UADateUtils
 
-
-+(NSDate*) localizedDateFromUTC:(NSDate*)sourceDate {
-    NSTimeZone* sourceTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
-    NSTimeZone* destinationTimeZone = [NSTimeZone systemTimeZone];
-
-    NSInteger sourceGMTOffset = [sourceTimeZone secondsFromGMTForDate:sourceDate];
-    NSInteger destinationGMTOffset = [destinationTimeZone secondsFromGMTForDate:sourceDate];
-    NSTimeInterval interval = destinationGMTOffset - sourceGMTOffset;
-
-    NSDate* destinationDate = [[[NSDate alloc] initWithTimeInterval:interval sinceDate:sourceDate] autorelease];
-    return destinationDate;
-}
-
 +(NSString *) formattedDateRelativeToNow:(NSDate *)date {
-    NSDateFormatter *mdf = [[NSDateFormatter alloc] init];
+
+    // shared locale object
+    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+
+    NSDateFormatter* mdf = [[NSDateFormatter alloc] init];
+    [mdf setLocale:enUSPOSIXLocale];
+    [mdf setTimeStyle:NSDateFormatterFullStyle];
+    [mdf setTimeZone:[NSTimeZone systemTimeZone]];
     [mdf setDateFormat:@"yyyy-MM-dd"];
+
     NSDate *midnight = [mdf dateFromString:[mdf stringFromDate:date]];
     [mdf release];
 
     NSInteger dayDiff = (int)[midnight timeIntervalSinceNow] / (60*60*24);
     NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
 
+    // TODO: format string for localization
     if(dayDiff == 0)
         [dateFormatter setDateFormat:@"h:mm aaa"];
     else if(dayDiff == -1)

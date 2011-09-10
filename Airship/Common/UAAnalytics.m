@@ -145,12 +145,28 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 	if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"badge"];
     }
+    
     if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"sound"];
     }
+    
     if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"alert"];
     }
+    
+// Allow the lib to be built in Xcode 4.1 w/ the iOS 5 newsstand type
+// The two blocks below are functionally identical, but they're separated
+// for clarity. Once we can build against a stable SDK the second option
+// should be removed.
+#ifdef __IPHONE_5_0
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
+    }
+#else
+    if (((1 << 3) & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
+    }
+#endif
     
 	[session setObject:notification_types forKey:@"notification_types"];
 	
@@ -497,7 +513,8 @@ IF_IOS4_OR_GREATER(
     
     NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
 	UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
-    request.compressPostBody = YES;//enable GZIP
+    request.compressBody = YES;//enable GZIP
+    request.HTTPMethod = @"POST";
     
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
@@ -579,7 +596,7 @@ IF_IOS4_OR_GREATER(
              
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     writer.humanReadable = NO;//strip whitespace
-    [request appendPostData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
 
     writer.humanReadable = YES;//turn on formatting for debugging
@@ -608,6 +625,14 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)sendIfNeeded {
+    
+    IF_IOS4_OR_GREATER(
+                       // if the application is not active, do not attempt to send
+                       // this will typically be the case for headless newsstant launches
+                       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
+                           return;
+                       }
+    )
     
     //try sending at this interval if no other thresholds
     //have been met

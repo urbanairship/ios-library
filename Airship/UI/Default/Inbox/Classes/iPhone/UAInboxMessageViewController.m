@@ -246,7 +246,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [statusBar setHidden: YES];
     [activity stopAnimating];
 
-    [self willRotateToInterfaceOrientation:[[UIDevice currentDevice] orientation] duration:0];
+    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
     // Mark message as read after it has finished loading
     if(message.unread) {
         [message markAsRead];

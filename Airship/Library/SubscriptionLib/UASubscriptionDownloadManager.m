@@ -24,6 +24,7 @@
  */
 
 #import "UASubscriptionDownloadManager.h"
+#import "UASubscriptionContent.h"
 #import "UA_SBJsonParser.h"
 #import "UAGlobal.h"
 #import "UAUser.h"
@@ -34,8 +35,15 @@
 #import "UASubscriptionManager.h"
 #import "UASubscriptionInventory.h"
 
+//private methods
+@interface UASubscriptionDownloadManager()
+- (void)downloadDidFail:(UADownloadContent *)downloadContent;
+@end
+
 @implementation UASubscriptionDownloadManager
+
 @synthesize downloadDirectory;
+@synthesize createProductIDSubdir;
 
 - (void)checkDownloading:(UASubscriptionContent *)content {
     for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
@@ -66,7 +74,7 @@
     }
 
     zipDownloadContent.downloadRequestURL = [NSURL URLWithString:contentURLString];
-    zipDownloadContent.downloadFileName = content.subscriptionKey;
+    zipDownloadContent.downloadFileName = [UAUtils UUID];
     zipDownloadContent.progressDelegate = content;
     zipDownloadContent.requestMethod = kRequestMethodGET;
     [downloadManager download:zipDownloadContent];
@@ -78,6 +86,7 @@
 - (void)downloadDidFail:(UADownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
 	content.progress = 0.0;
+    
 	// update UI
     [[UASubscriptionManager shared] downloadContentFailed:content];
     [downloadManager endBackground];
@@ -93,8 +102,25 @@
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
         zipDownloadContent.decompressDelegate = self;
+        
+        UASubscriptionContent *subscriptionContent = (UASubscriptionContent *)zipDownloadContent.userInfo;
         zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                        [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
+                                                      [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.subscriptionKey]];
+
+        if (self.createProductIDSubdir) {
+            
+            // Use the content key as the subdirectory unless the
+            // product ID is available
+            NSString *subdirectory = subscriptionContent.contentKey;
+            if ([subscriptionContent.productIdentifier length] > 0) {
+                subdirectory = subscriptionContent.productIdentifier;
+            }
+            
+            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                          [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
+        }
+        
+        
         [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:downloadContent];
@@ -112,7 +138,7 @@
     UASubscriptionContent *content = [downloadContent userInfo];
     UALOG(@"Download Content successful: %@, and decompressed to %@", 
           content.contentName, downloadContent.decompressedContentPath);
-    
+
     // update subscription
     [[[UASubscriptionManager shared].inventory subscriptionForContent:content] filterDownloadedContents];
     
@@ -142,6 +168,7 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
+    self.createProductIDSubdir = YES;
     
     return self;
 }

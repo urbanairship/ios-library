@@ -24,8 +24,8 @@
  */
 
 #import <Foundation/Foundation.h>
+
 #import "UAObservable.h"
-#import <StoreKit/StoreKit.h>
 
 @class UAProductInventory;
 @class UAContentInventory;
@@ -34,8 +34,15 @@
 @class UASubscription;
 @class UASubscriptionDownloadManager;
 
+@class SKPaymentTransaction;
+
+
+/**
+ * This class provides access to the full inventory
+ * of subscriptions offered for sale in this application.
+ */
 @interface UASubscriptionInventory : UAObservable {
-    UASubscriptionDownloadManager *downloadManager;
+  @private
     NSMutableArray *subscriptions;
     NSMutableArray *userSubscriptions;
     NSMutableDictionary *subscriptionDict;
@@ -49,37 +56,77 @@
     BOOL contentsLoaded;
     BOOL hasLoaded;
 
-    BOOL has_active_subscriptions;
+    BOOL hasActiveSubscriptions;
     NSDate *serverDate;
 }
 
+///---------------------------------------------------------------------------------------
+/// @name Access Subscription Inventory
+///---------------------------------------------------------------------------------------
+
+/** YES if the inventory has successfully loaded, otherwise NO */
 @property (nonatomic, assign, readonly) BOOL hasLoaded;
+
+/** The array of subscriptions the user has purchased */
 @property (nonatomic, retain, readonly) NSMutableArray *userSubscriptions;
+
+/** The array of all available subscriptions */
 @property (nonatomic, retain, readonly) NSMutableArray *subscriptions;
+
+/**
+ * The time of the last purchased product update. Useful for preventing users from setting back
+ * their clocks to access expired content.
+ */
 @property (nonatomic, retain) NSDate *serverDate;
 
+///---------------------------------------------------------------------------------------
+/// @name Load Inventory and Purchases
+///---------------------------------------------------------------------------------------
+
+/** Load all products, content and purchases */
 - (void)loadInventory;
+
+/** Load all products */
 - (void)loadProducts;
+
+/** Load the content inventory and all of the user's purchases. */
 - (void)loadPurchases;
 
-- (void)purchase:(UASubscriptionProduct *)product;
-- (void)download:(UASubscriptionContent *)content;
-- (void)checkDownloading:(UASubscriptionContent *)content;
+///---------------------------------------------------------------------------------------
+/// @name Purchase and Download
+///---------------------------------------------------------------------------------------
 
+/**
+ * Purchase a subscription product.
+ * 
+ * @param product The product to purchase
+ */
+- (void)purchase:(UASubscriptionProduct *)product;
+
+/**
+ * Download subscription content.
+ *
+ * @param content The content to download
+ */
+- (void)download:(UASubscriptionContent *)content;
+
+///---------------------------------------------------------------------------------------
+/// @name Query Subscriptions
+///---------------------------------------------------------------------------------------
+
+- (UASubscriptionContent *)contentForKey:(NSString *)contentKey;
 - (UASubscription *)subscriptionForKey:(NSString *)subscriptionKey;
 - (UASubscription *)subscriptionForProduct:(UASubscriptionProduct *)product;
 - (UASubscription *)subscriptionForContent:(UASubscriptionContent *)content;
-
-- (void)createSubscription;
-- (void)createUserSubscription;
-- (void)loadUserPurchasingInfo;
-
 - (BOOL)containsProduct:(NSString *)productID;
 - (UASubscriptionProduct *)productForKey:(NSString *)productKey;
 
+//Private
 - (void)subscriptionTransctionDidComplete:(SKPaymentTransaction *)transaction;
 
 - (void)productInventoryUpdated;
 - (void)contentInventoryUpdated;
+
+- (void)setUserPurchaseInfo:(NSDictionary *)purchaseInfo;
 
 @end

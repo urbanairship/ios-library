@@ -23,7 +23,7 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-buildConfig="$BUILD_STYLE"
+buildConfig="$CONFIGURATION"
 samplePath="$SRCROOT"
 sampleName=`basename "$SRCROOT"`
 dstPath="$samplePath"/../"$buildConfig"/"$sampleName"
@@ -45,3 +45,4 @@ rm -rf `find . -name "*Tests"`
 rm -rf `find . -name "*Test*.plist"`
 rm -rf `find . -name "*Test*.pch"`
 rm -rf `find . -name "*.orig" `
+mv -f AirshipConfig.plist.sample AirshipConfig.plist

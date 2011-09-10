@@ -30,7 +30,7 @@ else
 # Prevent recursion
 export ALREADYINVOKED="true"
 
-buildConfig="$BUILD_STYLE"
+buildConfig="$CONFIGURATION"
 srcRoot="$SRCROOT"
 
 srcPath="${srcRoot}/../Airship"
@@ -63,6 +63,9 @@ rm -rf External/google-toolbox-for-mac
 rm -rf External/ZipFile-OC
 rm -rf TestSamples
 rm -rf Test
+
+#Remove the Appledoc documenation settings from the distribution
+rm AppledocSettings.plist
 
 find . -name "*.orig" -delete
 

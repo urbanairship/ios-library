@@ -67,12 +67,21 @@ static UAUser *_defaultUser;
 //User retrieval
 - (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request;
 - (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request;
+
+//User creation
+- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request;
+
 @end
 
 
 @implementation UAUser
 
-@synthesize username, password, email, recoveryEmail, url, alias;
+@synthesize username;
+@synthesize password;
+@synthesize email;
+@synthesize recoveryEmail;
+@synthesize url;
+@synthesize alias;
 @synthesize tags;
 @synthesize userState;
 @synthesize recoveryStatusUrl;
@@ -88,7 +97,6 @@ static UAUser *_defaultUser;
             _defaultUser = [[UAUser alloc] init];
         }
     }
-    
     return _defaultUser;
 }
 
@@ -114,6 +122,7 @@ static UAUser *_defaultUser;
     RELEASE_SAFELY(alias);
     RELEASE_SAFELY(tags);
     RELEASE_SAFELY(recoveryPoller);
+    
     [super dealloc];
 }
 
@@ -126,30 +135,45 @@ static UAUser *_defaultUser;
 }
 
 - (id)init {
+    self = [super init];
+    if (self) {
+        // init
+        // no action required for now..
+    }
+    
+    return self;
+}
 
-    if (self = [super init]) {
-		
+- (void)initializeUser {
+    
+    @synchronized(self) {
+        
+        if (initialized) {
+            return;
+        }
+        
         if (![UAirship shared].ready) {
-            return self;
+            return;
         }
         
         [self migrateUser];
         
-		NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
-		NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
-		
-		if (storedUsername != nil && storedPassword != nil) {
-			self.username = storedUsername;
-			self.password = storedPassword;
-		}
+        NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
+        NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
+        
+        if (storedUsername != nil && storedPassword != nil) {
+            self.username = storedUsername;
+            self.password = storedPassword;
+        }
         
         // Boot strap - including processing our user recovery status
         [self loadUser];
-
+        
         [self performSelector:@selector(listenForDeviceTokenReg) withObject:nil afterDelay:0];
+        
+        initialized = YES;
+                
     }
-    
-    return self;
 }
 
 - (void)migrateUser {
@@ -228,6 +252,13 @@ static UAUser *_defaultUser;
 
 // TODO: better user state representation
 - (void)loadUser {
+
+    if (creatingUser) {
+        // if we're creating a user, do not load anything now
+        // everything relevant has already beenloaded
+        // and we don't want to step on the in-progress creation
+        return;
+    }
 
 	self.retrievingUser = NO;
     self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
@@ -361,8 +392,9 @@ static UAUser *_defaultUser;
 }
 
 - (void)updateUserState {
-    
-    if (username == nil || password == nil) {
+    if (creatingUser) {
+        userState = UAUserStateCreating;
+    } else if (username == nil || password == nil) {
         userState = UAUserStateEmpty;
     } else {
         if (email == nil) {
@@ -419,6 +451,8 @@ static UAUser *_defaultUser;
 
 - (void)createUser {
     
+    creatingUser = YES;
+
     NSString *urlString = [NSString stringWithFormat:@"%@%@",
                            [[UAirship shared] server],
                            @"/api/user/"];
@@ -428,7 +462,7 @@ static UAUser *_defaultUser;
                                                method:@"POST"
                                              delegate:self
                                                finish:@selector(userCreated:)
-                                                 fail:@selector(userRequestWentWrong:)];
+                                                 fail:@selector(userCreationDidFail:)];
 
     NSMutableDictionary *data = [self createUserDictionary];
 
@@ -446,10 +480,14 @@ static UAUser *_defaultUser;
     
     UALOG(@"User created: %d:%@", request.responseStatusCode, request.responseString);
 
+    // done creating! or it failed..
+    // wait to update the state enum until the next state is determined below
+    creatingUser = NO;
+
     switch (request.responseStatusCode) {
         case 201://created
         {
-            UA_SBJsonParser *parser = [UA_SBJsonParser new];
+            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
             NSDictionary *result = [parser objectWithString:request.responseString];
 
             self.username = [result objectForKey:@"user_id"];
@@ -458,18 +496,28 @@ static UAUser *_defaultUser;
             
             [self saveUserData];
             
+            // Make sure we do a full user update with any device tokens, we'll unset this if it is not needed
+            [UAirship shared].deviceTokenHasChanged = YES;
+            
             // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
             if (request.postBody != nil) {
+                
                 NSString *requestString = [[NSString alloc] initWithData:request.postBody encoding:NSUTF8StringEncoding];
                 NSDictionary *requestDict = [parser objectWithString:requestString];
+                
                 [requestString release];
+                
                 if (requestDict != nil && [requestDict objectForKey:@"device_tokens"] != nil) {
+                    
                     //created a user w/ a device token
                     UALOG(@"Created a user with a device token.");
+                    
                     NSArray *deviceTokens = [requestDict objectForKey:@"device_tokens"];
                     NSString *deviceToken = [deviceTokens objectAtIndex:0];
+                    
                     if ([[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
                         UALOG(@"Device token is unchanged");
+                        
                         [UAirship shared].deviceTokenHasChanged = NO;
                     }
                 }
@@ -494,10 +542,17 @@ static UAUser *_defaultUser;
         }
         default:
         {
+            [self updateUserState];
             [self userRequestWentWrong:request];
             break;
         }
     }
+}
+
+- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request {
+    creatingUser = NO;
+    [self updateUserState];
+    [self userRequestWentWrong:request];
 }
 
 #pragma mark -
@@ -796,6 +851,22 @@ static UAUser *_defaultUser;
         [self requestWentWrong:request];
     }
 }
+
+#pragma mark -
+#pragma mark Merge User (Autorenewables)
+
+
+- (void)didMergeWithUser:(NSDictionary *)userData {
+    
+    self.username = [userData objectForKey:@"user_id"];
+    self.password = [userData objectForKey:@"password"];
+    self.url = [userData objectForKey:@"user_url"];
+    self.alias = [userData objectForKey:@"alias"];
+    self.tags = [userData objectForKey:@"tags"];
+    
+    [self saveUserData];
+}
+
 
 #pragma mark -
 #pragma mark Retrieve User

@@ -25,12 +25,14 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+
 #import "UAObservable.h"
 
 @class UA_ASIHTTPRequest;
 @class UASubscriptionProduct;
 
 @interface UAProductInventory : UAObservable <SKProductsRequestDelegate> {
+  @private
     NSMutableArray *productIDArray;
     NSMutableDictionary *productDict;
     BOOL hasLoaded;

@@ -1,4 +1,53 @@
+-------------------------
+1.0.7 - August 29, 2011
+-------------------------
+- Rebuilt 1.0.6 in Xcode 4.1 to address an armv7 issue in the Xcode 4.2 generated static library
+
+-----------------------
+1.0.6 - August 26, 2011
+-----------------------
+Autorenewable Subscriptions:
+- Added Autorenewable subscription support. Purchasing is identical to the non-autorenewable process.
+- Added a restore process that will work on multiple devices without email entry. To trigger
+  a restore, call UASubscriptionManager's restoreAutorenewables method. The subscription list will
+  be automatically reloaded when the restore is complete.
+- Added new events in UASubscriptionManagerObserver (see UASubscriptionManager.h for 
+  details on their use).
+- Added UASubscriptionAlertType value that indicates restore failure: UASubscriptionAlertFailedRestore
+
+Newsstand and Other Subscription Updates:
+- The inventory now has an availableProducts property that contains items that are available for sale.
+- Added contentForKey: convenience getter to UASubscriptionInventory
+- Added publish date for subscription content
+- Added option to set custom download directory for subscription content
+- Subscription content is now placed in a subdirectory named with the content key OR the specified
+  product ID if it is available
+
+Subscription Sample UI:
+- The "Settings" button has been replaced with a "Restore" button.
+- The email entry interstitial UIAlertView has been removed.
+- Modified sample app to use the product ID string rather than the subscription product object
+
+iOS5-Specific Updates:
+- Fixed modal view issues in each sample UI
+- Fixed a crash caused by the unread count graphic in the Inbox UI
+- Updated purchase calls so they no longer use iOS5-deprecated purchase methods
+
+Misc updates:
+- UAUser may now be instantiated before takeOff so that you can add observers for the creation process.
+- Added UAUserStateCreating value to the UAUserState enum
+- Fixed crash in IAP library caused when a product was purchased multiple times in a single app session.
+- Added flexibility to UAHTTPConnection. Supports multiple methods, auth.
+- Disabled reports uploads when app is not active
+- The library header imports have been cleaned up to prevent conflicts. You
+  may need to add some additional imports to any custom UI classes (e.g., UASubscriptionProduct.h)
+- Instance variables are now private
+- Better documentation. New AR functionality is documented in headers.
+- Updates for Xcode 4.1 and 4.2 beta
+
+----------------------
 1.0.5 - April 26, 2011
+----------------------
 - Fixed bug where the StoreFront sample UI would not return control to the original window.
 - Fixed bug where product_id was missing from subscription objects.
 - Fixed enum collisions with external libraries.
@@ -16,7 +65,9 @@
 - Library is now a single arm6/arm7/i386 universal release file.
 - Xcode4 support for all projects.
 
+-------------------------
 1.0.4 - February 23, 2011
+-------------------------
 - Added Analytics to all products and samples. Gathering basic device data and tracking app state
 to determine push conversion related data. Can be enabled/disabled via takeOffOptions, on by default.
 - Added a completely re-worked PushLib with an all new sample project and UI. Includes a number
@@ -27,19 +78,25 @@ of handlers for making push, alias, tags, and auto-badge much simpler to use.
 - Fixed enum linker collisions on Reachability and asihttp.
 - Fixed IAP iPad UI crash in landscape mode.
 
+------------------------
 1.0.3 - January 31, 2011
+------------------------
 - Updated copyrights
 - Fixed storeFrontWillHide delegate call. Removed storeFrontDidHide. 
 - Updated all projects to use Clang/LLVM 1.6 as default (fully compatible now)
 - Fixed numerous LLVM/Analyzer warnings
 
+------------------------
 1.0.2 - January 27, 2011
+------------------------
 - Fixed bug causing downloads to still go to NSDocuments instead of NSLibrary
 - Removed category on UIDevice, eliminating -all_load flag requirement, and moved the functionality to UAUtils
 - Fixed dateFormatter to require GMT and en_us_posix locale
 - Fixed bug where download directory intermediate dirs were not initialized
 
+------------------------
 1.0.1 - January 20, 2011
+------------------------
 - Fixed bug that would erroneously cause subscription transactions to finish early with rare network issues.
 - Moved keys to AirshipConfig.plist
 - Added missing -all_load linker flags

@@ -212,6 +212,7 @@
     if ([downloadManager isDownloading:zipDownloadContent]) {
         product.status = UAProductStatusDownloading;
         [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+        product.transaction = nil;
         return;
     }
     
@@ -225,6 +226,7 @@
     
     [self addPendingProduct:product];
     [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    product.transaction = nil;
     // Refresh inventory and UI just before downloading start
     product.status = UAProductStatusDownloading;
     [[UAStoreFront shared].inventory groupInventory];

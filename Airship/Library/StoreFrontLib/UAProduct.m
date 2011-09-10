@@ -40,6 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize price;
 @synthesize priceNumber;
 @synthesize productDescription;
+@synthesize skProduct;
 @synthesize title;
 @synthesize receipt;
 @synthesize isFree;
@@ -51,6 +52,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark -
 
 - (void)dealloc {
+    RELEASE_SAFELY(skProduct);
     RELEASE_SAFELY(productIdentifier);
     RELEASE_SAFELY(previewURL);
     RELEASE_SAFELY(preview);
@@ -78,6 +80,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (id)copyWithZone:(NSZone *)zone {
     UAProduct *copy = [[[self class] allocWithZone:zone] init];
+    copy.skProduct = self.skProduct;
     copy.productIdentifier = self.productIdentifier;
     copy.previewURL = self.previewURL;
     copy.preview = self.preview;

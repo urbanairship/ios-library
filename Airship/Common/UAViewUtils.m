@@ -49,12 +49,12 @@
 #pragma mark Functions
 
 CGAffineTransform UARotateTransformForCurrentOrientation() {
-    UIInterfaceOrientation orientation = [UIDevice currentDevice].orientation;
-    if (orientation == UIInterfaceOrientationLandscapeLeft) {
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (orientation == UIDeviceOrientationLandscapeLeft) {
         return CGAffineTransformMakeRotation(M_PI*1.5);
-    } else if (orientation == UIInterfaceOrientationLandscapeRight) {
+    } else if (orientation == UIDeviceOrientationLandscapeRight) {
         return CGAffineTransformMakeRotation(M_PI/2);
-    } else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
+    } else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
         return CGAffineTransformMakeRotation(-M_PI);
     } else {
         return CGAffineTransformIdentity;

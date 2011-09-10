@@ -37,6 +37,7 @@
 @interface UAStoreFrontUI : NSObject <UAStoreFrontUIProtocol> {
 
     UIWindow *uaWindow;
+
     UIViewController *rootViewController;
     UAStoreFrontViewController *productListViewController;
     
@@ -47,9 +48,14 @@
     UAStoreFrontAlertHandler *alertHandler;
 
     NSBundle *localizationBundle;
+
+@private
+    UIWindow *originalWindow;
+
 }
 
 @property (nonatomic, retain) UIWindow *uaWindow;
+@property (nonatomic, retain) UIWindow *originalWindow;
 @property (nonatomic, retain, readonly) UIViewController *rootViewController;
 @property (nonatomic, retain, readonly) UAStoreFrontViewController *productListViewController;
 @property (nonatomic, assign, readonly) BOOL isVisible;
