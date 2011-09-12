@@ -257,6 +257,15 @@
     [webView stringByEvaluatingJavaScriptFromString:js];
 }
 
+- (void)injectViewportFix {
+    NSString *js = @"var metaTag = document.createElement('meta');"
+    "metaTag.name = 'viewport';"
+    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
+    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
+    
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
 /**
  * Removes the shade background and calls the finish selector
  */
@@ -411,6 +420,7 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [loadingIndicator hide];
+    [self injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {

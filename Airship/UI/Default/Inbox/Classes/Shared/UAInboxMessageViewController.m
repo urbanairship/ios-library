@@ -263,6 +263,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [webView stringByEvaluatingJavaScriptFromString:js];
 }
 
+- (void)injectViewportFix {
+    NSString *js = @"var metaTag = document.createElement('meta');"
+    "metaTag.name = 'viewport';"
+    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
+    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
+    
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [statusBar setHidden: NO];
     [activity startAnimating];
@@ -279,6 +288,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if(message.unread) {
         [message markAsRead];
     }
+    
+    [self injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
