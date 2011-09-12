@@ -35,7 +35,7 @@
 
 @implementation UAInboxMessageListController
 
-@synthesize activity;
+@synthesize loadingIndicator;
 @synthesize loadingView;
 @synthesize loadingLabel;
 @synthesize messageTable;
@@ -46,7 +46,7 @@
     RELEASE_SAFELY(cellNibName);
     RELEASE_SAFELY(cellReusableId);
     RELEASE_SAFELY(messageTable);
-    RELEASE_SAFELY(activity);
+    RELEASE_SAFELY(loadingIndicator);
     RELEASE_SAFELY(loadingLabel);
     RELEASE_SAFELY(selectedIndexPathsForEditing);
     RELEASE_SAFELY(deleteItem);
@@ -149,7 +149,7 @@
 
 - (void)viewDidUnload {
     // Release any retained subviews of the main view.
-    self.activity = nil;
+    self.loadingIndicator = nil;
     self.loadingLabel = nil;
     self.messageTable = nil;
     [selectedIndexPathsForEditing removeAllObjects];
@@ -357,14 +357,14 @@
 - (void)messageListWillLoad {
     loadingView.hidden = NO;
     loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
-    [activity startAnimating];
+    [loadingIndicator show];
     loadingLabel.hidden = NO;
 }
 
 - (void)messageListLoaded {
 	
 	UALOG(@"got messageListLoaded");
-    [activity stopAnimating];
+    [loadingIndicator hide];
     int messageCount = [[UAInbox shared].messageList messageCount];
     
     loadingView.hidden = (messageCount != 0);
@@ -381,13 +381,13 @@
 }
 
 - (void)inboxError:(NSString *)message {
-    [activity stopAnimating];
+    [loadingIndicator show];
     loadingLabel.text = UA_INBOX_TR(@"UA_Mailbox_Error_Title");
     UALOG(@"inboxError");
 }
 
 - (void)inboxLoadFailed {
-    [activity stopAnimating];
+    [loadingIndicator hide];
     [self tableReloadData];
     [self updateNavigationBadge];
     
@@ -422,7 +422,7 @@
         [alert release];
     }
 
-    [activity stopAnimating];
+    [loadingIndicator hide];
     int messageCount = [[UAInbox shared].messageList messageCount];
     
     loadingView.hidden = (messageCount != 0);

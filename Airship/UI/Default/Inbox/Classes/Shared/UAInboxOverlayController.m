@@ -70,6 +70,8 @@
             }
         }
         
+        loadingIndicator = [[UABeveledLoadingIndicator indicator] retain];
+        
         [self loadMessageForID:messageID];
         
         //required to receive orientation updates from NSNotifcationCenter
@@ -88,6 +90,7 @@
     self.message = nil;
     self.webView = nil;
     [parentViewController release];
+    [loadingIndicator release];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIDeviceOrientationDidChangeNotification
                                                   object:nil];
@@ -134,7 +137,7 @@
     
     //add the window background
     UIView *background = [[[UIView alloc] initWithFrame:CGRectInset
-                           (bigPanelView.bounds, 15, 30)] autorelease];
+                           (bigPanelView.frame, 15, 30)] autorelease];
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
     background.layer.borderColor = [[UIColor blackColor] CGColor];
@@ -148,6 +151,10 @@
     webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     [bigPanelView addSubview: webView];
+    
+    [webView addSubview:loadingIndicator];
+    loadingIndicator.center = CGPointMake(webView.frame.size.width/2, webView.frame.size.height/2);
+    [loadingIndicator show];
     
     //add the close button
     int closeBtnOffset = 10;
@@ -188,7 +195,7 @@
         [UIView transitionFromView:fauxView toView:bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
             
             //dim the contents behind the popup window
-            UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.frame] autorelease];
+            UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.bounds] autorelease];
             shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             shadeView.backgroundColor = [UIColor blackColor];
             shadeView.alpha = 0.3;
@@ -403,9 +410,12 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
+    [loadingIndicator hide];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
+    
+    [loadingIndicator hide];
     
     if (error.code == NSURLErrorCancelled)
         return;

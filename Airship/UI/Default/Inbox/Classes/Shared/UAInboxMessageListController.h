@@ -27,12 +27,13 @@
 #import <UIKit/UIKit.h>
 #import "UAInboxMessageListObserver.h"
 #import "UABarButtonSegmentedControl.h"
+#import "UABeveledLoadingIndicator.h"
 
 @interface UAInboxMessageListController : UIViewController <UITableViewDelegate, UITableViewDataSource, UAInboxMessageListObserver> {
     IBOutlet UITableView *messageTable;
     
     IBOutlet UIView *loadingView;
-    IBOutlet UIActivityIndicatorView *activity;
+    IBOutlet UABeveledLoadingIndicator *loadingIndicator;
     IBOutlet UILabel *loadingLabel;
 
     // navigation badge
@@ -53,7 +54,7 @@
 @property (nonatomic, retain) UITableView *messageTable;
 
 @property (nonatomic, retain) UIView *loadingView;
-@property (nonatomic, retain) UIActivityIndicatorView *activity;
+@property (nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator;
 @property (nonatomic, retain) UILabel *loadingLabel;
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;

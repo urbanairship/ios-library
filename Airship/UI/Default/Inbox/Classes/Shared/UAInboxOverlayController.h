@@ -3,6 +3,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAInboxMessage.h"
+#import "UABeveledLoadingIndicator.h"
 
 @interface UAInboxOverlayController : NSObject <UIWebViewDelegate>
 
@@ -11,6 +12,7 @@
     UIViewController *parentViewController;
     UIView *bgView;
     UIView *bigPanelView;
+    UABeveledLoadingIndicator *loadingIndicator;
     UIWebView *webView;
     UAInboxMessage *message;
 }
