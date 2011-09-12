@@ -95,10 +95,10 @@
 							<object class="IBUILabel" id="272909791">
 								<reference key="NSNextResponder" ref="119407132"/>
 								<int key="NSvFlags">301</int>
-								<string key="NSFrame">{{20, 123}, {280, 60}}</string>
+								<string key="NSFrame">{{20, 86}, {280, 60}}</string>
 								<reference key="NSSuperview" ref="119407132"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="1012886598"/>
+								<reference key="NSNextKeyView" ref="1012157876"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -129,17 +129,17 @@
 									<int key="NSfFlags">16</int>
 								</object>
 							</object>
-							<object class="IBUIView" id="1012886598">
+							<object class="IBUIView" id="1012157876">
 								<reference key="NSNextResponder" ref="119407132"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{110, 190}, {100, 100}}</string>
+								<string key="NSFrame">{{110, 154}, {100, 100}}</string>
 								<reference key="NSSuperview" ref="119407132"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
 									<bytes key="NSWhite">MQA</bytes>
-									<object class="NSColorSpace" key="NSCustomColorSpace" id="187049678">
+									<object class="NSColorSpace" key="NSCustomColorSpace" id="186675357">
 										<int key="NSID">2</int>
 									</object>
 								</object>
@@ -153,7 +153,7 @@
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MQA</bytes>
-							<reference key="NSCustomColorSpace" ref="187049678"/>
+							<reference key="NSCustomColorSpace" ref="186675357"/>
 						</object>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
@@ -228,7 +228,7 @@
 					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">loadingIndicator</string>
 						<reference key="source" ref="372490531"/>
-						<reference key="destination" ref="1012886598"/>
+						<reference key="destination" ref="1012157876"/>
 					</object>
 					<int key="connectionID">112</int>
 				</object>
@@ -310,7 +310,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="272909791"/>
-							<reference ref="1012886598"/>
+							<reference ref="1012157876"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
 						<string key="objectName">loadingView</string>
@@ -322,7 +322,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">111</int>
-						<reference key="object" ref="1012886598"/>
+						<reference key="object" ref="1012157876"/>
 						<reference key="parent" ref="119407132"/>
 					</object>
 				</object>
