@@ -11,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.urbanairship.subscriptiontest</string>
+	<string>com.urbanairship.autorenewables</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>iPadIcon.png</string>

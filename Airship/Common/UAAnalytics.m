@@ -154,9 +154,19 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         [notification_types addObject:@"alert"];
     }
     
+// Allow the lib to be built in Xcode 4.1 w/ the iOS 5 newsstand type
+// The two blocks below are functionally identical, but they're separated
+// for clarity. Once we can build against a stable SDK the second option
+// should be removed.
+#ifdef __IPHONE_5_0
     if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"newsstand"];
     }
+#else
+    if (((1 << 3) & enabledRemoteNotificationTypes) > 0) {
+        [notification_types addObject:@"newsstand"];
+    }
+#endif
     
 	[session setObject:notification_types forKey:@"notification_types"];
 	
@@ -616,14 +626,13 @@ IF_IOS4_OR_GREATER(
 
 - (void)sendIfNeeded {
     
-    
     IF_IOS4_OR_GREATER(
                        // if the application is not active, do not attempt to send
                        // this will typically be the case for headless newsstant launches
                        if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
                            return;
                        }
-                       )
+    )
     
     //try sending at this interval if no other thresholds
     //have been met
