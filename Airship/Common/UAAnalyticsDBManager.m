@@ -75,11 +75,17 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
                                                                         format:NSPropertyListBinaryFormat_v1_0
                                                               errorDescription:&errString];
-    
+
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
         [errString release];//must be relased by caller per docs
     }
+    
+    //insert an empty string if there isn't any event data
+    if (!serializedData) {
+        serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
     
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],

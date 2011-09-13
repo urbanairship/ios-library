@@ -107,7 +107,7 @@ static BOOL runiPhoneTargetOniPad = NO;
             [UAInboxNavUI shared].inboxParentController = viewController;
         }
         
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && !runiPhoneTargetOniPad) {
             [UAInboxNavUI shared].navigationController = [[[UINavigationController alloc] initWithRootViewController:[UAInboxNavUI shared].messageListController] autorelease];
             [UAInboxNavUI shared].popoverController = [[[UIPopoverController alloc] initWithContentViewController:[UAInboxNavUI shared].navigationController] autorelease];
             

@@ -41,10 +41,6 @@
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
-// Weak link to this notification since it doesn't exist in iOS 3.x
-UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
-UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribute__((weak_import));
-
 @implementation UAAnalytics
 
 @synthesize server;
@@ -225,21 +221,30 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
                                                      name:kUA_ReachabilityChangedNotification
                                                    object:nil];
         IF_IOS4_OR_GREATER(
-						   if (&UIApplicationDidEnterBackgroundNotification != NULL) {
-							   [[NSNotificationCenter defaultCenter] addObserver:self
-																		selector:@selector(enterBackground)
-																			name:UIApplicationDidEnterBackgroundNotification
-																		  object:nil];
-						   }
-						   
-						   if (&UIApplicationDidBecomeActiveNotification != NULL) {
-							   [[NSNotificationCenter defaultCenter] addObserver:self
-																		selector:@selector(enterForeground)
-																			name:UIApplicationDidBecomeActiveNotification
-																		  object:nil];
-						   }
-						   );
-		
+
+           [[NSNotificationCenter defaultCenter] addObserver:self
+                                                    selector:@selector(enterBackground)
+                                                        name:UIApplicationDidEnterBackgroundNotification
+                                                      object:nil];
+
+           [[NSNotificationCenter defaultCenter] addObserver:self
+                                                    selector:@selector(enterForeground)
+                                                        name:UIApplicationWillEnterForegroundNotification
+                                                      object:nil];
+
+		);
+        
+        // App inactive/active for incoming calls, notification center, and taskbar 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(willResignActive)
+                                                     name:UIApplicationWillResignActiveNotification
+                                                   object:nil];
+
         wasBackgrounded = NO;
         notificationUserInfo = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] retain];
         
@@ -250,27 +255,49 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)enterForeground {
-    if (wasBackgrounded) {
-		wasBackgrounded = NO;
-        
-		[self refreshSessionWhenNetworkChanged];
-		
-        //update session in case the app lunched from push while sleep in background
-        [self refreshSessionWhenActive];
-		
-        //add app_foreground event
-        [self addEvent:[UAEventAppForeground eventWithContext:nil]];
-    }
+    UALOG(@"Enter Foreground.");
+    
+    wasBackgrounded = NO;
+    
+    [self refreshSessionWhenNetworkChanged];
+    
+    //update session in case the app lunched from push while sleep in background
+    [self refreshSessionWhenActive];
+    
+    //add app_foreground event
+    [self addEvent:[UAEventAppForeground eventWithContext:nil]];
 }
 
 - (void)enterBackground {
+    
+    UALOG(@"Enter Background.");
+    if (wasBackgrounded) {
+        UALOG(@"Skipping extra background event.");
+        return;
+    }
+
     wasBackgrounded = YES;
 	
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
 
+    //TODO: clearing the session could cause an exit event to have an empty payload and it will be dropped - do we care?
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
+}
+
+- (void)didBecomeActive {
+    UALOG(@"Application did become active.");
+    
+    //add activity_started / AppActive event
+    [self addEvent:[UAEventAppActive eventWithContext:nil]];
+}
+
+- (void)willResignActive {
+    UALOG(@"Application will resign active.");
+    
+    //add activity_stopped / AppInactive event
+    [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
 
 - (void)restoreFromDefault {
@@ -449,6 +476,7 @@ IF_IOS4_OR_GREATER(
     }
     
 	if ([response statusCode] != 200) {
+        UALOG(@"Send analytics data request failed: %d", [response statusCode]);
 		return;
     } 
 
@@ -560,16 +588,16 @@ IF_IOS4_OR_GREATER(
         }
         
         // The event data returned by the DB is a binary plist. Deserialize now.
-        NSDictionary *eventData = nil;
+        NSMutableDictionary *eventData = nil;
         NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
         
         if (serializedEventData) {
             
             NSString *errString = nil;
             
-            eventData = (NSDictionary *)[NSPropertyListSerialization
+            eventData = (NSMutableDictionary *)[NSPropertyListSerialization
                                          propertyListFromData:serializedEventData
-                                         mutabilityOption:NSPropertyListImmutable
+                                         mutabilityOption:kCFPropertyListMutableContainersAndLeaves
                                          format:NULL /* an out param */
                                          errorDescription:&errString];
             if (errString) {
@@ -582,6 +610,7 @@ IF_IOS4_OR_GREATER(
         if (!eventData) {
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
+        [eventData setValue:[event objectForKey:@"session_id"] forKey:@"session_id"];
 		
         [event setValue:eventData forKey:@"data"];
 
@@ -606,11 +635,11 @@ IF_IOS4_OR_GREATER(
 
     writer.humanReadable = YES;//turn on formatting for debugging
     
-    /*
+    
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
-    */
+    
      
 	[writer release];
 
