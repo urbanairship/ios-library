@@ -42,14 +42,14 @@ typedef enum {
 } UABatchUpdateResult;
 
 @interface UAInboxMessageList : UAObservable <UAUserObserver> {
-    NSMutableArray* messages;
+    NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
     int unreadCount;
     int isRetriving;
     BOOL isBatchUpdating;
 }
 
-+ (UAInboxMessageList*)shared;
++ (UAInboxMessageList *)shared;
 + (void)land;
 
 - (void)retrieveMessageList;
@@ -61,9 +61,7 @@ typedef enum {
 - (UAInboxMessage*)messageAtIndex:(int)index;
 - (int)indexOfMessage:(UAInboxMessage *)message;
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
-
-@property(nonatomic, retain) NSMutableArray* messages;
+@property(nonatomic, retain) NSMutableArray *messages;
 @property(assign) int unreadCount;
 @property(assign) int isRetrieving;
 @property(assign) BOOL isBatchUpdating;
