@@ -40,6 +40,7 @@
 @synthesize loadingLabel;
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
+@synthesize shouldShowAlerts;
 
 - (void)dealloc {
     
@@ -68,6 +69,8 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         [self initNibNames];
+        
+        self.shouldShowAlerts = YES;
     }
     
     return self;
@@ -399,21 +402,32 @@
         [messageTable reloadRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]
                             withRowAnimation:UITableViewRowAnimationNone];
     } else if ([option intValue] == UABatchReadMessagesFailed) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Mark_Read_Message")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        
+        if (shouldShowAlerts) {
+        
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                            message:UA_INBOX_TR(@"UA_Error_Mark_Read_Message")
+                                                           delegate:nil
+                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        
+        }
+        
     } else if ([option intValue] == UABatchDeleteMessagesFailed) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Delete_Message")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        [alert release];
+        
+        if (shouldShowAlerts) {
+        
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                            message:UA_INBOX_TR(@"UA_Error_Delete_Message")
+                                                           delegate:nil
+                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        
+        }
     }
 
     [loadingIndicator hide];

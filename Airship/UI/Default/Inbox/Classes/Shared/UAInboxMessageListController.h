@@ -49,6 +49,8 @@
 
     NSString *cellReusableId;
     NSString *cellNibName;
+    
+    BOOL shouldShowAlerts;
 }
 
 @property (nonatomic, retain) UITableView *messageTable;
@@ -59,6 +61,8 @@
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
+
+@property (nonatomic, assign) BOOL shouldShowAlerts;
 
 - (void)updateNavigationBadge;      // indicate title and unread count
 - (void)refreshBatchUpdateButtons;  // indicate edit mode view

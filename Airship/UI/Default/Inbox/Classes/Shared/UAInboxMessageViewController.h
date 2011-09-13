@@ -34,6 +34,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     IBOutlet UIView* statusBar;
 
     UAInboxMessage* message;
+    
+    BOOL shouldShowAlerts;
 }
 
 @property (nonatomic, retain) UIWebView* webView;
@@ -42,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) UIView* statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl* messageNav;
 @property (nonatomic, retain) UAInboxMessage* message;
+@property (nonatomic, assign) BOOL shouldShowAlerts;
 
 - (void)loadMessageAtIndex:(int)index;
 - (void)loadMessageForID:(NSString *)mid;

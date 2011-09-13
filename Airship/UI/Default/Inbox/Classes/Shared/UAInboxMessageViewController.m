@@ -41,6 +41,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize statusBarTitle;
 @synthesize messageNav;
 @synthesize message;
+@synthesize shouldShowAlerts;
 
 - (void)dealloc {
     [[UAInbox shared].messageList removeObserver:self];
@@ -77,6 +78,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [segmentBarItem release];
 
         [webView setDataDetectorTypes:UIDataDetectorTypeAll];
+        
+        self.shouldShowAlerts = YES;
     }
 
     return self;
@@ -299,13 +302,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
-    UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
-                                                        message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
-                                                       delegate:self
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-    [someError show];
-    [someError release];
+    
+    if (shouldShowAlerts) {
+        
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
+                                                            message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
+                                                           delegate:self
+                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  otherButtonTitles:nil];
+        [someError show];
+        [someError release];
+    }
 }
 
 #pragma mark Message Nav
