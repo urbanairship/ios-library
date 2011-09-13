@@ -476,6 +476,7 @@ IF_IOS4_OR_GREATER(
     }
     
 	if ([response statusCode] != 200) {
+        UALOG(@"Send analytics data request failed: %d", [response statusCode]);
 		return;
     } 
 
@@ -587,16 +588,16 @@ IF_IOS4_OR_GREATER(
         }
         
         // The event data returned by the DB is a binary plist. Deserialize now.
-        NSDictionary *eventData = nil;
+        NSMutableDictionary *eventData = nil;
         NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
         
         if (serializedEventData) {
             
             NSString *errString = nil;
             
-            eventData = (NSDictionary *)[NSPropertyListSerialization
+            eventData = (NSMutableDictionary *)[NSPropertyListSerialization
                                          propertyListFromData:serializedEventData
-                                         mutabilityOption:NSPropertyListImmutable
+                                         mutabilityOption:kCFPropertyListMutableContainersAndLeaves
                                          format:NULL /* an out param */
                                          errorDescription:&errString];
             if (errString) {
@@ -609,6 +610,7 @@ IF_IOS4_OR_GREATER(
         if (!eventData) {
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
+        [eventData setValue:[event objectForKey:@"session_id"] forKey:@"session_id"];
 		
         [event setValue:eventData forKey:@"data"];
 
@@ -633,11 +635,11 @@ IF_IOS4_OR_GREATER(
 
     writer.humanReadable = YES;//turn on formatting for debugging
     
-    /*
+    
     UALOG(@"Sending to server: %@", self.server);
     UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
-    */
+    
      
 	[writer release];
 
