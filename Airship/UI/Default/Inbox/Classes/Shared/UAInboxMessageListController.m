@@ -388,7 +388,27 @@
     [self tableReloadData];
     [self updateNavigationBadge];
     
-    loadingLabel.text = UA_INBOX_TR(@"UA_Error_Fetching_Message_List");
+    if ([[UAInbox shared].messageList messageCount] > 0) {
+        
+        loadingView.hidden = YES;
+        
+        if (shouldShowAlerts) {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                            message:UA_INBOX_TR(@"UA_Error_Fetching_Message_List")
+                                                           delegate:nil
+                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            
+        }
+    }
+    
+    else {
+        loadingLabel.text = UA_INBOX_TR(@"UA_Error_Fetching_Message_List");
+
+    }
 }
 
 - (void)messagesDidUpdateWithOption:(id)option {
