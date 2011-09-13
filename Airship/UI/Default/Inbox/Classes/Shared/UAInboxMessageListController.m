@@ -380,12 +380,6 @@
     [self updateNavigationBadge];
 }
 
-- (void)inboxError:(NSString *)message {
-    [loadingIndicator show];
-    loadingLabel.text = UA_INBOX_TR(@"UA_Mailbox_Error_Title");
-    UALOG(@"inboxError");
-}
-
 - (void)inboxLoadFailed {
     [loadingIndicator hide];
     [self tableReloadData];

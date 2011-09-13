@@ -282,13 +282,6 @@ static UAInboxMessageList *_messageList = nil;
     UALOG(@"Body: %@", request.postBody);
 }
 
-- (void)userUpdateFailed {
-
-    UALOG(@"User update failed: propogating to listeners");
-    [self notifyObservers:@selector(inboxError:)];
-        
-}
-
 #pragma mark Get messages
 
 - (int)messageCount {

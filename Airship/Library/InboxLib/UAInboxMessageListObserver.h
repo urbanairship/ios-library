@@ -51,12 +51,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)messageListLoaded;
 
 /**
- * TODO: deprecate/rename -- it's only called when a user update fails,
- * and a message is never passed along.
- */
-- (void)inboxError:(NSString*)message;
-
-/**
  * Tells the observer that a request for inbox messages failed.
  */
 - (void)inboxLoadFailed;
