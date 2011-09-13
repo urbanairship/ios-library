@@ -58,6 +58,8 @@
     
     BOOL useOverlay;
     BOOL isVisible;
+    
+    CGSize popoverSize;
 }
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
@@ -73,6 +75,8 @@
 
 @property (nonatomic, assign) BOOL useOverlay;
 @property (nonatomic, assign) BOOL isVisible;
+
+@property (nonatomic, assign) CGSize popoverSize;
 
 SINGLETON_INTERFACE(UAInboxNavUI);
 

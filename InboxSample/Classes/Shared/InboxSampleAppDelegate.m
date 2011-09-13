@@ -90,6 +90,7 @@
     // For Navigation UI:
     [UAInboxNavUI shared].inboxParentController = navigationController;
     [UAInboxNavUI shared].useOverlay = YES;
+    [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
     
     
     //TODO: think about clean up / dealloc for multiple UI classes

@@ -350,6 +350,7 @@
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessageViewController *mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];
+    mvc.contentSizeForViewInPopover = self.contentSizeForViewInPopover;
     [mvc loadMessageAtIndex:indexPath.row];
     [self.navigationController pushViewController:mvc animated:YES];
 }

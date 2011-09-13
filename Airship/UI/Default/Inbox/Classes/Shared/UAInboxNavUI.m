@@ -43,6 +43,7 @@
 @synthesize popoverButton;
 @synthesize useOverlay;
 @synthesize isVisible;
+@synthesize popoverSize;
 
 SINGLETON_IMPLEMENTATION(UAInboxNavUI)
 
@@ -81,7 +82,9 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         self.messageListController = mlc;
         
-        alertHandler = [[UAInboxAlertHandler alloc] init];        		
+        alertHandler = [[UAInboxAlertHandler alloc] init];
+        
+        self.popoverSize = CGSizeMake(320, 1100);
     }
     
     return self;
@@ -107,6 +110,10 @@ static BOOL runiPhoneTargetOniPad = NO;
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
             [UAInboxNavUI shared].navigationController = [[[UINavigationController alloc] initWithRootViewController:[UAInboxNavUI shared].messageListController] autorelease];
             [UAInboxNavUI shared].popoverController = [[[UIPopoverController alloc] initWithContentViewController:[UAInboxNavUI shared].navigationController] autorelease];
+            
+            [UAInboxNavUI shared].popoverController.popoverContentSize = [UAInboxNavUI shared].popoverSize;
+            [UAInboxNavUI shared].messageListController.contentSizeForViewInPopover = [UAInboxNavUI shared].popoverSize;
+            
             [UAInboxNavUI shared].popoverController.delegate = [UAInboxNavUI shared];
             
             [[UAInboxNavUI shared].popoverController 
