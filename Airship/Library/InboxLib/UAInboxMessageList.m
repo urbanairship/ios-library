@@ -225,31 +225,23 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (void)batchUpdateFinished:(UA_ASIHTTPRequest*)request {
+    
+    self.isBatchUpdating = NO;
     id option = [request.userInfo objectForKey:@"option"];
+    
     NSArray *updateMessageArray = [request.userInfo objectForKey:@"messages"];
 
     if (request.responseStatusCode != 200) {
         UALOG(@"Server error during batch update messages");
         if ([option intValue] == UABatchDeleteMessages) {
-            option = [NSNumber numberWithInt:UABatchDeleteMessagesFailed];
+            [self notifyObservers:@selector(batchDeleteFailed)];
         } else if ([option intValue] == UABatchReadMessages) {
-            option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
+            [self notifyObservers:@selector(batchMarkAsReadFailed)];
         }
-        self.isBatchUpdating = NO;
-        [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
+        
         return;
     }
-
-    if ([option intValue] == UABatchDeleteMessages) {
-        [messages removeObjectsInArray:updateMessageArray];
-        // TODO: add delete to sync
-        [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
-        option = [NSNumber numberWithInt:UABatchDeleteMessagesSuccess];
-    } else if ([option intValue] == UABatchReadMessages) {
-        [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
-        option = [NSNumber numberWithInt:UABatchReadMessagesSuccess];
-    }
-
+    
     for (UAInboxMessage *msg in updateMessageArray) {
         if (msg.unread) {
             msg.unread = NO;
@@ -257,21 +249,26 @@ static UAInboxMessageList *_messageList = nil;
         }
     }
 
-    self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
+    if ([option intValue] == UABatchDeleteMessages) {
+        [messages removeObjectsInArray:updateMessageArray];
+        // TODO: add delete to sync
+        [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
+        [self notifyObservers:@selector(batchDeleteFinished)];
+    } else if ([option intValue] == UABatchReadMessages) {
+        [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+        [self notifyObservers:@selector(batchMarkAsReadFinished)];
+    }
 }
 
 - (void)batchUpdateFailed:(UA_ASIHTTPRequest*)request {
+    self.isBatchUpdating = NO;
     [self requestWentWrong:request];
     id option = [request.userInfo objectForKey:@"option"];
-
     if ([option intValue] == UABatchDeleteMessages) {
-        option = [NSNumber numberWithInt:UABatchDeleteMessagesFailed];
+        [self notifyObservers:@selector(batchDeleteFailed)];
     } else if ([option intValue] == UABatchReadMessages) {
-        option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
+        [self notifyObservers:@selector(batchMarkAsReadFailed)];
     }
-    self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpdateWithOption:) withObject:option];
 }
 
 - (void)requestWentWrong:(UA_ASIHTTPRequest*)request {

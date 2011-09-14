@@ -412,45 +412,7 @@
     }
 }
 
-- (void)messagesDidUpdateWithOption:(id)option {
-    if ([option intValue] == UABatchDeleteMessagesSuccess) {
-        [messageTable beginUpdates];
-        [messageTable deleteRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]
-                            withRowAnimation:UITableViewRowAnimationLeft];
-        [messageTable endUpdates];
-
-    } else if ([option intValue] == UABatchReadMessagesSuccess) {
-        [messageTable reloadRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]
-                            withRowAnimation:UITableViewRowAnimationNone];
-    } else if ([option intValue] == UABatchReadMessagesFailed) {
-        
-        if (shouldShowAlerts) {
-        
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                            message:UA_INBOX_TR(@"UA_Error_Mark_Read_Message")
-                                                           delegate:nil
-                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-        
-        }
-        
-    } else if ([option intValue] == UABatchDeleteMessagesFailed) {
-        
-        if (shouldShowAlerts) {
-        
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                            message:UA_INBOX_TR(@"UA_Error_Delete_Message")
-                                                           delegate:nil
-                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-        
-        }
-    }
-
+- (void)refreshAfterBatchUpdate {
     [loadingIndicator hide];
     int messageCount = [[UAInbox shared].messageList messageCount];
     
@@ -467,7 +429,57 @@
     [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
     
     [self refreshBatchUpdateButtons];
+
 }
+
+- (void)batchMarkAsReadFinished {
+    [messageTable reloadRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]
+                        withRowAnimation:UITableViewRowAnimationNone];
+    [self refreshAfterBatchUpdate];
+}
+
+
+- (void)batchMarkAsReadFailed {
+    if (shouldShowAlerts) {
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                        message:UA_INBOX_TR(@"UA_Error_Mark_Read_Message")
+                                                       delegate:nil
+                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }
+    [self refreshAfterBatchUpdate];
+}
+
+
+- (void)batchDeleteFinished {
+    [messageTable beginUpdates];
+    [messageTable deleteRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]
+                        withRowAnimation:UITableViewRowAnimationLeft];
+    [messageTable endUpdates];
+    
+    [self refreshAfterBatchUpdate];
+}
+
+
+- (void)batchDeleteFailed {
+    if (shouldShowAlerts) {
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                        message:UA_INBOX_TR(@"UA_Error_Delete_Message")
+                                                       delegate:nil
+                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }
+    [self refreshAfterBatchUpdate];
+}
+
 
 - (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)m {
     int row = [[UAInbox shared].messageList indexOfMessage:m];

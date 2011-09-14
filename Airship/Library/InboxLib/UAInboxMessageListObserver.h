@@ -56,14 +56,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)inboxLoadFailed;
 
 /**
- * Tells the observer when a message or group of messages has been updated.
- * 
- @ @param option A UABatchUpdateCommand wrapped in an NSNumber indicating the type 
- * of update performed. 
- */
-- (void)messagesDidUpdateWithOption:(NSNumber *)option;
-
-/**
  * Tells the observer that a message has been marked as read.
  *
  * @param message The message marked as read
@@ -77,7 +69,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 - (void)singleMessageMarkAsReadFailed:(UAInboxMessage *)message;
 
+/**
+ * Tells the observer that a batch of messages has been marked as read.
+ */
+- (void)batchMarkAsReadFinished;
 
-- (void)newMessageArrived:(NSDictionary *)message;
+/**
+ * Tells the observer that a batch mark-as-read request failed.
+ */
+- (void)batchMarkAsReadFailed;
+
+/**
+ * Tells the observer when a batch of messages has been deleted.
+ */
+- (void)batchDeleteFinished;
+
+/**
+ * Tells the observer when a batch update of messages has failed.
+ */
+- (void)batchDeleteFailed;
 
 @end
