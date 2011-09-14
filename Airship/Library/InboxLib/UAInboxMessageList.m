@@ -195,12 +195,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
-- (BOOL)batchUpdate:(NSIndexSet *)messageIndexSet option:(UABatchUpdateCommand)option {
-    
-    if (self.isBatchUpdating) {
-        UALOG(@"Warning: batch update already in progress");
-        return NO;
-    }
+- (void)batchUpdate:(NSIndexSet *)messageIndexSet option:(UABatchUpdateCommand)option {
 
     NSURL *requestUrl = nil;
     NSDictionary *data = nil;
@@ -231,7 +226,7 @@ static UAInboxMessageList *_messageList = nil;
         data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"mark_as_read"];
     } else {
         UALOG("option=%d is invalid.", option);
-        return NO;
+        return;
     }
     self.isBatchUpdating = YES;
     [self notifyObservers: @selector(messageListWillLoad)];
@@ -255,7 +250,6 @@ static UAInboxMessageList *_messageList = nil;
     [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
     [request startAsynchronous];
 
-    return YES;
 }
 
 - (void)batchUpdateFinished:(UA_ASIHTTPRequest*)request {
