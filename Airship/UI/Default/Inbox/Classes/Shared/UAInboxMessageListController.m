@@ -33,6 +33,19 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 
+@interface UAInboxMessageListController(Private)
+
+- (void)updateNavigationBadge;      // indicate title and unread count
+- (void)refreshBatchUpdateButtons;  // indicate edit mode view
+- (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath;
+- (void)createToolbarItems;
+- (void)createNavigationBadge;
+- (void)editButtonPressed:(id)sender;
+- (void)cancelButtonPressed:(id)sender;
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
 @implementation UAInboxMessageListController
 
 @synthesize loadingIndicator;
@@ -175,6 +188,26 @@
 - (void)tableReloadData {
     [messageTable reloadData];
     [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
+}
+
+- (void)refreshAfterBatchUpdate {
+    [loadingIndicator hide];
+    int messageCount = [[UAInbox shared].messageList messageCount];
+    
+    loadingView.hidden = (messageCount != 0);
+    
+    if (messageCount == 0) {
+        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
+    }
+    
+    [selectedIndexPathsForEditing removeAllObjects];
+    cancelItem.enabled = YES;
+    [self cancelButtonPressed:nil];
+    
+    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
+    
+    [self refreshBatchUpdateButtons];
+    
 }
 
 #pragma mark -
@@ -412,25 +445,6 @@
     }
 }
 
-- (void)refreshAfterBatchUpdate {
-    [loadingIndicator hide];
-    int messageCount = [[UAInbox shared].messageList messageCount];
-    
-    loadingView.hidden = (messageCount != 0);
-    
-    if (messageCount == 0) {
-        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
-    }
-    
-    [selectedIndexPathsForEditing removeAllObjects];
-    cancelItem.enabled = YES;
-    [self cancelButtonPressed:nil];
-    
-    [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:NO];
-    
-    [self refreshBatchUpdateButtons];
-
-}
 
 - (void)batchMarkAsReadFinished {
     [messageTable reloadRowsAtIndexPaths:[selectedIndexPathsForEditing allObjects]

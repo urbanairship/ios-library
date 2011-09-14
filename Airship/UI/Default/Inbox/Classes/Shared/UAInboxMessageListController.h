@@ -64,15 +64,4 @@
 
 @property (nonatomic, assign) BOOL shouldShowAlerts;
 
-- (void)updateNavigationBadge;      // indicate title and unread count
-- (void)refreshBatchUpdateButtons;  // indicate edit mode view
-- (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath;
-
-// Private Method
-- (void)createToolbarItems;
-- (void)createNavigationBadge;
-- (void)editButtonPressed:(id)sender;
-- (void)cancelButtonPressed:(id)sender;
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-
 @end
