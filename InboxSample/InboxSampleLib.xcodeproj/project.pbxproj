@@ -651,7 +651,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirship-1.0.5.a";
-			path = "libUAirship-1.0.6.a";
+			path = "libUAirship-1.0.7.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

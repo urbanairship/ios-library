@@ -120,7 +120,9 @@
 - (void)refreshDescriptionLabelView {
     if (product.purchased) {
         NSDateFormatter *generateStringformatter = [[[NSDateFormatter alloc] init] autorelease];
-        [generateStringformatter setDateStyle: NSDateFormatterMediumStyle]; // Will produce localized date
+        [generateStringformatter setDateStyle:NSDateFormatterMediumStyle]; // Will produce localized date
+        [generateStringformatter setTimeStyle:NSDateFormatterMediumStyle];
+        //[generateStringformatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
         NSString *start = [generateStringformatter stringFromDate:product.startDate];
         NSString *end = [generateStringformatter stringFromDate:product.endDate];

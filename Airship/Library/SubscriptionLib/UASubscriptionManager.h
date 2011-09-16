@@ -120,6 +120,13 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 - (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;
 
 /**
+ * Called when StoreKit delivers a renewal transaction. These types of transactions are
+ * are unique to autorenewables as they have a SKTransactionStateRestored state but are
+ * delivered outside of the context of a standard restore process
+ */
+- (void)subscriptionProductRenewed:(UASubscriptionProduct *)product;
+
+/**
  * This method is called when a restore process completes without error.
  *
  * @param productsRestored An array of the products for which receipts were

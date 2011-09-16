@@ -65,6 +65,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)completeTransaction:(SKPaymentTransaction *)transaction;
 - (void)failedTransaction:(SKPaymentTransaction *)transaction;
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction;
+
+/** Logs transaction identifiers and dates. */
+- (void)logTransaction:(SKPaymentTransaction *)transaction;
 @end
 
 #pragma mark -
@@ -197,10 +200,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
-    UALOG(@"Purchase Successful, provide content.\n completeTransaction: %@ id: %@ receipt: %@",
-          transaction,
-          transaction.payment.productIdentifier,
-          transaction.transactionReceipt);
+    UALOG(@"Purchase Successful for Product ID: %@", transaction.payment.productIdentifier);
+    [self logTransaction:transaction];
     
     [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
 }
@@ -209,12 +210,29 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     NSString *productIdentifier = transaction.payment.productIdentifier;
     UALOG(@"Restoring Transaction for Product ID: %@", productIdentifier);
+    [self logTransaction:transaction];
     
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productIdentifier];
+
     if (product && product.autorenewable && restoring) {
+    
         [unrestoredTransactions addObject:transaction];
         [self submitRestoredTransaction:transaction];
+        
+    } else if (product && product.autorenewable) {
+        
+        // Uncomment to clear out all transactions - helpful for debugging
+        // [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        // return;//don't do anything else
+        
+        
+        // if we did not start the restore process, treat this as a renewal
+        // and send it through the purchase process
+        UALOG(@"Renewing Subscription Product ID: %@", productIdentifier);
+        [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+        
     } else {
+        UALOG(@"Skipping transaction - unknown product or not an autorenewable.");
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     }
 
@@ -264,13 +282,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     writer.humanReadable = NO;
     
-    NSMutableDictionary* data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  product_id,
                                  @"product_id",
                                  receipt,
                                  @"transaction_receipt",
                                  nil];
-    NSString* body = [writer stringWithObject:data];
+    NSString *body = [writer stringWithObject:data];
     [data release];
     [writer release];
     
@@ -405,6 +423,25 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [networkQueue setDelegate:self];
     [networkQueue setQueueDidFinishSelector:@selector(autorenewableRestoreRequestsCompleted)];
     [networkQueue setMaxConcurrentOperationCount:1];
+}
+
+- (void)logTransaction:(SKPaymentTransaction *)transaction {
+    
+    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+    UALOG(@"Transaction ID: %@", transaction.transactionIdentifier);
+    UALOG(@"Transaction Date: %@", [dateFormatter stringFromDate:transaction.transactionDate]);
+
+    if (transaction.originalTransaction) {
+        UALOG(@"Original Transaction ID: %@", transaction.originalTransaction.transactionIdentifier);
+        UALOG(@"Original Transaction Date: %@", [dateFormatter stringFromDate:transaction.originalTransaction.transactionDate]);
+    }
+    
 }
 
 @end
