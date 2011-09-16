@@ -374,13 +374,13 @@
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     writer.humanReadable = NO;
     
-    NSMutableDictionary* data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  product_id,
                                  @"product_id",
                                  receipt,
                                  @"transaction_receipt",
                                  nil];
-    NSString* body = [writer stringWithObject:data];
+    NSString *body = [writer stringWithObject:data];
     [data release];
     [writer release];
 
@@ -397,14 +397,22 @@
     UASubscriptionProduct *product =
         [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
     
+    BOOL isRenewal = (transaction.transactionState == SKPaymentTransactionStateRestored);
+    
     switch (request.responseStatusCode) {
         case 200:
         {
+            
             //close the transaction
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
             //notify the observers
-            [[UASubscriptionManager shared] purchaseProductFinished:product];
+            if (isRenewal) {
+                UALOG(@"Notifying renewal observers");
+                [[UASubscriptionManager shared] notifyObservers:@selector(subscriptionProductRenewed:) withObject:product];
+            } else {
+                [[UASubscriptionManager shared] purchaseProductFinished:product];
+            }
             
             // Reload purchased contents and info. No need to reload products
             [self loadPurchases];
@@ -425,8 +433,12 @@
             // close the transaction
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
-            // notify the observers
-            [[UASubscriptionManager shared] purchaseProductFinished:product];
+            //notify the observers
+            if (isRenewal) {
+                [[UASubscriptionManager shared] notifyObservers:@selector(subscriptionProductRenewed:) withObject:product];
+            } else {
+                [[UASubscriptionManager shared] purchaseProductFinished:product];
+            }
             
             break;
         }

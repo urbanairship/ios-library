@@ -192,6 +192,10 @@
     }
 }
 
+- (void)subscriptionProductRenewed:(UASubscriptionProduct *)product {
+    UALOG(@"Subscription product renewed: %@", product.title);
+}
+
 - (void)restoreAutorenewablesFinished:(NSArray *)productsRestored {
     UALOG(@"Autorenewable restore finished. %d products restored.",[productsRestored count]);
 }
