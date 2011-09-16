@@ -56,7 +56,6 @@
 		1854B67F12C1B53E0048CD83 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09611C4D50B009F6B9C /* UIKit.framework */; };
 		1854B68012C1B53F0048CD83 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */; };
 		1854B68112C1B5400048CD83 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */; };
-		1854B68212C1B5400048CD83 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */; };
 		1854B68312C1B5410048CD83 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		1854B68412C1B5420048CD83 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		1854B68512C1B5430048CD83 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
@@ -139,7 +138,6 @@
 		B6C009941279869500E5A656 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		B6C009951279869500E5A656 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		B6C009961279869500E5A656 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
-		B6C009971279869500E5A656 /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */; };
 		B6C009981279869500E5A656 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */; };
 		B6C009991279869500E5A656 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */; };
 		B6C0099A1279869500E5A656 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09611C4D50B009F6B9C /* UIKit.framework */; };
@@ -305,7 +303,6 @@
 		63B2D8C012A37495007A0AA2 /* StoreFrontTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreFrontTests.m; sourceTree = "<group>"; };
 		63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -344,7 +341,6 @@
 				1854B67F12C1B53E0048CD83 /* UIKit.framework in Frameworks */,
 				1854B68012C1B53F0048CD83 /* SystemConfiguration.framework in Frameworks */,
 				1854B68112C1B5400048CD83 /* MobileCoreServices.framework in Frameworks */,
-				1854B68212C1B5400048CD83 /* libz.1.2.3.dylib in Frameworks */,
 				1854B68312C1B5410048CD83 /* CoreGraphics.framework in Frameworks */,
 				1854B68412C1B5420048CD83 /* CFNetwork.framework in Frameworks */,
 				1854B68512C1B5430048CD83 /* Foundation.framework in Frameworks */,
@@ -381,7 +377,6 @@
 				B6C009941279869500E5A656 /* CFNetwork.framework in Frameworks */,
 				B6C009951279869500E5A656 /* CoreGraphics.framework in Frameworks */,
 				B6C009961279869500E5A656 /* Foundation.framework in Frameworks */,
-				B6C009971279869500E5A656 /* libz.1.2.3.dylib in Frameworks */,
 				B6C009981279869500E5A656 /* MobileCoreServices.framework in Frameworks */,
 				B6C009991279869500E5A656 /* SystemConfiguration.framework in Frameworks */,
 				B6C0099A1279869500E5A656 /* UIKit.framework in Frameworks */,
@@ -691,7 +686,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				1FF54B9F13BE6DCF00F8E5A1 /* libz.dylib */,
 				1813F04A1279623C009DEB29 /* AirshipLib.xcodeproj */,
 				1813EE451279620E009DEB29 /* Airship */,
 				1827ED2012364571004001E2 /* Classes */,
@@ -742,12 +736,12 @@
 				9A50FAE80FCA81810007E1BE /* CFNetwork.framework */,
 				9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */,
 				9A50FAEE0FCA81A40007E1BE /* Foundation.framework */,
-				9A50FAEC0FCA819A0007E1BE /* libz.1.2.3.dylib */,
 				63F3544C11B50A7C00A02182 /* MobileCoreServices.framework */,
 				9AFD0458109FB58800A8D440 /* SystemConfiguration.framework */,
 				638EA09611C4D50B009F6B9C /* UIKit.framework */,
 				638EA09911C4D515009F6B9C /* StoreKit.framework */,
 				B6C009A71279871D00E5A656 /* libsqlite3.dylib */,
+				1FF54B9F13BE6DCF00F8E5A1 /* libz.dylib */,
 				B638661E128813390020C00F /* Security.framework */,
 				1872B6A512BA133C003CC5AC /* CoreTelephony.framework */,
 				1854B68612C1B5550048CD83 /* QuartzCore.framework */,
@@ -859,7 +853,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirship-1.0.5.a";
-			path = "libUAirship-1.0.6.a";
+			path = "libUAirship-1.0.7.a";
 			remoteRef = 1813F04E1279623C009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
