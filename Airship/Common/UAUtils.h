@@ -42,6 +42,8 @@
 
 + (NSString *)getReadableFileSizeFromBytes:(double)bytes;
 
++ (NSString *)urlEncodedStringWithString:(NSString*)string encoding:(NSStringEncoding)encoding;
+
 //HTTP Request Helpers
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)selector;

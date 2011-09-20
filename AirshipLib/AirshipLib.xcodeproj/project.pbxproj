@@ -27,6 +27,22 @@
 		633FD57C123496FE002E0F85 /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1A4A122DB77000522B4E /* UAirship.h */; };
 		633FD57D123496FE002E0F85 /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = D9FD1A4B122DB77000522B4E /* UAirship.m */; };
 		63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
+		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
+		7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679071429288D00B877DB /* SenTestingKit.framework */; };
+		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
+		7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		7BB6790B1429288D00B877DB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846BF1300B92200A40CAC /* CoreGraphics.framework */; };
+		7BB679111429288D00B877DB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7BB6790F1429288D00B877DB /* InfoPlist.strings */; };
+		7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */ = {isa = PBXBuildFile; fileRef = 7BB679121429288D00B877DB /* UAUtilsTest.h */; };
+		7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BB679141429288D00B877DB /* UAUtilsTest.m */; };
+		7BB6792414292D1800B877DB /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */; };
+		7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793C14292FF800B877DB /* CFNetwork.framework */; };
+		7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793D14292FF800B877DB /* CoreTelephony.framework */; };
+		7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679421429301E00B877DB /* libsqlite3.dylib */; };
+		7BB679451429302C00B877DB /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679441429302C00B877DB /* libz.dylib */; };
+		7BB679471429304600B877DB /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679461429304600B877DB /* StoreKit.framework */; };
+		7BB679491429307B00B877DB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679481429307B00B877DB /* SystemConfiguration.framework */; };
+		7BB6794B142930CC00B877DB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6794A142930CC00B877DB /* MobileCoreServices.framework */; };
 		B631183F1250925A0014F697 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; };
 		B63118401250925A0014F697 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
@@ -274,6 +290,21 @@
 		6331464F122F9A7C008F2D48 /* SubscriptionLib.xcodeproj */ = {isa = PBXFileReference; explicitFileType = "wrapper.pb-project"; name = SubscriptionLib.xcodeproj; path = ../SubscriptionLib/SubscriptionLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		7B909D421429363300D0AB36 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		7BB679061429288D00B877DB /* AirshipLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BB679071429288D00B877DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipLogicTests-Info.plist"; sourceTree = "<group>"; };
+		7BB679101429288D00B877DB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		7BB679121429288D00B877DB /* UAUtilsTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAUtilsTest.h; sourceTree = "<group>"; };
+		7BB679141429288D00B877DB /* UAUtilsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAUtilsTest.m; sourceTree = "<group>"; };
+		7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipLogicTests-Prefix.pch"; sourceTree = "<group>"; };
+		7BB6793C14292FF800B877DB /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		7BB6793D14292FF800B877DB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		7BB679421429301E00B877DB /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		7BB679441429302C00B877DB /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		7BB679461429304600B877DB /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		7BB679481429307B00B877DB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		7BB6794A142930CC00B877DB /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B631183B1250925A0014F697 /* UA_Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_Reachability.h; sourceTree = "<group>"; };
 		B631183C1250925A0014F697 /* UA_Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Reachability.m; sourceTree = "<group>"; };
@@ -318,7 +349,7 @@
 		B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASINetworkQueue.h; sourceTree = "<group>"; };
 		B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASINetworkQueue.m; sourceTree = "<group>"; };
 		B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIProgressDelegate.h; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.0.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libUAirship-1.0.5.a"; path = "libUAirship-1.0.7.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.0.7.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -377,6 +408,26 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7BB679021429288D00B877DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
+				7BB6794B142930CC00B877DB /* MobileCoreServices.framework in Frameworks */,
+				7BB679491429307B00B877DB /* SystemConfiguration.framework in Frameworks */,
+				7BB679471429304600B877DB /* StoreKit.framework in Frameworks */,
+				7BB679451429302C00B877DB /* libz.dylib in Frameworks */,
+				7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */,
+				7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */,
+				7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */,
+				7BB6792414292D1800B877DB /* libUAirship-1.0.7.a in Frameworks */,
+				7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */,
+				7BB679091429288D00B877DB /* UIKit.framework in Frameworks */,
+				7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */,
+				7BB6790B1429288D00B877DB /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC07C0554694100DB518D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -423,8 +474,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.0.5.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */,
 				D5A4B9411300A8F200002F71 /* AirshipTest.app */,
+				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -438,6 +490,7 @@
 				6331464F122F9A7C008F2D48 /* SubscriptionLib.xcodeproj */,
 				D9FD1A13122DB77000522B4E /* Airship */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
+				7BB6790C1429288D00B877DB /* AirshipLogicTests */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -459,6 +512,7 @@
 				63CB55371247148400DF2EBC /* StoreKit.framework */,
 				1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */,
 				D5A4B8DE13008BFE00002F71 /* GHUnitIOS.framework */,
+				7BB679071429288D00B877DB /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -496,6 +550,42 @@
 				6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
+			isa = PBXGroup;
+			children = (
+				7BB679121429288D00B877DB /* UAUtilsTest.h */,
+				7BB679141429288D00B877DB /* UAUtilsTest.m */,
+				7BB679661429357100B877DB /* Frameworks */,
+				7BB6790D1429288D00B877DB /* Supporting Files */,
+			);
+			path = AirshipLogicTests;
+			sourceTree = "<group>";
+		};
+		7BB6790D1429288D00B877DB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */,
+				7BB6790F1429288D00B877DB /* InfoPlist.strings */,
+				7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		7BB679661429357100B877DB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7B909D421429363300D0AB36 /* Security.framework */,
+				7BB6794A142930CC00B877DB /* MobileCoreServices.framework */,
+				7BB679481429307B00B877DB /* SystemConfiguration.framework */,
+				7BB679461429304600B877DB /* StoreKit.framework */,
+				7BB679441429302C00B877DB /* libz.dylib */,
+				7BB679421429301E00B877DB /* libsqlite3.dylib */,
+				7BB6793C14292FF800B877DB /* CFNetwork.framework */,
+				7BB6793D14292FF800B877DB /* CoreTelephony.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		B6DFC07112505131004E6D93 /* UA_fmdb */ = {
@@ -754,6 +844,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		7BB679051429288D00B877DB /* AirshipLogicTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7BB679171429288D00B877DB /* Build configuration list for PBXNativeTarget "AirshipLogicTests" */;
+			buildPhases = (
+				7BB679011429288D00B877DB /* Sources */,
+				7BB679021429288D00B877DB /* Frameworks */,
+				7BB679031429288D00B877DB /* Resources */,
+				7BB679041429288D00B877DB /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AirshipLogicTests;
+			productName = AirshipLogicTests;
+			productReference = 7BB679061429288D00B877DB /* AirshipLogicTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 		D2AAC07D0554694100DB518D /* AirshipLib */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "AirshipLib" */;
@@ -773,7 +881,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.0.5.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		D5A4B9401300A8F200002F71 /* AirshipTest */ = {
@@ -816,6 +924,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* AirshipLib */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -842,6 +951,7 @@
 			targets = (
 				D2AAC07D0554694100DB518D /* AirshipLib */,
 				D5A4B9401300A8F200002F71 /* AirshipTest */,
+				7BB679051429288D00B877DB /* AirshipLogicTests */,
 			);
 		};
 /* End PBXProject section */
@@ -878,6 +988,15 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7BB679031429288D00B877DB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BB679111429288D00B877DB /* InfoPlist.strings in Resources */,
+				7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D5A4B93D1300A8F200002F71 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -888,6 +1007,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7BB679041429288D00B877DB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
 		D905032912398D5A00D60744 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -904,6 +1036,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7BB679011429288D00B877DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D2AAC07B0554694100DB518D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1051,6 +1191,17 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		7BB6790F1429288D00B877DB /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7BB679101429288D00B877DB /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		1DEB921F08733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1172,6 +1323,59 @@
 			};
 			name = Release;
 		};
+		7BB679181429288D00B877DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "";
+				"WARNING_CFLAGS[arch=*]" = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		7BB679191429288D00B877DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = "";
+				"WARNING_CFLAGS[arch=*]" = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		D5A4B9441300A8F200002F71 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1249,6 +1453,15 @@
 			buildConfigurations = (
 				1DEB922308733DC00010E9CD /* Debug */,
 				1DEB922408733DC00010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7BB679171429288D00B877DB /* Build configuration list for PBXNativeTarget "AirshipLogicTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7BB679181429288D00B877DB /* Debug */,
+				7BB679191429288D00B877DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

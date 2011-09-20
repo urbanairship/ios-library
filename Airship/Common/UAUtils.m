@@ -110,6 +110,21 @@
     return([NSString stringWithFormat:@"%1.2f TB",bytes]);
 }
 
++ (NSString*)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding
+{
+    /*
+     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
+     */
+
+    CFStringRef result = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, (CFStringRef)@"!*'\"();:@&=+$,/?%#[] ", CFStringConvertNSStringEncodingToEncoding(encoding));
+    
+    /* autoreleased string */
+    NSString* value = [NSString stringWithString:(NSString*)result];
+    CFRelease(result);
+    
+    return value;
+}
+
 #pragma mark -
 #pragma mark ASIHTTPRequest helper methods
 
