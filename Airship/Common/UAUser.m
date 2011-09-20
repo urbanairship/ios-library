@@ -509,10 +509,12 @@ static UAUser *_defaultUser;
                 
                 if (requestDict != nil && [requestDict objectForKey:@"device_tokens"] != nil) {
                     
-                    //created a user w/ a device token
+                    // created a user w/ a device token
                     UALOG(@"Created a user with a device token.");
                     
                     NSArray *deviceTokens = [requestDict objectForKey:@"device_tokens"];
+                    
+                    // get the first item from the request - we will only ever send 1 at most
                     NSString *deviceToken = [deviceTokens objectAtIndex:0];
                     
                     if ([[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
@@ -1008,12 +1010,12 @@ static UAUser *_defaultUser;
     
     UALOG(@"Updating device token");
     
-    if ([UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
-		UALOG(@"Skipping device token update: already up to date, or user is being updated.");
+    NSString *token = [[UAirship shared]deviceToken];
+    
+    if (!token || [UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
+		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
-    
-    NSString *token = [[UAirship shared]deviceToken];
     
     //I sure wish there were an easier way to construct dictionaries
     NSDictionary *dict = [NSDictionary dictionaryWithObject:
@@ -1022,8 +1024,6 @@ static UAUser *_defaultUser;
     
     [self updateUserWithDelegate:self dict:dict finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
     
-    //old (PUT) method
-    //[self updateUserWithDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
 }
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
