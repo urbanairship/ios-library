@@ -259,13 +259,9 @@
     cancelItem.enabled = NO;
 
     if (sender == moveItem) {
-        if ([[UAInbox shared].messageList batchUpdate:messageIDs option:UABatchReadMessages] != YES) {
-            UALOG(@"Server is busy, please try later.");
-        }
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:messageIDs];
     } else {
-        if ([[UAInbox shared].messageList batchUpdate:messageIDs option:UABatchDeleteMessages] != YES) {
-            UALOG(@"Server is busy, please try later.");
-        }
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:messageIDs];
     }
 
     deleteItem.selectedSegmentIndex = UISegmentedControlNoSegment;
