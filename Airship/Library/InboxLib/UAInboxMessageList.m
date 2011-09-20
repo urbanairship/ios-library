@@ -195,7 +195,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
-- (void)batchUpdate:(NSIndexSet *)messageIndexSet option:(UABatchUpdateCommand)option {
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
 
     NSURL *requestUrl = nil;
     NSDictionary *data = nil;
@@ -203,7 +203,7 @@ static UAInboxMessageList *_messageList = nil;
     NSArray *updateMessageURLs = [updateMessageArray valueForKeyPath:@"messageURL.absoluteString"];
     UALOG(@"%@", updateMessageURLs);
 
-    if (option == UABatchDeleteMessages) {
+    if (command == UABatchDeleteMessages) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                [UAirship shared].server,
                                @"/api/user/",
@@ -214,7 +214,7 @@ static UAInboxMessageList *_messageList = nil;
 
         data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"delete"];
 
-    } else if (option == UABatchReadMessages) {
+    } else if (command == UABatchReadMessages) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                [UAirship shared].server,
                                @"/api/user/",
@@ -225,7 +225,7 @@ static UAInboxMessageList *_messageList = nil;
 
         data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"mark_as_read"];
     } else {
-        UALOG("option=%d is invalid.", option);
+        UALOG("command=%d is invalid.", command);
         return;
     }
     self.isBatchUpdating = YES;
@@ -242,7 +242,7 @@ static UAInboxMessageList *_messageList = nil;
                                                         fail:@selector(batchUpdateFailed:)];
     
     request.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [NSNumber numberWithInt:option], @"option",
+                            [NSNumber numberWithInt:command], @"command",
                             updateMessageArray, @"messages",
                             nil];
     
@@ -256,7 +256,7 @@ static UAInboxMessageList *_messageList = nil;
     
     self.isBatchUpdating = NO;
 
-    id option = [request.userInfo objectForKey:@"option"];
+    id option = [request.userInfo objectForKey:@"command"];
     
     NSArray *updateMessageArray = [request.userInfo objectForKey:@"messages"];
 
@@ -294,7 +294,7 @@ static UAInboxMessageList *_messageList = nil;
 
     [self requestWentWrong:request];
     
-    id option = [request.userInfo objectForKey:@"option"];
+    id option = [request.userInfo objectForKey:@"command"];
     if ([option intValue] == UABatchDeleteMessages) {
         [self notifyObservers:@selector(batchDeleteFailed)];
     } else if ([option intValue] == UABatchReadMessages) {
