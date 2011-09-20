@@ -34,13 +34,6 @@ typedef enum {
     UABatchDeleteMessages,
 } UABatchUpdateCommand;
 
-typedef enum {
-    UABatchReadMessagesSuccess,
-    UABatchDeleteMessagesSuccess,
-    UABatchReadMessagesFailed,
-    UABatchDeleteMessagesFailed,
-} UABatchUpdateResult;
-
 @interface UAInboxMessageList : UAObservable <UAUserObserver> {
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
