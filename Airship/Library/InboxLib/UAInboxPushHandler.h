@@ -54,11 +54,36 @@
 	BOOL hasLaunchMessage;
 }
 
+/**
+ * Handle an incoming in-app notification.  This should typically be called 
+ * from the UIApplicationDelegate.
+ * @param userInfo the notification as an NSDictionary
+ */
 + (void)handleNotification:(NSDictionary*)userInfo;
+
+/**
+ * Handle the launch options passed in as the app starts, while will include
+ * a noficiation if the app was launched in response to viewing one.  This should
+ * typically be called from the UIApplicationDelegate.
+ * @param options The launch options asn an NSDictionary.
+ */
 + (void)handleLaunchOptions:(NSDictionary*)options;
 
+/**
+ * The message ID of the most recent rich push as an NSString.
+ */
 @property (nonatomic, retain) NSString *viewingMessageID;
+
+/**
+ * YES if the most recent rich push launched the app, NO otherwise.
+ */
 @property (nonatomic, assign) BOOL hasLaunchMessage;
+
+/**
+ * The delegate that should be notified when an incoming push is handled,
+ * as an object conforming to the UAInboxPushHandlerDelegate protocol.
+ * NOTE: The delegate is not retained.
+ */
 @property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate;
 
 @end
