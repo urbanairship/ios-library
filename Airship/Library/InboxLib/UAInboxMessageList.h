@@ -53,8 +53,7 @@ typedef enum {
 + (void)land;
 
 - (void)retrieveMessageList;
-- (void)batchUpdate:(NSIndexSet *)messageIDs option:(UABatchUpdateCommand)option;
-
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet;
 - (int)messageCount;
 - (UAInboxMessage *)messageForID:(NSString *)mid;
 - (UAInboxMessage *)messageForBodyURL:(NSURL *)url;
