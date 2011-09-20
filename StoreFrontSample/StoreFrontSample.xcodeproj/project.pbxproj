@@ -46,7 +46,6 @@
 		184E3F77129E4CB6004465C8 /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F76129E4CB6004465C8 /* libUAirship-1.0.7.a */; };
 		1F79713412DE3D2600D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79713312DE3D2600D4937F /* AirshipConfig.plist */; };
 		1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EC613FB33BB00DBC45F /* libz.dylib */; };
-		1FD2EFCA1423E8A000692417 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD2EFC91423E8A000692417 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		636CB320128D0CB300481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
 		636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B6C009A71279871D00E5A656 /* libsqlite3.dylib */; };
 		638EA09711C4D50B009F6B9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638EA09611C4D50B009F6B9C /* UIKit.framework */; };
@@ -117,7 +116,6 @@
 		1D6058910D05DD3D006BFB54 /* StoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F79713312DE3D2600D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FD26EC613FB33BB00DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		1FD2EFC91423E8A000692417 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* StoreFrontSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFrontSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
 		638EA09611C4D50B009F6B9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		638EA09911C4D515009F6B9C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -143,7 +141,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FD2EFCA1423E8A000692417 /* libSystem.dylib in Frameworks */,
 				1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
@@ -394,7 +391,6 @@
 				638EA09911C4D515009F6B9C /* StoreKit.framework */,
 				1FD26EC613FB33BB00DBC45F /* libz.dylib */,
 				B6C009A71279871D00E5A656 /* libsqlite3.dylib */,
-				1FD2EFC91423E8A000692417 /* libSystem.dylib */,
 				B638661E128813390020C00F /* Security.framework */,
 				E9CB327C12B85C44002E39EA /* CoreTelephony.framework */,
 			);
@@ -535,6 +531,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -550,6 +547,7 @@
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = StoreFrontSample;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -562,6 +560,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -574,6 +573,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = StoreFrontSample;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -585,6 +585,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -594,12 +595,9 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-ObjC";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -613,6 +611,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -622,12 +621,9 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-ObjC";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

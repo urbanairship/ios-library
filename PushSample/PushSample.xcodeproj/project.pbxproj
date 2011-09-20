@@ -566,14 +566,7 @@
 					"\"$(SRCROOT)/../Airship\"",
 				);
 				OTHER_CFLAGS = "-DUADEBUG";
-				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
-					"-ObjC",
-					"-all_load",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				SDKROOT = iphoneos;
 			};
@@ -594,14 +587,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship\"",
 				);
-				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
-					"-ObjC",
-					"-all_load",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -613,6 +599,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -621,13 +608,9 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -641,6 +624,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -649,13 +633,9 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-all_load",
-					"-lstdc++",
-					"-cclib",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

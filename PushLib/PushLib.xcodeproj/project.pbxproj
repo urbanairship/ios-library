@@ -184,6 +184,7 @@
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
 				PRODUCT_NAME = "Push-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -198,6 +199,7 @@
 				GCC_PREFIX_HEADER = PushLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = "Push-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
