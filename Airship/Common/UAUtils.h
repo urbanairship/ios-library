@@ -47,6 +47,10 @@
 /// @name HTTP Authenticated Request Helpers
 ///---------------------------------------------------------------------------------------
 
+//HTTP Request Helpers
+
++ (NSString *)urlEncodedStringWithString:(NSString*)string encoding:(NSStringEncoding)encoding;
+
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)selector;
 
