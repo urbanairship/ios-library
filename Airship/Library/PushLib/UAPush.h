@@ -60,7 +60,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 - (void)displayNotificationAlert:(NSString *)alertMessage;
 - (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict;
 - (void)playNotificationSound:(NSString *)sound;
-- (void)handleCustomPayload:(NSDictionary *)notification :(NSDictionary *)customPayload;
+- (void)handleNotification:(NSDictionary *)notification withCustomPayload:(NSDictionary *)customPayload;
 - (void)handleBadgeUpdate:(int)badgeNumber;
 - (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end

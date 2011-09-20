@@ -199,7 +199,8 @@ static Class _uiClass;
         [self addTagToDeviceFailed:request];
     } else {
         UALOG(@"Tag added successfully: %d - %@", request.responseStatusCode, request.url);
-        NSString *tag = [self getTagFromUrl:request.url];
+        NSDictionary* userInfo = request.userInfo;
+        NSString *tag = [userInfo valueForKey:@"tag"];
         if (![tags containsObject:tag]) {
             [tags addObject:tag];
         }
@@ -220,7 +221,8 @@ static Class _uiClass;
         case 204://just removed
         case 404://already removed
             UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
-            NSString *tag = [self getTagFromUrl:request.url];
+            NSDictionary* userInfo = request.userInfo;
+            NSString *tag = [userInfo valueForKey:@"tag"];
             [tags removeObject:tag];
             [self saveDefaults];
             [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
@@ -312,13 +314,19 @@ static Class _uiClass;
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
                            tag];
-
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSString *encodedString = [UAUtils urlEncodedStringWithString:urlString encoding:NSUTF8StringEncoding];
+    
+    NSURL *url = [NSURL URLWithString:encodedString];
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
                                        method:@"PUT"
                                      delegate:self
                                        finish:@selector(addTagToDeviceSucceed:)
                                          fail:@selector(addTagToDeviceFailed:)];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:tag forKey:@"tag"];
+    request.userInfo = userInfo;
+    
     [request startAsynchronous];
 }
 
@@ -327,13 +335,18 @@ static Class _uiClass;
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
                            tag];
+    NSString *encodedString = [UAUtils urlEncodedStringWithString:urlString encoding:NSUTF8StringEncoding];
 
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSURL *url = [NSURL URLWithString:encodedString];
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
                                        method:@"DELETE"
                                      delegate:self
                                        finish:@selector(removeTagFromDeviceSucceed:)
                                          fail:@selector(removeTagFromDeviceFailed:)];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setValue:tag forKey:@"tag"];
+    request.userInfo = userInfo;
 
     [request startAsynchronous];
 }
@@ -433,7 +446,7 @@ static Class _uiClass;
 	// Note: There is come convenience built into this check, if for some reason there's a key collision
 	//	and we're stripping yours above, it's safe to remove this conditional
 	if([[customPayload allKeys] count] > 0) {
-		[delegate handleCustomPayload:notification :customPayload];
+		[delegate handleNotification:notification withCustomPayload:customPayload];
     }
 }
 
