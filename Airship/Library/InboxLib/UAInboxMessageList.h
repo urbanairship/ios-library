@@ -29,11 +29,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAInboxMessage;
 
+/**
+ * An emum expressing the two possible batch update commands,
+ * delete and mark-as-read.
+ */
 typedef enum {
     UABatchReadMessages,
     UABatchDeleteMessages,
 } UABatchUpdateCommand;
 
+/**
+ * The primary interface to the contents of the inbox.
+ * Use this class to asychronously retrieve messges from the server,
+ * delete or mark messages as read, retrieve individual messages from the
+ * list.
+ */
 @interface UAInboxMessageList : UAObservable <UAUserObserver> {
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
@@ -42,20 +52,77 @@ typedef enum {
     BOOL isBatchUpdating;
 }
 
+/**
+ * The shared singleton accessor.
+ */
 + (UAInboxMessageList *)shared;
+
+/**
+ * Teardown method.  This method is called as appropriate by the library,
+ * and thus you will not oridinarlly need to call it directly.
+ */
 + (void)land;
 
+/**
+ * Fetch new messages from the server.  This will result in a
+ * callback to observers at [UAInboxMessageListObserver messageListWillLoad] when loading starts, 
+ * and [UAInboxMessageListObserver messageListLoaded] upon completion.
+ */
 - (void)retrieveMessageList;
+
+/**
+ * Update the message list by marking messages as read, or deleting them.
+ * This eventually will result in an asyncrhonous observer callback to
+ * [UAInboxMessageListObserver batchMarkAsReadFinished],
+ * [UAInboxMessageListObserver batchMarkAsReadFailed],
+ * [UAInboxMessageListObserver batchDeleteFinished], or
+ * [UAInboxMessageListObserver batchDeleteFailed].
+ * @param command the UABatchUpdateCommand to perform.
+ * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
+ */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet;
+
+/**
+ * Returns the number of messages currently in the inbox.
+ * @return The message count as an integer.
+ */
 - (int)messageCount;
+
+/**
+ * Returns the message associated with a particular ID.
+ * @param mid The message ID as an NSString.
+ * @return The associated UAInboxMessage object.
+ */
 - (UAInboxMessage *)messageForID:(NSString *)mid;
-- (UAInboxMessage *)messageForBodyURL:(NSURL *)url;
+
+/**
+ * Returns the message associated with a particular message list index.
+ * @param index The message list index as an integer.
+ * @return The associated UAInboxMessage object.
+ */
 - (UAInboxMessage*)messageAtIndex:(int)index;
+
+/**
+ * Returns the index of a particular message within the message list.
+ * @param message The UAInboxMessage object of interest.
+ * @return The index of the message as an integer.
+ */
 - (int)indexOfMessage:(UAInboxMessage *)message;
 
+/**
+ * The list of messages on disk as an NSMutableArray.
+ */
 @property(nonatomic, retain) NSMutableArray *messages;
+
+/**
+ * The number of messages that are currently unread as an integer.
+ */
 @property(assign) int unreadCount;
-@property(assign) int isRetrieving;
+
+/**
+ * YES if a batch update is currently being performed on the message list,
+ * NO otherwise.
+ */
 @property(assign) BOOL isBatchUpdating;
 
 @end

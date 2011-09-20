@@ -47,6 +47,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)batchUpdateFinished:(UA_ASIHTTPRequest *)request;
 - (void)batchUpdateFailed:(UA_ASIHTTPRequest *)request;
+
+@property(assign) int isRetrieving;
+
 @end
 
 @implementation UAInboxMessageList
@@ -316,16 +319,6 @@ static UAInboxMessageList *_messageList = nil;
 - (UAInboxMessage *)messageForID:(NSString *)mid {
     for (UAInboxMessage *msg in messages) {
         if ([msg.messageID isEqualToString:mid]) {
-            return msg;
-        }
-    }
-    return nil;
-}
-
-
-- (UAInboxMessage *)messageForBodyURL:(NSURL *)url {
-    for (UAInboxMessage *msg in messages) {
-        if ([msg.messageBodyURL isEqual:url]) {
             return msg;
         }
     }
