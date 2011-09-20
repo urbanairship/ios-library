@@ -53,10 +53,7 @@
     [UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
-        
-    // Inbox uses SplitViewController on iPad target, but you could customize to
-    // use NavigationController on iPad device by uncommenting below line.
-    //UAInboxUI.runiPhoneTargetOniPad = YES;
+    //[UAInboxNavUI setRuniPhoneTargetOniPad:YES]; //set this to use a navigation controller, like on an iPhone
     
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];

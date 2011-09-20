@@ -225,15 +225,4 @@
     return authString;
 }
 
-+ (BOOL)isiPad {
-    
-    #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 30200
-        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-            return YES;
-        }
-    #endif
-    
-    return NO;
-}
-
 @end

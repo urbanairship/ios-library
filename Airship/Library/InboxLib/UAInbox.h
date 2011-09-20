@@ -168,9 +168,6 @@ SINGLETON_INTERFACE(UAInbox);
  */
 + (void)land;
 
-// do away with this - it should be dictated by idiom
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value;
-
 @property (nonatomic, assign) UAInboxMessageList *messageList;
 @property (nonatomic, retain) UAInboxPushHandler *pushHandler;
 

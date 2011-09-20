@@ -66,9 +66,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
         self.localizationBundle = [NSBundle bundleWithPath:path];
 
-        NSString *deviceType = [UIDevice currentDevice].model;
-
-        if ([deviceType hasPrefix:@"iPad"] && !runiPhoneTargetOniPad) {
+        if ((UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) && !runiPhoneTargetOniPad) {
             isiPad = YES;
             UAStoreFrontSplitViewController *svc = [[UAStoreFrontSplitViewController alloc] init];
             productListViewController = [[svc productListViewController] retain];

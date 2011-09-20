@@ -56,7 +56,6 @@ SINGLETON_INTERFACE(UAInboxUI);
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
 - (void)newMessageArrived:(NSDictionary *)message;
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value;
 + (void)land;
 + (void)loadLaunchMessage;
 
