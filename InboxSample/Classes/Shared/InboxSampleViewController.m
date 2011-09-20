@@ -46,7 +46,7 @@
     
     NSString *popoverOrNav;
     
-    if ([UAUtils isiPad]) {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         popoverOrNav = @"Popover";
     }
     

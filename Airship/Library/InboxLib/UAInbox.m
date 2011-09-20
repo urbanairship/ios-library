@@ -75,10 +75,6 @@ static Class _uiClass;
     _uiClass = customUIClass;
 }
 
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value {
-	[[[UAInbox shared] uiClass] setRuniPhoneTargetOniPad:value];
-}
-
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 

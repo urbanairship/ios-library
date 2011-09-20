@@ -42,12 +42,6 @@
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
-static BOOL runiPhoneTargetOniPad = NO;
-
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value {
-    runiPhoneTargetOniPad = value;
-}
-
 - (void)dealloc {
     RELEASE_SAFELY(localizationBundle);
 	RELEASE_SAFELY(alertHandler);
