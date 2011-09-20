@@ -54,7 +54,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize messageSent;
 @synthesize title;
 @synthesize extra;
-@synthesize inbox;
+@synthesize inbox; //TODO: this could be removed and replaced with a singleton reference
 
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
     if (self = [super init]) {

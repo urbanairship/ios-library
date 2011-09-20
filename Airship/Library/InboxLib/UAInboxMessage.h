@@ -120,8 +120,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The parent inbox.
  * 
  * Note that this object is not retained by the message.
- * TODO: this could be removed and replaced with a singleton reference
  */
-@property (assign) UAInboxMessageList *inbox;
+
+@property (assign) UAInboxMessageList *inbox; 
 
 @end
