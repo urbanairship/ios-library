@@ -44,6 +44,15 @@
 - (void)cancelButtonPressed:(id)sender;
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
+@property (nonatomic, retain) UITableView *messageTable;
+
+@property (nonatomic, retain) UIView *loadingView;
+@property (nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, retain) UILabel *loadingLabel;
+
+@property (nonatomic, retain) UITabBarItem *tabbarItem;
+@property (nonatomic, retain) UITabBar *tabbar;
+
 @end
 
 @implementation UAInboxMessageListController

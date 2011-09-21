@@ -29,6 +29,10 @@
 #import "UABarButtonSegmentedControl.h"
 #import "UABeveledLoadingIndicator.h"
 
+/**
+ * This class is a reference implementation of a table view controller drawing from the inbox
+ * message list.
+ */
 @interface UAInboxMessageListController : UIViewController <UITableViewDelegate, UITableViewDataSource, UAInboxMessageListObserver> {
     IBOutlet UITableView *messageTable;
     
@@ -53,15 +57,10 @@
     BOOL shouldShowAlerts;
 }
 
-@property (nonatomic, retain) UITableView *messageTable;
-
-@property (nonatomic, retain) UIView *loadingView;
-@property (nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator;
-@property (nonatomic, retain) UILabel *loadingLabel;
-
-@property (nonatomic, retain) UITabBarItem *tabbarItem;
-@property (nonatomic, retain) UITabBar *tabbar;
-
+/**
+ * Set this property to YES if the class should show alert dialogs in erroneous
+ * situations, NO otherwise.  Defaults to YES.
+ */
 @property (nonatomic, assign) BOOL shouldShowAlerts;
 
 @end
