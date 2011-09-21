@@ -32,6 +32,11 @@
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
+/**
+ * This class is the default rich push UI impelementation.  When it is
+ * designated as the [UAInbox uiClass], launching the inbox will cause it
+ * to be displayed in a modal view controller.
+ */
 @interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> {
   @private
     NSBundle *localizationBundle;
@@ -42,12 +47,12 @@
     BOOL isVisible;
 }
 
-@property (nonatomic, retain) NSBundle *localizationBundle;
-@property (nonatomic, retain) UIViewController *rootViewController;
-@property (nonatomic, retain) UIViewController *inboxParentController;
-@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+/**
+ * Set this property to YES if the class should display in-app messages
+ * using UAInboxOverlayController, and NO if it should navigate to the
+ * inbox and display the message as though it had been selected.
+ */
 @property (nonatomic, assign) BOOL useOverlay;
-@property (nonatomic, assign) BOOL isVisible;
 
 SINGLETON_INTERFACE(UAInboxUI);
 

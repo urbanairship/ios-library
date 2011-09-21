@@ -31,6 +31,16 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 
+@interface UAInboxUI (Private)
+
+@property (nonatomic, retain) NSBundle *localizationBundle;
+@property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, retain) UIViewController *inboxParentController;
+@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+@property (nonatomic, assign) BOOL isVisible;
+
+@end
+
 @implementation UAInboxUI
 
 @synthesize localizationBundle;
