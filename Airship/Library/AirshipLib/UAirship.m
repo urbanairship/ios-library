@@ -146,6 +146,10 @@ BOOL logging = false;
             //[UAirship setLogging:YES];
         }
         
+        // strip leading and trailing whitespace
+        configAppKey = [configAppKey stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        configAppSecret = [configAppSecret stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
         //Check for a custom UA server value
         NSString *airshipServer = [config objectForKey:@"AIRSHIP_SERVER"];
         if (airshipServer == nil) {
