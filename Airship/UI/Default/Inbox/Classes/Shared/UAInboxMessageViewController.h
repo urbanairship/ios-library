@@ -26,6 +26,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
 
+
+/**
+ * This class is a reference implementation of a view controller embedding
+ * a UIWebview sourcing content from a rich push message.
+ */
 @interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> {
     UISegmentedControl* messageNav;
     IBOutlet UIWebView *webView;
@@ -38,18 +43,32 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     BOOL shouldShowAlerts;
 }
 
+/**
+ * The UIWebView used to display the message content.
+ */
 @property (nonatomic, retain) UIWebView* webView;
-@property (nonatomic, retain) UIActivityIndicatorView* activity;
-@property (nonatomic, retain) UIView* statusBar;
-@property (nonatomic, retain) UIView* statusBarTitle;
-@property (nonatomic, retain) UISegmentedControl* messageNav;
+
+/**
+ * The UAInboxMessage being displayed.
+ */
 @property (nonatomic, retain) UAInboxMessage* message;
+
+/**
+ * Set this property to YES is the class should show alert dialogs in erroneous
+ * situations, NO otherwise.
+ */
 @property (nonatomic, assign) BOOL shouldShowAlerts;
 
+/**
+ * Load a UAInboxMessage at a particular index in the message list.
+ * @param index The corresponding index in the message list as an integer.
+ */
 - (void)loadMessageAtIndex:(int)index;
-- (void)loadMessageForID:(NSString *)mid;
-- (void)refreshHeader;               // refresh all header
 
-- (void)updateMessageNavButtons;    // Private Method
+/**
+ * Load a UAInboxMessage by message ID.
+ * @param mid The message ID as an NSString.
+ */
+- (void)loadMessageForID:(NSString *)mid;
 
 @end
