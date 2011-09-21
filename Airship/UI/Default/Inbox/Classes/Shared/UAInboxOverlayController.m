@@ -24,21 +24,12 @@
 
 @synthesize webView, message;
 
-/**
- * Convenience constructor.
- * @param UIViewController* viewController the view controller to display the overlay in
- * @param NSString* messageID the message ID of the rich push message to display
- */
+
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
     [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
 }
 
 
-/**
- * Initializer, creates an overlay window and loads the given content within a particular view controller.
- * @param UIViewController* viewController the view controller to display the overlay in
- * @param NSString* messageID the message ID of the rich push message to display
- */
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
     self = [super init];
     if (self) {
@@ -171,10 +162,6 @@
     
 }
 
-/**
- * Afrer the window background is added to the UI the window can animate in
- * and load the UIWebView
- */
 -(void)displayWindow {
     
     if ([self shouldTransition]) {
