@@ -119,6 +119,7 @@ SINGLETON_INTERFACE(UAPush);
 // Change tags for current device token
 - (void)addTagToCurrentDevice:(NSString *)tag;
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
+- (void)getTagsForCurrentDevice;
 
 // Update (replace) token attributes
 - (void)updateAlias:(NSString *)value;
