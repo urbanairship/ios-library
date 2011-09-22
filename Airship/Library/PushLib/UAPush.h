@@ -55,7 +55,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 /**
  * Protocol to be implemented by push notification clients. All methods are optional.
  */
-@protocol UAPushNotificationDelegate
+@protocol UAPushNotificationDelegate<NSObject>
 
 @optional
 
