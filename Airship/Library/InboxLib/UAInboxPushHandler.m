@@ -69,32 +69,28 @@
     } else if ([richPushValue isKindOfClass:[NSString class]]) {
         richPushId = (NSString *)richPushValue;
     }
-    
-    if (richPushId) {
-        [UAInbox shared].pushHandler.viewingMessageID = richPushId;
-    }
 	
     // add push_received event, or handle appropriately
     [[UAirship shared].analytics handleNotification:userInfo];
     
-	BOOL isActive = [self isApplicationActive];
-    
-    //if the app is in the foreground, let the UI class decide how it
-    //wants to respond to the incoming push
-    if (isActive) {
-        [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
-    }
-    
-    //otherwise, load the message list
-    else {
-        //this will result in calling loadLaunchMessage on the UI class
-        //once the request is complete
-        [UAInbox shared].pushHandler.hasLaunchMessage = YES;
+    if (richPushId) {
+        [UAInbox shared].pushHandler.viewingMessageID = richPushId;
+       
+        //if the app is in the foreground, let the UI class decide how it
+        //wants to respond to the incoming push
+        if ([self isApplicationActive]) {
+            [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
+        }
         
-        [[UAInbox shared].messageList retrieveMessageList];
+        //otherwise, load the message list
+        else {
+            //this will result in calling loadLaunchMessage on the UI class
+            //once the request is complete
+            [UAInbox shared].pushHandler.hasLaunchMessage = YES;
+            
+            [[UAInbox shared].messageList retrieveMessageList];
+        }
     }
-    
-    
 }
 
 + (void)handleLaunchOptions:(NSDictionary*)options {
