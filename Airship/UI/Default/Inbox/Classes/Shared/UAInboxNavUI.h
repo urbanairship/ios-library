@@ -79,6 +79,20 @@
  */
 @property (nonatomic, assign) CGSize popoverSize;
 
+@property (nonatomic, retain) UIBarButtonItem *popoverButton;
+
+@property (nonatomic, retain) UIPopoverController *popoverController;
+
+@property (nonatomic, retain) UIViewController *inboxParentController;
+
+@property (nonatomic, retain) UINavigationController *navigationController;
+
+@property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
+@property (nonatomic, retain) UAInboxMessageListController *messageListController;
+
+@property (nonatomic, retain) NSBundle *localizationBundle;
+
+
 SINGLETON_INTERFACE(UAInboxNavUI);
 
 + (void)quitInbox;

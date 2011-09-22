@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define kMessageUp 0
 #define kMessageDown 1
 
-@interface UAInboxMessageViewController (Private)
+@interface UAInboxMessageViewController ()
 
 - (void)refreshHeader;
 - (void)updateMessageNavButtons;

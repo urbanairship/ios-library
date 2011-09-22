@@ -53,6 +53,8 @@
  * inbox and display the message as though it had been selected.
  */
 @property (nonatomic, assign) BOOL useOverlay;
+@property (nonatomic, retain) NSBundle *localizationBundle;
+@property (nonatomic, retain) UIViewController *inboxParentController;
 
 SINGLETON_INTERFACE(UAInboxUI);
 

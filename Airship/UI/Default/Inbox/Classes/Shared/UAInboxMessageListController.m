@@ -33,7 +33,7 @@
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
 
-@interface UAInboxMessageListController(Private)
+@interface UAInboxMessageListController()
 
 - (void)updateNavigationBadge;      // indicate title and unread count
 - (void)refreshBatchUpdateButtons;  // indicate edit mode view
@@ -309,8 +309,7 @@
     [set addIndex:indexPath.row];
     [selectedIndexPathsForEditing removeAllObjects];
     [selectedIndexPathsForEditing addObject:indexPath];
-    [[UAInbox shared].messageList batchUpdate:set
-                                       option:UABatchDeleteMessages];
+    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:set];
     [self refreshBatchUpdateButtons];
 }
 
