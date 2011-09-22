@@ -74,21 +74,30 @@
 @property (nonatomic, assign) BOOL useOverlay;
 
 /**
- * The size of the UIPopoverController's window.
+ * The size of the popover controller's window.
  * Defaults to 320 x 1100.
  */
 @property (nonatomic, assign) CGSize popoverSize;
 
+/**
+ * The button used to launch the popover display.
+ */
 @property (nonatomic, retain) UIBarButtonItem *popoverButton;
 
+/**
+ * The popover controller used for displaying the inbox in the iPad UI idiom.
+ */
 @property (nonatomic, retain) UIPopoverController *popoverController;
 
-@property (nonatomic, retain) UIViewController *inboxParentController;
-
+/**
+ * The navigation controller used for displaying the inbox in the iPhone idiom.
+ */
 @property (nonatomic, retain) UINavigationController *navigationController;
 
-@property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
-@property (nonatomic, retain) UAInboxMessageListController *messageListController;
+/**
+ * The parent view controller the inbox will be launched from.
+ */
+@property (nonatomic, retain) UIViewController *inboxParentController;
 
 @property (nonatomic, retain) NSBundle *localizationBundle;
 

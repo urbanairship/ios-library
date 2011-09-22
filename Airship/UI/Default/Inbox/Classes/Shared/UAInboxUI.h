@@ -53,8 +53,13 @@
  * inbox and display the message as though it had been selected.
  */
 @property (nonatomic, assign) BOOL useOverlay;
-@property (nonatomic, retain) NSBundle *localizationBundle;
+
+/**
+ * The parent view controller the inbox will be launched from.
+ */
 @property (nonatomic, retain) UIViewController *inboxParentController;
+
+@property (nonatomic, retain) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAInboxUI);
 

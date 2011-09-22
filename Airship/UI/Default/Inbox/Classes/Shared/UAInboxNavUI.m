@@ -35,7 +35,8 @@
 
 @property (nonatomic, retain) UIViewController *rootViewController;
 @property (nonatomic, assign) BOOL isVisible;
-
+@property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
+@property (nonatomic, retain) UAInboxMessageListController *messageListController;
 
 @end
 
