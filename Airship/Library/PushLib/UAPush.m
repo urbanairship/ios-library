@@ -255,7 +255,7 @@ static Class _uiClass;
                 [tags addObject:tag];
             }
         }
-
+        [self saveDefaults];
         [self notifyObservers:@selector(getTagsForDeviceSucceed)];
     }
 }
