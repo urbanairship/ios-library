@@ -78,6 +78,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [dateFormatter release];
 
         self.title = [message objectForKey: @"title"];
+        self.extra = [message objectForKey: @"extra"];
     }
 
     return self;
