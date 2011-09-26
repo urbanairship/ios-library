@@ -28,6 +28,8 @@
 
 #import "UAInboxMessage.h"
 
+#import "UA_SBJSON.h"
+
 @implementation UAInboxDBManager
 
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
@@ -50,16 +52,16 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)resetDB {
     [db executeUpdate:@"DROP TABLE messages"];
-    [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
+    [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
     UA_FMDBLogError
 }
 
 - (void)initDBIfNeeded {
     if (![db tableExists:@"messages"]) {
-        [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
+        [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
         UA_FMDBLogError
     }
-}
+}   
 
 - (void)moveLegacyDatabase {
     
@@ -105,6 +107,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (NSMutableArray *)getMessagesForUser:(NSString *)userId App:(NSString *)appId {
+    NSLog(@"getMessagesForUser");
     UA_FMResultSet *rs;
     NSMutableArray *result = [NSMutableArray array];
     UAInboxMessage *msg;
@@ -127,12 +130,16 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         [dateFormatter release];
 
         msg.title = [rs stringForColumn:@"title"];
+        
+        msg.extra = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"extra"]];
+        
         [result addObject: msg];
     }
     return result;
 }
 
 - (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId {
+    NSLog(@"addMessages forUser");
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	[dateFormatter setLocale:enUSPOSIXLocale];
@@ -141,7 +148,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [db beginTransaction];
     for (UAInboxMessage *message in messages) {
-        [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)" ,
+        NSDictionary *extra = message.extra;
+        [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
          message.messageID,
          message.title,
          message.messageBodyURL,
@@ -149,7 +157,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          [NSNumber numberWithInt:(message.unread?1:0)],
          message.messageURL,
          appId,
-         userId];
+         userId,
+         [[[UA_SBJsonWriter new] autorelease] stringWithObject:extra]];
     }
     [db commit];
     UA_FMDBLogError

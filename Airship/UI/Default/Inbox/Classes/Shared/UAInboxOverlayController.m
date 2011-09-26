@@ -17,6 +17,7 @@
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
 - (void)loadMessageAtIndex:(int)index;
 - (void)loadMessageForID:(NSString *)mid;
+- (void)closePopupWindow;
 
 @end
 
@@ -91,6 +92,7 @@
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
+        [self closePopupWindow];
         return;
     }
     
@@ -108,6 +110,7 @@
     UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
+        [self closePopupWindow];
         return;
     }
     
