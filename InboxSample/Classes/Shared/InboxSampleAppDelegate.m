@@ -50,10 +50,7 @@
 
     [self failIfSimulator];
     
-    [UAInbox useCustomUI:[UAInboxUI class]];
-    [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
-    //[UAInboxNavUI setRuniPhoneTargetOniPad:YES]; //set this to use a navigation controller, like on an iPhone
     
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
@@ -75,6 +72,9 @@
 
     // Config Inbox behaviour before UAInboxPushHandler since it may need it
     // when launching from notification
+    
+    [UAInbox useCustomUI:[UAInboxUI class]];
+    [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
     // Optional: Delegate for JavaScript callback
     jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
