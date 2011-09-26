@@ -44,6 +44,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 UA_VERSION_IMPLEMENTATION(SubscriptionVersion, UA_VERSION)
 
 // Subscription error messages
+NSString * const UASubscriptionTransactionErrorDomain = @"UASubscriptionTransactionErrorDomain";
+NSString * const UASubscriptionReceiptVerificationFailure = @"UA Subscription Receipt is Invalid";
+
+NSString * const UASubscriptionRequestErrorDomain = @"UASubscriptionRequestErrorDomain";
+
 NSString * const UASubscriptionPurchaseInventoryFailure = @"UA Subscription Purchases Failed to Load";
 NSString * const UASubscriptionContentInventoryFailure = @"UA Subscription Content Inventory Failed to Load";
 NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Product Inventory Failed to Load";

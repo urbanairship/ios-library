@@ -38,6 +38,28 @@
 
 UA_VERSION_INTERFACE(SubscriptionVersion)
 
+///---------------------------------------------------------------------------------------
+/// @name Subscription Errors
+///---------------------------------------------------------------------------------------
+
+/** The error domain for transaction-related failures */
+extern NSString * const UASubscriptionTransactionErrorDomain;
+
+/** 
+ * This value indicates that the transaction failed when the receipt failed to verify
+ * with Apple's servers.
+ */
+extern NSString * const UASubscriptionReceiptVerificationFailure;
+
+/** Error codes for the UASubscriptionTransactionErrorDomain error domain */
+typedef enum _UASubscriptionTransactionErrorType {
+    /** This error code indicates that the submitted receipt is invalid. */
+    UASubscriptionReceiptVerificationFailedErrorType = 1
+} UASubscriptionTransactionErrorType;
+
+/** The error domain for Subscription REST API-related failures */
+extern NSString * const UASubscriptionRequestErrorDomain;
+
 // Error failure messages for use with inventoryUpdateFailedWithError:
 /** This value indicates that the list of purchased products failed to load */
 extern NSString * const UASubscriptionPurchaseInventoryFailure;
@@ -47,6 +69,8 @@ extern NSString * const UASubscriptionContentInventoryFailure;
 
 /** This value indicates that the list of available products failed to load */
 extern NSString * const UASubscriptionProductInventoryFailure;
+
+
 
 @protocol UASubscriptionUIProtocol
 + (void)displaySubscription:(UIViewController *)viewController
@@ -114,7 +138,8 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * retried.
  *
  * @param product The UASubscriptionProduct
- * @param error The StoreKit error returned with the transaction
+ * @param error The StoreKit error returned with the transaction or a UA error with
+ * a UASubscriptionTransactionErrorDomain domain
  *
  */
 - (void)purchaseProductFailed:(UASubscriptionProduct *)product withError:(NSError *)error;

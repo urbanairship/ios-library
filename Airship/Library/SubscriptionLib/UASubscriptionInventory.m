@@ -281,7 +281,9 @@
             [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
             [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
             
-            NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+            NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain
+                                                 code:request.responseStatusCode 
+                                             userInfo:userInfo];
             [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
             break;
         }
@@ -297,7 +299,9 @@
     [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
     [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
     
-    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain
+                                         code:request.responseStatusCode
+                                     userInfo:userInfo];
     [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 
@@ -403,6 +407,24 @@
         case 200:
         {
             
+            // First, check to see if the receipt was verified
+            // notify observers and bail if the receipt verification failed
+            if (![UASubscriptionInventory isReceiptValid:request.responseString]) {
+                UALOG(@"Recipt validation failed: %@", request.responseString);
+                NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                [userInfo setObject:UASubscriptionReceiptVerificationFailure forKey:NSLocalizedDescriptionKey];
+                
+                NSError *error = [NSError errorWithDomain:UASubscriptionTransactionErrorDomain
+                                                     code:UASubscriptionReceiptVerificationFailedErrorType
+                                                 userInfo:userInfo];
+                
+                //notify observers
+                [[UASubscriptionManager shared] purchaseProductFailed:product withError:error];
+                
+                // do not close the transaction - let SK retry later
+                return;
+            }
+            
             //close the transaction
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
@@ -456,6 +478,28 @@
 
 - (void)download:(UASubscriptionContent *)content {
     [[UASubscriptionManager shared].downloadManager download:content];
+}
+
+#pragma mark - 
+#pragma mark Verify Receipt Response
+
++ (BOOL)isReceiptValid:(NSString *)responseString {
+    // First, check to see if the receipt was verified
+    NSDictionary *receiptVerificationInfo = (NSDictionary *)[UAUtils parseJSON:responseString];
+    NSObject *receiptStatus = [receiptVerificationInfo objectForKey:@"receipt_status"];
+    
+    UALOG(@"Receipt status: %@", receiptStatus);
+    
+    // if the receipt status is nil or set to an NSNumber == 0, everything is good
+    // if it is set to anything else, the receipt failed to verify
+    BOOL isValid = NO;
+    if (!receiptStatus) {
+        isValid = YES;
+    } else if ([receiptStatus isKindOfClass:[NSNumber class]] && [((NSNumber *)receiptStatus) isEqualToNumber:[NSNumber numberWithInt:0]]) {
+        isValid = YES;
+    }
+    
+    return isValid;
 }
 
 @end

@@ -300,7 +300,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)autorenewableRestoredWithRequest:(UA_ASIHTTPRequest *)request {
     
-    UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
+    UALOG(@"Subscription restored or renewed: %d\n%@\n", request.responseStatusCode, request.responseString);
     
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
@@ -308,11 +308,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     switch (request.responseStatusCode) {
         case 200:
         {
-            // close the transaction
+
+            // close the transaction, even if verificaiton failed - it's restorable
             [unrestoredTransactions removeObject:transaction];
             [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
             
-            if (![restoredProducts containsObject:product]) {
+            // First, check to see if the receipt was verified
+            // if not, notify observers and bail if the receipt verification failed
+            if (![UASubscriptionInventory isReceiptValid:request.responseString]) {
+                UALOG(@"Recipt validation failed: %@", request.responseString);
+                
+                //notify observers
+                [[UASubscriptionManager shared] restoreAutorenewableProductFailed:product];
+                
+            } else if (![restoredProducts containsObject:product]) {
                 [restoredProducts addObject:product];
             }
             

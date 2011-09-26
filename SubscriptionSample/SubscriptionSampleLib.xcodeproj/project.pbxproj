@@ -87,6 +87,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7BB679061429288D00B877DB;
+			remoteInfo = AirshipLogicTests;
+		};
 		1FA23849130460BE005A4DEC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
@@ -438,6 +445,7 @@
 			children = (
 				63314760122FAC96008F2D48 /* libUAirship-1.0.7.a */,
 				1FA2384A130460BE005A4DEC /* AirshipTest.app */,
+				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -578,6 +586,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipLogicTests.octest;
+			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		1FA2384A130460BE005A4DEC /* AirshipTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
