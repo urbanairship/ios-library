@@ -46,6 +46,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @interface UASubscriptionObserver()
 
 /**
+ * Finish a transaction if it is still present in the queue.
+ *
+ * @param transaction The transaction to finish
+ */
+- (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction;
+
+/**
  * Creates and initializes a network queue for sequentially submitting
  * receipts to Urban Airship. Max concurrent connections = 1, calls
  * autorenewableRestoreRequestsCompleted on success
@@ -161,7 +168,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     //close any of the transactions that were passed back and clear out the list to try again
     for (SKPaymentTransaction *transaction in unrestoredTransactions) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishTransaction:transaction];
     }
     [unrestoredTransactions removeAllObjects];
     
@@ -195,7 +202,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString *productIdentifier = transaction.payment.productIdentifier;
     if (![[UASubscriptionManager shared].inventory containsProduct:productIdentifier]) {
         UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishTransaction:transaction];
     }
 }
 
@@ -222,7 +229,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     } else if (product && product.autorenewable) {
         
         // Uncomment to clear out all transactions - helpful for debugging
-        // [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        // [self safelyFinishTransaction:transaction];
         // return;//don't do anything else
         
         
@@ -233,7 +240,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
     } else {
         UALOG(@"Skipping transaction - unknown product or not an autorenewable.");
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishTransaction:transaction];
     }
 
 }
@@ -250,8 +257,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         }
     }
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [[UASubscriptionManager shared] purchaseProductFailed:product withError:transaction.error];
+    [self safelyFinishTransaction:transaction];
 
 }
 
@@ -311,7 +318,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
             // close the transaction, even if verificaiton failed - it's restorable
             [unrestoredTransactions removeObject:transaction];
-            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            [self safelyFinishTransaction:transaction];
             
             // First, check to see if the receipt was verified
             // if not, notify observers and bail if the receipt verification failed
@@ -333,23 +340,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         {
             UALOG(@"Subscription restored from another user!");
             
-            // Sample response:
-            /*
-             {"user_data": 
-             {"has_active_subscription": true, 
-             "user_url": "https://sgc.urbanairship.com/api/user/4e20bc17a9ee251feb000001/", 
-             "subscriptions": [
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:20:13", "product_id": "com.urbanairship.artest.7days", "is_active": false, "start": "2011-07-15 22:17:13", "purchased": "2011-07-15 22:17:13"},
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:27:59", "product_id": "com.urbanairship.artest.7days", "is_active": true, "start": "2011-07-15 22:24:59", "purchased": "2011-07-15 22:24:59"}
-             ],
-             "user_id": "4e20bc17a9ee251feb000001",
-             "server_time": "2011-07-15 22:25:00",
-             "password": "-4GNBzU5RA2sAt0B2TPLNA",
-             "device_tokens": ["BF58148F2142DF6A843710BBEADC513916DB26B015EBA610BF86C457FD171B37"]
-             }
-             }
-             */
-            
             UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
             NSDictionary *responseDictionary = [parser objectWithString:request.responseString];
             [parser release];
@@ -360,7 +350,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             
             // close the transaction
             [unrestoredTransactions removeObject:transaction];
-            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            [self safelyFinishTransaction:transaction];
             
             if (![restoredProducts containsObject:product]) {
                 [restoredProducts addObject:product];
@@ -405,7 +395,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     
     [unrestoredTransactions removeObject:transaction];
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [self safelyFinishTransaction:transaction];
     
     //notify observers
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
@@ -451,6 +441,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         UALOG(@"Original Transaction Date: %@", [dateFormatter stringFromDate:transaction.originalTransaction.transactionDate]);
     }
     
+}
+
+#pragma mark -
+#pragma mark Transaction Management
+
+- (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction {
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    }
 }
 
 @end
