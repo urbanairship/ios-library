@@ -251,9 +251,19 @@
     // alerts when timeout error raised
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
     if (product.status == UAProductStatusWaiting) {
-        [alertHandler showReceiptVerifyFailedAlert];
+        if ([(NSObject *)alertHandler respondsToSelector:@selector(showReceiptVerifyFailedAlert)]) {
+            [alertHandler showReceiptVerifyFailedAlert];
+        }
     } else if (product.status == UAProductStatusDownloading){
-        [alertHandler showDownloadContentFailedAlert];
+        if ([(NSObject *)alertHandler respondsToSelector:@selector(showDownloadContentFailedAlert)]) {
+            [alertHandler showDownloadContentFailedAlert];
+        }
+        
+    } else if (product.status == UAProductStatusDecompressing) {
+        if ([(NSObject *)alertHandler respondsToSelector:@selector(showDecompressContentFailedAlert)]) {
+            [alertHandler showDecompressContentFailedAlert];
+        }
+        
     }
 
     // NOTE: the following block is commented out to prevent a crash
@@ -279,7 +289,7 @@
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
         UAProduct *product = zipDownloadContent.userInfo;
-        product.status = UAProductStatusWaiting;
+        product.status = UAProductStatusDecompressing;
         zipDownloadContent.decompressDelegate = self;
         
         if(self.createProductIDSubdir) {

@@ -112,6 +112,21 @@
     [failureAlert release];
 }
 
+- (void)showDecompressContentFailedAlert {
+    NSString *okStr = UA_SF_TR(@"UA_OK");
+    NSString *decompressErrorTitle = UA_SF_TR(@"UA_decompress_failure_title");
+    NSString *decompressError = UA_SF_TR(@"UA_decompress_failure");
+    
+    UIAlertView *failureAlert = [[UIAlertView alloc] initWithTitle: decompressErrorTitle
+                                                           message: decompressError
+                                                          delegate: nil
+                                                 cancelButtonTitle: okStr
+                                                 otherButtonTitles: nil];
+    [failureAlert show];
+    [failureAlert release];
+    
+}
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1) {
         if (restoreAlertDelegate && restoreAlertApproveSelector) {
