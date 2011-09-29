@@ -63,7 +63,7 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 @protocol UAStoreFrontObserverProtocol
 @optional
 // will notify this method if restoring status changed
-- (void)restoreStatusChanged:(NSNumber*)inRestoring;
+- (void)restoreStatusChanged:(NSNumber *)inRestoring;
 // will notify this method if inventory groups updated
 - (void)inventoryGroupUpdated;
 // will notify this method if inventory loading status changed
@@ -71,7 +71,7 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 // will notify this method if anyone of products in the inventory been changed.
 // always can be used to control inventory level ui elements (not related to a
 // specified product), such as 'restore all' button
-- (void)inventoryProductsChanged:(UAProductStatus*)status;
+- (void)inventoryProductsChanged:(NSNumber *)status;
 @end
 
 @protocol UAProductObserverProtocol
