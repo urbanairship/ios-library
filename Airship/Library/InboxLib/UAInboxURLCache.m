@@ -92,17 +92,6 @@
     return actualDiskCapacity * 50;
 }
 
-/*
-- (NSUInteger)currentDiskUsage {
-    return [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
-}
-
-- (void)setCurrentDiskUsage:(NSUInteger)bytes {
-    [metadata setValue:[NSNumber numberWithUnsignedInt:bytes] forKey:CACHE_SIZE_KEY];
-    [self saveMetadata];
-}
-*/
-
 - (void)dealloc {
     RELEASE_SAFELY(cacheDirectory);
     RELEASE_SAFELY(resourceTypes);
