@@ -60,6 +60,7 @@
 - (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request;
 
 @property(nonatomic, retain) NSMutableDictionary *metadata;
+@property(nonatomic, retain) NSOperationQueue *queue;
 
 
 @end
@@ -70,6 +71,7 @@
 @synthesize resourceTypes;
 @synthesize metadata;
 @synthesize actualDiskCapacity;
+@synthesize queue;
 
 #pragma mark -
 #pragma mark NSURLCache methods
@@ -84,6 +86,9 @@
         
         self.metadata = [self loadMetadata];
         
+        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        queue.maxConcurrentOperationCount = 1;
+        
     }
     return self;
 }
@@ -96,6 +101,7 @@
     RELEASE_SAFELY(cacheDirectory);
     RELEASE_SAFELY(resourceTypes);
     RELEASE_SAFELY(metadata);
+    RELEASE_SAFELY(queue);
     [super dealloc];
 }
 
@@ -108,10 +114,22 @@
         
         NSData *content = cachedResponse.data;
         
+        NSURL *url = request.URL;
+        
         //default to "text/html" if the server doesn't provide a content type
         NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
         
-        [self storeContent:content withURL:request.URL contentType:contentType];
+        NSMethodSignature *signature = [UAInboxURLCache instanceMethodSignatureForSelector:@selector(storeContent:withURL:contentType:)];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        invocation.selector = @selector(storeContent:withURL:contentType:);
+        invocation.target = self;
+        [invocation setArgument:&content atIndex:2];
+        [invocation setArgument:&url atIndex:3];
+        [invocation setArgument:&contentType atIndex:4];
+        
+        NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithInvocation:invocation] autorelease];
+        [queue addOperation:io];
+
     }
     
     else {
@@ -155,8 +173,11 @@
         UALOG(@"Uncaching request %@", request);
         
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
-        [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
-        [self saveMetadata];
+        @synchronized(metadata) {
+            [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+            NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(saveMetadata) object:nil] autorelease];
+            [queue addOperation:io];
+        }
     }
     
     return cachedResponse;
@@ -196,6 +217,7 @@
 
 
 - (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     NSString *contentPath = [self getStoragePathForURL:url];
     NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
@@ -211,27 +233,31 @@
         if (ok) {
             NSString *hash = [UAUtils md5:[url absoluteString]];
             
-            [[metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
-            [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
-            
-            
-            NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
-            currentSize += content.length;
-            [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
-                        
-            UALOG(@"Cache size: %d bytes", currentSize);
-            UALOG(@"Actual disk capacity: %d bytes", actualDiskCapacity);
-            
-            if (currentSize > actualDiskCapacity) {
-                [self purge];
+            @synchronized(metadata) {
+                [[metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
+                [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+                
+                
+                NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+                currentSize += content.length;
+                [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+                
+                UALOG(@"Cache size: %d bytes", currentSize);
+                UALOG(@"Actual disk capacity: %d bytes", actualDiskCapacity);
+                
+                if (currentSize > actualDiskCapacity) {
+                    [self purge];
+                }
+                
+                [self saveMetadata];
             }
-            
-            [self saveMetadata];
         }
         
         ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
         UALOG(@"Caching %@ at %@: %@", contentType, contentTypePath, ok?@"OK":@"FAILED");
     }
+    
+    [pool drain];
 }
 
 - (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
@@ -279,10 +305,14 @@
 }
 
 - (void)saveMetadata {
-    if (metadata) {
-        NSString *metadataPath = [self getMetadataPath];
-        [metadata writeToFile:metadataPath atomically:YES];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @synchronized(metadata) {
+        if (metadata) {
+            NSString *metadataPath = [self getMetadataPath];
+            [metadata writeToFile:metadataPath atomically:YES];
+        }
     }
+    [pool drain];
 }
 
 - (NSUInteger)deleteCacheEntry:(NSString *)hash {

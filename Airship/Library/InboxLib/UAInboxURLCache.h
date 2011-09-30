@@ -30,6 +30,7 @@
     NSArray *resourceTypes;
     NSMutableDictionary *metadata;
     NSUInteger actualDiskCapactiy;
+    NSOperationQueue *queue;
 }
 
 @property(nonatomic, retain) NSString *cacheDirectory;
