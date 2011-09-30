@@ -177,7 +177,7 @@
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
-    
+    [self addDataFromSessionForKey:@"foreground"];
     
     // Capture carrier info if available
     IF_IOS4_OR_GREATER(
@@ -209,6 +209,12 @@
 
 - (NSString*)getType {
     return @"app_foreground";
+}
+
+- (void)gatherIndividualData:(NSDictionary*)context {
+    [super gatherIndividualData:context];
+    
+    [data removeObjectForKey:@"foreground"];//not necessary - even is an explicit foreground
 }
 
 @end
