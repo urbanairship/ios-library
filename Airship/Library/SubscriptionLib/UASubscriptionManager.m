@@ -61,6 +61,10 @@ NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Produ
 
 SINGLETON_IMPLEMENTATION(UASubscriptionManager)
 
++ (BOOL)initialized {
+    return g_sharedUASubscriptionManager ? YES : NO;
+}
+
 #pragma mark -
 #pragma mark Custom UI
 

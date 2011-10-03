@@ -101,6 +101,13 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 
 SINGLETON_INTERFACE(UAStoreFront)
 
+/**
+ * Test whether the singleton has been initialized.
+ * 
+ * @returns YES if initialized, otherwise NO
+ */
++ (BOOL)initialized;
+
 + (void)useCustomUI:(Class)customUIClass;
 + (void)quitStoreFront;
 

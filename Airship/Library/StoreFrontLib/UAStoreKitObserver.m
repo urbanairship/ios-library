@@ -108,7 +108,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
         if ([[UAStoreFront shared].inventory hasProductWithIdentifier:productIdentifier] == NO) {
             UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-            [self finishTransaction:transaction];
+            [self finishUnknownTransaction:transaction];
             return;
         }
 
@@ -134,7 +134,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         // if it's not inRestoring, the transaction should be added by StoreKit
         // automatically. Due to apple's internal policies, we cann't restore
         // prior purchases behind the scenes, so directly finish the transaction
-        [self finishTransaction:transaction];
+        [self finishUnknownTransaction:transaction];
     }
 }
 
@@ -261,9 +261,32 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 #pragma mark Transaction Management
 
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
+    
     if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     }
+}
+
+- (void)finishUnknownTransaction:(SKPaymentTransaction *)transaction {
+    
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        
+        NSString *identifier = transaction.payment.productIdentifier;
+        UAProduct *product = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
+        
+        Class subscriptionManagerClass = NSClassFromString(@"UASubscriptionManager");
+        BOOL subscriptionManagerPresent = subscriptionManagerClass && [subscriptionManagerClass initialized];
+        
+        // if we have the product or the subscription manager has not been initialized,
+        // go ahead an close it.
+        // otherwise, let the subscription manager deal with it
+        if (product) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        } else if (!subscriptionManagerPresent) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
+    }
+    
 }
 
 @end

@@ -223,6 +223,13 @@ extern NSString * const UASubscriptionProductInventoryFailure;
 // ^ The above singleton declarations were inlined for documentation purproses
 // from SINGLETON_INTERFACE(UASubscriptionManager)
 
+/**
+ * Test whether the singleton has been initialized.
+ * 
+ * @returns YES if initialized, otherwise NO
+ */
++ (BOOL)initialized;
+
 ///---------------------------------------------------------------------------------------
 /// @name UI and Initialization
 ///---------------------------------------------------------------------------------------

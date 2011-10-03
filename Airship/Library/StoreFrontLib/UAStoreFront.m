@@ -41,6 +41,10 @@ UA_VERSION_IMPLEMENTATION(StoreFrontVersion, UA_VERSION)
 
 SINGLETON_IMPLEMENTATION(UAStoreFront)
 
++ (BOOL)initialized {
+    return g_sharedUAStoreFront ? YES : NO;
+}
+
 #pragma mark -
 #pragma mark History Receipts
 
