@@ -86,6 +86,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIDeviceOrientationDidChangeNotification
                                                   object:nil];
+    [super dealloc];
 }
 
 - (void)loadMessageAtIndex:(int)index {
