@@ -28,9 +28,13 @@
 @interface UAInboxURLCache : NSURLCache {
     NSString *cacheDirectory;
     NSArray *resourceTypes;
+    NSMutableDictionary *metadata;
+    NSUInteger actualDiskCapactiy;
+    NSOperationQueue *queue;
 }
 
 @property(nonatomic, retain) NSString *cacheDirectory;
 @property(nonatomic, retain) NSArray *resourceTypes;
+@property(nonatomic, assign) NSUInteger actualDiskCapacity;
 
 @end
