@@ -411,6 +411,12 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [loadingIndicator hide];
+    
+    // Mark message as read after it has finished loading
+    if(message.unread) {
+        [message markAsRead];
+    }
+
     [self injectViewportFix];
 }
 
