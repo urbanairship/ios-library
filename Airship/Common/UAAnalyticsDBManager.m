@@ -96,8 +96,8 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
      [NSString stringWithFormat:@"%d", estimateSize]];
     
     
-    UALOG(@"DB Count %d", [self eventCount]);
-    UALOG(@"DB Size %d", [self sizeInBytes]);
+    //UALOG(@"DB Count %d", [self eventCount]);
+    //UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.
