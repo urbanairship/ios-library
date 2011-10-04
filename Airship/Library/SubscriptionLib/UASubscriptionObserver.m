@@ -40,6 +40,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_SBJSON.h"
 #import "UA_ZipArchive.h"
 
+// for IAP Compatibility
+#import "UAStoreFront.h"
+#import "UAInventory.h"
+
 #pragma mark -
 #pragma mark Private Category
 // Private methods
@@ -51,6 +55,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @param transaction The transaction to finish
  */
 - (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction;
+
+/**
+ * Finish a transaction if it is still present in the queue, but only if the product
+ * is in the inventory or NOT in the IAP inventory
+ *
+ * @param transaction The transaction to finish
+ */
+- (void)safelyFinishUnknownTransaction:(SKPaymentTransaction *)transaction;
 
 /**
  * Creates and initializes a network queue for sequentially submitting
@@ -202,7 +214,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString *productIdentifier = transaction.payment.productIdentifier;
     if (![[UASubscriptionManager shared].inventory containsProduct:productIdentifier]) {
         UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-        [self safelyFinishTransaction:transaction];
+        [self safelyFinishUnknownTransaction:transaction];
     }
 }
 
@@ -240,7 +252,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
     } else {
         UALOG(@"Skipping transaction - unknown product or not an autorenewable.");
-        [self safelyFinishTransaction:transaction];
+        [self safelyFinishUnknownTransaction:transaction];
     }
 
 }
@@ -316,7 +328,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         case 200:
         {
 
-            // close the transaction, even if verificaiton failed - it's restorable
+            // close the transaction, even if verification failed - it's restorable
             [unrestoredTransactions removeObject:transaction];
             [self safelyFinishTransaction:transaction];
             
@@ -449,6 +461,27 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction {
     if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
         [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    }
+}
+
+- (void)safelyFinishUnknownTransaction:(SKPaymentTransaction *)transaction {
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        Class iapClass = NSClassFromString(@"UAStoreFront");
+        if (iapClass && [iapClass initialized]) {
+            
+            UAInventoryStatus iapStatus = [UAStoreFront shared].inventory.status;
+            NSString *identifier = transaction.payment.productIdentifier;
+            
+            // if purchasing is disabled, finish the transaction
+            // if the inventory is loaded and does not contain the product ID, finish the transaction
+            if (iapStatus == UAInventoryStatusPurchaseDisabled ||
+                (iapStatus == UAInventoryStatusLoaded && ![[UAStoreFront shared].inventory productWithIdentifier:identifier])) {
+                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            }
+            
+        } else {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
     }
 }
 

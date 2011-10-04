@@ -45,6 +45,7 @@ typedef enum {
  * list.
  */
 @interface UAInboxMessageList : UAObservable <UAUserObserver> {
+  @private
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
     int unreadCount;

@@ -102,7 +102,7 @@
     // We can not restore it.
     if ([[UAStoreFront shared].inventory hasProductWithIdentifier:productIdentifier] == NO) {
         UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-        [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+        [[UAStoreFront shared].sfObserver finishUnknownTransaction:transaction];
         return nil;
     }
 

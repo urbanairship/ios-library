@@ -49,6 +49,7 @@
  * an APNS notification.
  */
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver> {
+  @private
     NSString *viewingMessageID;
     id <UAInboxPushHandlerDelegate> delegate;
 	BOOL hasLaunchMessage;

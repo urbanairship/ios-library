@@ -109,7 +109,7 @@ UA_VERSION_INTERFACE(UAInboxVersion)
  * Most implementations will only use functionality found in this class.
  */
 @interface UAInbox : NSObject {
-
+  @private
     UAInboxMessageList *messageList;
 	UAInboxPushHandler *pushHandler;
 	
