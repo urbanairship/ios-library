@@ -98,7 +98,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @property (nonatomic, retain) NSURL *messageURL;
 
-/** The MIME content type for the message (e.g., text/html */
+/** The MIME content type for the message (e.g., text/html) */
 @property (nonatomic, copy) NSString *contentType;
 
 /** YES if the message is unread, otherwise NO. */
@@ -121,7 +121,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  * Note that this object is not retained by the message.
  */
-
 @property (assign) UAInboxMessageList *inbox; 
 
 @end

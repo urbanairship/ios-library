@@ -35,6 +35,7 @@
 #define DB_NAME @"UAInbox.db"
 
 @interface UAInboxDBManager : NSObject {
+  @private
     UA_FMDatabase *db;
 }
 
