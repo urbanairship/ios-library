@@ -87,14 +87,10 @@
         self.metadata = [self loadMetadata];
         
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        queue.maxConcurrentOperationCount = 1;
+        self.queue.maxConcurrentOperationCount = 1;
         
     }
     return self;
-}
-
-- (NSUInteger)diskCapacity {
-    return actualDiskCapacity * 50;
 }
 
 - (void)dealloc {
@@ -103,6 +99,10 @@
     RELEASE_SAFELY(metadata);
     RELEASE_SAFELY(queue);
     [super dealloc];
+}
+
+- (NSUInteger)diskCapacity {
+    return actualDiskCapacity * 50;
 }
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
@@ -316,7 +316,7 @@
 }
 
 - (NSUInteger)deleteCacheEntry:(NSString *)hash {
-    NSLog(@"Deleting cache entry for %@", hash);
+    UALOG(@"Deleting cache entry for %@", hash);
     NSString *contentPath = [self getStoragePathForHash:hash];
     NSString *contentTypePath = [self getStoragePathForContentTypeWithHash:hash];
     
@@ -355,7 +355,7 @@
             }
         }
     
-        NSLog(@"Cache size after purge: %d bytes", currentSize);
+        UALOG(@"Cache size after purge: %d bytes", currentSize);
     }
 }
 
