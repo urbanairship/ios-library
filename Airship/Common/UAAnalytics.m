@@ -38,8 +38,21 @@
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
+// analytics-specific logging method
+#define UA_ANALYTICS_LOG(fmt, ...) \
+do { \
+if (logging && analyticsLoggingEnabled) { \
+NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+} \
+} while(0)
+
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
+NSString * const UAAnalyticsOptionsLoggingKey = @"UAAnalyticsOptionsLoggingKey";
+
+// Weak link to this notification since it doesn't exist in iOS 3.x
+UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
+UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
 
 @implementation UAAnalytics
 
@@ -73,7 +86,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
     // Caputre connection type using Reachability
     NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
     
-    NSString* connectionTypeString = @"";
+    NSString *connectionTypeString = @"";
     
     switch (netStatus) {
             
@@ -196,9 +209,11 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
 - (id)initWithOptions:(NSDictionary *)options {
     if (self = [super init]) {
-        
+
         //set server to default if not specified in options
         self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
+        
+        analyticsLoggingEnabled = [[options objectForKey:UAAnalyticsOptionsLoggingKey] boolValue];
         
         if (self.server == nil) {
             self.server = kAnalyticsProductionServer;
@@ -228,16 +243,20 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
                                                      name:kUA_ReachabilityChangedNotification
                                                    object:nil];
         IF_IOS4_OR_GREATER(
+            if (&UIApplicationDidEnterBackgroundNotification != NULL) {
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(enterBackground)
+                                                             name:UIApplicationDidEnterBackgroundNotification
+                                                           object:nil];
+            }
 
-           [[NSNotificationCenter defaultCenter] addObserver:self
-                                                    selector:@selector(enterBackground)
-                                                        name:UIApplicationDidEnterBackgroundNotification
-                                                      object:nil];
+            if (&UIApplicationWillEnterForegroundNotification != NULL) {
 
-           [[NSNotificationCenter defaultCenter] addObserver:self
-                                                    selector:@selector(enterForeground)
-                                                        name:UIApplicationWillEnterForegroundNotification
-                                                      object:nil];
+               [[NSNotificationCenter defaultCenter] addObserver:self
+                                                        selector:@selector(enterForeground)
+                                                            name:UIApplicationWillEnterForegroundNotification
+                                                          object:nil];
+            }
 
         );
         
@@ -262,7 +281,7 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 }
 
 - (void)enterForeground {
-    UALOG(@"Enter Foreground.");
+    UA_ANALYTICS_LOG(@"Enter Foreground.");
     
     wasBackgrounded = NO;
     
@@ -277,9 +296,9 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
 - (void)enterBackground {
     
-    UALOG(@"Enter Background.");
+    UA_ANALYTICS_LOG(@"Enter Background.");
     if (wasBackgrounded) {
-        UALOG(@"Skipping extra background event.");
+        UA_ANALYTICS_LOG(@"Skipping extra background event.");
         return;
     }
 
@@ -294,14 +313,14 @@ NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 }
 
 - (void)didBecomeActive {
-    UALOG(@"Application did become active.");
+    UA_ANALYTICS_LOG(@"Application did become active.");
     
     //add activity_started / AppActive event
     [self addEvent:[UAEventAppActive eventWithContext:nil]];
 }
 
 - (void)willResignActive {
-    UALOG(@"Application will resign active.");
+    UA_ANALYTICS_LOG(@"Application will resign active.");
     
     //add activity_stopped / AppInactive event
     [self addEvent:[UAEventAppInactive eventWithContext:nil]];
@@ -390,7 +409,7 @@ IF_IOS4_OR_GREATER(
 
 - (void)addEvent:(UAEvent*)event {
     
-    UALOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
+    UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
     
     [[UAAnalyticsDBManager shared] addEvent:event withSession:session];
     
@@ -483,7 +502,7 @@ IF_IOS4_OR_GREATER(
     }
     
     if ([response statusCode] != 200) {
-        UALOG(@"Send analytics data request failed: %d", [response statusCode]);
+        UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [response statusCode]);
         return;
     } 
 
@@ -492,7 +511,7 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)requestDidFail:(UAHTTPRequest *)request {
-    UALOG(@"Send analytics data request failed.");
+    UA_ANALYTICS_LOG(@"Send analytics data request failed.");
     RELEASE_SAFELY(connection);
 }
 
@@ -525,15 +544,15 @@ IF_IOS4_OR_GREATER(
         oldestEventTime = 0;
     }
     
-    UALOG(@"Database size: %d", databaseSize);
-    UALOG(@"Oldest Event: %f", oldestEventTime);
+    UA_ANALYTICS_LOG(@"Database size: %d", databaseSize);
+    UA_ANALYTICS_LOG(@"Oldest Event: %f", oldestEventTime);
 
 }
 
 - (void)send {
     
     if (self.server == nil || [self.server length] == 0) {
-        UALOG("Analytics disabled.");
+        UA_ANALYTICS_LOG("Analytics disabled.");
         return;
     }
     
@@ -590,7 +609,7 @@ IF_IOS4_OR_GREATER(
         if (actualSize <= x_ua_max_batch) {
             batchEventCount++; 
         } else {
-            UALOG(@"Met batch limit.");
+            UA_ANALYTICS_LOG(@"Met batch limit.");
             break;
         }
         
@@ -608,7 +627,7 @@ IF_IOS4_OR_GREATER(
                                          format:NULL /* an out param */
                                          errorDescription:&errString];
             if (errString) {
-                UALOG("Deserialization Error: %@", errString);
+                UA_ANALYTICS_LOG("Deserialization Error: %@", errString);
                 [errString release];//must be relased by caller per docs
             }
         }
@@ -643,9 +662,9 @@ IF_IOS4_OR_GREATER(
     writer.humanReadable = YES;//turn on formatting for debugging
     
     
-    UALOG(@"Sending to server: %@", self.server);
-    UALOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
-    UALOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    UA_ANALYTICS_LOG(@"Sending to server: %@", self.server);
+    UA_ANALYTICS_LOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
+    UA_ANALYTICS_LOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     
      
     [writer release];
@@ -686,7 +705,7 @@ IF_IOS4_OR_GREATER(
     
     //Delete oldest events first, otherwise, we may send some deleted events.
     while (databaseSize > x_ua_max_total) {
-        UALOG(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
+        UA_ANALYTICS_LOG(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -696,7 +715,7 @@ IF_IOS4_OR_GREATER(
     // imprecise time
     @synchronized(self) {
         if (reSendTimer != nil) {
-            UALOG(@"Send skipped - a reset timer is already running.");
+            UA_ANALYTICS_LOG(@"Send skipped - a reset timer is already running.");
             return;
         }
     }
@@ -709,7 +728,7 @@ IF_IOS4_OR_GREATER(
     NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastSendTime];
     
     if (interval < sendInterval) {
-        UALOG(@"Attempted to send too soon. Setting a timer to comply with the min batch interval.");
+        UA_ANALYTICS_LOG(@"Attempted to send too soon. Setting a timer to comply with the min batch interval.");
         
         //The synchronization may be overkill here, but would prevent
         //two timers from running at once, and one leaking
