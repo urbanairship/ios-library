@@ -1,24 +1,12 @@
 
-// UADelegate is the object that communicate with InboxJSDelegate on iPhone side
-UADelegate = {
+// UAListener is the object that communicates with the UAInboxDefaultJSDelegate.
+// The name UAListener is hard-coded into that sample.
+UAListener = {
     result : {},
-    error : {},
-    iOSCallbackDidSucceed : function() {
-        // implement your own successCallback here
-        // retrieve result created in iPhone callback
-        // e.g. var res0 = this.result[0];
-        alert("Success callback: "+UADelegate.result);
-    },
-    iOSCallbackDidFail : function() {
-        // implement your own errorCallback here
-        // you can set error info in iPhone callback and reference it from here
-        // e.g. document.write(this.error);
-        
-        alert("Failure callback: "+UADelegate.result);
-    }
+    error : {}
 };
 
-UADelegate.invokeIPhoneCallback = function() {
+UAListener.invokeIPhoneCallback = function() {
     var args = arguments;
     var uri = [];
     var dict = null;
@@ -58,23 +46,23 @@ UADelegate.invokeIPhoneCallback = function() {
     }
 
     // send to iPhone
-    document.location = url;
+    UAirship.handleCustomURL(url);
 };
 
 // This is a demo function that illustrates how to invoke iOS side callback
 function demoFunction() {
 
-    // Customize UADelegate
+    // Customize UAListener
     // Register your own JS callback that might be invoked when iPhone callback finished
 
-    UADelegate.iOSCallbackDidSucceed = function(){
+    UAListener.onSuccess = function(){
         console.log("iOS callback succeeded");
-        alert("UADelegate.iOSCallbackDidSucceed: "+UADelegate.result);
+        alert("UAListener.iOSCallbackDidSucceed: "+this.result);
     };
     
-    UADelegate.iOSCallbackDidFail = function(){
+    UAListener.onError = function(){
         console.log("iOS callback failed");
-        alert("UADelegate.iOSCallbackDidFail: "+UADelegate.error);
+        alert("UAListener.iOSCallbackDidFail: "+this.error);
     };
 
     // set options
@@ -83,5 +71,5 @@ function demoFunction() {
     opt.property2 = "option 2";
 
     // invoke iPhone delegate
-    UADelegate.invokeIPhoneCallback("arg0", "arg1", "Called from JavaScript running on UIWebView", opt);
+    UAListener.invokeIPhoneCallback("arg0", "arg1", "Called from JavaScript running on UIWebView", opt);
 };

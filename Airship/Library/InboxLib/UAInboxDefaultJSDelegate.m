@@ -39,9 +39,9 @@
     // invoke JS callback w/ result
     NSString *script = nil;
     if (!hasError) {
-        script = @"UADelegate.result = 'Callback from ObjC succeeded'; UADelegate.iOSCallbackDidSucceed();";
+        script = @"UAListener.result = 'Callback from ObjC succeeded'; UAListener.onSuccess();";
     } else {
-        script = @"UADelegate.error = 'Callback from ObjC failed'; UADelegate.iOSCallbackDidFail();";
+        script = @"UAListener.error = 'Callback from ObjC failed'; UAListener.onError();";
     }
     return script;
 }

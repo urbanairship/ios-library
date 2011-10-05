@@ -268,13 +268,38 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
     [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
-
-    NSString *model = [UIDevice currentDevice].model;
-    NSString *js = [NSString stringWithFormat:@"devicemodel=\"%@\"", model];
-    [webView stringByEvaluatingJavaScriptFromString:js];
     
+    /*
+     * Define and initialize our one global
+     */
+    NSString* js = @"var UAirship = {};";
+    
+    /*
+     * Set the device model.
+     */
+    NSString *model = [UIDevice currentDevice].model;
+    js = [js stringByAppendingFormat:@"UAirship.devicemodel=\"%@\";", model];
+    
+    /*
+     * Set the UA user ID.
+     */
     NSString *userID = [UAUser defaultUser].username;
-    js = [NSString stringWithFormat:@"userID=\"%@\"", userID];
+    js = [js stringByAppendingFormat:@"UAirship.userID=\"%@\";", userID];
+    
+    /*
+     * Set the current message ID.
+     */
+    NSString* messageID = message.messageID;
+    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
+    
+    /*
+     * Define UAirship.handleCustomURL.
+     */
+    js = [js stringByAppendingString:@"UAirship.handleCustomURL = function(url) { location = url; };"];
+    
+    /*
+     * Execute the JS we just constructed.
+     */
     [webView stringByEvaluatingJavaScriptFromString:js];
 }
 
