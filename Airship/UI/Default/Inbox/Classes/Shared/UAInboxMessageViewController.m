@@ -295,7 +295,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Define UAirship.handleCustomURL.
      */
-    js = [js stringByAppendingString:@"UAirship.handleCustomURL = function(url) { location = url; };"];
+    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
     
     /*
      * Execute the JS we just constructed.

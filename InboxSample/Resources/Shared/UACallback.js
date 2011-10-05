@@ -46,7 +46,7 @@ UAListener.invokeIPhoneCallback = function() {
     }
 
     // send to iPhone
-    UAirship.handleCustomURL(url);
+    UAirship.invoke(url);
 };
 
 // This is a demo function that illustrates how to invoke iOS side callback
