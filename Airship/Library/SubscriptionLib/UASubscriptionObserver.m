@@ -222,7 +222,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UALOG(@"Purchase Successful for Product ID: %@", transaction.payment.productIdentifier);
     [self logTransaction:transaction];
     
-    [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+    // If the product was purchased previously, but no longer exits on UA
+    // we can not complete this transaction, so we'll close it
+    NSString *productIdentifier = transaction.payment.productIdentifier;
+    if (![[UASubscriptionManager shared].inventory containsProduct:productIdentifier]) {
+        UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
+        [self safelyFinishUnknownTransaction:transaction];
+    } else {
+        [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+    }
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
