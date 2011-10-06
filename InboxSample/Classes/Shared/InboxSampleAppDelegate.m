@@ -56,6 +56,10 @@
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
+    NSMutableDictionary *analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [analyticsOptions setValue:@"NO" forKey:UAAnalyticsOptionsLoggingKey];
+    [takeOffOptions setValue:analyticsOptions forKey:UAirshipTakeOffOptionsAnalyticsKey];
+    
     // To use your own pre-existing inbox credentials, uncomment and modify these lines:
     //[takeOffOptions setValue:@"4cf54407a9ee256d9400000c" forKey:UAAirshipTakeOffOptionsDefaultUsername];
     //[takeOffOptions setValue:@"GUvTvih4RcaqZZOAsLvKXQ" forKey:UAAirshipTakeOffOptionsDefaultPassword];
