@@ -366,8 +366,12 @@ BOOL logging = false;
 }
 
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
+    
     [self updateDeviceToken:token];
     [self registerDeviceTokenWithExtraInfo:info];
+    
+    // add device_registration event
+    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
 }
 
 - (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
@@ -405,9 +409,6 @@ BOOL logging = false;
 	
     // succeed register APN device token, then register on UA server
     [self registerDeviceToken:token withExtraInfo:nil];
-    
-    // add device_registration event
-    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
 	
 }
 
