@@ -34,6 +34,7 @@
 @interface UAInboxUI ()
 
 @property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, retain) UAInboxMessageListController *messageListController;
 @property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
 @property (nonatomic, assign) BOOL isVisible;
 
@@ -43,6 +44,7 @@
 
 @synthesize localizationBundle;
 @synthesize rootViewController;
+@synthesize messageListController;
 @synthesize inboxParentController;
 @synthesize alertHandler;
 @synthesize useOverlay;
@@ -67,11 +69,11 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         self.useOverlay = NO;
         self.isVisible = NO;
         
-        UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
-        mlc.title = @"Inbox";
-        mlc.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
+        self.messageListController = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+        messageListController.title = @"Inbox";
+        messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:mlc] autorelease];
+        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:messageListController] autorelease];
         
         alertHandler = [[UAInboxAlertHandler alloc] init];        		
     }
@@ -84,6 +86,8 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 }
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
+    
+    [[[UAInbox shared] messageList] addObserver:[UAInboxUI shared].messageListController];
 	
     if ([viewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
@@ -136,6 +140,8 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 }
 
 - (void)quitInbox {
+    
+    [[[UAInbox shared] messageList] removeObserver:messageListController];
 
     if ([rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];

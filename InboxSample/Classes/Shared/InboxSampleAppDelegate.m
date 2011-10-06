@@ -92,8 +92,6 @@
     
     //TODO: think about clean up / dealloc for multiple UI classes
     
-    
-    
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
@@ -126,15 +124,6 @@
     //TODO: clean up all UI classes
     
     [UAirship land];
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    
-    // Reload the message list when the app is foregrounded
-    UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.messageList != nil) {
-        [inbox.messageList retrieveMessageList];
-    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -39,6 +39,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInboxMessageListObserver.h"
 
+//weak link to this notification since it doesn't exist prior to iOS 4
+UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
+
 UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
 
 @implementation UAInbox
@@ -68,6 +71,10 @@ static Class _uiClass;
     return _uiClass;
 }
 
+- (void)enterForeground {
+    [messageList retrieveMessageList];
+}
+
 #pragma mark -
 #pragma mark Open APIs, set custom ui
 
@@ -79,7 +86,6 @@ static Class _uiClass;
 #pragma mark Open API, enter/quit Inbox
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    [[UAInbox shared].messageList retrieveMessageList];
     [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 }
@@ -128,8 +134,22 @@ static Class _uiClass;
         self.clientCache = [NSURLCache sharedURLCache];
         
         self.messageList = [UAInboxMessageList shared];
+        
+        [messageList retrieveMessageList];
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
+        
+        IF_IOS4_OR_GREATER(
+                           
+           if (&UIApplicationDidEnterBackgroundNotification != NULL) {
+               
+               [[NSNotificationCenter defaultCenter] addObserver:self
+                                                        selector:@selector(enterForeground)
+                                                            name:UIApplicationWillEnterForegroundNotification
+                                                          object:nil];
+           }
+        );
+        
     }
 
     return self;
@@ -139,6 +159,8 @@ static Class _uiClass;
     RELEASE_SAFELY(clientCache);
     RELEASE_SAFELY(inboxCache);
 	RELEASE_SAFELY(pushHandler);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [super dealloc];
 }

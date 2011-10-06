@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 
 @interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate> {
-
+    UIAlertView *notificationAlert;
 }
 
 - (void)showNewMessageAlert:(NSString *)message;

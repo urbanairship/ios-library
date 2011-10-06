@@ -29,6 +29,7 @@
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
+#import "UAInboxMessageListController.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
@@ -42,6 +43,7 @@
     NSBundle *localizationBundle;
 	UAInboxAlertHandler *alertHandler;
     UIViewController *rootViewController;
+    UAInboxMessageListController *messageListController;
     UIViewController *inboxParentController;
     BOOL useOverlay;
     BOOL isVisible;

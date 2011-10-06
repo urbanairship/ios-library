@@ -48,7 +48,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)batchUpdateFinished:(UA_ASIHTTPRequest *)request;
 - (void)batchUpdateFailed:(UA_ASIHTTPRequest *)request;
 
-@property(assign) int isRetrieving;
+@property(assign) int nRetrieving;
 
 @end
 
@@ -56,7 +56,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @synthesize messages;
 @synthesize unreadCount;
-@synthesize isRetrieving;
+@synthesize nRetrieving;
 @synthesize isBatchUpdating;
 
 #pragma mark Create Inbox
@@ -84,12 +84,16 @@ static UAInboxMessageList *_messageList = nil;
         if(_messageList == nil) {
             _messageList = [[UAInboxMessageList alloc] init];
             _messageList.unreadCount = -1;
-            _messageList.isRetrieving = 0;
+            _messageList.nRetrieving = 0;
             _messageList.isBatchUpdating = NO;
         }
     }
     
     return _messageList;
+}
+
+- (BOOL)isRetrieving {
+    return nRetrieving > 0;
 }
 
 #pragma mark Update/Delete/Mark Messages
@@ -139,7 +143,7 @@ static UAInboxMessageList *_messageList = nil;
                                                       finish:@selector(messageListReady:)
                                                         fail:@selector(messageListFailed:)];
     
-    self.isRetrieving++;
+    self.nRetrieving++;
     [request startAsynchronous];
 
     
@@ -152,7 +156,7 @@ static UAInboxMessageList *_messageList = nil;
         return;
     }
     
-    self.isRetrieving--;
+    self.nRetrieving--;
 	
     UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
     NSDictionary *jsonResponse = [parser objectWithString: [request responseString]];
@@ -185,15 +189,15 @@ static UAInboxMessageList *_messageList = nil;
     unreadCount = [[jsonResponse objectForKey: @"badge"] intValue];
 
     UALOG(@"after retrieveMessageList, messages: %@", messages);
-    if (self.isRetrieving == 0) {
+    if (self.nRetrieving == 0) {
         [self notifyObservers:@selector(messageListLoaded)];
     }
 }
 
 - (void)messageListFailed:(UA_ASIHTTPRequest *)request {
-    self.isRetrieving--;
+    self.nRetrieving--;
     [self requestWentWrong:request];
-    if (self.isRetrieving == 0) {
+    if (self.nRetrieving == 0) {
         [self notifyObservers:@selector(inboxLoadFailed)];
     }
 }

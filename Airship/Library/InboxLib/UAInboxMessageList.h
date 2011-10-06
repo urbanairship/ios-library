@@ -49,7 +49,7 @@ typedef enum {
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
     int unreadCount;
-    int isRetriving;
+    int nRetrieving;
     BOOL isBatchUpdating;
 }
 
@@ -125,5 +125,7 @@ typedef enum {
  * NO otherwise.
  */
 @property(assign) BOOL isBatchUpdating;
+
+@property(readonly) BOOL isRetrieving;
 
 @end

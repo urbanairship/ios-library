@@ -43,6 +43,10 @@
 - (void)editButtonPressed:(id)sender;
 - (void)cancelButtonPressed:(id)sender;
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableReloadData;
+- (void)coverUpEmptyListIfNeeded;
+- (void)showLoadingScreen;
+- (void)hideLoadingScreen;
 
 @property (nonatomic, retain) UITableView *messageTable;
 
@@ -79,7 +83,7 @@
     RELEASE_SAFELY(tabbar);
     RELEASE_SAFELY(tabbarItem);
     RELEASE_SAFELY(badgeView);
-    
+        
     [super dealloc];
 }
 
@@ -93,6 +97,7 @@
         [self initNibNames];
         
         self.shouldShowAlerts = YES;
+
     }
     
     return self;
@@ -100,8 +105,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     
     editItem = [[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
@@ -118,9 +121,7 @@
     [self createToolbarItems];
     [self createNavigationBadge];
 
-    selectedIndexPathsForEditing = [[NSMutableSet alloc] init];
-    
-    [[UAInbox shared].messageList retrieveMessageList];
+    selectedIndexPathsForEditing = [[NSMutableSet alloc] init];   
 }
 
 - (void)createToolbarItems {
@@ -156,8 +157,14 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-        
-    [[UAInbox shared].messageList addObserver:self];
+    
+    if ([UAInbox shared].messageList.isRetrieving) {
+        [self showLoadingScreen];
+    } else {
+        [self coverUpEmptyListIfNeeded];
+        [self tableReloadData];
+        [self updateNavigationBadge];
+    }
     
     [messageTable deselectRowAtIndexPath:[messageTable indexPathForSelectedRow] animated:animated];
     [self.navigationController.navigationBar addSubview:badgeView];
@@ -165,9 +172,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
-    [[UAInbox shared].messageList removeObserver:self];
-    
     [badgeView removeFromSuperview];
 }
 
@@ -199,14 +203,7 @@
 }
 
 - (void)refreshAfterBatchUpdate {
-    [loadingIndicator hide];
-    int messageCount = [[UAInbox shared].messageList messageCount];
-    
-    loadingView.hidden = (messageCount != 0);
-    
-    if (messageCount == 0) {
-        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
-    }
+    [self hideLoadingScreen];
     
     [selectedIndexPathsForEditing removeAllObjects];
     cancelItem.enabled = YES;
@@ -217,6 +214,29 @@
     [self refreshBatchUpdateButtons];
     
 }
+
+- (void)showLoadingScreen {
+    loadingView.hidden = NO;
+    loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
+    [loadingIndicator show];
+    loadingLabel.hidden = NO;
+}
+
+- (void)coverUpEmptyListIfNeeded {
+    int messageCount = [[UAInbox shared].messageList messageCount];
+    
+    loadingView.hidden = (messageCount != 0);
+    
+    if (messageCount == 0) {
+        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
+    }
+}
+
+- (void)hideLoadingScreen {
+    [loadingIndicator hide];
+    [self coverUpEmptyListIfNeeded];
+}
+
 
 #pragma mark -
 #pragma mark Button Action Methods
@@ -393,56 +413,39 @@
 #pragma mark UAInboxMessageListObserver
 
 - (void)messageListWillLoad {
-    loadingView.hidden = NO;
-    loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
-    [loadingIndicator show];
-    loadingLabel.hidden = NO;
+    [self showLoadingScreen];
 }
 
 - (void)messageListLoaded {
 	
 	UALOG(@"got messageListLoaded");
-    [loadingIndicator hide];
-    int messageCount = [[UAInbox shared].messageList messageCount];
-    
-    loadingView.hidden = (messageCount != 0);
-    
-    if (messageCount == 0) {
-        loadingLabel.text = UA_INBOX_TR(@"UA_No_Messages");
-    }
-    
+        
 	// TODO: add call to pushhandler here to get the messageid we should be viewing????
 	//[UAInboxUI displayMessage:viewingMessageID];
 	
+    [self hideLoadingScreen];
+    
     [self tableReloadData];
     [self updateNavigationBadge];
 }
 
 - (void)inboxLoadFailed {
-    [loadingIndicator hide];
+    
+    [self hideLoadingScreen];
+    
     [self tableReloadData];
     [self updateNavigationBadge];
     
-    if ([[UAInbox shared].messageList messageCount] > 0) {
+    if (shouldShowAlerts) {
         
-        loadingView.hidden = YES;
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
+                                                        message:UA_INBOX_TR(@"UA_Error_Fetching_Message_List")
+                                                       delegate:nil
+                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                              otherButtonTitles:nil];
+        [alert show];
+        [alert release];
         
-        if (shouldShowAlerts) {
-            
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                            message:UA_INBOX_TR(@"UA_Error_Fetching_Message_List")
-                                                           delegate:nil
-                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                                  otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            
-        }
-    }
-    
-    else {
-        loadingLabel.text = UA_INBOX_TR(@"UA_Error_Fetching_Message_List");
-
     }
 }
 
