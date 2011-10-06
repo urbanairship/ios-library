@@ -101,7 +101,7 @@ static UAInboxMessageList *_messageList = nil;
 - (void)loadSavedMessages {
     
     UALOG(@"before retrieve saved messages: %@", messages);
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
@@ -185,7 +185,7 @@ static UAInboxMessageList *_messageList = nil;
         }
     }
 
-    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
     unreadCount = [[jsonResponse objectForKey: @"badge"] intValue];
 
     UALOG(@"after retrieveMessageList, messages: %@", messages);
