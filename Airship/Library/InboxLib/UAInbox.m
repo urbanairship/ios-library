@@ -31,6 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_ASIHTTPRequest.h"
 
 #import "UAirship.h"
+#import "UAInboxDBManager.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxURLCache.h"
@@ -116,6 +117,13 @@ static Class _uiClass;
 - (id)init {
     if (self = [super init]) {
 
+        // create the DB and clear out legacy info
+        // prior to creating the new caches directory
+        [UAInboxDBManager shared];
+        
+        
+        //TODO: do we need the bundle name?
+        
         /* Using custom URLCache */
         NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
