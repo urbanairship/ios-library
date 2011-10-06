@@ -49,6 +49,8 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 - (void)updateMessageAsRead:(UAInboxMessage *)msg;
 - (void)updateMessagesAsRead:(NSArray *)messages;
 
+- (void)removeLegacyDatabase;
+
 // Helper for development
 - (void)resetDB;
 
