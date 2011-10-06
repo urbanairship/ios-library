@@ -14,4 +14,4 @@ Airship/libUAirship-*.a
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
-fabfile.pyc
+fabfile.py*
