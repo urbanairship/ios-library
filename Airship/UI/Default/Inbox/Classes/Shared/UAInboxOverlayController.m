@@ -31,6 +31,7 @@
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
 - (void)loadMessageAtIndex:(int)index;
 - (void)loadMessageForID:(NSString *)mid;
+- (void)displayWindow;
 - (void)closePopupWindow;
 
 @end
@@ -77,15 +78,15 @@
         }
         
         loadingIndicator = [[UABeveledLoadingIndicator indicator] retain];
-        
-        [self loadMessageForID:messageID];
-        
+                
         //required to receive orientation updates from NSNotifcationCenter
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(orientationChanged:) 
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
+        
+        [self loadMessageForID:messageID];
         
     }
     
@@ -119,6 +120,7 @@
     
     [webView stopLoading];
     [webView loadRequest:requestObj];
+    [self performSelector:@selector(displayWindow) withObject:nil afterDelay:0.1];
 }
 
 - (void)loadMessageForID:(NSString *)mid {
@@ -419,8 +421,6 @@
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self populateJavascriptEnvironment];
-    
-    [self displayWindow];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
