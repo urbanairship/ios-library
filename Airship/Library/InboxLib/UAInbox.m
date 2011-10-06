@@ -121,14 +121,9 @@ static Class _uiClass;
         // prior to creating the new caches directory
         [UAInboxDBManager shared];
         
-        
-        //TODO: do we need the bundle name?
-        
         /* Using custom URLCache */
-        NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        //append bundle name to cache directory to make it app-unique
-        NSString *cacheDirectory = [[paths objectAtIndex:0]stringByAppendingPathComponent:bundleName];
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cacheDirectory = [cachePaths objectAtIndex:0];
         NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
         NSError *error;
 
