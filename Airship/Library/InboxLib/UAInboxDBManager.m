@@ -63,26 +63,37 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }   
 
-- (void)moveLegacyDatabase {
+- (void)removeLegacyDatabase {
     
     NSArray *docPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [docPaths objectAtIndex:0];
     NSString *oldDbPath = [documentsDirectory stringByAppendingPathComponent:OLD_DB_NAME];
 
-    NSArray *libPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString *libraryDirectory = [libPaths objectAtIndex:0];
-    NSString *newDbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
-    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error = nil;
     
-    if (![fileManager fileExistsAtPath:newDbPath] && [fileManager fileExistsAtPath:oldDbPath]) {
-        UALOG(@"Moving legacy AirMail database.");
-        [fileManager moveItemAtPath:oldDbPath toPath:newDbPath error:&error];
+    if ([fileManager fileExistsAtPath:oldDbPath]) {
+        UALOG(@"Removing legacy AirMail database and cache");
+        [fileManager removeItemAtPath:oldDbPath error:&error];
         
         if (error) {
-            UALOG(@"Failed to move the database. %@", [error localizedDescription]);
+            UALOG(@"Failed to remove the old database. %@", [error localizedDescription]);
+            error = nil;//will be reused
         }
+        
+        // clear the old caches
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cachesDirectory = [cachePaths objectAtIndex:0];
+        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
+        
+        if ([fileManager fileExistsAtPath:diskCachePath]) {
+            [fileManager removeItemAtPath:diskCachePath error:&error];
+            
+            if (error) {
+                UALOG(@"Failed to remove the old cache. %@", [error localizedDescription]);
+            }
+        }
+        
     }
     
 }
@@ -97,7 +108,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     
     if (![fileManager fileExistsAtPath:dbPath]) {
         //move old db
-        [self moveLegacyDatabase];
+        [self removeLegacyDatabase];
     }
 
     db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
