@@ -38,6 +38,8 @@
 @property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
 @property (nonatomic, retain) UAInboxMessageListController *messageListController;
 
+- (void)quitInbox;
+
 @end
 
 @implementation UAInboxNavUI
