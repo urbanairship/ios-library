@@ -65,12 +65,17 @@
 
 SINGLETON_INTERFACE(UAInboxUI);
 
+///---------------------------------------------------------------------------------------
+/// @name UAInboxUIProtocol Methods
+///---------------------------------------------------------------------------------------
 + (void)quitInbox;
-- (void)quitInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-- (void)newMessageArrived:(NSDictionary *)message;
-+ (void)land;
 + (void)loadLaunchMessage;
+
+///---------------------------------------------------------------------------------------
+/// @name UAInboxPushHandlerDelegate Methods
+///---------------------------------------------------------------------------------------
+- (void)newMessageArrived:(NSDictionary *)message;
 
 @end

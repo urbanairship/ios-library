@@ -104,13 +104,33 @@
 
 SINGLETON_INTERFACE(UAInboxNavUI);
 
+
+///---------------------------------------------------------------------------------------
+/// @name UAInboxUIProtocol Methods
+///---------------------------------------------------------------------------------------
 + (void)quitInbox;
-- (void)quitInbox;
-- (void)newMessageArrived:(NSDictionary *)message;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value;
-+ (void)land;
 + (void)loadLaunchMessage;
+
+///---------------------------------------------------------------------------------------
+/// @name UAInboxPushHandlerDelegate Methods
+///---------------------------------------------------------------------------------------
+- (void)newMessageArrived:(NSDictionary *)message;
+
+///---------------------------------------------------------------------------------------
+/// @name Misc
+///---------------------------------------------------------------------------------------
+
+/**
+ * Instructs the UI class to place the UI in an existing UINavigationController on the iPad
+ * rather than using a UIPopoverController
+ *
+ * @param value Set to YES if the iPhone/NavigationController UI should be used even when the
+ * application is using the iPad UI idiom
+ */
++ (void)setRuniPhoneTargetOniPad:(BOOL)value;
+
++ (void)land;
 
 @end

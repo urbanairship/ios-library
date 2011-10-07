@@ -38,6 +38,8 @@
 @property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
 @property (nonatomic, assign) BOOL isVisible;
 
+- (void)quitInbox;
+
 @end
 
 @implementation UAInboxUI

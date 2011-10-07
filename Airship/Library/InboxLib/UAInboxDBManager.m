@@ -117,7 +117,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userId App:(NSString *)appId {
+- (NSMutableArray *)getMessagesForUser:(NSString *)userId app:(NSString *)appId {
 
     UA_FMResultSet *rs;
     NSMutableArray *result = [NSMutableArray array];
@@ -149,7 +149,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return result;
 }
 
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId {
+- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId app:(NSString *)appId {
 
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
