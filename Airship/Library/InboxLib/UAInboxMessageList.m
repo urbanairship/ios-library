@@ -126,14 +126,12 @@ static UAInboxMessageList *_messageList = nil;
     if ([messages count] > 0) {
         lastMessage = [[messages objectAtIndex: 0] messageID];
     }
-    NSString *queryString = @"";
-    if (lastMessage != nil) {
-        queryString = [NSString stringWithFormat: @"?since=%@", lastMessage];
-    }
     
-	//TODO: standardize on a single create user url method?
-    NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@%@",
-                           [[UAirship shared] server], @"/api/user/", [UAUser defaultUser].username ,@"/messages/", queryString];
+        
+    NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
+                                                  [[UAirship shared] server], @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
+
+    
     UALOG(@"%@",urlString);
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
@@ -170,22 +168,21 @@ static UAInboxMessageList *_messageList = nil;
         [newMessages addObject:tmp];
         [tmp release];
     }
-
+    
+    
     if (newMessages.count > 0) {
         NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:YES] autorelease];
+                                                                        ascending:NO] autorelease];
         
         //TODO: this flow seems terribly backwards
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [newMessages sortUsingDescriptors:sortDescriptors];
-
-        [newMessages removeObjectsInArray:messages];
-        for (UAInboxMessage *msg in newMessages) {
-            [messages insertObject:msg atIndex:0];
-        }
     }
-
+    
+    [[UAInboxDBManager shared] deleteMessages:messages];
     [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    self.messages = newMessages;
+        
     unreadCount = [[jsonResponse objectForKey: @"badge"] intValue];
 
     UALOG(@"after retrieveMessageList, messages: %@", messages);
