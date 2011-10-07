@@ -180,7 +180,7 @@ static UAInboxMessageList *_messageList = nil;
     }
     
     [[UAInboxDBManager shared] deleteMessages:messages];
-    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
     self.messages = newMessages;
         
     unreadCount = [[jsonResponse objectForKey: @"badge"] intValue];
