@@ -149,7 +149,7 @@ static Class _uiClass;
         
         IF_IOS4_OR_GREATER(
                            
-           if (&UIApplicationDidEnterBackgroundNotification != NULL) {
+           if (&UIApplicationWillEnterForegroundNotification != NULL) {
                
                [[NSNotificationCenter defaultCenter] addObserver:self
                                                         selector:@selector(enterForeground)
