@@ -488,7 +488,7 @@
     NSDictionary *receiptVerificationInfo = (NSDictionary *)[UAUtils parseJSON:responseString];
     NSObject *receiptStatus = [receiptVerificationInfo objectForKey:@"receipt_status"];
     
-    UALOG(@"Receipt status: %@", receiptStatus);
+    //UALOG(@"Receipt verification status: %@", receiptStatus);
     
     // if the receipt status is nil or set to an NSNumber == 0, everything is good
     // if it is set to anything else, the receipt failed to verify
