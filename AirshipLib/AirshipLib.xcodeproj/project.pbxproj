@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1813EDE412796188009DEB29 /* libStoreFront-2.2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */; };
+		1813EDE412796188009DEB29 /* libStoreFront-2.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.6.a */; };
 		1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
-		1890B8A712519FCD00E6EBF1 /* libPush-1.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */; };
+		1890B8A712519FCD00E6EBF1 /* libPush-1.2.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.3.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
 		1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -19,7 +19,7 @@
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		1FE4379A128B589000D38A14 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
 		1FE4379B128B589000D38A14 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
-		6331479E122FB0AA008F2D48 /* libSubscription-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */; };
+		6331479E122FB0AA008F2D48 /* libSubscription-1.2.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.7.a */; };
 		633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -35,7 +35,7 @@
 		7BB679111429288D00B877DB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7BB6790F1429288D00B877DB /* InfoPlist.strings */; };
 		7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */ = {isa = PBXBuildFile; fileRef = 7BB679121429288D00B877DB /* UAUtilsTest.h */; };
 		7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BB679141429288D00B877DB /* UAUtilsTest.m */; };
-		7BB6792414292D1800B877DB /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */; };
+		7BB6792414292D1800B877DB /* libUAirship-1.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.1.0.a */; };
 		7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793C14292FF800B877DB /* CFNetwork.framework */; };
 		7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793D14292FF800B877DB /* CoreTelephony.framework */; };
 		7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679421429301E00B877DB /* libsqlite3.dylib */; };
@@ -50,8 +50,6 @@
 		B69DB4CB12533B280037AF7F /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		B6DFC09212505131004E6D93 /* UA_FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07212505131004E6D93 /* UA_FMDatabase.h */; };
 		B6DFC09312505131004E6D93 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		B6DFC09412505131004E6D93 /* UA_FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */; };
-		B6DFC09512505131004E6D93 /* UA_FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */; };
 		B6DFC09712505131004E6D93 /* UA_FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07712505131004E6D93 /* UA_FMResultSet.h */; };
 		B6DFC09812505131004E6D93 /* UA_FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07812505131004E6D93 /* UA_FMResultSet.m */; };
 		B6DFC09912505131004E6D93 /* UA_SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07A12505131004E6D93 /* UA_SBJSON.h */; };
@@ -86,16 +84,16 @@
 		B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */; };
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
-		D51846851300B6FC00A40CAC /* libInbox-1.5.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */; };
-		D51846861300B70100A40CAC /* libStoreFront-2.2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */; };
-		D51846871300B70900A40CAC /* libPush-1.2.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */; };
-		D51846881300B70F00A40CAC /* libSubscription-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */; };
+		D51846851300B6FC00A40CAC /* libInbox-2.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.0.a */; };
+		D51846861300B70100A40CAC /* libStoreFront-2.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.6.a */; };
+		D51846871300B70900A40CAC /* libPush-1.2.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.3.a */; };
+		D51846881300B70F00A40CAC /* libSubscription-1.2.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.7.a */; };
 		D51846AD1300B8C200A40CAC /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846AC1300B8C200A40CAC /* CFNetwork.framework */; };
 		D51846B21300B8D900A40CAC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846B11300B8D900A40CAC /* Security.framework */; };
 		D51846B71300B8EC00A40CAC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846B61300B8EC00A40CAC /* libz.dylib */; };
 		D51846BB1300B90A00A40CAC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846BA1300B90A00A40CAC /* MobileCoreServices.framework */; };
 		D51846C01300B92200A40CAC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D51846BF1300B92200A40CAC /* CoreGraphics.framework */; };
-		D5A1928712C15A4E006AF4AE /* libInbox-1.5.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */; };
+		D5A1928712C15A4E006AF4AE /* libInbox-2.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.0.a */; };
 		D5A4B8DF13008BFE00002F71 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A4B8DE13008BFE00002F71 /* GHUnitIOS.framework */; };
 		D5A4B95B1300A9A100002F71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		D5A4B95C1300A9AA00002F71 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
@@ -129,7 +127,6 @@
 		D5A4B9811300AAB800002F71 /* UA_ASIDownloadCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE222124F3FBB00A46CB1 /* UA_ASIDownloadCache.m */; };
 		D5A4B9821300AAB800002F71 /* UA_unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25512507CEA004E6D93 /* UA_unzip.c */; };
 		D5A4B9831300AAB800002F71 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		D5A4B9841300AAB900002F71 /* UA_FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */; };
 		D5A4B9851300AABA00002F71 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		D5A4B9861300AAC000002F71 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5A4B9871300AAC000002F71 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
@@ -313,8 +310,6 @@
 		B69DB4C912533B280037AF7F /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Base64.m; sourceTree = "<group>"; };
 		B6DFC07212505131004E6D93 /* UA_FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMDatabase.h; sourceTree = "<group>"; };
 		B6DFC07312505131004E6D93 /* UA_FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMDatabase.m; sourceTree = "<group>"; };
-		B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMDatabaseAdditions.h; sourceTree = "<group>"; };
-		B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMDatabaseAdditions.m; sourceTree = "<group>"; };
 		B6DFC07712505131004E6D93 /* UA_FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMResultSet.h; sourceTree = "<group>"; };
 		B6DFC07812505131004E6D93 /* UA_FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMResultSet.m; sourceTree = "<group>"; };
 		B6DFC07A12505131004E6D93 /* UA_SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJSON.h; sourceTree = "<group>"; };
@@ -349,7 +344,7 @@
 		B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASINetworkQueue.h; sourceTree = "<group>"; };
 		B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASINetworkQueue.m; sourceTree = "<group>"; };
 		B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIProgressDelegate.h; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.0.7.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.1.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.1.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -420,7 +415,7 @@
 				7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */,
 				7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */,
 				7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */,
-				7BB6792414292D1800B877DB /* libUAirship-1.0.7.a in Frameworks */,
+				7BB6792414292D1800B877DB /* libUAirship-1.1.0.a in Frameworks */,
 				7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */,
 				7BB679091429288D00B877DB /* UIKit.framework in Frameworks */,
 				7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */,
@@ -432,15 +427,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5A1928712C15A4E006AF4AE /* libInbox-1.5.5.a in Frameworks */,
-				6331479E122FB0AA008F2D48 /* libSubscription-1.2.6.a in Frameworks */,
+				D5A1928712C15A4E006AF4AE /* libInbox-2.0.0.a in Frameworks */,
+				6331479E122FB0AA008F2D48 /* libSubscription-1.2.7.a in Frameworks */,
 				633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */,
 				633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */,
 				633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */,
 				B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */,
 				63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */,
-				1890B8A712519FCD00E6EBF1 /* libPush-1.2.2.a in Frameworks */,
-				1813EDE412796188009DEB29 /* libStoreFront-2.2.5.a in Frameworks */,
+				1890B8A712519FCD00E6EBF1 /* libPush-1.2.3.a in Frameworks */,
+				1813EDE412796188009DEB29 /* libStoreFront-2.2.6.a in Frameworks */,
 				1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */,
 				D5A4B8DF13008BFE00002F71 /* GHUnitIOS.framework in Frameworks */,
 			);
@@ -450,10 +445,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D51846851300B6FC00A40CAC /* libInbox-1.5.5.a in Frameworks */,
-				D51846861300B70100A40CAC /* libStoreFront-2.2.5.a in Frameworks */,
-				D51846871300B70900A40CAC /* libPush-1.2.2.a in Frameworks */,
-				D51846881300B70F00A40CAC /* libSubscription-1.2.6.a in Frameworks */,
+				D51846851300B6FC00A40CAC /* libInbox-2.0.0.a in Frameworks */,
+				D51846861300B70100A40CAC /* libStoreFront-2.2.6.a in Frameworks */,
+				D51846871300B70900A40CAC /* libPush-1.2.3.a in Frameworks */,
+				D51846881300B70F00A40CAC /* libSubscription-1.2.7.a in Frameworks */,
 				D5A4B95B1300A9A100002F71 /* Foundation.framework in Frameworks */,
 				D5A4B95C1300A9AA00002F71 /* SystemConfiguration.framework in Frameworks */,
 				D5A4B95E1300A9BA00002F71 /* StoreKit.framework in Frameworks */,
@@ -474,7 +469,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.1.0.a */,
 				D5A4B9411300A8F200002F71 /* AirshipTest.app */,
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
 			);
@@ -593,8 +588,6 @@
 			children = (
 				B6DFC07212505131004E6D93 /* UA_FMDatabase.h */,
 				B6DFC07312505131004E6D93 /* UA_FMDatabase.m */,
-				B6DFC07412505131004E6D93 /* UA_FMDatabaseAdditions.h */,
-				B6DFC07512505131004E6D93 /* UA_FMDatabaseAdditions.m */,
 				B6DFC07712505131004E6D93 /* UA_FMResultSet.h */,
 				B6DFC07812505131004E6D93 /* UA_FMResultSet.m */,
 			);
@@ -737,16 +730,16 @@
 			children = (
 				D5BED7B312FC787900057449 /* UASQLite.m */,
 				D5BED7B412FC787900057449 /* UASQLite.h */,
-				D5BED7B512FC787900057449 /* UAHTTPConnection.m */,
 				D5BED7B612FC787900057449 /* UAHTTPConnection.h */,
+				D5BED7B512FC787900057449 /* UAHTTPConnection.m */,
 				D5BED7B712FC787900057449 /* UAEvent.m */,
 				D5BED7B812FC787900057449 /* UAEvent.h */,
 				D5BED7B912FC787900057449 /* UAAnalyticsDBManager.m */,
 				D5BED7BA12FC787900057449 /* UAAnalyticsDBManager.h */,
 				1FC71652129597F9003BDD2B /* UAUser.h */,
 				1FC71653129597F9003BDD2B /* UAUser.m */,
-				D9983E8B1238462100B7E69F /* UAUtils.m */,
 				D9983E8C1238462100B7E69F /* UAUtils.h */,
+				D9983E8B1238462100B7E69F /* UAUtils.m */,
 				D9983E8E1238462100B7E69F /* UAObservable.m */,
 				D9983E8F1238462100B7E69F /* UAObservable.h */,
 				D9983E901238462100B7E69F /* UAAsycImageView.m */,
@@ -811,7 +804,6 @@
 				B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */,
 				B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */,
 				B6DFC09212505131004E6D93 /* UA_FMDatabase.h in Headers */,
-				B6DFC09412505131004E6D93 /* UA_FMDatabaseAdditions.h in Headers */,
 				B6DFC09712505131004E6D93 /* UA_FMResultSet.h in Headers */,
 				B6DFC09912505131004E6D93 /* UA_SBJSON.h in Headers */,
 				B6DFC09C12505131004E6D93 /* UA_SBJsonBase.h in Headers */,
@@ -881,7 +873,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.0.7.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.1.0.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		D5A4B9401300A8F200002F71 /* AirshipTest */ = {
@@ -960,28 +952,28 @@
 		1813EDE312796185009DEB29 /* libStoreFront-2.2.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libStoreFront-2.2.5.a";
+			path = "libStoreFront-2.2.6.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		1890B8A612519FC400E6EBF1 /* libPush-1.2.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libPush-1.2.2.a";
+			path = "libPush-1.2.3.a";
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6331469C122FA34B008F2D48 /* libSubscription-1.2.6.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libSubscription-1.2.6.a";
+			path = "libSubscription-1.2.7.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D5A1927812C158A8006AF4AE /* libInbox-1.5.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libInbox-1.5.5.a";
+			path = "libInbox-2.0.0.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1060,7 +1052,6 @@
 				B6EFE235124F3FBB00A46CB1 /* UA_ASIInputStream.m in Sources */,
 				B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */,
 				B6DFC09312505131004E6D93 /* UA_FMDatabase.m in Sources */,
-				B6DFC09512505131004E6D93 /* UA_FMDatabaseAdditions.m in Sources */,
 				B6DFC09812505131004E6D93 /* UA_FMResultSet.m in Sources */,
 				B6DFC09A12505131004E6D93 /* UA_SBJSON.m in Sources */,
 				B6DFC09D12505131004E6D93 /* UA_SBJsonBase.m in Sources */,
@@ -1119,7 +1110,6 @@
 				D5A4B9811300AAB800002F71 /* UA_ASIDownloadCache.m in Sources */,
 				D5A4B9821300AAB800002F71 /* UA_unzip.c in Sources */,
 				D5A4B9831300AAB800002F71 /* UA_FMDatabase.m in Sources */,
-				D5A4B9841300AAB900002F71 /* UA_FMDatabaseAdditions.m in Sources */,
 				D5A4B9851300AABA00002F71 /* UA_Reachability.m in Sources */,
 				D5A4B9861300AAC000002F71 /* UASQLite.m in Sources */,
 				D5A4B9871300AAC000002F71 /* UAUser.m in Sources */,
@@ -1227,11 +1217,9 @@
 					"-DUADEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 			};
@@ -1254,11 +1242,9 @@
 				INSTALL_PATH = /Airship;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1270,7 +1256,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 1.0.7;
+				CURRENT_PROJECT_VERSION = 1.1.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1280,10 +1266,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1301,7 +1284,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 1.0.7;
+				CURRENT_PROJECT_VERSION = 1.1.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1310,10 +1293,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

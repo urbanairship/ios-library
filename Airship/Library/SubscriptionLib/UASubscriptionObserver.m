@@ -40,10 +40,29 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_SBJSON.h"
 #import "UA_ZipArchive.h"
 
+// for IAP Compatibility
+#import "UAStoreFront.h"
+#import "UAInventory.h"
+
 #pragma mark -
 #pragma mark Private Category
 // Private methods
 @interface UASubscriptionObserver()
+
+/**
+ * Finish a transaction if it is still present in the queue.
+ *
+ * @param transaction The transaction to finish
+ */
+- (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction;
+
+/**
+ * Finish a transaction if it is still present in the queue, but only if the product
+ * is in the inventory or NOT in the IAP inventory
+ *
+ * @param transaction The transaction to finish
+ */
+- (void)safelyFinishUnknownTransaction:(SKPaymentTransaction *)transaction;
 
 /**
  * Creates and initializes a network queue for sequentially submitting
@@ -161,7 +180,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     //close any of the transactions that were passed back and clear out the list to try again
     for (SKPaymentTransaction *transaction in unrestoredTransactions) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishTransaction:transaction];
     }
     [unrestoredTransactions removeAllObjects];
     
@@ -195,7 +214,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString *productIdentifier = transaction.payment.productIdentifier;
     if (![[UASubscriptionManager shared].inventory containsProduct:productIdentifier]) {
         UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishUnknownTransaction:transaction];
     }
 }
 
@@ -203,7 +222,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UALOG(@"Purchase Successful for Product ID: %@", transaction.payment.productIdentifier);
     [self logTransaction:transaction];
     
-    [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+    // If the product was purchased previously, but no longer exits on UA
+    // we can not complete this transaction, so we'll close it
+    NSString *productIdentifier = transaction.payment.productIdentifier;
+    if (![[UASubscriptionManager shared].inventory containsProduct:productIdentifier]) {
+        UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
+        [self safelyFinishUnknownTransaction:transaction];
+    } else {
+        [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+    }
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
@@ -222,7 +249,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     } else if (product && product.autorenewable) {
         
         // Uncomment to clear out all transactions - helpful for debugging
-        // [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        // [self safelyFinishTransaction:transaction];
         // return;//don't do anything else
         
         
@@ -233,7 +260,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
     } else {
         UALOG(@"Skipping transaction - unknown product or not an autorenewable.");
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self safelyFinishUnknownTransaction:transaction];
     }
 
 }
@@ -250,8 +277,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         }
     }
 
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [[UASubscriptionManager shared] purchaseProductFailed:product withError:transaction.error];
+    [self safelyFinishTransaction:transaction];
 
 }
 
@@ -300,7 +327,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)autorenewableRestoredWithRequest:(UA_ASIHTTPRequest *)request {
     
-    UALOG(@"Subscription purchased: %d\n%@\n", request.responseStatusCode, request.responseString);
+    UALOG(@"Subscription restored or renewed: %d\n%@\n", request.responseStatusCode, request.responseString);
     
     SKPaymentTransaction *transaction = [request.userInfo objectForKey:@"transaction"];
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
@@ -308,11 +335,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     switch (request.responseStatusCode) {
         case 200:
         {
-            // close the transaction
+
+            // close the transaction, even if verification failed - it's restorable
             [unrestoredTransactions removeObject:transaction];
-            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            [self safelyFinishTransaction:transaction];
             
-            if (![restoredProducts containsObject:product]) {
+            // First, check to see if the receipt was verified
+            // if not, notify observers and bail if the receipt verification failed
+            if (![UASubscriptionInventory isReceiptValid:request.responseString]) {
+                UALOG(@"Recipt validation failed: %@", request.responseString);
+                
+                //notify observers
+                [[UASubscriptionManager shared] restoreAutorenewableProductFailed:product];
+                
+            } else if (![restoredProducts containsObject:product]) {
                 [restoredProducts addObject:product];
             }
             
@@ -324,23 +360,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         {
             UALOG(@"Subscription restored from another user!");
             
-            // Sample response:
-            /*
-             {"user_data": 
-             {"has_active_subscription": true, 
-             "user_url": "https://sgc.urbanairship.com/api/user/4e20bc17a9ee251feb000001/", 
-             "subscriptions": [
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:20:13", "product_id": "com.urbanairship.artest.7days", "is_active": false, "start": "2011-07-15 22:17:13", "purchased": "2011-07-15 22:17:13"},
-             {"subscription_key": "d5PFDJyBSwukGaRiZheuNw", "end": "2011-07-15 22:27:59", "product_id": "com.urbanairship.artest.7days", "is_active": true, "start": "2011-07-15 22:24:59", "purchased": "2011-07-15 22:24:59"}
-             ],
-             "user_id": "4e20bc17a9ee251feb000001",
-             "server_time": "2011-07-15 22:25:00",
-             "password": "-4GNBzU5RA2sAt0B2TPLNA",
-             "device_tokens": ["BF58148F2142DF6A843710BBEADC513916DB26B015EBA610BF86C457FD171B37"]
-             }
-             }
-             */
-            
             UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
             NSDictionary *responseDictionary = [parser objectWithString:request.responseString];
             [parser release];
@@ -351,7 +370,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             
             // close the transaction
             [unrestoredTransactions removeObject:transaction];
-            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            [self safelyFinishTransaction:transaction];
             
             if (![restoredProducts containsObject:product]) {
                 [restoredProducts addObject:product];
@@ -396,7 +415,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     
     [unrestoredTransactions removeObject:transaction];
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [self safelyFinishTransaction:transaction];
     
     //notify observers
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
@@ -442,6 +461,36 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         UALOG(@"Original Transaction Date: %@", [dateFormatter stringFromDate:transaction.originalTransaction.transactionDate]);
     }
     
+}
+
+#pragma mark -
+#pragma mark Transaction Management
+
+- (void)safelyFinishTransaction:(SKPaymentTransaction *)transaction {
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    }
+}
+
+- (void)safelyFinishUnknownTransaction:(SKPaymentTransaction *)transaction {
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        Class iapClass = NSClassFromString(@"UAStoreFront");
+        if (iapClass && [iapClass initialized]) {
+            
+            UAInventoryStatus iapStatus = [UAStoreFront shared].inventory.status;
+            NSString *identifier = transaction.payment.productIdentifier;
+            
+            // if purchasing is disabled, finish the transaction
+            // if the inventory is loaded and does not contain the product ID, finish the transaction
+            if (iapStatus == UAInventoryStatusPurchaseDisabled ||
+                (iapStatus == UAInventoryStatusLoaded && ![[UAStoreFront shared].inventory productWithIdentifier:identifier])) {
+                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            }
+            
+        } else {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
+    }
 }
 
 @end

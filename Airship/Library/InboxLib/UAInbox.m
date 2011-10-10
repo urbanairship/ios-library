@@ -1,4 +1,4 @@
-/*
+    /*
 Copyright 2009-2011 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -23,22 +23,35 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
+
 #import "UAInbox.h"
+
+#import "UA_ASINetworkQueue.h"
+#import "UA_ASIHTTPRequest.h"
+
+#import "UAirship.h"
+#import "UAInboxDBManager.h"
+#import "UAInboxMessageList.h"
+#import "UAInboxPushHandler.h"
 #import "UAInboxURLCache.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-#import "UA_ASINetworkQueue.h"
-#import "UA_ASIHTTPRequest.h"
+
 #import "UAInboxMessageListObserver.h"
+
+//weak link to this notification since it doesn't exist prior to iOS 4
+UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
 
 UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
 
 @implementation UAInbox
 
-@synthesize activeInbox;
+@synthesize messageList;
 @synthesize jsDelegate;
 @synthesize pushHandler;
-@synthesize clientCache, inboxCache;
+@synthesize clientCache;
+@synthesize inboxCache;
 
 SINGLETON_IMPLEMENTATION(UAInbox)
 
@@ -59,6 +72,10 @@ static Class _uiClass;
     return _uiClass;
 }
 
+- (void)enterForeground {
+    [messageList retrieveMessageList];
+}
+
 #pragma mark -
 #pragma mark Open APIs, set custom ui
 
@@ -66,46 +83,16 @@ static Class _uiClass;
     _uiClass = customUIClass;
 }
 
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value {
-	[[[UAInbox shared] uiClass] setRuniPhoneTargetOniPad:value];
-}
-
-+ (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj {
-    NSString *username = [UAUser defaultUser].username;
-    NSString *password = [UAUser defaultUser].password;
-    NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
-	
-    authString = [NSString stringWithFormat: @"Basic %@", authString];
-    [requestObj setValue:authString forHTTPHeaderField:@"Authorization"];
-}
-
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 
-+ (void)setInbox:(UAInboxMessageList *)inbox {
-	if([UAInbox shared].activeInbox != inbox) {
-		[UAInbox shared].activeInbox = inbox;	
-	}
-}
-
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-	if([UAInbox shared].activeInbox == nil) {
-		[UAInbox shared].activeInbox = [UAInboxMessageList defaultInbox];
-	}
-	
-    [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
-
-    [[UAInbox shared].activeInbox retrieveMessageList];
-	
     [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
+    [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 }
 
-+ (void)displayInboxOnLoad:(UAInboxMessageList *)inbox {
-	[[[UAInbox shared] uiClass] displayInboxOnLoad:inbox];
-}
-
-+(void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID {
-    [[[UAInbox shared] uiClass] displayMessage:viewController message:messageID];
++ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID {
+    [[[UAInbox shared] uiClass] displayMessage:(UIViewController *)viewController message:messageID];
 }
 
 
@@ -114,9 +101,9 @@ static Class _uiClass;
     [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
 }
 
-+ (void) land {
++ (void)land {
     // Update application badge number
-	[UAInbox shared].activeInbox = nil;
+	[UAInbox shared].messageList = nil;
 	
     [[[UAInbox shared] uiClass] land];
 	
@@ -130,10 +117,14 @@ static Class _uiClass;
 - (id)init {
     if (self = [super init]) {
 
+        // create the DB and clear out legacy info
+        // prior to creating the new caches directory
+        [UAInboxDBManager shared];
+        
         /* Using custom URLCache */
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesDirectory = [paths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
         NSError *error;
 
         [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
@@ -145,21 +136,34 @@ static Class _uiClass;
                                                                     diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
         
-		if([UAInbox shared].activeInbox == nil) {
-			[UAInbox shared].activeInbox = [UAInboxMessageList defaultInbox];
-		}
+        self.messageList = [UAInboxMessageList shared];
+        
+        [messageList retrieveMessageList];
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
+        
+        IF_IOS4_OR_GREATER(
+                           
+           if (&UIApplicationWillEnterForegroundNotification != NULL) {
+               
+               [[NSNotificationCenter defaultCenter] addObserver:self
+                                                        selector:@selector(enterForeground)
+                                                            name:UIApplicationWillEnterForegroundNotification
+                                                          object:nil];
+           }
+        );
+        
     }
 
     return self;
 }
 
-
 - (void)dealloc {
     RELEASE_SAFELY(clientCache);
     RELEASE_SAFELY(inboxCache);
 	RELEASE_SAFELY(pushHandler);
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [super dealloc];
 }

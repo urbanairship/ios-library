@@ -24,10 +24,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInboxAlertProtocol.h"
 
-@interface UAInboxAlertHandler : NSObject <UAInboxAlertProtocol, UIAlertViewDelegate> {
-
+@interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate> {
+    UIAlertView *notificationAlert;
 }
+
+- (void)showNewMessageAlert:(NSString *)message;
 
 @end

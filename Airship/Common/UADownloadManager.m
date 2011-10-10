@@ -24,11 +24,15 @@
  */
 
 #import "UADownloadManager.h"
+
 #import "UA_SBJSON.h"
 #import "UA_ASIHTTPRequest.h"
+#import "UA_ASINetworkQueue.h"
+
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAUtils.h"
+#import "UADownloadContent.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));

@@ -25,8 +25,8 @@
 
 #import <Foundation/Foundation.h>
 #import "UAObservable.h"
-#import "UA_ASIHTTPRequest.h"
-#import "UASubscriptionAlertProtocol.h"
+
+@class UA_ASIHTTPRequest;
 
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,
@@ -133,7 +133,10 @@ typedef enum _UAUserState {
 - (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
 - (void)userRequestWentWrong:(UA_ASIHTTPRequest*)request;
 
+//POST
+- (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
 
+//PUT
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
 - (NSMutableDictionary*)createUserDictionary;
 

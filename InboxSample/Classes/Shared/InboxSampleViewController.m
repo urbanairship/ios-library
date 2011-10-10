@@ -26,19 +26,67 @@
 #import "InboxSampleAppDelegate.h"
 #import "UAirship.h"
 #import "UAInbox.h"
+#import "UAInboxMessageListController.h"
+#import "UAInboxMessageViewController.h"
 
+#import "UAInboxNavUI.h"
+#import "UAInboxUI.h"
+
+#import "UAUtils.h"
 
 @implementation InboxSampleViewController
 
 @synthesize version;
 
--(IBAction)mail:(id)sender {
-	[UAInbox displayInbox:self animated:YES];	
+- (IBAction)mail:(id)sender {
+    [UAInbox displayInbox:self.navigationController animated:YES];   
+}
+
+- (IBAction)selectInboxStyle:(id)sender {
+    
+    NSString *popoverOrNav;
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        popoverOrNav = @"Popover";
+    }
+    
+    else {
+        popoverOrNav = @"Navigation Controller";
+    }
+    
+    
+    UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
+                        cancelButtonTitle:@"Cancel" 
+                   destructiveButtonTitle:nil 
+                        otherButtonTitles:@"Modal", popoverOrNav, nil] autorelease];
+    
+    [sheet showInView:self.view];
+    
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (buttonIndex) {
+        case 0:
+            [UAInbox useCustomUI:[UAInboxUI class]];
+            [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
+            break;
+        case 1:
+            [UAInbox useCustomUI:[UAInboxNavUI class]];
+            [UAInbox shared].pushHandler.delegate = [UAInboxNavUI shared];
+            break;
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.version.text = [NSString stringWithFormat:@"UAInbox Version: %@", [UAInboxVersion get]];
+    
+    self.navigationItem.rightBarButtonItem 
+        = [[[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)] autorelease];
+    
+    // For UINavigationController UI
+    [UAInboxNavUI shared].popoverButton = self.navigationItem.rightBarButtonItem;
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

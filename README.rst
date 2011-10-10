@@ -27,9 +27,10 @@ Interface into your project. These are located under /Airship/UI/Default
 Required Libraries
 ##################
 
-AirMail Inbox requires your application to link against the following Frameworks::
+The core library requires your application to link against the following Frameworks (sample UIs
+have additional linking requirements)::
 
-    libUAirship-1.0.5.a
+    libUAirship-1.1.0.a
     CFNetwork.framework
     CoreGraphics.framework
     Foundation.framework
@@ -47,16 +48,11 @@ Build Settings
 
 **Compiler**
     
-LLVM 2.0 is the default compiler for all projects and the static library. GCC 4.2 is also supported.
+LLVM 2.1 is the default compiler for all projects and the static library.
      
 **Header search path**
                                          
 Ensure that your build target's header search path includes the Airship directory.
-
-**Linker**
-
-In order to properly link against the Urban Airship static library, you will need to set the ``-all_load``
-flag and ``-weak_library /usr/lib/libSystem.B.dylib`` in your build target's ``Other Linker Flags``.
              
 Quickstart
 ----------
@@ -78,7 +74,7 @@ in your project and set the following values to the ones in your application at 
 You can also edit the file as plain-text::
 
         {
-                /* NOTE: DO NOT USE THE MASTER SECRET */
+         /* NOTE: DO NOT USE THE MASTER SECRET */
 		"APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
 		"DEVELOPMENT_APP_KEY" = "Your development app key";
 		"DEVELOPMENT_APP_SECRET" = "Your development app secret";
@@ -110,3 +106,5 @@ GHUnit	Apache 2	Copyright 2007 Google Inc.
 Google Toolkit	Apache 2	Copyright 2007 Google Inc.
 
 Reachability	BSD		Copyright (C) 2010 Apple Inc.
+
+MTPopupWindow	MIT		Copyright 2011 Marin Todorov

@@ -24,7 +24,9 @@
  */
 
 #import "UAAnalyticsDBManager.h"
+
 #import "UAirship.h"
+#import "UAEvent.h"
 
 #define DB_NAME @"UAAnalyticsDB"
 #define CREATE_TABLE_CMD @"CREATE TABLE analytics (_id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR(255), event_id VARCHAR(255), time VARCHAR(255), data BLOB, session_id VARCHAR(255), event_size VARCHAR(255))"
@@ -73,11 +75,17 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
                                                                         format:NSPropertyListBinaryFormat_v1_0
                                                               errorDescription:&errString];
-    
+
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
         [errString release];//must be relased by caller per docs
     }
+    
+    //insert an empty string if there isn't any event data
+    if (!serializedData) {
+        serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
+    }
+    
     
     [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
      [event getType],
@@ -88,8 +96,8 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
      [NSString stringWithFormat:@"%d", estimateSize]];
     
     
-    UALOG(@"DB Count %d", [self eventCount]);
-    UALOG(@"DB Size %d", [self sizeInBytes]);
+    //UALOG(@"DB Count %d", [self eventCount]);
+    //UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.

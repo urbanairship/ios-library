@@ -24,7 +24,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
 
 @interface UAViewUtils : NSObject {
 }

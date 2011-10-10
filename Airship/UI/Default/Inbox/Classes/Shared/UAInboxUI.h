@@ -24,55 +24,58 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAInboxMessageViewController.h"
-#import "UAInboxMessageListController.h"
-#import "UAInboxNavigationController.h"
-#import "UAInboxMessageListControllerPad.h"
-#import "UAInboxMessageViewControllerPad.h"
+
 #import "UAViewUtils.h"
 #import "UAInboxAlertHandler.h"
+#import "UAInbox.h"
+#import "UAInboxPushHandler.h"
+#import "UAInboxMessageListController.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
-typedef enum {
-    NORMAL_QUIT,
-    DEVICE_TOKEN_ERROR,
-    USER_ERROR,
-} QuitReason;
-
-@class UAInboxMessageViewController;
-@class UAInboxAlertProtocol;
-
-@interface UAInboxUI : NSObject <UAInboxUIProtocol> {
-    UIViewController *rootViewController;
-    UAInboxMessageViewController* messageViewController;
-    UAInboxMessageListController* messageListController;
+/**
+ * This class is the default rich push UI impelementation.  When it is
+ * designated as the [UAInbox uiClass], launching the inbox will cause it
+ * to be displayed in a modal view controller.
+ */
+@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> {
+  @private
     NSBundle *localizationBundle;
-    BOOL isVisible;
-    BOOL isiPad;
-    NSString *messageListTitle;
-    UIWindow *uaWindow;
 	UAInboxAlertHandler *alertHandler;
-	UIViewController *inboxParentController;
+    UIViewController *rootViewController;
+    UAInboxMessageListController *messageListController;
+    UIViewController *inboxParentController;
+    BOOL useOverlay;
+    BOOL isVisible;
 }
 
-@property (nonatomic, retain) UIViewController* rootViewController;
-@property (nonatomic, retain) UAInboxMessageListController* messageListController;
-@property (nonatomic, retain) UAInboxMessageViewController* messageViewController;
-@property (nonatomic, retain) UIViewController* inboxParentController;
+/**
+ * Set this property to YES if the class should display in-app messages
+ * using UAInboxOverlayController, and NO if it should navigate to the
+ * inbox and display the message as though it had been selected.
+ */
+@property (nonatomic, assign) BOOL useOverlay;
+
+/**
+ * The parent view controller the inbox will be launched from.
+ */
+@property (nonatomic, retain) UIViewController *inboxParentController;
+
 @property (nonatomic, retain) NSBundle *localizationBundle;
-@property (assign) BOOL isVisible, isiPad;
-@property (nonatomic, retain) NSString *messageListTitle;
-@property (nonatomic, retain) UIWindow *uaWindow;
 
 SINGLETON_INTERFACE(UAInboxUI);
 
+///---------------------------------------------------------------------------------------
+/// @name UAInboxUIProtocol Methods
+///---------------------------------------------------------------------------------------
 + (void)quitInbox;
-- (void)quitInbox:(QuitReason)reason;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-+ (void)setRuniPhoneTargetOniPad:(BOOL)value;
-+ (void)land;
 + (void)loadLaunchMessage;
+
+///---------------------------------------------------------------------------------------
+/// @name UAInboxPushHandlerDelegate Methods
+///---------------------------------------------------------------------------------------
+- (void)newMessageArrived:(NSDictionary *)message;
 
 @end

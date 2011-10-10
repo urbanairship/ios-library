@@ -23,17 +23,70 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import <Foundation/Foundation.h>
+
+@class UAInboxMessage;
+
+/**
+ * The UAInboxMessageListObserver protocol declares methods that
+ * are implemented by observers of a UAInboxMessageList object.
+ *
+ * An observer is notified when messages are modified, loaded or
+ * fail to load or update.
+ */
 @protocol UAInboxMessageListObserver <NSObject>
 
 @optional
+
+/**
+ * Tells an observer when a message list reload or update 
+ * is initiated.
+ */
 - (void)messageListWillLoad;
+
+/**
+ * Tells an observer when the message list has successfully loaded
+ * the latest information from Urban Airship's servers.
+ */
 - (void)messageListLoaded;
-- (void)inboxCreatedWithUser:(NSString*)user andPassword:(NSString*)password;
-- (void)inboxError:(NSString*)message;
+
+/**
+ * Tells the observer that a request for inbox messages failed.
+ */
 - (void)inboxLoadFailed;
-- (void)messagesDidUpateWithOption:(id)option;
-- (void)singleMessageMarkAsReadFinished:(id)m;
-- (void)singleMessageMarkAsReadFailed:(id)m;
-- (void)newMessageArrived:(id)message delegate:(id)delegate;
+
+/**
+ * Tells the observer that a message has been marked as read.
+ *
+ * @param message The message marked as read
+ */
+- (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)message;
+
+/**
+ * Tells the observer that a mark-as-read request failed.
+ *
+ * @param message The message that failed to update
+ */
+- (void)singleMessageMarkAsReadFailed:(UAInboxMessage *)message;
+
+/**
+ * Tells the observer that a batch of messages has been marked as read.
+ */
+- (void)batchMarkAsReadFinished;
+
+/**
+ * Tells the observer that a batch mark-as-read request failed.
+ */
+- (void)batchMarkAsReadFailed;
+
+/**
+ * Tells the observer when a batch of messages has been deleted.
+ */
+- (void)batchDeleteFinished;
+
+/**
+ * Tells the observer when a batch update of messages has failed.
+ */
+- (void)batchDeleteFailed;
 
 @end

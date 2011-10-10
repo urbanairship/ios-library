@@ -104,6 +104,15 @@
 - (void)purchase:(UASubscriptionProduct *)product;
 
 /**
+ * Check the UA receipt verification response.
+ *
+ * @param responseString The receipt validatation response string (JSON).
+ *
+ * @return YES if the receipt was validated, otherwise NO
+ */
++ (BOOL)isReceiptValid:(NSString *)responseString;
+
+/**
  * Download subscription content.
  *
  * @param content The content to download

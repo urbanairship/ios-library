@@ -23,32 +23,42 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import "InboxSampleAppDelegate.h"
-#import "UAirship.h"
-#import "UAInbox.h"
-#import "UAInboxUI.h"
+
 #import "InboxSampleViewController.h"
 #import "UAInboxDefaultJSDelegate.h"
+#import "UAInboxPushHandler.h"
+#import "UAInboxNavUI.h"
+#import "UAInboxUI.h"
+
+#import "UAirship.h"
+#import "UAInbox.h"
+#import "UAInboxMessageList.h"
+
 
 @implementation InboxSampleAppDelegate
 
 @synthesize window;
 @synthesize viewController;
+@synthesize navigationController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [window addSubview:[viewController view]];
+    
+    self.navigationController = [[[UINavigationController alloc] init] autorelease];
+    [navigationController pushViewController:viewController animated:NO];
+    [window addSubview:navigationController.view];
     [window makeKeyAndVisible];
 
     [self failIfSimulator];
-
-    [UAInbox useCustomUI:[UAInboxUI class]];
     
-    // Inbox uses SplitViewController on iPad target, but you could customize to
-    // use NavigationController on iPad device by uncommenting below line.
-    //UAInboxUI.runiPhoneTargetOniPad = YES;
+    //[UAInbox useCustomUI: [UAInboxNavUI class]];
     
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    
+    NSMutableDictionary *analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [analyticsOptions setValue:@"NO" forKey:UAAnalyticsOptionsLoggingKey];
+    [takeOffOptions setValue:analyticsOptions forKey:UAirshipTakeOffOptionsAnalyticsKey];
     
     // To use your own pre-existing inbox credentials, uncomment and modify these lines:
     //[takeOffOptions setValue:@"4cf54407a9ee256d9400000c" forKey:UAAirshipTakeOffOptionsDefaultUsername];
@@ -66,18 +76,30 @@
 
     // Config Inbox behaviour before UAInboxPushHandler since it may need it
     // when launching from notification
+    
+    [UAInbox useCustomUI:[UAInboxUI class]];
+    [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
     // Optional: Delegate for JavaScript callback
     jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = jsDelegate;
-
-    // If the application gets an UAInbox message id on launch open it up immediately.
-    // Only works for the default inbox
-	[UAInboxUI shared].inboxParentController = viewController;
+    
+    // For modal UI:
+    [UAInboxUI shared].inboxParentController = navigationController;
+    [UAInboxUI shared].useOverlay = YES;
+    
+    // For Navigation UI:
+    [UAInboxNavUI shared].inboxParentController = navigationController;
+    [UAInboxNavUI shared].useOverlay = YES;
+    [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
+    
+    
+    //TODO: think about clean up / dealloc for multiple UI classes
+    
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
 	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
-		[UAInboxUI loadLaunchMessage];
+		[[[UAInbox shared] uiClass] loadLaunchMessage];
 	}
 
     // Return value is ignored for push notifications, so it's safer to return
@@ -98,35 +120,29 @@
 // Copy and paste this method into your AppDelegate to recieve push
 // notifications for your application while the app is running.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [UAInboxPushHandler handleNotification:userInfo forInbox:[UAInboxMessageList defaultInbox]];
+    [UAInboxPushHandler handleNotification:userInfo];
 }
-
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    [UAirship land];
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.activeInbox != nil) {
-        [inbox.activeInbox retrieveMessageList];
-    }
     
-	id<UAInboxAlertProtocol> alertHandler = [UAInboxUI getAlertHandler];
-	[alertHandler cancelPreviousAlertAndShowMessage];
+    //TODO: clean up all UI classes
+    
+    [UAirship land];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.activeInbox != nil && inbox.activeInbox.unreadCount >= 0) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.activeInbox.unreadCount];
+    if (inbox != nil && inbox.messageList != nil && inbox.messageList.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.messageList.unreadCount];
     }
 }
 
 - (void)dealloc {
-    [jsDelegate release];
-    [viewController release];
-    [window release];
+    RELEASE_SAFELY(jsDelegate);
+    self.viewController = nil;
+    self.navigationController = nil;
+    self.window = nil;
+    
     [super dealloc];
 }
 

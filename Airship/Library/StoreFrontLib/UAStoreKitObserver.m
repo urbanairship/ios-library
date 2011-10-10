@@ -108,7 +108,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
         if ([[UAStoreFront shared].inventory hasProductWithIdentifier:productIdentifier] == NO) {
             UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
-            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+            [self finishUnknownTransaction:transaction];
             return;
         }
 
@@ -120,7 +120,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         BOOL contains = NO;
         for (SKPaymentTransaction *tran in unRestoredTransactions) {
             if ([tran.payment.productIdentifier isEqual:productIdentifier]) {
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                [self finishTransaction:transaction];
                 contains = YES;
                 break;
             }
@@ -134,7 +134,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         // if it's not inRestoring, the transaction should be added by StoreKit
         // automatically. Due to apple's internal policies, we cann't restore
         // prior purchases behind the scenes, so directly finish the transaction
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self finishUnknownTransaction:transaction];
     }
 }
 
@@ -144,8 +144,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
         [alertHandler showPaymentTransactionFailedAlert];
     }
-
-    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 
     // If canceled because of being a duplicate transaction
     BOOL needReset = YES;
@@ -161,12 +159,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         UAProduct *product = [self productFromTransaction:transaction];
         [product resetStatus];
     }
-}
-
-- (void)finishTransaction:(SKPaymentTransaction *)transaction {
-    if (transaction) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    }
+    
+    [self finishTransaction:transaction];
 }
 
 
@@ -200,7 +194,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
     self.inRestoring = NO;
     for (SKPaymentTransaction *transaction in unRestoredTransactions) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self finishTransaction:transaction];
         UAProduct *product = [self productFromTransaction:transaction];
         [product resetStatus];
     }
@@ -228,7 +222,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 - (void)discardAllRestoredItems {
     for (SKPaymentTransaction *transaction in unRestoredTransactions) {
-        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        [self finishTransaction:transaction];
     }
     RELEASE_SAFELY(unRestoredTransactions);
 }
@@ -261,6 +255,38 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 // App is backgrounding, remove transactionObserver
 - (void)enterBackground {
     [[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
+}
+
+#pragma mark -
+#pragma mark Transaction Management
+
+- (void)finishTransaction:(SKPaymentTransaction *)transaction {
+    
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    }
+}
+
+- (void)finishUnknownTransaction:(SKPaymentTransaction *)transaction {
+    
+    if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
+        
+        NSString *identifier = transaction.payment.productIdentifier;
+        UAProduct *product = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
+        
+        Class subscriptionManagerClass = NSClassFromString(@"UASubscriptionManager");
+        BOOL subscriptionManagerPresent = subscriptionManagerClass && [subscriptionManagerClass initialized];
+        
+        // if we have the product or the subscription manager has not been initialized,
+        // go ahead an close it.
+        // otherwise, let the subscription manager deal with it
+        if (product) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        } else if (!subscriptionManagerPresent) {
+            [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        }
+    }
+    
 }
 
 @end

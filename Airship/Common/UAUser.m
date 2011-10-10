@@ -217,7 +217,7 @@ static UAUser *_defaultUser;
     
     // Migrate subscription recovery keys to new keychain store
     // kLegacySubscriptionsEmailKey -> keychain
-    NSString* existingEmail = [userDictionary objectForKey:kLegacySubscriptionsEmailKey];
+    NSString *existingEmail = [userDictionary objectForKey:kLegacySubscriptionsEmailKey];
     if (existingEmail != nil) {
         UALOG(@"Migrating email address '%@' to keychain", existingEmail);
         [UAKeychainUtils updateKeychainValueForUsername:[UAKeychainUtils getUsername:[[UAirship shared] appId]] 
@@ -229,14 +229,14 @@ static UAUser *_defaultUser;
     
     // Migrate from UAInboxMessageList keys to new UAUser keys
     // kLegacyInboxAliasKey to kAliasKey
-    NSObject* existingAlias = [userDictionary objectForKey:kLegacyInboxAliasKey];
+    NSObject *existingAlias = [userDictionary objectForKey:kLegacyInboxAliasKey];
     if (existingAlias != nil) {
         [userDictionary setObject:existingAlias forKey:kAliasKey];
         [userDictionary removeObjectForKey:kLegacyInboxAliasKey];
     }
     
     // kLegacyInboxTagsKey to kTagsKey
-    NSObject* existingTags = [userDictionary objectForKey:kLegacyInboxTagsKey];
+    NSObject *existingTags = [userDictionary objectForKey:kLegacyInboxTagsKey];
     if (existingTags != nil) {
         [userDictionary setObject:existingTags forKey:kTagsKey];
         [userDictionary removeObjectForKey:kLegacyInboxTagsKey];
@@ -509,10 +509,12 @@ static UAUser *_defaultUser;
                 
                 if (requestDict != nil && [requestDict objectForKey:@"device_tokens"] != nil) {
                     
-                    //created a user w/ a device token
+                    // created a user w/ a device token
                     UALOG(@"Created a user with a device token.");
                     
                     NSArray *deviceTokens = [requestDict objectForKey:@"device_tokens"];
+                    
+                    // get the first item from the request - we will only ever send 1 at most
                     NSString *deviceToken = [deviceTokens objectAtIndex:0];
                     
                     if ([[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
@@ -582,8 +584,19 @@ static UAUser *_defaultUser;
     self.email = value;
     self.recoveryEmail = value;
     
-    [self updateUserWithDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];
+    //old (PUT) method
+    //[self updateUserWithDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];
     
+    NSDictionary *dict;
+    
+    if(value) {
+        dict = [NSDictionary dictionaryWithObject:value forKey:@"email"];
+    }
+    else {
+        dict = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"email"];
+    }
+   
+    [self updateUserInfo:dict withDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];  
 }
 
 - (void)modifyUserWithEmailFailed:(UA_ASIHTTPRequest*)request {
@@ -748,7 +761,7 @@ static UAUser *_defaultUser;
     [request startAsynchronous];
 }
 
-- (void)recoveryStatusUpdated:(UA_ASIHTTPRequest*)request {
+- (void)recoveryStatusUpdated:(UA_ASIHTTPRequest *)request {
 
     if (request.responseStatusCode == 200) {
 
@@ -997,12 +1010,20 @@ static UAUser *_defaultUser;
     
     UALOG(@"Updating device token");
     
-    if ([UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
-		UALOG(@"Skipping device token update: already up to date, or user is being updated.");
+    NSString *token = [[UAirship shared]deviceToken];
+    
+    if (!token || [UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
+		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
     
-    [self updateUserWithDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
+    //I sure wish there were an easier way to construct dictionaries
+    NSDictionary *dict = [NSDictionary dictionaryWithObject:
+                          [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:token] forKey:@"add"] 
+                                                     forKey:@"device_tokens"];
+    
+    [self updateUserInfo:dict withDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
+    
 }
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
@@ -1016,7 +1037,7 @@ static UAUser *_defaultUser;
 - (NSMutableDictionary*)createUserDictionary {
  
     //set up basic payload
-    NSMutableDictionary* data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  [UAUtils udidHash], @"udid", nil ];
     
     [data setValue:self.alias forKey:@"alias"];                             
@@ -1049,9 +1070,37 @@ static UAUser *_defaultUser;
 - (void)updateUserGetFinished:(UA_ASIHTTPRequest *)request {
 	if(request.responseStatusCode != 200) {
 		[self requestWentWrong:request];
-	}	
+	}
 }
 
+- (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
+
+    UALOG(@"Updating user");
+    
+    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
+								 [[UAirship shared] server],
+								 @"/api/user/",
+								 [self username]];
+	
+    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
+	
+	// Now do the user update, and pass out "master list" of deviceTokens back to the server
+    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:updateUrl
+                                                      method:@"POST"
+                                                    delegate:delegate
+                                                      finish:finishSelector
+                                                        fail:failSelector];
+	
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter new] autorelease];
+    NSString *body = [writer stringWithObject:info];
+    
+    UALOG(@"Update user with content: %@", body);
+    
+    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+    [request startAsynchronous];
+}
 
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
 
@@ -1066,7 +1115,7 @@ static UAUser *_defaultUser;
 	
 }	
 	
-- (void) doUpdateUserWithDelegate:(NSMutableDictionary *)selectors { 	
+- (void)doUpdateUserWithDelegate:(NSMutableDictionary *)selectors { 	
 	
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Top-level pool
 	

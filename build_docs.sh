@@ -1,3 +1,3 @@
 #!/bin/bash
 
-appledoc Airship
+appledoc --exit-threshold 2 Airship

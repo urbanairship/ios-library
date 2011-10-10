@@ -36,7 +36,7 @@ typedef enum UAProductStatus {
     UAProductStatusWaiting,          // transient state
     UAProductStatusPurchased,
     UAProductStatusDownloading,      // transient state
-    //UAProductStatusDecompressing,  // transient state
+    UAProductStatusDecompressing,  // transient state
     UAProductStatusInstalled,
     UAProductStatusHasUpdate
 } UAProductStatus;

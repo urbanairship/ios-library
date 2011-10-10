@@ -26,26 +26,52 @@
 #import "UAInboxAlertHandler.h"
 #import "UAInboxUI.h"
 
+#import "UAInboxPushHandler.h"
+#import "UAInboxMessageList.h"
+
+// Weak link to this notification since it doesn't exist in iOS 3.x
+UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
+
 @implementation UAInboxAlertHandler
 
-static UIAlertView *notificationAlert = nil;
+- (id)init {
+    if (self = [super init]) {
+        IF_IOS4_OR_GREATER(
+                           
+           if (&UIApplicationDidEnterBackgroundNotification != NULL) {
+               
+               [[NSNotificationCenter defaultCenter] addObserver:self
+                                                        selector:@selector(enterBackground)
+                                                            name:UIApplicationDidEnterBackgroundNotification
+                                                          object:nil];
+           }
+        );
+    }
+    
+    return self;
+}
+
+- (void)dealloc {
+    RELEASE_SAFELY(notificationAlert);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
+- (void)enterBackground {
+    [notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+    [[UAInbox shared].pushHandler setViewingMessageID:nil];
+}
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
 	if (buttonIndex == alertView.cancelButtonIndex) {
-		
 		// If we cancel, clear the pushHandler viewmessageID
 		[[UAInbox shared].pushHandler setViewingMessageID:nil];
-		
-		if ([UAInbox shared].activeInbox) {
-			// Reload the list if we have one
-			[[UAInbox shared].activeInbox retrieveMessageList];
-		}
-	} else {
-		// User clicked "view" so load the message after the list reloads
-		[UAInboxPushHandler showMessageAfterMessageListLoaded];
-	}
-
+    }
+    
+    //retrieve the message list -- if viewmessageID is non-nil,
+    //the corresponding message will be displayed.
+    [[UAInbox shared].messageList retrieveMessageList];
 }
 
 - (void)showNewMessageAlert:(NSString *)message {
@@ -58,14 +84,6 @@ static UIAlertView *notificationAlert = nil;
                                        nil] autorelease];
     [notificationAlert show];
 	
-}
-
-// TODO: we can only cancel one message now.
-- (void)cancelPreviousAlertAndShowMessage {
-//    if (notificationAlert != nil) {
-//        [notificationAlert dismissWithClickedButtonIndex:1 animated:NO];
-//        notificationAlert = nil;
-//    }
 }
 
 @end

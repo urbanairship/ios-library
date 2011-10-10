@@ -36,5 +36,5 @@
 - (void)showPaymentTransactionFailedAlert;
 - (void)showReceiptVerifyFailedAlert;
 - (void)showDownloadContentFailedAlert;
-
+- (void)showDecompressContentFailedAlert;
 @end

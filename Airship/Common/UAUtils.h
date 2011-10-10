@@ -24,11 +24,18 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UA_ASIHTTPRequest.h"
+
+@class UA_ASIHTTPRequest;
 
 @interface UAUtils : NSObject {
 
 }
+
++ (NSString *)md5:(NSString *)sourceString;
+
+///---------------------------------------------------------------------------------------
+/// @name Device ID Utils
+///---------------------------------------------------------------------------------------
 
 + (NSString *)udidHash;
 
@@ -36,15 +43,16 @@
 
 + (NSString *)deviceModelName;
 
-+ (NSString *)pluralize:(int)count 
-             singularForm:(NSString*)singular
-             pluralForm:(NSString*)plural;
-
-+ (NSString *)getReadableFileSizeFromBytes:(double)bytes;
+///---------------------------------------------------------------------------------------
+/// @name HTTP Authenticated Request Helpers
+///---------------------------------------------------------------------------------------
 
 + (NSString *)urlEncodedStringWithString:(NSString*)string encoding:(NSStringEncoding)encoding;
 
 //HTTP Request Helpers
+
++ (NSString *)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
+
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)selector;
 
@@ -57,10 +65,30 @@
 + (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
                              delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
 
-//HTTP Response Helpers
+/**
+ * Returns a basic auth header string
+ *
+ * @return A basic auth header string encoded in base64 with the user's credentials
+ */
+
++ (NSString *)userAuthHeaderString;
+
+///---------------------------------------------------------------------------------------
+/// @name HTTP Response Helpers
+///---------------------------------------------------------------------------------------
 + (id)responseFromRequest:(UA_ASIHTTPRequest *)request;
 + (id)parseJSON:(NSString *)responseString;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request keyword:(NSString *)keyword;
++ (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
++ (void)requestWentWrong:(UA_ASIHTTPRequest *)request keyword:(NSString *)keyword;
+
+///---------------------------------------------------------------------------------------
+/// @name UI Formatting Helpers
+///---------------------------------------------------------------------------------------
+
++ (NSString *)pluralize:(int)count 
+           singularForm:(NSString*)singular
+             pluralForm:(NSString*)plural;
+
++ (NSString *)getReadableFileSizeFromBytes:(double)bytes;
 
 @end

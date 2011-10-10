@@ -24,139 +24,341 @@
  */
 
 #import "UAInboxURLCache.h"
-#import "UA_ASIHTTPRequest.h"
-#import "UAInbox.h"
-#import "UAUser.h"
+
+#import "UAGlobal.h"
+#import "UAUtils.h"
+#import "UAirship.h"
+
+#define METADATA_NAME @"UAInboxURLCache.metadata"
+#define CACHE_SIZE_KEY @"cacheSize"
+#define SIZES_KEY @"sizes"
+#define ACCESS_KEY @"access"
+
+/**
+ * Private methods
+ */
+@interface UAInboxURLCache()
+
+//get the locations for content and content type files
+- (NSString *)getStoragePathForHash:(NSString *)hash;
+- (NSString *)getStoragePathForURL:(NSURL *)url;
+- (NSString *)getStoragePathForContentTypeWithHash:(NSString *)hash;
+- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url;
+
+//lookup methods
+- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType;
+
+//housekeeping
+- (NSString *)getMetadataPath;
+- (NSMutableDictionary *)loadMetadata;
+- (void)saveMetadata;
+- (void)purge;
+- (NSUInteger)deleteCacheEntry:(NSString *)hash;
+
+//store content on disk
+- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType;
+- (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request;
+
+@property(nonatomic, retain) NSMutableDictionary *metadata;
+@property(nonatomic, retain) NSOperationQueue *queue;
+
+
+@end
 
 @implementation UAInboxURLCache
 
 @synthesize cacheDirectory;
+@synthesize resourceTypes;
+@synthesize metadata;
+@synthesize actualDiskCapacity;
+@synthesize queue;
 
+#pragma mark -
+#pragma mark NSURLCache methods
 - (id)initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity diskPath:(NSString *)path {
     if (self = [super initWithMemoryCapacity:memoryCapacity diskCapacity:diskCapacity diskPath:path]) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        self.cacheDirectory = [paths objectAtIndex:0];
+        self.cacheDirectory = path;
+
+        self.resourceTypes = [NSArray arrayWithObjects:
+                              @"image/png", @"image/gif", @"image/jpg", @"image/jpeg", @"text/javascript", @"application/javascript", @"text/css", nil];
+        
+        self.actualDiskCapacity = diskCapacity;
+        
+        self.metadata = [self loadMetadata];
+        
+        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue.maxConcurrentOperationCount = 1;
+        
     }
     return self;
 }
 
 - (void)dealloc {
     RELEASE_SAFELY(cacheDirectory);
+    RELEASE_SAFELY(resourceTypes);
+    RELEASE_SAFELY(metadata);
+    RELEASE_SAFELY(queue);
     [super dealloc];
 }
 
-- (NSString *)getStoragePath:(NSURL *)url {
-    NSString *result = [NSString stringWithFormat:@"%@/UAInboxCache%@", cacheDirectory, url.relativePath];
-    if (url.query != nil) {
-        result = [NSString stringWithFormat:@"%@?%@", result, url.query];
-    }
-    return result;
-}
-
-- (NSString *)getAbsolutePath:(NSURL *)url {
-    NSArray *tokens = [url.relativePath componentsSeparatedByString:@"/"];
-    NSString *pathWithoutRessourceName = @"";
-    for (int i = 0; i < [tokens count]-1; i++) {
-        pathWithoutRessourceName = [pathWithoutRessourceName stringByAppendingString:[NSString stringWithFormat:@"%@%@", [tokens objectAtIndex:i], @"/"]];
-    }
-    return [NSString stringWithFormat:@"%@/UAInboxCache%@", cacheDirectory, pathWithoutRessourceName];
+- (NSUInteger)diskCapacity {
+    return actualDiskCapacity * 50;
 }
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
-    UALOG(@"storeCachedResponse: %@", cachedResponse);
+    
+    if ([self shouldStoreCachedResponse:cachedResponse forRequest:request]) {
+        
+        UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
+        UALOG(@"storeCachedResponse: %@", cachedResponse);
+        
+        NSData *content = cachedResponse.data;
+        
+        NSURL *url = request.URL;
+        
+        //default to "text/html" if the server doesn't provide a content type
+        NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
+        
+        NSMethodSignature *signature = [UAInboxURLCache instanceMethodSignatureForSelector:@selector(storeContent:withURL:contentType:)];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        invocation.selector = @selector(storeContent:withURL:contentType:);
+        invocation.target = self;
+        [invocation setArgument:&content atIndex:2];
+        [invocation setArgument:&url atIndex:3];
+        [invocation setArgument:&contentType atIndex:4];
+        
+        NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithInvocation:invocation] autorelease];
+        [queue addOperation:io];
+
+    }
+    
+    else {
+        UALOG(@"IGNORE CACHE for %@", request);
+    }
 }
 
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
-    NSArray* tokens = [request.URL.relativePath componentsSeparatedByString:@"/"];
-    if (tokens == nil) {
-        UALOG(@"IGNORE CACHE for %@", request);
-        return nil;
-    }
-    NSString* absolutePath = [self getAbsolutePath:request.URL];
-    NSString* absolutePathWithResourceName = [NSString stringWithFormat:@"%@%@", cacheDirectory, request.URL.relativePath];
-    NSString* resourceName = [absolutePathWithResourceName stringByReplacingOccurrencesOfString:absolutePath withString:@""];
+    
     NSCachedURLResponse* cachedResponse = nil;
-    if (
-        [resourceName rangeOfString:@".png"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".gif"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".jpg"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".js"].location!=NSNotFound ||
-        [resourceName rangeOfString:@".css"].location!=NSNotFound ||
-        [resourceName rangeOfString:@"body"].location!=NSNotFound //This is for message content
-        ) {
-        NSString* storagePath = [self getStoragePath:request.URL];
-        NSData* content;
-        if ([[NSFileManager defaultManager] fileExistsAtPath:storagePath]) {
-            UALOG(@"CACHE FOUND at %@", storagePath);
-            content = [NSData dataWithContentsOfFile:storagePath];
-            NSURLResponse* response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:@"text/html"
-                                                    expectedContentLength:[content length]
-                                                         textEncodingName:nil]
-                                       autorelease];
-            // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
-            cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
-                                                                      data:content];
-        } else {
-            if ([resourceName rangeOfString:@"body"].location == NSNotFound) {
-                [NSThread detachNewThreadSelector:@selector(populateCacheFor:)
-                                         toTarget:self withObject:request];
-            } else {
-                [NSThread detachNewThreadSelector:@selector(populateAuthNeededCacheFor:)
-                                         toTarget:self withObject:request];
-            }
+    
+    //retrieve resource from cache or populate if needed
+    NSString *contentPath = [self getStoragePathForURL:request.URL];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
+    
+    if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+        //retrieve it
+        NSData *content = [NSData dataWithContentsOfFile:contentPath];
+        
+        NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath 
+                                                          encoding:NSUTF8StringEncoding 
+                                                             error:NULL];
+        NSString *charset = nil;
+        
+        //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
+        //into separate arguments so UIWebView doesn't get confused
+        NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
+        contentType = [subTypes objectAtIndex:0];
+        if(subTypes.count > 1) {
+            charset = [subTypes objectAtIndex:1];
         }
-    } else {
-        UALOG(@"IGNORE CACHE for %@", request);
+        
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
+                                                expectedContentLength:[content length]
+                                                     textEncodingName:charset]
+                                   autorelease];
+        // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
+        cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
+                                                                  data:content];
+        
+        UALOG(@"Uncaching request %@", request);
+        
+        NSString *hash = [UAUtils md5:[request.URL absoluteString]];
+        @synchronized(metadata) {
+            [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+            NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(saveMetadata) object:nil] autorelease];
+            [queue addOperation:io];
+        }
     }
+    
     return cachedResponse;
 }
 
-- (void)populateAuthNeededCacheFor:(NSURLRequest*)req {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+#pragma mark -
+#pragma mark Private, Custom Cache Methods
 
-    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:req.URL] autorelease];
-    request.timeOutSeconds = 60;
-    request.username = [UAUser defaultUser].username;
-    request.password = [UAUser defaultUser].password;
-    request.requestMethod = @"GET";
-    [request startSynchronous];
-
-    NSError *error = [request error];
-    if (error) {
-        UALOG(@"Cache not populated for %@, error: %@", req.URL, error);
-    } else {
-        [self saveContentIfNecessary:request.responseData forRequestURL:req.URL];
-    }
-
-    [pool release];
+- (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request {
+    
+    NSString *referer = [[request allHTTPHeaderFields] objectForKey:@"Referer"];
+    BOOL whitelisted = [resourceTypes containsObject:response.response.MIMEType];
+    NSString *host = request.URL.host;
+    NSString  *airshipHost = [[NSURL URLWithString:[UAirship shared].server] host];
+    
+    //only cache responses to requests for content from the airship server, 
+    //or content types in the whitelist with no referer
+    
+    return [airshipHost isEqualToString:host] || (whitelisted && !referer);
 }
 
-- (void)populateCacheFor:(NSURLRequest*)request {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
-    NSData *content;
-    NSError *error = nil;
-    content = [NSData dataWithContentsOfURL:request.URL options:1 error:&error];
-    if (error != nil) {
-        UALOG(@"Cache not populated for %@, error: %@", request.URL, error);
-    } else {
-        [self saveContentIfNecessary:content forRequestURL:request.URL];
-    }
-
-    [pool release];
+- (NSString *)getStoragePathForHash:(NSString *)hash {
+    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, hash];
 }
 
-- (void)saveContentIfNecessary:(NSData *)content forRequestURL:(NSURL *)url {
-    NSString* absolutePath = [self getAbsolutePath:url];
-    NSString* storagePath = [self getStoragePath:url];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:storagePath]) {
-        UALOG(@"File exists %@", storagePath);
+- (NSString *)getStoragePathForURL:(NSURL *)url {    
+    return [self getStoragePathForHash:[UAUtils md5:[url absoluteString]]];
+}
+
+- (NSString *)getStoragePathForContentTypeWithHash:(NSString *)hash {
+    return [NSString stringWithFormat:@"%@%@", [self getStoragePathForHash:hash], @".contentType"];
+}
+
+- (NSString *)getStoragePathForContentTypeWithURL:(NSURL *)url {
+    return [self getStoragePathForContentTypeWithHash:[UAUtils md5:[url absoluteString]]];
+}
+
+
+- (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    NSString *contentPath = [self getStoragePathForURL:url];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+        UALOG(@"File exists %@", contentPath);
+    }
+    
+    else {
+        BOOL ok = [content writeToFile:contentPath atomically:YES];
+        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
+        
+        if (ok) {
+            NSString *hash = [UAUtils md5:[url absoluteString]];
+            
+            @synchronized(metadata) {
+                [[metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
+                [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+                
+                
+                NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+                currentSize += content.length;
+                [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+                
+                UALOG(@"Cache size: %d bytes", currentSize);
+                UALOG(@"Actual disk capacity: %d bytes", actualDiskCapacity);
+                
+                if (currentSize > actualDiskCapacity) {
+                    [self purge];
+                }
+                
+                [self saveMetadata];
+            }
+        }
+        
+        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        UALOG(@"Caching %@ at %@: %@", contentType, contentTypePath, ok?@"OK":@"FAILED");
+    }
+    
+    [pool drain];
+}
+
+- (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
+   
+    NSRange range = [contentType rangeOfString:@"charset="];
+    
+    NSString *contentSubType;
+    NSString *charset;
+    
+    if (range.location != NSNotFound) {
+        contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
+                     stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        charset = [[contentType substringFromIndex:(range.location + range.length)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        return [NSArray arrayWithObjects:contentSubType, charset, nil];
+    }
+    
+    else {
+        return [NSArray arrayWithObjects:contentType, nil];
+    }    
+}
+
+//housekeeping
+
+- (NSString *)getMetadataPath {
+    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, METADATA_NAME];
+}
+
+- (NSMutableDictionary *)loadMetadata {
+    NSString *metadataPath = [self getMetadataPath];
+    NSMutableDictionary *dict = nil;
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:metadataPath]) {
+        //if this fails, dict will remain nil
+        dict = [NSMutableDictionary dictionaryWithContentsOfFile:metadataPath];
+    }
+    
+    if (!dict) {
+        dict = [NSMutableDictionary dictionary];
+        [dict setValue:[NSNumber numberWithUnsignedInt:0] forKey:CACHE_SIZE_KEY];
+        [dict setValue:[NSMutableDictionary dictionary] forKey:SIZES_KEY];
+        [dict setValue:[NSMutableDictionary dictionary] forKey:ACCESS_KEY];
+    }
+    
+    return dict;
+}
+
+- (void)saveMetadata {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @synchronized(metadata) {
+        if (metadata) {
+            NSString *metadataPath = [self getMetadataPath];
+            [metadata writeToFile:metadataPath atomically:YES];
+        }
+    }
+    [pool drain];
+}
+
+- (NSUInteger)deleteCacheEntry:(NSString *)hash {
+    UALOG(@"Deleting cache entry for %@", hash);
+    NSString *contentPath = [self getStoragePathForHash:hash];
+    NSString *contentTypePath = [self getStoragePathForContentTypeWithHash:hash];
+    
+    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    [fileManager removeItemAtPath:contentPath error:NULL];
+    [fileManager removeItemAtPath:contentTypePath error:NULL];
+    
+    NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+    NSUInteger contentSize = [[[metadata objectForKey:SIZES_KEY] objectForKey:hash] unsignedIntValue];
+    currentSize -= contentSize;
+    
+    [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+    
+    [[metadata objectForKey:SIZES_KEY] removeObjectForKey:hash];
+    [[metadata objectForKey:ACCESS_KEY] removeObjectForKey:hash];
+    
+    return currentSize;
+}
+
+- (void)purge {
+    UALOG(@"Purge");
+    NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+    UALOG(@"Cache size before purge: %d bytes", currentSize);
+    if (currentSize <= actualDiskCapacity) {
+        //nothing to do here
+        return;
     } else {
-        [[NSFileManager defaultManager] createDirectoryAtPath:absolutePath
-                                  withIntermediateDirectories:YES attributes:nil error:nil];
-        BOOL ok = [content writeToFile:storagePath atomically:YES];
-        UALOG(@"Caching %@ : %@", storagePath , ok?@"OK":@"FAILED");
+        int delta = currentSize - actualDiskCapacity;
+        NSArray *sortedHashes = [[self.metadata objectForKey:ACCESS_KEY] keysSortedByValueUsingSelector:@selector(compare:)];
+        
+        for (NSString *hash in sortedHashes) {
+            currentSize = [self deleteCacheEntry:hash];
+            delta = currentSize - actualDiskCapacity;
+            if (delta <= 0) {
+                break;
+            }
+        }
+    
+        UALOG(@"Cache size after purge: %d bytes", currentSize);
     }
 }
 
 @end
+
+
