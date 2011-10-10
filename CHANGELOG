@@ -1,26 +1,49 @@
+--------------------------
+1.1.0 - October 10, 2011
+--------------------------
 
---------------------------
-1.0.8 - September 28, 2011
---------------------------
+General:
+- Code-level docs are available at http://urbanairship.com/docs/ios-lib/ (a work in progress)
+- Silenced analytics/reports-related logging by default.
+- Added new iOS5-related analytics events
+- Trim whitespace from AirshipConfig.plist keys and secrets
+- Removed requirements for most linker flags (all_load and the weak ref to libSystem.B)
+
+IAP:
+- Fixed decompression failure error message text in In-App Purchase
+
+Push:
+- Fix URL-encoding issue in UAPush single-tag methods
+- UAPushNotificationDelegate's methods are now optional
+- Fixed a UAPushNotificationDelegate selector with an empty parameter name
+
+Subscriptions:
+- Fixed a bug in the autorenewable product renewal flow. Renewals are now handled properly.
+- Fixed a bug in the SKTransaction handling when both SubscriptionLib and StoreFrontLib were used.
+- Fixed a bug in subscription receipt validation. Transactions are now kept open until a receipt
+  is validated.
 
 InboxLib:
-
-- "one inbox to rule them all" 
-- methods and properties related to setting the "active" inbox have been eliminated or renamed
+- Major updates to InboxLib and the Rich Push Inbox sample
+- Methods and properties related to setting the "active" inbox have been eliminated or renamed
 - UAInboxAlertProtocol has been removed
 - The inbox database has been renamed from "Airmail.db" to "UAInbox.db"
 - Inbox messages can carry an explicit content type other than text/html
 - UAInboxMessageList supports concurrent batch updates
+- Message extras are now retrieved and cached locally
+- Improvements to message and asset cache for performance
+- Improvements to Obj-C <-> Javascript bridge
+- Added message id and user id values to the message detail's JS environment
+- See http://support.urbanairship.com/customer/portal/articles/200710-upgrading-to-rich-push-in-1-1-
+  for information on specific items added, removed or modified
 
-Protocols:
-
+Inbox Protocols:
 - UAInboxMessageListObserver breaks out batch update events in explicit success/failure methods
 - Cleaner separation from UAUser observer patterns
 - New UAInboxPushHandlerDelegate protocol allows for a user-specified delegate to respond to 
   incoming in-app messages
 
-UI Classes:
-
+Inbox UI Classes:
 - iPad specific classes and xib files have been removed
 - iPhone interfaces have been generalized to be adaptable to the iPad UI idiom
 - New UAInboxOverlayController allows for displaying incoming Rich Push messages 
@@ -30,151 +53,6 @@ UI Classes:
 - New UAInboxNavUI embeds the inbox in a navigation controller or popover controller
 - The InboxSample project allows you to select between multiple UI classes on the fly 
   as a quick overview of the different inbox interface styles
-
-Class-level changes:
-
-UAUtils 
--------
-added:
-
-+ (NSString *)md5:(NSString *)sourceString;
-+ (NSString *)userAuthHeaderString;
-+ (BOOL)isiPad;
-  
-UAInbox 
--------
-removed:
-
-+ (void)setInbox:(UAInboxMessageList *)inbox;
-+ (void)displayInboxOnLoad:(UAInboxMessageList *)inbox;
-+ (void)addAuthToWebRequest:(NSMutableURLRequest*)requestObj;
-
-changed:
-
-@property (nonatomic, assign) UAInboxMessageList *activeInbox -> 
-  @property (nonatomic, assign) UAInboxMessageList *messageList;
-
-UAInboxUIProtocol
------------------
-removed:
-     
-+ (id<UAInboxAlertProtocol>)getAlertHandler;
-
-UAInboxAlertProtocol 
---------------------
-(This protocol has been removed)
-
-UAInboxDBManager
-----------------
-The database name has changed from Airmail.db to UAInbox.db
-
-UAInboxMessage
---------------
-added: 
-
-@property (nonatomic, copy) NSString *contentType 
-
-removed:
-
--(NSString*)description;
-
-UAInboxMessageList 
-------------------
-changed: 
-
-+ (UAInboxMessageList*)defaultInbox -> + (UAInboxMessageList *)shared
-- (BOOL)batchUpdate:(NSIndexSet *)messageIDs option:(UABatchUpdateCommand)option -> 
-  - (void)batchUpdate:(NSIndexSet *)messageIDs option:(UABatchUpdateCommand)option
-
-UAInboxMessageListObserver
---------------------------
-added:
-
-- (void)batchMarkAsReadFinished
-- (void)batchMarkAsReadFailed
-- (void)batchDeleteFinished
-- (void)batchDeleteFailed
-
-removed: 
-
-- (void)inboxCreatedWithUser:(NSString*)user andPassword:(NSString*)password
-- (void)inboxError:(NSString*)message
-- (void)messagesDidUpateWithOption:(id)option
-- (void)newMessageArrived:(id)message delegate:(id)delegate;
-
-UAInboxPushHandler
-------------------
-added: 
-
-@property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate 
-
-removed: 
-
-+ (void)showMessageAfterMessageListLoaded
-
-changed: 
-
-+ (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox -> 
-  + (void)handleNotification:(NSDictionary*)userInfo
-
-UAInboxPushHandlerDelegate protocol 
------------------------------------
-(This is a new protocol)
-
-- (void)newMessageArrived:(NSDictionary *)message; 
-
-UAInboxMessageListControllerPad 
--------------------------------
-(This class has been removed)
-
-UAInboxMessageViewControllerPad 
--------------------------------
-(This class has been removed)
-
-UAInboxMessageListController 
-----------------------------
-added: 
-
-@property (nonatomic, retain) UIView *loadingView
-@property (nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator
-@property (nonatomic, assign) BOOL shouldShowAlerts 
-
-removed: 
-
-@property (nonatomic, retain) UILabel *noMessagesLabel
-@property (nonatomic, retain) UIActivityIndicatorView *activity
-@property (nonatomic, retain, readonly) UIBarButtonItem *doneItem 
-
-UAInboxMessageViewController 
-----------------------------
-@property (nonatomic, assign) BOOL shouldShowAlerts
-
-UABeveledLoadingIndicator 
--------------------------
-(new class)
-
-UAInboxUI
----------
-added:
-
-- (void)newMessageArrived:(NSDictionary *)message
-@property (nonatomic, assign) BOOL useOverlay
-
-removed: 
-
-@property (nonatomic, retain) NSString *messageListTitle;
-@property (nonatomic, retain) UIWindow *uaWindow; 
-
-changed: 
-- (void)quitInbox:(QuitReason)reason -> - (void)quitInbox
-
-UAInboxNavUI 
-------------
-(new class)
-
-UAInboxOverlayController 
-------------------------
-(new class)
 
 -------------------------
 1.0.7 - August 29, 2011
