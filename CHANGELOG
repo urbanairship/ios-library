@@ -7,7 +7,7 @@ General:
 - Silenced analytics/reports-related logging by default.
 - Added new iOS5-related analytics events
 - Trim whitespace from AirshipConfig.plist keys and secrets
-- Removed requirements for most linker flags (all_load and the weak ref to libSystem.B)
+- Removed the need for extra linker flags (all_load and the weak ref to libSystem.B)
 
 IAP:
 - Fixed decompression failure error message text in In-App Purchase
