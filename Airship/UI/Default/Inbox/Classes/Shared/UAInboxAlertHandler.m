@@ -72,16 +72,22 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     //retrieve the message list -- if viewmessageID is non-nil,
     //the corresponding message will be displayed.
     [[UAInbox shared].messageList retrieveMessageList];
+
+    RELEASE_SAFELY(notificationAlert);
 }
 
 - (void)showNewMessageAlert:(NSString *)message {
+    /* In the event that one happens to be showing. (These are no-ops if notificationAlert is nil.) */
+    [notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+    RELEASE_SAFELY(notificationAlert);
 	
-	notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
+    /* display a new alert */
+	notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
                                                                  message:message
                                                                 delegate:self
                                                        cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                                        otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                                       nil] autorelease];
+                                       nil];
     [notificationAlert show];
 	
 }
