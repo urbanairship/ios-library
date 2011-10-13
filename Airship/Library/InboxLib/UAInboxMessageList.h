@@ -116,7 +116,8 @@ typedef enum {
 @property(nonatomic, retain) NSMutableArray *messages;
 
 /**
- * The number of messages that are currently unread as an integer.
+ * The number of messages that are currently unread or -1
+ * if the message list is not loaded.
  */
 @property(assign) int unreadCount;
 
