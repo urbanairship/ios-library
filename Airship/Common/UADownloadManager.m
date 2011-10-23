@@ -282,7 +282,7 @@ IF_IOS4_OR_GREATER(
     
 IF_IOS4_OR_GREATER(
 				   
-        if(continueDownloadsInBackground) {
+        if(continueDownloadsInBackground && (downloadNetworkQueue.requestsCount > 0)) {
             UIApplication *app = [UIApplication sharedApplication];
             
             if ([app respondsToSelector:@selector(beginBackgroundTaskWithExpirationHandler:)]) {

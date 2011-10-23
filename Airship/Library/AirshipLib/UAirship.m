@@ -344,7 +344,15 @@ BOOL logging = false;
 #pragma mark UA Registration request methods
 
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-	
+
+    IF_IOS4_OR_GREATER(
+                       // if the application is backgrounded, do not send a registration
+                       if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+                           UALOG(@"Skipping DT registration. The app is currently backgrounded.");
+                           return;
+                       }
+    )
+    
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            server, @"/api/device_tokens/",
                            deviceToken];
