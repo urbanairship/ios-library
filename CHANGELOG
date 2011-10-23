@@ -1,4 +1,13 @@
 --------------------------
+1.1.1 - October 23, 2011
+--------------------------
+
+- Registrations will no longer be performed when the app is running in the background
+- FIX: Background download tasks will only be created when there are pending downloads.
+- FIX: Properly release UIAlertView displayed in the Inbox UI when messages arrive while the app
+  is running.
+
+--------------------------
 1.1.0 - October 10, 2011
 --------------------------
 
