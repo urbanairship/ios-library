@@ -348,7 +348,7 @@ BOOL logging = false;
     IF_IOS4_OR_GREATER(
                        // if the application is backgrounded, do not send a registration
                        if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                           UALOG(@"App is running in the background - Skipping DT registration. The app is currently backgrounded.");
+                           UALOG(@"Skipping DT registration. The app is currently backgrounded.");
                            return;
                        }
     )
