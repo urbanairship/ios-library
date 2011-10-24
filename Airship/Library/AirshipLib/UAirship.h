@@ -47,6 +47,8 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 - (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request;
 - (void)removeTagFromDeviceSucceeded;
 - (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
+- (void)getTagsForDeviceSucceed;
+- (void)getTagsForDeviceFailed:(UA_ASIHTTPRequest *)request;
 @end
 
 

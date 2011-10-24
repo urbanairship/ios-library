@@ -28,6 +28,7 @@
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
+#import "UA_SBJSON.h"
 
 #import <UIKit/UIKit.h>
 
@@ -233,6 +234,34 @@ static Class _uiClass;
     }
 }
 
+- (void)getTagsForDeviceFailed:(UA_ASIHTTPRequest *)request {
+    UALOG(@"Using U/P: %@ / %@", request.username, request.password);
+    [UAUtils requestWentWrong:request keyword:@"get tags for current device"];
+    [self notifyObservers:@selector(getTagsForDeviceFailed:) withObject:[request error]];
+}
+
+- (void)getTagsForDeviceSucceed:(UA_ASIHTTPRequest *)request {
+    if (request.responseStatusCode != 200) {
+        [self getTagsForDeviceFailed:request];
+    } else {
+        UALOG(@"Tags received successfully: %d - %@", request.responseStatusCode, request.url);
+        
+        // JSON decode response
+        UA_SBJsonParser *parser = [UA_SBJsonParser new];
+        NSArray *jsonResponse = [[parser objectWithString: [request responseString]] valueForKey:@"tags"];
+        UALOG(@"Retrieved Messages: %@", [request responseString]);
+        [parser release];
+
+        for (NSString *tag in jsonResponse) {
+            if (![tags containsObject:tag]) {
+                [tags addObject:tag];
+            }
+        }
+        [self saveDefaults];
+        [self notifyObservers:@selector(getTagsForDeviceSucceed)];
+    }
+}
+
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
@@ -347,6 +376,21 @@ static Class _uiClass;
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     [userInfo setValue:tag forKey:@"tag"];
     request.userInfo = userInfo;
+
+    [request startAsynchronous];
+}
+
+- (void)getTagsForCurrentDevice {
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/",
+                           [[UAirship shared] server],
+                           [[UAirship shared] deviceToken]];
+
+    NSURL *url = [NSURL URLWithString:urlString];
+    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
+                                       method:@"GET"
+                                     delegate:self
+                                       finish:@selector(getTagsForDeviceSucceed:)
+                                         fail:@selector(getTagsForDeviceFailed:)];
 
     [request startAsynchronous];
 }
