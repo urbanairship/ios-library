@@ -98,7 +98,7 @@ g/255.0f, b/255.0f, a)
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
-#define UA_VERSION @ "1.0.7"
+#define UA_VERSION @ "1.1.2"
 #endif
 
 #define UA_VERSION_INTERFACE(CLASSNAME)  \

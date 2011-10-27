@@ -31,6 +31,10 @@
 
 }
 
+///---------------------------------------------------------------------------------------
+/// @name Digest/Hash Utils
+///---------------------------------------------------------------------------------------
+
 + (NSString *)md5:(NSString *)sourceString;
 
 ///---------------------------------------------------------------------------------------
@@ -44,10 +48,15 @@
 + (NSString *)deviceModelName;
 
 ///---------------------------------------------------------------------------------------
-/// @name HTTP Authenticated Request Helpers
+/// @name URL Encoding
 ///---------------------------------------------------------------------------------------
 
 + (NSString *)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
+
+
+///---------------------------------------------------------------------------------------
+/// @name HTTP Authenticated Request Helpers
+///---------------------------------------------------------------------------------------
 
 + (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
                                  delegate:(id)delegate finish:(SEL)selector;
@@ -62,11 +71,12 @@
                              delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
 
 /**
- * Returns a basic auth header string
+ * Returns a basic auth header string.
  *
- * @return A basic auth header string encoded in base64 with the user's credentials
+ * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
+ *
+ * @return An HTTP Basic Auth header string value for the user's credentials.
  */
-
 + (NSString *)userAuthHeaderString;
 
 ///---------------------------------------------------------------------------------------

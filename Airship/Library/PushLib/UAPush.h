@@ -107,13 +107,13 @@ UA_VERSION_INTERFACE(UAPushVersion)
     NSObject<UAPushNotificationDelegate> *defaultPushHandler; /**< A default implementation of the push notification delegate **/
     
   @private
-    BOOL pushEnabled; /**< Push enabled flag. */
+    BOOL pushEnabled; /* Push enabled flag. */
     BOOL autobadgeEnabled;
-    UIRemoteNotificationType notificationTypes; /**< Requested notification types */
-    NSString *alias; /**< Device token alias. */
-    NSMutableArray *tags; /**< Device token tags */
-    NSMutableDictionary *quietTime; /**< Quiet time period. */
-    NSString *tz; /**< Timezone, for quiet time */
+    UIRemoteNotificationType notificationTypes; /* Requested notification types */
+    NSString *alias; /* Device token alias. */
+    NSMutableArray *tags; /* Device token tags */
+    NSMutableDictionary *quietTime; /* Quiet time period. */
+    NSString *tz; /* Timezone, for quiet time */
 }
 
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;

@@ -33,23 +33,26 @@
 #define kEventAppInactiveSize           120
 
 @interface UAEvent : NSObject {
-    NSString *time, *event_id;
+    NSString *time;
+    NSString *event_id;
     NSMutableDictionary *data;
 }
 
-@property (nonatomic, readonly) NSString *time, *event_id;
+@property (nonatomic, readonly) NSString *time;
+@property (nonatomic, readonly) NSString *event_id;
 @property (nonatomic, readonly) NSMutableDictionary *data;
 
 + (id)event;
 - (id)initWithContext:(NSDictionary*)context;
 + (id)eventWithContext:(NSDictionary*)context;
-- (NSString*)getType;
+- (NSString *)getType;
 - (void)gatherData:(NSDictionary*)context;
 - (int)getEstimatedSize;
 
 @end
 
 @interface UAEventCustom : UAEvent {
+  @private
     NSString *type;
 }
 - (id)initWithType:(NSString*)aType;
