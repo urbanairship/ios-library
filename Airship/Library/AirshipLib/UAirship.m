@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_SBJSON.h"
 
 #import "UAUser.h"
+#import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
@@ -46,6 +47,12 @@ NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOpt
 
 static UAirship *_sharedAirship;
 BOOL logging = false;
+
+@interface UAirship()
+// Update device token without remote registration
+// Private
+- (void)updateDeviceToken:(NSData *)token;
+@end
 
 @implementation UAirship
 
@@ -343,6 +350,13 @@ BOOL logging = false;
 #pragma mark -
 #pragma mark UA Registration request methods
 
+- (void)registerDeviceToken:(NSData *)token {
+	
+    //register on UA server
+    [self registerDeviceToken:token withExtraInfo:nil];
+	
+}
+
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
 
     IF_IOS4_OR_GREATER(
@@ -408,16 +422,6 @@ BOOL logging = false;
                                        finish:@selector(unRegisterDeviceTokenSucceeded:)
                                          fail:@selector(unRegisterDeviceTokenFailed:)];
     [request startAsynchronous];
-}
-
-#pragma mark -
-#pragma mark Callback for succeed register APN device token
-
-- (void)registerDeviceToken:(NSData *)token {
-	
-    // succeed register APN device token, then register on UA server
-    [self registerDeviceToken:token withExtraInfo:nil];
-	
 }
 
 @end
