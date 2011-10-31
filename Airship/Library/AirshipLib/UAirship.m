@@ -71,7 +71,6 @@ BOOL logging = false;
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
-    RELEASE_SAFELY(registerRequest);
     RELEASE_SAFELY(deviceToken);
     RELEASE_SAFELY(analytics);
 

@@ -23,6 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
 #import "UAObservable.h"
@@ -32,7 +33,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @interface UAStoreKitObserver : UAObservable <SKPaymentTransactionObserver> {
 
+  @private
     BOOL inRestoring;
+    
     // when restoring all transactions, put the transaction into this array but
     // not download content for them. Then alert user the count, and download
     // all of them if user agree to download

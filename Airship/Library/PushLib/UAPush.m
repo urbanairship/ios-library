@@ -23,13 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <UIKit/UIKit.h>
+
 #import "UAPush.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
+#import "UAAnalytics.h"
 
-#import <UIKit/UIKit.h>
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 

@@ -27,9 +27,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
-#import "UAAsycImageView.h"
 #import "UAObservable.h"
 #import "UA_ASIProgressDelegate.h"
+
+@class UAAsyncImageView;
 
 typedef enum UAProductStatus {
     UAProductStatusUnpurchased = 0,
@@ -43,6 +44,7 @@ typedef enum UAProductStatus {
 
 
 @interface UAProduct : UAObservable <NSCopying, UA_ASIProgressDelegate> {
+  @private
     NSString *productIdentifier;
     NSURL *previewURL;
     UAAsyncImageView *preview;
@@ -75,11 +77,11 @@ typedef enum UAProductStatus {
 @property (nonatomic, retain) NSURL *downloadURL;
 @property (nonatomic, assign) int revision;
 @property (nonatomic, assign) double fileSize;
-@property (nonatomic, retain) NSString* price;
-@property (nonatomic, retain) NSDecimalNumber* priceNumber;
-@property (nonatomic, retain) NSString* productDescription;
-@property (nonatomic, retain) NSString* title;
-@property (nonatomic, copy) NSString* receipt;
+@property (nonatomic, retain) NSString *price;
+@property (nonatomic, retain) NSDecimalNumber *priceNumber;
+@property (nonatomic, retain) NSString *productDescription;
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, copy) NSString *receipt;
 @property (nonatomic, assign) BOOL isFree;
 @property (nonatomic, assign) UAProductStatus status;
 @property (nonatomic, assign) float progress;
@@ -88,7 +90,7 @@ typedef enum UAProductStatus {
 
 - (id)init;
 + (UAProduct *)productFromDictionary:(NSDictionary *)item;
-- (NSComparisonResult)compare:(UAProduct*)product;
+- (NSComparisonResult)compare:(UAProduct *)product;
 - (void)resetStatus;
 - (BOOL)hasUpdate;
 

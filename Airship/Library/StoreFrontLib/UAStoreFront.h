@@ -23,17 +23,21 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+
 #import "UAGlobal.h"
-#import "UAirship.h"
-#import "UAStoreFrontDelegate.h"
-#import "UAStoreFrontAlertProtocol.h"
+
+@protocol UAStoreFrontAlertProtocol;
+@protocol UAStoreFrontDelegate;
+
+@class UAProduct;
 
 #define STOREFRONT_UI_CLASS @"UAStoreFrontUI"
 
-UIKIT_EXTERN NSString *const UAContentsDisplayOrderTitle;
-UIKIT_EXTERN NSString *const UAContentsDisplayOrderID;
-UIKIT_EXTERN NSString *const UAContentsDisplayOrderPrice;
+UIKIT_EXTERN NSString * const UAContentsDisplayOrderTitle;
+UIKIT_EXTERN NSString * const UAContentsDisplayOrderID;
+UIKIT_EXTERN NSString * const UAContentsDisplayOrderPrice;
 
 typedef enum {
     UAInventoryStatusUnloaded = 0,
@@ -49,7 +53,7 @@ typedef enum {
     ProductTypeInstalled = 1,
     ProductTypeUpdated = 2,
     ProductTypeOrigin = 10
-} ProductType;
+} UAProductType;
 
 UA_VERSION_INTERFACE(StoreFrontVersion)
 
@@ -85,19 +89,20 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 @class UAStoreFrontDownloadManager;
 
 @interface UAStoreFront : NSObject {
-    UAStoreKitObserver* sfObserver;
-    UAInventory* inventory;
-    UAStoreFrontDownloadManager* downloadManager;
+  @private
+    UAStoreKitObserver *sfObserver;
+    UAInventory *inventory;
+    UAStoreFrontDownloadManager *downloadManager;
 
     NSObject<UAStoreFrontDelegate> *delegate;
-    NSMutableDictionary* purchaseReceipts;
+    NSMutableDictionary *purchaseReceipts;
 }
 
-@property (nonatomic, retain, readonly) UAStoreKitObserver* sfObserver;
+@property (nonatomic, retain, readonly) UAStoreKitObserver *sfObserver;
 @property (nonatomic, retain, readonly) UAStoreFrontDownloadManager* downloadManager;
 @property (nonatomic, assign) NSObject<UAStoreFrontDelegate> *delegate;
-@property (nonatomic, retain) UAInventory* inventory;
-@property (nonatomic, retain) NSMutableDictionary* purchaseReceipts;
+@property (nonatomic, retain) UAInventory *inventory;
+@property (nonatomic, retain) NSMutableDictionary *purchaseReceipts;
 
 SINGLETON_INTERFACE(UAStoreFront)
 
@@ -153,7 +158,7 @@ SINGLETON_INTERFACE(UAStoreFront)
 /*
  operations on products
  */
-+ (NSArray*)productsForType:(ProductType)type;
++ (NSArray *)productsForType:(UAProductType)type;
 + (void)updateAllProducts;
 + (void)restoreAllProducts;
 

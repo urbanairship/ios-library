@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAViewUtils.h"
 #import "UAStoreFrontUI.h"
 #import "UAProductDetailViewController.h"
+#import "UAAsycImageView.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));

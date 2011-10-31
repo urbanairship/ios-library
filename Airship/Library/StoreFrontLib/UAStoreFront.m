@@ -24,9 +24,12 @@
  */
 
 #import "UAStoreFront.h"
-#import "UAStoreKitObserver.h"
-#import "UAInventory.h"
+
 #import "UA_ASIDownloadCache.h"
+
+#import "UAStoreKitObserver.h"
+#import "UAProduct.h"
+#import "UAInventory.h"
 #import "UAStoreFrontDownloadManager.h"
 
 UA_VERSION_IMPLEMENTATION(StoreFrontVersion, UA_VERSION)
@@ -247,7 +250,7 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open API, products operations
 
-+ (NSArray *)productsForType:(ProductType)type {
++ (NSArray *)productsForType:(UAProductType)type {
     return [[UAStoreFront shared].inventory productsForType:type];
 }
 

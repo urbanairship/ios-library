@@ -101,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				009EAF1612B8B362006005F8 /* UAStoreFrontDelegate.h */,
+				1813EC3012796005009DEB29 /* UAStoreFrontAlertProtocol.h */,
 				1813EC2712796005009DEB29 /* UAStoreFront.h */,
 				1813EC2812796005009DEB29 /* UAStoreFront.m */,
 				1813EC2A12796005009DEB29 /* UAStoreFrontDownloadManager.h */,
@@ -109,7 +110,6 @@
 				1813EC2D12796005009DEB29 /* UAInventory.m */,
 				1813EC2E12796005009DEB29 /* UAProduct.h */,
 				1813EC2F12796005009DEB29 /* UAProduct.m */,
-				1813EC3012796005009DEB29 /* UAStoreFrontAlertProtocol.h */,
 				1813EC3112796005009DEB29 /* UAStoreKitObserver.h */,
 				1813EC3212796005009DEB29 /* UAStoreKitObserver.m */,
 			);

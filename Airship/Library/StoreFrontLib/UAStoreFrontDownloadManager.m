@@ -24,15 +24,20 @@
  */
 
 #import "UAStoreFrontDownloadManager.h"
+
 #import "UAStoreFront.h"
+#import "UAStoreFrontDelegate.h"
+#import "UAirship.h"
 #import "UADownloadContent.h"
 #import "UAUtils.h"
+#import "UAProduct.h"
 #import "UAInventory.h"
 #import "UAStoreKitObserver.h"
 #import "UAStoreFrontAlertProtocol.h"
 #import "UA_SBJSON.h"
 
 @implementation UAStoreFrontDownloadManager
+
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
 
@@ -63,24 +68,25 @@
 #pragma mark -
 #pragma mark Download
 
-- (void)verifyProduct:(UAProduct*)product {
+- (void)verifyProduct:(UAProduct *)product {
     // Refresh cell, waiting for download
     product.status = UAProductStatusWaiting;
     UALOG(@"Verify receipt for product: %@", product.productIdentifier);
-    NSString* receipt = nil;
+    NSString *receipt = nil;
     if(product.isFree != YES) {
         receipt = product.receipt;
     }
     NSString *server = [[UAirship shared] server];
     NSString *urlString = [NSString stringWithFormat: @"%@/api/app/content/%@/download",
                            server, product.productIdentifier];
-    NSURL* itemURL = [NSURL URLWithString: urlString];
+    NSURL *itemURL = [NSURL URLWithString: urlString];
     
-    NSMutableDictionary* data = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                  [UAUtils udidHash], @"udid",
                                  [StoreFrontVersion get], @"version", nil];
-    if(receipt != nil)
+    if (receipt != nil) {
         [data setObject:receipt forKey:@"transaction_receipt"];
+    }
     
     UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
     downloadContent.userInfo = product;
@@ -251,16 +257,16 @@
     // alerts when timeout error raised
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
     if (product.status == UAProductStatusWaiting) {
-        if ([(NSObject *)alertHandler respondsToSelector:@selector(showReceiptVerifyFailedAlert)]) {
+        if ([alertHandler respondsToSelector:@selector(showReceiptVerifyFailedAlert)]) {
             [alertHandler showReceiptVerifyFailedAlert];
         }
     } else if (product.status == UAProductStatusDownloading){
-        if ([(NSObject *)alertHandler respondsToSelector:@selector(showDownloadContentFailedAlert)]) {
+        if ([alertHandler respondsToSelector:@selector(showDownloadContentFailedAlert)]) {
             [alertHandler showDownloadContentFailedAlert];
         }
         
     } else if (product.status == UAProductStatusDecompressing) {
-        if ([(NSObject *)alertHandler respondsToSelector:@selector(showDecompressContentFailedAlert)]) {
+        if ([alertHandler respondsToSelector:@selector(showDecompressContentFailedAlert)]) {
             [alertHandler showDecompressContentFailedAlert];
         }
         

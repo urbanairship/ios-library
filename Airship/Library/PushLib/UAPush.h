@@ -102,11 +102,11 @@ UA_VERSION_INTERFACE(UAPushVersion)
  * 
  */
 @interface UAPush : UAObservable<UARegistrationObserver> {
-    
+
+  @private
     id<UAPushNotificationDelegate> delegate; /**< Push notification delegate. Handles incoming notifications */
     NSObject<UAPushNotificationDelegate> *defaultPushHandler; /**< A default implementation of the push notification delegate **/
-    
-  @private
+
     BOOL pushEnabled; /* Push enabled flag. */
     BOOL autobadgeEnabled;
     UIRemoteNotificationType notificationTypes; /* Requested notification types */

@@ -94,7 +94,6 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     BOOL deviceTokenHasChanged;
     BOOL ready;
 
-    UA_ASIHTTPRequest *registerRequest;
 }
 
 /**

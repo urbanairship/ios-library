@@ -26,12 +26,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAStoreFront.h"
 #import "UAUtils.h"
 #import "UAStoreKitObserver.h"
+#import "UAProduct.h"
 #import "UAInventory.h"
 #import "UAStoreFrontDownloadManager.h"
 #import "UAStoreFrontAlertProtocol.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
-UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
+UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
 
 @implementation UAStoreKitObserver
 

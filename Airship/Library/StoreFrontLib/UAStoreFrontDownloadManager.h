@@ -24,19 +24,20 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
-#import "UAGlobal.h"
+
 #import "UADownloadManager.h"
-#import "UAProduct.h"
+
+@class UAProduct;
 
 @interface UAStoreFrontDownloadManager : NSObject <UADownloadManagerDelegate> {
+  @private
     NSMutableDictionary *pendingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
     BOOL createProductIDSubdir;
 }
-@property (nonatomic, retain) NSString *downloadDirectory;
-@property (assign) BOOL createProductIDSubdir;
+@property (nonatomic, copy) NSString *downloadDirectory;
+@property (nonatomic, assign) BOOL createProductIDSubdir;
 
 - (void)loadPendingProducts;
 - (void)downloadIfValid:(id)parameter;

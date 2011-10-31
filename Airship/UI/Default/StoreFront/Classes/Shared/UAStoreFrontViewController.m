@@ -30,6 +30,7 @@
 #import "UAViewUtils.h"
 #import "UAStoreFrontUI.h"
 #import "UAInventory.h"
+#import "UAAsycImageView.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
