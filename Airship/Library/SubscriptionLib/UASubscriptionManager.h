@@ -54,7 +54,10 @@ extern NSString * const UASubscriptionReceiptVerificationFailure;
 /** Error codes for the UASubscriptionTransactionErrorDomain error domain */
 typedef enum _UASubscriptionTransactionErrorType {
     /** This error code indicates that the submitted receipt is invalid. */
-    UASubscriptionReceiptVerificationFailedErrorType = 1
+    UASubscriptionReceiptVerificationFailedErrorType = 1,
+    
+    /** This error code indicates that the verification service could not be contacted. */
+    UASubscriptionReceiptVerificationServiceFailedErrorType = 2
 } UASubscriptionTransactionErrorType;
 
 /** The error domain for Subscription REST API-related failures */
