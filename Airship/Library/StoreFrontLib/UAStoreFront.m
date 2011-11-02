@@ -171,7 +171,10 @@ static Class _uiClass;
 #pragma mark Open API, enter/quit StoreFront
 
 + (void)land {
-    [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UAStoreFront shared].sfObserver];
+    if (g_sharedUAStoreFront) {
+        [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UAStoreFront shared].sfObserver];
+        RELEASE_SAFELY(g_sharedUAStoreFront);
+    }
 }
 
 + (void)displayStoreFront:(UIViewController *)viewController animated:(BOOL)animated {

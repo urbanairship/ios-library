@@ -96,6 +96,8 @@ typedef enum _UAUserState {
 @property (retain, nonatomic) NSMutableSet *tags;
 
 + (UAUser *)defaultUser;
++ (void)land;
+
 - (BOOL)defaultUserCreated;
 - (BOOL)setUserEmail:(NSString *)address;
 - (void)startRecovery;

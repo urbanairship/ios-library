@@ -128,7 +128,7 @@ static UAUser *_defaultUser;
 
 + (void)land {
 
-    if (_defaultUser != nil) {
+    if (_defaultUser) {
         [_defaultUser cancelListeningForDeviceToken];
     }
     

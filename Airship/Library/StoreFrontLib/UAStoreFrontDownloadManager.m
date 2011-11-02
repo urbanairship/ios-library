@@ -233,6 +233,7 @@
     
     [self addPendingProduct:product];
     [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    
     product.transaction = nil;
     // Refresh inventory and UI just before downloading start
     product.status = UAProductStatusDownloading;

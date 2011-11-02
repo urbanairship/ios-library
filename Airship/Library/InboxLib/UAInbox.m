@@ -102,13 +102,17 @@ static Class _uiClass;
 }
 
 + (void)land {
-    // Update application badge number
-	[UAInbox shared].messageList = nil;
-	
-    [[[UAInbox shared] uiClass] land];
-	
-    RELEASE_SAFELY(g_sharedUAInbox);
-    [UAInboxMessageList land];
+    
+    if (g_sharedUAInbox) {
+        
+        [UAInbox shared].messageList = nil;
+        
+        [[[UAInbox shared] uiClass] land];
+        
+        [UAInboxMessageList land];
+        
+        RELEASE_SAFELY(g_sharedUAInbox);
+    }
 }
 
 #pragma mark -

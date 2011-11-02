@@ -281,6 +281,17 @@ static Class _uiClass;
 }
 
 #pragma mark -
+#pragma mark Open APIs
+
++ (void)land {
+    
+    // not much teardown to do here, but implement anyway for the future
+    if (g_sharedUAPush) {
+        RELEASE_SAFELY(g_sharedUAPush);
+    }
+}
+
+#pragma mark -
 #pragma mark Open APIs - Custom UI
 
 + (void)useCustomUI:(Class)customUIClass {

@@ -257,16 +257,19 @@ BOOL logging = false;
 
 + (void)land {
 
+    [[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
+    
 	// add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
 	
     //Land the modular libaries first
+    [NSClassFromString(@"UAPush") land];
     [NSClassFromString(@"UAInbox") land];
     [NSClassFromString(@"UAStoreFront") land];
     [NSClassFromString(@"UASubscriptionManager") land];
     
     //Land common classes
-    [NSClassFromString(@"UAUser") land];
+    [UAUser land];
     
     //Finally, release the airship!
     [_sharedAirship release];

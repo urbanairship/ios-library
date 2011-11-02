@@ -104,8 +104,8 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @interface UAPush : UAObservable<UARegistrationObserver> {
 
   @private
-    id<UAPushNotificationDelegate> delegate; /**< Push notification delegate. Handles incoming notifications */
-    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /**< A default implementation of the push notification delegate **/
+    id<UAPushNotificationDelegate> delegate; /* Push notification delegate. Handles incoming notifications */
+    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /* A default implementation of the push notification delegate */
 
     BOOL pushEnabled; /* Push enabled flag. */
     BOOL autobadgeEnabled;
@@ -143,6 +143,8 @@ SINGLETON_INTERFACE(UAPush);
                  animated:(BOOL)animated;
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;
+
++ (void)land;
 
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
 - (void)registerDeviceToken:(NSData *)token;

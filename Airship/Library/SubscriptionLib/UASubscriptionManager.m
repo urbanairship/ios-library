@@ -101,8 +101,13 @@ static Class _uiClass;
 }
 
 + (void)land {
-	[[UAUser defaultUser] removeObserver:self];
-    [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
+    if (g_sharedUASubscriptionManager) {
+        
+        [[UAUser defaultUser] removeObserver:self];
+        [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
+        
+        RELEASE_SAFELY(g_sharedUASubscriptionManager);
+    }
 }
 
 #pragma mark -

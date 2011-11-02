@@ -233,6 +233,19 @@
 	// Do not finish the transaction here, leave it open for iOS to re-deliver until it explicitly fails or works
 	UALOG(@"Purchase product failed: %@", transaction.payment.productIdentifier);
 
+    UASubscriptionProduct *product =
+        [[UASubscriptionManager shared].inventory productForKey:transaction.payment.productIdentifier];
+    
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    [userInfo setObject:UASubscriptionReceiptVerificationFailure forKey:NSLocalizedDescriptionKey];
+    
+    NSError *error = [NSError errorWithDomain:UASubscriptionTransactionErrorDomain
+                                         code:UASubscriptionReceiptVerificationServiceFailedErrorType
+                                     userInfo:userInfo];
+    
+    //notify observers
+    [[UASubscriptionManager shared] purchaseProductFailed:product withError:error];
+
 }
 
 #pragma mark -
