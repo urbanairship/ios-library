@@ -34,14 +34,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @interface UAStoreKitObserver : UAObservable <SKPaymentTransactionObserver> {
 
   @private
-    BOOL inRestoring;
+    BOOL restoring;
     
     // when restoring all transactions, put the transaction into this array but
     // not download content for them. Then alert user the count, and download
     // all of them if user agree to download
     NSMutableArray *unRestoredTransactions;
 }
-@property (nonatomic, assign, readonly) BOOL inRestoring;
+@property (nonatomic, assign) BOOL restoring;
 
 - (void)restoreAll;
 - (void)failedTransaction:(SKPaymentTransaction *)transaction;

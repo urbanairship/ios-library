@@ -36,13 +36,13 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 
 @implementation UAStoreKitObserver
 
-@synthesize inRestoring;
+@synthesize restoring;
 
 - (id)init {
     if (!(self = [super init]))
         return nil;
 
-    inRestoring = NO;
+    restoring = NO;
 
     IF_IOS4_OR_GREATER(
         if (&UIApplicationDidEnterBackgroundNotification != NULL) {
@@ -63,11 +63,11 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     [super dealloc];
 }
 
-- (void)setInRestoring:(BOOL)value {
-    if (inRestoring != value) {
-        inRestoring = value;
+- (void)setRestoring:(BOOL)value {
+    if (restoring != value) {
+        restoring = value;
         [self notifyObservers:@selector(restoreStatusChanged:)
-                   withObject:[NSNumber numberWithBool:inRestoring]];
+                   withObject:[NSNumber numberWithBool:restoring]];
     }
 }
 
@@ -99,7 +99,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     UALOG(@"Restore Transaction: %@ id: %@", transaction, transaction.payment.productIdentifier);
     NSString *productIdentifier = transaction.payment.productIdentifier;
-    if (inRestoring) {
+    if (restoring) {
         UALOG(@"Original transaction: %@", transaction.originalTransaction);
         // when a transaction restored, we don't directly verify and download
         // contents but just put it into unRestoredTransactions. The
@@ -193,7 +193,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 }
 
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
-    self.inRestoring = NO;
+    self.restoring = NO;
     for (SKPaymentTransaction *transaction in unRestoredTransactions) {
         [self finishTransaction:transaction];
         UAProduct *product = [self productFromTransaction:transaction];
@@ -207,7 +207,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 
 - (void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
     UALOG(@"paymentQueueRestoreCompletedTransactionsFinished:%@", queue);
-    self.inRestoring = NO;
+    self.restoring = NO;
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
     [alertHandler showConfirmRestoringAlert:[unRestoredTransactions count]
                                    delegate:self approveSelector:@selector(downloadAllRestoredItems)
@@ -240,7 +240,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 #pragma mark Resotre all completed transactions
 
 - (void)restoreAll {
-    self.inRestoring = YES;
+    self.restoring = YES;
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 

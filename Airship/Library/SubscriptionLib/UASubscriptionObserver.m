@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // for IAP Compatibility
 #import "UAStoreFront.h"
 #import "UAInventory.h"
+#import "UAStoreKitObserver.h"
 
 #pragma mark -
 #pragma mark Private Category
@@ -126,6 +127,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     UALOG(@"Restoring all autorenewable subscriptions");
     restoring = YES;
+    
+    // If StoreFrontLib is in use, tell its observer that we're restoring products
+    // Ties SubscriptionLib to StoreFrontLib -c onsider making these weak references once we drop 3.x support
+    if ([UAStoreFront initialized]) {
+        [[UAStoreFront shared].sfObserver setRestoring:YES];
+    }
+    
     [self createNetworkQueue];
     [unrestoredTransactions removeAllObjects];
     [restoredProducts removeAllObjects];
@@ -474,8 +482,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)safelyFinishUnknownTransaction:(SKPaymentTransaction *)transaction {
     if (transaction && [[[SKPaymentQueue defaultQueue] transactions] containsObject:transaction]) {
-        Class iapClass = NSClassFromString(@"UAStoreFront");
-        if (iapClass && [iapClass initialized]) {
+
+        // Tests the transaction against the StoreFront inventory
+        // Ties SubscriptionLib to StoreFrontLib - consider making these weak references once we drop 3.x support
+        if ([UAStoreFront initialized]) {
             
             UAInventoryStatus iapStatus = [UAStoreFront shared].inventory.status;
             NSString *identifier = transaction.payment.productIdentifier;
