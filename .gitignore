@@ -10,7 +10,7 @@ Debug/
 Release/
 Distribution/
 build/
-Airship/libUAirship-*.a
+Airship/*.a
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
