@@ -24,6 +24,8 @@
  */
 
 #import "UAInventory.h"
+
+#import "UAirship.h"
 #import "UAStoreKitObserver.h"
 #import "UAProduct.h"
 #import "UAStoreFrontDownloadManager.h"
@@ -34,10 +36,9 @@
 
 #define MAX_RELOAD_TIME 5
 
-NSString *const UAContentsDisplayOrderTitle = @"title";
-NSString *const UAContentsDisplayOrderID = @"productIdentifier";
-NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
-
+NSString * const UAContentsDisplayOrderTitle = @"title";
+NSString * const UAContentsDisplayOrderID = @"productIdentifier";
+NSString * const UAContentsDisplayOrderPrice = @"priceNumber";
 
 @implementation UAInventory
 
@@ -82,7 +83,7 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
 #pragma mark -
 #pragma mark Product management
 
-- (NSArray *)productsForType:(ProductType)type {
+- (NSArray *)productsForType:(UAProductType)type {
     if (type == ProductTypeAll) {
         return sortedProducts;
     } else if (type == ProductTypeInstalled) {
@@ -100,11 +101,11 @@ NSString *const UAContentsDisplayOrderPrice = @"priceNumber";
     [keys sortUsingSelector:@selector(compare:)];
 }
 
-- (UAProduct*)productWithIdentifier:(NSString*)productId {
+- (UAProduct *)productWithIdentifier:(NSString *)productId {
     return [products objectForKey:productId];
 }
 
-- (BOOL)hasProductWithIdentifier:(NSString*)productId {
+- (BOOL)hasProductWithIdentifier:(NSString *)productId {
     return [keys containsObject:productId];
 }
 

@@ -26,9 +26,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInbox.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxUI.h"
+#import "UAInboxMessageList.h"
+
+#import "UAUtils.h"
 
 #define kMessageUp 0
 #define kMessageDown 1
+
+@interface UAInboxMessageViewController ()
+
+- (void)refreshHeader;
+- (void)updateMessageNavButtons;
+
+@property (nonatomic, retain) UIActivityIndicatorView* activity;
+@property (nonatomic, retain) UIView* statusBar;
+@property (nonatomic, retain) UIView* statusBarTitle;
+@property (nonatomic, retain) UISegmentedControl* messageNav;
+
+@end
 
 @implementation UAInboxMessageViewController
 
@@ -38,8 +53,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize statusBarTitle;
 @synthesize messageNav;
 @synthesize message;
+@synthesize shouldShowAlerts;
 
 - (void)dealloc {
+    [[UAInbox shared].messageList removeObserver:self];
     RELEASE_SAFELY(message);
     RELEASE_SAFELY(webView);
     RELEASE_SAFELY(activity);
@@ -51,6 +68,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
     if (self = [super initWithNibName:nibName bundle:nibBundle]) {
+        
+        [[UAInbox shared].messageList addObserver:self];
+        
         self.title = UA_INBOX_TR(@"UA_Message");
 
         // "Segmented" up/down control to the right
@@ -70,13 +90,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [segmentBarItem release];
 
         [webView setDataDetectorTypes:UIDataDetectorTypeAll];
+        
+        self.shouldShowAlerts = YES;
     }
 
     return self;
 }
 
 - (void)viewDidLoad {
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
     [self loadMessageAtIndex:index];
@@ -110,8 +132,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark UI
 
 - (void)refreshHeader {
-    int count = [[UAInbox shared].activeInbox messageCount];
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int count = [[UAInbox shared].messageList messageCount];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if (index >= 0 && index < count) {
         self.title = [NSString stringWithFormat: @"%d %@ %d", index+1, UA_INBOX_TR(@"UA_Of"), count];
@@ -125,17 +147,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessage *msg = [[UAInbox shared].activeInbox messageForID:mid];
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
         return;
     }
 
-    [self loadMessageAtIndex:[[UAInbox shared].activeInbox indexOfMessage:msg]];
+    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
 }
 
 - (void)loadMessageAtIndex:(int)index {
-    self.message = [[UAInbox shared].activeInbox messageAtIndex:index];
+    self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
         return;
@@ -144,8 +166,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self refreshHeader];
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
-    [UAInbox addAuthToWebRequest:requestObj];
+    
     [requestObj setTimeoutInterval:5];
+    
+    NSString *auth = [UAUtils userAuthHeaderString];
+    [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
+    
     [webView stopLoading];
     [webView loadRequest:requestObj];
 }
@@ -236,21 +262,74 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return YES;
 }
 
+- (void)populateJavascriptEnvironment {
+    
+    // This will inject the current device orientation
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
+    
+    /*
+     * Define and initialize our one global
+     */
+    NSString* js = @"var UAirship = {};";
+    
+    /*
+     * Set the device model.
+     */
+    NSString *model = [UIDevice currentDevice].model;
+    js = [js stringByAppendingFormat:@"UAirship.devicemodel=\"%@\";", model];
+    
+    /*
+     * Set the UA user ID.
+     */
+    NSString *userID = [UAUser defaultUser].username;
+    js = [js stringByAppendingFormat:@"UAirship.userID=\"%@\";", userID];
+    
+    /*
+     * Set the current message ID.
+     */
+    NSString* messageID = message.messageID;
+    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
+    
+    /*
+     * Define UAirship.handleCustomURL.
+     */
+    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
+    
+    /*
+     * Execute the JS we just constructed.
+     */
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
+- (void)injectViewportFix {
+    NSString *js = @"var metaTag = document.createElement('meta');"
+    "metaTag.name = 'viewport';"
+    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
+    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
+    
+    [webView stringByEvaluatingJavaScriptFromString:js];
+}
+
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [statusBar setHidden: NO];
     [activity startAnimating];
     statusBarTitle.text = message.title;
+    
+    [self populateJavascriptEnvironment];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [statusBar setHidden: YES];
     [activity stopAnimating];
 
-    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
     // Mark message as read after it has finished loading
     if(message.unread) {
         [message markAsRead];
     }
+    
+    [self injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
@@ -260,20 +339,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
-    UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
-                                                        message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
-                                                       delegate:self
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-    [someError show];
-    [someError release];
+    
+    if (shouldShowAlerts) {
+        
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
+                                                            message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
+                                                           delegate:self
+                                                  cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                                  otherButtonTitles:nil];
+        [someError show];
+        [someError release];
+    }
 }
 
 #pragma mark Message Nav
 
 - (IBAction)segmentAction:(id)sender {
     UISegmentedControl *segmentedControl = (UISegmentedControl *)sender;
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if(segmentedControl.selectedSegmentIndex == kMessageUp) {
         [self loadMessageAtIndex:index-1];
@@ -283,7 +366,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)updateMessageNavButtons {
-    int index = [[UAInbox shared].activeInbox indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:message];
 
     if (message == nil || index == NSNotFound) {
         [messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
@@ -294,14 +377,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         } else {
             [messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
         }
-        if(index >= [[UAInbox shared].activeInbox messageCount] - 1) {
+        if(index >= [[UAInbox shared].messageList messageCount] - 1) {
             [messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
         } else {
             [messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
         }
     }
 
-    UALOG(@"update nav %d, of %d", index, [[UAInbox shared].activeInbox messageCount]);
+    UALOG(@"update nav %d, of %d", index, [[UAInbox shared].messageList messageCount]);
 }
 
 #pragma mark UAInboxMessageListObserver

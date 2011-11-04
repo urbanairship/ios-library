@@ -25,17 +25,25 @@
 
 
 #import "UAInboxPushHandler.h"
+#import "UAirship.h"
+
+#import "UAInbox.h"
 #import "UAInboxMessageList.h"
-#import "UAInboxAlertProtocol.h"
+#import "UAAnalytics.h"
 #import "UAEvent.h"
+
+
 
 @implementation UAInboxPushHandler
 
 @synthesize viewingMessageID;
+@synthesize delegate;
 @synthesize hasLaunchMessage;
 
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
+    RELEASE_SAFELY(delegate);
+    [[[UAInbox shared] messageList] removeObserver:self];
     [super dealloc];
 }
 
@@ -47,15 +55,8 @@
     return isActive;
 }
 
-+ (void) showMessageAfterMessageListLoaded {
-    if ([UAInbox shared].activeInbox == nil) {
-        [UAInbox setInbox:[UAInboxMessageList defaultInbox]];
-	}
-	
-	[[UAInbox shared].activeInbox retrieveMessageList];
-}
 
-+ (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox {
++ (void)handleNotification:(NSDictionary*)userInfo{
 
     UALOG(@"remote notification: %@", [userInfo description]);
 
@@ -70,33 +71,28 @@
     } else if ([richPushValue isKindOfClass:[NSString class]]) {
         richPushId = (NSString *)richPushValue;
     }
-    
-    if (richPushId) {
-        [[UAInbox shared].pushHandler setViewingMessageID:richPushId];
-    }
 	
     // add push_received event, or handle appropriately
     [[UAirship shared].analytics handleNotification:userInfo];
     
-	BOOL isActive = [self isApplicationActive];
-
-    if (isActive) {
+    if (richPushId) {
+        [UAInbox shared].pushHandler.viewingMessageID = richPushId;
+       
+        //if the app is in the foreground, let the UI class decide how it
+        //wants to respond to the incoming push
+        if ([self isApplicationActive]) {
+            [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
+        }
         
-        // only show alert view when the app is active
-        // if it's running in background, apple will show a standard notification
-        // alertview, so here we no need to show our alert
-        NSString* message = [[userInfo objectForKey: @"aps"] objectForKey: @"alert"];
-		
-		id<UAInboxAlertProtocol> alertHandler = [[[UAInbox shared] uiClass] getAlertHandler];
-        [alertHandler showNewMessageAlert:message];
-		
-    } else {
-		
-        // load message list and show the specified message
-        [UAInboxPushHandler showMessageAfterMessageListLoaded];
+        //otherwise, load the message list
+        else {
+            //this will result in calling loadLaunchMessage on the UI class
+            //once the request is complete
+            [UAInbox shared].pushHandler.hasLaunchMessage = YES;
+            
+            [[UAInbox shared].messageList retrieveMessageList];
+        }
     }
-    
-    
 }
 
 + (void)handleLaunchOptions:(NSDictionary*)options {
@@ -126,10 +122,31 @@
     
 }
 
+- (void)messageListLoaded {
+    
+    //only take action is there's a new message
+    if(viewingMessageID) {
+        
+        Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
+        
+        //if the notification came in while the app was backgrounded, treat it as a launch message
+        if (hasLaunchMessage) {
+            [uiClass loadLaunchMessage];
+        }
+        
+        //otherwise, have the UI class display it
+        else {
+            [uiClass displayMessage:nil message:viewingMessageID];
+            [self setViewingMessageID:nil];
+        }
+    }
+}
+
 
 - (id)init {
     if (self = [super init]) {
 		hasLaunchMessage = NO;
+        [[[UAInbox shared] messageList] addObserver:self];
 	}
 	return self;
 }

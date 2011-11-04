@@ -30,6 +30,8 @@
 
 @class UAAsyncImageView;
 @class UASubscriptionProduct;
+@protocol UASubscriptionAlertProtocol;
+
 @interface UASubscriptionProductDetailViewController : UIViewController
 <UITableViewDelegate, UITableViewDataSource> {
     

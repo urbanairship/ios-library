@@ -96,7 +96,7 @@
 	[[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 }
 
-- (void)handleCustomPayload:(NSDictionary *)notification :(NSDictionary *)customData {
+- (void)handleNotification:(NSDictionary *)notification withCustomPayload:(NSDictionary *)customData {
     UALOG(@"Received an alert with a custom payload");
 	
 	// Do something with your customData JSON, then entire notification is also available

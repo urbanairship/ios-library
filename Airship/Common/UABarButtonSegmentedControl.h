@@ -23,8 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGlobal.h"
-
 @interface UABarButtonSegmentedControl : UISegmentedControl {
 
 }

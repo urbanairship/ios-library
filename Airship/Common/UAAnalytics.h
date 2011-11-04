@@ -24,8 +24,8 @@
  */
 #import <Foundation/Foundation.h>
 #import "UAHTTPConnection.h"
-#import "UAAnalyticsDBManager.h"
-#import "UAEvent.h"
+
+@class UAEvent;
 
 // Used for init local size if server didn't response, or server sends bad data
 
@@ -43,8 +43,10 @@
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
+extern NSString * const UAAnalyticsOptionsLoggingKey;
 
 @interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
+  @private
     NSString *server;
     NSMutableDictionary *session;
 
@@ -64,6 +66,8 @@ extern NSString * const UAAnalyticsOptionsServerKey;
     NSTimeInterval oldestEventTime;
     NSDate *lastSendTime;
     NSTimer *reSendTimer;
+    
+    BOOL analyticsLoggingEnabled;
 }
 
 @property (retain) NSString *server;

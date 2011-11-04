@@ -30,6 +30,7 @@
 #import "UAViewUtils.h"
 #import "UAStoreFrontUI.h"
 #import "UAInventory.h"
+#import "UAAsycImageView.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -338,11 +339,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark -
 #pragma mark UAInventory status observer
 
-- (void)inventoryProductsChanged:(UAProductStatus*)status {
+- (void)inventoryProductsChanged:(NSNumber *)status {
     [self refreshExitButton];
 }
 
-- (void)restoreStatusChanged:(NSNumber*)inRestoring {
+- (void)restoreStatusChanged:(NSNumber *)inRestoring {
     self.navigationItem.rightBarButtonItem.enabled = ![inRestoring boolValue];
 }
 

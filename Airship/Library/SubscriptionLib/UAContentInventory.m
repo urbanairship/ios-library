@@ -91,7 +91,7 @@
         [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
         [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
         
-        NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+        NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];
         [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
         
         return;
@@ -118,7 +118,7 @@
     [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
     [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
     
-    NSError *error = [NSError errorWithDomain:@"com.urbanairship" code:request.responseStatusCode userInfo:userInfo];
+    NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];
     [[UASubscriptionManager shared] inventoryUpdateFailedWithError:error];
 }
 

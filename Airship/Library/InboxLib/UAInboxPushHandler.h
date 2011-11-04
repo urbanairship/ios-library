@@ -24,21 +24,67 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+
 #import "UAInboxMessageListObserver.h"
 
 @class UAInboxMessageList;
 
+/**
+ * This protocol defines a delegate method that is called
+ * when a push notification arrives with a rich push message ID
+ * embedded in its payload.
+ */
+@protocol UAInboxPushHandlerDelegate <NSObject>
+
+@required
+/**
+ * Handle an incoming push message.
+ * @param message An NSDictionary with the push notification contents.
+ */
+- (void)newMessageArrived:(NSDictionary *)message;
+@end
+
+/**
+ * This class handles incoming rich push messages that are sent with
+ * an APNS notification.
+ */
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver> {
+  @private
     NSString *viewingMessageID;
+    id <UAInboxPushHandlerDelegate> delegate;
 	BOOL hasLaunchMessage;
 }
 
-+ (void)handleNotification:(NSDictionary*)userInfo forInbox:(UAInboxMessageList*)inbox;
-+ (void)handleLaunchOptions:(NSDictionary*)options;
-+ (void)showMessageAfterMessageListLoaded;
+/**
+ * Handle an incoming in-app notification.  This should typically be called 
+ * from the UIApplicationDelegate.
+ * @param userInfo the notification as an NSDictionary
+ */
++ (void)handleNotification:(NSDictionary*)userInfo;
 
+/**
+ * Handle the launch options passed in as the app starts, while will include
+ * a noficiation if the app was launched in response to viewing one.  This should
+ * typically be called from the UIApplicationDelegate.
+ * @param options The launch options asn an NSDictionary.
+ */
++ (void)handleLaunchOptions:(NSDictionary*)options;
+
+/**
+ * The message ID of the most recent rich push as an NSString.
+ */
 @property (nonatomic, retain) NSString *viewingMessageID;
+
+/**
+ * YES if the most recent rich push launched the app, NO otherwise.
+ */
 @property (nonatomic, assign) BOOL hasLaunchMessage;
+
+/**
+ * The delegate that should be notified when an incoming push is handled,
+ * as an object conforming to the UAInboxPushHandlerDelegate protocol.
+ * NOTE: The delegate is not retained.
+ */
+@property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate;
 
 @end

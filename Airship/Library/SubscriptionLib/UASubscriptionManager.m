@@ -44,6 +44,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 UA_VERSION_IMPLEMENTATION(SubscriptionVersion, UA_VERSION)
 
 // Subscription error messages
+NSString * const UASubscriptionTransactionErrorDomain = @"UASubscriptionTransactionErrorDomain";
+NSString * const UASubscriptionReceiptVerificationFailure = @"UA Subscription Receipt is Invalid";
+
+NSString * const UASubscriptionRequestErrorDomain = @"UASubscriptionRequestErrorDomain";
+
 NSString * const UASubscriptionPurchaseInventoryFailure = @"UA Subscription Purchases Failed to Load";
 NSString * const UASubscriptionContentInventoryFailure = @"UA Subscription Content Inventory Failed to Load";
 NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Product Inventory Failed to Load";
@@ -55,6 +60,10 @@ NSString * const UASubscriptionProductInventoryFailure = @"UA Subscription Produ
 @synthesize downloadManager;
 
 SINGLETON_IMPLEMENTATION(UASubscriptionManager)
+
++ (BOOL)initialized {
+    return g_sharedUASubscriptionManager ? YES : NO;
+}
 
 #pragma mark -
 #pragma mark Custom UI
@@ -92,8 +101,13 @@ static Class _uiClass;
 }
 
 + (void)land {
-	[[UAUser defaultUser] removeObserver:self];
-    [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
+    if (g_sharedUASubscriptionManager) {
+        
+        [[UAUser defaultUser] removeObserver:self];
+        [[SKPaymentQueue defaultQueue] removeTransactionObserver:[UASubscriptionManager shared].transactionObserver];
+        
+        RELEASE_SAFELY(g_sharedUASubscriptionManager);
+    }
 }
 
 #pragma mark -

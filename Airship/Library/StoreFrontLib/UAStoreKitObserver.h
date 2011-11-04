@@ -23,6 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
 #import "UAObservable.h"
@@ -32,17 +33,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @interface UAStoreKitObserver : UAObservable <SKPaymentTransactionObserver> {
 
-    BOOL inRestoring;
+  @private
+    BOOL restoring;
+    
     // when restoring all transactions, put the transaction into this array but
     // not download content for them. Then alert user the count, and download
     // all of them if user agree to download
     NSMutableArray *unRestoredTransactions;
 }
-@property (nonatomic, assign, readonly) BOOL inRestoring;
+@property (nonatomic, assign) BOOL restoring;
 
 - (void)restoreAll;
 - (void)failedTransaction:(SKPaymentTransaction *)transaction;
 - (void)finishTransaction:(SKPaymentTransaction *)transaction;
+- (void)finishUnknownTransaction:(SKPaymentTransaction *)transaction;
 - (void)payForProduct:(SKProduct *)product;
 - (UAProduct *)productFromTransaction:(SKPaymentTransaction *)transaction;
 

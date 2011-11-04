@@ -23,38 +23,104 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "UAInbox.h"
+#import <Foundation/Foundation.h>
 
 @class UAInboxMessageList;
-@class UA_ASIHTTPRequest;
 
+/**
+ * This class represents a Rich Push Inbox message. It contains all
+ * the available information about a message, including the URLs where
+ * the message can be retrieved.
+ */
 @interface UAInboxMessage : NSObject {
-    NSString* messageID;
-    NSURL* messageBodyURL;
-    NSURL* messageURL;
+  @private
+    NSString *messageID;
+    NSURL *messageBodyURL;
+    NSURL *messageURL;
+    NSString *contentType;
     BOOL unread;
-    NSDate* messageSent;
-    NSString* title;
-    NSDictionary* extra;
-    UAInboxMessageList* inbox;
+    NSDate *messageSent;
+    NSString *title;
+    NSDictionary *extra;
+    UAInboxMessageList *inbox;//not retained - see property
 }
 
 
-// Supported methods
-/******************************************************************************/
-- (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList*)inbox;
+/**
+ * Initialize the message.
+ *
+ * @param message A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ * @param inbox The inbox containing this message.
+ *
+ * @return A message, populated with data from the message dictionary.
+ */
+- (id)initWithDict:(NSDictionary *)message inbox:(UAInboxMessageList *)inbox;
+
+/**
+ * Mark the message as read.
+ * 
+ * @return YES if the request was submitted or already complete, otherwise NO.
+ */
 - (BOOL)markAsRead;
-+ (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url;
 
-@property (nonatomic, retain) NSString* messageID;
-@property (nonatomic, retain) NSURL* messageBodyURL;
-@property (nonatomic, retain) NSURL* messageURL;
+/**
+ * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
+ *
+ * This method returns null, but a callback to the UIWebView may be made via
+ * [UIWebView stringByEvaluatingJavaScriptFromString:] if the delegate returns
+ * a Javascript string for evaluation.
+ *
+ * @param webView The UIWebView generating the request
+ * @param url The URL requested by the webView
+ */
++ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
+
+
+///---------------------------------------------------------------------------------------
+/// @name Message Properties
+///---------------------------------------------------------------------------------------
+
+/**
+ * The Urban Airship message ID.
+ * This ID may be used to match an incoming push notification to a specific message.
+ */
+@property (nonatomic, retain) NSString *messageID;
+
+/**
+ * The URL for the message body itself.
+ * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ */
+@property (nonatomic, retain) NSURL *messageBodyURL;
+
+/** The URL for the message.
+ * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ */
+@property (nonatomic, retain) NSURL *messageURL;
+
+/** The MIME content type for the message (e.g., text/html) */
+@property (nonatomic, copy) NSString *contentType;
+
+/** YES if the message is unread, otherwise NO. */
 @property (assign) BOOL unread;
-@property (nonatomic, retain) NSDate* messageSent;
-@property (nonatomic, retain) NSString* title;
-@property (nonatomic, retain) NSDictionary* extra;
-@property (assign) UAInboxMessageList* inbox;
 
--(NSString*)description;
+/** The date and time the message was sent (UTC) */
+@property (nonatomic, retain) NSDate *messageSent;
+
+/** The message title */
+@property (nonatomic, retain) NSString *title;
+
+/**
+ * The message's extra dictionary. This dictionary can be populated
+ * with arbitrary key-value data at the time the message is composed.
+ */
+@property (nonatomic, retain) NSDictionary *extra;
+
+/**
+ * The parent inbox.
+ * 
+ * Note that this object is not retained by the message.
+ */
+@property (assign) UAInboxMessageList *inbox; 
 
 @end

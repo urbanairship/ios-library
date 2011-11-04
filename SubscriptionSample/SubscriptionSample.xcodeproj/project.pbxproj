@@ -38,7 +38,7 @@
 		0D5A7E2811CA043000BE4A57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */; };
 		0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DE288F311CF310D0013D2F1 /* StoreKit.framework */; };
 		0DF7FF9311CA251D00DD9F96 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */; };
-		181A7703129E495C0061547A /* libUAirship-1.0.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 181A7702129E495C0061547A /* libUAirship-1.0.7.a */; };
+		181A7703129E495C0061547A /* libUAirship-1.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 181A7702129E495C0061547A /* libUAirship-1.1.1.a */; };
 		18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -109,7 +109,7 @@
 		0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		0DE288F311CF310D0013D2F1 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0DF7FF9211CA251D00DD9F96 /* checkConfig.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = checkConfig.sh; sourceTree = "<group>"; };
-		181A7702129E495C0061547A /* libUAirship-1.0.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.0.7.a"; path = "../Airship/libUAirship-1.0.7.a"; sourceTree = SOURCE_ROOT; };
+		181A7702129E495C0061547A /* libUAirship-1.1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.1.1.a"; path = "../Airship/libUAirship-1.1.1.a"; sourceTree = SOURCE_ROOT; };
 		18F4D8D01287DC0100FE3508 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubscriptionSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,7 +160,7 @@
 				0DE2890011CF310D0013D2F1 /* StoreKit.framework in Frameworks */,
 				B63B5EDA1246383700145424 /* libsqlite3.dylib in Frameworks */,
 				18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */,
-				181A7703129E495C0061547A /* libUAirship-1.0.7.a in Frameworks */,
+				181A7703129E495C0061547A /* libUAirship-1.1.1.a in Frameworks */,
 				E9CB329412B85C7E002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -223,7 +223,7 @@
 		181A7701129E494A0061547A /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				181A7702129E495C0061547A /* libUAirship-1.0.7.a */,
+				181A7702129E495C0061547A /* libUAirship-1.1.1.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -557,12 +557,7 @@
 					"\"$(SRCROOT)/../Airship\"",
 				);
 				OTHER_CFLAGS = "-DUADEBUG";
-				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = SubscriptionSample;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -584,12 +579,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship\"",
 				);
-				OTHER_LDFLAGS = (
-					"-weak_library",
-					/usr/lib/libSystem.B.dylib,
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = SubscriptionSample;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -610,10 +600,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DDEBUG";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
@@ -638,10 +625,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";

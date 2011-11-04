@@ -23,30 +23,43 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CommonCrypto/CommonDigest.h>
 #import "UAUtils.h"
+
+// Frameworks
+#import <CommonCrypto/CommonDigest.h>
+
+// UA external libraries
+#import "UA_SBJSON.h"
+#import "UA_Base64.h"
+#import "UA_ASIHTTPRequest.h"
+
+// UALib
 #import "UAUser.h"
 #import "UAirship.h"
-#import "UA_SBJSON.h"
 
+// C includes
 #include <sys/types.h>
 #include <sys/sysctl.h>
 
 @implementation UAUtils
 
-+ (NSString *)udidHash {
-    NSString* udid = [[UIDevice currentDevice] uniqueIdentifier];
-    const char *cStr = [udid UTF8String];
+
++ (NSString *)md5:(NSString *)sourceString  {
+    const char *cStr = [sourceString UTF8String];
     unsigned char result[16];
     CC_MD5(cStr, strlen(cStr), result);
     return [NSString stringWithFormat:
-                            @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-                            result[0], result[1], result[2], result[3],
-                            result[4], result[5], result[6], result[7],
-                            result[8], result[9], result[10], result[11],
-                            result[12], result[13], result[14], result[15]
-                            ];
+            @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+            result[0], result[1], result[2], result[3],
+            result[4], result[5], result[6], result[7],
+            result[8], result[9], result[10], result[11],
+            result[12], result[13], result[14], result[15]
+            ];
+}
 
++ (NSString *)udidHash {
+    NSString* udid = [[UIDevice currentDevice] uniqueIdentifier];
+    return [UAUtils md5:udid];
 }
 
 + (NSString *) UUID {
@@ -108,6 +121,21 @@
 
     bytes /= 1024.0;
     return([NSString stringWithFormat:@"%1.2f TB",bytes]);
+}
+
++ (NSString*)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding
+{
+    /*
+     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
+     */
+
+    CFStringRef result = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, (CFStringRef)@"!*'\"();:@&=+$,/?%#[] ", CFStringConvertNSStringEncodingToEncoding(encoding));
+    
+    /* autoreleased string */
+    NSString* value = [NSString stringWithString:(NSString*)result];
+    CFRelease(result);
+    
+    return value;
 }
 
 #pragma mark -
@@ -197,6 +225,19 @@
           request.url, request.requestHeaders, request.requestMethod, request.postBody,
           request.responseStatusCode, request.responseHeaders, request.responseString,
           request.username, request.password);
+}
+
++ (NSString *)userAuthHeaderString {
+    NSString *username = [UAUser defaultUser].username;
+    NSString *password = [UAUser defaultUser].password;
+    NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
+    
+    //strip carriage return and linefeed characters
+    authString = [authString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    authString = [authString stringByReplacingOccurrencesOfString:@"\r" withString:@""];
+    authString = [NSString stringWithFormat: @"Basic %@", authString];
+    
+    return authString;
 }
 
 @end

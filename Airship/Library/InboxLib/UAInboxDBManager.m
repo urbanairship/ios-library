@@ -24,7 +24,11 @@
  */
 
 #import "UAInboxDBManager.h"
+#import "UA_FMDatabase.h"
+
 #import "UAInboxMessage.h"
+
+#import "UA_SBJSON.h"
 
 @implementation UAInboxDBManager
 
@@ -48,42 +52,73 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)resetDB {
     [db executeUpdate:@"DROP TABLE messages"];
-    [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
-    FMDBLogError
+    [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+    UA_FMDBLogError
 }
 
 - (void)initDBIfNeeded {
     if (![db tableExists:@"messages"]) {
-        [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255))"];
-        FMDBLogError
+        [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+        UA_FMDBLogError
     }
+}   
+
+- (void)removeLegacyDatabase {
+    
+    NSArray *docPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [docPaths objectAtIndex:0];
+    NSString *oldDbPath = [documentsDirectory stringByAppendingPathComponent:OLD_DB_NAME];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error = nil;
+    
+    if ([fileManager fileExistsAtPath:oldDbPath]) {
+        UALOG(@"Removing legacy AirMail database and cache");
+        [fileManager removeItemAtPath:oldDbPath error:&error];
+        
+        if (error) {
+            UALOG(@"Failed to remove the old database. %@", [error localizedDescription]);
+            error = nil;//will be reused
+        }
+        
+        // clear the old caches
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cachesDirectory = [cachePaths objectAtIndex:0];
+        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
+        
+        if ([fileManager fileExistsAtPath:diskCachePath]) {
+            [fileManager removeItemAtPath:diskCachePath error:&error];
+            
+            if (error) {
+                UALOG(@"Failed to remove the old cache. %@", [error localizedDescription]);
+            }
+        }
+        
+    }
+    
 }
 
 - (void)createEditableCopyOfDatabaseIfNeeded {
-    // First, test for existence.
-    BOOL success;
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error;
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:DB_NAME];
-    success = [fileManager fileExistsAtPath:writableDBPath];
-    if (!success) {
-        // The writable database does not exist, so copy the default to the appropriate location.
-        UALOG(@"copy db into document directory.");
-        NSString *defaultDBPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:DB_NAME];
-        success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error];
-        if (!success) {
-            NSAssert1(0, @"Failed to create writable database file with message '%@'.", [error localizedDescription]);
-        }
+
+    NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
+    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
+    
+    if (![fileManager fileExistsAtPath:dbPath]) {
+        //move old db
+        [self removeLegacyDatabase];
     }
-    db = [[UA_FMDatabase databaseWithPath:writableDBPath] retain];
+
+    db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
     if (![db open]) {
-        UALOG(@"Faile to open database");
+        UALOG(@"Failed to open database");
     }
 }
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userId App:(NSString *)appId {
+- (NSMutableArray *)getMessagesForUser:(NSString *)userId app:(NSString *)appId {
+
     UA_FMResultSet *rs;
     NSMutableArray *result = [NSMutableArray array];
     UAInboxMessage *msg;
@@ -106,12 +141,16 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         [dateFormatter release];
 
         msg.title = [rs stringForColumn:@"title"];
+        
+        msg.extra = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"extra"]];
+        
         [result addObject: msg];
     }
     return result;
 }
 
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId {
+- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId app:(NSString *)appId {
+
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
 	[dateFormatter setLocale:enUSPOSIXLocale];
@@ -120,7 +159,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [db beginTransaction];
     for (UAInboxMessage *message in messages) {
-        [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)" ,
+        NSDictionary *extra = message.extra;
+        [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
          message.messageID,
          message.title,
          message.messageBodyURL,
@@ -128,10 +168,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          [NSNumber numberWithInt:(message.unread?1:0)],
          message.messageURL,
          appId,
-         userId];
+         userId,
+         [[[UA_SBJsonWriter new] autorelease] stringWithObject:extra]];
     }
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)deleteMessages:(NSArray *)messages {
@@ -144,12 +185,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)updateMessageAsRead:(UAInboxMessage *)msg {
     [db executeUpdate:@"UPDATE messages SET unread = 0 WHERE id = ?", msg.messageID];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 - (void)updateMessagesAsRead:(NSArray *)messages {
@@ -162,7 +203,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
     [db commit];
-    FMDBLogError
+    UA_FMDBLogError
 }
 
 @end

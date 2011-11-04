@@ -24,6 +24,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInboxMessageList.h"
+
+#import "UAirship.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager.h"
 #import "UAUtils.h"
@@ -31,15 +33,35 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
 
+/*
+ * Private methods
+ */
+@interface UAInboxMessageList()
+
+- (void)loadSavedMessages;
+
+- (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
+
+- (void)messageListFailed:(UA_ASIHTTPRequest *)request;
+- (void)messageListReady:(UA_ASIHTTPRequest *)request;
+
+- (void)batchUpdateFinished:(UA_ASIHTTPRequest *)request;
+- (void)batchUpdateFailed:(UA_ASIHTTPRequest *)request;
+
+@property(assign) int nRetrieving;
+
+@end
+
 @implementation UAInboxMessageList
 
 @synthesize messages;
 @synthesize unreadCount;
-@synthesize isRetrieving, isBatchUpdating;
+@synthesize nRetrieving;
+@synthesize isBatchUpdating;
 
 #pragma mark Create Inbox
 
-static UAInboxMessageList *_defaultInbox = nil;
+static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
     RELEASE_SAFELY(messages);
@@ -47,43 +69,39 @@ static UAInboxMessageList *_defaultInbox = nil;
 }
 
 + (void)land {
-    if (_defaultInbox) {
-        if (_defaultInbox.isRetrieving || _defaultInbox.isBatchUpdating) {
+    if (_messageList) {
+        if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
             UALOG(@"Force quit now may cause crash if UA_ASIRequest is alive.");
-            //TODO: kill request?
+            [[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
         }
-
-        if ([_defaultInbox unreadCount] >= 0) {
-            UALOG(@"update badge number: %d", [_defaultInbox unreadCount]);
-			
-			// TODO: This is a UI call - shouldn't be in the library
-			
-            //[[UIApplication sharedApplication] setApplicationIconBadgeNumber: _defaultInbox.unreadCount];
-        }
-        RELEASE_SAFELY(_defaultInbox);
+        RELEASE_SAFELY(_messageList);
     }
 }
 
-+ (UAInboxMessageList*)defaultInbox {
++ (UAInboxMessageList *)shared {
     
     @synchronized(self) {
-        if(_defaultInbox == nil) {
-            _defaultInbox = [[UAInboxMessageList alloc] init];
-            _defaultInbox.unreadCount = -1;
-            _defaultInbox.isRetrieving = 0;
-            _defaultInbox.isBatchUpdating = NO;
+        if(_messageList == nil) {
+            _messageList = [[UAInboxMessageList alloc] init];
+            _messageList.unreadCount = -1;
+            _messageList.nRetrieving = 0;
+            _messageList.isBatchUpdating = NO;
         }
     }
     
-    return _defaultInbox;
+    return _messageList;
+}
+
+- (BOOL)isRetrieving {
+    return nRetrieving > 0;
 }
 
 #pragma mark Update/Delete/Mark Messages
 
-- (void)retrieveSavedMessages {
+- (void)loadSavedMessages {
     
     UALOG(@"before retrieve saved messages: %@", messages);
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
@@ -102,77 +120,86 @@ static UAInboxMessageList *_defaultInbox = nil;
 
     [self notifyObservers: @selector(messageListWillLoad)];
 
-    [self retrieveSavedMessages];
+    [self loadSavedMessages];
 
-    NSString* lastMessage = nil;
+    NSString *lastMessage = nil;
     if ([messages count] > 0) {
         lastMessage = [[messages objectAtIndex: 0] messageID];
     }
-    NSString *queryString = @"";
-    if (lastMessage != nil) {
-        queryString = [NSString stringWithFormat: @"?since=%@", lastMessage];
-    }
     
-	//TODO: standardize on a single create user url method?
-    NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@%@",
-                           [[UAirship shared] server], @"/api/user/", [UAUser defaultUser].username ,@"/messages/", queryString];
+        
+    NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
+                                                  [[UAirship shared] server], @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
+
+    
     UALOG(@"%@",urlString);
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl method:@"GET" delegate:self finish:@selector(messageListReady:) fail:@selector(messageListFailed:)];
+    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl
+                                                      method:@"GET"
+                                                    delegate:self
+                                                      finish:@selector(messageListReady:)
+                                                        fail:@selector(messageListFailed:)];
+    
+    self.nRetrieving++;
     [request startAsynchronous];
-    self.isRetrieving++;
+
     
 }
 
-- (void)messageListReady:(UA_ASIHTTPRequest*)request {
-    self.isRetrieving--;
+- (void)messageListReady:(UA_ASIHTTPRequest *)request {
+    
+    if ([request responseStatusCode] != 200) {
+        [self messageListFailed:request];
+        return;
+    }
+    
+    self.nRetrieving--;
 	
-    UA_SBJsonParser *parser = [UA_SBJsonParser new];
-    NSDictionary* jsonResponse = [parser objectWithString: [request responseString]];
+    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+    NSDictionary *jsonResponse = [parser objectWithString: [request responseString]];
     UALOG(@"Retrieved Messages: %@", [request responseString]);
     [parser release];
     
     // Convert dictionary to objects for convenience
     NSMutableArray *newMessages = [NSMutableArray array];
-    for(NSDictionary* message in [jsonResponse objectForKey:@"messages"]) {
-        UAInboxMessage* tmp = [[UAInboxMessage alloc] initWithDict:message inbox:self];
+    for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
+        UAInboxMessage *tmp = [[UAInboxMessage alloc] initWithDict:message inbox:self];
         [newMessages addObject:tmp];
         [tmp release];
     }
-
+    
+    
     if (newMessages.count > 0) {
         NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:YES] autorelease];
+                                                                        ascending:NO] autorelease];
+        
+        //TODO: this flow seems terribly backwards
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [newMessages sortUsingDescriptors:sortDescriptors];
-
-        [newMessages removeObjectsInArray:messages];
-        for (UAInboxMessage *msg in newMessages) {
-            [messages insertObject:msg atIndex:0];
-        }
     }
-
-    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username App:[[UAirship shared] appId]];
+    
+    [[UAInboxDBManager shared] deleteMessages:messages];
+    [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
+    self.messages = newMessages;
+        
     unreadCount = [[jsonResponse objectForKey: @"badge"] intValue];
 
     UALOG(@"after retrieveMessageList, messages: %@", messages);
-    if (self.isRetrieving == 0)
+    if (self.nRetrieving == 0) {
         [self notifyObservers:@selector(messageListLoaded)];
-}
-
-- (void)messageListFailed:(UA_ASIHTTPRequest*)request {
-    self.isRetrieving--;
-    [self requestWentWrong:request];
-    if (self.isRetrieving == 0)
-        [self notifyObservers:@selector(inboxLoadFailed)];
-}
-
-- (BOOL)batchUpdate:(NSIndexSet *)messageIndexSet option:(UABatchUpdateCommand)option {
-    if (self.isBatchUpdating) {
-        UALOG("Warning: isBatchUpdating now, option=%d", option);
-        return NO;
     }
+}
+
+- (void)messageListFailed:(UA_ASIHTTPRequest *)request {
+    self.nRetrieving--;
+    [self requestWentWrong:request];
+    if (self.nRetrieving == 0) {
+        [self notifyObservers:@selector(inboxLoadFailed)];
+    }
+}
+
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
 
     NSURL *requestUrl = nil;
     NSDictionary *data = nil;
@@ -180,7 +207,7 @@ static UAInboxMessageList *_defaultInbox = nil;
     NSArray *updateMessageURLs = [updateMessageArray valueForKeyPath:@"messageURL.absoluteString"];
     UALOG(@"%@", updateMessageURLs);
 
-    if (option == UABatchDeleteMessages) {
+    if (command == UABatchDeleteMessages) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                [UAirship shared].server,
                                @"/api/user/",
@@ -191,7 +218,7 @@ static UAInboxMessageList *_defaultInbox = nil;
 
         data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"delete"];
 
-    } else if (option == UABatchReadMessages) {
+    } else if (command == UABatchReadMessages) {
         NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                                [UAirship shared].server,
                                @"/api/user/",
@@ -202,8 +229,8 @@ static UAInboxMessageList *_defaultInbox = nil;
 
         data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"mark_as_read"];
     } else {
-        UALOG("option=%d is invalid.", option);
-        return NO;
+        UALOG("command=%d is invalid.", command);
+        return;
     }
     self.isBatchUpdating = YES;
     [self notifyObservers: @selector(messageListWillLoad)];
@@ -212,42 +239,42 @@ static UAInboxMessageList *_defaultInbox = nil;
     NSString* body = [writer stringWithObject:data];
     [writer release];
 
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl method:@"POST" delegate:self finish:@selector(batchUpdateFinished:) fail:@selector(batchUpdateFailed:)];
+    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl
+                                                      method:@"POST"
+                                                    delegate:self
+                                                      finish:@selector(batchUpdateFinished:)
+                                                        fail:@selector(batchUpdateFailed:)];
+    
     request.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSNumber numberWithInt:option], @"option", updateMessageArray, @"messages", nil];
+                            [NSNumber numberWithInt:command], @"command",
+                            updateMessageArray, @"messages",
+                            nil];
+    
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
     [request startAsynchronous];
 
-    return YES;
 }
 
 - (void)batchUpdateFinished:(UA_ASIHTTPRequest*)request {
-    id option = [request.userInfo objectForKey:@"option"];
+    
+    self.isBatchUpdating = NO;
+
+    id option = [request.userInfo objectForKey:@"command"];
+    
     NSArray *updateMessageArray = [request.userInfo objectForKey:@"messages"];
 
     if (request.responseStatusCode != 200) {
         UALOG(@"Server error during batch update messages");
         if ([option intValue] == UABatchDeleteMessages) {
-            option = [NSNumber numberWithInt:UABatchDeleteMessagesFailed];
+            [self notifyObservers:@selector(batchDeleteFailed)];
         } else if ([option intValue] == UABatchReadMessages) {
-            option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
+            [self notifyObservers:@selector(batchMarkAsReadFailed)];
         }
-        self.isBatchUpdating = NO;
-        [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+        
         return;
     }
-
-    if ([option intValue] == UABatchDeleteMessages) {
-        [messages removeObjectsInArray:updateMessageArray];
-        // TODO: add delete to sync
-        [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
-        option = [NSNumber numberWithInt:UABatchDeleteMessagesSuccess];
-    } else if ([option intValue] == UABatchReadMessages) {
-        [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
-        option = [NSNumber numberWithInt:UABatchReadMessagesSuccess];
-    }
-
+    
     for (UAInboxMessage *msg in updateMessageArray) {
         if (msg.unread) {
             msg.unread = NO;
@@ -255,42 +282,35 @@ static UAInboxMessageList *_defaultInbox = nil;
         }
     }
 
-    self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+    if ([option intValue] == UABatchDeleteMessages) {
+        [messages removeObjectsInArray:updateMessageArray];
+        // TODO: add delete to sync
+        [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
+        [self notifyObservers:@selector(batchDeleteFinished)];
+    } else if ([option intValue] == UABatchReadMessages) {
+        [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+        [self notifyObservers:@selector(batchMarkAsReadFinished)];
+    }
 }
 
 - (void)batchUpdateFailed:(UA_ASIHTTPRequest*)request {
-    [self requestWentWrong:request];
-    id option = [request.userInfo objectForKey:@"option"];
-
-    if ([option intValue] == UABatchDeleteMessages) {
-        option = [NSNumber numberWithInt:UABatchDeleteMessagesFailed];
-    } else if ([option intValue] == UABatchReadMessages) {
-        option = [NSNumber numberWithInt:UABatchReadMessagesFailed];
-    }
     self.isBatchUpdating = NO;
-    [self notifyObservers:@selector(messagesDidUpateWithOption:) withObject:option];
+
+    [self requestWentWrong:request];
+    
+    id option = [request.userInfo objectForKey:@"command"];
+    if ([option intValue] == UABatchDeleteMessages) {
+        [self notifyObservers:@selector(batchDeleteFailed)];
+    } else if ([option intValue] == UABatchReadMessages) {
+        [self notifyObservers:@selector(batchMarkAsReadFailed)];
+    }
 }
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
-    NSError *error = [request error];
-    UALOG(@"Connection ERROR: NSError query result: %@ for URL: %@ - %@",
-          error, request.requestMethod, [request.url absoluteString]);
-    UALOG(@"Using U/P: %@ / %@", request.username, request.password);
-    UALOG(@"Body: %@", request.postBody);
+- (void)requestWentWrong:(UA_ASIHTTPRequest *)request {
+    UALOG(@"Inbox Message List Request Failed: %@", [[request error] localizedDescription]);
 }
 
-- (void)userUpdateFailed {
-
-    UALOG(@"User update failed: propogating to listeners");
-    [self notifyObservers:@selector(inboxError:)];
-        
-}
-
-- (BOOL)isBusying {
-    return isBatchUpdating;
-}
-
+#pragma mark -
 #pragma mark Get messages
 
 - (int)messageCount {
@@ -306,7 +326,7 @@ static UAInboxMessageList *_defaultInbox = nil;
     return nil;
 }
 
-- (UAInboxMessage*)messageAtIndex:(int)index {
+- (UAInboxMessage *)messageAtIndex:(int)index {
     if (index < 0 || index >= [messages count]) {
         UALOG("Load message(index=%d, count=%d) error.", index, [messages count]);
         return nil;
@@ -318,6 +338,7 @@ static UAInboxMessageList *_defaultInbox = nil;
     return [messages indexOfObject:message];
 }
 
+#pragma mark -
 #pragma mark UAUserObserver
 
 - (void)userUpdated {

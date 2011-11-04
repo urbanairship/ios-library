@@ -83,7 +83,7 @@
 
     //set the duration if available (not sent for autorenewables)
     id durationValue = [dict objectForKey:@"duration_in_days"];
-    if (duration && (NSNull *)duration != [NSNull null]) { 
+    if (durationValue && (NSNull *)durationValue != [NSNull null]) { 
         self.duration = [(NSNumber *)durationValue intValue];
     }
     

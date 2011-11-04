@@ -25,10 +25,9 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "UA_ASIHTTPRequest.h"
-#import "UA_ASIHTTPRequestDelegate.h"
-#import "UA_ASINetworkQueue.h"
-#import "UADownloadContent.h"
+
+@class UA_ASINetworkQueue;
+@class UADownloadContent;
 
 @protocol UADownloadManagerDelegate <NSObject>
 @optional

@@ -24,7 +24,10 @@
  */
 
 #import "UASQLite.h"
+
 #import "UA_SBJSON.h"
+
+#import "UAGlobal.h"
 
 
 @implementation UASQLite

@@ -23,18 +23,18 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-
-@protocol UAStoreFrontAlertProtocol
+@protocol UAStoreFrontAlertProtocol<NSObject>
 @required
 - (void)showConfirmRestoringAlert:(NSInteger)restoreItemsCount
                          delegate:(id)object
                   approveSelector:(SEL)okSelector
                disapproveSelector:(SEL)cancelSelector;
+
 @optional
 - (void)showPaymentTransactionFailedAlert;
 - (void)showReceiptVerifyFailedAlert;
 - (void)showDownloadContentFailedAlert;
-
+- (void)showDecompressContentFailedAlert;
 @end

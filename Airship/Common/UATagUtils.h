@@ -23,17 +23,18 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 
 /**
  * Autogenerate a set of tags with
  * the following flags
  */
 typedef enum {
-    UATagTypeTimeZone             = 1 << 0, /**< Full Time Zone: "America/Los_Angeles" */
-    UATagTypeTimeZoneAbbreviation = 1 << 1, /**< Abbreviated Time Zone: "PST" Note: Containst DST info and may abbreviations may conflict with other time zones. */
-    UATagTypeLanguage             = 1 << 2, /**< Language Code, with prefix: "language_en" */
-    UATagTypeCountry              = 1 << 3, /**< Country Code, with prefix: "country_us" */
-    UATagTypeDeviceType           = 1 << 4  /**< Device type: iPhone, iPad or iPod */
+    UATagTypeTimeZone             = 1 << 0, /** Full Time Zone: "America/Los_Angeles" */
+    UATagTypeTimeZoneAbbreviation = 1 << 1, /** Abbreviated Time Zone: "PST" Note: Containst DST info and may abbreviations may conflict with other time zones. */
+    UATagTypeLanguage             = 1 << 2, /** Language Code, with prefix: "language_en" */
+    UATagTypeCountry              = 1 << 3, /** Country Code, with prefix: "country_us" */
+    UATagTypeDeviceType           = 1 << 4  /** Device type: iPhone, iPad or iPod */
 } UATagType;
 
 @interface UATagUtils : NSObject {

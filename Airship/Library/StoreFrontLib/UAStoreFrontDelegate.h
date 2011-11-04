@@ -23,11 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAProduct.h"
+#import <Foundation/Foundation.h>
 
-@protocol UAStoreFrontDelegate <NSObject>
+@class UAProduct;
 
-- (void)productPurchased:(UAProduct*) product;
+@protocol UAStoreFrontDelegate<NSObject>
+
+- (void)productPurchased:(UAProduct *) product;
 
 @optional
 

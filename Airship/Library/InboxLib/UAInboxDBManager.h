@@ -23,17 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGlobal.h"
 #import <Foundation/Foundation.h>
-#import "UA_FMDatabase.h"
-#import "UA_FMDatabaseAdditions.h"
 
-#define FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
-#define DB_NAME @"AirMail.db"
+#import "UAGlobal.h"
 
-
+@class UA_FMDatabase;
 @class UAInboxMessage;
+
+#define UA_FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
+#define OLD_DB_NAME @"AirMail.db"
+#define DB_NAME @"UAInbox.db"
+
 @interface UAInboxDBManager : NSObject {
+  @private
     UA_FMDatabase *db;
 }
 
@@ -41,11 +43,13 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 
 - (void)createEditableCopyOfDatabaseIfNeeded;
 - (void)initDBIfNeeded;
-- (NSMutableArray *)getMessagesForUser:(NSString *)userId App:(NSString *)appId;
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId App:(NSString *)appId;
+- (NSMutableArray *)getMessagesForUser:(NSString *)userId app:(NSString *)appId;
+- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId app:(NSString *)appId;
 - (void)deleteMessages:(NSArray *)messages;
 - (void)updateMessageAsRead:(UAInboxMessage *)msg;
 - (void)updateMessagesAsRead:(NSArray *)messages;
+
+- (void)removeLegacyDatabase;
 
 // Helper for development
 - (void)resetDB;

@@ -30,11 +30,13 @@
 @interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> {
     UIWindow *window;
     InboxSampleViewController *viewController;
+    UINavigationController *navigationController;
     UAInboxDefaultJSDelegate *jsDelegate;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet InboxSampleViewController *viewController;
+@property (nonatomic, retain) UINavigationController *navigationController;
 
 - (void)failIfSimulator;
 

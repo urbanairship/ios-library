@@ -23,11 +23,44 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import <UIKit/UIKit.h>
+#import "UAInboxMessageListObserver.h"
+#import "UABarButtonSegmentedControl.h"
+#import "UABeveledLoadingIndicator.h"
 
+/**
+ * This class is a reference implementation of a table view controller drawing from the inbox
+ * message list.
+ */
+@interface UAInboxMessageListController : UIViewController <UITableViewDelegate, UITableViewDataSource, UAInboxMessageListObserver> {
+    IBOutlet UITableView *messageTable;
+    
+    IBOutlet UIView *loadingView;
+    IBOutlet UABeveledLoadingIndicator *loadingIndicator;
+    IBOutlet UILabel *loadingLabel;
 
-@interface UAInboxNavigationController : UINavigationController {
-	
+    // navigation badge
+    IBOutlet UITabBar *tabbar;
+    IBOutlet UITabBarItem *tabbarItem;
+    UIView *badgeView;
+
+    NSMutableSet *selectedIndexPathsForEditing;
+    UABarButtonSegmentedControl *deleteItem;
+    UIBarButtonItem *moveItem;
+    UIBarButtonItem *editItem;
+    UIBarButtonItem *cancelItem;
+
+    NSString *cellReusableId;
+    NSString *cellNibName;
+    
+    BOOL shouldShowAlerts;
 }
+
+/**
+ * Set this property to YES if the class should show alert dialogs in erroneous
+ * situations, NO otherwise.  Defaults to YES.
+ */
+@property (nonatomic, assign) BOOL shouldShowAlerts;
 
 @end

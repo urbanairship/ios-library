@@ -23,17 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "UA_Reachability.h"
 
 #import "UAStoreFront.h"
 #import "UAObservable.h"
 
 @class UA_ASIHTTPRequest;
+@class UA_Reachability;
 @class UAProduct;
 
 @interface UAInventory : UAObservable<SKProductsRequestDelegate> {
 
+  @private
     NSMutableDictionary *products;
     NSMutableArray *keys;
     NSMutableArray *sortedProducts;
@@ -60,10 +62,10 @@
 - (void)reloadInventory;
 
 
-- (NSArray *)productsForType:(ProductType)type;
-- (UAProduct*)productWithIdentifier:(NSString*)productId;
-- (BOOL)hasProductWithIdentifier:(NSString*)productId;
-- (UAProduct*)productAtIndex:(int)index;
+- (NSArray *)productsForType:(UAProductType)type;
+- (UAProduct *)productWithIdentifier:(NSString *)productId;
+- (BOOL)hasProductWithIdentifier:(NSString *)productId;
+- (UAProduct *)productAtIndex:(int)index;
 
 
 - (void)setOrderBy:(NSString *)key ascending:(BOOL)ascending;
@@ -72,6 +74,6 @@
 - (void)purchase:(NSString *)productIdentifier;
 - (void)updateAll;
 
-+ (NSString*)localizedPrice:(SKProduct*)product;
++ (NSString *)localizedPrice:(SKProduct *)product;
 
 @end

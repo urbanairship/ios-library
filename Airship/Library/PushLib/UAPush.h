@@ -53,15 +53,47 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @end
 
 /**
- *
- *
+ * Protocol to be implemented by push notification clients. All methods are optional.
  */
-@protocol UAPushNotificationDelegate
+@protocol UAPushNotificationDelegate<NSObject>
+
+@optional
+
+/**
+ * Called when an alert notification is received.
+ * @param alertMessage a simple string to be displayed as an alert
+ */
 - (void)displayNotificationAlert:(NSString *)alertMessage;
+
+/**
+ * Called when an alert notification is received with additional localization info.
+ * @param alertDict a dictionary containing the alert and localization info
+ */
 - (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict;
+
+/**
+ * Called when a push notification is received with a sound associated
+ * @param sound the sound to play
+ */
 - (void)playNotificationSound:(NSString *)sound;
-- (void)handleCustomPayload:(NSDictionary *)notification :(NSDictionary *)customPayload;
+
+/**
+ * Called when a push notification is received with a custom payload
+ * @param notification basic information about the notification
+ * @param customPayload user-defined custom payload
+ */
+- (void)handleNotification:(NSDictionary *)notification withCustomPayload:(NSDictionary *)customPayload;
+
+/**
+ * Called when a push notification is received with a badge number
+ * @param badgeNumber the badge number to display
+ */
 - (void)handleBadgeUpdate:(int)badgeNumber;
+
+/**
+ * Called when a push notification is received when the application is in the background
+ * @param notification the push notification
+ */
 - (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end
 
@@ -70,18 +102,18 @@ UA_VERSION_INTERFACE(UAPushVersion)
  * 
  */
 @interface UAPush : UAObservable<UARegistrationObserver> {
-    
-    id<UAPushNotificationDelegate> delegate; /**< Push notification delegate. Handles incoming notifications */
-    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /**< A default implementation of the push notification delegate **/
-    
+
   @private
-    BOOL pushEnabled; /**< Push enabled flag. */
+    id<UAPushNotificationDelegate> delegate; /* Push notification delegate. Handles incoming notifications */
+    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /* A default implementation of the push notification delegate */
+
+    BOOL pushEnabled; /* Push enabled flag. */
     BOOL autobadgeEnabled;
-    UIRemoteNotificationType notificationTypes; /**< Requested notification types */
-    NSString *alias; /**< Device token alias. */
-    NSMutableArray *tags; /**< Device token tags */
-    NSMutableDictionary *quietTime; /**< Quiet time period. */
-    NSString *tz; /**< Timezone, for quiet time */
+    UIRemoteNotificationType notificationTypes; /* Requested notification types */
+    NSString *alias; /* Device token alias. */
+    NSMutableArray *tags; /* Device token tags */
+    NSMutableDictionary *quietTime; /* Quiet time period. */
+    NSString *tz; /* Timezone, for quiet time */
 }
 
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
@@ -111,6 +143,8 @@ SINGLETON_INTERFACE(UAPush);
                  animated:(BOOL)animated;
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;
+
++ (void)land;
 
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
 - (void)registerDeviceToken:(NSData *)token;

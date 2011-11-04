@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
-		D56859D812C2882800BBF31A /* UAInboxAlertProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */; };
 		E9AED96812B7931500441700 /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AED95912B7931500441700 /* UAInbox.h */; };
 		E9AED96912B7931500441700 /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AED95A12B7931500441700 /* UAInbox.m */; };
 		E9AED96A12B7931500441700 /* UAInboxDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AED95B12B7931500441700 /* UAInboxDBManager.h */; };
@@ -29,8 +28,7 @@
 
 /* Begin PBXFileReference section */
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libInbox-1.5.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libInbox-1.5.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAlertProtocol.h; sourceTree = "<group>"; };
+		D2AAC07E0554694100DB518D /* libInbox-2.0.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libInbox-2.0.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9AED95912B7931500441700 /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInbox.h; sourceTree = "<group>"; };
 		E9AED95A12B7931500441700 /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInbox.m; sourceTree = "<group>"; };
 		E9AED95B12B7931500441700 /* UAInboxDBManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxDBManager.h; sourceTree = "<group>"; };
@@ -64,7 +62,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libInbox-1.5.5.a */,
+				D2AAC07E0554694100DB518D /* libInbox-2.0.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,7 +99,6 @@
 			children = (
 				E9AED95912B7931500441700 /* UAInbox.h */,
 				E9AED95A12B7931500441700 /* UAInbox.m */,
-				D56859D712C2882800BBF31A /* UAInboxAlertProtocol.h */,
 				E9AED95B12B7931500441700 /* UAInboxDBManager.h */,
 				E9AED95C12B7931500441700 /* UAInboxDBManager.m */,
 				E9AED95D12B7931500441700 /* UAInboxDefaultJSDelegate.h */,
@@ -136,7 +133,6 @@
 				E9AED97212B7931500441700 /* UAInboxMessageListObserver.h in Headers */,
 				E9AED97312B7931500441700 /* UAInboxPushHandler.h in Headers */,
 				E9AED97512B7931500441700 /* UAInboxURLCache.h in Headers */,
-				D56859D812C2882800BBF31A /* UAInboxAlertProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,7 +153,7 @@
 			);
 			name = InboxLib;
 			productName = InboxLib;
-			productReference = D2AAC07E0554694100DB518D /* libInbox-1.5.5.a */;
+			productReference = D2AAC07E0554694100DB518D /* libInbox-2.0.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -211,7 +207,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1.5.5;
+				CURRENT_PROJECT_VERSION = 2.0.1;
 				DSTROOT = /tmp/InboxLib.dst;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -224,10 +220,7 @@
 					"-DUADEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Inbox-$(CURRENT_PROJECT_VERSION)";
 			};
 			name = Debug;
@@ -236,13 +229,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CURRENT_PROJECT_VERSION = 1.5.5;
+				CURRENT_PROJECT_VERSION = 2.0.1;
 				DSTROOT = /tmp/InboxLib.dst;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = InboxLib_Prefix.pch;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Inbox-$(CURRENT_PROJECT_VERSION)";
 				SKIP_INSTALL = YES;
 			};
@@ -252,7 +246,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.5.4;
+				CURRENT_PROJECT_VERSION = 2.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -265,13 +259,12 @@
 					"-DDEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
+				VERSION_INFO_BUILDER = "";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
@@ -281,7 +274,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CURRENT_PROJECT_VERSION = 1.5.4;
+				CURRENT_PROJECT_VERSION = 2.0.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -290,13 +283,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				New_Setting = "";
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
-				OTHER_LDFLAGS = (
-					"-all_load",
-					"-ObjC",
-				);
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
+				VERSION_INFO_BUILDER = "";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};

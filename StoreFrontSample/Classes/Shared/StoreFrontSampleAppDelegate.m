@@ -23,8 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import "StoreFrontSampleAppDelegate.h"
+
 #import "UAirship.h"
+#import "UAAnalytics.h"
 #import "UAStoreFront.h"
+#import "UAProduct.h"
 #import "UAInventory.h"
 #import "UAStoreFrontUI.h"
 
