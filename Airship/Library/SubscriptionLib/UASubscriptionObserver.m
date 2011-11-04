@@ -129,7 +129,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     restoring = YES;
     
     // If StoreFrontLib is in use, tell its observer that we're restoring products
-    // Ties SubscriptionLib to StoreFrontLib -c onsider making these weak references once we drop 3.x support
+    // Ties SubscriptionLib to StoreFrontLib - consider making these weak references once we drop 3.x support
     if ([UAStoreFront initialized]) {
         [[UAStoreFront shared].sfObserver setRestoring:YES];
     }
