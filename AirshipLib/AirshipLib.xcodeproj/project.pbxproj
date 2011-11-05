@@ -31,25 +31,14 @@
 		1FBF507C14646AC500554710 /* UA_ASIInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE227124F3FBB00A46CB1 /* UA_ASIInputStream.h */; };
 		1FBF507D14646AC500554710 /* UA_ASINetworkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */; };
 		1FBF507E14646AC500554710 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
-		1FBF507F14646AC500554710 /* UA_FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07212505131004E6D93 /* UA_FMDatabase.h */; };
-		1FBF508014646AC500554710 /* UA_FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07712505131004E6D93 /* UA_FMResultSet.h */; };
 		1FBF508114646AC500554710 /* UA_SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07A12505131004E6D93 /* UA_SBJSON.h */; };
 		1FBF508214646AC500554710 /* UA_SBJsonBase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07D12505131004E6D93 /* UA_SBJsonBase.h */; };
 		1FBF508314646AC500554710 /* UA_SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07F12505131004E6D93 /* UA_SBJsonParser.h */; };
 		1FBF508414646AC500554710 /* UA_SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC08112505131004E6D93 /* UA_SBJsonWriter.h */; };
-		1FBF508514646AC500554710 /* UA_crypt.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC24E12507CEA004E6D93 /* UA_crypt.h */; };
-		1FBF508614646AC500554710 /* UA_ioapi.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25112507CEA004E6D93 /* UA_ioapi.h */; };
-		1FBF508714646AC500554710 /* UA_mztools.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25412507CEA004E6D93 /* UA_mztools.h */; };
-		1FBF508814646AC500554710 /* UA_unzip.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25612507CEA004E6D93 /* UA_unzip.h */; };
-		1FBF508914646AC500554710 /* UA_zconf.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25712507CEA004E6D93 /* UA_zconf.h */; };
-		1FBF508A14646AC500554710 /* UA_zip.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25912507CEA004E6D93 /* UA_zip.h */; };
-		1FBF508B14646AC500554710 /* UA_ZipArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC25A12507CEA004E6D93 /* UA_ZipArchive.h */; };
 		1FBF508C14646AC500554710 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; };
 		1FBF508D14646AC500554710 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
 		1FBF508E14646AC500554710 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
-		1FBF508F14646AC500554710 /* UADownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E9F06DD2128CFE8800C30453 /* UADownloadManager.h */; };
 		1FBF509014646AC500554710 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
-		1FBF509114646AC500554710 /* UADownloadContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */; };
 		1FBF509214646AC500554710 /* UA_ASIDataCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9F73F8A12ADE86D003CF572 /* UA_ASIDataCompressor.h */; };
 		1FBF509314646AC500554710 /* UA_ASIDataDecompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9F73FB112ADE93A003CF572 /* UA_ASIDataDecompressor.h */; };
 		1FBF509414646AC500554710 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
@@ -69,27 +58,17 @@
 		1FBF50A314646AC500554710 /* UA_ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE224124F3FBB00A46CB1 /* UA_ASIHTTPRequest.m */; };
 		1FBF50A414646AC500554710 /* UA_ASIInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE228124F3FBB00A46CB1 /* UA_ASIInputStream.m */; };
 		1FBF50A514646AC500554710 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
-		1FBF50A614646AC500554710 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		1FBF50A714646AC500554710 /* UA_FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07812505131004E6D93 /* UA_FMResultSet.m */; };
 		1FBF50A814646AC500554710 /* UA_SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07B12505131004E6D93 /* UA_SBJSON.m */; };
 		1FBF50A914646AC500554710 /* UA_SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07E12505131004E6D93 /* UA_SBJsonBase.m */; };
 		1FBF50AA14646AC500554710 /* UA_SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08012505131004E6D93 /* UA_SBJsonParser.m */; };
 		1FBF50AB14646AC500554710 /* UA_SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08212505131004E6D93 /* UA_SBJsonWriter.m */; };
-		1FBF50AC14646AC500554710 /* UA_ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25012507CEA004E6D93 /* UA_ioapi.c */; };
-		1FBF50AD14646AC500554710 /* UA_miniunz.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25212507CEA004E6D93 /* UA_miniunz.c */; };
-		1FBF50AE14646AC500554710 /* UA_mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25312507CEA004E6D93 /* UA_mztools.c */; };
-		1FBF50AF14646AC500554710 /* UA_unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25512507CEA004E6D93 /* UA_unzip.c */; };
-		1FBF50B014646AC500554710 /* UA_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25812507CEA004E6D93 /* UA_zip.c */; };
 		1FBF50B114646AC500554710 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		1FBF50B214646AC500554710 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		1FBF50B314646AC500554710 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
-		1FBF50B414646AC500554710 /* UADownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F06DD3128CFE8800C30453 /* UADownloadManager.m */; };
 		1FBF50B514646AC500554710 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
-		1FBF50B614646AC500554710 /* UADownloadContent.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */; };
 		1FBF50B714646AC500554710 /* UA_ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73F8B12ADE86D003CF572 /* UA_ASIDataCompressor.m */; };
 		1FBF50B814646AC500554710 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		1FBF50B914646AC500554710 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
-		1FBF50BA14646AC500554710 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
 		1FBF50BB14646AC500554710 /* UATagUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2B10C412DD01B60020843D /* UATagUtils.m */; };
 		1FBF50BC14646AC500554710 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		1FBF50BD14646AC500554710 /* UAHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B512FC787900057449 /* UAHTTPConnection.m */; };
@@ -911,25 +890,14 @@
 				1FBF507C14646AC500554710 /* UA_ASIInputStream.h in Headers */,
 				1FBF507D14646AC500554710 /* UA_ASINetworkQueue.h in Headers */,
 				1FBF507E14646AC500554710 /* UA_ASIProgressDelegate.h in Headers */,
-				1FBF507F14646AC500554710 /* UA_FMDatabase.h in Headers */,
-				1FBF508014646AC500554710 /* UA_FMResultSet.h in Headers */,
 				1FBF508114646AC500554710 /* UA_SBJSON.h in Headers */,
 				1FBF508214646AC500554710 /* UA_SBJsonBase.h in Headers */,
 				1FBF508314646AC500554710 /* UA_SBJsonParser.h in Headers */,
 				1FBF508414646AC500554710 /* UA_SBJsonWriter.h in Headers */,
-				1FBF508514646AC500554710 /* UA_crypt.h in Headers */,
-				1FBF508614646AC500554710 /* UA_ioapi.h in Headers */,
-				1FBF508714646AC500554710 /* UA_mztools.h in Headers */,
-				1FBF508814646AC500554710 /* UA_unzip.h in Headers */,
-				1FBF508914646AC500554710 /* UA_zconf.h in Headers */,
-				1FBF508A14646AC500554710 /* UA_zip.h in Headers */,
-				1FBF508B14646AC500554710 /* UA_ZipArchive.h in Headers */,
 				1FBF508C14646AC500554710 /* UA_Reachability.h in Headers */,
 				1FBF508D14646AC500554710 /* UA_Base64.h in Headers */,
 				1FBF508E14646AC500554710 /* UAKeychainUtils.h in Headers */,
-				1FBF508F14646AC500554710 /* UADownloadManager.h in Headers */,
 				1FBF509014646AC500554710 /* UAUser.h in Headers */,
-				1FBF509114646AC500554710 /* UADownloadContent.h in Headers */,
 				1FBF509214646AC500554710 /* UA_ASIDataCompressor.h in Headers */,
 				1FBF509314646AC500554710 /* UA_ASIDataDecompressor.h in Headers */,
 				1FBF509414646AC500554710 /* UAAnalytics.h in Headers */,
@@ -1234,27 +1202,17 @@
 				1FBF50A314646AC500554710 /* UA_ASIHTTPRequest.m in Sources */,
 				1FBF50A414646AC500554710 /* UA_ASIInputStream.m in Sources */,
 				1FBF50A514646AC500554710 /* UA_ASINetworkQueue.m in Sources */,
-				1FBF50A614646AC500554710 /* UA_FMDatabase.m in Sources */,
-				1FBF50A714646AC500554710 /* UA_FMResultSet.m in Sources */,
 				1FBF50A814646AC500554710 /* UA_SBJSON.m in Sources */,
 				1FBF50A914646AC500554710 /* UA_SBJsonBase.m in Sources */,
 				1FBF50AA14646AC500554710 /* UA_SBJsonParser.m in Sources */,
 				1FBF50AB14646AC500554710 /* UA_SBJsonWriter.m in Sources */,
-				1FBF50AC14646AC500554710 /* UA_ioapi.c in Sources */,
-				1FBF50AD14646AC500554710 /* UA_miniunz.c in Sources */,
-				1FBF50AE14646AC500554710 /* UA_mztools.c in Sources */,
-				1FBF50AF14646AC500554710 /* UA_unzip.c in Sources */,
-				1FBF50B014646AC500554710 /* UA_zip.c in Sources */,
 				1FBF50B114646AC500554710 /* UA_Reachability.m in Sources */,
 				1FBF50B214646AC500554710 /* UA_Base64.m in Sources */,
 				1FBF50B314646AC500554710 /* UAKeychainUtils.m in Sources */,
-				1FBF50B414646AC500554710 /* UADownloadManager.m in Sources */,
 				1FBF50B514646AC500554710 /* UAUser.m in Sources */,
-				1FBF50B614646AC500554710 /* UADownloadContent.m in Sources */,
 				1FBF50B714646AC500554710 /* UA_ASIDataCompressor.m in Sources */,
 				1FBF50B814646AC500554710 /* UA_ASIDataDecompressor.m in Sources */,
 				1FBF50B914646AC500554710 /* UAAnalytics.m in Sources */,
-				1FBF50BA14646AC500554710 /* UA_ZipArchive.m in Sources */,
 				1FBF50BB14646AC500554710 /* UATagUtils.m in Sources */,
 				1FBF50BC14646AC500554710 /* UASQLite.m in Sources */,
 				1FBF50BD14646AC500554710 /* UAHTTPConnection.m in Sources */,
@@ -1570,7 +1528,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
+				GCC_PREFIX_HEADER = AirshipPushLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
@@ -1604,7 +1562,7 @@
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
+				GCC_PREFIX_HEADER = AirshipPushLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
