@@ -82,6 +82,8 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)sendRichPush:(NSMutableDictionary *)data {
+    
+    NSLog(@"%@", [data description]);
 	
 	UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     NSString* body = [writer stringWithObject:data];
@@ -108,10 +110,10 @@ IF_IOS4_OR_GREATER(
     [request setRequestMethod:@"POST"];
     request.username = [UAirship shared].appId;
     request.password = masterSecret;
-    //request.delegate = self;
+    request.delegate = self;
     request.timeOutSeconds = 60;
-    [request setDidFinishSelector:@selector(endBackground)];
-    [request setDidFailSelector:@selector(endBackground)];
+    [request setDidFinishSelector:@selector(requestFinished:)];
+    [request setDidFailSelector:@selector(requestFailed:)];
 	
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -120,6 +122,17 @@ IF_IOS4_OR_GREATER(
 	//end inline dirtiness
 	
 	
+}
+
+- (void)requestFinished:(UA_ASIHTTPRequest *)request {
+    NSLog(@"request finished: %@, %d", request.responseString, request.responseStatusCode);
+    [self endBackground];
+}
+
+- (void)requestFailed:(UA_ASIHTTPRequest *)request {
+    NSError *error = [request error];
+    NSLog(@"request failed: %@", [error localizedDescription]);
+    [self endBackground];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)index {	
@@ -164,16 +177,6 @@ IF_IOS4_OR_GREATER(
 	[super dealloc];
 }
 
-
-
-
-
-
-
-
-
-
-
 #pragma mark -
 #pragma mark Memory management
 
@@ -197,8 +200,6 @@ IF_IOS4_OR_GREATER(
 );
     
 }
-
-
 
 - (void)doBackground:(NSNotification *)aNotification {
     

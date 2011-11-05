@@ -34,6 +34,8 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
+#import "UAAnalytics.h"
+
 
 @implementation InboxSampleAppDelegate
 

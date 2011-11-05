@@ -35,6 +35,12 @@
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
 		4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */; };
+		49BF050014649BB500D6C820 /* RichPushSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BF04FF14649BB500D6C820 /* RichPushSender.m */; };
+		49BF05061464A55700D6C820 /* coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 49BF05011464A55700D6C820 /* coupon.html */; };
+		49BF05071464A55700D6C820 /* ipad_coupon.html in Resources */ = {isa = PBXBuildFile; fileRef = 49BF05021464A55700D6C820 /* ipad_coupon.html */; };
+		49BF05081464A55700D6C820 /* nkor.html in Resources */ = {isa = PBXBuildFile; fileRef = 49BF05031464A55700D6C820 /* nkor.html */; };
+		49BF05091464A55700D6C820 /* pill.html in Resources */ = {isa = PBXBuildFile; fileRef = 49BF05041464A55700D6C820 /* pill.html */; };
+		49BF050A1464A55700D6C820 /* vote.html in Resources */ = {isa = PBXBuildFile; fileRef = 49BF05051464A55700D6C820 /* vote.html */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -180,6 +186,13 @@
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4952F9BA141E77D200FE280C /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
 		4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
+		49BF04FE14649BB500D6C820 /* RichPushSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichPushSender.h; sourceTree = "<group>"; };
+		49BF04FF14649BB500D6C820 /* RichPushSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RichPushSender.m; sourceTree = "<group>"; };
+		49BF05011464A55700D6C820 /* coupon.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = coupon.html; sourceTree = "<group>"; };
+		49BF05021464A55700D6C820 /* ipad_coupon.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ipad_coupon.html; sourceTree = "<group>"; };
+		49BF05031464A55700D6C820 /* nkor.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = nkor.html; sourceTree = "<group>"; };
+		49BF05041464A55700D6C820 /* pill.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = pill.html; sourceTree = "<group>"; };
+		49BF05051464A55700D6C820 /* vote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = vote.html; sourceTree = "<group>"; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		63CB54DC1247122500DF2EBC /* InboxAPITests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxAPITests.h; sourceTree = "<group>"; };
@@ -287,6 +300,8 @@
 		18A27C82125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49BF04FE14649BB500D6C820 /* RichPushSender.h */,
+				49BF04FF14649BB500D6C820 /* RichPushSender.m */,
 				18A27C84125EDD6E0045D75B /* InboxSampleAppDelegate.h */,
 				18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */,
 				18A27C86125EDD6E0045D75B /* InboxSampleViewController.h */,
@@ -332,6 +347,11 @@
 		18A27CA1125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				49BF05011464A55700D6C820 /* coupon.html */,
+				49BF05021464A55700D6C820 /* ipad_coupon.html */,
+				49BF05031464A55700D6C820 /* nkor.html */,
+				49BF05041464A55700D6C820 /* pill.html */,
+				49BF05051464A55700D6C820 /* vote.html */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -427,7 +447,7 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B6E7F8441239FFD5009BC92D /* libUAirship-1.1.0.a */,
+				B6E7F8441239FFD5009BC92D /* libUAirship-1.1.1.a */,
 				1F4A305F1300DD000029170F /* AirshipTest.app */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.octest */,
 			);
@@ -629,7 +649,7 @@
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B6E7F8441239FFD5009BC92D /* libUAirship-1.1.0.a */ = {
+		B6E7F8441239FFD5009BC92D /* libUAirship-1.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirship-1.1.1.a";
@@ -674,6 +694,11 @@
 				1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */,
 				1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */,
 				1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */,
+				49BF05061464A55700D6C820 /* coupon.html in Resources */,
+				49BF05071464A55700D6C820 /* ipad_coupon.html in Resources */,
+				49BF05081464A55700D6C820 /* nkor.html in Resources */,
+				49BF05091464A55700D6C820 /* pill.html in Resources */,
+				49BF050A1464A55700D6C820 /* vote.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,6 +780,7 @@
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
 				1F57820814182188003FA039 /* UAInboxOverlayController.m in Sources */,
 				4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */,
+				49BF050014649BB500D6C820 /* RichPushSender.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,6 +818,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Urban Airship Inc.";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -806,6 +833,7 @@
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "04A08001-E3A8-41FC-8BF5-003B2B38594C";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -819,7 +847,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Urban Airship Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -829,6 +858,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "04A08001-E3A8-41FC-8BF5-003B2B38594C";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -836,6 +866,86 @@
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
+		};
+		49BF050B1464B42200D6C820 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
+			};
+			name = Distribution;
+		};
+		49BF050C1464B42200D6C820 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Urban Airship Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "InboxSample-Info.plist";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = InboxSample;
+				PROVISIONING_PROFILE = "04A08001-E3A8-41FC-8BF5-003B2B38594C";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
+			};
+			name = Distribution;
+		};
+		49BF050D1464B42200D6C820 /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Classes/Tests\"",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = InboxTests_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INFOPLIST_FILE = "InboxTests-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+				);
+				PRODUCT_NAME = InboxTests;
+				SDKROOT = iphoneos;
+				ZERO_LINK = NO;
+			};
+			name = Distribution;
 		};
 		63CB54BC1247107C00DF2EBC /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -901,6 +1011,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -912,6 +1023,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -925,6 +1037,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -933,6 +1046,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = "-ObjC";
+				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -950,6 +1064,7 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+				49BF050C1464B42200D6C820 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -959,6 +1074,7 @@
 			buildConfigurations = (
 				63CB54BC1247107C00DF2EBC /* Debug */,
 				63CB54BD1247107C00DF2EBC /* Release */,
+				49BF050D1464B42200D6C820 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -968,6 +1084,7 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				49BF050B1464B42200D6C820 /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
