@@ -68,7 +68,7 @@
 		B6BC28B7127950B5005CBE16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		B6BC28B8127950B5005CBE16 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		B6BC28B9127950B5005CBE16 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ED91246383700145424 /* libsqlite3.dylib */; };
-		B6BC28DE12795459005CBE16 /* libUAirship-1.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.1.a */; };
+		B6BC28DE12795459005CBE16 /* libUAirship-1.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */; };
 		B6BC28FA1279557A005CBE16 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */; };
 		B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */; };
 		B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */; };
@@ -83,7 +83,7 @@
 		D5C759AC12BAE0EF0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759AB12BAE0EF0041239E /* Default@2x.png */; };
 		D5C75AFD12BBEF9B0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFC12BBEF9B0041239E /* Icon-Small@2x.png */; };
 		D5C75AFF12BBEFA80041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFE12BBEFA80041239E /* Icon-72.png */; };
-		D9983CAB123829DB00B7E69F /* libUAirship-1.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.1.a */; };
+		D9983CAB123829DB00B7E69F /* libUAirship-1.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +93,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
+		};
+		1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1FBF50D014646AC500554710;
+			remoteInfo = AirshipMiniPushLib;
 		};
 		1FA23849130460BE005A4DEC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -215,7 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */,
-				D9983CAB123829DB00B7E69F /* libUAirship-1.1.1.a in Frameworks */,
+				D9983CAB123829DB00B7E69F /* libUAirship-1.1.2.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -233,7 +240,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6BC28DE12795459005CBE16 /* libUAirship-1.1.1.a in Frameworks */,
+				B6BC28DE12795459005CBE16 /* libUAirship-1.1.2.a in Frameworks */,
 				B6BC28B1127950B5005CBE16 /* StoreKit.framework in Frameworks */,
 				B6BC28B2127950B5005CBE16 /* SystemConfiguration.framework in Frameworks */,
 				B6BC28B4127950B5005CBE16 /* MobileCoreServices.framework in Frameworks */,
@@ -444,6 +451,7 @@
 			isa = PBXGroup;
 			children = (
 				63314760122FAC96008F2D48 /* libUAirship-1.1.1.a */,
+				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */,
 				1FA2384A130460BE005A4DEC /* AirshipTest.app */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
 			);
@@ -593,6 +601,13 @@
 			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libUAirshipPush-1.1.2.a";
+			remoteRef = 1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		1FA2384A130460BE005A4DEC /* AirshipTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -603,7 +618,7 @@
 		63314760122FAC96008F2D48 /* libUAirship-1.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.1.1.a";
+			path = "libUAirship-1.1.2.a";
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
