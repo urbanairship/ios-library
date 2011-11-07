@@ -137,6 +137,11 @@ IF_IOS4_OR_GREATER(
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)index {	
 	
+    // cancel button is at index 0
+    if (index == 0) {
+        return;
+    }
+    
 	NSMutableDictionary *payload = [messages valueForKey:[buttonTitles objectAtIndex:index-1]];
 	
 	//NSLog(@"%@", [payload description]);
