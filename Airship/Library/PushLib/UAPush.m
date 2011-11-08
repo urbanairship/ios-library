@@ -323,13 +323,13 @@ static Class _uiClass;
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
+    NSString *encodedTag = [UAUtils urlEncodedStringWithString:tag encoding:NSUTF8StringEncoding];
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
-                           tag];
-    NSString *encodedString = [UAUtils urlEncodedStringWithString:urlString encoding:NSUTF8StringEncoding];
+                           encodedTag];
     
-    NSURL *url = [NSURL URLWithString:encodedString];
+    NSURL *url = [NSURL URLWithString:urlString];
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
                                        method:@"PUT"
                                      delegate:self
@@ -344,13 +344,13 @@ static Class _uiClass;
 }
 
 - (void)removeTagFromCurrentDevice:(NSString *)tag {
+    NSString *encodedTag = [UAUtils urlEncodedStringWithString:tag encoding:NSUTF8StringEncoding];
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
-                           tag];
-    NSString *encodedString = [UAUtils urlEncodedStringWithString:urlString encoding:NSUTF8StringEncoding];
-
-    NSURL *url = [NSURL URLWithString:encodedString];
+                           encodedTag];
+    
+    NSURL *url = [NSURL URLWithString:urlString];
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
                                        method:@"DELETE"
                                      delegate:self
