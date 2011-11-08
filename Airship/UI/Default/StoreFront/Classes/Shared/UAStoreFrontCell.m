@@ -189,7 +189,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
             progressView.hidden = NO;
             [activityView stopAnimating];
             break;
-        case UAProductStatusWaiting:
+        case UAProductStatusPurchasing:
+        case UAProductStatusDecompressing:
+        case UAProductStatusVerifyingReceipt:
             progressView.hidden = YES;
             [activityView startAnimating];
             break;

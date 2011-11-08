@@ -287,17 +287,21 @@ NSString * const UAContentsDisplayOrderPrice = @"priceNumber";
     [installedProducts removeAllObjects];
 
     for (UAProduct *product in sortedProducts) {
-        if (product.status == UAProductStatusHasUpdate)
+        
+        if (product.status == UAProductStatusHasUpdate) {
             [updatedProducts addObject:product];
+        }
 
         if (product.status == UAProductStatusPurchased
             || product.status == UAProductStatusInstalled
             || product.status == UAProductStatusDownloading
-            || (product.status == UAProductStatusWaiting
-                && (product.isFree
-                    || (product.receipt!=nil && ![product.receipt isEqualToString:@""]))))
-            [installedProducts addObject:product];
+            || (product.status == UAProductStatusVerifyingReceipt //TODO: is this right??
+                && (product.isFree || (product.receipt!=nil && ![product.receipt isEqualToString:@""])))) {
+            
+                    [installedProducts addObject:product];
+                }
     }
+    
     if (self.status == UAInventoryStatusLoaded) {
         [self notifyObservers:@selector(inventoryGroupUpdated)];
     }
@@ -346,7 +350,7 @@ NSString * const UAContentsDisplayOrderPrice = @"priceNumber";
 
     if(product.isFree == YES
        || [[UAStoreFront shared].purchaseReceipts objectForKey:product.productIdentifier] != nil) {
-        [[UAStoreFront shared].downloadManager downloadIfValid:product];
+        [[UAStoreFront shared].downloadManager downloadPurchasedProduct:product];
     } else {
         [[UAStoreFront shared].sfObserver payForProduct:product.skProduct];
     }
