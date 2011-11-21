@@ -190,7 +190,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     
     [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [session setObject:[AirshipVersion get] forKey:@"lib_version"];
-    [session setObject:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] forKey:@"package_version"];
+    [session setValue:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation)
     BOOL isInForeground = YES;
