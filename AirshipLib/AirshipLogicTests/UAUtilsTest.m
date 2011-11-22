@@ -117,6 +117,9 @@
     
     NSString* rightBracket = @"z]";
     STAssertEqualObjects(@"z%5D", [UAUtils urlEncodedStringWithString:rightBracket encoding:NSUTF8StringEncoding], @"] test failed");
+    
+    NSString* underscore = @"a_tag";
+    STAssertEqualObjects(@"a_tag", [UAUtils urlEncodedStringWithString:underscore encoding:NSUTF8StringEncoding], @"_ test failed");
 }
 
 @end
