@@ -1,6 +1,6 @@
 //
-//  UA_ASINetworkQueue.m
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASINetworkQueue.m
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 07/11/2008.
 //  Copyright 2008-2009 All-Seeing Interactive. All rights reserved.
@@ -127,7 +127,7 @@
 	}
 }
 
-// Only add ASIHTTPRequests to this queue!!
+// Only add UA_ASIHTTPRequests to this queue!!
 - (void)addOperation:(NSOperation *)operation
 {
 	if (![operation isKindOfClass:[UA_ASIHTTPRequest class]]) {
