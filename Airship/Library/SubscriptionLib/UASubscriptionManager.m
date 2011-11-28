@@ -37,6 +37,8 @@
 
 #import "UAUser.h"
 
+#import <sys/xattr.h>
+
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -177,6 +179,10 @@ IF_IOS4_OR_GREATER(
         BOOL uaExists = [[NSFileManager defaultManager] fileExistsAtPath:kUADirectory];
         if(!uaExists) {
             [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
+
+            //mark the path so that it will not be backed up by iCloud
+            u_int8_t b = 1;
+            setxattr([kUADirectory fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
         }
         
         //Set up default download directory

@@ -32,6 +32,9 @@
 #import "UAInventory.h"
 #import "UAStoreFrontDownloadManager.h"
 
+#import <sys/xattr.h>
+
+
 UA_VERSION_IMPLEMENTATION(StoreFrontVersion, UA_VERSION)
 
 @implementation UAStoreFront
@@ -299,6 +302,10 @@ static Class _uiClass;
 
         if (!uaExists) {
             [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
+
+            //mark the path so that it will not be backed up by iCloud
+            u_int8_t b = 1;
+            setxattr([kUADirectory fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
         }
         
         //Set up default download directory
