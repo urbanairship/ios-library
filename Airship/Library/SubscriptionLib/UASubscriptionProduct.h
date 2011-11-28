@@ -27,6 +27,12 @@
 
 @class SKProduct;
 
+typedef enum _UASubscriptionProductType {
+    UASubscriptionProductTypeLegacy = 0,
+    UASubscriptionProductTypeAutorenewable = 1,
+    UASubscriptionProductTypeFree = 2
+} UASubscriptionProductType;
+
 typedef enum _UAAutorenewableDuration {
     UAAutorenewableDurationNone = 0,
     UAAutorenewableDuration7Days = 1,
@@ -47,7 +53,7 @@ typedef enum _UAAutorenewableDuration {
     NSURL *iconURL;
     int duration;
     
-    BOOL autorenewable;
+    UASubscriptionProductType productType;
     UAAutorenewableDuration autorenewableDuration;
 
     //property from SKProduct
@@ -126,8 +132,8 @@ typedef enum _UAAutorenewableDuration {
 /// @name Autorenewable Info
 ///---------------------------------------------------------------------------------------
 
-/** @return YES if the product is an autorenewable subscription, otherwise NO */
-@property(nonatomic, assign, getter=isAutorenewable) BOOL autorenewable;
+/** @return UASubscriptionProductTypeLegacy, UASubscriptionProductTypeAutorenewable or UASubscriptionProductTypeFree */
+@property(nonatomic, assign) UASubscriptionProductType productType;
 
 /** The duration of this autorenewable product. UAAutorenewableDurationNone returned if not an autorenewable */
 @property(nonatomic, assign) UAAutorenewableDuration autorenewableDuration;

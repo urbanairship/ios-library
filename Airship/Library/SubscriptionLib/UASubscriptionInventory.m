@@ -367,7 +367,7 @@
     product.isPurchasing = YES;
 }
 
-- (void)subscriptionTransctionDidComplete:(SKPaymentTransaction *)transaction {
+- (void)subscriptionTransactionDidComplete:(SKPaymentTransaction *)transaction {
     UASubscriptionProduct *product = [self productForKey:transaction.payment.productIdentifier];
     NSString *key = product.subscriptionKey;
     NSString *product_id = transaction.payment.productIdentifier;

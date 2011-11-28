@@ -133,12 +133,19 @@
 }
 
 - (void)updateTitle {
-    if (product.autorenewable) {
-        NSString *arDurationString = 
-            [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
-        self.title = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
-    } else {
-        self.title = product.title;
+    NSString* arDurationString;
+    switch (product.productType) {
+        case UASubscriptionProductTypeAutorenewable:
+            arDurationString = [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
+            self.title = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+            break;
+        case UASubscriptionProductTypeFree:
+            arDurationString = UA_SS_TR(@"UA_Free_Subscription");
+            self.title = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+            break;
+        default:
+            self.title = product.title;
+            break;
     }
 }
 

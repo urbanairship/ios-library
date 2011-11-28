@@ -46,7 +46,7 @@
 @synthesize endDate;
 @synthesize isPurchasing;
 @synthesize isForSale;
-@synthesize autorenewable;
+@synthesize productType;
 @synthesize autorenewableDuration;
 
 - (void)dealloc {
@@ -113,7 +113,8 @@
         UALOG(@"Duration value = %d", self.autorenewableDuration);
     }
     
-    self.autorenewable = ([[dict objectForKey:@"autorenewable"] intValue] == 1) ? YES : NO;
+    // the integer enumeration values were chosen to agree with this field's range of values
+    self.productType = [[dict objectForKey:@"product_type"] intValue];
 
     for (SKPaymentTransaction *transaction in [[SKPaymentQueue defaultQueue] transactions]) {
         if ([transaction.payment.productIdentifier isEqualToString:self.productIdentifier]) {
@@ -146,7 +147,7 @@
 	self.endDate = sp.endDate;
 	self.isPurchasing = sp.isPurchasing;
     self.isForSale = sp.isForSale;
-    self.autorenewable = sp.autorenewable;
+    self.productType = sp.productType;
     self.autorenewableDuration = sp.autorenewableDuration;
 	
 	return self;

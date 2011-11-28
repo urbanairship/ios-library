@@ -237,7 +237,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         UALOG(@"Product no longer exists in inventory: %@", productIdentifier);
         [self safelyFinishUnknownTransaction:transaction];
     } else {
-        [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+        [[UASubscriptionManager shared].inventory subscriptionTransactionDidComplete:transaction];
     }
 }
 
@@ -248,13 +248,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self logTransaction:transaction];
     
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productIdentifier];
+    bool restorable = product && (product.productType == UASubscriptionProductTypeAutorenewable || 
+        product.productType == UASubscriptionProductTypeFree);
 
-    if (product && product.autorenewable && restoring) {
+    if (restorable && restoring) {
     
         [unrestoredTransactions addObject:transaction];
         [self submitRestoredTransaction:transaction];
         
-    } else if (product && product.autorenewable) {
+    } else if (restorable) {
         
         // Uncomment to clear out all transactions - helpful for debugging
         // [self safelyFinishTransaction:transaction];
@@ -264,7 +266,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         // if we did not start the restore process, treat this as a renewal
         // and send it through the purchase process
         UALOG(@"Renewing Subscription Product ID: %@", productIdentifier);
-        [[UASubscriptionManager shared].inventory subscriptionTransctionDidComplete:transaction];
+        [[UASubscriptionManager shared].inventory subscriptionTransactionDidComplete:transaction];
         
     } else {
         UALOG(@"Skipping transaction - unknown product or not an autorenewable.");
