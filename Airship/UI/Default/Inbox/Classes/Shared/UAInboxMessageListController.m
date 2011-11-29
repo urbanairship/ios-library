@@ -47,6 +47,8 @@
 - (void)coverUpEmptyListIfNeeded;
 - (void)showLoadingScreen;
 - (void)hideLoadingScreen;
+- (NSArray*)selectedMessagesFromSet:(NSSet*)set;
+- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages;
 
 @property (nonatomic, retain) UITableView *messageTable;
 
@@ -305,6 +307,9 @@
     NSString* markReadStr = UA_INBOX_TR(@"UA_Mark_as_Read");
 
     NSUInteger count = [selectedIndexPathsForEditing count];
+    NSArray* selectedMessages = [self selectedMessagesFromSet:selectedIndexPathsForEditing];
+    NSDictionary* readUnread = [self readUnreadCountFromMessages:selectedMessages];
+    [readUnread retain];
     if (count == 0) {
         [deleteItem setTitle:deleteStr forSegmentAtIndex:0];
         moveItem.title = markReadStr;
@@ -312,16 +317,52 @@
         moveItem.enabled = NO;
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
-        moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
+        moveItem.title = [NSString stringWithFormat:@"%@ (%@)", markReadStr, [readUnread valueForKey:@"unread"]];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
             moveItem.enabled = NO;
         } else {
             deleteItem.enabled = YES;
-            moveItem.enabled = YES;
+            int unreadCount = [[readUnread valueForKey:@"unread"] intValue];
+            if ( unreadCount == 0) {
+                moveItem.enabled = NO;
+            }
+            else {
+                moveItem.enabled = YES;
+            }
         }
     }
+    [readUnread release];
+    readUnread = nil;
 }
+
+
+- (NSArray*)selectedMessagesFromSet:(NSSet*)set {
+    NSMutableArray* messages = [[UAInboxMessageList shared] messages];
+    NSMutableArray* mutableArray = [NSMutableArray array];
+    for (NSIndexPath* path in set) {
+        [mutableArray addObject:[messages objectAtIndex:[path indexAtPosition:1]]];
+    }
+    return mutableArray;
+}
+
+- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages {
+    int read = 0;
+    int unread = 0;
+    for (UAInboxMessage *message in messages) {
+        if (message.unread == YES){
+            unread++;
+        }
+        else {
+            read++;
+        }
+    }
+    NSDictionary* readUnread = [NSMutableDictionary dictionary];
+    [readUnread setValue:[NSNumber numberWithInt:unread] forKey:@"unread"];
+    [readUnread setValue:[NSNumber numberWithInt:read] forKey:@"read"];
+    return readUnread;
+}
+
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
     NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
@@ -384,7 +425,6 @@
 - (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath {
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }
-
 
 #pragma mark -
 #pragma mark UITableViewDelegate
