@@ -83,7 +83,7 @@
     RELEASE_SAFELY(loadingLabel);
     RELEASE_SAFELY(selectedIndexPathsForEditing);
     RELEASE_SAFELY(deleteItem);
-    RELEASE_SAFELY(moveItem);
+    RELEASE_SAFELY(markAsRead);
     RELEASE_SAFELY(editItem);
     RELEASE_SAFELY(cancelItem);
     RELEASE_SAFELY(tabbar);
@@ -150,12 +150,12 @@
 
     UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithCustomView:deleteItem] autorelease];
     deleteButton.width = 130;
-    moveItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
+    markAsRead = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
                                                 style:UIBarButtonItemStyleBordered
                                                target:self action:@selector(batchUpdateButtonPressed:)];
-    moveItem.width = 130;
+    markAsRead.width = 130;
 
-    self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, moveItem, fixedSpace, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, markAsRead, fixedSpace, nil];
 
     [fixedSpace release];
     [flexibleSpace release];
@@ -190,7 +190,7 @@
     RELEASE_SAFELY(selectedIndexPathsForEditing);
     RELEASE_SAFELY(setOfUnreadMessagesInSelection);
     RELEASE_SAFELY(deleteItem);
-    RELEASE_SAFELY(moveItem);
+    RELEASE_SAFELY(markAsRead);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -333,7 +333,7 @@
 
     cancelItem.enabled = NO;
 
-    if (sender == moveItem) {
+    if (sender == markAsRead) {
         [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:messageIDs];
     } else {
         [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:messageIDs];
@@ -354,23 +354,23 @@
     NSUInteger count = [selectedIndexPathsForEditing count];
     if (count == 0) {
         [deleteItem setTitle:deleteStr forSegmentAtIndex:0];
-        moveItem.title = markReadStr;
+        markAsRead.title = markReadStr;
         deleteItem.enabled = NO;
-        moveItem.enabled = NO;
+        markAsRead.enabled = NO;
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
         NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInSetOfIndexPaths:selectedIndexPathsForEditing];
-        moveItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, ureadCountInSelection];
+        markAsRead.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, ureadCountInSelection];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
-            moveItem.enabled = NO;
+            markAsRead.enabled = NO;
         } else {
             deleteItem.enabled = YES;
             if (ureadCountInSelection != 0) {
-                moveItem.enabled = YES;
+                markAsRead.enabled = YES;
             }
             else {
-                moveItem.enabled = NO;
+                markAsRead.enabled = NO;
             }
         }
     }
