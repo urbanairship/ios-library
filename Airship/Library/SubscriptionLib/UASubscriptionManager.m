@@ -173,23 +173,6 @@ IF_IOS4_OR_GREATER(
 			}
 									
 );
-
-        //Make sure the default ua directory exists, we use it for storing
-        //various bits of data like download history, image cache
-        BOOL uaExists = [[NSFileManager defaultManager] fileExistsAtPath:kUADirectory];
-        if(!uaExists) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
-
-            //mark the path so that it will not be backed up by iCloud
-            u_int8_t b = 1;
-            setxattr([kUADirectory fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
-        }
-        
-        //Set up default download directory
-        if (![[NSFileManager defaultManager] fileExistsAtPath:kUADownloadDirectory]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:kUADownloadDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-        }
-
         transactionObserver = [[UASubscriptionObserver alloc] init];
         inventory = [[UASubscriptionInventory alloc] init];
         downloadManager = [[UASubscriptionDownloadManager alloc] init];

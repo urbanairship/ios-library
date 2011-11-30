@@ -24,6 +24,7 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "UALocalStorageDirectory.h"
 
 // ALog always displays output regardless of the UADEBUG setting
 //#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
@@ -47,27 +48,23 @@ extern BOOL logging; // Default is false
 // constants
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 
-// path
-#define kPendingProductsFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/pendingProducts.history"]
-
-#define kDownloadHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/download.history"]
-
-#define kReceiptHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/receipt.history"]
-
-#define kUADirectory [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
-
+//legacy paths
 #define kUAOldDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
 
-#define kUADownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/downloads/"]
-
 #define kUAOldDownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/"]
+
+//managed paths
+#define kUADirectory [UALocalStorageDirectory uaDirectory].path
+
+#define kUADownloadDirectory [UALocalStorageDirectory downloadsDirectory].path
+
+#define kPendingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/pendingProducts.history"]
+
+#define kDownloadHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/download.history"]
+
+#define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/receipt.history"]
 
 // color
 #define RGBA(r,g,b,a) [UIColor colorWithRed: r/255.0f green: g/255.0f \

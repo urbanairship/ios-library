@@ -298,21 +298,6 @@ static Class _uiClass;
     UALOG(@"Initialize StoreFront.");
 
     if (self = [super init]) {
-        BOOL uaExists = [self directoryExistsAtPath:kUADirectory orOldPath:kUAOldDirectory];
-
-        if (!uaExists) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:kUADirectory withIntermediateDirectories:YES attributes:nil error:nil];
-
-            //mark the path so that it will not be backed up by iCloud
-            u_int8_t b = 1;
-            setxattr([kUADirectory fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
-        }
-        
-        //Set up default download directory
-        if (![[NSFileManager defaultManager] fileExistsAtPath:kUADownloadDirectory]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:kUADownloadDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-        }
-
         // In StoreFront, we set the cache policy to use cache if possible.
         // And currently we only use this download cache in UAAsyncImageView.
         [[UA_ASIDownloadCache sharedCache] setDefaultCachePolicy:UA_ASIAskServerIfModifiedWhenStaleCachePolicy|UA_ASIFallbackToCacheIfLoadFailsCachePolicy];
