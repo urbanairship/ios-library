@@ -49,10 +49,8 @@
 - (void)hideLoadingScreen;
 - (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath;
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
-- (NSIndexPath *)checkSetOfIndexPaths:(NSSet *) forIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
-//- (NSArray*)selectedMessagesFromSet:(NSSet*)set;
-//- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages;
+- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
 @property (nonatomic, retain) UITableView *messageTable;
 
@@ -62,7 +60,7 @@
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
-@property (nonatomic, retain) NSMutableSet *setOfUnreadMessages;
+@property (nonatomic, retain) NSMutableSet *setOfUnreadMessagesInSelection;
 
 @end
 
@@ -74,7 +72,7 @@
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
 @synthesize shouldShowAlerts;
-@synthesize setOfUnreadMessages;
+@synthesize setOfUnreadMessagesInSelection;
 
 - (void)dealloc {
     
@@ -190,7 +188,7 @@
     self.messageTable = nil;
     [selectedIndexPathsForEditing removeAllObjects];
     RELEASE_SAFELY(selectedIndexPathsForEditing);
-    RELEASE_SAFELY(setOfUnreadMessages);
+    RELEASE_SAFELY(setOfUnreadMessagesInSelection);
     RELEASE_SAFELY(deleteItem);
     RELEASE_SAFELY(moveItem);
 }
@@ -253,20 +251,40 @@
 }
 
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
-    if (nil == setOfUnreadMessages) {
-        self.setOfUnreadMessages = [NSMutableSet set];
+    if (nil == setOfUnreadMessagesInSelection) {
+        self.setOfUnreadMessagesInSelection = [NSMutableSet set];
+    }
+    NSIndexPath *pathOfUnreadMessage = [self checkSetOfIndexPaths:setOfUnreadMessagesInSelection forIndexPath:indexPath];
+    if(pathOfUnreadMessage && message.unread){
+        return;
+    }
+    if(pathOfUnreadMessage && !message.unread){
+        [setOfUnreadMessagesInSelection removeObject:pathOfUnreadMessage];
+    }
+    if(!pathOfUnreadMessage && message.unread){
+        [setOfUnreadMessagesInSelection addObject:indexPath];
     }
     
-    
-    
+}
+
+- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set {
+    NSUInteger count = 0;
+    for (NSIndexPath *path in set) {
+        NSIndexPath *indexPathOrNil =[self checkSetOfIndexPaths:setOfUnreadMessagesInSelection forIndexPath:path];
+        if(indexPathOrNil) count++;
+    }
+    return count;
 }
 
 - (NSIndexPath *)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath {
     for (NSIndexPath *path in setOfPaths) {
-        ;
+        if ([path compare:indexPath] == NSOrderedSame) {
+            return indexPath;
+        };
     }
     return nil;
 }
+
 #pragma mark -
 #pragma mark Button Action Methods
 
@@ -332,11 +350,8 @@
 - (void)refreshBatchUpdateButtons {
     NSString* deleteStr = UA_INBOX_TR(@"UA_Delete");
     NSString* markReadStr = UA_INBOX_TR(@"UA_Mark_as_Read");
-
+    
     NSUInteger count = [selectedIndexPathsForEditing count];
-//    NSArray* selectedMessages = [self selectedMessagesFromSet:selectedIndexPathsForEditing];
-//    NSDictionary* readUnread = [self readUnreadCountFromMessages:selectedMessages];
-//    [readUnread retain];
     if (count == 0) {
         [deleteItem setTitle:deleteStr forSegmentAtIndex:0];
         moveItem.title = markReadStr;
@@ -344,46 +359,23 @@
         moveItem.enabled = NO;
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
-        moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
+        NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInSetOfIndexPaths:selectedIndexPathsForEditing];
+        moveItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, ureadCountInSelection];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
             moveItem.enabled = NO;
         } else {
             deleteItem.enabled = YES;
-            moveItem.enabled = YES;
+            if (ureadCountInSelection != 0) {
+                moveItem.enabled = YES;
+            }
+            else {
+                moveItem.enabled = NO;
+            }
         }
     }
-//    [readUnread release];
-//    readUnread = nil;
+
 }
-
-
-//- (NSArray*)selectedMessagesFromSet:(NSSet*)set {
-//    NSMutableArray* messages = [[UAInboxMessageList shared] messages];
-//    NSMutableArray* mutableArray = [NSMutableArray array];
-//    for (NSIndexPath* path in set) {
-//        [mutableArray addObject:[messages objectAtIndex:[path indexAtPosition:1]]];
-//    }
-//    return mutableArray;
-//}
-
-//- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages {
-//    int read = 0;
-//    int unread = 0;
-//    for (UAInboxMessage *message in messages) {
-//        if (message.unread == YES){
-//            unread++;
-//        }
-//        else {
-//            read++;
-//        }
-//    }
-//    NSDictionary* readUnread = [NSMutableDictionary dictionary];
-//    [readUnread setValue:[NSNumber numberWithInt:unread] forKey:@"unread"];
-//    [readUnread setValue:[NSNumber numberWithInt:read] forKey:@"read"];
-//    return readUnread;
-//}
-
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
     NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
@@ -452,6 +444,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessage *message = [self messageForIndexPath:indexPath];
+    [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         if ([selectedIndexPathsForEditing containsObject:indexPath]) {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -464,6 +457,7 @@
     } else if (!self.editing) {
         [self didSelectRowAtIndexPath:indexPath];
     }
+   
 }
 
 

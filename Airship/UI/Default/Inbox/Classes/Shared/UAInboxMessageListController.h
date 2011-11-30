@@ -44,9 +44,9 @@
     IBOutlet UITabBar *tabbar;
     IBOutlet UITabBarItem *tabbarItem;
     UIView *badgeView;
-
+    
     NSMutableSet *selectedIndexPathsForEditing;
-    NSMutableSet *setOfUnreadMessages; // NSIndexPaths of unread messages
+    NSMutableSet *setOfUnreadMessagesInSelection; 
     UABarButtonSegmentedControl *deleteItem;
     UIBarButtonItem *moveItem;
     UIBarButtonItem *editItem;
