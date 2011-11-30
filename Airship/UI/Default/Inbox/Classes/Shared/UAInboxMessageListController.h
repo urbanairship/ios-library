@@ -46,6 +46,7 @@
     UIView *badgeView;
 
     NSMutableSet *selectedIndexPathsForEditing;
+    NSMutableSet *setOfUnreadMessages; // NSIndexPaths of unread messages
     UABarButtonSegmentedControl *deleteItem;
     UIBarButtonItem *moveItem;
     UIBarButtonItem *editItem;
