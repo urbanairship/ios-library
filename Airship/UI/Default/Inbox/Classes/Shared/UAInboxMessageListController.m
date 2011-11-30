@@ -47,8 +47,12 @@
 - (void)coverUpEmptyListIfNeeded;
 - (void)showLoadingScreen;
 - (void)hideLoadingScreen;
-- (NSArray*)selectedMessagesFromSet:(NSSet*)set;
-- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages;
+- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath;
+- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)checkSetOfIndexPaths:(NSSet *) forIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexPath *)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
+//- (NSArray*)selectedMessagesFromSet:(NSSet*)set;
+//- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages;
 
 @property (nonatomic, retain) UITableView *messageTable;
 
@@ -58,6 +62,7 @@
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
+@property (nonatomic, retain) NSMutableSet *setOfUnreadMessages;
 
 @end
 
@@ -69,6 +74,7 @@
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
 @synthesize shouldShowAlerts;
+@synthesize setOfUnreadMessages;
 
 - (void)dealloc {
     
@@ -184,6 +190,7 @@
     self.messageTable = nil;
     [selectedIndexPathsForEditing removeAllObjects];
     RELEASE_SAFELY(selectedIndexPathsForEditing);
+    RELEASE_SAFELY(setOfUnreadMessages);
     RELEASE_SAFELY(deleteItem);
     RELEASE_SAFELY(moveItem);
 }
@@ -239,7 +246,27 @@
     [self coverUpEmptyListIfNeeded];
 }
 
+// indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
+- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
+    NSArray *messages = [[UAInboxMessageList shared] messages];
+    return [messages objectAtIndex:indexPath.row];
+}
 
+- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
+    if (nil == setOfUnreadMessages) {
+        self.setOfUnreadMessages = [NSMutableSet set];
+    }
+    
+    
+    
+}
+
+- (NSIndexPath *)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath {
+    for (NSIndexPath *path in setOfPaths) {
+        ;
+    }
+    return nil;
+}
 #pragma mark -
 #pragma mark Button Action Methods
 
@@ -307,9 +334,9 @@
     NSString* markReadStr = UA_INBOX_TR(@"UA_Mark_as_Read");
 
     NSUInteger count = [selectedIndexPathsForEditing count];
-    NSArray* selectedMessages = [self selectedMessagesFromSet:selectedIndexPathsForEditing];
-    NSDictionary* readUnread = [self readUnreadCountFromMessages:selectedMessages];
-    [readUnread retain];
+//    NSArray* selectedMessages = [self selectedMessagesFromSet:selectedIndexPathsForEditing];
+//    NSDictionary* readUnread = [self readUnreadCountFromMessages:selectedMessages];
+//    [readUnread retain];
     if (count == 0) {
         [deleteItem setTitle:deleteStr forSegmentAtIndex:0];
         moveItem.title = markReadStr;
@@ -317,51 +344,45 @@
         moveItem.enabled = NO;
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
-        moveItem.title = [NSString stringWithFormat:@"%@ (%@)", markReadStr, [readUnread valueForKey:@"unread"]];
+        moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
             moveItem.enabled = NO;
         } else {
             deleteItem.enabled = YES;
-            int unreadCount = [[readUnread valueForKey:@"unread"] intValue];
-            if ( unreadCount == 0) {
-                moveItem.enabled = NO;
-            }
-            else {
-                moveItem.enabled = YES;
-            }
+            moveItem.enabled = YES;
         }
     }
-    [readUnread release];
-    readUnread = nil;
+//    [readUnread release];
+//    readUnread = nil;
 }
 
 
-- (NSArray*)selectedMessagesFromSet:(NSSet*)set {
-    NSMutableArray* messages = [[UAInboxMessageList shared] messages];
-    NSMutableArray* mutableArray = [NSMutableArray array];
-    for (NSIndexPath* path in set) {
-        [mutableArray addObject:[messages objectAtIndex:[path indexAtPosition:1]]];
-    }
-    return mutableArray;
-}
+//- (NSArray*)selectedMessagesFromSet:(NSSet*)set {
+//    NSMutableArray* messages = [[UAInboxMessageList shared] messages];
+//    NSMutableArray* mutableArray = [NSMutableArray array];
+//    for (NSIndexPath* path in set) {
+//        [mutableArray addObject:[messages objectAtIndex:[path indexAtPosition:1]]];
+//    }
+//    return mutableArray;
+//}
 
-- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages {
-    int read = 0;
-    int unread = 0;
-    for (UAInboxMessage *message in messages) {
-        if (message.unread == YES){
-            unread++;
-        }
-        else {
-            read++;
-        }
-    }
-    NSDictionary* readUnread = [NSMutableDictionary dictionary];
-    [readUnread setValue:[NSNumber numberWithInt:unread] forKey:@"unread"];
-    [readUnread setValue:[NSNumber numberWithInt:read] forKey:@"read"];
-    return readUnread;
-}
+//- (NSDictionary*)readUnreadCountFromMessages:(NSArray*)messages {
+//    int read = 0;
+//    int unread = 0;
+//    for (UAInboxMessage *message in messages) {
+//        if (message.unread == YES){
+//            unread++;
+//        }
+//        else {
+//            read++;
+//        }
+//    }
+//    NSDictionary* readUnread = [NSMutableDictionary dictionary];
+//    [readUnread setValue:[NSNumber numberWithInt:unread] forKey:@"unread"];
+//    [readUnread setValue:[NSNumber numberWithInt:read] forKey:@"read"];
+//    return readUnread;
+//}
 
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
@@ -430,6 +451,7 @@
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UAInboxMessage *message = [self messageForIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         if ([selectedIndexPathsForEditing containsObject:indexPath]) {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -443,6 +465,7 @@
         [self didSelectRowAtIndexPath:indexPath];
     }
 }
+
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessage *message = [[UAInboxMessageList shared] messageAtIndex:indexPath.row];
