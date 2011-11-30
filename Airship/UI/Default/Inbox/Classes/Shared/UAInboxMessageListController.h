@@ -48,7 +48,7 @@
     NSMutableSet *selectedIndexPathsForEditing;
     NSMutableSet *setOfUnreadMessagesInSelection; 
     UABarButtonSegmentedControl *deleteItem;
-    UIBarButtonItem *moveItem;
+    UIBarButtonItem *markAsRead;
     UIBarButtonItem *editItem;
     UIBarButtonItem *cancelItem;
 
