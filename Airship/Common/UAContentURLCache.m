@@ -50,7 +50,7 @@
     NSString *productURLString = [NSString stringWithContentsOfURL:productURL encoding:NSUTF8StringEncoding error:NULL];
     [contentDictionary setObject:contentURLString forKey:productURLString];
     [timestampDictionary setObject:[NSNumber numberWithDouble:
-                                   [[NSDate date]timeIntervalSince1970]] 
+                                   [[NSDate date]timeIntervalSince1970]]
                            forKey:productURLString];
     [self saveToDisk];
 }
