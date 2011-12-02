@@ -66,7 +66,9 @@ NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/"]
 
 #define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/receipt.history"]
 
-#define kContentURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/contentURLCache.plist"]
+#define kIAPURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/contentURLCache.plist"]
+
+#define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/ua/contentURLCache.plist"]
 
 // color
 #define RGBA(r,g,b,a) [UIColor colorWithRed: r/255.0f green: g/255.0f \

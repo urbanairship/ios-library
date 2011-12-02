@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
+#import "UAContentURLCache.h"
 
 @class UASubscriptionContent;
 
@@ -33,10 +34,12 @@
   @private
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
+    UAContentURLCache *contentURLCache;
     BOOL createProductIDSubdir;
 }
 
 @property (nonatomic, retain) NSString *downloadDirectory;
+@property (nonatomic, retain) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
 - (void)download:(UASubscriptionContent *)content;

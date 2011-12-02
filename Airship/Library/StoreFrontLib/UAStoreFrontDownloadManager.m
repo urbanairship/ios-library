@@ -53,7 +53,7 @@
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
     self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:60*60*24 //24 hours
-                                                                 withPath:kContentURLCacheFile];
+                                                                 withPath:kIAPURLCacheFile];
     self.createProductIDSubdir = YES;
     
     [self loadPendingProducts];
@@ -265,10 +265,10 @@
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
     //cache the content url
-    NSString *productURLString = [NSString stringWithContentsOfURL:product.downloadURL encoding:NSUTF8StringEncoding error:NULL];
-    [contentURLCache setContent:[NSURL URLWithString:contentURLString] forProductURL:[NSURL URLWithString:productURLString]];
+    NSURL *contentURL = [NSURL URLWithString:contentURLString];
+    [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
         
-    [self downloadProduct:product withContentURL:[NSURL URLWithString:contentURLString]];
+    [self downloadProduct:product withContentURL:contentURL];
 }
 
 

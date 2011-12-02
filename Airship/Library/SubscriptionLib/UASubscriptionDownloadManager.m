@@ -44,6 +44,7 @@
 @implementation UASubscriptionDownloadManager
 
 @synthesize downloadDirectory;
+@synthesize contentURLCache;
 @synthesize createProductIDSubdir;
 
 - (void)checkDownloading:(UASubscriptionContent *)content {
@@ -59,26 +60,35 @@
     }
 }
 
-- (void)verifyDidSucceed:(UADownloadContent *)downloadContent {
-    UASubscriptionContent *content = downloadContent.userInfo;
+- (void)downloadContent:(UASubscriptionContent *)content withContentURL:(NSURL *)contentURL {
+   
     UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
     [zipDownloadContent setUserInfo:content];
-    
-    id result = [UAUtils parseJSON:downloadContent.responseString];
-    NSString *contentURLString = [result objectForKey:@"download_url"];
-    UALOG(@"Actual download URL: %@", contentURLString);
-    
-    if (!contentURLString) {
+
+    if (!contentURL) {
         UALOG(@"Error: no actual download_url returned from download_url");
         [self downloadDidFail:zipDownloadContent];
         return;
     }
-
-    zipDownloadContent.downloadRequestURL = [NSURL URLWithString:contentURLString];
+    
+    zipDownloadContent.downloadRequestURL = contentURL;
     zipDownloadContent.downloadFileName = [UAUtils UUID];
     zipDownloadContent.progressDelegate = content;
     zipDownloadContent.requestMethod = kRequestMethodGET;
     [downloadManager download:zipDownloadContent];
+}
+
+- (void)verifyDidSucceed:(UADownloadContent *)downloadContent {
+    UASubscriptionContent *content = downloadContent.userInfo;
+    id result = [UAUtils parseJSON:downloadContent.responseString];
+    NSString *contentURLString = [result objectForKey:@"download_url"];
+    UALOG(@"Actual download URL: %@", contentURLString);
+    
+    //cache the content url
+    NSURL *contentURL = [NSURL URLWithString:contentURLString];
+    [contentURLCache setContent:contentURL forProductURL:content.downloadURL];
+
+    [self downloadContent:content withContentURL:contentURL];
 }
 
 #pragma mark -
@@ -153,13 +163,19 @@
 
 - (void)download:(UASubscriptionContent *)content {
     UALOG(@"verifyContent: %@", content.contentName);
-    UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
-    downloadContent.username = [UAUser defaultUser].username;
-    downloadContent.password = [UAUser defaultUser].password;
-    downloadContent.downloadRequestURL = content.downloadURL;
-    downloadContent.requestMethod = kRequestMethodPOST;
-    downloadContent.userInfo = content;
-    [downloadManager download:downloadContent];
+    
+    NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL];
+    if (contentURL) {
+        [self downloadContent:content withContentURL:contentURL];
+    } else {
+        UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
+        downloadContent.username = [UAUser defaultUser].username;
+        downloadContent.password = [UAUser defaultUser].password;
+        downloadContent.downloadRequestURL = content.downloadURL;
+        downloadContent.requestMethod = kRequestMethodPOST;
+        downloadContent.userInfo = content;
+        [downloadManager download:downloadContent];   
+    }
 }
 
 - (id)init {
@@ -169,6 +185,8 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
+    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:60*60*24 //24 hours
+                                                                 withPath:kSubscriptionURLCacheFile];
     self.createProductIDSubdir = YES;
     
     return self;
@@ -177,6 +195,7 @@
 - (void)dealloc {
     RELEASE_SAFELY(downloadManager);
     RELEASE_SAFELY(downloadDirectory);
+    RELEASE_SAFELY(contentURLCache);
     [super dealloc];
 }
 
