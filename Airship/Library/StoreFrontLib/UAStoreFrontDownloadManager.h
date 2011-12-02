@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
+#import "UAContentURLCache.h"
 
 @class UAProduct;
 @class SKPaymentTransaction;
@@ -35,14 +36,17 @@
     NSMutableDictionary *pendingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
+    UAContentURLCache *contentURLCache;
     BOOL createProductIDSubdir;
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
+@property (nonatomic, assign) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
 //load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
+- (void)addPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
 
 - (void)downloadPurchasedProduct:(UAProduct *)product;

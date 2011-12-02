@@ -85,6 +85,8 @@
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		1FE4379A128B589000D38A14 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
 		1FE4379B128B589000D38A14 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
+		497D13F41488282F00FB0A8A /* UAContentURLCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 497D13F21488282F00FB0A8A /* UAContentURLCache.h */; };
+		497D13F51488282F00FB0A8A /* UAContentURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 497D13F31488282F00FB0A8A /* UAContentURLCache.m */; };
 		49BD5499148449DB009FD146 /* UALocalStorageDirectory.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */; };
 		49BD549A148449DB009FD146 /* UALocalStorageDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */; };
 		6331479E122FB0AA008F2D48 /* libSubscription-1.2.8.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.8.a */; };
@@ -363,6 +365,8 @@
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
+		497D13F21488282F00FB0A8A /* UAContentURLCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAContentURLCache.h; sourceTree = "<group>"; };
+		497D13F31488282F00FB0A8A /* UAContentURLCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAContentURLCache.m; sourceTree = "<group>"; };
 		49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocalStorageDirectory.h; sourceTree = "<group>"; };
 		49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocalStorageDirectory.m; sourceTree = "<group>"; };
 		6331464F122F9A7C008F2D48 /* SubscriptionLib.xcodeproj */ = {isa = PBXFileReference; explicitFileType = "wrapper.pb-project"; name = SubscriptionLib.xcodeproj; path = ../SubscriptionLib/SubscriptionLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -866,6 +870,8 @@
 				1F2B10C412DD01B60020843D /* UATagUtils.m */,
 				49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */,
 				49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */,
+				497D13F21488282F00FB0A8A /* UAContentURLCache.h */,
+				497D13F31488282F00FB0A8A /* UAContentURLCache.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -977,6 +983,7 @@
 				7B72D39E147D7827008853AC /* UA_ASIAuthenticationDialog.h in Headers */,
 				7B72D3A0147D7827008853AC /* UA_ASIFormDataRequest.h in Headers */,
 				49BD5499148449DB009FD146 /* UALocalStorageDirectory.h in Headers */,
+				497D13F41488282F00FB0A8A /* UAContentURLCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1294,6 +1301,7 @@
 				7B72D39F147D7827008853AC /* UA_ASIAuthenticationDialog.m in Sources */,
 				7B72D3A1147D7827008853AC /* UA_ASIFormDataRequest.m in Sources */,
 				49BD549A148449DB009FD146 /* UALocalStorageDirectory.m in Sources */,
+				497D13F51488282F00FB0A8A /* UAContentURLCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

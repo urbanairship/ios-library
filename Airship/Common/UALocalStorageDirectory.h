@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-	UALocalStorageTypeCritical = 0,
+    UALocalStorageTypeCritical = 0,
     UALocalStorageTypeCached = 1,
     UALocalStorageTypeTemporary = 2,
     UALocalStorageTypeOffline = 3
