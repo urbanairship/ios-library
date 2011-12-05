@@ -46,8 +46,8 @@
 }
 
 - (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL {
-    NSString *contentURLString = [NSString stringWithContentsOfURL:contentURL encoding:NSUTF8StringEncoding error:NULL];
-    NSString *productURLString = [NSString stringWithContentsOfURL:productURL encoding:NSUTF8StringEncoding error:NULL];
+    NSString *contentURLString = [contentURL absoluteString];
+    NSString *productURLString = [productURL absoluteString];
     [contentDictionary setObject:contentURLString forKey:productURLString];
     [timestampDictionary setObject:[NSNumber numberWithDouble:
                                    [[NSDate date]timeIntervalSince1970]]
@@ -56,7 +56,7 @@
 }
 
 - (NSURL *)contentForProductURL:(NSURL *)productURL {
-    NSString *productURLString = [NSString stringWithContentsOfURL:productURL encoding:NSUTF8StringEncoding error:NULL];
+    NSString *productURLString = [productURL absoluteString];
     NSString *contentURLString = [contentDictionary objectForKey:productURLString];
     
     NSURL *content = [NSURL URLWithString:contentURLString];
