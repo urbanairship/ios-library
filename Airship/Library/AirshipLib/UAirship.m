@@ -436,22 +436,22 @@ BOOL logging = false;
      * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
      */
     
-    UIDevice* device = [UIDevice currentDevice];
+    UIDevice *device = [UIDevice currentDevice];
     
-    NSBundle* bundle = [NSBundle mainBundle];
-    NSDictionary* info = [bundle infoDictionary];
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSDictionary *info = [bundle infoDictionary];
     
-    NSString* appName = [info objectForKey:(NSString*)kCFBundleNameKey];
-    NSString* appVersion = [info objectForKey:(NSString*)kCFBundleVersionKey];
+    NSString *appName = [info objectForKey:(NSString*)kCFBundleNameKey];
+    NSString *appVersion = [info objectForKey:(NSString*)kCFBundleVersionKey];
     
-    NSString* deviceModel = [device model];
-    NSString* osName = [device systemName];
-    NSString* osVersion = [device systemVersion];
+    NSString *deviceModel = [device model];
+    NSString *osName = [device systemName];
+    NSString *osVersion = [device systemVersion];
     
-    NSString* libVersion = [AirshipVersion get];
-    NSString* locale = [[NSLocale currentLocale] localeIdentifier];
+    NSString *libVersion = [AirshipVersion get];
+    NSString *locale = [[NSLocale currentLocale] localeIdentifier];
     
-    NSString* userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
+    NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
                            appName, appVersion, deviceModel, osName, osVersion, libVersion, appId, locale];
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
