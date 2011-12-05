@@ -69,7 +69,7 @@ extern NSString * const UAAnalyticsOptionsLoggingKey;
     
     BOOL analyticsLoggingEnabled;
     
-    NSString* packageVersion;
+    NSString *packageVersion;
 }
 
 @property (retain) NSString *server;

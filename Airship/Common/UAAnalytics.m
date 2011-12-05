@@ -190,14 +190,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     
     [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [session setObject:[AirshipVersion get] forKey:@"lib_version"];
-    
-    /*
-     * This is the Build field in Xcode. If it's not set, use a blank string.
-     */
-    packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-    if (packageVersion == nil) {
-        packageVersion = @"";
-    }
     [session setValue:packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation)
@@ -282,6 +274,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
         wasBackgrounded = NO;
         notificationUserInfo = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] retain];
+        
+        /*
+         * This is the Build field in Xcode. If it's not set, use a blank string.
+         */
+        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        if (packageVersion == nil) {
+            packageVersion = @"";
+        }
         
         [self initSession];
     }
