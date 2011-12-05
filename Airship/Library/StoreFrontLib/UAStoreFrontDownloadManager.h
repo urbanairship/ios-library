@@ -40,7 +40,7 @@
     BOOL createProductIDSubdir;
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
-@property (nonatomic, assign) UAContentURLCache *contentURLCache;
+@property (nonatomic, retain) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
 //load the pending products dictionary from kPendingProductsFile
