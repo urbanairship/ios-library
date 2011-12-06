@@ -266,6 +266,7 @@
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
     //cache the content url
+    NSLog(@"caching content url: %@ for product url: %@", contentURLString, product.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
     [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
         
