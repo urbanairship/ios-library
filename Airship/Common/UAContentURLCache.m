@@ -36,11 +36,13 @@
     NSMutableDictionary *serialized = [NSMutableDictionary dictionary];
     [serialized setObject:contentDictionary forKey:@"content"];
     [serialized setObject:timestampDictionary forKey:@"timestamps"];
-    [serialized writeToFile:nil atomically:YES];
+    if (![serialized writeToFile:path atomically:YES]) {
+        NSLog(@"failed to serialize content url cache");
+    };
 }
 
 - (void)readFromDisk {
-    NSMutableDictionary *serialized = [NSMutableDictionary dictionaryWithContentsOfFile:nil];
+    NSMutableDictionary *serialized = [NSMutableDictionary dictionaryWithContentsOfFile:path];
     [contentDictionary addEntriesFromDictionary:[serialized objectForKey:@"content"]];
     [timestampDictionary addEntriesFromDictionary:[serialized objectForKey:@"timestamps"]];
 }
@@ -69,6 +71,7 @@
             if (now - timestamp < expirationInterval) {
                 return content;
             } else {
+                NSLog(@"cached entry for %@ is expired, removing", productURL);
                 [contentDictionary removeObjectForKey:productURLString];
                 [timestampDictionary removeObjectForKey:productURLString];
             }
