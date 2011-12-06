@@ -302,6 +302,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSString *receipt = [[[NSString alloc] initWithData:transaction.transactionReceipt
                                                encoding:NSUTF8StringEncoding] autorelease];
     
+    if (!product.isForSale) {
+        UALOG(@"Ignoring transaction for deleted product %@", product_id);
+        [unrestoredTransactions removeObject:transaction];
+        [self safelyFinishTransaction:transaction];
+        return;
+    }
+              
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/subscriptions/%@/purchase",
                            [[UAirship shared] server],
                            @"/api/user/",
@@ -353,7 +360,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             // First, check to see if the receipt was verified
             // if not, notify observers and bail if the receipt verification failed
             if (![UASubscriptionInventory isReceiptValid:request.responseString]) {
-                UALOG(@"Recipt validation failed: %@", request.responseString);
+                UALOG(@"Receipt validation failed: %@", request.responseString);
                 
                 //notify observers
                 [[UASubscriptionManager shared] restoreAutorenewableProductFailed:product];

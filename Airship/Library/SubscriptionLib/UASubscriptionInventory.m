@@ -373,6 +373,12 @@
     NSString *product_id = transaction.payment.productIdentifier;
     NSString *receipt = [[[NSString alloc] initWithData:transaction.transactionReceipt
                                                encoding:NSUTF8StringEncoding] autorelease];
+    
+    if (!product.isForSale) {
+        UALOG(@"Ignoring transaction for deleted product %@", product_id);
+        [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+        return;
+    }
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/subscriptions/%@/purchase",
                            [[UAirship shared] server],
