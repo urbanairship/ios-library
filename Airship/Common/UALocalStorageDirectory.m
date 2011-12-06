@@ -19,9 +19,9 @@
 
 + (UALocalStorageDirectory *)uaDirectory {
     NSString *oldPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask, YES)
-                          objectAtIndex:0] stringByAppendingString: @"/ua/"];
+                          objectAtIndex:0] stringByAppendingPathComponent: @"/ua"];
     NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask, YES)
-                          objectAtIndex:0] stringByAppendingString: @"/Caches/ua/"];
+                          objectAtIndex:0] stringByAppendingPathComponent: @"/Caches/ua"];
     NSSet *pathsSet = [NSMutableSet setWithObjects:oldPath, cachesPath, nil];
     
     return [UALocalStorageDirectory localStorageDirectoryWithType:UALocalStorageTypeOffline withSubpath:@"/ua" withOldPaths:pathsSet];
@@ -29,10 +29,10 @@
 
 + (UALocalStorageDirectory *)downloadsDirectory {
     NSString *oldPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) 
-                          objectAtIndex:0] stringByAppendingString: @"/ua/downloads/"];
+                          objectAtIndex:0] stringByAppendingPathComponent: @"/ua/downloads"];
 
     NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) 
-                          objectAtIndex:0] stringByAppendingString: @"/Caches/ua/downloads/"];
+                          objectAtIndex:0] stringByAppendingPathComponent: @"/Caches/ua/downloads"];
     NSSet *pathsSet = [NSMutableSet setWithObjects:oldPath, cachesPath, nil];    
     
     return [UALocalStorageDirectory localStorageDirectoryWithType:UALocalStorageTypeOffline withSubpath:@"/ua/downloads" withOldPaths:pathsSet];
@@ -95,19 +95,41 @@
         [fm createDirectoryAtPath:self.path withIntermediateDirectories:YES attributes:nil error:nil];
         
         [self setFileAttributes];
+    }
         
-        //migrate old path to new if present and non-equal
-        for (NSString *p in oldPaths.allObjects) {
-            if ([fm fileExistsAtPath:p] && ![self.path isEqualToString:p]) {
-                [self migratePath:p];
-            }
+    //migrate old path to new if present and non-equal
+    for (NSString *p in oldPaths.allObjects) {
+        if ([fm fileExistsAtPath:p] && ![self.path isEqualToString:p]) {
+            [self migratePath:p];
         }
     }
 }
 
 - (void)migratePath:(NSString *)oldPath {
+    NSString *_path = self.path;
     NSFileManager *fm = [NSFileManager defaultManager];
-    [fm moveItemAtPath:oldPath toPath:self.path error:NULL];
+    if ([fm fileExistsAtPath:oldPath]) {
+        //move subpaths
+        for (NSString *sub in [fm subpathsAtPath:oldPath]) {
+            NSError *e = nil;
+            NSString *item = [oldPath stringByAppendingPathComponent:sub];
+            NSString *destination = [_path stringByAppendingPathComponent:sub];
+            if (![fm fileExistsAtPath:destination]) {
+                NSLog(@"migrating %@ to %@", item, destination);
+                [fm moveItemAtPath:item toPath:destination error:&e];
+            }
+            if (e) {
+                NSLog(@"%@", [e description]);
+            }
+        }
+        //clean up whatever is left
+        NSError *e = nil;
+        NSLog(@"removing %@", oldPath);
+        [fm removeItemAtPath:oldPath error:&e];
+        if (e) {
+            NSLog(@"%@", [e description]);
+        }
+    }
 }
 
 - (void)setFileAttributes {
