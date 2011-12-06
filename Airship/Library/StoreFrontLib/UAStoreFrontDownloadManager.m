@@ -135,6 +135,7 @@
     NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
     
     if (contentURL) {
+        NSLog(@"downloading from cached contentURL: %@", contentURL);
         [self downloadProduct:product withContentURL:contentURL];
     } else {
         UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];

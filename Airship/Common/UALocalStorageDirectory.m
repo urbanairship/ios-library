@@ -105,6 +105,8 @@
     }
 }
 
+//moves subpaths of oldPath to self.path and deletes oldPath when done.
+//this really should not be so complicated but whatever
 - (void)migratePath:(NSString *)oldPath {
     NSString *_path = self.path;
     NSFileManager *fm = [NSFileManager defaultManager];
