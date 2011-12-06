@@ -613,7 +613,7 @@ typedef void (^UA_ASIDataBlock)(NSData *data);
 
 #pragma mark HEAD request
 
-// Used by UA_ASINetworkQueue to create a HEAD request appropriate for this request with the same headers (though you can use it yourself)
+// Used by ASINetworkQueue to create a HEAD request appropriate for this request with the same headers (though you can use it yourself)
 - (UA_ASIHTTPRequest *)HEADRequest;
 
 #pragma mark upload/download progress
@@ -823,10 +823,10 @@ typedef void (^UA_ASIDataBlock)(NSData *data);
 // Will return YES is bandwidth throttling is currently in use
 + (BOOL)isBandwidthThrottled;
 
-// Used internally to record bandwidth use, and by UA_ASIInputStreams when uploading. It's probably best if you don't mess with this.
+// Used internally to record bandwidth use, and by ASIInputStreams when uploading. It's probably best if you don't mess with this.
 + (void)incrementBandwidthUsedInLastSecond:(unsigned long)bytes;
 
-// On iPhone, UA_ASIHTTPRequest can automatically turn throttling on and off as the connection type changes between WWAN and WiFi
+// On iPhone, ASIHTTPRequest can automatically turn throttling on and off as the connection type changes between WWAN and WiFi
 
 #if TARGET_OS_IPHONE
 // Set to YES to automatically turn on throttling when WWAN is connected, and automatically turn it off when it isn't
@@ -872,6 +872,11 @@ typedef void (^UA_ASIDataBlock)(NSData *data);
 // Used for generating Authorization header when using basic authentication when shouldPresentCredentialsBeforeChallenge is true
 // And also by UA_ASIS3Request
 + (NSString *)base64forData:(NSData *)theData;
+
+// Returns the expiration date for the request.
+// Calculated from the Expires response header property, unless maxAge is non-zero or
+// there exists a non-zero max-age property in the Cache-Control response header.
++ (NSDate *)expiryDateForRequest:(UA_ASIHTTPRequest *)request maxAge:(NSTimeInterval)maxAge;
 
 // Returns a date from a string in RFC1123 format
 + (NSDate *)dateFromRFC1123String:(NSString *)string;
