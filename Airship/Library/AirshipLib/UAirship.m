@@ -52,6 +52,7 @@ BOOL logging = false;
 // Update device token without remote registration
 // Private
 - (void)updateDeviceToken:(NSData *)token;
+- (void)configureUserAgent;
 @end
 
 @implementation UAirship
@@ -232,6 +233,8 @@ BOOL logging = false;
         return;
         
     }
+    
+    [_sharedAirship configureUserAgent];
     
     _sharedAirship.ready = true;
     _sharedAirship.analytics = [[[UAAnalytics alloc] initWithOptions:analyticsOptions] autorelease];
@@ -424,6 +427,35 @@ BOOL logging = false;
                                        finish:@selector(unRegisterDeviceTokenSucceeded:)
                                          fail:@selector(unRegisterDeviceTokenFailed:)];
     [request startAsynchronous];
+}
+
+- (void)configureUserAgent
+{
+    /*
+     * [LIB-101] User agent string should be:
+     * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
+     */
+    
+    UIDevice *device = [UIDevice currentDevice];
+    
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSDictionary *info = [bundle infoDictionary];
+    
+    NSString *appName = [info objectForKey:(NSString*)kCFBundleNameKey];
+    NSString *appVersion = [info objectForKey:(NSString*)kCFBundleVersionKey];
+    
+    NSString *deviceModel = [device model];
+    NSString *osName = [device systemName];
+    NSString *osVersion = [device systemVersion];
+    
+    NSString *libVersion = [AirshipVersion get];
+    NSString *locale = [[NSLocale currentLocale] localeIdentifier];
+    
+    NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
+                           appName, appVersion, deviceModel, osName, osVersion, libVersion, appId, locale];
+    
+    UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
+    [UA_ASIHTTPRequest setDefaultUserAgentString:userAgent];
 }
 
 @end

@@ -1,6 +1,6 @@
 //
-//  UA_ASIInputStream.m
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASIInputStream.m
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 10/08/2009.
 //  Copyright 2009 All-Seeing Interactive. All rights reserved.
@@ -58,9 +58,11 @@ static NSLock *readLock = nil;
 		}
 		[request performThrottling];
 	}
-	[UA_ASIHTTPRequest incrementBandwidthUsedInLastSecond:toRead];
 	[readLock unlock];
-	return [stream read:buffer maxLength:toRead];
+	NSInteger rv = [stream read:buffer maxLength:toRead];
+	if (rv > 0)
+		[UA_ASIHTTPRequest incrementBandwidthUsedInLastSecond:rv];
+	return rv;
 }
 
 /*

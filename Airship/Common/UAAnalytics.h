@@ -68,6 +68,8 @@ extern NSString * const UAAnalyticsOptionsLoggingKey;
     NSTimer *reSendTimer;
     
     BOOL analyticsLoggingEnabled;
+    
+    NSString *packageVersion;
 }
 
 @property (retain) NSString *server;

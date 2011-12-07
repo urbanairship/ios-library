@@ -93,6 +93,10 @@
 		633FD57C123496FE002E0F85 /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1A4A122DB77000522B4E /* UAirship.h */; };
 		633FD57D123496FE002E0F85 /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = D9FD1A4B122DB77000522B4E /* UAirship.m */; };
 		63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
+		7B72D39E147D7827008853AC /* UA_ASIAuthenticationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */; };
+		7B72D39F147D7827008853AC /* UA_ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */; };
+		7B72D3A0147D7827008853AC /* UA_ASIFormDataRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */; };
+		7B72D3A1147D7827008853AC /* UA_ASIFormDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B72D39D147D7827008853AC /* UA_ASIFormDataRequest.m */; };
 		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
 		7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679071429288D00B877DB /* SenTestingKit.framework */; };
 		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -360,6 +364,10 @@
 		6331464F122F9A7C008F2D48 /* SubscriptionLib.xcodeproj */ = {isa = PBXFileReference; explicitFileType = "wrapper.pb-project"; name = SubscriptionLib.xcodeproj; path = ../SubscriptionLib/SubscriptionLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIAuthenticationDialog.h; sourceTree = "<group>"; };
+		7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
+		7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIFormDataRequest.h; sourceTree = "<group>"; };
+		7B72D39D147D7827008853AC /* UA_ASIFormDataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIFormDataRequest.m; sourceTree = "<group>"; };
 		7B909D421429363300D0AB36 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7BB679061429288D00B877DB /* AirshipLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BB679071429288D00B877DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -727,6 +735,10 @@
 		B6EFE21D124F3FBB00A46CB1 /* UA_asi-http-request */ = {
 			isa = PBXGroup;
 			children = (
+				7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */,
+				7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */,
+				7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */,
+				7B72D39D147D7827008853AC /* UA_ASIFormDataRequest.m */,
 				B6EFE220124F3FBB00A46CB1 /* UA_ASICacheDelegate.h */,
 				E9F73F8A12ADE86D003CF572 /* UA_ASIDataCompressor.h */,
 				E9F73F8B12ADE86D003CF572 /* UA_ASIDataCompressor.m */,
@@ -956,6 +968,8 @@
 				D5BED7C612FC787900057449 /* UAHTTPConnection.h in Headers */,
 				D5BED7C812FC787900057449 /* UAEvent.h in Headers */,
 				D5BED7CA12FC787900057449 /* UAAnalyticsDBManager.h in Headers */,
+				7B72D39E147D7827008853AC /* UA_ASIAuthenticationDialog.h in Headers */,
+				7B72D3A0147D7827008853AC /* UA_ASIFormDataRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1270,6 +1284,8 @@
 				D5BED7C512FC787900057449 /* UAHTTPConnection.m in Sources */,
 				D5BED7C712FC787900057449 /* UAEvent.m in Sources */,
 				D5BED7C912FC787900057449 /* UAAnalyticsDBManager.m in Sources */,
+				7B72D39F147D7827008853AC /* UA_ASIAuthenticationDialog.m in Sources */,
+				7B72D3A1147D7827008853AC /* UA_ASIFormDataRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

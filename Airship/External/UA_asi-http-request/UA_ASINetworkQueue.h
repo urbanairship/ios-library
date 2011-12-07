@@ -1,6 +1,6 @@
 //
-//  UA_ASINetworkQueue.h
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASINetworkQueue.h
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 07/11/2008.
 //  Copyright 2008-2009 All-Seeing Interactive. All rights reserved.
@@ -81,7 +81,7 @@
 // Used internally to manage HEAD requests when showAccurateProgress is YES, do not use!
 - (void)addHEADOperation:(NSOperation *)operation;
 
-// All ASINetworkQueues are paused when created so that total size can be calculated before the queue starts
+// All UA_ASINetworkQueues are paused when created so that total size can be calculated before the queue starts
 // This method will start the queue
 - (void)go;
 
