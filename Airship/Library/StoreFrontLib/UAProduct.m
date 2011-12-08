@@ -182,6 +182,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         } else {
             if ([[UAStoreFront shared].downloadManager hasPendingProduct:self]) {
                 self.status = UAProductStatusPurchased;
+            } else if ([[UAStoreFront shared].downloadManager hasDecompressingProduct:self]) {
+                self.status = UAProductStatusDecompressing;
             } else {
                 self.status = UAProductStatusInstalled;
             }

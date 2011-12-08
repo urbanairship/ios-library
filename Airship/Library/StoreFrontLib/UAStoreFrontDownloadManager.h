@@ -33,6 +33,7 @@
 @interface UAStoreFrontDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
     NSMutableDictionary *pendingProducts;
+    NSMutableDictionary *decompressingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
     BOOL createProductIDSubdir;
@@ -44,6 +45,11 @@
 - (void)loadPendingProducts;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
+
+//load the decompressing products dictionary from kDecompressingProductsFile
+- (void)loadDecompressingProducts;
+- (BOOL)hasDecompressingProduct:(UAProduct *)product;
+- (void)resumeDecompressingProducts;
 
 - (void)downloadPurchasedProduct:(UAProduct *)product;
 - (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction;

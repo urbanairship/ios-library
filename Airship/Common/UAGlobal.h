@@ -51,6 +51,9 @@ extern BOOL logging; // Default is false
 #define kPendingProductsFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/pendingProducts.history"]
 
+#define kDecompressingProductsFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
+NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/decompressingProducts.history"]
+
 #define kDownloadHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/download.history"]
 
