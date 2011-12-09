@@ -74,7 +74,7 @@
     
     
     /*
-     * Some example cases where user notifcation may be warranted
+     * Some example cases where user notification may be warranted
      *
      * This code will alert users who try to enable notifications
      * from the settings screen, but cannot do so because

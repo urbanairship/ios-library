@@ -101,7 +101,7 @@
     [downloadManager download:downloadContent];
 }
 
-- (UAProduct *)getProductByTransction:(SKPaymentTransaction*)transaction {
+- (UAProduct *)getProductByTransaction:(SKPaymentTransaction*)transaction {
     NSString *productIdentifier;
     UAProduct *product;
     
@@ -123,10 +123,10 @@
 // called from sf observer's completeTransaction/restoreTransaction - verifies the receipt with UA
 - (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction {
     
-    UAProduct *product = [self getProductByTransction:transaction];
+    UAProduct *product = [self getProductByTransaction:transaction];
     
     if (!product) {
-        UALOG(@"ERROR: The transction is invalid.");
+        UALOG(@"ERROR: The transaction is invalid.");
         return;
     }
     
