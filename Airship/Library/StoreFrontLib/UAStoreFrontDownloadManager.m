@@ -69,9 +69,11 @@
 #pragma mark Download
 
 - (void)verifyProduct:(UAProduct *)product {
+    
     // Refresh cell, waiting for download
-    product.status = UAProductStatusWaiting;
+    product.status = UAProductStatusVerifyingReceipt;
     UALOG(@"Verify receipt for product: %@", product.productIdentifier);
+    
     NSString *receipt = nil;
     if(product.isFree != YES) {
         receipt = product.receipt;
@@ -99,7 +101,7 @@
     [downloadManager download:downloadContent];
 }
 
-- (UAProduct *)getProductByTransction:(SKPaymentTransaction*)transaction {
+- (UAProduct *)getProductByTransaction:(SKPaymentTransaction*)transaction {
     NSString *productIdentifier;
     UAProduct *product;
     
@@ -118,30 +120,33 @@
     return product;
 }
 
-- (void)verifyTransaction:(SKPaymentTransaction*)transaction {
-    UAProduct *product = [self getProductByTransction:transaction];
-    if (product == nil) {
-        UALOG(@"ERROR: The transction is invalid.");
+// called from sf observer's completeTransaction/restoreTransaction - verifies the receipt with UA
+- (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction {
+    
+    UAProduct *product = [self getProductByTransaction:transaction];
+    
+    if (!product) {
+        UALOG(@"ERROR: The transaction is invalid.");
         return;
     }
+    
     [self verifyProduct:product];
 }
 
-- (void)downloadIfValid:(id)parameter {
-    UAProduct *product = nil;
-    
-    if ([parameter isKindOfClass:[UAProduct class]]) {
-        product = (UAProduct*)parameter;
-        // Check if already downloading the product
-        if (product.status == UAProductStatusDownloading ||
-            product.status == UAProductStatusWaiting) {
-            UALOG(@"The same item is being downloaded, ignore this request");
-            return;
-        }
-        [self verifyProduct:product];
-    } else if([parameter isKindOfClass: [SKPaymentTransaction class]]) {
-        [self verifyTransaction:(SKPaymentTransaction*)parameter];
+//download a pending product - it's already been purchased, so we'll proceed to verifying the receipt
+- (void)downloadPurchasedProduct:(UAProduct *)product {
+
+    // Check if we are already downloading the product
+    if (product.status == UAProductStatusDownloading ||
+        product.status == UAProductStatusVerifyingReceipt ||
+        product.status == UAProductStatusDecompressing) {
+        
+        UALOG(@"The same item is being downloaded, ignore this request");
+        
+        return;
     }
+    
+    [self verifyProduct:product];
 }
 
 #pragma mark -
@@ -180,7 +185,7 @@
     for (NSString *identifier in [pendingProducts allKeys]) {
         UAProduct *pendingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
         pendingProduct.receipt = [pendingProducts objectForKey:identifier];
-        [self downloadIfValid:pendingProduct];
+        [self downloadPurchasedProduct:pendingProduct];
     }
     
     // Reconnect downloading request with newly created product
@@ -257,7 +262,7 @@
     // if put the error alert codes in '...Finished' method, will miss these
     // alerts when timeout error raised
     id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
-    if (product.status == UAProductStatusWaiting) {
+    if (product.status == UAProductStatusVerifyingReceipt) {
         if ([alertHandler respondsToSelector:@selector(showReceiptVerifyFailedAlert)]) {
             [alertHandler showReceiptVerifyFailedAlert];
         }

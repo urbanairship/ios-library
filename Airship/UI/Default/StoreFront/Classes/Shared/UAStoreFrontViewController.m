@@ -286,7 +286,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     self.navigationItem.leftBarButtonItem.enabled = YES;
     for (UAProduct *product in [UAStoreFront productsForType:ProductTypeAll]) {
         if (product.status == UAProductStatusDownloading
-            || product.status == UAProductStatusWaiting) {
+            || product.status == UAProductStatusPurchasing
+            || product.status == UAProductStatusDecompressing
+            || product.status == UAProductStatusVerifyingReceipt) {
             self.navigationItem.leftBarButtonItem.enabled = NO;
             break;
         }

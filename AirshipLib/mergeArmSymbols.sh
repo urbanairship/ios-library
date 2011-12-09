@@ -32,8 +32,10 @@ SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 if [ ${PLATFORM_NAME} = "iphonesimulator" ]
 then
 OTHER_SDK_TO_BUILD=iphoneos${SDK_VERSION}
+ARCH_TO_BUILD="armv6 armv7"
 else
 OTHER_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
+ARCH_TO_BUILD="i386"
 fi
 
 echo "XCode has selected SDK: ${PLATFORM_NAME} with version: ${SDK_VERSION} (although back-targetting: ${IPHONEOS_DEPLOYMENT_TARGET})"
@@ -55,8 +57,8 @@ else
 export ALREADYINVOKED="true"
 
 echo "RECURSION: I am the root... recursing all missing build targets..."
-echo "RECURSION: ...about to invoke: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${OTHER_SDK_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
-xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" > "${BUILD_ROOT}.build_output"
+echo "RECURSION: ...about to invoke: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${OTHER_SDK_TO_BUILD}\" -arch \"${ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
+xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${OTHER_SDK_TO_BUILD}" -arch "${ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" BUILD_ROOT="${BUILD_ROOT}" > "${BUILD_ROOT}.build_output"
 
 ACTION="build"
 

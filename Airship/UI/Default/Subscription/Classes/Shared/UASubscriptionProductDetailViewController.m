@@ -136,12 +136,20 @@
     buyButton.enabled = !product.isPurchasing;
 
     // table header    
-    if (product.autorenewable) {
-        NSString *arDurationString = 
-            [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
-        productTitle.text = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
-    } else {
-        productTitle.text = product.title;
+    NSString *arDurationString;
+    
+    switch (product.productType) {
+        case UASubscriptionProductTypeAutorenewable:
+            arDurationString = [UASubscriptionUIUtil localizedAutorenewableDuration:product.autorenewableDuration];
+            productTitle.text = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+            break;
+        case UASubscriptionProductTypeFree:
+            arDurationString = UA_SS_TR(@"UA_Free_Subscription");
+            productTitle.text = [product.title stringByAppendingFormat:@" (%@)", arDurationString];
+            break;
+        default:
+            productTitle.text = product.title;
+            break;
     }
     
     

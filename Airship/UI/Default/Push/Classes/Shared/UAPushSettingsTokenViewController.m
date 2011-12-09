@@ -29,11 +29,9 @@
 @implementation UAPushSettingsTokenViewController
 
 @synthesize emailButton;
-@synthesize copyButton;
 @synthesize tokenLabel;
 
 - (void)dealloc {
-    RELEASE_SAFELY(copyButton);
     RELEASE_SAFELY(emailButton);
     RELEASE_SAFELY(tokenLabel);
     RELEASE_SAFELY(text);
@@ -57,7 +55,6 @@
 
 - (void)viewDidUnload {
     [super viewDidUnload];
-    self.copyButton = nil;
     self.emailButton = nil;
     self.tokenLabel = nil;
 }

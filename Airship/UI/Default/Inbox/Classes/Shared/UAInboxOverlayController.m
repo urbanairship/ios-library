@@ -109,7 +109,7 @@
         
         loadingIndicator = [[UABeveledLoadingIndicator indicator] retain];
                 
-        //required to receive orientation updates from NSNotifcationCenter
+        //required to receive orientation updates from NSNotificationCenter
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         
         [[NSNotificationCenter defaultCenter] addObserver:self 

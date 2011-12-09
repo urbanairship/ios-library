@@ -28,6 +28,7 @@
 #import "UADownloadManager.h"
 
 @class UAProduct;
+@class SKPaymentTransaction;
 
 @interface UAStoreFrontDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
@@ -39,10 +40,13 @@
 @property (nonatomic, copy) NSString *downloadDirectory;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
+//load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;
-- (void)downloadIfValid:(id)parameter;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
+
+- (void)downloadPurchasedProduct:(UAProduct *)product;
+- (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction;
 
 - (void)downloadDidFail:(UADownloadContent *)downloadContent;
 @end

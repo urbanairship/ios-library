@@ -157,15 +157,16 @@ enum {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
-        // Delete the row from the data source.
         NSString *tagToDelete = [[UAPush shared].tags objectAtIndex:indexPath.row];
+        
+        // Commit to server
+        [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
+
+        // Delete the row from the data source.
         [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
         
         // Delete the row from the view
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        
-        // Commit to server
-        [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
         
     }
 }
