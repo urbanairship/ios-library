@@ -182,7 +182,7 @@
 - (UAZipDownloadContent *)zipDownloadContentForSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
     UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
     zipDownloadContent.userInfo = subscriptionContent;
-    zipDownloadContent.downloadFileName = [UAUtils UUID];
+    zipDownloadContent.downloadFileName = subscriptionContent.contentKey;
     zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
                                        [NSString stringWithFormat: @"%@.zip", subscriptionContent.subscriptionKey]];
     zipDownloadContent.progressDelegate = subscriptionContent;
