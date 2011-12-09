@@ -25,6 +25,7 @@
 
 #import "UAStoreFrontDownloadManager.h"
 
+#import "UAContentURLCache.h"
 #import "UAStoreFront.h"
 #import "UAStoreFrontDelegate.h"
 #import "UAirship.h"
@@ -52,7 +53,7 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
-    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:60*60*24 //24 hours
+    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:kDefaultUrlCacheExpirationInterval //24 hours
                                                                  withPath:kIAPURLCacheFile];
     self.createProductIDSubdir = YES;
     
@@ -135,7 +136,7 @@
     NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
     
     if (contentURL) {
-        NSLog(@"downloading from cached contentURL: %@", contentURL);
+        UALOG(@"downloading from cached contentURL: %@", contentURL);
         [self downloadProduct:product withContentURL:contentURL];
     } else {
         UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
@@ -266,7 +267,7 @@
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
     //cache the content url
-    NSLog(@"caching content url: %@ for product url: %@", contentURLString, product.downloadURL);
+    UALOG(@"caching content url: %@ for product url: %@", contentURLString, product.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
     [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
         

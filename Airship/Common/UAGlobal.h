@@ -24,7 +24,6 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "UALocalStorageDirectory.h"
 
 // ALog always displays output regardless of the UADEBUG setting
 //#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
@@ -54,21 +53,6 @@ NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
 
 #define kUAOldDownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/"]
-
-//managed paths
-#define kUADirectory [UALocalStorageDirectory uaDirectory].path
-
-#define kUADownloadDirectory [UALocalStorageDirectory downloadsDirectory].path
-
-#define kPendingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/pendingProducts.history"]
-
-#define kDownloadHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/download.history"]
-
-#define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/receipt.history"]
-
-#define kIAPURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/IAPURLCache.plist"]
-
-#define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/subsURLCache.plist"]
 
 // color
 #define RGBA(r,g,b,a) [UIColor colorWithRed: r/255.0f green: g/255.0f \

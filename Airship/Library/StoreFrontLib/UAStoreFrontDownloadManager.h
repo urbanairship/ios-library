@@ -26,8 +26,16 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
-#import "UAContentURLCache.h"
+#import "UALocalStorageDirectory.h"
 
+#define kPendingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/pendingProducts.history"]
+
+#define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/receipt.history"]
+
+#define kIAPURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/IAPURLCache.plist"]
+
+
+@class UAContentURLCache;
 @class UAProduct;
 @class SKPaymentTransaction;
 

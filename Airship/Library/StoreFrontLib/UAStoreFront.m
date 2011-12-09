@@ -32,8 +32,6 @@
 #import "UAInventory.h"
 #import "UAStoreFrontDownloadManager.h"
 
-#import <sys/xattr.h>
-
 
 UA_VERSION_IMPLEMENTATION(StoreFrontVersion, UA_VERSION)
 

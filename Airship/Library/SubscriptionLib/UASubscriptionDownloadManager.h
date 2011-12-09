@@ -26,8 +26,11 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
-#import "UAContentURLCache.h"
+#import "UALocalStorageDirectory.h"
 
+#define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/subsURLCache.plist"]
+
+@class UAContentURLCache;
 @class UASubscriptionContent;
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
