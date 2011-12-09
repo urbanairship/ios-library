@@ -38,13 +38,49 @@
 
 //private methods
 @interface UASubscriptionDownloadManager()
+
+- (void)addPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)removePendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)addDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)removeDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+
 - (void)downloadDidFail:(UADownloadContent *)downloadContent;
+
+- (UAZipDownloadContent *)zipDownloadContentForSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
 @end
 
 @implementation UASubscriptionDownloadManager
 
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
+
+- (id)init {
+    if (!(self = [super init]))
+        return nil;
+    
+    [[UASubscriptionManager shared] addObserver:self];
+    
+    downloadManager = [[UADownloadManager alloc] init];
+    downloadManager.delegate = self;
+    self.downloadDirectory = kUADownloadDirectory;
+    self.createProductIDSubdir = YES;
+    
+    [self loadPendingSubscriptionContent];
+    [self loadDecompressingSubscriptionContent];
+    
+    return self;
+}
+
+- (void)dealloc {
+    [[UASubscriptionManager shared] removeObserver:self];
+    
+    RELEASE_SAFELY(downloadManager);
+    RELEASE_SAFELY(downloadDirectory);
+    RELEASE_SAFELY(pendingSubscriptionContent);
+    RELEASE_SAFELY(decompressingSubscriptionContent);
+    
+    [super dealloc];
+}
 
 - (void)checkDownloading:(UASubscriptionContent *)content {
     for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
@@ -61,7 +97,10 @@
 
 - (void)verifyDidSucceed:(UADownloadContent *)downloadContent {
     UASubscriptionContent *content = downloadContent.userInfo;
-    UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
+    
+    [self addPendingSubscriptionContent:content];
+    
+    UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
     [zipDownloadContent setUserInfo:content];
     
     id result = [UAUtils parseJSON:downloadContent.responseString];
@@ -75,10 +114,131 @@
     }
 
     zipDownloadContent.downloadRequestURL = [NSURL URLWithString:contentURLString];
-    zipDownloadContent.downloadFileName = [UAUtils UUID];
-    zipDownloadContent.progressDelegate = content;
     zipDownloadContent.requestMethod = kRequestMethodGET;
     [downloadManager download:zipDownloadContent];
+}
+
+- (NSMutableArray *)loadSubscriptionContentFromFilePath:(NSString *)filePath {
+    return [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+}
+
+- (BOOL)saveSubscriptionContent:(NSMutableArray *)productDictionary toFilePath:(NSString *)filePath {
+    return [productDictionary writeToFile:filePath atomically:YES];
+}
+
+
+#pragma mark -
+#pragma mark Pending Transactions Management
+
+- (void)loadPendingSubscriptionContent {
+    pendingSubscriptionContent = [[self loadSubscriptionContentFromFilePath:kPendingSubscriptionContentFile] retain];
+    if (pendingSubscriptionContent == nil) {
+        pendingSubscriptionContent = [[NSMutableArray alloc] init];
+    }
+}
+
+- (void)savePendingSubscriptionContent {
+    if (![self saveSubscriptionContent:pendingSubscriptionContent toFilePath:kPendingSubscriptionContentFile]) {
+        UALOG(@"Failed to save pending SubscriptionContent to file path: %@", kPendingSubscriptionContentFile);
+    }
+}
+
+- (BOOL)hasPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    return [pendingSubscriptionContent containsObject:subscriptionContent.subscriptionKey];
+}
+
+- (void)addPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    [pendingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
+    [self savePendingSubscriptionContent];
+}
+
+- (void)removePendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    [pendingSubscriptionContent removeObject:subscriptionContent.subscriptionKey];
+    [self savePendingSubscriptionContent];
+}
+
+- (void)resumePendingSubscriptionContent {
+    UALOG(@"Resume pending SubscriptionContent in purchasing queue %@", pendingSubscriptionContent);
+    for (NSString *identifier in pendingSubscriptionContent) {
+        UASubscriptionContent *subscriptionContent = [[UASubscriptionManager shared].inventory contentForKey:identifier];
+        [self download:subscriptionContent];
+    }
+    
+    // Reconnect downloading request with newly created subscription content
+    for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
+        
+        UASubscriptionContent *oldSubscriptionContent = [downloadContent userInfo];
+        UASubscriptionContent *newSubscriptionContent = [[UASubscriptionManager shared].inventory contentForKey:oldSubscriptionContent.contentKey];
+        
+        downloadContent.userInfo = newSubscriptionContent;
+        downloadContent.progressDelegate = newSubscriptionContent;
+        [downloadManager updateProgressDelegate:downloadContent];
+    }
+}
+
+#pragma mark -
+#pragma mark Decompressing SubscriptionContent Management
+
+- (UAZipDownloadContent *)zipDownloadContentForSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
+    zipDownloadContent.userInfo = subscriptionContent;
+    zipDownloadContent.downloadFileName = [UAUtils UUID];
+    zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
+                                       [NSString stringWithFormat: @"%@.zip", subscriptionContent.subscriptionKey]];
+    zipDownloadContent.progressDelegate = subscriptionContent;
+    
+    return zipDownloadContent;
+}
+
+- (void)decompressZipDownloadContent:(UAZipDownloadContent *)zipDownloadContent {
+    zipDownloadContent.decompressDelegate = self;
+    
+    if(self.createProductIDSubdir) {
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
+    } else {
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+        
+    }
+    
+    UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
+    
+    [zipDownloadContent decompress];
+}
+
+- (void)loadDecompressingSubscriptionContent {
+    decompressingSubscriptionContent = [[self loadSubscriptionContentFromFilePath:kDecompressingSubscriptionContentFile] retain];
+    if (decompressingSubscriptionContent == nil) {
+        decompressingSubscriptionContent = [[NSMutableArray alloc] init];
+    }
+}
+
+- (void)saveDecompressingSubscriptionContent {
+    if (![self saveSubscriptionContent:decompressingSubscriptionContent toFilePath:kDecompressingSubscriptionContentFile]) {
+        UALOG(@"Failed to save decompresing products to file path: %@", kDecompressingSubscriptionContentFile);
+    }
+}
+
+- (BOOL)hasDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    return [decompressingSubscriptionContent containsObject:subscriptionContent.subscriptionKey];
+}
+
+- (void)addDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    [decompressingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
+    [self saveDecompressingSubscriptionContent];
+}
+
+- (void)removeDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
+    [decompressingSubscriptionContent removeObject:subscriptionContent.subscriptionKey];
+    [self saveDecompressingSubscriptionContent];
+}
+
+- (void)resumeDecompressingSubscriptionContent {
+    for (NSString *identifier in decompressingSubscriptionContent) {
+        UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];        
+        UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
+        [self decompressZipDownloadContent:zipDownloadContent];
+    }
 }
 
 #pragma mark -
@@ -121,8 +281,11 @@
                                                           [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
         }
         
+        [self addDecompressingSubscriptionContent:subscriptionContent];
+        [self removePendingSubscriptionContent:subscriptionContent];
         
         [zipDownloadContent decompress];
+        
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:downloadContent];
     }
@@ -137,6 +300,7 @@
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
+    [self removeDecompressingSubscriptionContent:content];
     UALOG(@"Download Content successful: %@, and decompressed to %@", 
           content.contentName, downloadContent.decompressedContentPath);
 
@@ -162,22 +326,13 @@
     [downloadManager download:downloadContent];
 }
 
-- (id)init {
-    if (!(self = [super init]))
-        return nil;
-    
-    downloadManager = [[UADownloadManager alloc] init];
-    downloadManager.delegate = self;
-    self.downloadDirectory = kUADownloadDirectory;
-    self.createProductIDSubdir = YES;
-    
-    return self;
+#pragma mark -
+#pragma mark SubscriptionObserver methods
+
+- (void)userSubscriptionsUpdated:(NSArray *)userSubscriptions {
+    [self resumePendingSubscriptionContent];
+    [self resumeDecompressingSubscriptionContent];
 }
 
-- (void)dealloc {
-    RELEASE_SAFELY(downloadManager);
-    RELEASE_SAFELY(downloadDirectory);
-    [super dealloc];
-}
 
 @end

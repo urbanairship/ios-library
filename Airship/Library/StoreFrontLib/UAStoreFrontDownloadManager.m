@@ -42,7 +42,7 @@
 @synthesize createProductIDSubdir;
 
 #pragma mark -
-#pragma mark Lefecycle methods
+#pragma mark Lifecycle methods
 
 - (id)init {
     if ((self = [super init])) {

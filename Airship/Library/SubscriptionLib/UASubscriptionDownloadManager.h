@@ -31,6 +31,8 @@
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
+    NSMutableArray *pendingSubscriptionContent;
+    NSMutableArray *decompressingSubscriptionContent;
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
     BOOL createProductIDSubdir;
@@ -38,6 +40,16 @@
 
 @property (nonatomic, retain) NSString *downloadDirectory;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
+
+//load the pending subscriptions dictionary from kPendingSubscriptionsFile
+- (void)loadPendingSubscriptionContent;
+- (BOOL)hasPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)resumePendingSubscriptionContent;
+
+//load the decompressing subscriptions dictionary from kDecompressingSubscriptionsFile
+- (void)loadDecompressingSubscriptionContent;
+- (BOOL)hasDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)resumeDecompressingSubscriptionContent;
 
 - (void)download:(UASubscriptionContent *)content;
 

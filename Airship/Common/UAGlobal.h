@@ -54,6 +54,12 @@ NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/pendingPr
 #define kDecompressingProductsFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/decompressingProducts.history"]
 
+#define kPendingSubscriptionContentFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
+NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/pendingSubscriptions.history"]
+
+#define kDecompressingSubscriptionContentFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
+NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/decompressingSubscriptions.history"]
+
 #define kDownloadHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/download.history"]
 
