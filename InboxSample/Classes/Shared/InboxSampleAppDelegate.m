@@ -29,7 +29,7 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxNavUI.h"
 #import "UAInboxUI.h"
-
+#import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"

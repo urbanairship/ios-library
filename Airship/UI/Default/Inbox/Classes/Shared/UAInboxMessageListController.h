@@ -44,10 +44,11 @@
     IBOutlet UITabBar *tabbar;
     IBOutlet UITabBarItem *tabbarItem;
     UIView *badgeView;
-
+    
     NSMutableSet *selectedIndexPathsForEditing;
+    NSMutableSet *setOfUnreadMessagesInSelection; 
     UABarButtonSegmentedControl *deleteItem;
-    UIBarButtonItem *moveItem;
+    UIBarButtonItem *markAsRead;
     UIBarButtonItem *editItem;
     UIBarButtonItem *cancelItem;
 
