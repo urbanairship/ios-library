@@ -34,6 +34,7 @@
 #import "UAContentInventory.h"
 #import "UASubscriptionManager.h"
 #import "UASubscriptionInventory.h"
+#import "UAContentURLCache.h"
 #import "UADownloadContent.h"
 
 //private methods
@@ -185,7 +186,7 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
-    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:60*60*24 //24 hours
+    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:kDefaultUrlCacheExpirationInterval //24 hours
                                                                  withPath:kSubscriptionURLCacheFile];
     self.createProductIDSubdir = YES;
     
