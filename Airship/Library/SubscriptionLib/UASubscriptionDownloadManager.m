@@ -55,6 +55,7 @@
 @synthesize createProductIDSubdir;
 @synthesize pendingSubscriptionContent;
 @synthesize decompressingSubscriptionContent;
+@synthesize currentlyDecompressingContent;
 
 - (id)init {
     if (!(self = [super init]))
@@ -70,6 +71,8 @@
     [self loadPendingSubscriptionContent];
     [self loadDecompressingSubscriptionContent];
     
+    self.currentlyDecompressingContent = [NSMutableArray array];
+    
     return self;
 }
 
@@ -80,6 +83,7 @@
     RELEASE_SAFELY(downloadDirectory);
     RELEASE_SAFELY(pendingSubscriptionContent);
     RELEASE_SAFELY(decompressingSubscriptionContent);
+    RELEASE_SAFELY(currentlyDecompressingContent);
     
     [super dealloc];
 }
@@ -193,6 +197,9 @@
 }
 
 - (void)decompressZipDownloadContent:(UAZipDownloadContent *)zipDownloadContent {
+    UASubscriptionContent *content = zipDownloadContent.userInfo;
+    [currentlyDecompressingContent addObject:content.contentKey];
+    
     zipDownloadContent.decompressDelegate = self;
     
     if(self.createProductIDSubdir) {
@@ -237,9 +244,11 @@
 
 - (void)resumeDecompressingSubscriptionContent {
     for (NSString *identifier in decompressingSubscriptionContent) {
-        UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];        
-        UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
-        [self decompressZipDownloadContent:zipDownloadContent];
+        if (![currentlyDecompressingContent containsObject:identifier]) {
+            UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];        
+            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
+            [self decompressZipDownloadContent:zipDownloadContent];
+        }
     }
 }
 
@@ -297,12 +306,16 @@
 #pragma mark Decompresse Delegate
 
 - (void)decompressDidFail:(UAZipDownloadContent *)downloadContent {
+    UASubscriptionContent *content = [downloadContent userInfo];
+    [currentlyDecompressingContent removeObject:content.contentKey];
     [self downloadDidFail:downloadContent];
 }
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
     [self removeDecompressingSubscriptionContent:content];
+    [currentlyDecompressingContent removeObject:content.contentKey];
+    
     UALOG(@"Download Content successful: %@, and decompressed to %@", 
           content.contentName, downloadContent.decompressedContentPath);
 

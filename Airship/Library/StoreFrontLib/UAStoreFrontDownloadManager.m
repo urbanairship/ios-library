@@ -42,6 +42,7 @@
 @synthesize createProductIDSubdir;
 @synthesize pendingProducts;
 @synthesize decompressingProducts;
+@synthesize currentlyDecompressingProducts;
 
 #pragma mark -
 #pragma mark Lifecycle methods
@@ -52,6 +53,7 @@
         downloadManager.delegate = self;
         self.downloadDirectory = kUADownloadDirectory;
         self.createProductIDSubdir = YES;
+        self.currentlyDecompressingProducts = [NSMutableArray array];
         
         [self loadPendingProducts];
         [self loadDecompressingProducts];
@@ -63,6 +65,7 @@
 - (void)dealloc {
     RELEASE_SAFELY(pendingProducts);
     RELEASE_SAFELY(decompressingProducts);
+    RELEASE_SAFELY(currentlyDecompressingProducts);
     RELEASE_SAFELY(downloadDirectory);
     RELEASE_SAFELY(downloadManager);
     [super dealloc];
@@ -236,6 +239,8 @@
 - (void)decompressZipDownloadContent:(UAZipDownloadContent *)zipDownloadContent {
     UAProduct *product = zipDownloadContent.userInfo;
     product.status = UAProductStatusDecompressing;
+    [currentlyDecompressingProducts addObject:product.productIdentifier];
+    
     zipDownloadContent.decompressDelegate = self;
     
     if(self.createProductIDSubdir) {
@@ -284,11 +289,14 @@
 
 - (void)resumeDecompressingProducts {
     for (NSString *identifier in [decompressingProducts allKeys]) {
-        UAProduct *decompressingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
-        decompressingProduct.receipt = [decompressingProducts objectForKey:identifier];
-        
-        UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
-        [self decompressZipDownloadContent:zipDownloadContent];
+        //only resume decompression for products that aren't currently doing so
+        if (![currentlyDecompressingProducts containsObject:identifier]) {
+            UAProduct *decompressingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
+            decompressingProduct.receipt = [decompressingProducts objectForKey:identifier];
+            
+            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
+            [self decompressZipDownloadContent:zipDownloadContent];
+        }
     }
 }
 
@@ -403,6 +411,7 @@
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
+    [currentlyDecompressingProducts removeObject:product.productIdentifier];
     [self removeDecompressingProduct:product];
     product.status = UAProductStatusInstalled;
     [[UAStoreFront shared].delegate productPurchased:product];
@@ -411,6 +420,8 @@
 }
 
 - (void)decompressDidFail:(UAZipDownloadContent *)downloadContent {
+    UAProduct *product = downloadContent.userInfo;
+    [currentlyDecompressingProducts removeObject:product.productIdentifier];
     [self downloadDidFail:downloadContent];
 }
 

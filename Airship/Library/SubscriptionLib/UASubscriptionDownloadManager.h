@@ -33,6 +33,7 @@
   @private
     NSMutableArray *pendingSubscriptionContent;
     NSMutableArray *decompressingSubscriptionContent;
+    NSMutableArray *currentlyDecompressingContent;
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
     BOOL createProductIDSubdir;
@@ -42,6 +43,7 @@
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 @property (nonatomic, retain) NSMutableArray *pendingSubscriptionContent;
 @property (nonatomic, retain) NSMutableArray *decompressingSubscriptionContent;
+@property (nonatomic, retain) NSMutableArray *currentlyDecompressingContent;
 
 //load the pending subscriptions dictionary from kPendingSubscriptionsFile
 - (void)loadPendingSubscriptionContent;

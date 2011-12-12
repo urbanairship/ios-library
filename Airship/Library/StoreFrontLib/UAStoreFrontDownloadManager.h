@@ -34,14 +34,16 @@
   @private
     NSMutableDictionary *pendingProducts;
     NSMutableDictionary *decompressingProducts;
+    NSMutableArray *currentlyDecompressingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
     BOOL createProductIDSubdir;
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
-@property (nonatomic, retain) NSMutableDictionary *pendingProducts;
-@property (nonatomic, retain) NSMutableDictionary *decompressingProducts;
+@property (nonatomic, retain) NSMutableDictionary *pendingProducts; //productIdentifier -> receipt
+@property (nonatomic, retain) NSMutableDictionary *decompressingProducts; //productIdentifier -> receipt
+@property (nonatomic, retain) NSMutableArray *currentlyDecompressingProducts; //of productIdentifier
 
 //load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;
