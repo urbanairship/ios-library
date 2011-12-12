@@ -40,6 +40,8 @@
 
 @property (nonatomic, retain) NSString *downloadDirectory;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
+@property (nonatomic, retain) NSMutableArray *pendingSubscriptionContent;
+@property (nonatomic, retain) NSMutableArray *decompressingSubscriptionContent;
 
 //load the pending subscriptions dictionary from kPendingSubscriptionsFile
 - (void)loadPendingSubscriptionContent;

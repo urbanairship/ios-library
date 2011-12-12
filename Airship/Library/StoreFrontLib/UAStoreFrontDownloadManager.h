@@ -40,6 +40,8 @@
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
+@property (nonatomic, retain) NSMutableDictionary *pendingProducts;
+@property (nonatomic, retain) NSMutableDictionary *decompressingProducts;
 
 //load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;

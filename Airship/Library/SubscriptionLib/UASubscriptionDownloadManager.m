@@ -53,6 +53,8 @@
 
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
+@synthesize pendingSubscriptionContent;
+@synthesize decompressingSubscriptionContent;
 
 - (id)init {
     if (!(self = [super init]))
@@ -131,9 +133,9 @@
 #pragma mark Pending Transactions Management
 
 - (void)loadPendingSubscriptionContent {
-    pendingSubscriptionContent = [[self loadSubscriptionContentFromFilePath:kPendingSubscriptionContentFile] retain];
+    self.pendingSubscriptionContent = [self loadSubscriptionContentFromFilePath:kPendingSubscriptionContentFile];
     if (pendingSubscriptionContent == nil) {
-        pendingSubscriptionContent = [[NSMutableArray alloc] init];
+        self.pendingSubscriptionContent = [NSMutableArray array];
     }
 }
 
@@ -207,9 +209,9 @@
 }
 
 - (void)loadDecompressingSubscriptionContent {
-    decompressingSubscriptionContent = [[self loadSubscriptionContentFromFilePath:kDecompressingSubscriptionContentFile] retain];
+    self.decompressingSubscriptionContent = [self loadSubscriptionContentFromFilePath:kDecompressingSubscriptionContentFile];
     if (decompressingSubscriptionContent == nil) {
-        decompressingSubscriptionContent = [[NSMutableArray alloc] init];
+        self.decompressingSubscriptionContent = [NSMutableArray array];
     }
 }
 

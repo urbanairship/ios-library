@@ -40,6 +40,8 @@
 
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
+@synthesize pendingProducts;
+@synthesize decompressingProducts;
 
 #pragma mark -
 #pragma mark Lifecycle methods
@@ -162,9 +164,9 @@
 #pragma mark Pending Transactions Management
 
 - (void)loadPendingProducts {
-    pendingProducts = [[self loadProductsFromFilePath:kPendingProductsFile] retain];
+    self.pendingProducts = [self loadProductsFromFilePath:kPendingProductsFile];
     if (pendingProducts == nil) {
-        pendingProducts = [[NSMutableDictionary alloc] init];
+        self.pendingProducts = [NSMutableDictionary dictionary];
     }
 }
 
@@ -250,9 +252,9 @@
 }
 
 - (void)loadDecompressingProducts {
-    decompressingProducts = [[self loadProductsFromFilePath:kDecompressingProductsFile] retain];
+    self.decompressingProducts = [self loadProductsFromFilePath:kDecompressingProductsFile];
     if (decompressingProducts == nil) {
-        decompressingProducts = [[NSMutableDictionary alloc] init];
+        decompressingProducts = [NSMutableDictionary dictionary];
     }
 }
 
