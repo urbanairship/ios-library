@@ -39,8 +39,6 @@ typedef enum {
 }
 
 + (UALocalStorageDirectory *)uaDirectory;
-+ (UALocalStorageDirectory *)downloadsDirectory;
-
 + (UALocalStorageDirectory *)localStorageDirectoryWithType:(UALocalStorageType)storageType withSubpath:(NSString *)nameString withOldPaths:(NSSet *)oldPathsSet;
 
 @property(nonatomic, assign) UALocalStorageType storageType;

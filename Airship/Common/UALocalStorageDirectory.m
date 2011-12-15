@@ -52,17 +52,6 @@
     return [UALocalStorageDirectory localStorageDirectoryWithType:UALocalStorageTypeOffline withSubpath:@"/ua" withOldPaths:pathsSet];
 }
 
-+ (UALocalStorageDirectory *)downloadsDirectory {
-    NSString *oldPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) 
-                          objectAtIndex:0] stringByAppendingPathComponent: @"/ua/downloads"];
-
-    NSString *cachesPath = [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) 
-                          objectAtIndex:0] stringByAppendingPathComponent: @"/Caches/ua/downloads"];
-    NSSet *pathsSet = [NSMutableSet setWithObjects:oldPath, cachesPath, nil];    
-    
-    return [UALocalStorageDirectory localStorageDirectoryWithType:UALocalStorageTypeOffline withSubpath:@"/ua/downloads" withOldPaths:pathsSet];
-}
-
 + (UALocalStorageDirectory *)localStorageDirectoryWithType:(UALocalStorageType)storageType withSubpath:(NSString *)subpathString withOldPaths:(NSSet *)oldPathsSet {
     return [[[UALocalStorageDirectory alloc] initWithStorageType:storageType withSubpath:subpathString withOldPaths:oldPathsSet] autorelease];
 }

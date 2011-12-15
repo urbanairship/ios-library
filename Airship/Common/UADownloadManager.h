@@ -29,7 +29,7 @@
 
 #define kUADirectory [UALocalStorageDirectory uaDirectory].path
 
-#define kUADownloadDirectory [UALocalStorageDirectory downloadsDirectory].path
+#define kUADownloadDirectory [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/downloads"];
 
 #define kDownloadHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/download.history"]
 
