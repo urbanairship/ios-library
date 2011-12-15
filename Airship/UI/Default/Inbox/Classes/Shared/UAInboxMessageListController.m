@@ -47,6 +47,11 @@
 - (void)coverUpEmptyListIfNeeded;
 - (void)showLoadingScreen;
 - (void)hideLoadingScreen;
+- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath;
+
+- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
+- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
 @property (nonatomic, retain) UITableView *messageTable;
 
@@ -56,6 +61,7 @@
 
 @property (nonatomic, retain) UITabBarItem *tabbarItem;
 @property (nonatomic, retain) UITabBar *tabbar;
+@property (nonatomic, retain) NSMutableSet *setOfUnreadMessagesInSelection;
 
 @end
 
@@ -67,6 +73,7 @@
 @synthesize messageTable;
 @synthesize tabbar, tabbarItem;
 @synthesize shouldShowAlerts;
+@synthesize setOfUnreadMessagesInSelection;
 
 - (void)dealloc {
     
@@ -77,7 +84,7 @@
     RELEASE_SAFELY(loadingLabel);
     RELEASE_SAFELY(selectedIndexPathsForEditing);
     RELEASE_SAFELY(deleteItem);
-    RELEASE_SAFELY(moveItem);
+    RELEASE_SAFELY(markAsReadButtonItem);
     RELEASE_SAFELY(editItem);
     RELEASE_SAFELY(cancelItem);
     RELEASE_SAFELY(tabbar);
@@ -144,12 +151,12 @@
 
     UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithCustomView:deleteItem] autorelease];
     deleteButton.width = 130;
-    moveItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
+    markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
                                                 style:UIBarButtonItemStyleBordered
                                                target:self action:@selector(batchUpdateButtonPressed:)];
-    moveItem.width = 130;
+    markAsReadButtonItem.width = 130;
 
-    self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, moveItem, fixedSpace, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, markAsReadButtonItem, fixedSpace, nil];
 
     [fixedSpace release];
     [flexibleSpace release];
@@ -182,8 +189,9 @@
     self.messageTable = nil;
     [selectedIndexPathsForEditing removeAllObjects];
     RELEASE_SAFELY(selectedIndexPathsForEditing);
+    RELEASE_SAFELY(setOfUnreadMessagesInSelection);
     RELEASE_SAFELY(deleteItem);
-    RELEASE_SAFELY(moveItem);
+    RELEASE_SAFELY(markAsReadButtonItem);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -237,6 +245,47 @@
     [self coverUpEmptyListIfNeeded];
 }
 
+// indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
+- (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
+    NSArray *messages = [[UAInboxMessageList shared] messages];
+    return [messages objectAtIndex:indexPath.row];
+}
+
+- (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
+    if (nil == setOfUnreadMessagesInSelection) {
+        self.setOfUnreadMessagesInSelection = [NSMutableSet set];
+    }
+    BOOL messageIsListedAsUnread = [self checkSetOfIndexPaths:setOfUnreadMessagesInSelection forIndexPath:indexPath];
+    if(messageIsListedAsUnread && message.unread){
+        return;
+    }
+    if(messageIsListedAsUnread && !message.unread){
+        [setOfUnreadMessagesInSelection removeObject:indexPath];
+    }
+    if(!messageIsListedAsUnread && message.unread){
+        [setOfUnreadMessagesInSelection addObject:indexPath];
+    }
+    
+}
+
+- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set {
+    NSUInteger count = 0;
+    BOOL isMarkedUnread = NO;
+    for (NSIndexPath *path in set) {
+        isMarkedUnread = [self checkSetOfIndexPaths:setOfUnreadMessagesInSelection forIndexPath:path];
+        if(isMarkedUnread) count++;
+    }
+    return count;
+}
+
+- (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath {
+    for (NSIndexPath *path in setOfPaths) {
+        if ([path compare:indexPath] == NSOrderedSame) {
+            return YES;
+        };
+    }
+    return NO;
+}
 
 #pragma mark -
 #pragma mark Button Action Methods
@@ -286,7 +335,7 @@
 
     cancelItem.enabled = NO;
 
-    if (sender == moveItem) {
+    if (sender == markAsReadButtonItem) {
         [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:messageIDs];
     } else {
         [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:messageIDs];
@@ -303,24 +352,31 @@
 - (void)refreshBatchUpdateButtons {
     NSString* deleteStr = UA_INBOX_TR(@"UA_Delete");
     NSString* markReadStr = UA_INBOX_TR(@"UA_Mark_as_Read");
-
+    
     NSUInteger count = [selectedIndexPathsForEditing count];
     if (count == 0) {
         [deleteItem setTitle:deleteStr forSegmentAtIndex:0];
-        moveItem.title = markReadStr;
+        markAsReadButtonItem.title = markReadStr;
         deleteItem.enabled = NO;
-        moveItem.enabled = NO;
+        markAsReadButtonItem.enabled = NO;
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
-        moveItem.title = [NSString stringWithFormat:@"%@ (%d)", markReadStr, count];
+        NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInSetOfIndexPaths:selectedIndexPathsForEditing];
+        markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, ureadCountInSelection];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
-            moveItem.enabled = NO;
+            markAsReadButtonItem.enabled = NO;
         } else {
             deleteItem.enabled = YES;
-            moveItem.enabled = YES;
+            if (ureadCountInSelection != 0) {
+                markAsReadButtonItem.enabled = YES;
+            }
+            else {
+                markAsReadButtonItem.enabled = NO;
+            }
         }
     }
+
 }
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
@@ -385,11 +441,12 @@
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
-
 #pragma mark -
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UAInboxMessage *message = [self messageForIndexPath:indexPath];
+    [self updateSetOfUnreadMessagesWithMessage:message atIndexPath:indexPath];
     if (self.editing && ![[UAInbox shared].messageList isBatchUpdating]) {
         if ([selectedIndexPathsForEditing containsObject:indexPath]) {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -402,7 +459,9 @@
     } else if (!self.editing) {
         [self didSelectRowAtIndexPath:indexPath];
     }
+   
 }
+
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessage *message = [[UAInboxMessageList shared] messageAtIndex:indexPath.row];

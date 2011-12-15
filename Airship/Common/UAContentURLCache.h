@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -25,29 +25,25 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UADownloadManager.h"
-#import "UALocalStorageDirectory.h"
+// one day in seconds
+#define kDefaultUrlCacheExpirationInterval 86400
 
-#define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/subsURLCache.plist"]
-
-@class UAContentURLCache;
-@class UASubscriptionContent;
-
-@interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
-  @private
-    UADownloadManager *downloadManager;
-    NSString *downloadDirectory;
-    UAContentURLCache *contentURLCache;
-    BOOL createProductIDSubdir;
+@interface UAContentURLCache : NSObject {
+    NSMutableDictionary *contentDictionary; //of product url string -> content NSURL
+    NSMutableDictionary *timestampDictionary; //of product url string -> NSNumber of epoch timestamp
+    NSString *path;
+    NSTimeInterval expirationInterval;
 }
 
-@property (nonatomic, retain) NSString *downloadDirectory;
-@property (nonatomic, retain) UAContentURLCache *contentURLCache;
-@property (nonatomic, assign) BOOL createProductIDSubdir;
++ (UAContentURLCache *)cacheWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
+- (id)initWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
 
-- (void)download:(UASubscriptionContent *)content;
+- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL;
+- (NSURL *)contentForProductURL:(NSURL *)productURL;
 
-//private library method
-- (void)checkDownloading:(UASubscriptionContent *)content;
+@property (nonatomic, retain) NSMutableDictionary *contentDictionary;
+@property (nonatomic, retain) NSMutableDictionary *timestampDictionary;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, assign) NSTimeInterval expirationInterval;
 
 @end

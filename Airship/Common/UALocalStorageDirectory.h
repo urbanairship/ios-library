@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -25,29 +25,27 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UADownloadManager.h"
-#import "UALocalStorageDirectory.h"
+typedef enum {
+    UALocalStorageTypeCritical = 0,
+    UALocalStorageTypeCached = 1,
+    UALocalStorageTypeTemporary = 2,
+    UALocalStorageTypeOffline = 3
+} UALocalStorageType;
 
-#define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/subsURLCache.plist"]
-
-@class UAContentURLCache;
-@class UASubscriptionContent;
-
-@interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
-  @private
-    UADownloadManager *downloadManager;
-    NSString *downloadDirectory;
-    UAContentURLCache *contentURLCache;
-    BOOL createProductIDSubdir;
+@interface UALocalStorageDirectory : NSObject {
+    UALocalStorageType storageType;
+    NSString *subpath;
+    NSSet *oldPaths; //of NSString
 }
 
-@property (nonatomic, retain) NSString *downloadDirectory;
-@property (nonatomic, retain) UAContentURLCache *contentURLCache;
-@property (nonatomic, assign) BOOL createProductIDSubdir;
++ (UALocalStorageDirectory *)uaDirectory;
++ (UALocalStorageDirectory *)downloadsDirectory;
 
-- (void)download:(UASubscriptionContent *)content;
++ (UALocalStorageDirectory *)localStorageDirectoryWithType:(UALocalStorageType)storageType withSubpath:(NSString *)nameString withOldPaths:(NSSet *)oldPathsSet;
 
-//private library method
-- (void)checkDownloading:(UASubscriptionContent *)content;
+@property(nonatomic, assign) UALocalStorageType storageType;
+@property(nonatomic, copy) NSString *subpath;
+@property(nonatomic, retain) NSSet *oldPaths;
+@property(nonatomic, readonly) NSString *path;
 
 @end

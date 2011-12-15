@@ -25,6 +25,7 @@
 
 #import "UAStoreFrontDownloadManager.h"
 
+#import "UAContentURLCache.h"
 #import "UAStoreFront.h"
 #import "UAStoreFrontDelegate.h"
 #import "UAirship.h"
@@ -40,6 +41,7 @@
 
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
+@synthesize contentURLCache;
 
 #pragma mark -
 #pragma mark Lefecycle methods
@@ -51,6 +53,8 @@
     downloadManager = [[UADownloadManager alloc] init];
     downloadManager.delegate = self;
     self.downloadDirectory = kUADownloadDirectory;
+    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:kDefaultUrlCacheExpirationInterval //24 hours
+                                                                 withPath:kIAPURLCacheFile];
     self.createProductIDSubdir = YES;
     
     [self loadPendingProducts];
@@ -62,11 +66,50 @@
     RELEASE_SAFELY(pendingProducts);
     RELEASE_SAFELY(downloadDirectory);
     RELEASE_SAFELY(downloadManager);
+    RELEASE_SAFELY(contentURLCache);
     [super dealloc];
 }
 
 #pragma mark -
 #pragma mark Download
+
+- (void)downloadProduct:(UAProduct *)product withContentURL:(NSURL *)contentURL {
+    UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
+    zipDownloadContent.userInfo = product;
+    zipDownloadContent.downloadFileName = product.productIdentifier;
+    zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
+                                       [NSString stringWithFormat: @"%@.zip", product.productIdentifier]];
+    zipDownloadContent.progressDelegate = product;
+    
+    SKPaymentTransaction *transaction = product.transaction;
+    // check if already downloading
+    if ([downloadManager isDownloading:zipDownloadContent]) {
+        product.status = UAProductStatusDownloading;
+        [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+        product.transaction = nil;
+        return;
+    }
+    
+    // Check if product got updated before resume downloading
+    if ([product hasUpdate] && [[NSFileManager defaultManager] fileExistsAtPath:[zipDownloadContent downloadTmpPath]]) {
+        zipDownloadContent.clearBeforeDownload = YES;
+    }
+    
+    // Save purchased receipt
+    [[UAStoreFront shared] addReceipt:product];
+    
+    [self addPendingProduct:product];
+    [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    
+    product.transaction = nil;
+    // Refresh inventory and UI just before downloading start
+    product.status = UAProductStatusDownloading;
+    [[UAStoreFront shared].inventory groupInventory];
+    
+    zipDownloadContent.downloadRequestURL = contentURL;
+    zipDownloadContent.requestMethod = kRequestMethodGET;
+    [downloadManager download:zipDownloadContent];
+}
 
 - (void)verifyProduct:(UAProduct *)product {
     
@@ -90,18 +133,25 @@
         [data setObject:receipt forKey:@"transaction_receipt"];
     }
     
-    UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
-    downloadContent.userInfo = product;
-    downloadContent.username = [[UAirship shared] appId];
-    downloadContent.password = [[UAirship shared] appSecret];
-    downloadContent.downloadRequestURL = itemURL;
-    downloadContent.requestMethod = kRequestMethodPOST;
-    downloadContent.postData = data;
+    NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
     
-    [downloadManager download:downloadContent];
+    if (contentURL) {
+        UALOG(@"downloading from cached contentURL: %@", contentURL);
+        [self downloadProduct:product withContentURL:contentURL];
+    } else {
+        UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
+        downloadContent.userInfo = product;
+        downloadContent.username = [[UAirship shared] appId];
+        downloadContent.password = [[UAirship shared] appSecret];
+        downloadContent.downloadRequestURL = itemURL;
+        downloadContent.requestMethod = kRequestMethodPOST;
+        downloadContent.postData = data;
+        
+        [downloadManager download:downloadContent];
+    }
 }
 
-- (UAProduct *)getProductByTransction:(SKPaymentTransaction*)transaction {
+- (UAProduct *)getProductByTransaction:(SKPaymentTransaction*)transaction {
     NSString *productIdentifier;
     UAProduct *product;
     
@@ -123,10 +173,10 @@
 // called from sf observer's completeTransaction/restoreTransaction - verifies the receipt with UA
 - (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction {
     
-    UAProduct *product = [self getProductByTransction:transaction];
+    UAProduct *product = [self getProductByTransaction:transaction];
     
     if (!product) {
-        UALOG(@"ERROR: The transction is invalid.");
+        UALOG(@"ERROR: The transaction is invalid.");
         return;
     }
     
@@ -212,44 +262,16 @@
 //Pull an item from the store and decompress it into the ~/Documents directory
 - (void)verifyDidSucceed:(UADownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
-    UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
-    zipDownloadContent.userInfo = product;
-    zipDownloadContent.downloadFileName = product.productIdentifier;
-    zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
-                                       [NSString stringWithFormat: @"%@.zip", product.productIdentifier]];
-    zipDownloadContent.progressDelegate = product;
-    
-    SKPaymentTransaction *transaction = product.transaction;
-    // check if already downloading
-    if ([downloadManager isDownloading:zipDownloadContent]) {
-        product.status = UAProductStatusDownloading;
-        [[UAStoreFront shared].sfObserver finishTransaction:transaction];
-        product.transaction = nil;
-        return;
-    }
-    
-    // Check if product got updated before resume downloading
-    if ([product hasUpdate] && [[NSFileManager defaultManager] fileExistsAtPath:[zipDownloadContent downloadTmpPath]]) {
-        zipDownloadContent.clearBeforeDownload = YES;
-    }
-    
-    // Save purchased receipt
-    [[UAStoreFront shared] addReceipt:product];
-    
-    [self addPendingProduct:product];
-    [[UAStoreFront shared].sfObserver finishTransaction:transaction];
-    
-    product.transaction = nil;
-    // Refresh inventory and UI just before downloading start
-    product.status = UAProductStatusDownloading;
-    [[UAStoreFront shared].inventory groupInventory];
-    
+        
     NSDictionary *result = (NSDictionary *)[UAUtils parseJSON:downloadContent.responseString];
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
-    zipDownloadContent.downloadRequestURL = [NSURL URLWithString:contentURLString];
-    zipDownloadContent.requestMethod = kRequestMethodGET;
-    [downloadManager download:zipDownloadContent];
+    //cache the content url
+    UALOG(@"caching content url: %@ for product url: %@", contentURLString, product.downloadURL);
+    NSURL *contentURL = [NSURL URLWithString:contentURLString];
+    [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
+        
+    [self downloadProduct:product withContentURL:contentURL];
 }
 
 

@@ -44,16 +44,14 @@
     IBOutlet UITabBar *tabbar;
     IBOutlet UITabBarItem *tabbarItem;
     UIView *badgeView;
-
     NSMutableSet *selectedIndexPathsForEditing;
+    NSMutableSet *setOfUnreadMessagesInSelection; 
     UABarButtonSegmentedControl *deleteItem;
-    UIBarButtonItem *moveItem;
+    UIBarButtonItem *markAsReadButtonItem;
     UIBarButtonItem *editItem;
     UIBarButtonItem *cancelItem;
-
     NSString *cellReusableId;
     NSString *cellNibName;
-    
     BOOL shouldShowAlerts;
 }
 

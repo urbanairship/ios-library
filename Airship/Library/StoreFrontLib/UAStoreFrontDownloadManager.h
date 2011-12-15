@@ -26,7 +26,16 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
+#import "UALocalStorageDirectory.h"
 
+#define kPendingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/pendingProducts.history"]
+
+#define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/receipt.history"]
+
+#define kIAPURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/IAPURLCache.plist"]
+
+
+@class UAContentURLCache;
 @class UAProduct;
 @class SKPaymentTransaction;
 
@@ -35,14 +44,17 @@
     NSMutableDictionary *pendingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
+    UAContentURLCache *contentURLCache;
     BOOL createProductIDSubdir;
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
+@property (nonatomic, retain) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 
 //load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
+- (void)addPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
 
 - (void)downloadPurchasedProduct:(UAProduct *)product;

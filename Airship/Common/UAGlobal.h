@@ -47,24 +47,9 @@ extern BOOL logging; // Default is false
 // constants
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 
-// path
-#define kPendingProductsFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/pendingProducts.history"]
-
-#define kDownloadHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/download.history"]
-
-#define kReceiptHistoryFile [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/receipt.history"]
-
-#define kUADirectory [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
-
+//legacy paths
 #define kUAOldDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/"]
-
-#define kUADownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, \
-NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/ua/downloads/"]
 
 #define kUAOldDownloadDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString: @"/"]
