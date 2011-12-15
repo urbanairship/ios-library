@@ -25,6 +25,7 @@
 
 #import "AppDelegate_Phone.h"
 #import "UAirship.h"
+#import "UAAnalytics.h"
 #import "UAProductInventory.h"
 #import "UAContentInventory.h"
 #import "UASubscription.h"
