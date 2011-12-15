@@ -42,28 +42,37 @@
 @synthesize downloadDirectory;
 @synthesize createProductIDSubdir;
 @synthesize contentURLCache;
+@synthesize pendingProducts;
+@synthesize decompressingProducts;
+@synthesize currentlyDecompressingProducts;
 
 #pragma mark -
-#pragma mark Lefecycle methods
+#pragma mark Lifecycle methods
 
 - (id)init {
-    if (!(self = [super init]))
-        return nil;
     
-    downloadManager = [[UADownloadManager alloc] init];
-    downloadManager.delegate = self;
-    self.downloadDirectory = kUADownloadDirectory;
-    self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:kDefaultUrlCacheExpirationInterval //24 hours
-                                                                 withPath:kIAPURLCacheFile];
-    self.createProductIDSubdir = YES;
-    
-    [self loadPendingProducts];
+    if ((self = [super init])) {
+        downloadManager = [[UADownloadManager alloc] init];
+        downloadManager.delegate = self;
+        self.downloadDirectory = kUADownloadDirectory;
+        self.createProductIDSubdir = YES;
+        
+        self.contentURLCache = [UAContentURLCache cacheWithExpirationInterval:kDefaultUrlCacheExpirationInterval //24 hours
+                                                                     withPath:kIAPURLCacheFile];
+        
+        self.currentlyDecompressingProducts = [NSMutableArray array];
+        
+        [self loadPendingProducts];
+        [self loadDecompressingProducts];
+    }
     
     return self;
 }
 
 - (void)dealloc {
     RELEASE_SAFELY(pendingProducts);
+    RELEASE_SAFELY(decompressingProducts);
+    RELEASE_SAFELY(currentlyDecompressingProducts);
     RELEASE_SAFELY(downloadDirectory);
     RELEASE_SAFELY(downloadManager);
     RELEASE_SAFELY(contentURLCache);
@@ -98,7 +107,6 @@
     // Save purchased receipt
     [[UAStoreFront shared] addReceipt:product];
     
-    [self addPendingProduct:product];
     [[UAStoreFront shared].sfObserver finishTransaction:transaction];
     
     product.transaction = nil;
@@ -199,18 +207,28 @@
     [self verifyProduct:product];
 }
 
+- (NSMutableDictionary *)loadProductsFromFilePath:(NSString *)filePath {
+    return [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+}
+
+- (BOOL)saveProducts:(NSMutableDictionary *)productDictionary toFilePath:(NSString *)filePath {
+   return [productDictionary writeToFile:filePath atomically:YES];
+}
+
 #pragma mark -
 #pragma mark Pending Transactions Management
 
 - (void)loadPendingProducts {
-    pendingProducts = [[NSMutableDictionary alloc] initWithContentsOfFile:kPendingProductsFile];
+    self.pendingProducts = [self loadProductsFromFilePath:kPendingProductsFile];
     if (pendingProducts == nil) {
-        pendingProducts = [[NSMutableDictionary alloc] init];
+        self.pendingProducts = [NSMutableDictionary dictionary];
     }
 }
 
 - (void)savePendingProducts {
-    [pendingProducts writeToFile:kPendingProductsFile atomically:YES];
+    if (![self saveProducts:pendingProducts toFilePath:kPendingProductsFile]) {
+        UALOG(@"Failed to save pending products to file path: %@", kPendingProductsFile);
+    }
 }
 
 - (BOOL)hasPendingProduct:(UAProduct *)product {
@@ -257,12 +275,118 @@
 }
 
 #pragma mark -
-#pragma mark Download Delegate Implemente
+#pragma mark Decompressing Products Management
 
-//Pull an item from the store and decompress it into the ~/Documents directory
+- (UAZipDownloadContent *)zipDownloadContentForProduct:(UAProduct *)product {
+    UAZipDownloadContent *zipDownloadContent = [[[UAZipDownloadContent alloc] init] autorelease];
+    zipDownloadContent.userInfo = product;
+    zipDownloadContent.downloadFileName = product.productIdentifier;
+    zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
+                                       [NSString stringWithFormat: @"%@.zip", product.productIdentifier]];
+    zipDownloadContent.progressDelegate = product;
+    
+    return zipDownloadContent;
+}
+
+- (void)decompressZipDownloadContent:(UAZipDownloadContent *)zipDownloadContent {
+    UAProduct *product = zipDownloadContent.userInfo;
+    product.status = UAProductStatusDecompressing;
+    [currentlyDecompressingProducts addObject:product.productIdentifier];
+    
+    zipDownloadContent.decompressDelegate = self;
+    
+    if(self.createProductIDSubdir) {
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
+    } else {
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+        
+    }
+    
+    UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
+    
+    [zipDownloadContent decompress];
+}
+
+- (void)loadDecompressingProducts {
+    self.decompressingProducts = [self loadProductsFromFilePath:kDecompressingProductsFile];
+    if (decompressingProducts == nil) {
+        self.decompressingProducts = [NSMutableDictionary dictionary];
+    }
+}
+
+- (void)saveDecompressingProducts {
+    if (![self saveProducts:decompressingProducts toFilePath:kDecompressingProductsFile]) {
+        UALOG(@"Failed to save decompresing products to file path: %@", kDecompressingProductsFile);
+    }
+}
+
+- (BOOL)hasDecompressingProduct:(UAProduct *)product {
+    return [decompressingProducts valueForKey:product.productIdentifier] != nil;
+}
+
+- (void)addDecompressingProduct:(UAProduct *)product {
+    if (product.receipt == nil) {
+        product.receipt = @"";
+    }
+    
+    [decompressingProducts setObject:product.receipt forKey:product.productIdentifier];
+    [self saveDecompressingProducts];
+}
+
+- (void)removeDecompressingProduct:(UAProduct *)product {
+    [decompressingProducts removeObjectForKey:product.productIdentifier];
+    [self saveDecompressingProducts];
+}
+
+- (void)resumeDecompressingProducts {
+    for (NSString *identifier in [decompressingProducts allKeys]) {
+        //only resume decompression for products that aren't currently doing so
+        if (![currentlyDecompressingProducts containsObject:identifier]) {
+            UAProduct *decompressingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
+            decompressingProduct.receipt = [decompressingProducts objectForKey:identifier];
+            
+            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
+            [self decompressZipDownloadContent:zipDownloadContent];
+        }
+    }
+}
+
+#pragma mark -
+#pragma mark Download Delegate
+
+//Pull an item from the store and decompress it into the downloads directory
 - (void)verifyDidSucceed:(UADownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
+    
+    UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:product];
         
+    SKPaymentTransaction *transaction = product.transaction;
+    // check if already downloading
+    if ([downloadManager isDownloading:zipDownloadContent]) {
+        product.status = UAProductStatusDownloading;
+        [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+        product.transaction = nil;
+        return;
+    }
+    
+    // Check if product got updated before resume downloading
+    if ([product hasUpdate] && [[NSFileManager defaultManager] fileExistsAtPath:[zipDownloadContent downloadTmpPath]]) {
+        zipDownloadContent.clearBeforeDownload = YES;
+    }
+    
+    // Save purchased receipt
+    [[UAStoreFront shared] addReceipt:product];
+    
+    [self addPendingProduct:product];
+    
+    [[UAStoreFront shared].sfObserver finishTransaction:transaction];
+    
+    product.transaction = nil;
+    // Refresh inventory and UI just before downloading start
+    product.status = UAProductStatusDownloading;
+    [[UAStoreFront shared].inventory groupInventory];
+    
     NSDictionary *result = (NSDictionary *)[UAUtils parseJSON:downloadContent.responseString];
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
@@ -322,21 +446,14 @@
 - (void)requestDidSucceed:(id)downloadContent {
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
+        
         UAProduct *product = zipDownloadContent.userInfo;
-        product.status = UAProductStatusDecompressing;
-        zipDownloadContent.decompressDelegate = self;
         
-        if(self.createProductIDSubdir) {
-            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
-        } else {
-            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
-
-        }
+        [self removePendingProduct:product];
+        [self addDecompressingProduct:product];
         
-        UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
+        [self decompressZipDownloadContent:zipDownloadContent];
         
-        [zipDownloadContent decompress];
     } else if ([downloadContent isKindOfClass:[UADownloadContent class]]) {
         [self verifyDidSucceed:(UADownloadContent *)downloadContent];
     }
@@ -352,7 +469,8 @@
 
 - (void)decompressDidSucceed:(UAZipDownloadContent *)downloadContent {
     UAProduct *product = downloadContent.userInfo;
-    [self removePendingProduct:product];
+    [currentlyDecompressingProducts removeObject:product.productIdentifier];
+    [self removeDecompressingProduct:product];
     product.status = UAProductStatusInstalled;
     [[UAStoreFront shared].delegate productPurchased:product];
     // Check to see if we're done with background downloads, this may end the execution thread here.
@@ -360,6 +478,9 @@
 }
 
 - (void)decompressDidFail:(UAZipDownloadContent *)downloadContent {
+    UAProduct *product = downloadContent.userInfo;
+    [currentlyDecompressingProducts removeObject:product.productIdentifier];
+    [self removeDecompressingProduct:product];
     [self downloadDidFail:downloadContent];
 }
 
@@ -370,6 +491,7 @@
 - (void)inventoryStatusChanged:(NSNumber *)status {
     if ([status intValue] == UAInventoryStatusLoaded) {
         [self resumePendingProducts];
+        [self resumeDecompressingProducts];
     }
 }
 

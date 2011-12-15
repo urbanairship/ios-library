@@ -30,11 +30,18 @@
 
 #define kSubscriptionURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/subsURLCache.plist"]
 
+#define kPendingSubscriptionContentFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/pendingSubscriptions.history"]
+
+#define kDecompressingSubscriptionContentFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/decompressingSubscriptions.history"]
+
 @class UAContentURLCache;
 @class UASubscriptionContent;
 
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
+    NSMutableArray *pendingSubscriptionContent;
+    NSMutableArray *decompressingSubscriptionContent;
+    NSMutableArray *currentlyDecompressingContent;
     UADownloadManager *downloadManager;
     NSString *downloadDirectory;
     UAContentURLCache *contentURLCache;
@@ -44,6 +51,19 @@
 @property (nonatomic, retain) NSString *downloadDirectory;
 @property (nonatomic, retain) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
+@property (nonatomic, retain) NSMutableArray *pendingSubscriptionContent;
+@property (nonatomic, retain) NSMutableArray *decompressingSubscriptionContent;
+@property (nonatomic, retain) NSMutableArray *currentlyDecompressingContent;
+
+//load the pending subscriptions dictionary from kPendingSubscriptionsFile
+- (void)loadPendingSubscriptionContent;
+- (BOOL)hasPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)resumePendingSubscriptionContent;
+
+//load the decompressing subscriptions dictionary from kDecompressingSubscriptionsFile
+- (void)loadDecompressingSubscriptionContent;
+- (BOOL)hasDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent;
+- (void)resumeDecompressingSubscriptionContent;
 
 - (void)download:(UASubscriptionContent *)content;
 
