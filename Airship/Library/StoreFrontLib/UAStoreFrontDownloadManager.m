@@ -259,7 +259,7 @@
 - (void)loadDecompressingProducts {
     self.decompressingProducts = [self loadProductsFromFilePath:kDecompressingProductsFile];
     if (decompressingProducts == nil) {
-        decompressingProducts = [NSMutableDictionary dictionary];
+        self.decompressingProducts = [NSMutableDictionary dictionary];
     }
 }
 
