@@ -74,6 +74,7 @@
         self.oldPaths = oldPathsSet;
         
         [self createIfNecessary];
+        [self setFileAttributes];
     }
     
     return self;
@@ -118,8 +119,6 @@
     //create the directory on disk if needed
     if (![fm fileExistsAtPath:self.path]) {
         [fm createDirectoryAtPath:self.path withIntermediateDirectories:YES attributes:nil error:nil];
-        
-        [self setFileAttributes];
     }
         
     //migrate old path to new if present and non-equal
