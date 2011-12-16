@@ -102,6 +102,15 @@
     return [root stringByAppendingPathComponent:subpath];
 }
 
+- (NSString *)subDirectoryWithPathComponent:(NSString *)component {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *fullSubpath = [self.path stringByAppendingPathComponent:component];
+    if (![fm fileExistsAtPath:fullSubpath]) {
+        [fm createDirectoryAtPath:fullSubpath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    return fullSubpath;
+}
+
 - (void)createIfNecessary {
     NSFileManager *fm = [NSFileManager defaultManager];
     

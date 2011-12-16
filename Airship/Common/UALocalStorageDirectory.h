@@ -41,6 +41,8 @@ typedef enum {
 + (UALocalStorageDirectory *)uaDirectory;
 + (UALocalStorageDirectory *)localStorageDirectoryWithType:(UALocalStorageType)storageType withSubpath:(NSString *)nameString withOldPaths:(NSSet *)oldPathsSet;
 
+- (NSString *)subDirectoryWithPathComponent:(NSString *)component;
+
 @property(nonatomic, assign) UALocalStorageType storageType;
 @property(nonatomic, copy) NSString *subpath;
 @property(nonatomic, retain) NSSet *oldPaths;
