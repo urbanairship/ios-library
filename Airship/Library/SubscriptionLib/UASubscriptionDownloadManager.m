@@ -319,7 +319,7 @@
 }
 
 #pragma mark -
-#pragma mark Decompresse Delegate
+#pragma mark Decompress Delegate
 
 - (void)decompressDidFail:(UAZipDownloadContent *)downloadContent {
     UASubscriptionContent *content = [downloadContent userInfo];
