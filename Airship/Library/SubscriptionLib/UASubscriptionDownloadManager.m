@@ -117,7 +117,7 @@
         [self downloadDidFail:zipDownloadContent];
         return;
     }
-    
+
     zipDownloadContent.downloadRequestURL = contentURL;
     zipDownloadContent.downloadFileName = [UAUtils UUID];
     zipDownloadContent.progressDelegate = content;
@@ -132,11 +132,10 @@
     UALOG(@"Actual download URL: %@", contentURLString);
     
     //cache the content url
+    UALOG(@"caching content url: %@ for download url: %@", contentURLString, content.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
     [contentURLCache setContent:contentURL forProductURL:content.downloadURL];
     
-    [self addPendingSubscriptionContent:content];
-
     [self downloadContent:content withContentURL:contentURL];
 }
 
@@ -170,8 +169,10 @@
 }
 
 - (void)addPendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
-    [pendingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
-    [self savePendingSubscriptionContent];
+    if (![pendingSubscriptionContent containsObject:subscriptionContent.subscriptionKey]) {
+        [pendingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
+        [self savePendingSubscriptionContent];
+    }
 }
 
 - (void)removePendingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
@@ -249,8 +250,10 @@
 }
 
 - (void)addDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
-    [decompressingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
-    [self saveDecompressingSubscriptionContent];
+    if (![decompressingSubscriptionContent containsObject:subscriptionContent.subscriptionKey]) {
+        [decompressingSubscriptionContent addObject:subscriptionContent.subscriptionKey];
+        [self saveDecompressingSubscriptionContent];
+    }
 }
 
 - (void)removeDecompressingSubscriptionContent:(UASubscriptionContent *)subscriptionContent {
@@ -350,8 +353,11 @@
 - (void)download:(UASubscriptionContent *)content {
     UALOG(@"verifyContent: %@", content.contentName);
     
+    [self addPendingSubscriptionContent:content];
+
     NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL];
     if (contentURL) {
+        UALOG(@"downloading from cached contentURL: %@", contentURL);
         [self downloadContent:content withContentURL:contentURL];
     } else {
         UADownloadContent *downloadContent = [[[UADownloadContent alloc] init] autorelease];
