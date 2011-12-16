@@ -142,6 +142,8 @@
     }
     
     NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
+
+    [self addPendingProduct:product];
     
     if (contentURL) {
         UALOG(@"downloading from cached contentURL: %@", contentURL);
@@ -377,9 +379,7 @@
     
     // Save purchased receipt
     [[UAStoreFront shared] addReceipt:product];
-    
-    [self addPendingProduct:product];
-    
+
     [[UAStoreFront shared].sfObserver finishTransaction:transaction];
     
     product.transaction = nil;
@@ -391,7 +391,7 @@
     NSString *contentURLString = [result objectForKey:@"content_url"];
     
     //cache the content url
-    UALOG(@"caching content url: %@ for product url: %@", contentURLString, product.downloadURL);
+    UALOG(@"caching content url: %@ for download url: %@", contentURLString, product.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
     [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
         
