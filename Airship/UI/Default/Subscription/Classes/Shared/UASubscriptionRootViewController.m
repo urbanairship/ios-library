@@ -40,8 +40,6 @@
 
 - (void)dealloc {
     
-	[[UASubscriptionManager shared] removeObserver:self];
-    
 	RELEASE_SAFELY(productsTable);
     RELEASE_SAFELY(activity);
     RELEASE_SAFELY(settingsViewController);
@@ -70,6 +68,10 @@
 
     [[UASubscriptionManager shared] addObserver:self];
     [self loadAllSubscriptions];
+}
+
+- (void)viewWillUnload {
+    [[UASubscriptionManager shared] removeObserver:self];
 }
 
 
@@ -154,6 +156,8 @@
 #pragma mark UASubscriptionManagerObserver
 
 - (void)subscriptionWillEnterForeground {
+    UALOG(@"subscriptionWillEnterForeground");
+    
     if (self.navigationController.topViewController != self) {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }
@@ -165,8 +169,7 @@
 }
 
 - (void)subscriptionWillEnterBackground {
-
-	[[UASubscriptionManager shared] removeObserver:self];
+    UALOG(@"subscriptionWillEnterBackground");
 }
 
 - (void)userSubscriptionsUpdated:(NSArray *)userSubscriptions {
