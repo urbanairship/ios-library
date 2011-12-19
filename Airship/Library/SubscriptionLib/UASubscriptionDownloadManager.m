@@ -205,7 +205,7 @@
     zipDownloadContent.userInfo = subscriptionContent;
     zipDownloadContent.downloadFileName = subscriptionContent.contentKey;
     zipDownloadContent.downloadPath = [downloadDirectory stringByAppendingPathComponent:
-                                       [NSString stringWithFormat: @"%@.zip", subscriptionContent.contentKey]];
+                                       [NSString stringWithFormat: @"%@.zip", subscriptionContent.subscriptionKey]];
     zipDownloadContent.progressDelegate = subscriptionContent;
     
     return zipDownloadContent;
@@ -294,7 +294,7 @@
         
         UASubscriptionContent *subscriptionContent = (UASubscriptionContent *)zipDownloadContent.userInfo;
         zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.contentKey]];
+                                                      [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.subscriptionKey]];
 
         if (self.createProductIDSubdir) {
             
