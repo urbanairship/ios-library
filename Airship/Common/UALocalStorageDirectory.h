@@ -51,7 +51,7 @@ typedef enum {
 /**
  * This class provides an abstracted interface to a local storage directory
  * that corresponds to one of the four types enumerated in Apple's iOS Data
- * Storage Guidelines. When refering to a path through an instance of this class,
+ * Storage Guidelines. When referring to a path through an instance of this class,
  * the directory will be transparently created on disk if necessary, setting appropriate
  * file attributes, and migrating any existing content from a set of old locations.
  */
@@ -72,8 +72,8 @@ typedef enum {
  * Convenience constructor for an arbitrary UALocalStorageDirectory.
  *
  * @param storageType A UALocalStorageType enum corresponding to the purpose and lifecycle of the directory.
- * @param nameString A subpath string to be appended as a path component to the base directory.
- * @param oldPathsSet An NSSet of path strings to check for old content and migrate if necessary.
+ * @param nameString A subpath string to be appended to the base directory.
+ * @param oldPathsSet An NSSet of directories as NSStrings to check for old content and migrate if necessary.
  *
  * @return a UALocalStorageDirectory instance.
 */
@@ -83,7 +83,7 @@ typedef enum {
  * Returns a full path string of a subdirectory to be located under the receiver's path.
  * If this subpath does not currently exist, it will be created automatically.
  *
- * @param component A path component to be appended to the receiver's path
+ * @param component A subcomponent to be appended to the receiver's path
  *
  * @return A full path as an NSString.
  */
@@ -98,7 +98,7 @@ typedef enum {
  */
 @property(nonatomic, copy) NSString *subpath;
 /**
- *The set of old path locations to migrate existing content from.
+ *The set of old directory locations to migrate existing content from.
  */
 @property(nonatomic, retain) NSSet *oldPaths;
 /**
