@@ -26,23 +26,51 @@
 #import <Foundation/Foundation.h>
 
 #import "UADownloadManager.h"
+#import "UALocalStorageDirectory.h"
 
+#define kPendingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/pendingProducts.history"]
+
+#define kDecompressingProductsFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/decompressingProducts.history"]
+
+#define kReceiptHistoryFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/receipt.history"]
+
+#define kIAPURLCacheFile [[UALocalStorageDirectory uaDirectory].path stringByAppendingPathComponent:@"/IAPURLCache.plist"]
+
+
+@class UAContentURLCache;
 @class UAProduct;
+@class SKPaymentTransaction;
 
 @interface UAStoreFrontDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
     NSMutableDictionary *pendingProducts;
+    NSMutableDictionary *decompressingProducts;
+    NSMutableArray *currentlyDecompressingProducts;
     NSString *downloadDirectory;
     UADownloadManager *downloadManager;
+    UAContentURLCache *contentURLCache;
     BOOL createProductIDSubdir;
 }
 @property (nonatomic, copy) NSString *downloadDirectory;
+@property (nonatomic, retain) UAContentURLCache *contentURLCache;
 @property (nonatomic, assign) BOOL createProductIDSubdir;
+@property (nonatomic, retain) NSMutableDictionary *pendingProducts; //productIdentifier -> receipt
+@property (nonatomic, retain) NSMutableDictionary *decompressingProducts; //productIdentifier -> receipt
+@property (nonatomic, retain) NSMutableArray *currentlyDecompressingProducts; //of productIdentifier
 
+//load the pending products dictionary from kPendingProductsFile
 - (void)loadPendingProducts;
-- (void)downloadIfValid:(id)parameter;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
+- (void)addPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
+
+//load the decompressing products dictionary from kDecompressingProductsFile
+- (void)loadDecompressingProducts;
+- (BOOL)hasDecompressingProduct:(UAProduct *)product;
+- (void)resumeDecompressingProducts;
+
+- (void)downloadPurchasedProduct:(UAProduct *)product;
+- (void)verifyTransactionReceipt:(SKPaymentTransaction *)transaction;
 
 - (void)downloadDidFail:(UADownloadContent *)downloadContent;
 @end

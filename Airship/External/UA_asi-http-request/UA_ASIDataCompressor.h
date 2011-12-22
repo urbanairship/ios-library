@@ -1,6 +1,6 @@
 //
-//  UA_ASIDataCompressor.h
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASIDataCompressor.h
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 17/08/2010.
 //  Copyright 2010 All-Seeing Interactive. All rights reserved.
@@ -22,7 +22,8 @@
 + (id)compressor;
 
 // Compress the passed chunk of data
-- (NSData *)compressBytes:(Bytef *)bytes length:(NSUInteger)length error:(NSError **)err;
+// Passing YES for shouldFinish will finalize the deflated data - you must pass YES when you are on the last chunk of data
+- (NSData *)compressBytes:(Bytef *)bytes length:(NSUInteger)length error:(NSError **)err shouldFinish:(BOOL)shouldFinish;
 
 // Convenience method - pass it some data, and you'll get deflated data back
 + (NSData *)compressData:(NSData*)uncompressedData error:(NSError **)err;

@@ -1,6 +1,6 @@
 //
-//  UA_ASIDataDecompressor.h
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASIDataDecompressor.h
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 17/08/2010.
 //  Copyright 2010 All-Seeing Interactive. All rights reserved.

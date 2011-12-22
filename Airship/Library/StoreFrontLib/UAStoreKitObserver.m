@@ -87,13 +87,13 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 - (void)startTransaction:(SKPaymentTransaction *)transaction {
     UALOG(@"Transaction started: %@, id: %@", transaction, transaction.payment.productIdentifier);
     UAProduct *product = [self productFromTransaction:transaction];
-    product.status = UAProductStatusWaiting;
+    product.status = UAProductStatusPurchasing;
 }
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
     UALOG(@"Purchase Successful, provide content.\n completeTransaction: %@ \t id: %@",
           transaction, transaction.payment.productIdentifier);
-    [[UAStoreFront shared].downloadManager downloadIfValid:transaction];
+    [[UAStoreFront shared].downloadManager verifyTransactionReceipt:transaction];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
@@ -216,7 +216,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 
 - (void)downloadAllRestoredItems {
     for (SKPaymentTransaction *transaction in unRestoredTransactions) {
-        [[UAStoreFront shared].downloadManager downloadIfValid:transaction];
+        [[UAStoreFront shared].downloadManager verifyTransactionReceipt:transaction];
     }
     RELEASE_SAFELY(unRestoredTransactions);
 }

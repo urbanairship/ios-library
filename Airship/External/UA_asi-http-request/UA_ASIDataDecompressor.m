@@ -1,6 +1,6 @@
 //
-//  UA_ASIDataDecompressor.m
-//  Part of UA_ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
+//  ASIDataDecompressor.m
+//  Part of ASIHTTPRequest -> http://allseeing-i.com/ASIHTTPRequest
 //
 //  Created by Ben Copsey on 17/08/2010.
 //  Copyright 2010 All-Seeing Interactive. All rights reserved.
@@ -77,39 +77,29 @@
 	zStream.next_in = bytes;
 	zStream.avail_in = (unsigned int)length;
 	zStream.avail_out = 0;
-	NSError *theError = nil;
 	
 	NSInteger bytesProcessedAlready = zStream.total_out;
-	while (zStream.avail_out == 0) {
+	while (zStream.avail_in != 0) {
 		
 		if (zStream.total_out-bytesProcessedAlready >= [outputData length]) {
 			[outputData increaseLengthBy:halfLength];
 		}
 		
-		zStream.next_out = [outputData mutableBytes] + zStream.total_out-bytesProcessedAlready;
+		zStream.next_out = (Bytef*)[outputData mutableBytes] + zStream.total_out-bytesProcessedAlready;
 		zStream.avail_out = (unsigned int)([outputData length] - (zStream.total_out-bytesProcessedAlready));
 		
-		status = inflate(&zStream, Z_SYNC_FLUSH);
+		status = inflate(&zStream, Z_NO_FLUSH);
 		
 		if (status == Z_STREAM_END) {
-			theError = [self closeStream];
 			break;
 		} else if (status != Z_OK) {
 			if (err) {
 				*err = [[self class] inflateErrorWithCode:status];
 			}
-			[self closeStream];
 			return nil;
 		}
 	}
 	
-	if (theError) {
-		if (err) {
-			*err = theError;
-		}
-		return nil;
-	}
-
 	// Set real length
 	[outputData setLength: zStream.total_out-bytesProcessedAlready];
 	return outputData;
@@ -136,7 +126,7 @@
 	// Create an empty file at the destination path
 	if (![fileManager createFileAtPath:destinationPath contents:[NSData data] attributes:nil]) {
 		if (err) {
-			*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were to create a file at %@",sourcePath,destinationPath],NSLocalizedDescriptionKey,nil]];
+			*err = [NSError errorWithDomain:NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were to create a file at %@",sourcePath,destinationPath],NSLocalizedDescriptionKey,nil]];
 		}
 		return NO;
 	}
@@ -144,7 +134,7 @@
 	// Ensure the source file exists
 	if (![fileManager fileExistsAtPath:sourcePath]) {
 		if (err) {
-			*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed the file does not exist",sourcePath],NSLocalizedDescriptionKey,nil]];
+			*err = [NSError errorWithDomain:NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed the file does not exist",sourcePath],NSLocalizedDescriptionKey,nil]];
 		}
 		return NO;
 	}
@@ -169,11 +159,15 @@
 		
 		// Make sure nothing went wrong
 		if ([inputStream streamStatus] == NSStreamEventErrorOccurred) {
-            [decompressor closeStream];
 			if (err) {
-				*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were unable to read from the source data file",sourcePath],NSLocalizedDescriptionKey,[inputStream streamError],NSUnderlyingErrorKey,nil]];
+				*err = [NSError errorWithDomain:NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were unable to read from the source data file",sourcePath],NSLocalizedDescriptionKey,[inputStream streamError],NSUnderlyingErrorKey,nil]];
 			}
+            [decompressor closeStream];
 			return NO;
+		}
+		// Have we reached the end of the input data?
+		if (!readLength) {
+			break;
 		}
 
 		// Attempt to inflate the chunk of data
@@ -182,18 +176,19 @@
 			if (err) {
 				*err = theError;
 			}
+			[decompressor closeStream];
 			return NO;
 		}
 		
 		// Write the inflated data out to the destination file
-		[outputStream write:[outputData bytes] maxLength:[outputData length]];
+		[outputStream write:(Bytef*)[outputData bytes] maxLength:[outputData length]];
 		
 		// Make sure nothing went wrong
 		if ([inputStream streamStatus] == NSStreamEventErrorOccurred) {
-			[decompressor closeStream];
 			if (err) {
-				*err = [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were unable to write to the destination data file at &@",sourcePath,destinationPath],NSLocalizedDescriptionKey,[outputStream streamError],NSUnderlyingErrorKey,nil]];
+				*err = [NSError errorWithDomain:NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of %@ failed because we were unable to write to the destination data file at %@",sourcePath,destinationPath],NSLocalizedDescriptionKey,[outputStream streamError],NSUnderlyingErrorKey,nil]];
             }
+			[decompressor closeStream];
 			return NO;
 		}
 		
@@ -201,13 +196,22 @@
 	
 	[inputStream close];
 	[outputStream close];
+
+	NSError *error = [decompressor closeStream];
+	if (error) {
+		if (err) {
+			*err = error;
+		}
+		return NO;
+	}
+
 	return YES;
 }
 
 
 + (NSError *)inflateErrorWithCode:(int)code
 {
-	return [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of data failed with code %hi",code],NSLocalizedDescriptionKey,nil]];
+	return [NSError errorWithDomain:NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Decompression of data failed with code %hi",code],NSLocalizedDescriptionKey,nil]];
 }
 
 @synthesize streamReady;

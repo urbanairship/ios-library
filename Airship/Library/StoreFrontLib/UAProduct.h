@@ -32,12 +32,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAAsyncImageView;
 
+// this enum has overlapping status states
+// UAProductStatusDownloading includes
 typedef enum UAProductStatus {
     UAProductStatusUnpurchased = 0,
-    UAProductStatusWaiting,          // transient state
-    UAProductStatusPurchased,
-    UAProductStatusDownloading,      // transient state
-    UAProductStatusDecompressing,  // transient state
+    UAProductStatusPurchasing,
+    UAProductStatusVerifyingReceipt,
+    UAProductStatusPurchased, // purchased, but a download is pending
+    UAProductStatusDownloading, // transient state
+    UAProductStatusDecompressing, // transient state 
     UAProductStatusInstalled,
     UAProductStatusHasUpdate
 } UAProductStatus;

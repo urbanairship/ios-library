@@ -37,4 +37,5 @@
 	"UA_AR_Duration_6_Months" = "6 Months";
 	"UA_AR_Duration_1_Year" = "1 Year";
 	"UA_Expired" = "Expired";
+    "UA_Free_Subscription" = "Free, No Expiration";
 }

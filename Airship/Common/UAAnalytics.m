@@ -190,7 +190,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     
     [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [session setObject:[AirshipVersion get] forKey:@"lib_version"];
-    [session setObject:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] forKey:@"package_version"];
+    [session setValue:packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation)
     BOOL isInForeground = YES;
@@ -214,6 +214,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
         
         analyticsLoggingEnabled = [[options objectForKey:UAAnalyticsOptionsLoggingKey] boolValue];
+        UALOG(@"Analytics logging %@enabled", (analyticsLoggingEnabled ? @"" : @"not "));
         
         if (self.server == nil) {
             self.server = kAnalyticsProductionServer;
@@ -273,6 +274,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
         wasBackgrounded = NO;
         notificationUserInfo = [[options objectForKey:UAAnalyticsOptionsRemoteNotificationKey] retain];
+        
+        /*
+         * This is the Build field in Xcode. If it's not set, use a blank string.
+         */
+        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        if (packageVersion == nil) {
+            packageVersion = @"";
+        }
         
         [self initSession];
     }
@@ -437,7 +446,7 @@ IF_IOS4_OR_GREATER(
     /*
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-    */
+     */
      
     RELEASE_SAFELY(connection);
     
@@ -579,7 +588,7 @@ IF_IOS4_OR_GREATER(
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
-    [request addRequestHeader:@"X-UA-Package-Version" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey]];
+    [request addRequestHeader:@"X-UA-Package-Version" value:packageVersion];
     [request addRequestHeader:@"X-UA-Device-ID" value:[UAUtils udidHash]];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
     

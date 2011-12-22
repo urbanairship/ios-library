@@ -131,7 +131,7 @@
 - (UASubscriptionProduct *)productForKey:(NSString *)productKey;
 
 //Private
-- (void)subscriptionTransctionDidComplete:(SKPaymentTransaction *)transaction;
+- (void)subscriptionTransactionDidComplete:(SKPaymentTransaction *)transaction;
 
 - (void)productInventoryUpdated;
 - (void)contentInventoryUpdated;

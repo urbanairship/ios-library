@@ -106,7 +106,9 @@
             descriptionHidden = YES;
             progressHidden = NO;
             break;
-        case UAProductStatusWaiting:
+        case UAProductStatusPurchasing:
+        case UAProductStatusDecompressing:
+        case UAProductStatusVerifyingReceipt:
             descriptionHidden = YES;
             progressHidden = YES;
             break;
@@ -141,7 +143,10 @@
         text = UA_SF_TR(@"UA_installed");
         borderColor = textColor = kInstalledFGColor;
         bgColor = kInstalledBGColor;
-    } else if (status == UAProductStatusDownloading || status == UAProductStatusWaiting) {
+    } else if (status == UAProductStatusDownloading 
+               || status == UAProductStatusPurchasing 
+               || status == UAProductStatusVerifyingReceipt
+               || status == UAProductStatusDecompressing) {
         text = UA_SF_TR(@"UA_downloading");
         textColor = borderColor = kDownloadingFGColor;
         bgColor = kDownloadingBGColor;
