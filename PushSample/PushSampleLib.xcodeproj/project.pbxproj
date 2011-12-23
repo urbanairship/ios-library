@@ -36,7 +36,7 @@
 		18C0295E124F216B00D49CD5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
 		18C02960124F216B00D49CD5 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02954124F216B00D49CD5 /* Icon-Small.png */; };
 		18C02961124F216B00D49CD5 /* SampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02955124F216B00D49CD5 /* SampleViewController.xib */; };
-		18C02A05124F244300D49CD5 /* libUAirship-1.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02973124F21B800D49CD5 /* libUAirship-1.1.1.a */; };
+		18C02A05124F244300D49CD5 /* libUAirship-1.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02973124F21B800D49CD5 /* libUAirship-1.1.2.a */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
@@ -98,6 +98,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
+		};
+		7BF2183F14A1033C00C4BA3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1FBF50D014646AC500554710;
+			remoteInfo = AirshipMiniPushLib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -192,7 +199,7 @@
 				0D2E043C11AA5D1E00C4CD8A /* CFNetwork.framework in Frameworks */,
 				0D2E049A11AA5DB100C4CD8A /* MobileCoreServices.framework in Frameworks */,
 				0D2E04BE11AA5E9700C4CD8A /* SystemConfiguration.framework in Frameworks */,
-				18C02A05124F244300D49CD5 /* libUAirship-1.1.1.a in Frameworks */,
+				18C02A05124F244300D49CD5 /* libUAirship-1.1.2.a in Frameworks */,
 				636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */,
 				636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */,
 				18A698BF129F679B00757214 /* Security.framework in Frameworks */,
@@ -390,7 +397,8 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				18C02973124F21B800D49CD5 /* libUAirship-1.1.1.a */,
+				18C02973124F21B800D49CD5 /* libUAirship-1.1.2.a */,
+				7BF2184014A1033C00C4BA3F /* libUAirshipPush-1.1.2.a */,
 				1FC354FE130DE7E200A26179 /* AirshipTest.app */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */,
 			);
@@ -509,10 +517,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		18C02973124F21B800D49CD5 /* libUAirship-1.1.1.a */ = {
+		18C02973124F21B800D49CD5 /* libUAirship-1.1.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.1.1.a";
+			path = "libUAirship-1.1.2.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -528,6 +536,13 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipLogicTests.octest;
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7BF2184014A1033C00C4BA3F /* libUAirshipPush-1.1.2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libUAirshipPush-1.1.2.a";
+			remoteRef = 7BF2183F14A1033C00C4BA3F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -689,8 +704,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jimmy Dee (AZLNJLY3H7)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -698,8 +712,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "50100EF0-1DA5-4F3E-A259-EEC2EAD02645";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -713,8 +726,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jimmy Dee (AZLNJLY3H7)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -722,8 +734,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=*]" = "";
+				PROVISIONING_PROFILE = "50100EF0-1DA5-4F3E-A259-EEC2EAD02645";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
