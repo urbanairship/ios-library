@@ -27,18 +27,32 @@
 
 @class UAProduct;
 
+/**
+ * Implementors of this protocol will receive
+ * callbacks from IAP regarding purchase and
+ * UI activity.
+ */
 @protocol UAStoreFrontDelegate<NSObject>
 
+/**
+ * Indicates that a product has been purchased.
+ * @param product The associated UAProduct instance.
+ */
 - (void)productPurchased:(UAProduct *) product;
 
 @optional
 
-// Indicates that the store front view will hide via
-// [UAStoreFront quitStoreFront]
+/** 
+ * Indicates that the store front view will hide via
+ * [UAStoreFront quitStoreFront]
+ */
 - (void)storeFrontWillHide;
 
-// Only when count == 0, downloads are all finished
-// Progress is between 0.0 and 1.0, inclusive
+/** 
+ * Called periodically with product download progress.
+ * @param progress A float between 0 and 1, indicating the current download progress
+ * @param count The number of current downloads.  When 0, downloads are finished.
+ */
 - (void)productsDownloadProgress:(float)progress count:(int)count;
 
 @end

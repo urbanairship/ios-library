@@ -25,16 +25,44 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * Implementors of this protocol will receive callbacks
+ * when IAP events requiring the display of alerts occur.
+ */
 @protocol UAStoreFrontAlertProtocol<NSObject>
 @required
+/**
+ * Called when an alert should be displayed that confirms a
+ * restore operation.
+ * @param restoreItemsCount The nubmer of items to be restored.
+ * @param delegate The delegate on which to invoke selectors for approval or disapproval
+ * @param approveSelector The selector to invoke when the restore is approved.
+ * @param disapprovedSelector The selector to invoke when the restore is disapproved.
+ */
 - (void)showConfirmRestoringAlert:(NSInteger)restoreItemsCount
                          delegate:(id)object
                   approveSelector:(SEL)okSelector
                disapproveSelector:(SEL)cancelSelector;
 
 @optional
+/**
+ * Called when an alert should be displayed showing that a Payment
+ * transaction failed.
+ */
 - (void)showPaymentTransactionFailedAlert;
+/**
+ * Called when an alert should be displayed showing that a Receipt
+ * verification failed.
+ */
 - (void)showReceiptVerifyFailedAlert;
+/**
+ * Called when an alert should be displayed showing that a content
+ * download failed.
+ */
 - (void)showDownloadContentFailedAlert;
+/**
+ * Called when an alert should be displayed showing that content
+ * decompression failed.
+ */
 - (void)showDecompressContentFailedAlert;
 @end
