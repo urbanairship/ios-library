@@ -44,6 +44,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize detailTable;
 @synthesize previewImage;
 @synthesize previewImageCell;
+@synthesize revisionHeading;
+@synthesize fileSizeHeading;
 
 - (void)dealloc {
     self.product = nil;
@@ -56,6 +58,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     RELEASE_SAFELY(previewImage);
     RELEASE_SAFELY(previewImageCell);
     RELEASE_SAFELY(buyButton);
+    RELEASE_SAFELY(revisionHeading);
+    RELEASE_SAFELY(fileSizeHeading);
     [super dealloc];
 }
 
@@ -98,6 +102,26 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     price.textColor = kPriceFGColor;
     [UAViewUtils roundView:price borderRadius:5.0 borderWidth:1.0 color:kPriceBorderColor];
     price.backgroundColor = kPriceBGColor;
+    
+    // Font customization
+    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
+    if (ui.detailTitleFont != nil)
+    {
+        self.productTitle.font = ui.detailTitleFont;
+    }
+    
+    if (ui.detailPriceFont != nil)
+    {
+        self.price.font = ui.detailPriceFont;
+    }
+    
+    if (ui.detailMetadataFont != nil)
+    {
+        self.revision.font = ui.detailMetadataFont;
+        self.fileSize.font = ui.detailMetadataFont;
+        self.revisionHeading.font = ui.detailMetadataFont;
+        self.fileSizeHeading.font = ui.detailMetadataFont;
+    }
 
     [self refreshUI];
 }
@@ -111,6 +135,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     self.detailTable = nil;
     self.previewImage = nil;
     self.previewImageCell = nil;
+    self.revisionHeading = nil;
+    self.fileSizeHeading = nil;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -245,7 +271,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (CGFloat) tableView: (UITableView *) tableView heightForRowAtIndexPath: (NSIndexPath *) indexPath {
     if([indexPath row] == 0) {
-        UIFont *font = [UIFont systemFontOfSize: 16];
+        UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
         
         // calculate the size of the text
         // note: text cannot be nil as sizeWithFont
@@ -284,7 +310,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     UIImageView *bgImageView = [[UIImageView alloc] initWithImage: stretchableBgImage];
     if (indexPath.row == 0) {
         NSString* text = product.productDescription;
-        UIFont *font = [UIFont systemFontOfSize: 16];
+        UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
 
         UILabel* description = [[UILabel alloc] init];
         description.text = text;

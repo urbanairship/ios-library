@@ -50,6 +50,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) IBOutlet UILabel* price;
 @property (nonatomic, retain) IBOutlet UILabel* revision;
 @property (nonatomic, retain) IBOutlet UILabel* fileSize;
+@property (nonatomic, retain) IBOutlet UILabel* revisionHeading;
+@property (nonatomic, retain) IBOutlet UILabel* fileSizeHeading;
 @property (nonatomic, retain) IBOutlet UITableView *detailTable;
 @property (nonatomic, retain) IBOutlet UITableViewCell *previewImageCell;
 @property (nonatomic, retain) IBOutlet UAAsyncImageView *previewImage;

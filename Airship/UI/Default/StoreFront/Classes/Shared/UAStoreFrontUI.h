@@ -62,6 +62,16 @@
 @property (nonatomic, assign, readonly) BOOL isiPad;
 @property (nonatomic, retain) NSBundle *localizationBundle;
 
+// Customization properties
+@property (nonatomic, retain) UIFont *cellPriceFont;
+@property (nonatomic, retain) UIFont *cellTitleFont;
+@property (nonatomic, retain) UIFont *cellDescriptionFont;
+@property (nonatomic, retain) UIFont *cellProgressFont;
+@property (nonatomic, retain) UIFont *detailDescriptionFont;
+@property (nonatomic, retain) UIFont *detailTitleFont;
+@property (nonatomic, retain) UIFont *detailMetadataFont;
+@property (nonatomic, retain) UIFont *detailPriceFont;
+
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;

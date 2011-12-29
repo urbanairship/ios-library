@@ -24,7 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAProductDetailiPadViewController.h"
-
+#import "UAStoreFrontUI.h"
 
 @implementation UAProductDetailiPadViewController
 
@@ -57,7 +57,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UIImageView *bgImageView = [[[UIImageView alloc] initWithImage:stretchableBgImage] autorelease];
 
     NSString* text = product.productDescription;
-    UIFont *font = [UIFont systemFontOfSize: 16];
+    UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
     UIWebView *webView = [[[UIWebView alloc] init] autorelease];
     NSString *htmlString = [self constructHtmlForWebViewWithDescription:text AndImageURL:product.previewURL];
     [webView loadHTMLString:htmlString baseURL:nil];
@@ -94,8 +94,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark WebView
 
 - (NSString *)constructHtmlForWebViewWithDescription:(NSString *)description AndImageURL:(NSURL *)imageURL {
-    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: helvetica; font-size: 16px;\"> <img width=\"160\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
-            [imageURL description], description];
+    
+    UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
+    
+    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> <img width=\"160\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
+            font.familyName, font.pointSize, [imageURL description], description];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)view {

@@ -190,7 +190,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
 
 - (float)getWidth:(NSString *)string {
     CGSize size;
-    size = [string sizeWithFont:[UIFont fontWithName:@"Helvetica" size:14]];
+    size = [string sizeWithFont:[UAStoreFrontUI shared].cellPriceFont];
     return size.width;
 }
 
@@ -209,7 +209,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
     [fontColor set];
     rect = CGRectMake(76, 11, width-RIGHT_BOUNDARY-76, 20);
     [title drawInRect:rect
-             withFont:[UIFont fontWithName:@"Helvetica-Bold" size:18]
+             withFont:[UAStoreFrontUI shared].cellTitleFont
         lineBreakMode:UILineBreakModeTailTruncation
             alignment:UITextAlignmentLeft];
 
@@ -227,7 +227,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
     [priceColor set];
     rect = CGRectMake(width-RIGHT_BOUNDARY-w, 8, w, 20);
     [price drawInRect:rect
-             withFont:[UIFont fontWithName:@"Helvetica" size:14]
+             withFont:[UAStoreFrontUI shared].cellPriceFont
         lineBreakMode:UILineBreakModeTailTruncation
             alignment:UITextAlignmentCenter];
 
@@ -235,7 +235,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
         [fontColor set];
         rect = CGRectMake(77, 31, width-RIGHT_BOUNDARY-77, 33);
         [description drawInRect:rect
-                       withFont:[UIFont fontWithName:@"Helvetica" size:13]
+                       withFont:[UAStoreFrontUI shared].cellDescriptionFont
                   lineBreakMode:UILineBreakModeTailTruncation
                       alignment:UITextAlignmentLeft];
     }
@@ -244,7 +244,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
         [fontColor set];
         rect = CGRectMake(77, 37, width-RIGHT_BOUNDARY-77, 20);
         [progress drawInRect:rect
-                    withFont:[UIFont fontWithName:@"Helvetica" size:13]
+                    withFont:[UAStoreFrontUI shared].cellProgressFont
                lineBreakMode:UILineBreakModeTailTruncation
                    alignment:UITextAlignmentLeft];
     }

@@ -40,6 +40,15 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize isVisible;
 @synthesize localizationBundle;
 
+@synthesize cellPriceFont;
+@synthesize cellTitleFont;
+@synthesize cellDescriptionFont;
+@synthesize detailDescriptionFont;
+@synthesize cellProgressFont;
+@synthesize detailTitleFont;
+@synthesize detailPriceFont;
+@synthesize detailMetadataFont;
+
 static BOOL runiPhoneTargetOniPad = NO;
 
 + (void)setRuniPhoneTargetOniPad:(BOOL)value {
@@ -53,7 +62,16 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(originalWindow);
     RELEASE_SAFELY(alertHandler);
     RELEASE_SAFELY(localizationBundle);
-
+    
+    RELEASE_SAFELY(cellPriceFont);
+    RELEASE_SAFELY(cellTitleFont);
+    RELEASE_SAFELY(cellDescriptionFont);
+    RELEASE_SAFELY(cellProgressFont);
+    RELEASE_SAFELY(detailDescriptionFont);
+    RELEASE_SAFELY(detailPriceFont);
+    RELEASE_SAFELY(detailMetadataFont);
+    RELEASE_SAFELY(detailTitleFont);
+    
     [super dealloc];
 }
 
@@ -81,6 +99,16 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         alertHandler = [[UAStoreFrontAlertHandler alloc] init];
         isVisible = NO;
+        
+        // Default fonts
+        cellDescriptionFont = [[UIFont fontWithName:@"Helvetica" size:13] retain];
+        cellTitleFont = [[UIFont fontWithName:@"Helvetica-Bold" size:18] retain];
+        cellPriceFont = [[UIFont fontWithName:@"Helvetica" size:14] retain];
+        cellProgressFont = [[UIFont fontWithName:@"Helvetica" size:13] retain];
+        detailDescriptionFont = [[UIFont systemFontOfSize:16] retain];
+        detailTitleFont = nil;
+        detailPriceFont = nil;
+        detailMetadataFont = nil;
     }
     
     return self;
