@@ -217,12 +217,20 @@
     
     zipDownloadContent.decompressDelegate = self;
     
-    if(self.createProductIDSubdir) {
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
-    } else {
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+    zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                  [self.downloadDirectory stringByAppendingPathComponent:content.subscriptionKey]];
+    
+    if (self.createProductIDSubdir) {
         
+        // Use the content key as the subdirectory unless the
+        // product ID is available
+        NSString *subdirectory = content.contentKey;
+        if ([content.productIdentifier length] > 0) {
+            subdirectory = content.productIdentifier;
+        }
+        
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
     }
     
     UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
@@ -290,25 +298,9 @@
 - (void)requestDidSucceed:(id)downloadContent {
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
-        zipDownloadContent.decompressDelegate = self;
         
         UASubscriptionContent *subscriptionContent = (UASubscriptionContent *)zipDownloadContent.userInfo;
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.subscriptionKey]];
 
-        if (self.createProductIDSubdir) {
-            
-            // Use the content key as the subdirectory unless the
-            // product ID is available
-            NSString *subdirectory = subscriptionContent.contentKey;
-            if ([subscriptionContent.productIdentifier length] > 0) {
-                subdirectory = subscriptionContent.productIdentifier;
-            }
-            
-            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                          [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
-        }
-        
         [self addDecompressingSubscriptionContent:subscriptionContent];
         [self removePendingSubscriptionContent:subscriptionContent];
         
