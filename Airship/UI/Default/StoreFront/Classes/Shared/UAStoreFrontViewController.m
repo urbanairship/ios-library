@@ -47,6 +47,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize toolBar;
 @dynamic products;
 @synthesize productID;
+@synthesize cellSelectionStyle;
 
 #pragma mark -
 #pragma mark UIViewController
@@ -74,6 +75,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
                                 initWithNibName:productDetailViewNibName
                                 bundle:nil];
         productID = nil;
+        cellSelectionStyle = UITableViewCellSelectionStyleBlue;
     }
     return self;
 }
@@ -237,6 +239,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         cell = [[[UAStoreFrontCell alloc] initWithStyle:UITableViewCellStyleDefault
                                         reuseIdentifier:@"store-front-cell"] autorelease];
         [UAViewUtils roundView:cell.iconContainer borderRadius:10 borderWidth:1 color:[UIColor darkGrayColor]];
+        cell.selectionStyle = self.cellSelectionStyle;
     }
 
     NSArray *tableProducts = [self productsForTableView:tableView];

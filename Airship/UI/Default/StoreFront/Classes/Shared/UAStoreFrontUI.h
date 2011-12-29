@@ -71,6 +71,8 @@
 @property (nonatomic, retain) UIFont *detailTitleFont;
 @property (nonatomic, retain) UIFont *detailMetadataFont;
 @property (nonatomic, retain) UIFont *detailPriceFont;
+@property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
+@property (nonatomic, retain) UIColor *cellOddBackgroundColor;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 

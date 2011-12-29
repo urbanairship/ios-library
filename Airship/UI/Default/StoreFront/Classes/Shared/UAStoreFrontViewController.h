@@ -61,6 +61,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, readonly) NSArray *products;
 @property (nonatomic, retain) NSString *productID;
 
+@property (nonatomic, assign) UITableViewCellSelectionStyle cellSelectionStyle;
+
 - (IBAction)segmentAction:(id)sender;
 
 //private

@@ -25,6 +25,7 @@
 
 #import "UATableCell.h"
 #import "UAirship.h"
+#import "UAStoreFrontUI.h"
 
 @implementation UATableCell
 
@@ -46,9 +47,9 @@
     isOdd = odd;
 
     if (isOdd) {
-        self.backgroundColor = RGBA(255, 255, 255, 1);
+        self.backgroundColor = [UAStoreFrontUI shared].cellOddBackgroundColor;
     } else {
-        self.backgroundColor = RGBA(240, 242, 243, 1);
+        self.backgroundColor = [UAStoreFrontUI shared].cellEvenBackgroundColor;
     }
 }
 

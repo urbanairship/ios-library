@@ -48,6 +48,8 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize detailTitleFont;
 @synthesize detailPriceFont;
 @synthesize detailMetadataFont;
+@synthesize cellEvenBackgroundColor;
+@synthesize cellOddBackgroundColor;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -71,6 +73,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(detailPriceFont);
     RELEASE_SAFELY(detailMetadataFont);
     RELEASE_SAFELY(detailTitleFont);
+    RELEASE_SAFELY(cellEvenBackgroundColor);
+    RELEASE_SAFELY(cellOddBackgroundColor);
     
     [super dealloc];
 }
@@ -109,6 +113,8 @@ static BOOL runiPhoneTargetOniPad = NO;
         detailTitleFont = nil;
         detailPriceFont = nil;
         detailMetadataFont = nil;
+        cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
+        cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
     }
     
     return self;
