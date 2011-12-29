@@ -3,15 +3,15 @@
 --------------------------
 
 - Updated HTTP client libraries
-- IAP and Susbscription content URLs are cached for 24 hours after purchase
-- Improvements to resuming incomplete installs for IAP and Susbscription content
+- IAP and Subscription content URLs are cached for 24 hours after purchase
+- Improvements to resuming incomplete installs for IAP and Subscription content
 - Subscriptions UI now supports free subscriptions
 - Subscriptions checks if products are available before submitting receipts
 - FIX: takeOff no longer crashes if the build field in Xcode is not set
 - FIX: Downloaded content is stored in Caches on iOS 5.0 and marked with the "do not back up"
   attribute on iOS 5.0.1
 - FIX: Tag API is working properly
-- FIX: Inbox "Mark as Read" button is unvailable once a message is marked as read
+- FIX: Inbox "Mark as Read" button is unavailable once a message is marked as read
 
 --------------------------
 1.1.1 - October 23, 2011
