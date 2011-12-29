@@ -105,7 +105,7 @@ typedef enum {
 UA_VERSION_INTERFACE(StoreFrontVersion)
 
 /**
- * Implementors of this protocol will receive callbacks
+ * Implementers of this protocol will receive callbacks
  * related to the IAP UI display.
  */
 @protocol UAStoreFrontUIProtocol
@@ -128,7 +128,7 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 @end
 
 /**
- * Implementors of this protocol will receive callbacks
+ * Implementers of this protocol will receive callbacks
  * related to inventory state changes
  */
 @protocol UAStoreFrontObserverProtocol
@@ -157,9 +157,9 @@ UA_VERSION_INTERFACE(StoreFrontVersion)
 @end
 
 /**
- * Implementors of this protocol will receive callbacks
+ * Implementers of this protocol will receive callbacks
  * from UAProduct instances when their state changes,
- * if the implementor has registered as an observer.
+ * if the implementer has registered as an observer.
  */
 @protocol UAProductObserverProtocol
 @optional

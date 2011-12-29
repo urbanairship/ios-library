@@ -28,7 +28,7 @@
 @class UAProduct;
 
 /**
- * Implementors of this protocol will receive
+ * Implementers of this protocol will receive
  * callbacks from IAP regarding purchase and
  * UI activity.
  */

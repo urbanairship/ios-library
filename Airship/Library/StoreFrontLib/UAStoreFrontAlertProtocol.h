@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Implementors of this protocol will receive callbacks
+ * Implementers of this protocol will receive callbacks
  * when IAP events requiring the display of alerts occur.
  */
 @protocol UAStoreFrontAlertProtocol<NSObject>
