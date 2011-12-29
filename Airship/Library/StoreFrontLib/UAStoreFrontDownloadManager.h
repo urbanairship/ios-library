@@ -59,9 +59,7 @@
  * The download directory.  If not set by the user, this will return a default value.
  */
 @property (nonatomic, copy) NSString *downloadDirectory;
-/**
- * The content URL cache.  If not set by the user, this will return a default value.
- */
+
 @property (nonatomic, retain) UAContentURLCache *contentURLCache;
 /**
  * A BOOL indicating whether to create a product ID subdirectory for downloaded content.
