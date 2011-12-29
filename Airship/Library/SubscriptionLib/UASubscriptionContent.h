@@ -28,6 +28,9 @@
 #import "UAObservable.h"
 #import "UA_ASIProgressDelegate.h"
 
+/**
+ * This class represents subscription content available for download.
+ */
 @interface UASubscriptionContent : UAObservable <UA_ASIProgressDelegate> {
   @private
     NSString *contentName;
@@ -46,15 +49,45 @@
     float progress;
 }
 
+/**
+ * The content name.
+ */
 @property (nonatomic, retain) NSString *contentName;
+/**
+ * The content key.
+ */
 @property (nonatomic, retain) NSString *contentKey;
+/**
+ * The associated subscription key.
+ */
 @property (nonatomic, retain) NSString *subscriptionKey;
+/**
+ * The associated product identifier, if present.
+ */
 @property (nonatomic, retain) NSString *productIdentifier;
+/**
+ * The URL for the content's icon.
+ */
 @property (nonatomic, retain) NSURL *iconURL;
+/**
+ * The URL for the content's preview image.
+ */
 @property (nonatomic, retain) NSURL *previewURL;
+/**
+ * The content's download URL.
+ */
 @property (nonatomic, retain) NSURL *downloadURL;
+/**
+ * The revision number.
+ */
 @property (nonatomic, assign) int revision;
+/**
+ * The file size in bytes.
+ */
 @property (nonatomic, assign) int fileSize;
+/**
+ * The content's description.
+ */
 @property (nonatomic, retain) NSString *description;
 
 /**
