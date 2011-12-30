@@ -1,4 +1,12 @@
 --------------------------
+1.1.3 - December 30, 2011
+--------------------------
+
+- Fixed incompatibility between ASIHTTPRequest and UA_ASIHTTPRequest introduced in recent update
+- Fixed Subscriptions decompression path bug that resulted in content unzipping into a
+  content key subdirectory
+
+--------------------------
 1.1.2 - December 20, 2011
 --------------------------
 
