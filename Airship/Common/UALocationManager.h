@@ -27,19 +27,21 @@
 #import <CoreLocation/CoreLocation.h>
 
 
-typedef enum UALocationManagerStatus {
-    UALocationManagerUpdating =0,
-    UALocationManagerStopped,
+typedef enum {
+    UALocationManagerUpdating = 0,
+    UALocationManagerNotUpdating,
     UALocationManagerNotEnabled,
     UALocationManagerNotAuthorized
-}UALocationManagerStatus;
+} UALocationManagerStatus;
 
 @interface UALocationManager : NSObject <CLLocationManagerDelegate> {
     CLLocationManager *locationManager_;
+    UALocationManagerStatus currentStatus_;
     BOOL useStandardLocationServiceInBackroundIfEnabled_;
 }
 
-@property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, retain, readonly) CLLocationManager *locationManager;
+@property (nonatomic, assign, readonly) UALocationManagerStatus currentStatus;
 
 /** Enables location montitoring in the background if and only if
  *  the "location" attribute is set in the application info plist.

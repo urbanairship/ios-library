@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 #import "UALocationManager.h"
 #import "UAGlobal.h"
 
@@ -33,6 +34,7 @@
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
+@synthesize currentStatus = currentStatus_;
 @synthesize useStandardLocationServiceInBackroundIfEnabled = useStandardLocationServiceInBackroundIfEnabled_;
 
 #pragma mark -
@@ -67,7 +69,7 @@
     return locationManager_.distanceFilter;
 }
 
-- (void)setDistanceFilter:(CLLocationDistance)distanceFilter {
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter {  
     locationManager_.distanceFilter = distanceFilter;
 }
 
@@ -75,11 +77,22 @@
 #pragma Location Updating
 
 - (void)startUpdatingLocation {
+    if (![locationManager_ locationServicesEnabled]) {
+        currentStatus_ = UALocationManagerNotEnabled;
+        return;
+    }
+    CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
+    if (!kCLAuthorizationStatusAuthorized == authorizationStatus) {
+        currentStatus_ = UALocationManagerNotAuthorized;
+        return;
+    }
     [locationManager_ startUpdatingLocation];
+    currentStatus_ = UALocationManagerUpdating;
 }
 
 - (void)stopUpdatingLocation {
     [locationManager_ stopUpdatingLocation];
+    currentStatus_ = UALocationManagerNotUpdating;
 }
 
 
