@@ -164,6 +164,8 @@
 		BB696FE114B79DD400964053 /* UALocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB696FA914B7741E00964053 /* UALocationManager.m */; };
 		BB696FF714B79FBA00964053 /* UALocationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB696FB014B797D300964053 /* UALocationManagerTests.m */; };
 		BB696FF914B7A01800964053 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB696FF814B7A01800964053 /* CoreLocation.framework */; };
+		BBFB99AD14B7ACFC008FAAEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBFB99AC14B7ACFC008FAAEC /* libOCMock.a */; };
+		BBFB99C614B7C20D008FAAEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB99C514B7C20D008FAAEC /* JRSwizzle.m */; };
 		D51846851300B6FC00A40CAC /* libInbox-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */; };
 		D51846861300B70100A40CAC /* libStoreFront-2.2.11.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */; };
 		D51846871300B70900A40CAC /* libPush-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */; };
@@ -443,6 +445,9 @@
 		BB696FA914B7741E00964053 /* UALocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManager.m; sourceTree = "<group>"; };
 		BB696FB014B797D300964053 /* UALocationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManagerTests.m; sourceTree = "<group>"; };
 		BB696FF814B7A01800964053 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		BBFB99AC14B7ACFC008FAAEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
+		BBFB99C414B7C20D008FAAEC /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
+		BBFB99C514B7C20D008FAAEC /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.1.3.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -520,6 +525,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBFB99AD14B7ACFC008FAAEC /* libOCMock.a in Frameworks */,
 				BB696FF914B7A01800964053 /* CoreLocation.framework in Frameworks */,
 				BB696FDF14B79D9E00964053 /* libUAirship-1.1.3.a in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -593,7 +599,6 @@
 		0867D691FE84028FC02AAC07 /* AirshipLib */ = {
 			isa = PBXGroup;
 			children = (
-				BB696FF814B7A01800964053 /* CoreLocation.framework */,
 				D5A1927312C158A8006AF4AE /* InboxLib.xcodeproj */,
 				1813EDDB12796185009DEB29 /* StoreFrontLib.xcodeproj */,
 				1890B89E12519FC400E6EBF1 /* PushLib.xcodeproj */,
@@ -610,6 +615,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB696FF814B7A01800964053 /* CoreLocation.framework */,
 				D51846AC1300B8C200A40CAC /* CFNetwork.framework */,
 				D51846B11300B8D900A40CAC /* Security.framework */,
 				D51846B61300B8EC00A40CAC /* libz.dylib */,
@@ -665,6 +671,8 @@
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXGroup;
 			children = (
+				BBFB99C414B7C20D008FAAEC /* JRSwizzle.h */,
+				BBFB99C514B7C20D008FAAEC /* JRSwizzle.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
 				BB696FB014B797D300964053 /* UALocationManagerTests.m */,
@@ -687,6 +695,7 @@
 		7BB679661429357100B877DB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BBFB99AC14B7ACFC008FAAEC /* libOCMock.a */,
 				7B909D421429363300D0AB36 /* Security.framework */,
 				7BB6794A142930CC00B877DB /* MobileCoreServices.framework */,
 				7BB679481429307B00B877DB /* SystemConfiguration.framework */,
@@ -1273,6 +1282,7 @@
 			files = (
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				BB696FF714B79FBA00964053 /* UALocationManagerTests.m in Sources */,
+				BBFB99C614B7C20D008FAAEC /* JRSwizzle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1649,7 +1659,16 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/AirshipLogicTests/OCMockLibrary/Headers/**",
+					"../Airship/**",
+				);
 				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/AirshipLogicTests/OCMockLibrary\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "";
 				"WARNING_CFLAGS[arch=*]" = "";
@@ -1672,7 +1691,16 @@
 				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/AirshipLogicTests/OCMockLibrary/Headers/**",
+					"../Airship/**",
+				);
 				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/AirshipLogicTests/OCMockLibrary\"",
+				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_PRODUCT = YES;
 				WARNING_CFLAGS = "";

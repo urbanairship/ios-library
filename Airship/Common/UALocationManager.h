@@ -40,7 +40,7 @@ typedef enum {
     BOOL useStandardLocationServiceInBackroundIfEnabled_;
 }
 
-@property (nonatomic, retain, readonly) CLLocationManager *locationManager;
+@property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, assign, readonly) UALocationManagerStatus currentStatus;
 
 /** Enables location montitoring in the background if and only if

@@ -7,15 +7,28 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <OCMock/OCMock.h>
 #import "UALocationManager.h"
+#import "JRSwizzle.h"
+
 
 @interface UALocationManagerTests : SenTestCase {
     UALocationManager *testLocationManager_;
 }
 
++ (BOOL)returnYES;
++ (BOOL)returnNO;
 @end
 
 @implementation UALocationManagerTests
+
++ (BOOL)returnNO {
+    return NO;
+}
+
++ (BOOL)returnYES {
+    return YES;
+}
 
 - (void)setUp {
     testLocationManager_ = [[UALocationManager alloc] init];
@@ -28,7 +41,7 @@
 }
 
 // Only testing get/set methods since they are being forwarded and retrieved from a different object
-- (void) testGetSetMethods {
+- (void)testGetSetMethods {
     CLLocationDistance testDistance = 100.0;
     testLocationManager_.distanceFilter = testDistance;
     // Check the distance from the CLLocationManager directly
@@ -41,5 +54,16 @@
     STAssertEquals(testAccuracy, testLocationManager_.desiredAccuracy, @"Desired accuracy getter broken");
 }
 
+- (void)testStartUpdatingLocation {
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] startUpdatingLocation];
+    testLocationManager_.locationManager = mockLocationManager;
+    NSError* swizzleError = nil;
+    // + (BOOL)jr_swizzleClassMethod:(SEL)origSel_ withClassMethod:(SEL)altSel_ error:(NSError**)error_;
+    [CLLocationManager jr_swizzleClassMethod:@selector(locationServicesEnabled) withClassMethod:@selector(returnNO) error:&swizzleError];
+    NSLog(@"Error %@", swizzleError.description);
+//    [testLocationManager_ startUpdatingLocation];
+//    [mockLocationManager verify];
 
+}
 @end
