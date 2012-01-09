@@ -11,24 +11,37 @@
 #import "UALocationManager.h"
 #import "JRSwizzle.h"
 
+@interface CLLocationManager (Test)
++ (BOOL)returnYES;
++ (BOOL)returnNO;
++ (CLAuthorizationStatus)returnCLLocationStatusAuthorized;
++ (CLAuthorizationStatus)returnCLLocationStatusDenied;
+@end
+// Add methods to CLLocationManager for swizzling
+@implementation CLLocationManager (Test)
++ (BOOL)returnYES {
+    return YES;
+}
++ (BOOL)returnNO {
+    return NO;
+}
++ (CLAuthorizationStatus)returnCLLocationStatusAuthorized {
+    CLAuthorizationStatus authorized = kCLAuthorizationStatusAuthorized;
+    return authorized;
+}
++ (CLAuthorizationStatus)returnCLLocationStatusDenied {
+    CLAuthorizationStatus denied = kCLAuthorizationStatusDenied;
+    return denied;
+}
+@end
+
 
 @interface UALocationManagerTests : SenTestCase {
     UALocationManager *testLocationManager_;
 }
-
-+ (BOOL)returnYES;
-+ (BOOL)returnNO;
 @end
 
 @implementation UALocationManagerTests
-
-+ (BOOL)returnNO {
-    return NO;
-}
-
-+ (BOOL)returnYES {
-    return YES;
-}
 
 - (void)setUp {
     testLocationManager_ = [[UALocationManager alloc] init];
@@ -54,16 +67,22 @@
     STAssertEquals(testAccuracy, testLocationManager_.desiredAccuracy, @"Desired accuracy getter broken");
 }
 
-- (void)testStartUpdatingLocation {
+- (void)testStartUpdatingLocationWhenLocationIsEnabledAndAuthorized {
+    //Swizzle methods
+    NSError* locationServiceSwizzleError = nil;
+    [CLLocationManager jr_swizzleClassMethod:@selector(locationServicesEnabled) withClassMethod:@selector(returnYES) error:&locationServiceSwizzleError];
+    STAssertNil(locationServiceSwizzleError, @"LocationServicesSwizzle fail");
+    NSError* authoriztionSwizzleError = nil;
+    [CLLocationManager jr_swizzleClassMethod:@selector(authorizationStatus) withClassMethod:@selector(returnCLLocationStatusAuthorized) error:&authoriztionSwizzleError];
+    STAssertNil(authoriztionSwizzleError, @"AuthorizationSwizzle fail");
+    // Setup mock object and message expectations
+    STAssertEquals(kCLAuthorizationStatusAuthorized, [CLLocationManager authorizationStatus], @"authoriztionStatus swizzling failed");
+    STAssertEquals(YES, [CLLocationManager locationServicesEnabled], @"locationServices not enabled");
+    //Setup the mock object and expected messages
     id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
     [[mockLocationManager expect] startUpdatingLocation];
     testLocationManager_.locationManager = mockLocationManager;
-    NSError* swizzleError = nil;
-    // + (BOOL)jr_swizzleClassMethod:(SEL)origSel_ withClassMethod:(SEL)altSel_ error:(NSError**)error_;
-    [CLLocationManager jr_swizzleClassMethod:@selector(locationServicesEnabled) withClassMethod:@selector(returnNO) error:&swizzleError];
-    NSLog(@"Error %@", swizzleError.description);
-//    [testLocationManager_ startUpdatingLocation];
-//    [mockLocationManager verify];
-
+    [testLocationManager_ startUpdatingLocation];
+    [mockLocationManager verify];
 }
 @end

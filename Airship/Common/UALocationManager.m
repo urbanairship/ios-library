@@ -77,7 +77,7 @@
 #pragma Location Updating
 
 - (void)startUpdatingLocation {
-    if (![locationManager_ locationServicesEnabled]) {
+    if (![CLLocationManager locationServicesEnabled]) {
         currentStatus_ = UALocationManagerNotEnabled;
         return;
     }
