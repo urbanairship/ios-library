@@ -84,5 +84,23 @@
     testLocationManager_.locationManager = mockLocationManager;
     [testLocationManager_ startUpdatingLocation];
     [mockLocationManager verify];
+    UALocationManagerStatus managerStatus = testLocationManager_.currentStatus;
+    STAssertEquals(UALocationManagerUpdating, managerStatus, @"testLocationManager status is not set properly");
+}
+
+-(void)testStartUpdatingLocationWhenLocationIsDisabled {
+    // setup and test swizzle
+    NSError *locationServiceSwizzleError = nil;
+    [CLLocationManager jr_swizzleClassMethod:@selector(locationServicesEnabled) withClassMethod:@selector(returnNO) error:&locationServiceSwizzleError];
+    STAssertEquals(NO, [CLLocationManager locationServicesEnabled], @"method swizzle failed in CLLocationManager");
+    STAssertNil(locationServiceSwizzleError, @"locationServicesEnabled swizzle failed");
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    testLocationManager_.locationManager = mockLocationManager;
+    // Mock objects that receive messages that are not stubbed or expected will throw an exception
+    STAssertThrows([mockLocationManager startUpdatingLocation], @"mockLocationManager should throw exception");
+    STAssertNoThrow([testLocationManager_ startUpdatingLocation], @"Exception thown in testLocationManager, CLLocationManager object should not receive any messages");
+    UALocationManagerStatus managerStatus = testLocationManager_.currentStatus;
+    STAssertEquals(UALocationManagerNotEnabled, managerStatus, @"testLocationManager status is not set properly");
+    
 }
 @end
