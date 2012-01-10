@@ -35,21 +35,22 @@ typedef enum {
 } UALocationManagerStatus;
 
 @interface UALocationManager : NSObject <CLLocationManagerDelegate> {
+    @private
     CLLocationManager *locationManager_;
     UALocationManagerStatus currentStatus_;
-    BOOL useStandardLocationServiceInBackroundIfEnabled_;
+    BOOL backgroundLocationMonitoringEnabled_;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, assign, readonly) UALocationManagerStatus currentStatus;
 
-/** Enables location montitoring in the background if and only if
- *  the "location" attribute is set in the application info plist.
- *  If this is not set to YES, location monitoring for Urban Airhsip
+/** Enables location monitoring in the background.
+ *  If this is not set to YES, location monitoring for Urban Airship
  *  is terminated when the app enters the background
  **/
-@property (nonatomic, assign) BOOL useStandardLocationServiceInBackroundIfEnabled;
+@property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
 
+// KVO compliant methods to pass settings to CLLocationManager
 - (CLLocationAccuracy)desiredAccuracy;
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
@@ -67,27 +68,18 @@ typedef enum {
  **/
 - (void)stopUpdatingLocation;
 
-///** Enabling automatic location updates creates an update event at the
-// *  following times:
-// *  1. Immediately when called
-// *  2. Every time the app returns to the foreground, AND more than 60 seconds
-// *     have passed.
-// *  TODO: match     
-// *  Returns:
-// *      YES if services are available and service is started
-// *      NO if services are unavailable, or unauthorized
-// **/
-//- (BOOL)enableAutomaticStandardLocationUpdates;
-//
-///** Returns the authorization status of the location manager 
-// *  Returns nil if the iOS version < 4.2
-// **/
-//- (CLAuthorizationStatus) locationServicesAuthorizationStatus;
-//
-///** Returns the value of the locationServicesEnabled method for the 
-// * locationManager
-// **/
-//- (BOOL)locationServicesEnabled;
+/** Enabling automatic location updates creates an update event at the
+ *  following times:
+ *  1. Immediately when called
+ *  2. Every time the app returns to the foreground, AND more than 60 seconds
+ *     have passed.
+ *  Returns:
+ *      YES if services are available and service is started
+ *      NO if services are unavailable, or unauthorized
+ **/
+- (BOOL)enableAutomaticStandardLocationUpdates;
+
+
 
 
 

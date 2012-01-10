@@ -27,15 +27,15 @@
 #import "UALocationManager.h"
 #import "UAGlobal.h"
 
-@interface UALocationManager (Private)
-
+@interface UALocationManager ()
+- (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices;
 @end
 
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
 @synthesize currentStatus = currentStatus_;
-@synthesize useStandardLocationServiceInBackroundIfEnabled = useStandardLocationServiceInBackroundIfEnabled_;
+@synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
 
 #pragma mark -
 #pragma Object Lifecycle
@@ -50,6 +50,7 @@
     if(self){
         locationManager_ = [[CLLocationManager alloc] init];
         locationManager_.delegate = self;
+        backgroundLocationMonitoringEnabled_ = NO;
     }
     return self;
 }
@@ -77,15 +78,7 @@
 #pragma Location Updating
 
 - (void)startUpdatingLocation {
-    if (![CLLocationManager locationServicesEnabled]) {
-        currentStatus_ = UALocationManagerNotEnabled;
-        return;
-    }
-    CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
-    if (!kCLAuthorizationStatusAuthorized == authorizationStatus) {
-        currentStatus_ = UALocationManagerNotAuthorized;
-        return;
-    }
+    if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) return;
     [locationManager_ startUpdatingLocation];
     currentStatus_ = UALocationManagerUpdating;
 }
@@ -94,6 +87,46 @@
     [locationManager_ stopUpdatingLocation];
     currentStatus_ = UALocationManagerNotUpdating;
 }
+
+#pragma mark -
+#pragma CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+
+}
+
+#pragma mark -
+#pragma Automatic Standard Location Updates
+
+- (BOOL)enableAutomaticStandardLocationUpdates {
+    if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) return NO;
+    return NO;
+}
+
+#pragma mark -
+#pragma CLLocationManager authorization/location services settings
+
+/** Checks both locationServicesEnabled and authorizationStatus
+ *  for CLLocationManager an records state of appropriate flags.
+ *  Returns:
+ *      YES if locationServicesAreEnabled and kCLAuthorizationStatusAuthorized
+ *      NO in all other cases
+ *
+ */
+- (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices {
+    if (![CLLocationManager locationServicesEnabled]) {
+        currentStatus_ = UALocationManagerNotEnabled;
+        return NO;
+    }
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status != kCLAuthorizationStatusAuthorized) {
+        currentStatus_ = UALocationManagerNotAuthorized;
+        return NO;
+    }
+    return YES;
+}
+
+
 
 
 
