@@ -79,10 +79,8 @@
 }
 
 - (void)setLocationManager:(CLLocationManager *)locationManager {
-    NSLog(@"stop");
-    if (nil != locationManager_) {
-        RELEASE_SAFELY(locationManager_);
-    }
+    locationManager_.delegate = nil;
+    [locationManager_ autorelease];
     locationManager_ = [locationManager retain];
     locationManager_.delegate = self;
 }
@@ -118,14 +116,14 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    if(nil != locationManagerError_) RELEASE_SAFELY(locationManagerError_);
+    if(nil != locationManagerError_) [locationManager_ autorelease];
     locationManagerError_ = [error retain];
     // TODO: send a notification? what action should be taken?
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    // TODO: add some magic here
-    lastReportedLocation_ = newLocation;  
+    if (nil != lastReportedLocation_) [lastReportedLocation_ autorelease];
+    lastReportedLocation_ = [newLocation retain];  
 }
 
 

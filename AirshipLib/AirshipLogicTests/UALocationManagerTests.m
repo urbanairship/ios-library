@@ -18,6 +18,8 @@
 + (CLAuthorizationStatus)returnCLLocationStatusAuthorized;
 + (CLAuthorizationStatus)returnCLLocationStatusDenied;
 - (void)sendAuthorizationChangedDelegateCallWithAuthorization:(CLAuthorizationStatus)status;
+- (void)sendLocationDidFailWithErrorDelegateCallWithError:(NSError*)error;
+- (void)sendDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
 // Add methods to CLLocationManager for swizzling
 @implementation CLLocationManager (Test)
@@ -37,12 +39,25 @@
     [self.delegate locationManager:self didChangeAuthorizationStatus:status];
 }
 
+- (void)sendLocationDidFailWithErrorDelegateCallWithError:(NSError*)error {
+    [self.delegate locationManager:self didFailWithError:error];
+}
+
+- (void)sendDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
+    [self.delegate locationManager:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+}
 @end
 
 @interface UALocationManagerTests : SenTestCase {
     UALocationManager *testLocationManager_;
+    CLLocation *testLocationOne_;
+    CLLocation *testLocationTwo_;
 }
 - (void) swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector;
+- (void)swizzleCLLocationClassEnabledAndAuthorized;
+- (void)swizzleCLlocationClassBackFromEnabledAndAuthorized;
+- (void)setUpTestLocations;
+- (void)tearDownTestLocations;
 @end
 
 @implementation UALocationManagerTests
@@ -57,6 +72,23 @@
 - (void)tearDown {
     [testLocationManager_ release];
     testLocationManager_ = nil;
+
+}
+
+- (void)setUpTestLocations {
+    CLLocationCoordinate2D coord1 = CLLocationCoordinate2DMake(45.525352839897, -122.682115697712);
+    CLLocationCoordinate2D coord2 = CLLocationCoordinate2DMake(37.7726834626323, -122.406178648848);
+    testLocationOne_ = [[CLLocation alloc] initWithCoordinate:coord1 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
+    testLocationTwo_ = [[CLLocation alloc] initWithCoordinate:coord2 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
+    STAssertNotNil(testLocationOne_, @"location allocation fail");
+    STAssertNotNil(testLocationTwo_, @"location allocaiton fail");
+}
+
+- (void)tearDownTestLocations {
+    [testLocationOne_ release];
+    testLocationOne_ = nil; 
+    [testLocationTwo_ release];
+    testLocationTwo_ = nil;
 }
 
 #pragma mark -
@@ -131,30 +163,58 @@
 }
 
 - (void)testAuthorizationStatusChangeDelegateCall {
-    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnYES)];
-    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusAuthorized)];
+    [self swizzleCLLocationClassEnabledAndAuthorized];
     [testLocationManager_ startUpdatingLocation];
     STAssertEquals(UALocationManagerUpdating, testLocationManager_.locationManagerActivityStatus, @"locationManagerActivityStatus status should be UALocationManagerUpdating");
     id partialLocationMock = [OCMockObject partialMockForObject:testLocationManager_.locationManager];
     [[partialLocationMock expect] stopUpdatingLocation];
     [testLocationManager_.locationManager sendAuthorizationChangedDelegateCallWithAuthorization:kCLAuthorizationStatusDenied];
-    [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
     [partialLocationMock verify];
     STAssertEquals(UALocationManagerNotUpdating, testLocationManager_.locationManagerActivityStatus, @"locationManagerActivityStatus should be UALocationManagerNotUpdating");
-    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusAuthorized) withMethod:@selector(authorizationStatus)];
+    [self swizzleCLlocationClassBackFromEnabledAndAuthorized];
     
+}
+
+- (void)testLocationDidFailWithErrorDelegateCall {
+    NSError* testError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    [testLocationManager_.locationManager sendLocationDidFailWithErrorDelegateCallWithError:testError];
+    STAssertEqualObjects(testError, testLocationManager_.locationManagerError, @"locationManagerError not set correctly");
+}
+
+- (void)testDidUpdateToLocationFromLocationDelegateCall {
+    [self setUpTestLocations];
+    [testLocationManager_.locationManager sendDidUpdateToLocation:testLocationOne_ fromLocation:testLocationTwo_];
+    STAssertEqualObjects(testLocationOne_, testLocationManager_.lastReportedLocation, @"Location was not successfuly set in UALocationManager after didUpdate delegate call");
+    [self tearDownTestLocations];
 }
 
 
 #pragma mark -
 #pragma Support Methods
 
+// Don't forget to unswizzle the swizzles in cases of strange behavior
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector {
     NSError *swizzleError = nil;
     [CLLocationManager jr_swizzleClassMethod:oneSelector withClassMethod:anotherSelector error:&swizzleError];
     STAssertNil(swizzleError, @"Method swizzling for CLLocationManager failed with error %@", swizzleError.description);
 }
 
+- (void)swizzleCLLocationClassEnabledAndAuthorized {
+    NSError *locationServicesSizzleError = nil;
+    NSError *authorizationStatusSwizzleError = nil;
+    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnYES)];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusAuthorized)];    
+    STAssertNil(locationServicesSizzleError, @"Error swizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    STAssertNil(authorizationStatusSwizzleError, @"Error swizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
+}
 
+- (void)swizzleCLlocationClassBackFromEnabledAndAuthorized {
+    NSError *locationServicesSizzleError = nil;
+    NSError *authorizationStatusSwizzleError = nil;
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusAuthorized) withMethod:@selector(authorizationStatus)];
+    [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
+    STAssertNil(locationServicesSizzleError, @"Error unsizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    STAssertNil(authorizationStatusSwizzleError, @"Error unswizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
+}
 
 @end
