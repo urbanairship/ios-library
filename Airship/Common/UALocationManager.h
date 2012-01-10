@@ -28,21 +28,24 @@
 
 
 typedef enum {
-    UALocationManagerUpdating = 0,
-    UALocationManagerNotUpdating,
-    UALocationManagerNotEnabled,
-    UALocationManagerNotAuthorized
-} UALocationManagerStatus;
+    UALocationManagerNotUpdating = 0,
+    UALocationManagerUpdating
+} UALocationManagerActivityStatus;
+
 
 @interface UALocationManager : NSObject <CLLocationManagerDelegate> {
     @private
     CLLocationManager *locationManager_;
-    UALocationManagerStatus currentStatus_;
+    UALocationManagerActivityStatus locationManagerActivityStatus_;
+    CLLocation *lastReportedLocation_;
+    NSError *locationManagerError_;
     BOOL backgroundLocationMonitoringEnabled_;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, assign, readonly) UALocationManagerStatus currentStatus;
+@property (nonatomic, assign, readonly) UALocationManagerActivityStatus locationManagerActivityStatus;
+@property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
+@property (nonatomic, retain, readonly) NSError *locationManagerError;
 
 /** Enables location monitoring in the background.
  *  If this is not set to YES, location monitoring for Urban Airship
@@ -59,8 +62,11 @@ typedef enum {
 
 /** Starts updating the location and reporting to Urban Airship
  *  TODO: Fill this in when update timing is finalized
+ *  Both [CLLocationManager locationServicesEnabled] and [CLLocationManager authorizationStatus]
+ *  are called before location services begin reporting. Consult those mehtods for more information
+ *  
  **/
-- (void)startUpdatingLocation;
+- (BOOL)startUpdatingLocation;
 
 /** Stops updating the location. If this method is called while
  *  the automatic location service is enabled, it will terminate that
@@ -78,11 +84,6 @@ typedef enum {
  *      NO if services are unavailable, or unauthorized
  **/
 - (BOOL)enableAutomaticStandardLocationUpdates;
-
-
-
-
-
 
 
 

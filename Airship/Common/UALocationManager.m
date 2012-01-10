@@ -34,7 +34,9 @@
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
-@synthesize currentStatus = currentStatus_;
+@synthesize locationManagerActivityStatus = locationManagerActivityStatus_;
+@synthesize lastReportedLocation = lastReportedLocation_;
+@synthesize locationManagerError = locationManagerError_;
 @synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
 
 #pragma mark -
@@ -42,6 +44,8 @@
 
 - (void)dealloc{
     RELEASE_SAFELY(locationManager_);
+    RELEASE_SAFELY(lastReportedLocation_);
+    RELEASE_SAFELY(locationManagerError_);
     [super dealloc];
 }
 
@@ -74,26 +78,56 @@
     locationManager_.distanceFilter = distanceFilter;
 }
 
+- (void)setLocationManager:(CLLocationManager *)locationManager {
+    NSLog(@"stop");
+    if (nil != locationManager_) {
+        RELEASE_SAFELY(locationManager_);
+    }
+    locationManager_ = [locationManager retain];
+    locationManager_.delegate = self;
+}
+
+
 #pragma mark -
 #pragma Location Updating
 
-- (void)startUpdatingLocation {
-    if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) return;
+- (BOOL)startUpdatingLocation {
+    if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) {
+        return NO;
+    }
     [locationManager_ startUpdatingLocation];
-    currentStatus_ = UALocationManagerUpdating;
+    locationManagerActivityStatus_ = UALocationManagerUpdating;
+    return YES;
 }
 
 - (void)stopUpdatingLocation {
     [locationManager_ stopUpdatingLocation];
-    currentStatus_ = UALocationManagerNotUpdating;
+    locationManagerActivityStatus_ = UALocationManagerNotUpdating;
 }
 
 #pragma mark -
 #pragma CLLocationManagerDelegate
 
+// Shutdown location services if authorization changes
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-
+    if (status != kCLAuthorizationStatusAuthorized) {
+        if (locationManagerActivityStatus_ == UALocationManagerUpdating) {
+            [self stopUpdatingLocation];
+        }
+    }
 }
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    if(nil != locationManagerError_) RELEASE_SAFELY(locationManagerError_);
+    locationManagerError_ = [error retain];
+    // TODO: send a notification? what action should be taken?
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    // TODO: add some magic here
+    lastReportedLocation_ = newLocation;  
+}
+
 
 #pragma mark -
 #pragma Automatic Standard Location Updates
@@ -114,17 +148,12 @@
  *
  */
 - (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices {
-    if (![CLLocationManager locationServicesEnabled]) {
-        currentStatus_ = UALocationManagerNotEnabled;
-        return NO;
-    }
+    if (![CLLocationManager locationServicesEnabled]) return NO;
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-    if (status != kCLAuthorizationStatusAuthorized) {
-        currentStatus_ = UALocationManagerNotAuthorized;
-        return NO;
-    }
+    if (status != kCLAuthorizationStatusAuthorized) return NO;
     return YES;
 }
+
 
 
 
