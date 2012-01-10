@@ -1459,7 +1459,7 @@
 			};
 			name = Debug;
 		};
-		1DEB922008733DC00010E9CD /* Release */ = {
+		1DEB922008733DC00010E9CD /* Cupcakes */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1485,7 +1485,7 @@
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = Release;
+			name = Cupcakes;
 		};
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1515,7 +1515,7 @@
 			};
 			name = Debug;
 		};
-		1DEB922408733DC00010E9CD /* Release */ = {
+		1DEB922408733DC00010E9CD /* Cupcakes */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -1539,7 +1539,7 @@
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
-			name = Release;
+			name = Cupcakes;
 		};
 		1FBF50CE14646AC500554710 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1578,7 +1578,7 @@
 			};
 			name = Debug;
 		};
-		1FBF50CF14646AC500554710 /* Release */ = {
+		1FBF50CF14646AC500554710 /* Cupcakes */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1605,7 +1605,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = "";
 			};
-			name = Release;
+			name = Cupcakes;
 		};
 		7BB679181429288D00B877DB /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1636,7 +1636,7 @@
 			};
 			name = Debug;
 		};
-		7BB679191429288D00B877DB /* Release */ = {
+		7BB679191429288D00B877DB /* Cupcakes */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1658,7 +1658,281 @@
 				"WARNING_CFLAGS[arch=*]" = "";
 				WRAPPER_EXTENSION = octest;
 			};
-			name = Release;
+			name = Cupcakes;
+		};
+		B09A6C5814BCE941003361EC /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = 1.1.2;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
+				OTHER_LDFLAGS = "-ObjC";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
+			};
+			name = Distribution;
+		};
+		B09A6C5914BCE941003361EC /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DSTROOT = /tmp/AirshipLib.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INSTALL_PATH = /Airship;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Distribution;
+		};
+		B09A6C5A14BCE941003361EC /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DSTROOT = /tmp/AirshipLib.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AirshipPushLib_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INSTALL_PATH = /Airship;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "UAirshipPush-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = "";
+			};
+			name = Distribution;
+		};
+		B09A6C5B14BCE941003361EC /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "AirshipTest-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+				);
+				PRODUCT_NAME = AirshipTest;
+				SDKROOT = iphoneos;
+				ZERO_LINK = NO;
+			};
+			name = Distribution;
+		};
+		B09A6C5C14BCE941003361EC /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = "";
+				"WARNING_CFLAGS[arch=*]" = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Distribution;
+		};
+		B09A6C5D14BCE948003361EC /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = 1.1.2;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
+				OTHER_LDFLAGS = "-ObjC";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7 i386";
+				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
+				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
+			};
+			name = TestFlight;
+		};
+		B09A6C5E14BCE948003361EC /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DSTROOT = /tmp/AirshipLib.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INSTALL_PATH = /Airship;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = TestFlight;
+		};
+		B09A6C5F14BCE948003361EC /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
+				DSTROOT = /tmp/AirshipLib.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AirshipPushLib_Prefix.pch;
+				HEADER_SEARCH_PATHS = "../Airship/**";
+				INSTALL_PATH = /Airship;
+				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "UAirshipPush-$(CURRENT_PROJECT_VERSION)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = "";
+			};
+			name = TestFlight;
+		};
+		B09A6C6014BCE948003361EC /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Airship/External\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				INFOPLIST_FILE = "AirshipTest-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					UIKit,
+				);
+				PRODUCT_NAME = AirshipTest;
+				SDKROOT = iphoneos;
+				ZERO_LINK = NO;
+			};
+			name = TestFlight;
+		};
+		B09A6C6114BCE948003361EC /* TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WARNING_CFLAGS = "";
+				"WARNING_CFLAGS[arch=*]" = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = TestFlight;
 		};
 		D5A4B9441300A8F200002F71 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1698,7 +1972,7 @@
 			};
 			name = Debug;
 		};
-		D5A4B9451300A8F200002F71 /* Release */ = {
+		D5A4B9451300A8F200002F71 /* Cupcakes */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1726,7 +2000,7 @@
 				SDKROOT = iphoneos;
 				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = Cupcakes;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1735,7 +2009,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB921F08733DC00010E9CD /* Debug */,
-				1DEB922008733DC00010E9CD /* Release */,
+				1DEB922008733DC00010E9CD /* Cupcakes */,
+				B09A6C5914BCE941003361EC /* Distribution */,
+				B09A6C5E14BCE948003361EC /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1744,7 +2020,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB922308733DC00010E9CD /* Debug */,
-				1DEB922408733DC00010E9CD /* Release */,
+				1DEB922408733DC00010E9CD /* Cupcakes */,
+				B09A6C5814BCE941003361EC /* Distribution */,
+				B09A6C5D14BCE948003361EC /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1753,7 +2031,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1FBF50CE14646AC500554710 /* Debug */,
-				1FBF50CF14646AC500554710 /* Release */,
+				1FBF50CF14646AC500554710 /* Cupcakes */,
+				B09A6C5A14BCE941003361EC /* Distribution */,
+				B09A6C5F14BCE948003361EC /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1762,7 +2042,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7BB679181429288D00B877DB /* Debug */,
-				7BB679191429288D00B877DB /* Release */,
+				7BB679191429288D00B877DB /* Cupcakes */,
+				B09A6C5C14BCE941003361EC /* Distribution */,
+				B09A6C6114BCE948003361EC /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1771,7 +2053,9 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D5A4B9441300A8F200002F71 /* Debug */,
-				D5A4B9451300A8F200002F71 /* Release */,
+				D5A4B9451300A8F200002F71 /* Cupcakes */,
+				B09A6C5B14BCE941003361EC /* Distribution */,
+				B09A6C6014BCE948003361EC /* TestFlight */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
