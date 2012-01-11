@@ -80,5 +80,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadProduct:(NSString*)productID;
 
+- (void)enterBackground;
+- (void)enterForeground;
+- (void)restoreAll;
 
 @end

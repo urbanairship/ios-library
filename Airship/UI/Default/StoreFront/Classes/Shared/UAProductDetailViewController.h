@@ -60,4 +60,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshUI;
 - (void)refreshBuyButton;
 
+- (void)enterBackground;
+- (void)enterForeground;
+
 @end

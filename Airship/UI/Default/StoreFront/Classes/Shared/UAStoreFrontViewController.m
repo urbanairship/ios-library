@@ -193,7 +193,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     NSArray *dataSource = [self productsForTableView:productTable];
     UAProduct *aProduct;
 
-    for (int i=0; i<dataSource.count; i++) {
+    for (NSUInteger i=0; i<dataSource.count; i++) {
         aProduct = [dataSource objectAtIndex:i];
         if ([aProduct.productIdentifier isEqualToString:productID]) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
@@ -243,7 +243,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     }
 
     NSArray *tableProducts = [self productsForTableView:tableView];
-    if (indexPath.row < [tableProducts count]) {
+    if (indexPath.row < (int)[tableProducts count]) {
         cell.product = [tableProducts objectAtIndex:indexPath.row];
     }
     [self customizeAccessoryViewForCell:cell];
