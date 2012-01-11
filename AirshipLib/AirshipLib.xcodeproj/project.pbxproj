@@ -246,6 +246,8 @@
 		E9F73FB412ADE93A003CF572 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		E9FFDD8D129BAADB0012EF40 /* UADownloadContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */; };
 		E9FFDD8E129BAADB0012EF40 /* UADownloadContent.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */; };
+		FD40A77514BE041000504836 /* UAAnimatedGif.h in Headers */ = {isa = PBXBuildFile; fileRef = FD40A77314BE041000504836 /* UAAnimatedGif.h */; };
+		FD40A77614BE041000504836 /* UAAnimatedGif.m in Sources */ = {isa = PBXBuildFile; fileRef = FD40A77414BE041000504836 /* UAAnimatedGif.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -489,6 +491,8 @@
 		E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIDataDecompressor.m; sourceTree = "<group>"; };
 		E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADownloadContent.h; sourceTree = "<group>"; };
 		E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADownloadContent.m; sourceTree = "<group>"; };
+		FD40A77314BE041000504836 /* UAAnimatedGif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnimatedGif.h; sourceTree = "<group>"; };
+		FD40A77414BE041000504836 /* UAAnimatedGif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnimatedGif.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -850,6 +854,8 @@
 				D9983E8B1238462100B7E69F /* UAUtils.m */,
 				D9983E8F1238462100B7E69F /* UAObservable.h */,
 				D9983E8E1238462100B7E69F /* UAObservable.m */,
+				FD40A77314BE041000504836 /* UAAnimatedGif.h */,
+				FD40A77414BE041000504836 /* UAAnimatedGif.m */,
 				D9983E911238462100B7E69F /* UAAsycImageView.h */,
 				D9983E901238462100B7E69F /* UAAsycImageView.m */,
 				D9983E931238462100B7E69F /* UAViewUtils.h */,
@@ -984,6 +990,7 @@
 				7B72D3A0147D7827008853AC /* UA_ASIFormDataRequest.h in Headers */,
 				49BD5499148449DB009FD146 /* UALocalStorageDirectory.h in Headers */,
 				497D13F41488282F00FB0A8A /* UAContentURLCache.h in Headers */,
+				FD40A77514BE041000504836 /* UAAnimatedGif.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1302,6 +1309,7 @@
 				7B72D3A1147D7827008853AC /* UA_ASIFormDataRequest.m in Sources */,
 				49BD549A148449DB009FD146 /* UALocalStorageDirectory.m in Sources */,
 				497D13F51488282F00FB0A8A /* UAContentURLCache.m in Sources */,
+				FD40A77614BE041000504836 /* UAAnimatedGif.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
