@@ -85,6 +85,8 @@ typedef enum {
  **/
 - (BOOL)enableAutomaticStandardLocationUpdates;
 
+/** Disables the AutomaticStandaredLocationUpdate service */
+- (void)disableAutomaticStandardLocationUpdates;
 
 
 @end

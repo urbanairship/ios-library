@@ -29,6 +29,11 @@
 
 @interface UALocationManager ()
 - (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices;
+- (void)startObservingUIApplicationStateNotifications;
+- (void)stopObservingUIApplicationStateNotifications;
+- (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation;
+- (void)updateLastLocation:(CLLocation*)newLocation;
+
 @end
 
 @implementation UALocationManager
@@ -89,6 +94,7 @@
 #pragma mark -
 #pragma Location Updating
 
+
 - (BOOL)startUpdatingLocation {
     if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) {
         return NO;
@@ -101,6 +107,21 @@
 - (void)stopUpdatingLocation {
     [locationManager_ stopUpdatingLocation];
     locationManagerActivityStatus_ = UALocationManagerNotUpdating;
+}
+
+- (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation {
+    CLLocationAccuracy accuracyOfLocation = newLocation.horizontalAccuracy;
+    if (accuracyOfLocation < locationManager_.desiredAccuracy) {
+        [self updateLastLocation:newLocation];
+        return YES;
+    }
+    return NO;
+}
+// TODO: Start here and come up with a basic algorithm to check status of returned
+// location
+- (void)updateLastLocation:(CLLocation*)newLocation {
+    if (nil != lastReportedLocation_) [lastReportedLocation_ autorelease];
+    lastReportedLocation_ = [newLocation retain];
 }
 
 #pragma mark -
@@ -124,6 +145,7 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     if (nil != lastReportedLocation_) [lastReportedLocation_ autorelease];
     lastReportedLocation_ = [newLocation retain];  
+    // TODO: added functionality and API calls
 }
 
 
@@ -135,6 +157,21 @@
     return NO;
 }
 
+- (void)disableAutomaticStandardLocationUpdates {
+    
+}
+
+#pragma mark -
+#pragma UIApplication State Observation
+
+- (void)startObservingUIApplicationStateNotifications {
+    
+}
+
+- (void)stopObservingUIApplicationStateNotifications {
+    
+}
+
 #pragma mark -
 #pragma CLLocationManager authorization/location services settings
 
@@ -143,7 +180,6 @@
  *  Returns:
  *      YES if locationServicesAreEnabled and kCLAuthorizationStatusAuthorized
  *      NO in all other cases
- *
  */
 - (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices {
     if (![CLLocationManager locationServicesEnabled]) return NO;
@@ -151,6 +187,7 @@
     if (status != kCLAuthorizationStatusAuthorized) return NO;
     return YES;
 }
+
 
 
 
