@@ -32,20 +32,29 @@ typedef enum {
     UALocationManagerUpdating
 } UALocationManagerActivityStatus;
 
+@class UALocationManager;
+@protocol UALocationManagerDelegate <NSObject>
+@optional
+/** Delegate is called when a LocationManager reports an error */
+- (void)uaLocationManager:(UALocationManager*)uaLocationManager 
+          locationManager:(CLLocationManager*)locationManager 
+         didFailWithError:(NSError*)error;
+@end
 
 @interface UALocationManager : NSObject <CLLocationManagerDelegate> {
     @private
     CLLocationManager *locationManager_;
+    CLLocationManager *singleServiceLocationManager_;
     UALocationManagerActivityStatus locationManagerActivityStatus_;
     CLLocation *lastReportedLocation_;
-    NSError *locationManagerError_;
     BOOL backgroundLocationMonitoringEnabled_;
+    id <UALocationManagerDelegate> delegate;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, retain) CLLocationManager *singleServiceLocationManager;
 @property (nonatomic, assign, readonly) UALocationManagerActivityStatus locationManagerActivityStatus;
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
-@property (nonatomic, retain, readonly) NSError *locationManagerError;
 
 /** Enables location monitoring in the background.
  *  If this is not set to YES, location monitoring for Urban Airship
@@ -54,25 +63,39 @@ typedef enum {
 @property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
 
 // KVO compliant methods to pass settings to CLLocationManager
-- (CLLocationAccuracy)desiredAccuracy;
-- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+- (CLLocationAccuracy)desiredAccuracyForStandardLocationService;
+- (void)setDesiredAccuracyForStandardLocationService:(CLLocationAccuracy)desiredAccuracy;
 
-- (CLLocationDistance)distanceFilter;
-- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+- (CLLocationDistance)distanceFilterForStandardLocationService;
+- (void)setDistanceFilterForStandardLocationService:(CLLocationDistance)distanceFilter;
 
-/** Starts updating the location and reporting to Urban Airship
+/** Starts updating the location and reporting to Urban Airship using the
+ *  standard location service. This will not continue if the app has been 
+ *  backgrounded.
  *  TODO: Fill this in when update timing is finalized
  *  Both [CLLocationManager locationServicesEnabled] and [CLLocationManager authorizationStatus]
- *  are called before location services begin reporting. Consult those mehtods for more information
- *  
+ *  are called before location services begin reporting. Consult those methods for more information.
+ *  Returns:
+ *      YES if service has started
+ *      NO if the service cannot start because of CLLocationManager authorization status
  **/
-- (BOOL)startUpdatingLocation;
+- (BOOL)startStandardLocationUpdates;
 
-/** Stops updating the location. If this method is called while
- *  the automatic location service is enabled, it will terminate that
- *  service. 
+/** Stops updating the location with the Standard Location service.  **/
+- (void)stopStandardLocationUpdates;
+
+/** Starts the Significant Change location service. If the backgroundLocationMonitoringEnabled_
+ *  flag is not set to YES, this service terminates when the app enters the background. 
+ *  Both [CLLocationManager locationServicesEnabled] and [CLLocationManager authorizationStatus]
+ *  are called before location services begin reporting. Consult those methods for more information.
+ *  Returns:
+ *      YES if service has started
+ *      NO if the service cannot start because of CLLocationManager authorization status
  **/
-- (void)stopUpdatingLocation;
+- (BOOL)startSignificantChangeLocationUpdates;
+
+/** Stops the Significant Change location service **/
+- (void)stopSignificantChangeLocationUpdates;
 
 /** Enabling automatic location updates creates an update event at the
  *  following times:
@@ -88,5 +111,13 @@ typedef enum {
 /** Disables the AutomaticStandaredLocationUpdate service */
 - (void)disableAutomaticStandardLocationUpdates;
 
+/** Starts the Standard Location service and acquires a single location point that meets
+ *  the accuracy requirements set with desiredAccuracy, uploads it to Urban Airship, then
+ *  shuts down the Standard Location service
+ **/
+- (BOOL)acquireSingleLocationAndUploadToUrbanAirship;
+
+
+ 
 
 @end

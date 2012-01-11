@@ -34,14 +34,16 @@
 - (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation;
 - (void)updateLastLocation:(CLLocation*)newLocation;
 
+@property (nonatomic, assign) UALocationManagerActivityStatus locationManagerActivityStatus;
+@property (nonatomic, retain) CLLocation *lastReportedLocation;
 @end
 
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
+@synthesize singleServiceLocationManager = singleServiceLocationManager_;
 @synthesize locationManagerActivityStatus = locationManagerActivityStatus_;
 @synthesize lastReportedLocation = lastReportedLocation_;
-@synthesize locationManagerError = locationManagerError_;
 @synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
 
 #pragma mark -
@@ -49,8 +51,8 @@
 
 - (void)dealloc{
     RELEASE_SAFELY(locationManager_);
+    RELEASE_SAFELY(singleServiceLocationManager_);
     RELEASE_SAFELY(lastReportedLocation_);
-    RELEASE_SAFELY(locationManagerError_);
     [super dealloc];
 }
 
@@ -67,35 +69,32 @@
 #pragma mark -
 #pragma CLLocationManager property accessors
 
-- (CLLocationAccuracy)desiredAccuracy {
+//TODO: setup these methods to change settings for 
+// all the managers
+
+- (CLLocationAccuracy)desiredAccuracyForStandardLocationService {
     return locationManager_.desiredAccuracy;
 }
 
-- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy {
-    locationManager_.desiredAccuracy = desiredAccuracy;
+- (void)setDesiredAccuracyForStandardLocationService:(CLLocationAccuracy)desiredAccuracy {
+   locationManager_.desiredAccuracy = desiredAccuracy;
 }
 
-- (CLLocationDistance)distanceFilter {
+- (CLLocationDistance)distanceFilterForStandardLocationService {
     return locationManager_.distanceFilter;
 }
 
-- (void)setDistanceFilter:(CLLocationDistance)distanceFilter {  
+- (void)setDistanceFilterForStandardLocationService:(CLLocationDistance)distanceFilter {  
     locationManager_.distanceFilter = distanceFilter;
 }
 
-- (void)setLocationManager:(CLLocationManager *)locationManager {
-    locationManager_.delegate = nil;
-    [locationManager_ autorelease];
-    locationManager_ = [locationManager retain];
-    locationManager_.delegate = self;
-}
 
 
 #pragma mark -
 #pragma Location Updating
 
 
-- (BOOL)startUpdatingLocation {
+- (BOOL)startStandardLocationUpdates {
     if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) {
         return NO;
     }
@@ -104,12 +103,23 @@
     return YES;
 }
 
-- (void)stopUpdatingLocation {
+- (void)stopStandardLocationUpdates {
     [locationManager_ stopUpdatingLocation];
     locationManagerActivityStatus_ = UALocationManagerNotUpdating;
 }
 
+- (BOOL)startSignificantChangeLocationUpdates {
+    return NO;
+}
+
+- (void)stopSignificantChangeLocationUpdates {
+
+}
+
+// TODO: change this method to take more parameters to handle 
+// differing location requirements of the different location managers
 - (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation {
+
     CLLocationAccuracy accuracyOfLocation = newLocation.horizontalAccuracy;
     if (accuracyOfLocation < locationManager_.desiredAccuracy) {
         [self updateLastLocation:newLocation];
@@ -130,15 +140,12 @@
 // Shutdown location services if authorization changes
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (status != kCLAuthorizationStatusAuthorized) {
-        if (locationManagerActivityStatus_ == UALocationManagerUpdating) {
-            [self stopUpdatingLocation];
-        }
+        // Changes this to accomodate all of the CLLocationManagers
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    if(nil != locationManagerError_) [locationManager_ autorelease];
-    locationManagerError_ = [error retain];
+
     // TODO: send a notification? what action should be taken?
 }
 
@@ -159,6 +166,13 @@
 
 - (void)disableAutomaticStandardLocationUpdates {
     
+}
+
+#pragma mark -
+#pragma Single Location
+
+- (BOOL)acquireSingleLocationAndUploadToUrbanAirship {
+    return NO;
 }
 
 #pragma mark -
@@ -187,11 +201,6 @@
     if (status != kCLAuthorizationStatusAuthorized) return NO;
     return YES;
 }
-
-
-
-
-
 
 
 @end
