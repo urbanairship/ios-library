@@ -535,7 +535,7 @@
 		1813F04B1279623C009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813F04F1279623C009DEB29 /* libUAirship-1.1.2.a */,
+				1813F04F1279623C009DEB29 /* libUAirship-1.1.3.a */,
 				1F954312146894E8009DDB0C /* libUAirshipPush-1.1.2.a */,
 				1FDBE3A61309DDC600856719 /* AirshipTest.app */,
 				497159681430FC8200079B37 /* AirshipLogicTests.octest */,
@@ -865,7 +865,7 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813F04F1279623C009DEB29 /* libUAirship-1.1.2.a */ = {
+		1813F04F1279623C009DEB29 /* libUAirship-1.1.3.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirship-1.1.3.a";
