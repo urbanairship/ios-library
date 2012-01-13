@@ -75,9 +75,8 @@ static UAAnimatedGif * instance;
 + (UIImageView *) getAnimationForGifAtUrl:(NSURL *)animationUrl
 {   
     UAAnimatedGifQueueObject *agqo = [[UAAnimatedGifQueueObject alloc] init];
-    [agqo setUiv: [[UIImageView alloc] init]]; // 2x retain, alloc and the property.
-    [[agqo uiv] autorelease]; // We expect the user to retain the return object.
-    [agqo setUrl: animationUrl]; // this object is only retained by the queueobject, which will be released when loading finishes
+    agqo.uiv = [[[UIImageView alloc] init] autorelease];
+    agqo.url = animationUrl;
     [[UAAnimatedGif sharedInstance] addToQueue: agqo];
     [agqo release];
     

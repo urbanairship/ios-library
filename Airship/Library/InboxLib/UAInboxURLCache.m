@@ -344,12 +344,11 @@
         //nothing to do here
         return;
     } else {
-        int delta = currentSize - actualDiskCapacity;
         NSArray *sortedHashes = [[self.metadata objectForKey:ACCESS_KEY] keysSortedByValueUsingSelector:@selector(compare:)];
         
         for (NSString *hash in sortedHashes) {
             currentSize = [self deleteCacheEntry:hash];
-            delta = currentSize - actualDiskCapacity;
+            int delta = currentSize - actualDiskCapacity;
             if (delta <= 0) {
                 break;
             }

@@ -122,10 +122,10 @@ static UAInboxMessageList *_messageList = nil;
 
     [self loadSavedMessages];
 
-    NSString *lastMessage = nil;
-    if ([messages count] > 0) {
-        lastMessage = [[messages objectAtIndex: 0] messageID];
-    }
+//    NSString *lastMessage = nil;
+//    if ([messages count] > 0) {
+//        lastMessage = [[messages objectAtIndex: 0] messageID];
+//    }
     
         
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
