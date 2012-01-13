@@ -50,6 +50,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize detailMetadataFont;
 @synthesize cellEvenBackgroundColor;
 @synthesize cellOddBackgroundColor;
+@synthesize allowedUserInterfaceOrientations;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -75,6 +76,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(detailTitleFont);
     RELEASE_SAFELY(cellEvenBackgroundColor);
     RELEASE_SAFELY(cellOddBackgroundColor);
+    RELEASE_SAFELY(allowedUserInterfaceOrientations);
     
     [super dealloc];
 }
@@ -115,6 +117,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         detailMetadataFont = nil;
         cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
         cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
+        allowedUserInterfaceOrientations = nil;
     }
     
     return self;

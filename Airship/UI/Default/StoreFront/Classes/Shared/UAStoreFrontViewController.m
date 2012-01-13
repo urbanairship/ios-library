@@ -171,7 +171,23 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
+    BOOL result = YES;
+    
+    if ([UAStoreFrontUI shared].allowedUserInterfaceOrientations != nil)
+    {
+        result = NO;
+        
+        for (NSNumber *orientation in [UAStoreFrontUI shared].allowedUserInterfaceOrientations)
+        {
+            if ([orientation intValue] == interfaceOrientation)
+            {
+                result = YES;
+                break;
+            }
+        }
+    }
+    
+    return result;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {

@@ -73,6 +73,7 @@
 @property (nonatomic, retain) UIFont *detailPriceFont;
 @property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
 @property (nonatomic, retain) UIColor *cellOddBackgroundColor;
+@property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
