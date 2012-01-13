@@ -40,6 +40,25 @@
     return self;
 }
 
+#pragma mark -
+#pragma CLLocationManager property accessors
+
+- (CLLocationAccuracy)desiredAccuracy {
+    return locationManager_.desiredAccuracy;
+}
+
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy {
+    locationManager_.desiredAccuracy = desiredAccuracy;
+}
+
+- (CLLocationDistance)distanceFilter {
+    return locationManager_.distanceFilter;
+}
+
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter {  
+    locationManager_.distanceFilter = distanceFilter;
+}
+
 
 #pragma mark -
 #pragma CLLocationManager delegate

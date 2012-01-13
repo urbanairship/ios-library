@@ -86,9 +86,6 @@
 #pragma mark -
 #pragma CLLocationManager property accessors
 
-//TODO: setup these methods to change settings for 
-// all the managers
-
 - (CLLocationAccuracy)desiredAccuracyForStandardLocationService {
     return locationManager_.desiredAccuracy;
 }
@@ -104,7 +101,6 @@
 - (void)setDistanceFilterForStandardLocationService:(CLLocationDistance)distanceFilter {  
     locationManager_.distanceFilter = distanceFilter;
 }
-
 
 
 #pragma mark -

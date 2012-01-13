@@ -452,8 +452,9 @@
 		BB2AD4D014C0B74F005AC1C5 /* UALocationServicesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationServicesDelegate.h; sourceTree = "<group>"; };
 		BB2AD4D414C0D422005AC1C5 /* UALocationServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationServices.h; sourceTree = "<group>"; };
 		BB2AD4D614C0D7DC005AC1C5 /* UASingleLocationAcquireAndUploadTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASingleLocationAcquireAndUploadTests.m; sourceTree = "<group>"; };
-		BB2AD4D814C0DAAE005AC1C5 /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
+		BB2AD4D814C0DAAE005AC1C5 /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BB2AD4D914C0DAAE005AC1C5 /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
+		BB2AD4DE14C0EFB4005AC1C5 /* UALogicTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALogicTests.h; sourceTree = "<group>"; };
 		BB696FA814B7741E00964053 /* UALocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationManager.h; sourceTree = "<group>"; };
 		BB696FA914B7741E00964053 /* UALocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManager.m; sourceTree = "<group>"; };
 		BB696FB014B797D300964053 /* UALocationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManagerTests.m; sourceTree = "<group>"; };
@@ -694,6 +695,7 @@
 				BB2AD4D614C0D7DC005AC1C5 /* UASingleLocationAcquireAndUploadTests.m */,
 				BB2AD4D814C0DAAE005AC1C5 /* CLLocationManager+Test.h */,
 				BB2AD4D914C0DAAE005AC1C5 /* CLLocationManager+Test.m */,
+				BB2AD4DE14C0EFB4005AC1C5 /* UALogicTests.h */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";

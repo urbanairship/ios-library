@@ -27,6 +27,13 @@
 
 - (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil;
 
+// KVO compliant methods to pass settings to CLLocationManager
+- (CLLocationAccuracy)desiredAccuracy;
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+
+- (CLLocationDistance)distanceFilter;
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+
 /** Acquires a location using the Standard Location service.
  *  
  */
