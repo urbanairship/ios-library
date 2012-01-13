@@ -26,25 +26,38 @@
 
 #import "UALocationManager.h"
 #import "UAGlobal.h"
+#import "UASingleLocationAcquireAndUpload.h"
 
-@interface UALocationManager ()
+@interface UALocationManager () {
+    UASingleLocationAcquireAndUpload *singleLocationUpload_;
+}
+
 - (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices;
 - (void)startObservingUIApplicationStateNotifications;
 - (void)stopObservingUIApplicationStateNotifications;
 - (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation;
 - (void)updateLastLocation:(CLLocation*)newLocation;
+- (void)stopAllLocationUpdates;
+- (void)receivedUIApplicationDidEnterBackgroundNotification;
+- (void)receivedUIApplicationWillEnterForegroundNotification;
 
-@property (nonatomic, assign) UALocationManagerActivityStatus locationManagerActivityStatus;
+@property (nonatomic, assign) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
+@property (nonatomic, assign) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
+@property (nonatomic, assign) id <UALocationServicesDelegate> delegate;
+@property (nonatomic, retain) UASingleLocationAcquireAndUpload *singleLocationUpload;
 @end
 
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
 @synthesize singleServiceLocationManager = singleServiceLocationManager_;
-@synthesize locationManagerActivityStatus = locationManagerActivityStatus_;
+@synthesize standardLocationActivityStatus = standardLocationActivityStatus_;
+@synthesize significantChangeActivityStatus = significantChangeActivityStatus_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
+@synthesize delegate = delegate_;
+@synthesize singleLocationUpload = singleLocationUpload_;
 
 #pragma mark -
 #pragma Object Lifecycle
@@ -53,15 +66,19 @@
     RELEASE_SAFELY(locationManager_);
     RELEASE_SAFELY(singleServiceLocationManager_);
     RELEASE_SAFELY(lastReportedLocation_);
+    [self stopObservingUIApplicationStateNotifications];
     [super dealloc];
 }
 
-- (id)init {
+- (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil {
     self = [super init];
     if(self){
         locationManager_ = [[CLLocationManager alloc] init];
         locationManager_.delegate = self;
         backgroundLocationMonitoringEnabled_ = NO;
+        standardLocationActivityStatus_ = UALocationServiceNotUpdating;
+        significantChangeActivityStatus_ = UALocationServiceNotUpdating;
+        delegate_ = delegateOrNil;
     }
     return self;
 }
@@ -99,21 +116,27 @@
         return NO;
     }
     [locationManager_ startUpdatingLocation];
-    locationManagerActivityStatus_ = UALocationManagerUpdating;
+    standardLocationActivityStatus_ = UALocationServiceUpdating;
     return YES;
 }
 
 - (void)stopStandardLocationUpdates {
     [locationManager_ stopUpdatingLocation];
-    locationManagerActivityStatus_ = UALocationManagerNotUpdating;
+    standardLocationActivityStatus_ = UALocationServiceNotUpdating;
 }
 
 - (BOOL)startSignificantChangeLocationUpdates {
-    return NO;
+    if(![self checkAuthorizationAndAvailabiltyOfLocationServices]){
+        return NO;
+    }
+    [locationManager_ startMonitoringSignificantLocationChanges];
+    significantChangeActivityStatus_ = UALocationServiceUpdating;
+    return YES ;
 }
 
 - (void)stopSignificantChangeLocationUpdates {
-
+    [locationManager_ stopMonitoringSignificantLocationChanges];
+    significantChangeActivityStatus_ = UALocationServiceNotUpdating;
 }
 
 // TODO: change this method to take more parameters to handle 
@@ -134,19 +157,30 @@
     lastReportedLocation_ = [newLocation retain];
 }
 
+- (void)stopAllLocationUpdates {
+    [self stopStandardLocationUpdates];
+    [self stopSignificantChangeLocationUpdates];
+}
+
 #pragma mark -
 #pragma CLLocationManagerDelegate
 
 // Shutdown location services if authorization changes
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (status != kCLAuthorizationStatusAuthorized) {
-        // Changes this to accomodate all of the CLLocationManagers
+        [self stopAllLocationUpdates];
+        
+        // TODO: figure out what to do if single service is in the middle of processing
+        // maybe post a notification? Probably do nothing, but check for possible failure
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-
-    // TODO: send a notification? what action should be taken?
+    if (delegate_ && [delegate_ conformsToProtocol:@protocol(UALocationServicesDelegate)]) {
+        if([delegate_ respondsToSelector:@selector(uaLocationManager:locationManager:didFailWithError:)]){
+            [delegate_ uaLocationManager:self locationManager:manager didFailWithError:error];
+        }
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
@@ -162,6 +196,7 @@
 - (BOOL)enableAutomaticStandardLocationUpdates {
     if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) return NO;
     return NO;
+    
 }
 
 - (void)disableAutomaticStandardLocationUpdates {
@@ -172,18 +207,43 @@
 #pragma Single Location
 
 - (BOOL)acquireSingleLocationAndUploadToUrbanAirship {
-    return NO;
+    singleLocationUpload_ = [[UASingleLocationAcquireAndUpload alloc] initWithDelegate:self];
+    singleLocationUpload_.locationManager.distanceFilter = locationManager_.distanceFilter;
+    singleLocationUpload_.locationManager.desiredAccuracy = locationManager_.desiredAccuracy;
+    return [singleLocationUpload_ acquireAndSendLocationToUA];
+}
+
+- (void)uaLocationManager:(id)UALocationServiceObject 
+          locationManager:(CLLocationManager*)locationManager 
+         didFailWithError:(NSError*)error {
+    //Handle error from our one shot
 }
 
 #pragma mark -
 #pragma UIApplication State Observation
 
 - (void)startObservingUIApplicationStateNotifications {
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(receivedUIApplicationWillEnterForegroundNotification) 
+                                                 name:UIApplicationWillEnterForegroundNotification 
+                                               object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(receivedUIApplicationDidEnterBackgroundNotification) 
+                                                 name:UIApplicationDidEnterBackgroundNotification 
+                                               object:[UIApplication sharedApplication]];
 }
 
 - (void)stopObservingUIApplicationStateNotifications {
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+}
+
+- (void)receivedUIApplicationDidEnterBackgroundNotification {
+    NSLog(@"BACKGROUND");
+}
+
+- (void)receivedUIApplicationWillEnterForegroundNotification {
+    NSLog(@"FOREGROUND");
 }
 
 #pragma mark -

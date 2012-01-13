@@ -25,35 +25,24 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "UALocationServicesDelegate.h"
+#import "UALocationServices.h"
 
-
-typedef enum {
-    UALocationManagerNotUpdating = 0,
-    UALocationManagerUpdating
-} UALocationManagerActivityStatus;
-
-@class UALocationManager;
-@protocol UALocationManagerDelegate <NSObject>
-@optional
-/** Delegate is called when a LocationManager reports an error */
-- (void)uaLocationManager:(UALocationManager*)uaLocationManager 
-          locationManager:(CLLocationManager*)locationManager 
-         didFailWithError:(NSError*)error;
-@end
-
-@interface UALocationManager : NSObject <CLLocationManagerDelegate> {
+@interface UALocationManager : NSObject <CLLocationManagerDelegate, UALocationServicesDelegate> {
     @private
     CLLocationManager *locationManager_;
     CLLocationManager *singleServiceLocationManager_;
-    UALocationManagerActivityStatus locationManagerActivityStatus_;
+    UALocationManagerServiceActivityStatus standardLocationActivityStatus_;
+    UALocationManagerServiceActivityStatus significantChangeActivityStatus_;
     CLLocation *lastReportedLocation_;
     BOOL backgroundLocationMonitoringEnabled_;
-    id <UALocationManagerDelegate> delegate;
+    id <UALocationServicesDelegate> delegate_;
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CLLocationManager *singleServiceLocationManager;
-@property (nonatomic, assign, readonly) UALocationManagerActivityStatus locationManagerActivityStatus;
+@property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
+@property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
 
 /** Enables location monitoring in the background.
@@ -61,7 +50,9 @@ typedef enum {
  *  is terminated when the app enters the background
  **/
 @property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
+@property (nonatomic, assign, readonly)id <UALocationServicesDelegate> delegate;
 
+- (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil;
 // KVO compliant methods to pass settings to CLLocationManager
 - (CLLocationAccuracy)desiredAccuracyForStandardLocationService;
 - (void)setDesiredAccuracyForStandardLocationService:(CLLocationAccuracy)desiredAccuracy;
@@ -105,15 +96,18 @@ typedef enum {
  *  Returns:
  *      YES if services are available and service is started
  *      NO if services are unavailable, or unauthorized
+ *  
  **/
+// This is going to be the automatic turn on and forget service
+// haven't figured out how it will work yet. 
 - (BOOL)enableAutomaticStandardLocationUpdates;
 
 /** Disables the AutomaticStandaredLocationUpdate service */
 - (void)disableAutomaticStandardLocationUpdates;
 
-/** Starts the Standard Location service and acquires a single location point that meets
- *  the accuracy requirements set with desiredAccuracy, uploads it to Urban Airship, then
- *  shuts down the Standard Location service
+/** Starts the Standard Location service, acquires a single location that meets
+ *  accuracy requirements set in this location manager, and uploads it to UA. 
+ *
  **/
 - (BOOL)acquireSingleLocationAndUploadToUrbanAirship;
 
