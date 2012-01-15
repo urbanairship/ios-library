@@ -8,6 +8,7 @@
 
 #import "UASingleLocationAcquireAndUpload.h"
 #import "UAGlobal.h"
+#import "UAAnalytics.h"
 
 @interface UASingleLocationAcquireAndUpload ()
 @property (nonatomic, retain) CLLocationManager *locationManager;
@@ -82,8 +83,13 @@
 #pragma Accuracy algorithm
 
 - (BOOL)locationMeetsAccuracyRequirements:(CLLocation*)location {
-    // Stop trying to get a location if accuracy is not improved
-    //
+    if (location.horizontalAccuracy <= locationManager_.desiredAccuracy){
+        [self sendLocationToAnalytics:location];
+        [locationManager_ stopUpdatingLocation];
+        serviceStatus_ = UALocationServiceNotUpdating;
+        return YES;
+    }
+    // TODO: need a time/number of attempts/improved accuracy algorithm
     return NO;
 }
 #pragma mark -
@@ -98,6 +104,7 @@
 #pragma UASingleLocationAcquireAndUpload
 
 - (BOOL)acquireAndSendLocationToUA {
+    if(UALocationServiceUpdating == serviceStatus_) return YES;
     BOOL enabled = [CLLocationManager locationServicesEnabled];
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (kCLAuthorizationStatusAuthorized == status && YES == enabled) {

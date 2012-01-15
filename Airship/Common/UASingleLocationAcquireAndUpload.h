@@ -35,7 +35,8 @@
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
 /** Acquires a location using the Standard Location service.
- *  
+ *  If the service is already in process, this method returns
+ *  YES. 
  */
 - (BOOL)acquireAndSendLocationToUA;
 @end
