@@ -12,7 +12,7 @@
 #import "UAGlobal.h"
 #import "UASingleLocationAcquireAndUpload.h"
 #import "UASingleLocationAcquireAndUpload_Private.h"
-
+#import "CLLocationManager+Test.h"
 
 @interface UASingleLocationAcquireAndUpload (Test) 
 - (void)setLocationManager:(CLLocationManager*)locationManager;
@@ -115,7 +115,14 @@
 }
 
 - (void)testShutdownAfterAcceptableLocationIsReturned {
-    
+    CLLocation *testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(45.0, 45.0) altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:0.0 timestamp:[NSDate date]];
+    testUploader_.desiredAccuracy = 10.0;
+    id mockLocationManager = [OCMockObject partialMockForObject:testUploader_.locationManager];
+    [[[mockLocationManager stub] andForwardToRealObject] stopUpdatingLocation];
+    [testUploader_.locationManager sendDidUpdateToLocation:testLocation fromLocation:nil];
+    [mockLocationManager verify];
+    STAssertEquals(UALocationServiceNotUpdating, testUploader_.serviceStatus, @"serviceStatus should be UALocationServiceNotUpdating");
+    [testLocation release];
 }
 
 - (void)testLocationIsSentToUAAnalytics {

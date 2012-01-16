@@ -9,7 +9,7 @@
 /*  Private Methods
  *  This header should be imported into the implementation
  *  file and the test file
- */
+ \*/
 
 @interface UASingleLocationAcquireAndUpload ()
 @property (nonatomic, retain) CLLocationManager *locationManager;
