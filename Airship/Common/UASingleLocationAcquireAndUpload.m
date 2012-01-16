@@ -9,13 +9,7 @@
 #import "UASingleLocationAcquireAndUpload.h"
 #import "UAGlobal.h"
 #import "UAAnalytics.h"
-
-@interface UASingleLocationAcquireAndUpload ()
-@property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, assign) UALocationManagerServiceActivityStatus serviceStatus;
-- (BOOL)locationMeetsAccuracyRequirements:(CLLocation*)location;
-- (void)sendLocationToAnalytics:(CLLocation*)location;
-@end
+#import "UASingleLocationAcquireAndUpload_Private.h"
 
 @implementation UASingleLocationAcquireAndUpload
 

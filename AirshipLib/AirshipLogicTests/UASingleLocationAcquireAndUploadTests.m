@@ -11,20 +11,19 @@
 #import "JRSwizzle.h"
 #import "UAGlobal.h"
 #import "UASingleLocationAcquireAndUpload.h"
+#import "UASingleLocationAcquireAndUpload_Private.h"
 
 
 @interface UASingleLocationAcquireAndUpload (Test) 
- - (void)setLocationManager:(CLLocationManager*)locationManager;
+- (void)setLocationManager:(CLLocationManager*)locationManager;
 @end
 
 @implementation UASingleLocationAcquireAndUpload (Test) 
-
 - (void) setLocationManager:(CLLocationManager*)locationManager {
     [locationManager_ release];
     locationManager_ = [locationManager retain];
     locationManager_.delegate = self;
 }
-
 @end
 
 
@@ -104,6 +103,24 @@
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 
+- (void)testLocationMeetsAccuracyRequirements {
+    testUploader_.desiredAccuracy = 10.0;
+    CLLocation *testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(45.00, 45.0) altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:0.0 timestamp:[NSDate date]];
+    BOOL accuracyTest = [testUploader_ locationMeetsAccuracyRequirements:testLocation];
+    STAssertEquals(YES, accuracyTest, @"accuracyTest should be YES");
+    [testLocation release];
+    testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(45.0, 45.0) altitude:100.0 horizontalAccuracy:25.0 verticalAccuracy:0.0 timestamp:[NSDate date]];
+    accuracyTest = [testUploader_ locationMeetsAccuracyRequirements:testLocation];
+    STAssertEquals(NO, accuracyTest, @"accuracyTest should be NO");
+}
+
+- (void)testShutdownAfterAcceptableLocationIsReturned {
+    
+}
+
+- (void)testLocationIsSentToUAAnalytics {
+    
+}
 
 #pragma mark -
 #pragma Support Methods

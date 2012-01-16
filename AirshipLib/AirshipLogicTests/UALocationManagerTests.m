@@ -118,6 +118,9 @@
     STAssertEquals(testAccuracy_, testLocationManager_.desiredAccuracyForStandardLocationService, @"%@ getter broken", desiredAccuracyTag);
 }
 
+#pragma mark -
+#pragma Test start/stop services and authorization/enabled states
+
 - (void)testStartUpdatingStandardLocationWhenEnabledAndAuthorized {
     [self swizzleCLLocationClassEnabledAndAuthorized];
     STAssertEquals(kCLAuthorizationStatusAuthorized, [CLLocationManager authorizationStatus], @"authorizationStatus swizzling failed");
@@ -204,6 +207,24 @@
     [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusDenied) withMethod:@selector(authorizationStatus)];
     [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
 }
+
+- (void)testStopSignificantChangeLocationService {
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] setDelegate:testLocationManager_];
+    testLocationManager_.locationManager = mockLocationManager;
+    [[mockLocationManager expect] startMonitoringSignificantLocationChanges];
+    [testLocationManager_ startSignificantChangeLocationUpdates];
+    STAssertEquals(testLocationManager_.significantChangeActivityStatus, UALocationServiceUpdating, @"significantChangeActivityStatus should be UALocationServiceUpdating");
+    [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    [testLocationManager_ stopSignificantChangeLocationUpdates];
+    STAssertEquals(testLocationManager_.significantChangeActivityStatus, UALocationServiceNotUpdating, @"significantChangeActivityStatust should be UALocationServiceNotUpdating");
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];                          
+}
+
+
+#pragma mark -
+#pragma CLLocationManager delegate callbacks
 
 - (void)testAuthorizationStatusChangeDelegateCall {
     [self swizzleCLLocationClassEnabledAndAuthorized];
