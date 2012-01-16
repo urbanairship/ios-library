@@ -166,8 +166,43 @@
     [[mockLocationManager expect] stopUpdatingLocation];
     testLocationManager_.locationManager = mockLocationManager;
     [testLocationManager_ stopStandardLocationUpdates];
-    [mockLocationManager verify];
-                              
+    [mockLocationManager verify];  
+}
+
+- (void)testStartSignificantChangeServiceWhenEnabledAndAuthorized {
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] setDelegate:testLocationManager_];
+    testLocationManager_.locationManager = mockLocationManager;
+    [[mockLocationManager expect] startMonitoringSignificantLocationChanges];
+    [testLocationManager_ startSignificantChangeLocationUpdates];
+    [mockLocationManager verify]; 
+    STAssertEquals(testLocationManager_.significantChangeActivityStatus, UALocationServiceUpdating, @"significantChangeLocationService should be UALocationServiceUpdating");
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+}
+
+- (void)testStartSignificantChangeServiceWhenLocationIsDisabled {
+    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnNO)];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusAuthorized)];
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] setDelegate:testLocationManager_];
+    testLocationManager_.locationManager = mockLocationManager;
+    [testLocationManager_ startSignificantChangeLocationUpdates];
+    STAssertEquals(testLocationManager_.significantChangeActivityStatus, UALocationServiceNotUpdating, @"significantChangeServiceStatus should be UAServiceStatusNotUpdating");
+    [self swizzleCLLocationClassMethod:@selector(returnNO) withMethod:@selector(locationServicesEnabled)];
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusAuthorized) withMethod:@selector(authorizationStatus)];
+}
+
+- (void)testStartSignificantChangeServiceWhenLocationIsEnabledAndNotAuthorized {
+    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnYES)];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusDenied)];
+    id mockLocationManager = [OCMockObject mockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] setDelegate:testLocationManager_];
+    testLocationManager_.locationManager = mockLocationManager;
+    [testLocationManager_ startSignificantChangeLocationUpdates];
+    STAssertEquals(testLocationManager_.significantChangeActivityStatus, UALocationServiceNotUpdating, @"significantChangeServiceStatus should be UAServiceStatusNotUpdating");
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusDenied) withMethod:@selector(authorizationStatus)];
+    [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
 }
 
 - (void)testAuthorizationStatusChangeDelegateCall {
@@ -211,12 +246,15 @@
 }
 
 - (void)testUIApplicationDidEnterBackgroundNotifcationStopsSignificantChangeLocationMonitoringIfNotEnabled {
-//    id mockLocationManager = [OCMockObject partialMockForObject:testLocationManager_.locationManager];
-//    [[mockLocationManager stub] startUpdatingLocation];
-//    [[mockLocationManager stub] stopUpdatingLocation];
-//    [testLocationManager_ startSignificantChangeLocationUpdates];
-    
+    id mockLocationManager = [OCMockObject partialMockForObject:testLocationManager_.locationManager];
+    [[mockLocationManager stub] startUpdatingLocation];
+    [[mockLocationManager stub] stopUpdatingLocation];
+    [testLocationManager_ startSignificantChangeLocationUpdates];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationManager verify];
 }
+
+
 
 #pragma mark -
 #pragma Support Methods
