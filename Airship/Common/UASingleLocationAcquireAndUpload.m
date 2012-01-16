@@ -11,6 +11,11 @@
 #import "UAAnalytics.h"
 #import "UASingleLocationAcquireAndUpload_Private.h"
 
+/*  Use UASingleLocationAcquireAndUpload_Private.h for class extensions,
+ *  this allows sharing of private methods between test and implementation 
+ *  classes
+ */
+
 @implementation UASingleLocationAcquireAndUpload
 
 @synthesize locationManager = locationManager_;
@@ -76,6 +81,10 @@
 #pragma mark -
 #pragma Accuracy algorithm
 
+// TODO: build something more robust, this will fail with kCLLocationAccuracyBest and BestForNav which
+// return -1 & -2 repsectively for desiredAccuracy. Need a secondary test for difference in location points
+// over time, etc. 
+
 - (BOOL)locationMeetsAccuracyRequirements:(CLLocation*)location {
     if (location.horizontalAccuracy <= locationManager_.desiredAccuracy){
         [self sendLocationToAnalytics:location];
@@ -83,7 +92,6 @@
         serviceStatus_ = UALocationServiceNotUpdating;
         return YES;
     }
-    // TODO: need a time/number of attempts/improved accuracy algorithm
     return NO;
 }
 #pragma mark -
