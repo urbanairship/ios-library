@@ -12,10 +12,6 @@
 #import "UAirship.h" // temp
 #import "UAAnalytics.h" // temp
 
-@interface UALocationServices ()
-
-@end
-
 @implementation UALocationServices
 
 /**
@@ -35,10 +31,13 @@
 + (UAEvent*)createEventWithLocation:(CLLocation*)location {
     [location retain];
     UAEvent* event = [UAEvent eventWithContext:nil];
-    UAAnalytics *test = [UAirship shared].analytics;
-    NSLog(@"SESSION %@", test.session);
-    
+    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:10];
+    //TODO: come up with session logic for background operation
+    //      come up with string or double values setup
+
     [location release];
     return event;
 }
+
+
 @end

@@ -11,6 +11,17 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UAEvent.h"
 
+#define kSessionIdKey @"session_id"
+#define kLatKey @"lat"
+#define kLongKey @"long"
+#define kRequestedAccuracyKey @"requested_accuracy"
+#define kUpdateTypeKey @"update_type"
+#define kProviderKey @"provider"
+#define kUpdateDistanceKey @"update_dist"
+#define kHorizontalAccuracyKey @"h_accuracy"
+#define kVerticalAccuracyKey @"v_accuracy"
+#define kForegroundKey @"foreground"
+
 typedef enum {
     UALocationServiceNotUpdating = 0,
     UALocationServiceUpdating
