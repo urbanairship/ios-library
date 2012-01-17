@@ -49,15 +49,17 @@
  *  is terminated when the app enters the background
  **/
 @property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
+
+/** UALocationServices delegate is called when the location services 
+ *  report an error **/
 @property (nonatomic, assign, readonly)id <UALocationServicesDelegate> delegate;
-
-- (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil;
+- (id)initWithDelegateOrNil:(id<UALocationServicesDelegate>)delegateOrNil;
 // KVO compliant methods to pass settings to CLLocationManager
-- (CLLocationAccuracy)desiredAccuracyForStandardLocationService;
-- (void)setDesiredAccuracyForStandardLocationService:(CLLocationAccuracy)desiredAccuracy;
+- (CLLocationAccuracy)desiredAccuracy;
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
-- (CLLocationDistance)distanceFilterForStandardLocationService;
-- (void)setDistanceFilterForStandardLocationService:(CLLocationDistance)distanceFilter;
+- (CLLocationDistance)distanceFilter;
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
 /** Starts updating the location and reporting to Urban Airship using the
  *  standard location service. This will not continue if the app has been 

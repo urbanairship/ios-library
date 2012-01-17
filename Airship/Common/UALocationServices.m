@@ -40,13 +40,26 @@
 
 + (UAEvent*)createEventWithLocation:(CLLocation*)location forManager:(UALocationManager*)manager {
     [location retain];    
-    //TODO: come up with session logic for background operation
-    //      come up with string or double values setup
+    [manager retain];
     NSMutableDictionary *eventData = [NSMutableDictionary dictionaryWithCapacity:10];
     [UALocationServices populateDictionary:eventData withLocationValues:location];
     [UALocationServices populateDictionary:eventData withLocationManagerValues:manager];
+    UIApplicationState appState = [UIApplication sharedApplication].applicationState;
+    // Set app state and session id
+    if (UIApplicationStateActive == appState) {
+        [eventData setValue:@"true" forKey:kForegroundKey];
+        NSDictionary* session = [UAirship shared].analytics.session;
+        [eventData setValue:[session valueForKey:@"session"] forKey:kSessionIdKey];
+    }
+    else {
+        [eventData setValue:@"false" forKey:kForegroundKey];
+        [eventData setValue:@"" forKey:kSessionIdKey];
+    }
+    ////////
     UAEvent* event = [UAEvent eventWithContext:eventData];
+    // cleanup memory
     [location release];
+    [manager release];
     return event;
 }
 
@@ -58,8 +71,8 @@
 }
 
 + (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:(UALocationManager*)manager {
-    //[dictionary setValue:[NSString stringFromDouble:manager.desiredAccuracy] forKey:kDesiredAccuracyKey]; 
-    //[dictionary setValue:[NSString stringFromDouble:manager. forKey:<#(NSString *)#>
+    [dictionary setValue:[NSString stringFromDouble:manager.locationManager.desiredAccuracy] forKey:kDesiredAccuracyKey]; 
+    [dictionary setValue:[NSString stringFromDouble:manager.locationManager.distanceFilter] forKey:kUpdateDistanceKey];
 }
                                   
                                   

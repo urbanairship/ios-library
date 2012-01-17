@@ -10,7 +10,6 @@
 
 @protocol UALocationServicesDelegate <NSObject>
 @optional
-// TODO: Move this to a separate file
 /** Delegate is called when a UALocationServices object reports an error */
 - (void)uaLocationManager:(id)UALocationServiceObject 
           locationManager:(CLLocationManager*)locationManager 

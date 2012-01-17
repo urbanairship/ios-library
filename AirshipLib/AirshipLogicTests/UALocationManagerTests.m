@@ -66,7 +66,7 @@
 #pragma mark -
 #pragma Setup/Teardown
 - (void)setUp {
-    testLocationManager_ = [[UALocationManager alloc] initWithDelegate:nil];
+    testLocationManager_ = [[UALocationManager alloc] initWithDelegateOrNil:nil];
     STAssertNotNil(testLocationManager_, @"location manager is nil!");
 }
 
@@ -107,15 +107,15 @@
 - (void)testGetSetMethodsForStandardLocationManager {
     [self setupTestDistanceAndAccuracy];
     // Check the distance from the CLLocationManager directly
-    testLocationManager_.desiredAccuracyForStandardLocationService = testAccuracy_;
-    testLocationManager_.distanceFilterForStandardLocationService = testDistance_;
+    testLocationManager_.desiredAccuracy = testAccuracy_;
+    testLocationManager_.distanceFilter = testDistance_;
     //Test the CLLocationManager directly
     NSString *distanceFilterTag = @"distanceFilterForStandardLocation";
     NSString *desiredAccuracyTag = @"desiredAccuracyForStandardLocation";
     STAssertEquals(testDistance_, testLocationManager_.locationManager.distanceFilter, @"%@ setter broken", distanceFilterTag);
-    STAssertEquals(testDistance_, testLocationManager_.distanceFilterForStandardLocationService, @"%@ getter broken", distanceFilterTag);
+    STAssertEquals(testDistance_, testLocationManager_.distanceFilter, @"%@ getter broken", distanceFilterTag);
     STAssertEquals(testAccuracy_, testLocationManager_.locationManager.desiredAccuracy, @"%@ setter broken", desiredAccuracyTag);
-    STAssertEquals(testAccuracy_, testLocationManager_.desiredAccuracyForStandardLocationService, @"%@ getter broken", desiredAccuracyTag);
+    STAssertEquals(testAccuracy_, testLocationManager_.desiredAccuracy, @"%@ getter broken", desiredAccuracyTag);
 }
 
 #pragma mark -

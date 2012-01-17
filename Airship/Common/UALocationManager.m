@@ -68,7 +68,7 @@
     [super dealloc];
 }
 
-- (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil {
+- (id)initWithDelegateOrNil:(id<UALocationServicesDelegate>)delegateOrNil {
     self = [super init];
     if(self){
         locationManager_ = [[CLLocationManager alloc] init];
@@ -84,19 +84,19 @@
 #pragma mark -
 #pragma CLLocationManager property accessors
 
-- (CLLocationAccuracy)desiredAccuracyForStandardLocationService {
+- (CLLocationAccuracy)desiredAccuracy {
     return locationManager_.desiredAccuracy;
 }
 
-- (void)setDesiredAccuracyForStandardLocationService:(CLLocationAccuracy)desiredAccuracy {
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy {
    locationManager_.desiredAccuracy = desiredAccuracy;
 }
 
-- (CLLocationDistance)distanceFilterForStandardLocationService {
+- (CLLocationDistance)distanceFilter {
     return locationManager_.distanceFilter;
 }
 
-- (void)setDistanceFilterForStandardLocationService:(CLLocationDistance)distanceFilter {  
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter {  
     locationManager_.distanceFilter = distanceFilter;
 }
 
