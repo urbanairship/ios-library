@@ -51,6 +51,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize cellEvenBackgroundColor;
 @synthesize cellOddBackgroundColor;
 @synthesize allowedUserInterfaceOrientations;
+@synthesize downloadsPreventStoreFrontExit;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -118,6 +119,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
         cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
         allowedUserInterfaceOrientations = nil;
+        downloadsPreventStoreFrontExit = YES;
     }
     
     return self;

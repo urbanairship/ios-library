@@ -74,6 +74,7 @@
 @property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
 @property (nonatomic, retain) UIColor *cellOddBackgroundColor;
 @property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
+@property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
