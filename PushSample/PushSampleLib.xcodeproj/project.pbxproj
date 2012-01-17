@@ -197,7 +197,6 @@
 		BB5A2A9214C4E1F0009D7931 /* AirshipApplicationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB5A2A9714C4E1F0009D7931 /* AirshipApplicationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipApplicationTests-Info.plist"; sourceTree = "<group>"; };
 		BB5A2A9914C4E1F0009D7931 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		BB5A2A9B14C4E1F0009D7931 /* UALocationServicesApplicationTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UALocationServicesApplicationTest.h; sourceTree = "<group>"; };
 		BB5A2A9C14C4E1F0009D7931 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BB5A2A9E14C4E1F0009D7931 /* AirshipApplicationTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipApplicationTests-Prefix.pch"; sourceTree = "<group>"; };
 		BB5A2AA414C4E3F8009D7931 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -520,7 +519,6 @@
 		BB5A2A9514C4E1F0009D7931 /* AirshipApplicationTests */ = {
 			isa = PBXGroup;
 			children = (
-				BB5A2A9B14C4E1F0009D7931 /* UALocationServicesApplicationTest.h */,
 				BB5A2A9C14C4E1F0009D7931 /* UALocationServicesApplicationTest.m */,
 				BB5A2A9614C4E1F0009D7931 /* Supporting Files */,
 			);

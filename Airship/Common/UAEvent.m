@@ -30,7 +30,8 @@
 #import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
-
+// Location event key data and status enums
+#import "UALocationServicesCommon.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
@@ -334,4 +335,17 @@
     return kEventPushReceivedSize;
 }
 
+@end
+
+@implementation UALocationEvent
+
+- (id)initWithContext:(NSDictionary *)context {
+    self = [super initWithContext:context];
+    return self;
+}
+
+- (void)gatherIndividualData:(NSDictionary *)context {
+    NSLog(@"GATHER DATA BITCHES");
+    [data addEntriesFromDictionary:context];
+}
 @end

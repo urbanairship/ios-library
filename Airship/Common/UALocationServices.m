@@ -15,8 +15,10 @@
 
 @implementation NSString (LocationUtils)
 
+// TODO: look into optimizing this to avoid the NSNumber throwaway object
 + (NSString*)stringFromDouble:(double)doubleValue {
-    return [NSString stringWithFormat:@"%F", doubleValue];
+    NSNumber *number = [NSNumber numberWithDouble:doubleValue];
+    return [number stringValue];
 }
 
 @end
@@ -56,7 +58,7 @@
         [eventData setValue:@"" forKey:kSessionIdKey];
     }
     ////////
-    UAEvent* event = [UAEvent eventWithContext:eventData];
+    UAEvent* event = [UALocationEvent eventWithContext:eventData];
     // cleanup memory
     [location release];
     [manager release];
