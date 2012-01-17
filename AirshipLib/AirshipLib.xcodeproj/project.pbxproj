@@ -172,6 +172,7 @@
 		BB696FE114B79DD400964053 /* UALocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB696FA914B7741E00964053 /* UALocationManager.m */; };
 		BB696FF714B79FBA00964053 /* UALocationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB696FB014B797D300964053 /* UALocationManagerTests.m */; };
 		BB696FF914B7A01800964053 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB696FF814B7A01800964053 /* CoreLocation.framework */; };
+		BB92F7AF14C5EF2800B580CC /* UALocationServicesCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = BB92F7AE14C5EF2800B580CC /* UALocationServicesCommon.h */; };
 		BBFB99AD14B7ACFC008FAAEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBFB99AC14B7ACFC008FAAEC /* libOCMock.a */; };
 		BBFB99C614B7C20D008FAAEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBFB99C514B7C20D008FAAEC /* JRSwizzle.m */; };
 		D51846851300B6FC00A40CAC /* libInbox-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */; };
@@ -467,6 +468,7 @@
 		BB696FA914B7741E00964053 /* UALocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManager.m; sourceTree = "<group>"; };
 		BB696FB014B797D300964053 /* UALocationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationManagerTests.m; sourceTree = "<group>"; };
 		BB696FF814B7A01800964053 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		BB92F7AE14C5EF2800B580CC /* UALocationServicesCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationServicesCommon.h; sourceTree = "<group>"; };
 		BBFB99AC14B7ACFC008FAAEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		BBFB99C414B7C20D008FAAEC /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		BBFB99C514B7C20D008FAAEC /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
@@ -940,6 +942,7 @@
 				BB2AD4D414C0D422005AC1C5 /* UALocationServices.h */,
 				BB5A2A1814C4A88C009D7931 /* UASingleLocationAcquireAndUpload_Private.h */,
 				BB5A2A1A14C4CD41009D7931 /* UALocationServices.m */,
+				BB92F7AE14C5EF2800B580CC /* UALocationServicesCommon.h */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1057,6 +1060,7 @@
 				BB2AD4D114C0B74F005AC1C5 /* UALocationServicesDelegate.h in Headers */,
 				BB2AD4D514C0D422005AC1C5 /* UALocationServices.h in Headers */,
 				BB5A2A1914C4A88C009D7931 /* UASingleLocationAcquireAndUpload_Private.h in Headers */,
+				BB92F7AF14C5EF2800B580CC /* UALocationServicesCommon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

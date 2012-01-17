@@ -125,11 +125,6 @@
     [testLocation release];
 }
 
-//- (void)testLocationIsSentToUAAnalytics {
-//    CLLocation *testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(45.0, 45.0) altitude:10.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 course:90.0 speed:69.0 timestamp:[NSDate date]];
-//    [UALocationServices createEventWithLocation:testLocation];
-//    [testLocation release];
-//}
 
 #pragma mark -
 #pragma Support Methods

@@ -51,7 +51,6 @@
 @implementation UALocationManager
 
 @synthesize locationManager = locationManager_;
-@synthesize singleServiceLocationManager = singleServiceLocationManager_;
 @synthesize standardLocationActivityStatus = standardLocationActivityStatus_;
 @synthesize significantChangeActivityStatus = significantChangeActivityStatus_;
 @synthesize lastReportedLocation = lastReportedLocation_;
@@ -64,7 +63,6 @@
 
 - (void)dealloc{
     RELEASE_SAFELY(locationManager_);
-    RELEASE_SAFELY(singleServiceLocationManager_);
     RELEASE_SAFELY(lastReportedLocation_);
     [self stopObservingUIApplicationStateNotifications];
     [super dealloc];

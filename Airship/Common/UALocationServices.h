@@ -10,27 +10,27 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import "UAEvent.h"
+#import "UALocationManager.h"
 
-#define kSessionIdKey @"session_id"
-#define kLatKey @"lat"
-#define kLongKey @"long"
-#define kRequestedAccuracyKey @"requested_accuracy"
-#define kUpdateTypeKey @"update_type"
-#define kProviderKey @"provider"
-#define kUpdateDistanceKey @"update_dist"
-#define kHorizontalAccuracyKey @"h_accuracy"
-#define kVerticalAccuracyKey @"v_accuracy"
-#define kForegroundKey @"foreground"
 
-typedef enum {
-    UALocationServiceNotUpdating = 0,
-    UALocationServiceUpdating
-} UALocationManagerServiceActivityStatus;
+@interface NSString (LocationUtils)
++ (NSString*)stringFromDouble:(double)doubleValue;
+@end
 
+@class UALocationManager;
 @interface UALocationServices : NSObject 
 
 /** Returns an event populated with the correct
  *  information for UAnalytics
  */
-+ (UAEvent*)createEventWithLocation:(CLLocation*)location;
++ (UAEvent*)createEventWithLocation:(CLLocation*)location forManager:(UALocationManager*)manager;
+/** Returns a dictionary populates with values parsed from a CLLocation
+ *  object. The double values in the CLLocation (Core Location Constants) are
+ *  converted to strings. 
+ **/
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationValues:(CLLocation*)location;
+/** Returns a dictionary populated with values parsed from the UALocationManager
+ *  The double values in the UALocationManager object are converted to strings
+ **/
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:(UALocationManager*)manager;
 @end

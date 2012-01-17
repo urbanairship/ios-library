@@ -27,11 +27,11 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationServicesDelegate.h"
 #import "UALocationServices.h"
+#import "UALocationServicesCommon.h"
 
 @interface UALocationManager : NSObject <CLLocationManagerDelegate, UALocationServicesDelegate> {
     @private
     CLLocationManager *locationManager_;
-    CLLocationManager *singleServiceLocationManager_;
     UALocationManagerServiceActivityStatus standardLocationActivityStatus_;
     UALocationManagerServiceActivityStatus significantChangeActivityStatus_;
     CLLocation *lastReportedLocation_;
@@ -39,8 +39,7 @@
     id <UALocationServicesDelegate> delegate_;
 }
 
-@property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CLLocationManager *singleServiceLocationManager;
+@property (nonatomic, retain, readonly) CLLocationManager *locationManager;
 @property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
 @property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;

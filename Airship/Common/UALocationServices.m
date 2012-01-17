@@ -12,6 +12,16 @@
 #import "UAirship.h" // temp
 #import "UAAnalytics.h" // temp
 
+
+@implementation NSString (LocationUtils)
+
++ (NSString*)stringFromDouble:(double)doubleValue {
+    return [NSString stringWithFormat:@"%F", doubleValue];
+}
+
+@end
+
+
 @implementation UALocationServices
 
 /**
@@ -28,16 +38,30 @@
  "foreground": "true" (required, string boolean)
  **/
 
-+ (UAEvent*)createEventWithLocation:(CLLocation*)location {
-    [location retain];
-    UAEvent* event = [UAEvent eventWithContext:nil];
-    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:10];
++ (UAEvent*)createEventWithLocation:(CLLocation*)location forManager:(UALocationManager*)manager {
+    [location retain];    
     //TODO: come up with session logic for background operation
     //      come up with string or double values setup
-
+    NSMutableDictionary *eventData = [NSMutableDictionary dictionaryWithCapacity:10];
+    [UALocationServices populateDictionary:eventData withLocationValues:location];
+    [UALocationServices populateDictionary:eventData withLocationManagerValues:manager];
+    UAEvent* event = [UAEvent eventWithContext:eventData];
     [location release];
     return event;
 }
 
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationValues:(CLLocation*)location {
+    [dictionary setValue:[NSString stringFromDouble:location.coordinate.latitude] forKey:kLatKey];
+    [dictionary setValue:[NSString stringFromDouble:location.coordinate.longitude] forKey:kLongKey];
+    [dictionary setValue:[NSString stringFromDouble:location.horizontalAccuracy] forKey:kHorizontalAccuracyKey];
+    [dictionary setValue:[NSString stringFromDouble:location.verticalAccuracy] forKey:kVerticalAccuracyKey];
+}
+
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:(UALocationManager*)manager {
+    //[dictionary setValue:[NSString stringFromDouble:manager.desiredAccuracy] forKey:kDesiredAccuracyKey]; 
+    //[dictionary setValue:[NSString stringFromDouble:manager. forKey:<#(NSString *)#>
+}
+                                  
+                                  
 
 @end
