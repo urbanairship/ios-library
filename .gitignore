@@ -14,5 +14,6 @@ Airship/*.a
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
+AirshipDevelopment.plist
 fabfile.py*
 build.build_output

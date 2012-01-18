@@ -9,9 +9,7 @@
 /* Common variables for the UALocationServices classes */
 
 #import <CoreLocation/CoreLocation.h>
-#import "UAEvent.h"
-#import "UALocationAnalyticsProtocol.h"
-#import "UALocationManager.h"
+#import "UALocationServicesCommon.h"
 
 
 @interface NSString (LocationUtils)
@@ -19,7 +17,8 @@
 @end
 
 @class UALocationManager;
-@interface UALocationServices : NSObject 
+@class UAEvent;
+@interface UALocationUtils : NSObject 
 
 /** Returns an event populated with the correct
  *  information for UAnalytics

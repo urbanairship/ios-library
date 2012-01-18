@@ -23,13 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import "UALocationServicesDelegate.h"
-#import "UALocationAnalyticsProtocol.h"
-#import "UALocationServices.h"
 #import "UALocationServicesCommon.h"
 
+@class UALocationUtils;
 @interface UALocationManager : NSObject <CLLocationManagerDelegate, UALocationServicesDelegate, UALocationAnalyticsProtocol> {
     @private
     CLLocationManager *locationManager_;
@@ -112,7 +109,7 @@
  *  accuracy requirements set in this location manager, and uploads it to UA. 
  *
  **/
-- (BOOL)acquireSingleLocationAndUploadToUrbanAirship;
+- (BOOL)acquireSingleLocationAndUpload;
 
  
 

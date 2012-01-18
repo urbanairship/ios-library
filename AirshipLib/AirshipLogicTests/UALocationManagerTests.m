@@ -10,9 +10,11 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UALocationManager.h"
+#import "UALocationManger_Private.h"
 #import "JRSwizzle.h"
 #import "UAGlobal.h"
 #import "CLLocationManager+Test.h"
+
 
 /** Test Categories
  *  These categories open up private methods for the purposes of 
@@ -22,10 +24,7 @@
 #pragma mark -
 #pragma UALocationManager Test categories
 @interface UALocationManager (Test)
-
 - (void)setLocationManager:(CLLocationManager*)locationManger;
-- (void)setDelegate:(id<UALocationServicesDelegate>)delegate; 
-
 @end
 
 @implementation UALocationManager (Test)
@@ -35,11 +34,6 @@
     locationManager_ = [locationManager retain];
     locationManager_.delegate = self;
 }
-
-- (void)setDelegate:(id<UALocationServicesDelegate>)delegate {
-    delegate_ = delegate;
-}
-
 @end
 
 /** Test cases */

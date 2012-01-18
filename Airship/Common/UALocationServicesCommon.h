@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#import <CoreLocation/CoreLocation.h>
 
 /** Shared constants and enums for UALocationServices **/
 
@@ -42,3 +42,17 @@ typedef enum {
     UALocationServiceNotUpdating = 0,
     UALocationServiceUpdating
 } UALocationManagerServiceActivityStatus;
+
+@protocol UALocationAnalyticsProtocol <NSObject>
+@required
+- (CLLocationAccuracy)desiredAccuracy;
+- (CLLocationDistance)distanceFilter;
+@end
+
+@protocol UALocationServicesDelegate <NSObject>
+@optional
+/** Delegate is called when a UALocationServices object reports an error */
+- (void)uaLocationManager:(id)UALocationServiceObject 
+          locationManager:(CLLocationManager*)locationManager 
+         didFailWithError:(NSError*)error;
+@end

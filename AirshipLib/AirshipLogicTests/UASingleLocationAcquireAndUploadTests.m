@@ -98,7 +98,7 @@
     id mockLocationManger = [OCMockObject niceMockForClass:[CLLocationManager class]];
     testUploader_.locationManager = mockLocationManger;
     [[mockLocationManger expect] startUpdatingLocation];
-    [testUploader_ acquireAndSendLocationToUA];
+    [testUploader_ acquireAndSendLocation];
     [mockLocationManger verify];
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }

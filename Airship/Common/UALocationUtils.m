@@ -8,9 +8,12 @@
 
 /* Common variables for the UALocationServices classes */
 
-#import "UALocationServices.h"
+#import "UALocationUtils.h"
 #import "UAirship.h" 
 #import "UAAnalytics.h" 
+#import "UAEvent.h"
+#import "UALocationServicesCommon.h"
+
 
 
 @implementation NSString (LocationUtils)
@@ -24,7 +27,7 @@
 @end
 
 
-@implementation UALocationServices
+@implementation UALocationUtils
 
 /** Create an event with the following parameters
  *
@@ -44,8 +47,8 @@
     [location retain];    
     [manager retain];
     NSMutableDictionary *eventData = [NSMutableDictionary dictionaryWithCapacity:10];
-    [UALocationServices populateDictionary:eventData withLocationValues:location];
-    [UALocationServices populateDictionary:eventData withLocationManagerValues:manager];
+    [UALocationUtils populateDictionary:eventData withLocationValues:location];
+    [UALocationUtils populateDictionary:eventData withLocationManagerValues:manager];
     UIApplicationState appState = [UIApplication sharedApplication].applicationState;
     // Set app state and session id
     if (UIApplicationStateActive == appState) {

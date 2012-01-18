@@ -6,18 +6,16 @@
 //  Copyright (c) 2012 Urban Airship. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import "UALocationServicesDelegate.h"
-#import "UALocationAnalyticsProtocol.h"
-#import "UALocationServices.h"
+#import "UALocationServicesCommon.h"
 
 
 /** This class is designed to provide Urban Airship with a single
  *  location on demand.
  */
-
+@class UALocationUtils;
 @interface UASingleLocationAcquireAndUpload : NSObject <CLLocationManagerDelegate, UALocationAnalyticsProtocol> {
+    @private
     CLLocationManager *locationManager_;
     UALocationManagerServiceActivityStatus serviceStatus_;
     id <UALocationServicesDelegate> delegate_;
@@ -25,21 +23,18 @@
 @property (nonatomic, retain, readonly) CLLocationManager *locationManager;
 @property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus serviceStatus;
 @property (nonatomic, assign) id <UALocationServicesDelegate> delegate;
+/** These properties forward calls to the CLLocationManager */
+@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
+@property (nonatomic, assign) CLLocationDistance distanceFilter;
+/***/
 
 - (id)initWithDelegate:(id<UALocationServicesDelegate>)delegateOrNil;
-
-// KVO compliant methods to pass settings to CLLocationManager
-- (CLLocationAccuracy)desiredAccuracy;
-- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
-
-- (CLLocationDistance)distanceFilter;
-- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
 /** Acquires a location using the Standard Location service.
  *  If the service is already in process, this method returns
  *  YES. 
  */
-- (BOOL)acquireAndSendLocationToUA;
+- (BOOL)acquireAndSendLocation;
 
 
 @end

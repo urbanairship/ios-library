@@ -27,26 +27,7 @@
 #import "UALocationManager.h"
 #import "UAGlobal.h"
 #import "UASingleLocationAcquireAndUpload.h"
-
-@interface UALocationManager () {
-    UASingleLocationAcquireAndUpload *singleLocationUpload_;
-}
-
-- (BOOL)checkAuthorizationAndAvailabiltyOfLocationServices;
-- (void)startObservingUIApplicationStateNotifications;
-- (void)stopObservingUIApplicationStateNotifications;
-- (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation;
-- (void)updateLastLocation:(CLLocation*)newLocation;
-- (void)stopAllLocationUpdates;
-- (void)receivedUIApplicationDidEnterBackgroundNotification;
-- (void)receivedUIApplicationWillEnterForegroundNotification;
-
-@property (nonatomic, assign) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
-@property (nonatomic, assign) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
-@property (nonatomic, retain) CLLocation *lastReportedLocation;
-@property (nonatomic, assign) id <UALocationServicesDelegate> delegate;
-@property (nonatomic, retain) UASingleLocationAcquireAndUpload *singleLocationUpload;
-@end
+#import "UALocationManger_Private.h"
 
 @implementation UALocationManager
 
@@ -199,11 +180,11 @@
 #pragma mark -
 #pragma Single Location
 
-- (BOOL)acquireSingleLocationAndUploadToUrbanAirship {
+- (BOOL)acquireSingleLocationAndUpload {
     singleLocationUpload_ = [[UASingleLocationAcquireAndUpload alloc] initWithDelegate:self];
     singleLocationUpload_.locationManager.distanceFilter = locationManager_.distanceFilter;
     singleLocationUpload_.locationManager.desiredAccuracy = locationManager_.desiredAccuracy;
-    return [singleLocationUpload_ acquireAndSendLocationToUA];
+    return [singleLocationUpload_ acquireAndSendLocation];
 }
 
 - (void)uaLocationManager:(id)UALocationServiceObject 

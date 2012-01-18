@@ -7,7 +7,7 @@
 //
 
 #import <CoreLocation/CoreLocation.h>
-#import "UALocationServices.h"
+#import "UALocationUtils.h"
 #import "UALocationServicesCommon.h"
 #import "UAEvent.h"
 #import "UAUtils.h"
@@ -61,7 +61,7 @@
     UALocationManager *locationManager = [[UALocationManager alloc] initWithDelegateOrNil:nil];
     locationManager.desiredAccuracy = kTestDesiredAccuracy;
     locationManager.distanceFilter = kTestDistanceFilter;
-    UAEvent *event = [UALocationServices createEventWithLocation:testLocation forManager:locationManager];
+    UAEvent *event = [UALocationUtils createEventWithLocation:testLocation forManager:locationManager];
     NSLog(@"EVENT DATA %@", event.data);
     NSDictionary *eventData = event.data;
     NSComparisonResult compResult = [@"true" compare:[eventData valueForKey:kForegroundKey]];

@@ -7,15 +7,14 @@
 //
 
 #import "UASingleLocationAcquireAndUpload.h"
+#import "UASingleLocationAcquireAndUpload_Private.h"
 #import "UAGlobal.h"
 #import "UAAnalytics.h"
-#import "UASingleLocationAcquireAndUpload_Private.h"
 
 /*  Use UASingleLocationAcquireAndUpload_Private.h for class extensions,
  *  this allows sharing of private methods between test and implementation 
  *  classes
  */
-
 @implementation UASingleLocationAcquireAndUpload
 
 @synthesize locationManager = locationManager_;
@@ -105,7 +104,7 @@
 #pragma mark -
 #pragma UASingleLocationAcquireAndUpload
 
-- (BOOL)acquireAndSendLocationToUA {
+- (BOOL)acquireAndSendLocation {
     if(UALocationServiceUpdating == serviceStatus_) return YES;
     BOOL enabled = [CLLocationManager locationServicesEnabled];
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
