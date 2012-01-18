@@ -40,6 +40,19 @@
     STAssertEquals(YES, goodResult, @"good result should be good!");
     STAssertEquals(NO, badResult, @"bad result should be bad");
 }
+/**
+ *  
+ *  "session_id": "UUID"
+ *  "lat" : "31.3847" (required, DDD.dddd... string double)
+ *  "long": "32.3847" (required, DDD.dddd... string double)
+ *  "requested_accuracy": "10.0,100.0,NONE" (required, requested accuracy in meters as a string double)
+ *  "update_type": "CHANGE, CONTINUOUS, SINGLE, NONE" (required - string enum)
+ *  "provider": "GPS, NETWORK, PASSIVE, UNKNOWN" (required - string enum)
+ *  "update_dist": "10.0,100.0,NONE" (required - string double distance in meters, or NONE if not available applicable)
+ *  "h_accuracy": "10.0, NONE" (required, string double - actual horizontal accuracy in meters, or NONE if not available)
+ *  "v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
+ *  "foreground": "true" (required, string boolean)
+ */
 
 - (void)testCreateEventWithLocationAndManager
 {
@@ -51,11 +64,20 @@
     UAEvent *event = [UALocationServices createEventWithLocation:testLocation forManager:locationManager];
     NSLog(@"EVENT DATA %@", event.data);
     NSDictionary *eventData = event.data;
+    NSComparisonResult compResult = [@"true" compare:[eventData valueForKey:kForegroundKey]];
+    STAssertTrue((compResult == NSOrderedSame), @"kForegroundKey should be true");
+    // The session test could be more robust TODO: add robustness!
+    STAssertTrue(([[eventData valueForKey:kSessionIdKey] length] != 0), @"kSessionIdKey can't be empty");
     NSLog(@"lat %@", [eventData valueForKey:kLatKey]);
     STAssertNotNil(event, @"Event should not be nil");
     BOOL result = [self compareDoubleAsString:[eventData valueForKey:kLatKey] toDouble:kTestLat];
-    STAssertTrue(result, @"kLatKey test lat should match result->%i kTestLat->%F eventLat->%@", result, kTestLat, [eventData valueForKey:kLatKey]);
-    
+    STAssertTrue(result, @"kLatKey test lat should match  kTestLat->%F eventLat->%@", kTestLat, [eventData valueForKey:kLatKey]);
+    result = [self compareDoubleAsString:[eventData valueForKey:kLongKey] toDouble:kTestLong];
+    STAssertTrue(result, @"kLongKey test long should match i kLongKey->%F eventLong->%@", kTestLong, [eventData valueForKey:kLongKey]);
+    result = [self compareDoubleAsString:[eventData valueForKey:kHorizontalAccuracyKey] toDouble:kTestHorizontalAccuracy];
+    STAssertTrue(result, @"kHorzontalAccuracy  should match  kHorizontalAccuracy->%F evenHorizontalAccuracy->%@", kTestHorizontalAccuracy, [eventData valueForKey:kHorizontalAccuracyKey]);
+    result = [self compareDoubleAsString:[eventData valueForKey:kVerticalAccuracyKey] toDouble:kTestVerticalAccuracy];
+    STAssertTrue(result, @"kVerticalAccuracy should match kHorzontalAccuracy->%F eventHorizontalAccuracy->%@", kVerticalAccuracyKey, [eventData valueForKey:kVerticalAccuracyKey]);
 }
 
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {

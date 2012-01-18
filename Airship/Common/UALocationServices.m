@@ -51,7 +51,7 @@
     if (UIApplicationStateActive == appState) {
         [eventData setValue:@"true" forKey:kForegroundKey];
         NSDictionary* session = [UAirship shared].analytics.session;
-        [eventData setValue:[session valueForKey:@"session"] forKey:kSessionIdKey];
+        [eventData setValue:[session valueForKey:kSessionIdKey] forKey:kSessionIdKey];
     }
     else {
         [eventData setValue:@"false" forKey:kForegroundKey];
