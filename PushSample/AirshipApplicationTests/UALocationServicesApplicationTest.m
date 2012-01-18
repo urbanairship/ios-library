@@ -80,6 +80,8 @@
     STAssertTrue(result, @"kVerticalAccuracy should match kHorzontalAccuracy->%F eventHorizontalAccuracy->%@", kVerticalAccuracyKey, [eventData valueForKey:kVerticalAccuracyKey]);
     result = [self compareDoubleAsString:[eventData valueForKey:kUpdateDistanceKey] toDouble:kTestDistanceFilter];
     STAssertTrue(result, @"kUpdateDistance should match kTestDistanceFilter->%F eventDistanceFilter", kTestDistanceFilter, [eventData valueForKey:kUpdateDistanceKey]);
+    [testLocation release];
+    [locationManager release];
 }
 
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {

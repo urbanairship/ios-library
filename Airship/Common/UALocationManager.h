@@ -26,10 +26,11 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationServicesDelegate.h"
+#import "UALocationAnalyticsProtocol.h"
 #import "UALocationServices.h"
 #import "UALocationServicesCommon.h"
 
-@interface UALocationManager : NSObject <CLLocationManagerDelegate, UALocationServicesDelegate> {
+@interface UALocationManager : NSObject <CLLocationManagerDelegate, UALocationServicesDelegate, UALocationAnalyticsProtocol> {
     @private
     CLLocationManager *locationManager_;
     UALocationManagerServiceActivityStatus standardLocationActivityStatus_;
@@ -44,6 +45,11 @@
 @property (nonatomic, assign, readonly) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
 
+/** These properties are forwarded to the CLLocationManager */
+@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
+@property (nonatomic, assign) CLLocationDistance distanceFilter;
+/***************/
+
 /** Enables location monitoring in the background.
  *  If this is not set to YES, location monitoring for Urban Airship
  *  is terminated when the app enters the background
@@ -53,13 +59,9 @@
 /** UALocationServices delegate is called when the location services 
  *  report an error **/
 @property (nonatomic, assign, readonly)id <UALocationServicesDelegate> delegate;
-- (id)initWithDelegateOrNil:(id<UALocationServicesDelegate>)delegateOrNil;
-// KVO compliant methods to pass settings to CLLocationManager
-- (CLLocationAccuracy)desiredAccuracy;
-- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
-- (CLLocationDistance)distanceFilter;
-- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+
+- (id)initWithDelegateOrNil:(id<UALocationServicesDelegate>)delegateOrNil;
 
 /** Starts updating the location and reporting to Urban Airship using the
  *  standard location service. This will not continue if the app has been 
@@ -111,7 +113,6 @@
  *
  **/
 - (BOOL)acquireSingleLocationAndUploadToUrbanAirship;
-
 
  
 

@@ -10,6 +10,7 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import "UAEvent.h"
+#import "UALocationAnalyticsProtocol.h"
 #import "UALocationManager.h"
 
 
@@ -23,7 +24,7 @@
 /** Returns an event populated with the correct
  *  information for UAnalytics
  */
-+ (UAEvent*)createEventWithLocation:(CLLocation*)location forManager:(UALocationManager*)manager;
++ (UAEvent*)createEventWithLocation:(CLLocation*)location forManager:(id<UALocationAnalyticsProtocol>)manager;
 /** Returns a dictionary populates with values parsed from a CLLocation
  *  object. The double values in the CLLocation (Core Location Constants) are
  *  converted to strings. 
@@ -32,5 +33,5 @@
 /** Returns a dictionary populated with values parsed from the UALocationManager
  *  The double values in the UALocationManager object are converted to strings
  **/
-+ (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:(UALocationManager*)manager;
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:()manager;
 @end

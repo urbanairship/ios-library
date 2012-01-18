@@ -82,14 +82,14 @@
 }
 
 #pragma mark -
-#pragma CLLocationManager property accessors
+#pragma CLLocationManager forwarding
 
 - (CLLocationAccuracy)desiredAccuracy {
     return locationManager_.desiredAccuracy;
 }
 
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy {
-   locationManager_.desiredAccuracy = desiredAccuracy;
+    locationManager_.desiredAccuracy = desiredAccuracy;
 }
 
 - (CLLocationDistance)distanceFilter {
@@ -99,7 +99,6 @@
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter {  
     locationManager_.distanceFilter = distanceFilter;
 }
-
 
 #pragma mark -
 #pragma Location Updating

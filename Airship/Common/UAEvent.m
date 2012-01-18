@@ -345,7 +345,6 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    NSLog(@"GATHER DATA BITCHES");
     [data addEntriesFromDictionary:context];
 }
 @end

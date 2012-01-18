@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationServicesDelegate.h"
+#import "UALocationAnalyticsProtocol.h"
 #import "UALocationServices.h"
 
 
@@ -16,7 +17,7 @@
  *  location on demand.
  */
 
-@interface UASingleLocationAcquireAndUpload : NSObject <CLLocationManagerDelegate> {
+@interface UASingleLocationAcquireAndUpload : NSObject <CLLocationManagerDelegate, UALocationAnalyticsProtocol> {
     CLLocationManager *locationManager_;
     UALocationManagerServiceActivityStatus serviceStatus_;
     id <UALocationServicesDelegate> delegate_;

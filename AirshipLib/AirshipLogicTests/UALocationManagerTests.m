@@ -110,8 +110,8 @@
     testLocationManager_.desiredAccuracy = testAccuracy_;
     testLocationManager_.distanceFilter = testDistance_;
     //Test the CLLocationManager directly
-    NSString *distanceFilterTag = @"distanceFilterForStandardLocation";
-    NSString *desiredAccuracyTag = @"desiredAccuracyForStandardLocation";
+    NSString *distanceFilterTag = @"distanceFilter";
+    NSString *desiredAccuracyTag = @"desiredAccuracy";
     STAssertEquals(testDistance_, testLocationManager_.locationManager.distanceFilter, @"%@ setter broken", distanceFilterTag);
     STAssertEquals(testDistance_, testLocationManager_.distanceFilter, @"%@ getter broken", distanceFilterTag);
     STAssertEquals(testAccuracy_, testLocationManager_.locationManager.desiredAccuracy, @"%@ setter broken", desiredAccuracyTag);
