@@ -9,8 +9,8 @@
 /* Common variables for the UALocationServices classes */
 
 #import "UALocationServices.h"
-#import "UAirship.h" // temp
-#import "UAAnalytics.h" // temp
+#import "UAirship.h" 
+#import "UAAnalytics.h" 
 
 
 @implementation NSString (LocationUtils)
