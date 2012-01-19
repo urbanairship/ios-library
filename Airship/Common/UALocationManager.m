@@ -26,7 +26,6 @@
 
 #import "UALocationManager.h"
 #import "UAGlobal.h"
-#import "UASingleLocationAcquireAndUpload.h"
 #import "UALocationManger_Private.h"
 
 @implementation UALocationManager
@@ -40,13 +39,15 @@
 @synthesize dateOfLastLocationUpdateAttempt = dateOfLastLocationUpdateAttempt_;
 @synthesize delegate = delegate_;
 @synthesize singleLocationUpload = singleLocationUpload_;
+@synthesize automaticStandardLocationUpdatesEnabled = automaticStandardLocationUpdatesEnabled_;
 
 #pragma mark -
-#pragma Object Lifecycle
+#pragma mark Object Lifecycle
 
 - (void)dealloc{
     RELEASE_SAFELY(locationManager_);
     RELEASE_SAFELY(lastReportedLocation_);
+    [self invalidateAndReleaseUpdateTimer];
     [self stopObservingUIApplicationStateNotifications];
     [super dealloc];
 }
@@ -65,7 +66,7 @@
 }
 
 #pragma mark -
-#pragma CLLocationManager forwarding
+#pragma mark CLLocationManager forwarding
 
 - (CLLocationAccuracy)desiredAccuracy {
     return locationManager_.desiredAccuracy;
@@ -84,7 +85,7 @@
 }
 
 #pragma mark -
-#pragma Location Updating
+#pragma mark Location Updating
 
 
 - (BOOL)startStandardLocationUpdates {
@@ -140,13 +141,14 @@
 }
 
 #pragma mark -
-#pragma CLLocationManagerDelegate
+#pragma mark CLLocationManagerDelegate
 
 // Shutdown location services if authorization changes
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (status != kCLAuthorizationStatusAuthorized) {
         [self stopAllLocationUpdates];
         [self stopObservingUIApplicationStateNotifications];
+        // TODO: shutdown NSTimer if running
         // TODO: figure out what to do if single service is in the middle of processing
         // maybe post a notification? Probably do nothing, but check for possible failure
     }
@@ -170,12 +172,19 @@
 
 
 #pragma mark -
-#pragma Automatic Standard Location Updates
+#pragma mark Automatic Standard Location Updates
 
 - (BOOL)enableAutomaticStandardLocationUpdates {
+    // The acquireSingleLocationAndUpload will start a call if it returns YES
     if (![self acquireSingleLocationAndUpload]) return NO;
     else {
-        self.lastReportedLocation = [NSDate date];
+        // Just record the attempt, to many variables to ensure success at 
+        // this point
+        self.dateOfLastLocationUpdateAttempt = [NSDate date];
+        [self startObservingUIApplicationStateNotifications];
+        [self createAndScheduleLocationUpdateTimer];
+
+
     }
     return NO;
     
@@ -185,8 +194,23 @@
     [self stopStandardLocationUpdates];
 }
 
+- (void)createAndScheduleLocationUpdateTimer {
+    self.locationUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:kAutomaticStandardLocationServicesTimeInterval 
+                                                                target:self 
+                                                              selector:@selector(acquireSingleLocationAndUpload) 
+                                                              userInfo:nil 
+                                                               repeats:YES];
+    [[NSRunLoop currentRunLoop] addTimer:locationUpdateTimer_ forMode:NSDefaultRunLoopMode];
+}
+
+- (void)invalidateAndReleaseUpdateTimer {
+    if(locationUpdateTimer_) {
+        [locationUpdateTimer_ invalidate];
+        RELEASE_SAFELY(locationUpdateTimer_);
+    }
+}
 #pragma mark -
-#pragma Single Location
+#pragma mark Single Location
 
 - (BOOL)acquireSingleLocationAndUpload {
     singleLocationUpload_ = [[UASingleLocationAcquireAndUpload alloc] initWithDelegate:self];
@@ -202,7 +226,7 @@
 }
 
 #pragma mark -
-#pragma UIApplication State Observation
+#pragma mark UIApplication State Observation
 
 - (void)startObservingUIApplicationStateNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -221,15 +245,26 @@
 }
 
 - (void)receivedUIApplicationDidEnterBackgroundNotification {
-
-}
-
-- (void)receivedUIApplicationWillEnterForegroundNotification {
+    [self stopStandardLocationUpdates];
+    if (!backgroundLocationMonitoringEnabled_){
+        [self stopSignificantChangeLocationUpdates];
+    }
+    [self invalidateAndReleaseUpdateTimer];
+    
+    
     
 }
 
+- (void)receivedUIApplicationWillEnterForegroundNotification {
+    if (automaticStandardLocationUpdatesEnabled_){
+        if ([self acquireSingleLocationAndUpload]){
+            [self createAndScheduleLocationUpdateTimer];
+        }
+    }
+}
+
 #pragma mark -
-#pragma CLLocationManager authorization/location services settings
+#pragma mark CLLocationManager authorization/location services settings
 
 /** Checks both locationServicesEnabled and authorizationStatus
  *  for CLLocationManager an records state of appropriate flags.

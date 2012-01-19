@@ -5,8 +5,9 @@
 //  Created by Matt Hooge on 1/18/12.
 //  Copyright (c) 2012 Urban Airship. All rights reserved.
 //
+#import "UASingleLocationAcquireAndUpload.h"
 
-@class UASingleLocationAcquireAndUpload;
+
 @interface UALocationManager () {
     UASingleLocationAcquireAndUpload *singleLocationUpload_;
 }
@@ -19,6 +20,8 @@
 - (void)stopAllLocationUpdates;
 - (void)receivedUIApplicationDidEnterBackgroundNotification;
 - (void)receivedUIApplicationWillEnterForegroundNotification;
+- (void)createAndScheduleLocationUpdateTimer;
+- (void)invalidateAndReleaseUpdateTimer;
 
 @property (nonatomic, assign) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
 @property (nonatomic, assign) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
@@ -27,4 +30,5 @@
 @property (nonatomic, retain) NSDate *dateOfLastLocationUpdateAttempt;
 @property (nonatomic, assign) id <UALocationServicesDelegate> delegate;
 @property (nonatomic, retain) UASingleLocationAcquireAndUpload *singleLocationUpload;
+@property (nonatomic, assign) BOOL automaticStandardLocationUpdatesEnabled;
 @end

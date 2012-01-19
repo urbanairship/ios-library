@@ -93,7 +93,7 @@
 }
 
 #pragma mark -
-#pragma Testing Methods
+#pragma mark Testing Methods
 
 
 
@@ -113,7 +113,7 @@
 }
 
 #pragma mark -
-#pragma Test start/stop services and authorization/enabled states
+#pragma mark Test start/stop services and authorization/enabled states
 
 - (void)testStartUpdatingStandardLocationWhenEnabledAndAuthorized {
     [self swizzleCLLocationClassEnabledAndAuthorized];
@@ -216,9 +216,41 @@
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];                          
 }
 
+#pragma mark -
+#pragma mark Automatic Standard Location Updates
+
+- (void)testEnableAutomaticStandardLocationUpdates {
+    id mockLocationManager = [OCMockObject partialMockForObject:testLocationManager_];
+    BOOL yes = YES;
+    [[[mockLocationManager expect] andReturnValue:OCMOCK_VALUE(yes)] acquireSingleLocationAndUpload];
+    [[[mockLocationManager expect] andForwardToRealObject] startObservingUIApplicationStateNotifications];
+    [[[mockLocationManager expect] andForwardToRealObject] createAndScheduleLocationUpdateTimer];
+    [testLocationManager_ enableAutomaticStandardLocationUpdates];
+    [mockLocationManager verify];
+    STAssertNotNil(testLocationManager_.dateOfLastLocationUpdateAttempt , @"dateOfLastLocationUpdateAttempt should not be nil");
+    NSTimeInterval time = [[NSDate date] timeIntervalSinceDate:testLocationManager_.dateOfLastLocationUpdateAttempt];
+    // If this assert fails, read the output closely to make sure the test parameters aren't too tight
+    STAssertEqualsWithAccuracy(time, 0.0, 0.5, @"dateOfLastLocationUpdateAttempt not set properly");
+    
+   
+}
+    
+#pragma mark -
+#pragma mark Single Location Acquire Upload
+
+- (void)testSingleLocationAcquireAndUpload {
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    [testLocationManager_ acquireSingleLocationAndUpload];
+    STAssertNotNil(testLocationManager_.singleLocationUpload, nil);
+    // These two values should be passed to the single location manager on launch
+    STAssertEquals(testLocationManager_.distanceFilter, testLocationManager_.singleLocationUpload.distanceFilter, nil);
+    STAssertEquals(testLocationManager_.desiredAccuracy, testLocationManager_.singleLocationUpload.desiredAccuracy, nil);
+    STAssertEquals(testLocationManager_.singleLocationUpload.serviceStatus, UALocationServiceUpdating, @"singleLocationUpload should be updating");
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+}
 
 #pragma mark -
-#pragma CLLocationManager delegate callbacks
+#pragma mark CLLocationManager delegate callbacks
 
 - (void)testAuthorizationStatusChangeDelegateCall {
     [self swizzleCLLocationClassEnabledAndAuthorized];
@@ -269,10 +301,8 @@
     [mockLocationManager verify];
 }
 
-
-
 #pragma mark -
-#pragma Support Methods
+#pragma mark Support Methods
 
 // Don't forget to unswizzle the swizzles in cases of strange behavior
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector {

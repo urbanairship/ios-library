@@ -36,6 +36,7 @@
     BOOL backgroundLocationMonitoringEnabled_;
     NSTimer *locationUpdateTimer_;
     NSDate *dateOfLastLocationUpdateAttempt_;
+    BOOL automaticStandardLocationUpdatesEnabled_;
     id <UALocationServicesDelegate> delegate_;
 }
 
@@ -60,6 +61,9 @@
  *  acquired at that time.
  */
 @property (nonatomic, retain, readonly) NSDate *dateOfLastLocationUpdateAttempt;
+
+/** Returns YES if automaticStandardLocationUpdates have been enabled */
+@property (nonatomic, assign, readonly) BOOL automaticStandardLocationUpdatesEnabled;
 
 /** UALocationServices delegate is called when the location services 
  *  report an error **/

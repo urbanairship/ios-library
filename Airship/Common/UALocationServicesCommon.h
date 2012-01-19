@@ -37,6 +37,7 @@
 #define kHorizontalAccuracyKey @"h_accuracy"
 #define kVerticalAccuracyKey @"v_accuracy"
 #define kForegroundKey @"foreground"
+#define kAutomaticStandardLocationServicesTimeInterval 120.0
 
 typedef enum {
     UALocationServiceNotUpdating = 0,

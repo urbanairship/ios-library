@@ -56,8 +56,8 @@
     testUploader_ = nil;
 }
 
-#pragma -
-#pragma On demand setup methods
+#pragma mark -
+#pragma mark On demand setup methods
 - (void)setUpTestDistanceAndAccuracy {
     testDistance_ = 100.0;
     // CLLocationAccuracy best is the default, don't use that
@@ -127,7 +127,7 @@
 
 
 #pragma mark -
-#pragma Support Methods
+#pragma mark Support Methods
 
 // Don't forget to unswizzle the swizzles in cases of strange behavior
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector {
