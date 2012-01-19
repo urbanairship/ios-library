@@ -36,6 +36,8 @@
 @synthesize significantChangeActivityStatus = significantChangeActivityStatus_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
+@synthesize locationUpdateTimer = locationUpdateTimer_;
+@synthesize dateOfLastLocationUpdateAttempt = dateOfLastLocationUpdateAttempt_;
 @synthesize delegate = delegate_;
 @synthesize singleLocationUpload = singleLocationUpload_;
 
@@ -105,6 +107,7 @@
     }
     [locationManager_ startMonitoringSignificantLocationChanges];
     significantChangeActivityStatus_ = UALocationServiceUpdating;
+    [self startObservingUIApplicationStateNotifications];
     return YES ;
 }
 
@@ -143,7 +146,7 @@
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (status != kCLAuthorizationStatusAuthorized) {
         [self stopAllLocationUpdates];
-        
+        [self stopObservingUIApplicationStateNotifications];
         // TODO: figure out what to do if single service is in the middle of processing
         // maybe post a notification? Probably do nothing, but check for possible failure
     }
@@ -158,8 +161,10 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    if (nil != lastReportedLocation_) [lastReportedLocation_ autorelease];
-    lastReportedLocation_ = [newLocation retain];  
+    //TODO:  Figure out location accuracy algorithm
+    if (newLocation.horizontalAccuracy < locationManager_.desiredAccuracy || locationManager_.desiredAccuracy < 0) {
+        self.lastReportedLocation = newLocation;
+    }
     // TODO: added functionality and API calls
 }
 
@@ -168,13 +173,16 @@
 #pragma Automatic Standard Location Updates
 
 - (BOOL)enableAutomaticStandardLocationUpdates {
-    if (![self checkAuthorizationAndAvailabiltyOfLocationServices]) return NO;
+    if (![self acquireSingleLocationAndUpload]) return NO;
+    else {
+        self.lastReportedLocation = [NSDate date];
+    }
     return NO;
     
 }
 
 - (void)disableAutomaticStandardLocationUpdates {
-    
+    [self stopStandardLocationUpdates];
 }
 
 #pragma mark -
@@ -213,11 +221,11 @@
 }
 
 - (void)receivedUIApplicationDidEnterBackgroundNotification {
-    NSLog(@"BACKGROUND");
+
 }
 
 - (void)receivedUIApplicationWillEnterForegroundNotification {
-    NSLog(@"FOREGROUND");
+    
 }
 
 #pragma mark -

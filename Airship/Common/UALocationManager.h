@@ -34,6 +34,8 @@
     UALocationManagerServiceActivityStatus significantChangeActivityStatus_;
     CLLocation *lastReportedLocation_;
     BOOL backgroundLocationMonitoringEnabled_;
+    NSTimer *locationUpdateTimer_;
+    NSDate *dateOfLastLocationUpdateAttempt_;
     id <UALocationServicesDelegate> delegate_;
 }
 
@@ -52,6 +54,12 @@
  *  is terminated when the app enters the background
  **/
 @property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
+@property (nonatomic, retain, readonly) NSTimer *locationUpdateTimer;
+/** This timer records the last time an attempt was made to acquire a location
+ *  using the Standard Location service. It is possible that a location was not
+ *  acquired at that time.
+ */
+@property (nonatomic, retain, readonly) NSDate *dateOfLastLocationUpdateAttempt;
 
 /** UALocationServices delegate is called when the location services 
  *  report an error **/
@@ -79,6 +87,8 @@
  *  flag is not set to YES, this service terminates when the app enters the background. 
  *  Both [CLLocationManager locationServicesEnabled] and [CLLocationManager authorizationStatus]
  *  are called before location services begin reporting. Consult those methods for more information.
+ *  Significant change location service will continue in the background if background monitoring is
+ *  enabled.
  *  Returns:
  *      YES if service has started
  *      NO if the service cannot start because of CLLocationManager authorization status

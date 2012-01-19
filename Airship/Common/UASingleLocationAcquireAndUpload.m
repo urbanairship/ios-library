@@ -103,7 +103,8 @@
 
 #pragma mark -
 #pragma UASingleLocationAcquireAndUpload
-
+// TODO: figure out if this needs to be run as a backgroun
+// task or if it returns immediately
 - (BOOL)acquireAndSendLocation {
     if(UALocationServiceUpdating == serviceStatus_) return YES;
     BOOL enabled = [CLLocationManager locationServicesEnabled];
