@@ -13,6 +13,7 @@
 #import "UAUtils.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UALocationManager.h"
 
 #define kTestLat 45.525352839897
 #define kTestLong -122.682115697712
