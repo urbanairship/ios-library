@@ -15,7 +15,6 @@
 #import "UAAnalytics.h"
 #import "UALocationManager.h"
 #import "UALocationTestUtils.h"
-
 #import <SenTestingKit/SenTestingKit.h>
 
 @interface UALocationServicesApplicationTest : SenTestCase
@@ -26,11 +25,11 @@
 @implementation UALocationServicesApplicationTest
 
 - (void)testCompareDoubleAsString {
-    double five = 5.0;
-    NSString *fiveString = @"5.0";
-    NSString *six = @"6.0";
-    BOOL goodResult = [self compareDoubleAsString:fiveString toDouble:five];
-    BOOL badResult = [self compareDoubleAsString:six toDouble:five];
+    double testValue = kTestLat;
+    NSString *stringLat = @"45.525352839897";
+    NSString *badStringLat = @"37.7726834626323";
+    BOOL goodResult = [self compareDoubleAsString:stringLat toDouble:testValue];
+    BOOL badResult = [self compareDoubleAsString:badStringLat toDouble:testValue];
     STAssertEquals(YES, goodResult, @"good result should be good!");
     STAssertEquals(NO, badResult, @"bad result should be bad");
 }
@@ -47,6 +46,9 @@
  *  "v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
  *  "foreground": "true" (required, string boolean)
  */
+
+#pragma mark -
+#pragma mark UALocationManager
 
 - (void)testCreateEventWithLocationAndManager
 {
@@ -78,10 +80,32 @@
     [locationManager release];
 }
 
+#pragma mark -
+#pragma mark UALocationEvent
+- (void)testCreateEventWithLocation {
+    CLLocation *testLocation = [UALocationTestUtils getTestLocation];
+    CLLocationManager *testManager = [UALocationTestUtils getTestLocationManager];
+    STAssertNotNil(testLocation, nil);
+    STAssertNotNil(testManager, nil);
+    UALocationEvent *testEvent = [UALocationEvent createEventWithLocation:testLocation forManager:testManager];
+    STAssertNotNil(testEvent, nil);
+    NSDictionary *eventData = testEvent.data;
+    NSString *foregroundValue = [eventData valueForKey:kForegroundKey];
+    NSComparisonResult foregroundComparison = [foregroundValue compare:@"true"];
+    STAssertEquals(foregroundComparison, NSOrderedSame, @"foregroundValue not set properly");
+}
+
+#pragma mark -
+#pragma mark Support Methods
+
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
-    double stringAsDouble = [stringDouble doubleValue];
-    NSLog(@"stringValue %@", stringDouble);
-    NSLog(@"stringAsDouble %F", stringAsDouble);
-    return (stringAsDouble == doubleValue) ? YES:NO;
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *numberFromString = [formatter numberFromString:stringDouble];
+    NSNumber *numberFromDouble = [NSNumber numberWithDouble:doubleValue];
+    NSLog(@"NUMBER FROM STRING %@", [numberFromString stringValue]);
+    NSLog(@"NUBMER FORM DOUBLE %@", [numberFromDouble stringValue]);
+    [formatter release];
+    return [numberFromDouble isEqualToNumber:numberFromString];
 }
 @end

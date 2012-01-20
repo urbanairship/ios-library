@@ -46,8 +46,8 @@ typedef enum {
 
 @protocol UALocationAnalyticsProtocol <NSObject>
 @required
-- (CLLocationAccuracy)desiredAccuracy;
-- (CLLocationDistance)distanceFilter;
+@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
+@property (nonatomic, assign) CLLocationDistance distanceFilter;
 @end
 
 @protocol UALocationServicesDelegate <NSObject>

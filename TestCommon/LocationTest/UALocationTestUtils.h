@@ -18,6 +18,8 @@
 
 @interface UALocationTestUtils : NSObject
 
+/** Creates and returns a location with the above values */
 + (CLLocation*)getTestLocation;
+/** Creates and returns a location manager with the above values */
 + (CLLocationManager*)getTestLocationManager;
 @end
