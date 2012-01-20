@@ -14,14 +14,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UALocationManager.h"
-
-#define kTestLat 45.525352839897
-#define kTestLong -122.682115697712
-#define kTestAlt 100.0
-#define kTestHorizontalAccuracy 5.0
-#define kTestVerticalAccuracy 5.0
-#define kTestDistanceFilter 10.0
-#define kTestDesiredAccuracy 5.0
+#import "UALocationTestUtils.h"
 
 #import <SenTestingKit/SenTestingKit.h>
 
@@ -62,7 +55,7 @@
     UALocationManager *locationManager = [[UALocationManager alloc] initWithDelegateOrNil:nil];
     locationManager.desiredAccuracy = kTestDesiredAccuracy;
     locationManager.distanceFilter = kTestDistanceFilter;
-    UAEvent *event = [UALocationUtils createEventWithLocation:testLocation forManager:locationManager];
+    UAEvent *event = [UALocationEvent createEventWithLocation:testLocation forManager:locationManager];
     NSLog(@"EVENT DATA %@", event.data);
     NSDictionary *eventData = event.data;
     NSComparisonResult compResult = [@"true" compare:[eventData valueForKey:kForegroundKey]];

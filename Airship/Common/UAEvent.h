@@ -23,6 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UALocationServicesCommon.h"
+
 #define kEventAppInitSize               450//397 w/ push id, no inbox id
 #define kEventAppExitSize               200//136 w/ only network type
 #define kEventDeviceRegistrationSize    200//153 w/ only user info
@@ -99,6 +101,19 @@
  *  "foreground": "true" (required, string boolean)
  */
 - (id)initWithContext:(NSDictionary *)context;
+/** Returns an event populated with the correct
+ *  information for UAnalytics
+ */
++ (UALocationEvent*)createEventWithLocation:(CLLocation*)location forManager:(id<UALocationAnalyticsProtocol>)manager;
+/** Returns a dictionary populates with values parsed from a CLLocation
+ *  object. The double values in the CLLocation (Core Location Constants) are
+ *  converted to strings. 
+ **/
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationValues:(CLLocation*)location;
+/** Returns a dictionary populated with values parsed from the UALocationManager
+ *  The double values in the UALocationManager object are converted to strings
+ **/
++ (void)populateDictionary:(NSDictionary*)dictionary withLocationManagerValues:()manager;
 @end
 
 /**

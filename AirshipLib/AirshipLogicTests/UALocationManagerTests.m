@@ -14,6 +14,7 @@
 #import "JRSwizzle.h"
 #import "UAGlobal.h"
 #import "CLLocationManager+Test.h"
+#import "UALocationTestUtils.h"
 
 
 /** Test Categories
@@ -77,10 +78,9 @@
 }
 
 - (void)setUpTestLocations {
-    CLLocationCoordinate2D coord1 = CLLocationCoordinate2DMake(45.525352839897, -122.682115697712);
     CLLocationCoordinate2D coord2 = CLLocationCoordinate2DMake(37.7726834626323, -122.406178648848);
-    testLocationOne_ = [[CLLocation alloc] initWithCoordinate:coord1 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
     testLocationTwo_ = [[CLLocation alloc] initWithCoordinate:coord2 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
+    testLocationOne_ = [[UALocationTestUtils getTestLocation] retain];
     STAssertNotNil(testLocationOne_, @"location allocation fail");
     STAssertNotNil(testLocationTwo_, @"location allocaiton fail");
 }

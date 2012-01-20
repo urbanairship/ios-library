@@ -60,7 +60,6 @@
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
 		BB5A2A6B14C4DB45009D7931 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5A2A6A14C4DB45009D7931 /* CoreLocation.framework */; };
 		BB5A2A9A14C4E1F0009D7931 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BB5A2A9814C4E1F0009D7931 /* InfoPlist.strings */; };
-		BB5A2A9D14C4E1F0009D7931 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5A2A9C14C4E1F0009D7931 /* UALocationServicesApplicationTest.m */; };
 		BB5A2AA514C4E3F8009D7931 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5A2AA414C4E3F8009D7931 /* SenTestingKit.framework */; };
 		BB5A2AA614C4E42B009D7931 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		BB5A2AA714C4E462009D7931 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -763,7 +762,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB5A2A9D14C4E1F0009D7931 /* UALocationServicesApplicationTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,6 +860,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				HEADER_SEARCH_PATHS = (
+					../TestCommon/LocationTest,
+					"../Airship/**",
+				);
 				INFOPLIST_FILE = "AirshipApplicationTests/AirshipApplicationTests-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
