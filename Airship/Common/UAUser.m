@@ -250,7 +250,7 @@ static UAUser *_defaultUser;
 #pragma mark -
 #pragma mark Load
 
-// TODO: better user state representation
+//TODO: better user state representation
 - (void)loadUser {
 
     if (creatingUser) {

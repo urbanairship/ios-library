@@ -35,7 +35,6 @@
 @synthesize significantChangeActivityStatus = significantChangeActivityStatus_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize backgroundLocationMonitoringEnabled = backgroundLocationMonitoringEnabled_;
-@synthesize locationUpdateTimer = locationUpdateTimer_;
 @synthesize dateOfLastLocationUpdateAttempt = dateOfLastLocationUpdateAttempt_;
 @synthesize delegate = delegate_;
 @synthesize singleLocationUpload = singleLocationUpload_;
@@ -47,7 +46,6 @@
 - (void)dealloc{
     RELEASE_SAFELY(locationManager_);
     RELEASE_SAFELY(lastReportedLocation_);
-    [self invalidateAndReleaseUpdateTimer];
     [self stopObservingUIApplicationStateNotifications];
     [super dealloc];
 }
@@ -117,7 +115,7 @@
     significantChangeActivityStatus_ = UALocationServiceNotUpdating;
 }
 
-// TODO: change this method to take more parameters to handle 
+//TODO: change this method to take more parameters to handle 
 // differing location requirements of the different location managers
 - (BOOL)testAccuracyOfLocation:(CLLocation*)newLocation {
 
@@ -128,7 +126,7 @@
     }
     return NO;
 }
-// TODO: Start here and come up with a basic algorithm to check status of returned
+//TODO: Start here and come up with a basic algorithm to check status of returned
 // location
 - (void)updateLastLocation:(CLLocation*)newLocation {
     if (nil != lastReportedLocation_) [lastReportedLocation_ autorelease];
@@ -167,7 +165,7 @@
     if (newLocation.horizontalAccuracy < locationManager_.desiredAccuracy || locationManager_.desiredAccuracy < 0) {
         self.lastReportedLocation = newLocation;
     }
-    // TODO: added functionality and API calls
+    //TODO: added functionality and API calls
 }
 
 
@@ -194,21 +192,6 @@
     [self stopStandardLocationUpdates];
 }
 
-- (void)createAndScheduleLocationUpdateTimer {
-    self.locationUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:kAutomaticStandardLocationServicesTimeInterval 
-                                                                target:self 
-                                                              selector:@selector(acquireSingleLocationAndUpload) 
-                                                              userInfo:nil 
-                                                               repeats:YES];
-    [[NSRunLoop currentRunLoop] addTimer:locationUpdateTimer_ forMode:NSDefaultRunLoopMode];
-}
-
-- (void)invalidateAndReleaseUpdateTimer {
-    if(locationUpdateTimer_) {
-        [locationUpdateTimer_ invalidate];
-        RELEASE_SAFELY(locationUpdateTimer_);
-    }
-}
 #pragma mark -
 #pragma mark Single Location
 
@@ -248,18 +231,12 @@
     [self stopStandardLocationUpdates];
     if (!backgroundLocationMonitoringEnabled_){
         [self stopSignificantChangeLocationUpdates];
-    }
-    [self invalidateAndReleaseUpdateTimer];
-    
-    
-    
+    }   
 }
-
+//TODO: Finish and test this method
 - (void)receivedUIApplicationWillEnterForegroundNotification {
     if (automaticStandardLocationUpdatesEnabled_){
-        if ([self acquireSingleLocationAndUpload]){
-            [self createAndScheduleLocationUpdateTimer];
-        }
+        [self acquireSingleLocationAndUpload];
     }
 }
 

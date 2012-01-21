@@ -80,7 +80,7 @@
 #pragma mark -
 #pragma Accuracy algorithm
 
-// TODO: build something more robust, this will fail with kCLLocationAccuracyBest and BestForNav which
+//TODO: build something more robust, this will fail with kCLLocationAccuracyBest and BestForNav which
 // return -1 & -2 repsectively for desiredAccuracy. Need a secondary test for difference in location points
 // over time, etc. 
 
@@ -96,14 +96,14 @@
 #pragma mark -
 #pragma UAAnalytics
 
-// TODO: notify delegate if analytics send fail occurred
+//TODO: notify delegate if analytics send fail occurred
 - (void)sendLocationToAnalytics:(CLLocation*)location {
     
 }
 
 #pragma mark -
 #pragma UASingleLocationAcquireAndUpload
-// TODO: figure out if this needs to be run as a backgroun
+//TODO: figure out if this needs to be run as a backgroun
 // task or if it returns immediately
 - (BOOL)acquireAndSendLocation {
     if(UALocationServiceUpdating == serviceStatus_) return YES;

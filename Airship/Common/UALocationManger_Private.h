@@ -26,7 +26,6 @@
 @property (nonatomic, assign) UALocationManagerServiceActivityStatus standardLocationActivityStatus;
 @property (nonatomic, assign) UALocationManagerServiceActivityStatus significantChangeActivityStatus;
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
-@property (nonatomic, retain) NSTimer *locationUpdateTimer;
 @property (nonatomic, retain) NSDate *dateOfLastLocationUpdateAttempt;
 @property (nonatomic, assign) id <UALocationServicesDelegate> delegate;
 @property (nonatomic, retain) UASingleLocationAcquireAndUpload *singleLocationUpload;

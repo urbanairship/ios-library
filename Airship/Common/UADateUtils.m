@@ -48,7 +48,7 @@
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
 
-    // TODO: format string for localization
+    //TODO: format string for localization
     if(dayDiff == 0)
         [dateFormatter setDateFormat:@"h:mm aaa"];
     else if(dayDiff == -1)

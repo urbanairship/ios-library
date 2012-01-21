@@ -34,7 +34,6 @@
     UALocationManagerServiceActivityStatus significantChangeActivityStatus_;
     CLLocation *lastReportedLocation_;
     BOOL backgroundLocationMonitoringEnabled_;
-    NSTimer *locationUpdateTimer_;
     NSDate *dateOfLastLocationUpdateAttempt_;
     BOOL automaticStandardLocationUpdatesEnabled_;
     id <UALocationServicesDelegate> delegate_;
@@ -54,9 +53,9 @@
  *  If this is not set to YES, location monitoring for Urban Airship
  *  is terminated when the app enters the background
  **/
+
 @property (nonatomic, assign) BOOL backgroundLocationMonitoringEnabled;
-@property (nonatomic, retain, readonly) NSTimer *locationUpdateTimer;
-/** This timer records the last time an attempt was made to acquire a location
+/** This date records the last time an attempt was made to acquire a location
  *  using the Standard Location service. It is possible that a location was not
  *  acquired at that time.
  */
