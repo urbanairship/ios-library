@@ -46,54 +46,54 @@
  *  "v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
  *  "foreground": "true" (required, string boolean)
  */
-
-#pragma mark -
-#pragma mark UALocationManager
-
-- (void)testCreateEventWithLocationAndManager
-{
-    NSDate *dateNow = [NSDate date];
-    CLLocation *testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(kTestLat, kTestLong) altitude:kTestAlt horizontalAccuracy:kTestHorizontalAccuracy verticalAccuracy:kTestVerticalAccuracy timestamp:dateNow];
-    UALocationManager *locationManager = [[UALocationManager alloc] initWithDelegateOrNil:nil];
-    locationManager.desiredAccuracy = kTestDesiredAccuracy;
-    locationManager.distanceFilter = kTestDistanceFilter;
-    UAEvent *event = [UALocationEvent createEventWithLocation:testLocation forManager:locationManager];
-    NSLog(@"EVENT DATA %@", event.data);
-    NSDictionary *eventData = event.data;
-    NSComparisonResult compResult = [@"true" compare:[eventData valueForKey:kForegroundKey]];
-    STAssertTrue((compResult == NSOrderedSame), @"kForegroundKey should be true");
-    // The session test could be more robust TODO: add robustness!
-    STAssertTrue(([[eventData valueForKey:kSessionIdKey] length] != 0), @"kSessionIdKey can't be empty");
-    NSLog(@"lat %@", [eventData valueForKey:kLatKey]);
-    STAssertNotNil(event, @"Event should not be nil");
-    BOOL result = [self compareDoubleAsString:[eventData valueForKey:kLatKey] toDouble:kTestLat];
-    STAssertTrue(result, @"kLatKey test lat should match  kTestLat->%F eventLat->%@", kTestLat, [eventData valueForKey:kLatKey]);
-    result = [self compareDoubleAsString:[eventData valueForKey:kLongKey] toDouble:kTestLong];
-    STAssertTrue(result, @"kLongKey test long should match i kLongKey->%F eventLong->%@", kTestLong, [eventData valueForKey:kLongKey]);
-    result = [self compareDoubleAsString:[eventData valueForKey:kHorizontalAccuracyKey] toDouble:kTestHorizontalAccuracy];
-    STAssertTrue(result, @"kHorzontalAccuracy  should match  kHorizontalAccuracy->%F evenHorizontalAccuracy->%@", kTestHorizontalAccuracy, [eventData valueForKey:kHorizontalAccuracyKey]);
-    result = [self compareDoubleAsString:[eventData valueForKey:kVerticalAccuracyKey] toDouble:kTestVerticalAccuracy];
-    STAssertTrue(result, @"kVerticalAccuracy should match kHorzontalAccuracy->%F eventHorizontalAccuracy->%@", kVerticalAccuracyKey, [eventData valueForKey:kVerticalAccuracyKey]);
-    result = [self compareDoubleAsString:[eventData valueForKey:kUpdateDistanceKey] toDouble:kTestDistanceFilter];
-    STAssertTrue(result, @"kUpdateDistance should match kTestDistanceFilter->%F eventDistanceFilter", kTestDistanceFilter, [eventData valueForKey:kUpdateDistanceKey]);
-    [testLocation release];
-    [locationManager release];
-}
-
-#pragma mark -
-#pragma mark UALocationEvent
-- (void)testCreateEventWithLocation {
-    CLLocation *testLocation = [UALocationTestUtils getTestLocation];
-    CLLocationManager *testManager = [UALocationTestUtils getTestLocationManager];
-    STAssertNotNil(testLocation, nil);
-    STAssertNotNil(testManager, nil);
-    UALocationEvent *testEvent = [UALocationEvent createEventWithLocation:testLocation forManager:testManager];
-    STAssertNotNil(testEvent, nil);
-    NSDictionary *eventData = testEvent.data;
-    NSString *foregroundValue = [eventData valueForKey:kForegroundKey];
-    NSComparisonResult foregroundComparison = [foregroundValue compare:@"true"];
-    STAssertEquals(foregroundComparison, NSOrderedSame, @"foregroundValue not set properly");
-}
+//
+//#pragma mark -
+//#pragma mark UALocationManager
+//
+//- (void)testCreateEventWithLocationAndManager
+//{
+//    NSDate *dateNow = [NSDate date];
+//    CLLocation *testLocation = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(kTestLat, kTestLong) altitude:kTestAlt horizontalAccuracy:kTestHorizontalAccuracy verticalAccuracy:kTestVerticalAccuracy timestamp:dateNow];
+//    UALocationManager *locationManager = [[UALocationManager alloc] initWithDelegateOrNil:nil];
+//    locationManager.desiredAccuracy = kTestDesiredAccuracy;
+//    locationManager.distanceFilter = kTestDistanceFilter;
+//    UAEvent *event = [UALocationEvent createEventWithLocation:testLocation forManager:locationManager];
+//    NSLog(@"EVENT DATA %@", event.data);
+//    NSDictionary *eventData = event.data;
+//    NSComparisonResult compResult = [@"true" compare:[eventData valueForKey:kForegroundKey]];
+//    STAssertTrue((compResult == NSOrderedSame), @"kForegroundKey should be true");
+//    // The session test could be more robust TODO: add robustness!
+//    STAssertTrue(([[eventData valueForKey:kSessionIdKey] length] != 0), @"kSessionIdKey can't be empty");
+//    NSLog(@"lat %@", [eventData valueForKey:kLatKey]);
+//    STAssertNotNil(event, @"Event should not be nil");
+//    BOOL result = [self compareDoubleAsString:[eventData valueForKey:kLatKey] toDouble:kTestLat];
+//    STAssertTrue(result, @"kLatKey test lat should match  kTestLat->%F eventLat->%@", kTestLat, [eventData valueForKey:kLatKey]);
+//    result = [self compareDoubleAsString:[eventData valueForKey:kLongKey] toDouble:kTestLong];
+//    STAssertTrue(result, @"kLongKey test long should match i kLongKey->%F eventLong->%@", kTestLong, [eventData valueForKey:kLongKey]);
+//    result = [self compareDoubleAsString:[eventData valueForKey:kHorizontalAccuracyKey] toDouble:kTestHorizontalAccuracy];
+//    STAssertTrue(result, @"kHorzontalAccuracy  should match  kHorizontalAccuracy->%F evenHorizontalAccuracy->%@", kTestHorizontalAccuracy, [eventData valueForKey:kHorizontalAccuracyKey]);
+//    result = [self compareDoubleAsString:[eventData valueForKey:kVerticalAccuracyKey] toDouble:kTestVerticalAccuracy];
+//    STAssertTrue(result, @"kVerticalAccuracy should match kHorzontalAccuracy->%F eventHorizontalAccuracy->%@", kVerticalAccuracyKey, [eventData valueForKey:kVerticalAccuracyKey]);
+//    result = [self compareDoubleAsString:[eventData valueForKey:kUpdateDistanceKey] toDouble:kTestDistanceFilter];
+//    STAssertTrue(result, @"kUpdateDistance should match kTestDistanceFilter->%F eventDistanceFilter", kTestDistanceFilter, [eventData valueForKey:kUpdateDistanceKey]);
+//    [testLocation release];
+//    [locationManager release];
+//}
+//
+//#pragma mark -
+//#pragma mark UALocationEvent
+//- (void)testCreateEventWithLocation {
+//    CLLocation *testLocation = [UALocationTestUtils getTestLocation];
+//    CLLocationManager *testManager = [UALocationTestUtils getTestLocationManager];
+//    STAssertNotNil(testLocation, nil);
+//    STAssertNotNil(testManager, nil);
+//    UALocationEvent *testEvent = [UALocationEvent createEventWithLocation:testLocation forManager:testManager];
+//    STAssertNotNil(testEvent, nil);
+//    NSDictionary *eventData = testEvent.data;
+//    NSString *foregroundValue = [eventData valueForKey:kForegroundKey];
+//    NSComparisonResult foregroundComparison = [foregroundValue compare:@"true"];
+//    STAssertEquals(foregroundComparison, NSOrderedSame, @"foregroundValue not set properly");
+//}
 
 #pragma mark -
 #pragma mark Support Methods

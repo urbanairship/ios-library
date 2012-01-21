@@ -70,28 +70,28 @@
     testLocationManager_ = nil;
 
 }
-//
-//- (void)setupTestDistanceAndAccuracy {
-//    testDistance_ = 100.0;
-//    // CLLocationAccuracy best is the default, don't use that
-//    testAccuracy_ = kCLLocationAccuracyHundredMeters;
-//}
-//
-//- (void)setUpTestLocations {
-//    CLLocationCoordinate2D coord2 = CLLocationCoordinate2DMake(37.7726834626323, -122.406178648848);
-//    testLocationTwo_ = [[CLLocation alloc] initWithCoordinate:coord2 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
-//    testLocationOne_ = [[UALocationTestUtils getTestLocation] retain];
-//    STAssertNotNil(testLocationOne_, @"location allocation fail");
-//    STAssertNotNil(testLocationTwo_, @"location allocaiton fail");
-//}
-//
-//- (void)tearDownTestLocations {
-//    [testLocationOne_ release];
-//    testLocationOne_ = nil; 
-//    [testLocationTwo_ release];
-//    testLocationTwo_ = nil;
-//}
-//
+
+- (void)setupTestDistanceAndAccuracy {
+    testDistance_ = 100.0;
+    // CLLocationAccuracy best is the default, don't use that
+    testAccuracy_ = kCLLocationAccuracyHundredMeters;
+}
+
+- (void)setUpTestLocations {
+    CLLocationCoordinate2D coord2 = CLLocationCoordinate2DMake(37.7726834626323, -122.406178648848);
+    testLocationTwo_ = [[CLLocation alloc] initWithCoordinate:coord2 altitude:100.0 horizontalAccuracy:5.0 verticalAccuracy:5.0 timestamp:[NSDate date]];
+    testLocationOne_ = [[UALocationTestUtils getTestLocation] retain];
+    STAssertNotNil(testLocationOne_, @"location allocation fail");
+    STAssertNotNil(testLocationTwo_, @"location allocaiton fail");
+}
+
+- (void)tearDownTestLocations {
+    [testLocationOne_ release];
+    testLocationOne_ = nil; 
+    [testLocationTwo_ release];
+    testLocationTwo_ = nil;
+}
+
 //#pragma mark -
 //#pragma mark Testing Methods
 //
