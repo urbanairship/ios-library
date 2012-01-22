@@ -19,6 +19,7 @@
 @implementation UALocationUtils
 
 //TODO: look into optimizing this to avoid the NSNumber throwaway object
+//      without losing precision
 + (NSString*)stringFromDouble:(double)doubleValue {
     NSNumber *number = [NSNumber numberWithDouble:doubleValue];
     return [number stringValue];

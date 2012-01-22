@@ -11,7 +11,6 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationServicesCommon.h"
 
-
 @interface UALocationUtils
 + (NSString*)stringFromDouble:(double)doubleValue;
 @end

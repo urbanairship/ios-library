@@ -37,12 +37,16 @@
 #define kHorizontalAccuracyKey @"h_accuracy"
 #define kVerticalAccuracyKey @"v_accuracy"
 #define kForegroundKey @"foreground"
+#define kUALocationServiceProviderGPS = @"GPS"
+#define kUALocationServiceProviderNETWORK = @"NETWORK"
+//TODO: Figure out a better API description for Region Monitoring
+#define kUALocationServiceProviderREGION = @"NETWORK"
 #define kAutomaticStandardLocationServicesTimeInterval 120.0
 
 typedef enum {
     UALocationServiceNotUpdating = 0,
     UALocationServiceUpdating
-} UALocationManagerServiceActivityStatus;
+} UALocationServiceStatus;
 
 @protocol UALocationAnalyticsProtocol <NSObject>
 @required
@@ -50,10 +54,19 @@ typedef enum {
 @property (nonatomic, assign) CLLocationDistance distanceFilter;
 @end
 
-@protocol UALocationServicesDelegate <NSObject>
+@protocol UALocationServiceDelegate <NSObject>
 @optional
 /** Delegate is called when a UALocationServices object reports an error */
 - (void)uaLocationManager:(id)UALocationServiceObject 
           locationManager:(CLLocationManager*)locationManager 
          didFailWithError:(NSError*)error;
 @end
+
+@protocol UALocationService <NSObject>
+@required
+@property (nonatomic, retain) CLLocationManager *locationManager;
+- (void)startLocationService;
+- (void)stopLocationService;
+@end
+
+
