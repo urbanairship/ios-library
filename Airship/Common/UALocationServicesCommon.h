@@ -37,36 +37,42 @@
 #define kHorizontalAccuracyKey @"h_accuracy"
 #define kVerticalAccuracyKey @"v_accuracy"
 #define kForegroundKey @"foreground"
-#define kUALocationServiceProviderGPS = @"GPS"
-#define kUALocationServiceProviderNETWORK = @"NETWORK"
+#define kUALocationServiceProviderGPS  @"GPS"
+#define kUALocationServiceProviderNETWORK  @"NETWORK"
 //TODO: Figure out a better API description for Region Monitoring
-#define kUALocationServiceProviderREGION = @"NETWORK"
+#define kUALocationServiceProviderREGION  @"NETWORK"
+#define kUALocationServiceProviderUNKNOWN  @"UNKNOWN"
 #define kAutomaticStandardLocationServicesTimeInterval 120.0
+#define kUIBackgroundModesKey @"UIBackgroundModes"
+#define kUIBackgroundModeLocationKey @"location"
 
 typedef enum {
     UALocationServiceNotUpdating = 0,
     UALocationServiceUpdating
 } UALocationServiceStatus;
 
-@protocol UALocationAnalyticsProtocol <NSObject>
+@protocol UALocationDelegateProtocol <NSObject>
 @required
-@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
-@property (nonatomic, assign) CLLocationDistance distanceFilter;
+@property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, assign) UALocationServiceStatus serviceStatus;
+@property (nonatomic, copy) NSString *provider;
 @end
 
 @protocol UALocationServiceDelegate <NSObject>
-@optional
-/** Delegate is called when a UALocationServices object reports an error */
-- (void)uaLocationManager:(id)UALocationServiceObject 
-          locationManager:(CLLocationManager*)locationManager 
-         didFailWithError:(NSError*)error;
-@end
-
-@protocol UALocationService <NSObject>
 @required
-@property (nonatomic, retain) CLLocationManager *locationManager;
-- (void)startLocationService;
-- (void)stopLocationService;
+/** Delegate is called when a UALocationServices object reports an error */
+- (void)uaLocationDelgate:(id<UALocationDelegateProtocol>)locationDelegate 
+      withLocationManager:(CLLocationManager*)locationManager 
+         didFailWithError:(NSError*)error;
+
+/** Delegate is called when a UALocationService gets a callback
+ *  from a CLLocationManager with a location that meets accuracy
+ *  requirements.
+ */
+- (void)uaLocationDelegate:(id<UALocationDelegateProtocol>)locationDelegate
+       withLocationManager:(CLLocationManager *)locationManager 
+         didUpdateLocation:(CLLocation*)location;
+
 @end
 
 

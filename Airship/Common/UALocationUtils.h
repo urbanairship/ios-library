@@ -13,5 +13,7 @@
 
 @interface UALocationUtils
 + (NSString*)stringFromDouble:(double)doubleValue;
+
+
 @end
 
