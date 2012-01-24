@@ -166,9 +166,10 @@
 		BB03B3DB14CE08DD00476B91 /* UASignificantChangeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB03B3D914CE08DD00476B91 /* UASignificantChangeDelegate.h */; };
 		BB03B3DC14CE08DD00476B91 /* UASignificantChangeDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB03B3DA14CE08DD00476B91 /* UASignificantChangeDelegate.m */; };
 		BB03B3DE14CE181F00476B91 /* UALocationService_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BB03B3DD14CE181F00476B91 /* UALocationService_Private.h */; };
-		BB03B3E014CE20A600476B91 /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB03B3DF14CE20A600476B91 /* UALocationServiceTest.m */; };
 		BB2AD4D514C0D422005AC1C5 /* UALocationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB2AD4D414C0D422005AC1C5 /* UALocationUtils.h */; };
 		BB2AD4DA14C0DAAE005AC1C5 /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB2AD4D914C0DAAE005AC1C5 /* CLLocationManager+Test.m */; };
+		BB4DBE0A14CF4D670081DD90 /* UALocationDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4DBE0914CF4D670081DD90 /* UALocationDelegateTests.m */; };
+		BB4DBE0D14CF57390081DD90 /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4DBE0C14CF57390081DD90 /* UALocationServiceTest.m */; };
 		BB5A2A1B14C4CD41009D7931 /* UALocationUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5A2A1A14C4CD41009D7931 /* UALocationUtils.m */; };
 		BB696FDF14B79D9E00964053 /* libUAirship-1.1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */; };
 		BB696FF914B7A01800964053 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB696FF814B7A01800964053 /* CoreLocation.framework */; };
@@ -461,10 +462,11 @@
 		BB03B3D914CE08DD00476B91 /* UASignificantChangeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASignificantChangeDelegate.h; sourceTree = "<group>"; };
 		BB03B3DA14CE08DD00476B91 /* UASignificantChangeDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASignificantChangeDelegate.m; sourceTree = "<group>"; };
 		BB03B3DD14CE181F00476B91 /* UALocationService_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationService_Private.h; sourceTree = "<group>"; };
-		BB03B3DF14CE20A600476B91 /* UALocationServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServiceTest.m; sourceTree = "<group>"; };
 		BB2AD4D414C0D422005AC1C5 /* UALocationUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationUtils.h; sourceTree = "<group>"; };
 		BB2AD4D814C0DAAE005AC1C5 /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BB2AD4D914C0DAAE005AC1C5 /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
+		BB4DBE0914CF4D670081DD90 /* UALocationDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationDelegateTests.m; sourceTree = "<group>"; };
+		BB4DBE0C14CF57390081DD90 /* UALocationServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServiceTest.m; sourceTree = "<group>"; };
 		BB5A2A1A14C4CD41009D7931 /* UALocationUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationUtils.m; sourceTree = "<group>"; };
 		BB5A2A2314C4D773009D7931 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		BB5A2A2614C4D773009D7931 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -855,7 +857,8 @@
 			children = (
 				BB2AD4D814C0DAAE005AC1C5 /* CLLocationManager+Test.h */,
 				BB2AD4D914C0DAAE005AC1C5 /* CLLocationManager+Test.m */,
-				BB03B3DF14CE20A600476B91 /* UALocationServiceTest.m */,
+				BB4DBE0914CF4D670081DD90 /* UALocationDelegateTests.m */,
+				BB4DBE0C14CF57390081DD90 /* UALocationServiceTest.m */,
 			);
 			name = LocationTests;
 			sourceTree = "<group>";
@@ -1369,7 +1372,8 @@
 				BBFB99C614B7C20D008FAAEC /* JRSwizzle.m in Sources */,
 				BB2AD4DA14C0DAAE005AC1C5 /* CLLocationManager+Test.m in Sources */,
 				BBC6548214C9EF7500AE65A6 /* UALocationTestUtils.m in Sources */,
-				BB03B3E014CE20A600476B91 /* UALocationServiceTest.m in Sources */,
+				BB4DBE0A14CF4D670081DD90 /* UALocationDelegateTests.m in Sources */,
+				BB4DBE0D14CF57390081DD90 /* UALocationServiceTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

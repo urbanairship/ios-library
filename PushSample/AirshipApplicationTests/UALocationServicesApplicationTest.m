@@ -9,11 +9,12 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationUtils.h"
 #import "UALocationServicesCommon.h"
+#import "UALocationService.h"
+#import "UALocationService_Private.h"
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UALocationManager.h"
 #import "UALocationTestUtils.h"
 #import <SenTestingKit/SenTestingKit.h>
 
@@ -24,6 +25,9 @@
 
 @implementation UALocationServicesApplicationTest
 
+#pragma mark -
+#pragma mark Support Methods
+
 - (void)testCompareDoubleAsString {
     double testValue = kTestLat;
     NSString *stringLat = @"45.525352839897";
@@ -33,6 +37,21 @@
     STAssertEquals(YES, goodResult, @"good result should be good!");
     STAssertEquals(NO, badResult, @"bad result should be bad");
 }
+
+- (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSNumber *numberFromString = [formatter numberFromString:stringDouble];
+    NSNumber *numberFromDouble = [NSNumber numberWithDouble:doubleValue];
+    NSLog(@"NUMBER FROM STRING %@", [numberFromString stringValue]);
+    NSLog(@"NUBMER FORM DOUBLE %@", [numberFromDouble stringValue]);
+    [formatter release];
+    return [numberFromDouble isEqualToNumber:numberFromString];
+}
+
+//- (void) testStartStandardLocation {
+//
+//}
 /**
  *  
  *  "session_id": "UUID"
@@ -48,17 +67,5 @@
  */
 
 
-#pragma mark -
-#pragma mark Support Methods
 
-- (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
-    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    NSNumber *numberFromString = [formatter numberFromString:stringDouble];
-    NSNumber *numberFromDouble = [NSNumber numberWithDouble:doubleValue];
-    NSLog(@"NUMBER FROM STRING %@", [numberFromString stringValue]);
-    NSLog(@"NUBMER FORM DOUBLE %@", [numberFromDouble stringValue]);
-    [formatter release];
-    return [numberFromDouble isEqualToNumber:numberFromString];
-}
 @end

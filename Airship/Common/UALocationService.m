@@ -40,6 +40,9 @@ static UAStandardLocationDelegate *singleLocationDelegate = nil;
 - (id)init {
     self = [super init];
     if(self){
+        // Default CLManagerValues
+        desiredAccuracy_ = kCLLocationAccuracyBest;
+        distanceFilter_ = kCLDistanceFilterNone;
         standardLocationServiceStatus_ = UALocationServiceNotUpdating;
         significantChangeServiceStatus_ = UALocationServiceNotUpdating;
     }
@@ -98,9 +101,12 @@ static UAStandardLocationDelegate *singleLocationDelegate = nil;
 #pragma mark -
 #pragma mark CLLocationManager Methods
 
+// Lazy load delegate objects
+
 - (void)startUpdatingLocation {
     if ([self checkAuthorizationAndAvailabiltyOfLocationServices]) {
-        self.standardLocationDelegate = [UAStandardLocationDelegate locationDelegateWithServiceDelegate:self];
+        if (!standardLocationDelegate_)
+            self.standardLocationDelegate = [UAStandardLocationDelegate locationDelegateWithServiceDelegate:self];
         [standardLocationDelegate_.locationManager startUpdatingLocation];
         self.standardLocationServiceStatus = UALocationServiceUpdating;
     }
@@ -114,7 +120,8 @@ static UAStandardLocationDelegate *singleLocationDelegate = nil;
 
 - (void)startMonitoringSignificantLocationChanges {
     if([self checkAuthorizationAndAvailabiltyOfLocationServices]){
-        self.significantChangeDelegate = [UASignificantChangeDelegate locationDelegateWithServiceDelegate:self];
+        if(!significantChangeDelegate_)
+            self.significantChangeDelegate = [UASignificantChangeDelegate locationDelegateWithServiceDelegate:self];
         self.significantChangeServiceStatus = UALocationServiceUpdating;
     }
 }
@@ -171,6 +178,9 @@ static UAStandardLocationDelegate *singleLocationDelegate = nil;
         [singleLocationDelegate.locationManager startUpdatingLocation];
     }    
 }
+
+
+
 
 
 @end

@@ -10,6 +10,8 @@
 #import "UABaseLocationDelegate.h"
 
 @interface UALocationService ()
+- (void)setStandardLocationDelegate:(UAStandardLocationDelegate *)standardLocationDelegate;
+- (void)setSignificantChangeDelegate:(UASignificantChangeDelegate *)significantChangeDelegate;
 - (void)setDistanceFilterAndDesiredLocation:(UABaseLocationDelegate*)locationDelegate;
 @property (nonatomic, retain) UAStandardLocationDelegate *standardLocationDelegate;
 @property (nonatomic, assign) UALocationServiceStatus standardLocationServiceStatus;
