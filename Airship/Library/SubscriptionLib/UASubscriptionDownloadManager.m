@@ -180,9 +180,23 @@
 
 - (void)resumePendingSubscriptionContent {
     UALOG(@"Resume pending SubscriptionContent in purchasing queue %@", pendingSubscriptionContent);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if (![UASubscriptionManager shared].inventory.hasLoaded) {
+        UALOG(@"Warning: inventory has not yet loaded, cancelling resume");
+        return;
+    }
+
     for (NSString *identifier in pendingSubscriptionContent) {
         UASubscriptionContent *subscriptionContent = [[UASubscriptionManager shared].inventory contentForKey:identifier];
-        [self download:subscriptionContent];
+        //if subscriptionContent is nil, the inventory is either currently invalidated or the contents have been
+        //changed remotely
+        if (subscriptionContent) {
+            [self download:subscriptionContent];
+        } else {
+            UALOG(@"Warning: no subscription content found for identifier %@", identifier);
+        }
     }
     
     // Reconnect downloading request with newly created subscription content
@@ -268,11 +282,24 @@
 }
 
 - (void)resumeDecompressingSubscriptionContent {
+    UALOG(@"Resume decompressing subscription content in queue %@", decompressingSubscriptionContent);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if (![UASubscriptionManager shared].inventory.hasLoaded) {
+        UALOG(@"Warning: inventory has not yet loaded, cancelling resume");
+        return;
+    }
+
     for (NSString *identifier in decompressingSubscriptionContent) {
         if (![currentlyDecompressingContent containsObject:identifier]) {
-            UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];        
-            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
-            [self decompressZipDownloadContent:zipDownloadContent];
+            UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];
+            if (content) {
+                UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
+                [self decompressZipDownloadContent:zipDownloadContent];
+            } else {
+                UALOG(@"Warning: no subscription content found for identifier %@", identifier);
+            }
         }
     }
 }
