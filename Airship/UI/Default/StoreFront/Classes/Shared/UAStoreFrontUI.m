@@ -55,6 +55,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize detailTitleFont;
 @synthesize detailPriceFont;
 @synthesize detailMetadataFont;
+@synthesize detailBackgroundColor;
 @synthesize cellEvenBackgroundColor;
 @synthesize cellOddBackgroundColor;
 @synthesize allowedUserInterfaceOrientations;
@@ -125,6 +126,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         detailTitleFont = nil;
         detailPriceFont = nil;
         detailMetadataFont = nil;
+        detailBackgroundColor = nil;
         cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
         cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
         allowedUserInterfaceOrientations = nil;

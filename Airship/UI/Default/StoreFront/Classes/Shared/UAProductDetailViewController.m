@@ -121,6 +121,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         self.fileSizeHeading.font = ui.detailMetadataFont;
     }
 
+    if (ui.detailBackgroundColor != nil) {
+        self.detailTable.backgroundColor = ui.detailBackgroundColor;
+        self.view.backgroundColor = ui.detailBackgroundColor;
+    }
+    
     [self refreshUI];
 }
 

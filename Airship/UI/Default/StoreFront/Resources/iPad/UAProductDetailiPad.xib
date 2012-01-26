@@ -63,10 +63,12 @@
 												<string key="NSFrame">{{0, -1}, {768, 88}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="948002754"/>
 												<object class="NSColor" key="IBUIBackgroundColor">
 													<int key="NSColorSpace">1</int>
-													<bytes key="NSRGB">MC43OTI1MTgyMDA3IDAuODMyODIzNDU0MSAwLjg3MjQ0ODk3OTYAA</bytes>
+													<bytes key="NSRGB">MC43OTI1MTgyMDA3IDAuODMyODIzNDU0MSAwLjg3MjQ0ODk3OTYgMAA</bytes>
 												</object>
+												<bool key="IBUIOpaque">NO</bool>
 												<bool key="IBUIUserInteractionEnabled">NO</bool>
 												<string key="IBUIContentStretch">{{0.10000000000000001, 0}, {0.84999999999999998, 1}}</string>
 												<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -81,6 +83,7 @@
 												<string key="NSFrame">{{85, 9}, {594, 39}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="665089254"/>
 												<bool key="IBUIOpaque">NO</bool>
 												<bool key="IBUIClipsSubviews">YES</bool>
 												<bool key="IBUIUserInteractionEnabled">NO</bool>
@@ -117,6 +120,7 @@
 												<string key="NSFrame">{{85, 46}, {53, 13}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="312268566"/>
 												<object class="NSColor" key="IBUIBackgroundColor" id="474554411">
 													<int key="NSColorSpace">3</int>
 													<bytes key="NSWhite">MQA</bytes>
@@ -156,6 +160,7 @@
 												<string key="NSFrame">{{139, 45}, {107, 14}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="144152230"/>
 												<object class="NSColor" key="IBUIBackgroundColor" id="33698187">
 													<int key="NSColorSpace">1</int>
 													<bytes key="NSRGB">MSAxIDEAA</bytes>
@@ -183,6 +188,7 @@
 												<string key="NSFrame">{{19, 16}, {57, 57}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="580187702"/>
 												<object class="NSColor" key="IBUIBackgroundColor">
 													<int key="NSColorSpace">1</int>
 													<bytes key="NSRGB">MC42MjUgMC42MjUgMC42MjUAA</bytes>
@@ -196,6 +202,7 @@
 												<string key="NSFrame">{{537, 20}, {211, 25}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="269481507"/>
 												<object class="NSColor" key="IBUIBackgroundColor">
 													<int key="NSColorSpace">2</int>
 													<bytes key="NSRGB">MC45MjE1Njg2OTE3IDAuOTI1NDkwMjYwMSAwLjkyOTQxMTgyODUAA</bytes>
@@ -230,6 +237,7 @@
 												<string key="NSFrame">{{85, 62}, {53, 13}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="499500660"/>
 												<reference key="IBUIBackgroundColor" ref="474554411"/>
 												<bool key="IBUIOpaque">NO</bool>
 												<bool key="IBUIClipsSubviews">YES</bool>
@@ -257,6 +265,7 @@
 												<string key="NSFrame">{{139, 61}, {107, 14}}</string>
 												<reference key="NSSuperview" ref="973041704"/>
 												<reference key="NSWindow"/>
+												<reference key="NSNextKeyView" ref="734912173"/>
 												<reference key="IBUIBackgroundColor" ref="33698187"/>
 												<bool key="IBUIOpaque">NO</bool>
 												<bool key="IBUIClipsSubviews">YES</bool>
@@ -282,6 +291,7 @@
 										<string key="NSFrameSize">{768, 83}</string>
 										<reference key="NSSuperview" ref="599484114"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="331091720"/>
 										<object class="NSColor" key="IBUIBackgroundColor">
 											<int key="NSColorSpace">3</int>
 											<bytes key="NSWhite">MCAwAA</bytes>
@@ -296,10 +306,12 @@
 								<string key="NSFrameSize">{768, 84}</string>
 								<reference key="NSSuperview" ref="925118115"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="973041704"/>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">2</int>
-									<bytes key="NSRGB">MC44MDc4NDMyMDgzIDAuODM1Mjk0MTg3MSAwLjg2Mjc0NTE2NTgAA</bytes>
+									<bytes key="NSRGB">MC44MDc4NDMyMDgzIDAuODM1Mjk0MTg3MSAwLjg2Mjc0NTE2NTggMAA</bytes>
 								</object>
+								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
 								<string key="IBUIContentStretch">{{0, 0}, {0.90000000000000002, 1}}</string>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -311,6 +323,12 @@
 								<string key="NSFrame">{{0, 871.99993896484375}, {768, 44}}</string>
 								<reference key="NSSuperview" ref="925118115"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
+								<object class="NSColor" key="IBUIBackgroundColor">
+									<int key="NSColorSpace">1</int>
+									<bytes key="NSRGB">MC43OTI1MTgyMDA3IDAuODMyODIzNDU0MSAwLjg3MjQ0ODk3OTYgMAA</bytes>
+								</object>
+								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="IBUIContentStretch">{{0.10000000000000001, 0}, {0.84999999999999998, 1}}</string>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
@@ -323,6 +341,7 @@
 						<string key="NSFrameSize">{768, 916}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="599484114"/>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MC43OTI1MTgyMDA3IDAuODMyODIzNDU0MSAwLjg3MjQ0ODk3OTYAA</bytes>
@@ -333,6 +352,10 @@
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 						<bool key="IBUIShowsHorizontalScrollIndicator">NO</bool>
 						<bool key="IBUIBouncesZoom">NO</bool>
+						<object class="NSColor" key="IBUISeparatorColor">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MC45MDE0NTk4NTQgMAA</bytes>
+						</object>
 						<int key="IBUISectionIndexMinimumDisplayRowCount">0</int>
 						<float key="IBUIRowHeight">44</float>
 						<float key="IBUISectionHeaderHeight">22</float>
@@ -344,6 +367,7 @@
 				<string key="NSFrame">{{0, 64}, {768, 916}}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="925118115"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
 					<bytes key="NSWhite">MC45MDE0NTk4NTQAA</bytes>
@@ -641,8 +665,6 @@
 							<string>fileSize</string>
 							<string>fileSizeHeading</string>
 							<string>iconContainer</string>
-							<string>previewImage</string>
-							<string>previewImageCell</string>
 							<string>price</string>
 							<string>productTitle</string>
 							<string>revision</string>
@@ -654,8 +676,6 @@
 							<string>UILabel</string>
 							<string>UILabel</string>
 							<string>UAAsyncImageView</string>
-							<string>UAAsyncImageView</string>
-							<string>UITableViewCell</string>
 							<string>UILabel</string>
 							<string>UILabel</string>
 							<string>UILabel</string>
@@ -670,8 +690,6 @@
 							<string>fileSize</string>
 							<string>fileSizeHeading</string>
 							<string>iconContainer</string>
-							<string>previewImage</string>
-							<string>previewImageCell</string>
 							<string>price</string>
 							<string>productTitle</string>
 							<string>revision</string>
@@ -694,14 +712,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">iconContainer</string>
 								<string key="candidateClassName">UAAsyncImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">previewImage</string>
-								<string key="candidateClassName">UAAsyncImageView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">previewImageCell</string>
-								<string key="candidateClassName">UITableViewCell</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">price</string>

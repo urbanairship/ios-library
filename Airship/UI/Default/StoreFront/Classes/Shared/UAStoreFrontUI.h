@@ -71,6 +71,7 @@
 @property (nonatomic, retain) UIFont *detailTitleFont;
 @property (nonatomic, retain) UIFont *detailMetadataFont;
 @property (nonatomic, retain) UIFont *detailPriceFont;
+@property (nonatomic, retain) UIColor *detailBackgroundColor;
 @property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
 @property (nonatomic, retain) UIColor *cellOddBackgroundColor;
 @property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
