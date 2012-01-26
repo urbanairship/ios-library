@@ -202,7 +202,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 - (void)initSession {
     session = [[NSMutableDictionary alloc] init];
-    
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
@@ -316,9 +315,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
 
-    //TODO: clearing the session could cause an exit event to have an empty payload and it will be dropped - do we care?
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
+    //Set a blank session_id for app_exit events
+    [session setValue:@"" forKey:@"session_id"];
 }
 
 - (void)didBecomeActive {
