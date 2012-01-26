@@ -75,6 +75,7 @@
 @property (nonatomic, retain) UIColor *cellOddBackgroundColor;
 @property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
 @property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
+@property (nonatomic, retain) NSString* detailDescriptionTextFormat; ///< This will be used in stringWithFormat with the description text as the only parameter.
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
