@@ -27,6 +27,13 @@
 #import "UAStoreFrontViewController.h"
 #import "UAStoreFrontSplitViewController.h"
 
+static CGFloat const UAStoreFrontAnimationDuration = 0.5f;
+
+@interface UAStoreFrontUI ()
+
+- (CGPoint) offsetRect:(CGRect)rect forInterfaceOrientation:(UIInterfaceOrientation)orientation onScreen:(BOOL)onScreen;
+
+@end
 
 @implementation UAStoreFrontUI
 
@@ -145,8 +152,34 @@ static BOOL runiPhoneTargetOniPad = NO;
         ui.originalWindow = viewController.view.window;
 
         [ui.rootViewController viewWillAppear:animated];
-        [ui.uaWindow makeKeyAndVisible];
-        ui.originalWindow.hidden = YES;
+        if (animated)
+        {
+            __block CGPoint offset = [ui offsetRect:ui.uaWindow.frame
+                              forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                             onScreen:NO];
+            ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+            [ui.uaWindow makeKeyAndVisible];
+            
+            [UIView animateWithDuration:UAStoreFrontAnimationDuration
+                             animations:^{
+                                 offset = [ui offsetRect:ui.uaWindow.frame
+                                   forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                                  onScreen:YES];
+                                 ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+                             }
+                             completion:^(BOOL finished) {
+                                 // Note that we do not set original window hidden
+                                 // here so that it is visible when we animate off-screen
+                                 // later in quitStoreFront.
+                                 [ui.rootViewController viewDidAppear:animated];
+                             }];
+        }
+        else
+        {
+            [ui.uaWindow makeKeyAndVisible];
+            ui.originalWindow.hidden = YES;
+            [ui.rootViewController viewDidAppear:animated];
+        }
     }
     
     ui->isVisible = YES;
@@ -181,11 +214,29 @@ static BOOL runiPhoneTargetOniPad = NO;
 
         // For iPad displayStoreFront:animated:
         // Return control to original window
-        [ui.originalWindow makeKeyAndVisible];
-        ui.originalWindow = nil;
-
-        [ui.rootViewController.view removeFromSuperview];
-        ui.uaWindow = nil;
+        void(^quitCompletion)(BOOL) = ^(BOOL finished) {
+            [ui.originalWindow makeKeyAndVisible];
+            ui.originalWindow = nil;
+            [ui.rootViewController viewDidDisappear:ui->animated];
+            [ui.rootViewController.view removeFromSuperview];
+            ui.uaWindow = nil;
+            ui.rootViewController.view.transform = CGAffineTransformIdentity;
+        };
+        if (ui->animated)
+        {
+            [UIView animateWithDuration:UAStoreFrontAnimationDuration
+                             animations:^{
+                                 CGPoint offset = [ui offsetRect:ui.uaWindow.frame
+                                           forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                                          onScreen:NO];
+                                 ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+                             }
+                             completion:quitCompletion];
+        }
+        else
+        {
+            quitCompletion(YES);
+        }
 
     } else {
         // For other circumstances. e.g custom showing rootViewController or changed the showing code of StoreFront
@@ -200,5 +251,41 @@ static BOOL runiPhoneTargetOniPad = NO;
     
     return ui->alertHandler;
 }
+
+- (CGPoint) offsetRect:(CGRect)rect forInterfaceOrientation:(UIInterfaceOrientation)orientation onScreen:(BOOL)onScreen
+{
+    CGPoint offset = CGPointMake(0.0f, 0.0f);
+
+    switch (orientation)
+    {
+        case UIInterfaceOrientationPortrait:
+            offset.y = CGRectGetHeight(rect);
+            break;
+            
+        case UIInterfaceOrientationPortraitUpsideDown:
+            offset.y = -CGRectGetHeight(rect);
+            break;
+            
+        case UIInterfaceOrientationLandscapeLeft:
+            offset.x = CGRectGetWidth(rect);
+            break;
+            
+        case UIInterfaceOrientationLandscapeRight:
+            offset.x = -CGRectGetWidth(rect);
+            break;
+            
+        default:
+            break;
+    }
+    
+    if (onScreen)
+    {
+        offset.x *= -1.0f;
+        offset.y *= -1.0f;
+    }
+
+    return offset;
+}
+
 
 @end
