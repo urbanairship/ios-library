@@ -39,6 +39,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [detailTable reloadData];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    // Override view will dissappear so that closing the store doesn't cause the currently selected product to be lost
+    // the parent classes viewWillDisappear just contains the following:
+    // self.product = nil;
+}
+
 #pragma mark -
 #pragma mark WebView
 
