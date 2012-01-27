@@ -109,7 +109,7 @@
 		7BB679111429288D00B877DB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7BB6790F1429288D00B877DB /* InfoPlist.strings */; };
 		7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */ = {isa = PBXBuildFile; fileRef = 7BB679121429288D00B877DB /* UAUtilsTest.h */; };
 		7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BB679141429288D00B877DB /* UAUtilsTest.m */; };
-		7BB6792414292D1800B877DB /* libUAirship-1.1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */; };
+		7BB6792414292D1800B877DB /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */; };
 		7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793C14292FF800B877DB /* CFNetwork.framework */; };
 		7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6793D14292FF800B877DB /* CoreTelephony.framework */; };
 		7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679421429301E00B877DB /* libsqlite3.dylib */; };
@@ -360,7 +360,7 @@
 		1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1F2B10C312DD01B60020843D /* UATagUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATagUtils.h; sourceTree = "<group>"; };
 		1F2B10C412DD01B60020843D /* UATagUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtils.m; sourceTree = "<group>"; };
-		1FBF50D014646AC500554710 /* libUAirshipPush-1.1.2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libUAirshipPush-1.1.2.a"; path = "libUAirshipPush-1.1.3.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FBF50D014646AC500554710 /* libUAirshipPush-1.1.2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libUAirshipPush-1.1.2.a"; path = "libUAirshipPush-1.1.4.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -433,7 +433,7 @@
 		B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASINetworkQueue.h; sourceTree = "<group>"; };
 		B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASINetworkQueue.m; sourceTree = "<group>"; };
 		B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIProgressDelegate.h; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.1.3.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.1.4.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -518,7 +518,7 @@
 				7BB679431429301E00B877DB /* libsqlite3.dylib in Frameworks */,
 				7BB6793F14292FF800B877DB /* CFNetwork.framework in Frameworks */,
 				7BB6794014292FF800B877DB /* CoreTelephony.framework in Frameworks */,
-				7BB6792414292D1800B877DB /* libUAirship-1.1.3.a in Frameworks */,
+				7BB6792414292D1800B877DB /* libUAirship-1.1.4.a in Frameworks */,
 				7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */,
 				7BB679091429288D00B877DB /* UIKit.framework in Frameworks */,
 				7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */,
@@ -571,7 +571,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */,
 				D5A4B9411300A8F200002F71 /* AirshipTest.app */,
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
 				1FBF50D014646AC500554710 /* libUAirshipPush-1.1.2.a */,
@@ -1046,7 +1046,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.1.3.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		D5A4B9401300A8F200002F71 /* AirshipTest */ = {
@@ -1126,7 +1126,8 @@
 		1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libStoreFront-2.2.11.a";
+			name = "libStoreFront-2.2.11.a";
+			path = "libStoreFront-2.2.12.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1134,21 +1135,23 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libPush-1.2.6.a";
-			path = "libPush-1.2.7.a";
+			path = "libPush-1.2.8.a";
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6331469C122FA34B008F2D48 /* libSubscription-1.2.11.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libSubscription-1.2.11.a";
+			name = "libSubscription-1.2.11.a";
+			path = "libSubscription-1.2.12.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libInbox-2.0.3.a";
+			name = "libInbox-2.0.3.a";
+			path = "libInbox-2.0.4.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
