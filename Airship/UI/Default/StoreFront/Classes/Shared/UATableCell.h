@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 @interface UATableCell : UITableViewCell {

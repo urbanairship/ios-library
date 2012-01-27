@@ -74,6 +74,10 @@
 @property (nonatomic, retain) UIColor *detailBackgroundColor;
 @property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
 @property (nonatomic, retain) UIColor *cellOddBackgroundColor;
+@property (nonatomic, retain) UIColor *cellOddGradientTopColor;
+@property (nonatomic, retain) UIColor *cellOddGradientBottomColor;
+@property (nonatomic, retain) UIColor *cellEvenGradientTopColor;
+@property (nonatomic, retain) UIColor *cellEvenGradientBottomColor;
 @property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
 @property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
 @property (nonatomic, retain) NSString* detailDescriptionTextFormat; ///< This will be used in stringWithFormat with the description text as the only parameter.

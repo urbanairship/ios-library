@@ -58,6 +58,11 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize detailBackgroundColor;
 @synthesize cellEvenBackgroundColor;
 @synthesize cellOddBackgroundColor;
+@synthesize cellOddGradientTopColor;
+@synthesize cellOddGradientBottomColor;
+@synthesize cellEvenGradientTopColor;
+@synthesize cellEvenGradientBottomColor;
+
 @synthesize allowedUserInterfaceOrientations;
 @synthesize downloadsPreventStoreFrontExit;
 @synthesize detailDescriptionTextFormat;
@@ -129,6 +134,10 @@ static BOOL runiPhoneTargetOniPad = NO;
         detailBackgroundColor = nil;
         cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
         cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
+        cellOddGradientTopColor = nil;
+        cellOddGradientBottomColor = nil;
+        cellEvenGradientTopColor = nil;
+        cellEvenGradientBottomColor = nil;
         allowedUserInterfaceOrientations = nil;
         downloadsPreventStoreFrontExit = YES;
         detailDescriptionTextFormat = nil;

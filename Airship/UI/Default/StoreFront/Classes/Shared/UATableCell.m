@@ -27,9 +27,15 @@
 #import "UAirship.h"
 #import "UAStoreFrontUI.h"
 
+@interface UATableCell ()
+- (void)addGradientWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor;
+@property (nonatomic, retain) CAGradientLayer *gradientLayer;
+@end
+
 @implementation UATableCell
 
 @synthesize isOdd;
+@synthesize gradientLayer;
 
 -(void)dealloc {
     [super dealloc];
@@ -48,9 +54,42 @@
 
     if (isOdd) {
         self.backgroundColor = [UAStoreFrontUI shared].cellOddBackgroundColor;
+        [self addGradientWithTopColor:[UAStoreFrontUI shared].cellOddGradientTopColor 
+                          bottomColor:[UAStoreFrontUI shared].cellOddGradientBottomColor];
     } else {
         self.backgroundColor = [UAStoreFrontUI shared].cellEvenBackgroundColor;
+        [self addGradientWithTopColor:[UAStoreFrontUI shared].cellEvenGradientTopColor 
+                          bottomColor:[UAStoreFrontUI shared].cellEvenGradientBottomColor];
     }
+
+}
+
+- (void)addGradientWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor {
+    // Do nothing if both colors are nil
+    if (topColor == nil && bottomColor == nil) return;
+
+    // If just one color is nil, use clear color for that color
+    if (topColor == nil) topColor = [UIColor clearColor];
+    if (bottomColor == nil) bottomColor = [UIColor clearColor];
+    
+    CAGradientLayer *gradient   = [CAGradientLayer layer];    
+    gradient.colors = [NSArray arrayWithObjects:(id)[topColor CGColor], (id)[bottomColor CGColor], nil];
+    self.gradientLayer = gradient;
+}
+
+- (void)setGradientLayer:(CAGradientLayer *)aGradientLayer {
+    if (gradientLayer != nil) {
+        [gradientLayer removeFromSuperlayer];
+    }
+    
+    aGradientLayer.frame = self.bounds;
+    [self.layer insertSublayer:aGradientLayer atIndex:0];
+    gradientLayer = aGradientLayer;
+}
+
+- (void)prepareForReuse {
+    self.gradientLayer = nil;
+    [super prepareForReuse];
 }
 
 /*
