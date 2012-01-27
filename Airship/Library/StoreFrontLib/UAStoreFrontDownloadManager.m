@@ -270,7 +270,7 @@
             pendingProduct.receipt = [pendingProducts objectForKey:identifier];
             [self downloadPurchasedProduct:pendingProduct];
         } else {
-            UALOG(@"Warning: product not found for identifier %@", identifier);
+            UALOG(@"Warning: product not found for pending download with identifier %@", identifier);
         }
     }
 
@@ -380,7 +380,7 @@
                 UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
                 [self decompressZipDownloadContent:zipDownloadContent];
             } else {
-                UALOG(@"Warning: product not found for identifier %@", identifier);
+                UALOG(@"Warning: product not found for pending decompression with identifier %@", identifier);
             }
         }
     }

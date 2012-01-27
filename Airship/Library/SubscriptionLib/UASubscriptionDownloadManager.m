@@ -195,7 +195,7 @@
         if (subscriptionContent) {
             [self download:subscriptionContent];
         } else {
-            UALOG(@"Warning: no subscription content found for identifier %@", identifier);
+            UALOG(@"Warning: no subscription content found for pending download identifier %@", identifier);
         }
     }
     
@@ -298,7 +298,7 @@
                 UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
                 [self decompressZipDownloadContent:zipDownloadContent];
             } else {
-                UALOG(@"Warning: no subscription content found for identifier %@", identifier);
+                UALOG(@"Warning: no subscription content found for pending decompression with identifier %@", identifier);
             }
         }
     }
