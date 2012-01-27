@@ -81,6 +81,7 @@
 @property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
 @property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
 @property (nonatomic, retain) NSString* detailDescriptionTextFormat; ///< This will be used in stringWithFormat with the description text as the only parameter.
+@property (nonatomic, assign) int previewImageWidth;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 

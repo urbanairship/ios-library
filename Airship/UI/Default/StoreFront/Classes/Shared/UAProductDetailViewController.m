@@ -329,8 +329,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
     
-    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> %@ <div style='text-align: center; margin-top: 10px'><img width=\"280\" src=\"%@\" /></div> </body> </html>",
-            font.familyName, font.pointSize, description, [imageURL description]];
+    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> %@ <div style='text-align: center; margin-top: 10px'><img width=\"%d\" src=\"%@\" /></div> </body> </html>",
+            font.familyName, font.pointSize, description, [UAStoreFrontUI shared].previewImageWidth, [imageURL description]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)view {

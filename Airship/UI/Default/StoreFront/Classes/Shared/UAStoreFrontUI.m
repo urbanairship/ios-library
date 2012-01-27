@@ -66,6 +66,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize allowedUserInterfaceOrientations;
 @synthesize downloadsPreventStoreFrontExit;
 @synthesize detailDescriptionTextFormat;
+@synthesize previewImageWidth;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -141,6 +142,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         allowedUserInterfaceOrientations = nil;
         downloadsPreventStoreFrontExit = YES;
         detailDescriptionTextFormat = nil;
+        previewImageWidth = 280;
     }
     
     return self;
