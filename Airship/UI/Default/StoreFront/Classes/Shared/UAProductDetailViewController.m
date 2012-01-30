@@ -106,6 +106,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     priceButton.titleLabel.textColor = ui.priceFGColor;
     priceButton.normalStrokeColor = ui.priceBorderColor;
     [priceButton setNeedsDisplay];
+    [priceButton useStyleFromColor:kPriceBGColor];
     
     // Font customization
     if (ui.detailTitleFont != nil)
@@ -220,6 +221,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     fileSize.text = [UAUtils getReadableFileSizeFromBytes:product.fileSize];
     [priceButton setTitle:product.price forState:UIControlStateNormal];
 
+    // TODO: remove this block
     // resize price frame
     /*
     CGRect frame = price.frame;
@@ -231,6 +233,16 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     price.frame = frame;
      */
 
+
+    // resize price frame
+    frame = priceButton.frame;
+    frameRightBound = CGRectGetMaxX(frame);
+    [priceButton sizeToFit];
+    trimmedFrame = priceButton.frame;
+    frame.size.width = trimmedFrame.size.width + 15;
+    frame.origin.x = frameRightBound - frame.size.width;
+    priceButton.frame = frame;
+    
     [detailTable reloadData];
 }
 
