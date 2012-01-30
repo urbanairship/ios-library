@@ -6,10 +6,10 @@
 //  Copyright 2010 __MyCompanyName__. All rights reserved.
 //
 
-#import "GradientButton.h"
+#import "UAGradientButton.h"
 #import "UIColor-Expanded.h"
 
-@interface GradientButton ()
+@interface UAGradientButton ()
 @property (nonatomic) CGGradientRef normalGradient;
 @property (nonatomic) CGGradientRef highlightGradient;
 @property (nonatomic) CGGradientRef disabledGradient;
@@ -18,7 +18,7 @@
 
 #pragma mark -
 
-@implementation GradientButton
+@implementation UAGradientButton
 
 @synthesize normalGradientColors, normalGradientLocations;
 @synthesize normalStrokeColor, normalStrokeWeight;
