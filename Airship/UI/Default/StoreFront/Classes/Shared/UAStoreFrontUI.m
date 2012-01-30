@@ -76,6 +76,8 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize priceBGColor;
 @synthesize priceFGColor;
 @synthesize priceBorderColor;
+@synthesize priceBGHighlightColor;
+@synthesize priceBorderHighlightColor;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -112,6 +114,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(priceBorderColor);
     RELEASE_SAFELY(priceBGColor);
     RELEASE_SAFELY(priceFGColor);
+    RELEASE_SAFELY(priceBGHighlightColor);
+    RELEASE_SAFELY(priceBorderHighlightColor);
     
     [super dealloc];
 }
@@ -170,6 +174,8 @@ static BOOL runiPhoneTargetOniPad = NO;
         self.priceBGColor = kPriceBGColor;
         self.priceBorderColor = kPriceBorderColor;
         self.priceFGColor = kPriceFGColor;
+        self.priceBGHighlightColor = kPriceBGColor;
+        self.priceBorderHighlightColor = kPriceBorderColor;
     }
     
     return self;

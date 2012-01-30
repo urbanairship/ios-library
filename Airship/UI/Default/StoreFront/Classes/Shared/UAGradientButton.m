@@ -174,45 +174,26 @@
 
 #pragma mark -
 #pragma mark Appearances
-- (void) useStyleFromColor:(UIColor *)color
-{
-//        self.titleLabel.font = [UIFont systemFontOfSize:12.0];
-    
-    NSMutableArray *colors = [NSMutableArray arrayWithCapacity:3];
-//    UIColor *color = [UIColor colorWithRed:0.864f green:0.864f blue:0.864f alpha:1.0f];
+- (void) useStyleFromColor:(UIColor *)color hightlightColor:(UIColor *)highlightColor
+{    
+    NSMutableArray *colors = [NSMutableArray arrayWithCapacity:2];
     
     [colors addObject:(id)[color CGColor]];
-//    color = [UIColor colorWithRed:0.995f green:0.995f blue:0.995f alpha:1.0f];
-    [colors addObject:(id)[color CGColor]];
-//    color = [UIColor colorWithRed:0.956f green:0.956f blue:0.955f alpha:1.0f];
     [colors addObject:(id)[color CGColor]];
     self.normalGradientColors = colors;
     self.normalGradientLocations = [NSMutableArray arrayWithObjects:
                                     [NSNumber numberWithFloat:0.0f],
                                     [NSNumber numberWithFloat:1.0f],
-                                    [NSNumber numberWithFloat:0.601f],
                                     nil];
     
-    NSMutableArray *colors2 = [NSMutableArray arrayWithCapacity:3];
-//    color = [UIColor colorWithRed:0.692f green:0.692f blue:0.691f alpha:1.0f];
-    [colors2 addObject:(id)[color CGColor]];
-//    color = [UIColor colorWithRed:0.995f green:0.995f blue:0.995f alpha:1.0f];
-    [colors2 addObject:(id)[color CGColor]];
-//    color = [UIColor colorWithRed:0.83f green:0.83f blue:0.83f alpha:1.0f];
-    [colors2 addObject:(id)[color CGColor]];
+    NSMutableArray *colors2 = [NSMutableArray arrayWithCapacity:2];
+    [colors2 addObject:(id)[highlightColor CGColor]];
+    [colors2 addObject:(id)[highlightColor CGColor]];
     self.highlightGradientColors = colors2;
     self.highlightGradientLocations = [NSMutableArray arrayWithObjects:
                                        [NSNumber numberWithFloat:0.0f],
                                        [NSNumber numberWithFloat:1.0f],
-                                       [NSNumber numberWithFloat:0.601f],
                                        nil];
-    
-    self.cornerRadius = 6.f;
-    [self setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [self setTitleColor:[UIColor darkGrayColor] forState:UIControlStateHighlighted];
-
-    [self setNormalStrokeColor:[UIColor colorWithWhite:0.0f alpha:0.25f]];
-    [self setNormalStrokeWeight:1.0f];
 }
 
 - (void) usePurpleGameMinderStyle
@@ -994,6 +975,7 @@
         self.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0 alpha:0.0];
 
         self.titleLabel.font = [UIFont systemFontOfSize:16.0];
+        self.cornerRadius = 6.f;
     }
     return self;
 }

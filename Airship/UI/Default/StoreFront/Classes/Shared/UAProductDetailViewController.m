@@ -102,11 +102,13 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [UAViewUtils roundView:iconContainer borderRadius:10.0 borderWidth:1.0 color:[UIColor darkGrayColor]];
     
     // Price button colors
-    // TODO: rest of gradient button customization. we also have ui.priceBGColor and can add more if we want (e.g. top/bottom gradient?)
-    priceButton.titleLabel.textColor = ui.priceFGColor;
+    [priceButton setTitleColor:ui.priceFGColor forState:UIControlStateNormal];
+    [priceButton setTitleColor:ui.priceFGColor forState:UIControlStateHighlighted];
+    
     priceButton.normalStrokeColor = ui.priceBorderColor;
+    priceButton.highlightStrokeColor = ui.priceBorderHighlightColor;
     [priceButton setNeedsDisplay];
-    [priceButton useStyleFromColor:kPriceBGColor];
+    [priceButton useStyleFromColor:ui.priceBGColor hightlightColor:ui.priceBGHighlightColor];
     
     // Font customization
     if (ui.detailTitleFont != nil)
@@ -221,24 +223,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     fileSize.text = [UAUtils getReadableFileSizeFromBytes:product.fileSize];
     [priceButton setTitle:product.price forState:UIControlStateNormal];
 
-    // TODO: remove this block
-    // resize price frame
-    /*
-    CGRect frame = price.frame;
+    // resize priceButton frame
+    CGRect frame = priceButton.frame;
     CGFloat frameRightBound = CGRectGetMaxX(frame);
-    [price sizeToFit];
-    CGRect trimmedFrame = price.frame;
-    frame.size.width = trimmedFrame.size.width + 15;
-    frame.origin.x = frameRightBound - frame.size.width;
-    price.frame = frame;
-     */
-
-
-    // resize price frame
-    frame = priceButton.frame;
-    frameRightBound = CGRectGetMaxX(frame);
     [priceButton sizeToFit];
-    trimmedFrame = priceButton.frame;
+    CGRect trimmedFrame = priceButton.frame;
     frame.size.width = trimmedFrame.size.width + 15;
     frame.origin.x = frameRightBound - frame.size.width;
     priceButton.frame = frame;
