@@ -27,16 +27,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAProduct.h"
 #import "UAStoreFront.h"
 
+@class UAGradientButton;
+
 #define kCellPaddingHeight 30
 
 @interface UAProductDetailViewController : UIViewController
 <UITableViewDelegate, UITableViewDataSource, UAProductObserverProtocol, UIWebViewDelegate> {
     IBOutlet UILabel* productTitle;
     IBOutlet UAAsyncImageView* iconContainer;
-    IBOutlet UILabel* price;
     IBOutlet UILabel* revision;
     IBOutlet UILabel* fileSize;
     IBOutlet UITableView *detailTable;
+    IBOutlet UAGradientButton* priceButton;
     UIBarButtonItem *buyButton;
     BOOL wasBackgrounded;
     UAProduct* product;
@@ -46,14 +48,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) UAProduct *product;
 @property (nonatomic, retain) IBOutlet UILabel* productTitle;
 @property (nonatomic, retain) IBOutlet UAAsyncImageView* iconContainer;
-@property (nonatomic, retain) IBOutlet UILabel* price;
+@property (nonatomic, retain) IBOutlet UAGradientButton* priceButton;
 @property (nonatomic, retain) IBOutlet UILabel* revision;
 @property (nonatomic, retain) IBOutlet UILabel* fileSize;
 @property (nonatomic, retain) IBOutlet UILabel* revisionHeading;
 @property (nonatomic, retain) IBOutlet UILabel* fileSizeHeading;
 @property (nonatomic, retain) IBOutlet UITableView *detailTable;
 
-- (void)purchase:(id)sender;
+- (IBAction)purchase:(id)sender;
 - (void)refreshUI;
 - (void)refreshBuyButton;
 

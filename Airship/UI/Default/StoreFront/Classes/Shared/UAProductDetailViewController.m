@@ -28,6 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAStoreFrontUI.h"
 #import "UAProductDetailViewController.h"
 #import "UAAsycImageView.h"
+#import "UAGradientButton.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -38,24 +39,24 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize product;
 @synthesize productTitle;
 @synthesize iconContainer;
-@synthesize price;
 @synthesize fileSize;
 @synthesize revision;
 @synthesize detailTable;
 @synthesize revisionHeading;
 @synthesize fileSizeHeading;
+@synthesize priceButton;
 
 - (void)dealloc {
     self.product = nil;
     RELEASE_SAFELY(fileSize);
     RELEASE_SAFELY(productTitle);
     RELEASE_SAFELY(iconContainer);
-    RELEASE_SAFELY(price);
     RELEASE_SAFELY(revision);
     RELEASE_SAFELY(detailTable);
     RELEASE_SAFELY(buyButton);
     RELEASE_SAFELY(revisionHeading);
     RELEASE_SAFELY(fileSizeHeading);
+    RELEASE_SAFELY(priceButton);
     [super dealloc];
 }
 
@@ -97,9 +98,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [super viewDidLoad];
 
     [UAViewUtils roundView:iconContainer borderRadius:10.0 borderWidth:1.0 color:[UIColor darkGrayColor]];
-    price.textColor = kPriceFGColor;
-    [UAViewUtils roundView:price borderRadius:5.0 borderWidth:1.0 color:kPriceBorderColor];
-    price.backgroundColor = kPriceBGColor;
+    
+    // Update price button
+    priceButton.titleLabel.textColor = kPriceFGColor;
     
     // Font customization
     UAStoreFrontUI *ui = [UAStoreFrontUI shared];
@@ -110,7 +111,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     if (ui.detailPriceFont != nil)
     {
-        self.price.font = ui.detailPriceFont;
+        self.priceButton.titleLabel.font = ui.detailPriceFont;
     }
     
     if (ui.detailMetadataFont != nil)
@@ -132,7 +133,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)viewDidUnload {
     self.productTitle = nil;
     self.iconContainer = nil;
-    self.price = nil;
+    self.priceButton = nil;
     self.revision = nil;
     self.fileSize = nil;
     self.detailTable = nil;
@@ -213,9 +214,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [iconContainer loadImageFromURL:product.iconURL];
     revision.text = [NSString stringWithFormat: @"%d", product.revision];
     fileSize.text = [UAUtils getReadableFileSizeFromBytes:product.fileSize];
-    price.text = product.price;
+    [priceButton setTitle:product.price forState:UIControlStateNormal];
 
     // resize price frame
+    /*
     CGRect frame = price.frame;
     CGFloat frameRightBound = CGRectGetMaxX(frame);
     [price sizeToFit];
@@ -223,6 +225,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     frame.size.width = trimmedFrame.size.width + 15;
     frame.origin.x = frameRightBound - frame.size.width;
     price.frame = frame;
+     */
 
     [detailTable reloadData];
 }
