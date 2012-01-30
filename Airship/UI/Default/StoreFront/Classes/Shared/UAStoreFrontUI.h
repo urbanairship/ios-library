@@ -82,6 +82,15 @@
 @property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
 @property (nonatomic, retain) NSString* detailDescriptionTextFormat; ///< This will be used in stringWithFormat with the description text as the only parameter.
 @property (nonatomic, assign) int previewImageWidth;
+@property (nonatomic, retain) UIColor *updateFGColor;
+@property (nonatomic, retain) UIColor *updateBGColor;
+@property (nonatomic, retain) UIColor *installedFGColor;
+@property (nonatomic, retain) UIColor *installedBGColor;
+@property (nonatomic, retain) UIColor *downloadingFGColor;
+@property (nonatomic, retain) UIColor *downloadingBGColor;
+@property (nonatomic, retain) UIColor *priceFGColor;
+@property (nonatomic, retain) UIColor *priceBGColor;
+@property (nonatomic, retain) UIColor *priceBorderColor;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 

@@ -142,32 +142,33 @@
 
 - (void)refreshPriceLabelView:(UAProductStatus)status {
     //update color
+    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
     NSString *text;
     UIColor *textColor, *bgColor, *borderColor;
     if (status == UAProductStatusHasUpdate) {
         text = UA_SF_TR(@"UA_update_available");
-        borderColor = textColor = kUpdateFGColor;
-        bgColor = kUpdateBGColor;
+        borderColor = textColor = ui.updateFGColor;
+        bgColor = ui.updateBGColor;
     } else if (status == UAProductStatusPurchased) {
         text = UA_SF_TR(@"UA_not_downloaded");
-        borderColor = textColor = kUpdateFGColor;
-        bgColor = kUpdateBGColor;
+        borderColor = textColor = ui.updateFGColor;
+        bgColor = ui.updateBGColor;
     } else if (status == UAProductStatusInstalled) {
         text = UA_SF_TR(@"UA_installed");
-        borderColor = textColor = kInstalledFGColor;
-        bgColor = kInstalledBGColor;
+        borderColor = textColor = ui.installedFGColor;
+        bgColor = ui.installedBGColor;
     } else if (status == UAProductStatusDownloading 
                || status == UAProductStatusPurchasing 
                || status == UAProductStatusVerifyingReceipt
                || status == UAProductStatusDecompressing) {
         text = UA_SF_TR(@"UA_downloading");
-        textColor = borderColor = kDownloadingFGColor;
-        bgColor = kDownloadingBGColor;
+        textColor = borderColor = ui.downloadingFGColor;
+        bgColor = ui.downloadingBGColor;
     } else {
         text = self.product.price;
-        textColor = kPriceFGColor;
-        borderColor = kPriceBorderColor;
-        bgColor = kPriceBGColor;
+        textColor = ui.priceFGColor;
+        borderColor = ui.priceBorderColor;
+        bgColor = ui.priceBGColor;
     }
 
     self.price = text;

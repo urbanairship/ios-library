@@ -67,6 +67,15 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize downloadsPreventStoreFrontExit;
 @synthesize detailDescriptionTextFormat;
 @synthesize previewImageWidth;
+@synthesize updateFGColor;
+@synthesize updateBGColor;
+@synthesize downloadingBGColor;
+@synthesize downloadingFGColor;
+@synthesize installedBGColor;
+@synthesize installedFGColor;
+@synthesize priceBGColor;
+@synthesize priceFGColor;
+@synthesize priceBorderColor;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -94,6 +103,15 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(cellOddBackgroundColor);
     RELEASE_SAFELY(allowedUserInterfaceOrientations);
     RELEASE_SAFELY(detailDescriptionTextFormat);
+    RELEASE_SAFELY(updateBGColor);
+    RELEASE_SAFELY(updateFGColor);
+    RELEASE_SAFELY(downloadingFGColor);
+    RELEASE_SAFELY(downloadingBGColor);
+    RELEASE_SAFELY(installedFGColor);
+    RELEASE_SAFELY(installedBGColor);
+    RELEASE_SAFELY(priceBorderColor);
+    RELEASE_SAFELY(priceBGColor);
+    RELEASE_SAFELY(priceFGColor);
     
     [super dealloc];
 }
@@ -143,6 +161,15 @@ static BOOL runiPhoneTargetOniPad = NO;
         downloadsPreventStoreFrontExit = YES;
         detailDescriptionTextFormat = nil;
         previewImageWidth = 280;
+        self.updateFGColor = kUpdateFGColor;
+        self.updateBGColor = kUpdateBGColor;
+        self.downloadingBGColor = kDownloadingBGColor;
+        self.downloadingFGColor = kDownloadingFGColor;
+        self.installedBGColor = kInstalledBGColor;
+        self.installedFGColor = kInstalledFGColor;
+        self.priceBGColor = kPriceBGColor;
+        self.priceBorderColor = kPriceBorderColor;
+        self.priceFGColor = kPriceFGColor;
     }
     
     return self;

@@ -97,13 +97,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
+
     [UAViewUtils roundView:iconContainer borderRadius:10.0 borderWidth:1.0 color:[UIColor darkGrayColor]];
     
-    // Update price button
-    priceButton.titleLabel.textColor = kPriceFGColor;
+    // Price button colors
+    // TODO: rest of gradient button customization. we also have ui.priceBGColor and can add more if we want (e.g. top/bottom gradient?)
+    priceButton.titleLabel.textColor = ui.priceFGColor;
+    priceButton.normalStrokeColor = ui.priceBorderColor;
+    [priceButton setNeedsDisplay];
     
     // Font customization
-    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
     if (ui.detailTitleFont != nil)
     {
         self.productTitle.font = ui.detailTitleFont;
