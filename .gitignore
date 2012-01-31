@@ -17,3 +17,4 @@ AirshipConfig.plist
 fabfile.py*
 
 Cupcakes/
+TestFlight/

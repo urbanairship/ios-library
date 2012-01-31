@@ -87,20 +87,7 @@
 
 - (void)refreshCellView {
     self.title = product.title;
-
-    // Strip HTML tags from the description before setting it.
-    NSString *strippedDescription = product.productDescription;
-    BOOL finishedStripping = NO;
-    while (!finishedStripping) {
-        NSRange tagRange = [strippedDescription rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch];
-        if (tagRange.location != NSNotFound) {
-            strippedDescription = [strippedDescription stringByReplacingCharactersInRange:tagRange withString:@""];
-        } else {
-            finishedStripping = YES;
-        }
-    }
-    
-    self.description = strippedDescription;    
+    self.description = product.productDescription;
     
     [self setNeedsDisplay];
 }

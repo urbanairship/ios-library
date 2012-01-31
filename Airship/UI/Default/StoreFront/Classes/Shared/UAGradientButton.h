@@ -65,7 +65,7 @@
 @property (nonatomic)         CGFloat disabledStrokeWeight;
 @property (nonatomic) CGFloat cornerRadius;
 
-- (void) useStyleFromColor:(UIColor *)color hightlightColor:(UIColor *)highlightColor;
+- (void) useStyleFromColor:(UIColor *)color highlightColor:(UIColor *)highlightColor;
 - (void) usePurpleGameMinderStyle;
 - (void) useAlertStyle;
 - (void) useRedDeleteStyle;

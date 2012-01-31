@@ -107,8 +107,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     priceButton.normalStrokeColor = ui.priceBorderColor;
     priceButton.highlightStrokeColor = ui.priceBorderHighlightColor;
+    [priceButton useStyleFromColor:ui.priceBGColor highlightColor:ui.priceBGHighlightColor];
     [priceButton setNeedsDisplay];
-    [priceButton useStyleFromColor:ui.priceBGColor hightlightColor:ui.priceBGHighlightColor];
     
     // Font customization
     if (ui.detailTitleFont != nil)
@@ -301,11 +301,16 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     
     NSString* text = product.productDescription;
     
+    if (text == nil)
+    {
+        text = @"";
+    }
+    
     if ([UAStoreFrontUI shared].detailDescriptionTextFormat != nil)
     {
         text = [NSString stringWithFormat:[UAStoreFrontUI shared].detailDescriptionTextFormat, text];
     }
-    
+        
     UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
     UIWebView *webView = [[[UIWebView alloc] init] autorelease];
     NSString *htmlString = [self constructHtmlForWebViewWithDescription:text AndImageURL:product.previewURL];
@@ -336,9 +341,12 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (NSString *)constructHtmlForWebViewWithDescription:(NSString *)description AndImageURL:(NSURL *)imageURL {
     
     UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
+
+    // Replace \n with <br/> in the text
+    NSString *text = [description stringByReplacingOccurrencesOfString:@"\n" withString:@"<br/>"];
     
     return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> %@ <div style='text-align: center; margin-top: 10px'><img width=\"%d\" src=\"%@\" /></div> </body> </html>",
-            font.familyName, font.pointSize, description, [UAStoreFrontUI shared].previewImageWidth, [imageURL description]];
+            font.familyName, font.pointSize, text, [UAStoreFrontUI shared].previewImageWidth, [imageURL description]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)view {

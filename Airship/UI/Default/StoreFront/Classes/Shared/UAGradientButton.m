@@ -174,7 +174,7 @@
 
 #pragma mark -
 #pragma mark Appearances
-- (void) useStyleFromColor:(UIColor *)color hightlightColor:(UIColor *)highlightColor
+- (void) useStyleFromColor:(UIColor *)color highlightColor:(UIColor *)highlightColor
 {    
     NSMutableArray *colors = [NSMutableArray arrayWithCapacity:2];
     

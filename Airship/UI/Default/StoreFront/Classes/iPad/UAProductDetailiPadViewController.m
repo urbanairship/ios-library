@@ -52,8 +52,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
     
-    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> <img width=\"%d\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
-            font.familyName, font.pointSize, [UAStoreFrontUI shared].previewImageWidth, [imageURL description], description];
+    // Replace \n with <br/> in the text
+    NSString *text = [description stringByReplacingOccurrencesOfString:@"\n" withString:@"<br/>"];
+    
+    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> <img style='margin:10px' width=\"%d\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
+            font.familyName, font.pointSize, [UAStoreFrontUI shared].previewImageWidth, [imageURL description], text];
 }
 
 @end
