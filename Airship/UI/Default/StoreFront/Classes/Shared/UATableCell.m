@@ -83,12 +83,23 @@
     }
     
     aGradientLayer.frame = self.bounds;
-    [self.layer insertSublayer:aGradientLayer atIndex:0];
+
+    if (self.backgroundView == nil) {
+        // If we don't already have a backgroundView, add a clear one to put our gradient on.
+        // Putting the gradient on the backgroundView assures that the selection state for the cell will
+        // display over the gradient.
+        UIView *aBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        aBackgroundView.opaque = NO;
+        self.backgroundView = aBackgroundView;
+    }
+
+    [self.backgroundView.layer insertSublayer:aGradientLayer atIndex:0];
     gradientLayer = aGradientLayer;
 }
 
 - (void)prepareForReuse {
     self.gradientLayer = nil;
+    self.backgroundView = nil;
     [super prepareForReuse];
 }
 
