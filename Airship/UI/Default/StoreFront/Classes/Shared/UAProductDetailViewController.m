@@ -128,6 +128,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         self.revisionHeading.font = ui.detailMetadataFont;
         self.fileSizeHeading.font = ui.detailMetadataFont;
     }
+    
+    if (ui.detailMetadataFontColor != nil)
+    {
+        self.revision.textColor = ui.detailMetadataFontColor;
+        self.fileSize.textColor = ui.detailMetadataFontColor;
+        self.revisionHeading.textColor = ui.detailMetadataFontColor;
+        self.fileSizeHeading.textColor = ui.detailMetadataFontColor;        
+    }
 
     if (ui.detailBackgroundColor != nil) {
         self.detailTable.backgroundColor = ui.detailBackgroundColor;

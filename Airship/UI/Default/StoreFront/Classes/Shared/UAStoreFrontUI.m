@@ -78,6 +78,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize priceBorderColor;
 @synthesize priceBGHighlightColor;
 @synthesize priceBorderHighlightColor;
+@synthesize detailMetadataFontColor;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -176,6 +177,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         self.priceFGColor = kPriceFGColor;
         self.priceBGHighlightColor = kPriceBGColor;
         self.priceBorderHighlightColor = kPriceBorderColor;
+        self.detailMetadataFontColor = nil;
     }
     
     return self;

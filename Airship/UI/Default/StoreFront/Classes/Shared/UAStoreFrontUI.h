@@ -93,7 +93,7 @@
 @property (nonatomic, retain) UIColor *priceBorderColor;
 @property (nonatomic, retain) UIColor *priceBGHighlightColor;
 @property (nonatomic, retain) UIColor *priceBorderHighlightColor;
-
+@property (nonatomic, retain) UIColor *detailMetadataFontColor;
 
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
