@@ -1,0 +1,61 @@
+/*
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ 
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ 
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "UABaseLocationProvider.h"
+
+/** UASignificantChangeProvider
+ 
+ The significant change provider uses the significant change service 
+ provided by the CLLocationManager. This uses cell towers for triangulation for 
+ location and is a low power alternative to GPS, with less accuracy. This will run
+ in the background without entitlements
+ */
+
+@interface UASignificantChangeProvider : UABaseLocationProvider
+
+///---------------------------------------------------------------------------------------
+/// @name Starting and Stopping the location service
+///---------------------------------------------------------------------------------------
+
+/// Starts the significant change location service
+- (void)startProvidingLocation;
+/// Stops the significant change location service
+- (void)stopProvidingLocation;
+
+/** The significant change location service does not get multiple calls, therefore any valid location is returned.
+ 
+    @param newLocation The new location received.
+    @param oldLocation The location to compare to.
+    @return YES if location is valid
+    @return NO if location reports invalid (horizontal or vertical accuracy less than zero)
+ */
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation;
+
+/** Returns a UASignificantChange provider with the given delegate 
+    @param delegateOrNil A UALocationProviderDelegate or nil
+    @return Provider with the parameter as the assiged delegate
+ */
++ (UASignificantChangeProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil;
+@end

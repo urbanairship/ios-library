@@ -32,6 +32,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 UA_VERSION_INTERFACE(AirshipVersion)
 
 /**
+ * Key for the default preferences dictionary that 
+ * is loaded into NSUserDefaults on start for location services
+ */
+extern NSString * const UALocationServicePreferences;
+
+/**
  * The takeOff options key for setting custom AirshipConfig options. The value
  * must be an NSDictionary.
  */
@@ -255,5 +261,10 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
  */
 - (void)unRegisterDeviceToken;
+
+/** 
+ * Creates persistent default storage if necessary
+ */
++ (void)registerNSUserDefaults;
 
 @end

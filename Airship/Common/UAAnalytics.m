@@ -50,6 +50,9 @@ NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsR
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 NSString * const UAAnalyticsOptionsLoggingKey = @"UAAnalyticsOptionsLoggingKey";
 
+UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
+UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
+
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -202,6 +205,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 - (void)initSession {
     session = [[NSMutableDictionary alloc] init];
+    
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
@@ -315,10 +319,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
 
+    //TODO: clearing the session could cause an exit event to have an empty payload and it will be dropped - do we care?
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
-    //Set a blank session_id for app_exit events
-    [session setValue:@"" forKey:@"session_id"];
 }
 
 - (void)didBecomeActive {
@@ -443,10 +446,10 @@ IF_IOS4_OR_GREATER(
                  response:(NSHTTPURLResponse *)response
              responseData:(NSData *)responseData {
     
-    /*
+    
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-     */
+     
      
     RELEASE_SAFELY(connection);
     

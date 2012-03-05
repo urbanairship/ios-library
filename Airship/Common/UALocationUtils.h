@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -22,28 +22,21 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <CoreLocation/CoreLocation.h>
+#import "UALocationServicesCommon.h"
+/**
+    A collection of location utility methods
+ */
+@interface UALocationUtils
+/** Returns a string representation of the double value
+    @warning *Important:* 
+    Using stringWithFormat instead of wrapping the value in an NSNumber and 
+    returning the resulting string value truncates values.
+    @param double value to represent as a string
+    @return NSString string representation of the double value
+ */
++ (NSString*)stringFromDouble:(double)doubleValue;
 
-#import "UATestGlobal.h"
-
-@implementation UATestGlobal
-
-@synthesize calls;
-@synthesize value;
-
-SINGLETON_IMPLEMENTATION(UATestGlobal)
-
-- (id)init {
-    if (self=[super init]) {
-        calls = [[NSMutableDictionary alloc] init];
-        return self;
-    }
-    return nil;
-}
-
-- (void)dealloc {
-    [value release];
-    [calls release];
-    [super dealloc];
-}
 
 @end
+

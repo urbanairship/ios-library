@@ -45,6 +45,10 @@ extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
 extern NSString * const UAAnalyticsOptionsLoggingKey;
 
+typedef NSString UAAnalyticsValue;
+extern UAAnalyticsValue * const UAAnalyticsTrueValue;
+extern UAAnalyticsValue * const UAAnalyticsFalseValue;
+
 @interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
   @private
     NSString *server;

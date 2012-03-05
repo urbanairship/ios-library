@@ -15,3 +15,5 @@ xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
 fabfile.py*
+*.build_output
+*.un~

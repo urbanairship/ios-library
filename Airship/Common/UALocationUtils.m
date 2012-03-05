@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,26 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/******************************************************************************
- The swizzle method is copy/modify from JRSwizzle, thanks
- Copyright (c) 2007 Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
- Some rights reserved: <http://opensource.org/licenses/mit-license.php>
- *****************************************************************************/
+/* Common variables for the UALocationServices classes */
 
-#import <Foundation/Foundation.h>
+#import "UALocationUtils.h"
+#import "UAirship.h" 
+#import "UAAnalytics.h" 
+#import "UAEvent.h"
+#import "UALocationServicesCommon.h"
 
 
-@interface NSObject(UATestMockable)
 
-+ (BOOL)swizzleMethod:(SEL)origSel_ withMethod:(SEL)altSel_ error:(NSError**)error_;
-+ (BOOL)swizzleMethod:(SEL)origSel_ withClass:(Class)klass method:(SEL)altSel_ error:(NSError**)error_;
+@implementation UALocationUtils
 
-+ (void)recordCallSelector:(SEL)aSelector withArgs:(NSArray *)args;
-+ (void)removeAllCalls;
-+ (void)removeCalls:(SEL)aSelector;
-+ (NSArray *)getCalls:(SEL)aSelector;
-+ (NSInteger)getCallTimes:(SEL)aSelector;
-+ (NSArray *)getCallArgs:(SEL)aSelector;
-+ (NSArray *)getCallArgs:(SEL)aSelector atIndex:(NSInteger)index;
+//TODO: look into optimizing this to avoid the NSNumber throwaway object
+//      without losing precision
++ (NSString*)stringFromDouble:(double)doubleValue {
+    NSNumber *number = [NSNumber numberWithDouble:doubleValue];
+    return [number stringValue];
+}
+
 
 @end
+

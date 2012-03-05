@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -33,12 +33,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
+#import "UALocationServicesCommon.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
-
+NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
 NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
@@ -89,12 +90,11 @@ BOOL logging = false;
 }
 
 + (void)takeOff:(NSDictionary *)options {
-    
     //Airships only take off once!
     if (_sharedAirship) {
         return;
     }
-    
+    [self registerNSUserDefaults];
     //Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
@@ -285,6 +285,20 @@ BOOL logging = false;
                     format:@"Attempted to access instance before initializaion. Please call takeOff: first."];
     }
     return _sharedAirship;
+}
+
+#pragma mark -
+#pragma mark NSUserDefaults Setup
+
++ (void)registerNSUserDefaults {
+    //// UALocationService defaults
+    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:2];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceAllowedKey];
+    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
+    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
+    ///////////////////////////////
 }
 
 #pragma mark -
