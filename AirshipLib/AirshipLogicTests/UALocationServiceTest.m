@@ -93,8 +93,8 @@
     [self setTestValuesInNSUserDefaults];
     [self swizzleCLLocationClassEnabledAndAuthorized];
     UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"CATS"] autorelease];
-    STAssertTrue(localService.UALocationServiceAllowed, @"Default is NO, CLLManager swizzled to YES, updated value should be YES");
-    STAssertFalse(localService.UALocationServiceEnabled, @"Default val is NO");
+    STAssertTrue(localService.locationServiceAllowed, @"Default is NO, CLLManager swizzled to YES, updated value should be YES");
+    STAssertFalse(localService.locationServiceEnabled, @"Default val is NO");
     STAssertTrue([localService.purpose isEqualToString:@"CATS"], nil);
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
@@ -122,7 +122,7 @@
     [mockLocation verify];
     [mockStandard verify];
     STAssertEqualObjects(standard, locationService.standardLocationProvider, nil);
-
+    
 }
 
 - (void)testSignificantChangeSetter {
@@ -174,8 +174,8 @@
     [[mockLocationService expect] observeValueForKeyPath:UALocationServiceAllowedKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
     [[mockLocationService expect] observeValueForKeyPath:UALocationServicePurposeKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
     // Trigger all the appropriate callbacks
-    [locationService setUALocationServiceEnabled:YES];
-    [locationService setUALocationServiceAllowed:YES];
+    [locationService setLocationServiceEnabled:YES];
+    [locationService setLocationServiceAllowed:YES];
     [locationService setPurpose:@"CATS"];
     [mockLocationService verify];
 }
@@ -183,10 +183,10 @@
 - (void)testGetSetLocationServiceValues {
     locationService.purpose = @"CATS";
     STAssertTrue([locationService.purpose isEqualToString:@"CATS"],nil);
-    locationService.UALocationServiceAllowed = YES;
-    STAssertTrue(locationService.UALocationServiceAllowed, nil);
-    locationService.UALocationServiceEnabled = YES;
-    STAssertTrue(locationService.UALocationServiceEnabled, nil);
+    locationService.locationServiceAllowed = YES;
+    STAssertTrue(locationService.locationServiceAllowed, nil);
+    locationService.locationServiceEnabled = YES;
+    STAssertTrue(locationService.locationServiceEnabled, nil);
 }
 
 #pragma mark -
@@ -198,8 +198,8 @@
     [[mockLocationManager expect] startUpdatingLocation];
     standardProvider.locationManager = mockLocationManager;
     locationService.standardLocationProvider = standardProvider;
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
     [locationService startUpdatingLocation];
     [mockLocationManager verify];
     [mockLocationService verify];
@@ -219,8 +219,8 @@
 
 #pragma mark Significant Change Service
 - (void)testStartMonitoringSignificantChanges {
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceEnabled];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     UASignificantChangeProvider *sigChangeProvider = [[[UASignificantChangeProvider alloc] initWithDelegate:locationService] autorelease];
     id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
     sigChangeProvider.locationManager = mockLocationManager;
@@ -246,8 +246,8 @@
 #pragma mark Standard Location when not enabled
 - (void)testStandardLocationServicesWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceEnabled];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     // Fail if startProvidingLocation is called
     [[mockLocationProvider reject] startProvidingLocation];
@@ -256,7 +256,7 @@
     [mockLocationService verify];
     // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
     // short circuits statment evaluation
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
     [locationService startUpdatingLocation];
     [mockLocationService verify];
 }
@@ -264,8 +264,8 @@
 #pragma mark Significant Change when not enabled
 - (void)testSignificantChangeServicesWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceEnabled];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
     // Fail if startProvidingLocation is called
     [[mockLocationProvider reject] startProvidingLocation];
@@ -274,7 +274,7 @@
     [mockLocationService verify];
     // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
     // short circuits statment evaluation
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
     [locationService startMonitoringSignificantLocationChanges];
     [mockLocationService verify];
 }
@@ -282,8 +282,8 @@
 #pragma mark Single Location when not enabled
 - (void)testSingleLocationServiceWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceEnabled];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     // Fail if startProvidingLocation is called
     [[mockLocationProvider reject] startProvidingLocation];
@@ -292,7 +292,7 @@
     [mockLocationService verify];
     // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
     // short circuits statment evaluation
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] UALocationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
     [locationService acquireSingleLocationAndUpload];
     [mockLocationService verify];
 }
@@ -329,12 +329,12 @@
     locationService.standardLocationProvider = standard;
     id mockProvider = [OCMockObject partialMockForObject:standard.locationManager];
     [[[mockProvider expect] andReturnValue:OCMOCK_VALUE(yes)] locationServicesEnabled];
-    locationService.UALocationServiceAllowed = YES;
+    locationService.locationServiceAllowed = YES;
     // enabled YES authorized YES
     STAssertTrue([locationService isLocationServiceEnabledAndAuthorized], nil);
     [mockProvider verify];
     [[[mockProvider expect] andReturnValue:OCMOCK_VALUE(yes)] locationServicesEnabled];
-    locationService.UALocationServiceAllowed = NO;
+    locationService.locationServiceAllowed = NO;
     // enabled YES authorized NO
     STAssertFalse([locationService isLocationServiceEnabledAndAuthorized], nil);
     [mockProvider verify];
@@ -348,7 +348,7 @@
     [mockProvider verify];
     [[[mockProvider expect] andReturnValue:OCMOCK_VALUE(no)] locationServicesEnabled];
     // enabled NO authorized YES
-    locationService.UALocationServiceAllowed = YES;
+    locationService.locationServiceAllowed = YES;
     STAssertFalse([locationService isLocationServiceEnabledAndAuthorized], nil);
     [mockProvider verify];
 }
@@ -360,17 +360,17 @@
 // - (void)updateAllowedStatus:(CLAuthorizationStatus)status
 
 - (void)testUpdateAllowedStatus {
-    locationService.UALocationServiceAllowed = YES;
+    locationService.locationServiceAllowed = YES;
     [locationService updateAllowedStatus:kCLAuthorizationStatusDenied];
-    STAssertFalse(locationService.UALocationServiceAllowed, nil);
-    locationService.UALocationServiceAllowed = YES;
+    STAssertFalse(locationService.locationServiceAllowed, nil);
+    locationService.locationServiceAllowed = YES;
     [locationService updateAllowedStatus:kCLAuthorizationStatusRestricted];
-    STAssertFalse(locationService.UALocationServiceAllowed, nil);
+    STAssertFalse(locationService.locationServiceAllowed, nil);
     [locationService updateAllowedStatus:kCLAuthorizationStatusAuthorized];
-    STAssertTrue(locationService.UALocationServiceAllowed, nil);
-    locationService.UALocationServiceAllowed = NO;
+    STAssertTrue(locationService.locationServiceAllowed, nil);
+    locationService.locationServiceAllowed = NO;
     [locationService updateAllowedStatus:kCLAuthorizationStatusNotDetermined];
-    STAssertTrue(locationService.UALocationServiceAllowed, nil);    
+    STAssertTrue(locationService.locationServiceAllowed, nil);    
     
 }
 
@@ -381,8 +381,8 @@
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
     id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
     standard.locationManager = mockLocationManager;
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceAllowed];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] UALocationServiceEnabled];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
     [[mockLocationManager expect] startUpdatingLocation];
     locationService.singleLocationProvider = standard;
     [locationService acquireSingleLocationAndUpload];
@@ -441,7 +441,7 @@
 
 - (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
     locationService.backgroundLocationServiceEnabled = NO;
-    locationService.UALocationServiceAllowed = YES;
+    locationService.locationServiceAllowed = YES;
     [self swizzleCLLocationClassEnabledAndAuthorized];
     [locationService startUpdatingLocation];
     [locationService startMonitoringSignificantLocationChanges];

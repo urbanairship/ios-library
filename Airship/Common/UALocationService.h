@@ -86,7 +86,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
  - A value of NO means no location services will run
  - A value of YES means location services will run if authorized.
  */
-@property (nonatomic, assign) BOOL UALocationServiceEnabled;
+@property (nonatomic, assign) BOOL locationServiceEnabled;
 
 /** Enables or disables all UALocationServices 
     
@@ -101,7 +101,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
     received. Enabling service again and attempting to restart location services will
     prompt the user if the location service permissions have not changed. 
  */
-@property (nonatomic, assign) BOOL UALocationServiceAllowed;
+@property (nonatomic, assign) BOOL locationServiceAllowed;
 
 /// Provides GPS location events 
 @property (nonatomic, retain, readonly) UAStandardLocationProvider *standardLocationProvider;

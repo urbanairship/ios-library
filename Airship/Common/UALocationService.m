@@ -72,9 +72,9 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 #pragma mark -
 #pragma mark UALocationServicePreferences in locationServiceValues
 // These are stored in NSUserDefaults
-@synthesize UALocationServiceAllowed;
+@synthesize locationServiceAllowed;
 @synthesize purpose = purpose_;
-@synthesize UALocationServiceEnabled;
+@synthesize locationServiceEnabled;
 
 
 #pragma mark -
@@ -192,11 +192,11 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 #pragma mark UALocationService NSUserDefaults
 
 #pragma mark UALocationServiceValues Get/Set
-- (BOOL)UALocationServiceEnabled {
+- (BOOL)locationServiceEnabled {
     return [[locationServiceValues_ valueForKey:UALocationServiceEnabledKey] boolValue];
 }
 
-- (BOOL)UALocationServiceAllowed {
+- (BOOL)locationServiceAllowed {
     return [[locationServiceValues_ valueForKey:UALocationServiceAllowedKey] boolValue];
 }
 
@@ -205,11 +205,11 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 }
 
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
-- (void)setUALocationServiceEnabled:(BOOL)UALocationServiceEnabled_ {
+- (void)setLocationServiceEnabled:(BOOL)UALocationServiceEnabled_ {
     [self setBool:UALocationServiceEnabled_ forLocationServiceKey:UALocationServiceEnabledKey];
 }
 
-- (void)setUALocationServiceAllowed:(BOOL)UALocationServiceAllowed_ {
+- (void)setLocationServiceAllowed:(BOOL)UALocationServiceAllowed_ {
     [self setBool:UALocationServiceAllowed_ forLocationServiceKey:UALocationServiceAllowedKey];
 }
 
@@ -274,7 +274,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
     // and will be reset to NO on any kCLErrorDenied delegate callback from 
     // CLLocationManger.
     if(deprecatedLocation_) return;
-    self.UALocationServiceAllowed = [self isLocationServiceEnabledAndAuthorized];
+    self.locationServiceAllowed = [self isLocationServiceEnabledAndAuthorized];
 }
 
 
@@ -285,7 +285,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self updateAllowedStatus:status];
-    if(!UALocationServiceAllowed){
+    if(!locationServiceEnabled){
         [locationProvider stopProvidingLocation];
     }
     if ([delegate_ respondsToSelector:@selector(UALocationService:didChangeAuthorizationStatus:)]) {
@@ -301,7 +301,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (error.code == kCLErrorDenied) {
         [locationProvider stopProvidingLocation];
         if(deprecatedLocation_){
-            self.UALocationServiceAllowed = NO;
+            self.locationServiceAllowed = NO;
         }
         else {
             [self updateAllowedStatus:kCLAuthorizationStatusDenied];
@@ -336,10 +336,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)updateAllowedStatus:(CLAuthorizationStatus)status {
     if (status == kCLAuthorizationStatusAuthorized || status == kCLAuthorizationStatusNotDetermined) {
-        self.UALocationServiceAllowed = YES;
+        self.locationServiceAllowed = YES;
         return;
     }
-    self.UALocationServiceAllowed = NO;
+    self.locationServiceAllowed = NO;
 }
 
 #pragma mark -
@@ -350,7 +350,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(!standardLocationProvider_){
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
     }
-    if(self.UALocationServiceAllowed && self.UALocationServiceEnabled) {
+    if(self.locationServiceAllowed && self.locationServiceEnabled) {
         [standardLocationProvider_ startProvidingLocation];
         return;
     }
@@ -369,7 +369,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(!significantChangeProvider_){
         self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
     }
-    if(self.UALocationServiceAllowed && self.UALocationServiceEnabled) {
+    if(self.locationServiceAllowed && self.locationServiceEnabled) {
         [significantChangeProvider_ startProvidingLocation];
         return;
     }
@@ -452,7 +452,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         if ([standardLocationProvider_.locationManager respondsToSelector:@selector(locationServicesEnabled)]) {
             depricatedEnabled = standardLocationProvider_.locationManager.locationServicesEnabled;
         }
-        return (depricatedEnabled && self.UALocationServiceAllowed);
+        return (depricatedEnabled && self.locationServiceAllowed);
     }
     BOOL enabled = [CLLocationManager locationServicesEnabled];
     CLAuthorizationStatus authorization = [CLLocationManager authorizationStatus];
@@ -476,7 +476,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
     }
-    if(self.UALocationServiceAllowed && self.UALocationServiceEnabled){
+    if(self.locationServiceAllowed && self.locationServiceEnabled){
         [singleLocationProvider_ startProvidingLocation];
     }
 }
