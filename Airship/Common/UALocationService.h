@@ -33,14 +33,12 @@
 @class UASignificantChangeProvider;
 @class UALocationService;
 
-extern NSString *const UALocationServiceLastReportedLocationKey;
-extern NSString *const UALocationServiceDateOfLastReportKey;
-
 /** The UALocationService class provides an interface to both the location services on 
  device and the Urban Airship API. 
  */
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
     
+    NSTimeInterval minimumTimeBetweenForegroundUpdates_;
     CLLocationDistance distanceFilter_;
     CLLocationAccuracy desiredAccuracy_;
     CLLocation *lastReportedLocation_;
@@ -56,7 +54,10 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 /// @name Properties
 ///---------------------------------------------------------------------------------------
 
-
+/** Minimum time between automatic updates that are tied to app foreground events.
+ Default value is 120 seconds
+ */
+@property (nonatomic, assign) NSTimeInterval minimumTimeBetweenForegroundUpdates;
 /// Distance filter that is set for each new location service 
 @property (nonatomic, assign) CLLocationDistance distanceFilter;
 

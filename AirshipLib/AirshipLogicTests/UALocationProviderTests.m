@@ -95,12 +95,23 @@
 - (void)testCLLocationWithLessThanZeroAccuracyFail {
     id mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
     CLLocationAccuracy accuracy = -5.0;
-    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] verticalAccuracy];
-    UABaseLocationProvider *provider = [[[UABaseLocationProvider alloc] init] autorelease];
-    STAssertFalse([provider locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
+    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
+    UAStandardLocationProvider *stand = [[[UAStandardLocationProvider alloc] init] autorelease];
+    UASignificantChangeProvider *sig = [[[UASignificantChangeProvider alloc] init] autorelease];
+    STAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
+    STAssertFalse([stand locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
+    STAssertFalse([sig locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail"); 
     accuracy = 5;
-    STAssertTrue([provider locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
+    STAssertTrue([base locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
+    STAssertTrue([stand locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
+    STAssertTrue([sig locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
     
+    
+}
+
+- (void)testLocationAccuracyForSignificantChange {
+    // Sig change should send back any data that's valid (CLLocation with horizontalAccuracy > 0)
 }
 
 #pragma mark -

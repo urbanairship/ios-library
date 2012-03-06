@@ -29,7 +29,6 @@
 /** Shared constants and enums for UALocationServices */
 
 ///Various keys
-#define kAutomaticStandardLocationServicesTimeInterval 120.0
 #define kUIBackgroundModesKey @"UIBackgroundModes"
 #define kUIBackgroundModeLocationKey @"location"
 #define kUALocationServiceDefaultPurpose @"Urban Airship Location Service"
@@ -58,31 +57,30 @@ typedef enum {
 @protocol UALocationProviderDelegate <NSObject>
 @required
 /** Delegate call for authorization state changes iOS > 4.2 only 
-    @param locationProvider The locaiton provider
-    @param locationManager The CLLocationManager object
-    @param status The new status
+@param locationProvider The location provider
+@param locationManager The CLLocationManager object
+@param status The new status
  */
 - (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
 /** Delegate is called when a UALocationServices object reports an error 
-    @param locationProvider The location provider
-    @param locationManager  The CLLocationManager object
-    @param error The NSError thrown by the locationManager
+@param locationProvider The location provider
+@param locationManager  The CLLocationManager object
+@param error The NSError thrown by the locationManager
  */
 - (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
       withLocationManager:(CLLocationManager*)locationManager 
          didFailWithError:(NSError*)error;
 
-/**
-    Delegate is called when a UALocationService gets a callback
-    from a CLLocationManager with a location that meets accuracy
-    requirements.
-    @param locationProvider The location provider
-    @param locationManager The CLLocationManager object
-    @param newLocation The new location reported by the provider
-    @param oldLocation The previous location reported by the provider
+/** Delegate is called when a UALocationService gets a callback
+from a CLLocationManager with a location that meets accuracy
+requirements.
+@param locationProvider The location provider
+@param locationManager The CLLocationManager object
+@param newLocation The new location reported by the provider
+@param oldLocation The previous location reported by the provider
  */
 - (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider
        withLocationManager:(CLLocationManager *)locationManager 

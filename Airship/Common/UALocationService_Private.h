@@ -54,10 +54,12 @@
 - (NSDictionary*)locationServiceValues;
 // Sets appropriate value in NSUserDefaults
 - (void)setValue:(id)value forLocationServiceKey:(NSString*)key;
+// gets values out of location service
 - (id)valueForLocationServiceKey:(NSString*)key;
 // Sets appropriate bool in NSUserDefaults
 - (void)setBool:(BOOL)boolValue forLocationServiceKey:(NSString*)key;
 - (BOOL)boolForLocationServiceKey:(NSString*)key;
+// Private setters for location providers
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider;
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider;
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider;
@@ -67,6 +69,7 @@
 // Updates UALocationServiceAllowed when new
 // CLAuthorizationStatus updates are received 
 - (void)updateAllowedStatus:(CLAuthorizationStatus)status;
+// KVO magicness
 - (void)beginObservingLocationSettings;
 - (void)endObservingLocationSettings;
 // Analytics
@@ -77,5 +80,7 @@
 - (void)appWillEnterForeground; 
 // Shutdown location services if not enabled. 
 - (void)appDidEnterBackground;
+// Checks the elapsed time and other variables to decide whether a foreground report is needed
+- (BOOL)shouldPerformAutoLocationUpdate;
 
 @end

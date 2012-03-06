@@ -51,8 +51,13 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    [super locationManager:manager didUpdateToLocation:newLocation fromLocation:oldLocation];
+    // TODO: create a more robust accuracy algorithm
+    if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+    }
 }
+
+
 
 
 #pragma mark -

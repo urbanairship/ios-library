@@ -187,6 +187,8 @@
     STAssertTrue(locationService.locationServiceAllowed, nil);
     locationService.locationServiceEnabled = YES;
     STAssertTrue(locationService.locationServiceEnabled, nil);
+    [locationService setValue:@"SuperCat" forLocationServiceKey:@"TESTCAT"];
+    STAssertTrue([@"SuperCat" isEqualToString:(NSString*)[locationService valueForLocationServiceKey:@"TESTCAT"]], nil);
 }
 
 #pragma mark -
@@ -428,12 +430,19 @@
 -(void)testAutomaticLocationUpdateOnForeground {
     locationService.automaticLocationOnForegroundEnabled = YES;
     [[mockLocationService expect] reportCurrentLocation];
+    // Setup a date over 120.0 seconds ago
+    NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
+    locationService.dateOfLastReport = dateOver120;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
     locationService.automaticLocationOnForegroundEnabled = NO;
+    [[mockLocationService reject] reportCurrentLocation];
     // If there is another call to acquireSingleLocaitonAndUpload, this will fail
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-    
+    // reset the time stamp to now, should not trigger an update
+    locationService.automaticLocationOnForegroundEnabled = YES;
+    locationService.dateOfLastReport = [NSDate date];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
 }
 
 #pragma mark -

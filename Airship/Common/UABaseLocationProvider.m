@@ -92,7 +92,8 @@
 
 - (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
     // accuracy values less than zero represent invalid lat/long values
-    if (newLocation.horizontalAccuracy < 0 || newLocation.verticalAccuracy < 0) {
+    // If altitude becomes important in the future, add the check here for verticalAccuracy
+    if (newLocation.horizontalAccuracy < 0) {
         return NO;
     }
     return YES;

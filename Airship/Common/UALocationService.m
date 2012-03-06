@@ -43,16 +43,11 @@
 static NSString* const standardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
 static NSString* const significantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
 
-#pragma mark -
-#pragma mark UALocationService Date Time Dictionary Keys
-
-NSString *const UALocationServiceLastReportedLocationKey = @"UALocationServiceLastReportedLocationKey";
-NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOfLastReportKey";
-
 @implementation UALocationService
 
 #pragma mark -
 #pragma mark UALocationService.h
+@synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
 @synthesize distanceFilter = distanceFilter_;
 @synthesize desiredAccuracy = desiredAccuracy_;
 @synthesize lastReportedLocation = lastReportedLocation_;
@@ -101,6 +96,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
     if (self) {
         // Default CLManagerValues
         // TODO: set these values to something more appropriate
+        minimumTimeBetweenForegroundUpdates_ = 120.0;
         desiredAccuracy_ = kCLLocationAccuracyBest;
         distanceFilter_ = kCLDistanceFilterNone;
         // Read existing values and create a mutable object
@@ -140,7 +136,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 }
 
 - (void)appWillEnterForeground {
-    if (automaticLocationOnForegroundEnabled_) {
+    if ([self shouldPerformAutoLocationUpdate]) {
         [self reportCurrentLocation];
     }
     // If the location services were not allowed in the background, and they were tracking when the app entered the background
@@ -151,6 +147,18 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
         if (startStandard)[self startUpdatingLocation];
         if (startSignificantChange)[self startMonitoringSignificantLocationChanges];
     }
+}
+
+- (BOOL)shouldPerformAutoLocationUpdate {
+    // if not enabled, bail
+    if (!automaticLocationOnForegroundEnabled_) return NO; 
+    // If the date is nil, then a report is needed
+    if (!dateOfLastReport_) return YES;
+    NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:dateOfLastReport_];
+    if(elapsedTime < minimumTimeBetweenForegroundUpdates_) {
+        return NO;
+    }
+    return YES;
 }
 
 - (void)appDidEnterBackground {
@@ -229,8 +237,6 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 - (void)setBool:(BOOL)boolValue forLocationServiceKey:(NSString*)key {
     [self setValue:[NSNumber numberWithBool:boolValue] forLocationServiceKey:key];
 }
-
-//
 
 - (id)valueForLocationServiceKey:(NSString*)key {
     return [locationServiceValues_ valueForKey:key];
@@ -472,7 +478,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Single Location Service
 
 - (void)reportCurrentLocation {
-    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;
+    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
     }
@@ -493,7 +499,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 //"h_accuracy": "10.0, NONE" (required, string double - actual horizontal accuracy in meters, or NONE if not available)
 //"v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
  
-
+// This is tested in a application test, and will show up red in the code coverage tool
 - (UALocationEvent*)createLocationEventWithLocation:(CLLocation*)location andProvider:(id<UALocationProviderProtocol>)provider {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:[UALocationUtils stringFromDouble:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
