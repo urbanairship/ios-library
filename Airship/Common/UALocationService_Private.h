@@ -34,13 +34,13 @@
     BOOL deprecatedLocation_;
 }
 // Override property declarations for implementation and testing
-//////////////////////
+//
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
 @property (nonatomic, retain) NSDate *dateOfLastReport;
 @property (nonatomic, retain) UAStandardLocationProvider *standardLocationProvider;
 @property (nonatomic, retain) UASignificantChangeProvider *significantChangeProvider;
 @property (nonatomic, retain) UAStandardLocationProvider *singleLocationProvider;
-/////////////////////
+//
 
 /* 
  Values written to disk each time they are set

@@ -81,7 +81,7 @@
 - (id)init;
 /**
  Initializes the object with a delegate
- @param delgate that implements the UALocationProviderDelegate protocol
+ @param delegate Delegate object that implements the UALocationProviderDelegate protocol
  */
 - (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
 

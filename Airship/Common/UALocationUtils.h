@@ -24,16 +24,14 @@
  */
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationServicesCommon.h"
-/**
-    A collection of location utility methods
- */
+/** A collection of location utility methods */
 @interface UALocationUtils
 /** Returns a string representation of the double value
     @warning *Important:* 
     Using stringWithFormat instead of wrapping the value in an NSNumber and 
     returning the resulting string value truncates values.
-    @param double value to represent as a string
-    @return NSString string representation of the double value
+    @param doubleValue Value to represent as a string
+    @return String representation of the double value
  */
 + (NSString*)stringFromDouble:(double)doubleValue;
 

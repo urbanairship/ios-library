@@ -36,7 +36,8 @@
 extern NSString *const UALocationServiceLastReportedLocationKey;
 extern NSString *const UALocationServiceDateOfLastReportKey;
 
-/** The UALocationService class provides an interface to both the location services on 
+/** 
+    The UALocationService class provides an interface to both the location services on 
     device and the Urban Airship API. 
  */
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
@@ -152,7 +153,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services
 ///---------------------------------------------------------------------------------------
-
+/** Start the standard location service */
 - (void)startUpdatingLocation;
 
 /** Stops the standard location service */
