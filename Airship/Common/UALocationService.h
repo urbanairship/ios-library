@@ -64,10 +64,10 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 @property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
 
 /// Last location reported to Urban Airship 
-@property (nonatomic, readonly) CLLocation *lastReportedLocation;
+@property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
 
 /// Date of last location event reported 
-@property (nonatomic, assign, readonly) NSDate *dateOfLastReport;
+@property (nonatomic, retain, readonly) NSDate *dateOfLastReport;
 
 /// UALocationServiceDelage for location service callbacks
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;

@@ -83,10 +83,16 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 - (void)dealloc {
     [self endObservingLocationSettings];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    // private
     RELEASE_SAFELY(locationServiceValues_);
     RELEASE_SAFELY(standardLocationProvider_);
     RELEASE_SAFELY(significantChangeProvider_);
     RELEASE_SAFELY(singleLocationProvider_);
+    //
+    // public
+    RELEASE_SAFELY(lastReportedLocation_);
+    RELEASE_SAFELY(dateOfLastReport_);
+    //
     [super dealloc];
 }
 
