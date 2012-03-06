@@ -85,7 +85,6 @@
     STAssertEquals(locationService.desiredAccuracy, test.desiredAccuracy, @"Default CLManger values should match UALocationService defaults");
     STAssertEquals(locationService.distanceFilter, test.distanceFilter, @"Default CLManger values should match UALocationService defaults");
     STAssertNotNil(locationService.standardLocationProvider, @"standardLocationService should exist for authorization callbacks");
-    STAssertNotNil(locationService.lastLocationAndDate, nil);
     // Don't test locationService.purpose, it only needs to be tested with NSUserDefaults, that's where it's stored
 }
 
@@ -146,17 +145,16 @@
 #pragma mark lastLocationAndDate
 
 - (void)testLastLocationAndDate {
-    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
-    locationService.lastReportedLocation = PDX;
-    NSDictionary* dictionary = locationService.lastLocationAndDate;
-    STAssertEquals(PDX, [dictionary valueForKey:UALocationServiceLastReportedLocationKey], nil);
-    locationService.dateOfLastReport = [NSDate date];
-    NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:[dictionary valueForKey:UALocationServiceDateOfLastReportKey]];
-    STAssertEqualsWithAccuracy(0.0, interval, 0.0001, nil);
-    // check get methods
-    STAssertEquals(PDX, locationService.lastReportedLocation, nil);
-    interval = [[NSDate date] timeIntervalSinceDate:locationService.dateOfLastReport];
-    STAssertEqualsWithAccuracy(0.0, interval, 0.001, nil);
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+    [[mockLocationService stub] sendLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
+    [locationService.standardLocationProvider.delegate UALocationProvider:locationService.standardLocationProvider 
+                                                      withLocationManager:locationService.standardLocationProvider.locationManager 
+                                                        didUpdateLocation:pdx 
+                                                             fromLocation:sfo];
+    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
+    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastReport timeIntervalSinceNow];
+    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
 }
 
 #pragma mark -

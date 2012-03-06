@@ -57,7 +57,6 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 @synthesize desiredAccuracy = desiredAccuracy_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize dateOfLastReport = dateOfLastReport_;
-@synthesize lastLocationAndDate = lastLocationAndDate_;
 @synthesize delegate = delegate_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
 @synthesize backgroundLocationServiceEnabled = backroundLocationServiceEnabled_;
@@ -88,7 +87,6 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
     RELEASE_SAFELY(standardLocationProvider_);
     RELEASE_SAFELY(significantChangeProvider_);
     RELEASE_SAFELY(singleLocationProvider_);
-    RELEASE_SAFELY(lastLocationAndDate_);
     [super dealloc];
 }
 
@@ -99,7 +97,6 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
         // TODO: set these values to something more appropriate
         desiredAccuracy_ = kCLLocationAccuracyBest;
         distanceFilter_ = kCLDistanceFilterNone;
-        lastLocationAndDate_ = [[NSMutableDictionary alloc] initWithCapacity:2];
         // Read existing values and create a mutable object
         NSDictionary* currentPrefs = [[NSUserDefaults standardUserDefaults] dictionaryForKey:UALocationServicePreferences];
         locationServiceValues_ = [[NSMutableDictionary alloc] initWithDictionary:currentPrefs];
@@ -184,27 +181,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
     return singleLocationProvider_.serviceStatus;
 }
 
-#pragma mark -
-#pragma mark Last Location and Date
-
-- (NSDate*)dateOfLastReport {
-    return [lastLocationAndDate_ valueForKey:UALocationServiceDateOfLastReportKey];
-}
-
-- (CLLocation*)lastReportedLocation {
-    return [lastLocationAndDate_ valueForKey:UALocationServiceLastReportedLocationKey];
-}
-
-// This sets the date to the current date and replaces the last
-- (void)setLastReportedLocation:(CLLocation *)lastReportedLocation {
-    [lastLocationAndDate_ setValue:lastReportedLocation forKey:UALocationServiceLastReportedLocationKey];
-}
-
-- (void)setDateOfLastReport:(NSDate *)dateOfLastReport {
-    [lastLocationAndDate_ setValue:dateOfLastReport forKey:UALocationServiceDateOfLastReportKey];
-}
                                                 
-     
 #pragma mark -
 #pragma mark UALocationService NSUserDefaults
 

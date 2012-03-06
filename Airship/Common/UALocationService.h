@@ -36,8 +36,6 @@
 extern NSString *const UALocationServiceLastReportedLocationKey;
 extern NSString *const UALocationServiceDateOfLastReportKey;
 
-
-
 /** The UALocationService class provides an interface to both the location services on 
     device and the Urban Airship API. 
  */
@@ -47,7 +45,6 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
     CLLocationAccuracy desiredAccuracy_;
     CLLocation *lastReportedLocation_;
     NSDate *dateOfLastReport_;
-    NSDictionary* lastLocationAndDate_;
     id <UALocationServiceDelegate> delegate_;
     BOOL automaticLocationOnForegroundEnabled_;
     BOOL backroundLocationServiceEnabled_;
@@ -71,9 +68,6 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 
 /// Date of last location event reported 
 @property (nonatomic, assign, readonly) NSDate *dateOfLastReport;
-
-/// Dictionary of the dateOfLastReport and lastReportedLocation 
-@property (nonatomic, retain, readonly) NSDictionary* lastLocationAndDate;
 
 /// UALocationServiceDelage for location service callbacks
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
@@ -162,7 +156,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 - (void)startUpdatingLocation;
 
 /** Stops the standard location service */
--(void)stopUpdatingLocation;
+- (void)stopUpdatingLocation;
 
 /** Starts the Significant Change location service
  and sends location data to Urban Airship. This service 
