@@ -31,7 +31,7 @@
 @interface UALocationService () {
     NSMutableDictionary* locationServiceValues_;
     UAStandardLocationProvider *singleLocationProvider_;
-    BOOL depricatedLocation_;
+    BOOL deprecatedLocation_;
 }
 // Override property declarations for implementation and testing
 //////////////////////
@@ -49,7 +49,7 @@
 @property (nonatomic, retain) NSDictionary *locationServiceValues;
 
 // Indicates iOS < 4.2 and depricated method calls should be used
-@property (nonatomic, assign) BOOL depricatedLocation;
+@property (nonatomic, assign) BOOL deprecatedLocation;
 
 - (NSDictionary*)locationServiceValues;
 // Sets appropriate value in NSUserDefaults

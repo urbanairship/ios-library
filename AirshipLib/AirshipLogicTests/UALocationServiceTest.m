@@ -324,7 +324,7 @@
 }
 
 - (void)testDepricatedEnabledAndAuthorized {
-    locationService.depricatedLocation = YES;
+    locationService.deprecatedLocation = YES;
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
     locationService.standardLocationProvider = standard;
     id mockProvider = [OCMockObject partialMockForObject:standard.locationManager];

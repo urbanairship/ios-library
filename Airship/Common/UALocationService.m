@@ -67,7 +67,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 #pragma mark UALocationService_Private.h
 @synthesize locationServiceValues = locationServiceValues_;
 @synthesize singleLocationProvider = singleLocationProvider_;
-@synthesize depricatedLocation = depricatedLocation_;
+@synthesize deprecatedLocation = deprecatedLocation_;
 
 #pragma mark -
 #pragma mark UALocationServicePreferences in locationServiceValues
@@ -267,7 +267,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
     // If this is less than iOS 4.2, UALocationPreferences defaults to NO, 
     // and will be reset to NO on any kCLErrorDenied delegate callback from 
     // CLLocationManger.
-    if(depricatedLocation_) return;
+    if(deprecatedLocation_) return;
     self.UALocationServiceAllowed = [self isLocationServiceEnabledAndAuthorized];
 }
 
@@ -294,7 +294,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // Catch kCLErrorDenied for iOS < 4.2
     if (error.code == kCLErrorDenied) {
         [locationProvider stopProvidingLocation];
-        if(depricatedLocation_){
+        if(deprecatedLocation_){
             self.UALocationServiceAllowed = NO;
         }
         else {
@@ -441,7 +441,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // check for the existence of the method before calling. 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)isLocationServiceEnabledAndAuthorized {
-    if (depricatedLocation_) {
+    if (deprecatedLocation_) {
         BOOL depricatedEnabled = NO;
         if ([standardLocationProvider_.locationManager respondsToSelector:@selector(locationServicesEnabled)]) {
             depricatedEnabled = standardLocationProvider_.locationManager.locationServicesEnabled;
