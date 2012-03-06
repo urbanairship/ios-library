@@ -141,7 +141,7 @@ NSString *const UALocationServiceDateOfLastReportKey = @"UALocationServiceDateOf
 
 - (void)appWillEnterForeground {
     if (automaticLocationOnForegroundEnabled_) {
-        [self acquireSingleLocationAndUpload];
+        [self reportCurrentLocation];
     }
     // If the location services were not allowed in the background, and they were tracking when the app entered the background
     // restart them now. 
@@ -471,7 +471,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark Single Location Service
 
-- (void)acquireSingleLocationAndUpload {
+- (void)reportCurrentLocation {
     if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];

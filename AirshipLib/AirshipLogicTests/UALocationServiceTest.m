@@ -288,12 +288,12 @@
     // Fail if startProvidingLocation is called
     [[mockLocationProvider reject] startProvidingLocation];
     locationService.singleLocationProvider = mockLocationProvider;
-    [locationService acquireSingleLocationAndUpload];
+    [locationService reportCurrentLocation];
     [mockLocationService verify];
     // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
     // short circuits statment evaluation
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-    [locationService acquireSingleLocationAndUpload];
+    [locationService reportCurrentLocation];
     [mockLocationService verify];
 }
 
@@ -377,7 +377,7 @@
 #pragma mark -
 #pragma mark Single Location Service
 
-- (void)testAcquireSingleLocation {
+- (void)testReportCurrentLocation{
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
     id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
     standard.locationManager = mockLocationManager;
@@ -385,7 +385,7 @@
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
     [[mockLocationManager expect] startUpdatingLocation];
     locationService.singleLocationProvider = standard;
-    [locationService acquireSingleLocationAndUpload];
+    [locationService reportCurrentLocation];
     [mockLocationService verify];
     [mockLocationManager verify];
     STAssertEquals(UALocationProviderUpdating, locationService.singleLocationServiceStatus, @"Single location service should be running");
@@ -400,7 +400,7 @@
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
     locationService.singleLocationProvider = standard;
     standard.locationManager = mockLocationManager;
-    [locationService acquireSingleLocationAndUpload];
+    [locationService reportCurrentLocation];
     //This will fail if any method is called on mockLocationManager
 }
 
@@ -427,7 +427,7 @@
 
 -(void)testAutomaticLocationUpdateOnForeground {
     locationService.automaticLocationOnForegroundEnabled = YES;
-    [[mockLocationService expect] acquireSingleLocationAndUpload];
+    [[mockLocationService expect] reportCurrentLocation];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
     locationService.automaticLocationOnForegroundEnabled = NO;

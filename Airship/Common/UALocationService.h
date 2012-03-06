@@ -36,9 +36,8 @@
 extern NSString *const UALocationServiceLastReportedLocationKey;
 extern NSString *const UALocationServiceDateOfLastReportKey;
 
-/** 
-    The UALocationService class provides an interface to both the location services on 
-    device and the Urban Airship API. 
+/** The UALocationService class provides an interface to both the location services on 
+ device and the Urban Airship API. 
  */
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
     
@@ -89,17 +88,16 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 @property (nonatomic, assign) BOOL locationServiceEnabled;
 
 /** Enables or disables all UALocationServices 
-    
-    On iOS 4.2 or greater this value is NO when CLLocationManager reports
-    - kCLAuthorizationStatusRestricted  
-    - kCLAuthorizationStatusDenied
-    and YES for 
-    - kCLAuthorizationStatusAuthorized  
-    - kCLAuthorizationStatusNotDetermined
-    On iOS 4.2 and earlier this value is NO after an attempt has been made
-    to start the location service and a delegate callback with a kCLErrorDenied error is 
-    received. Enabling service again and attempting to restart location services will
-    prompt the user if the location service permissions have not changed. 
+On iOS 4.2 or greater this value is NO when CLLocationManager reports
+- kCLAuthorizationStatusRestricted  
+- kCLAuthorizationStatusDenied
+and YES for 
+- kCLAuthorizationStatusAuthorized  
+- kCLAuthorizationStatusNotDetermined
+On iOS 4.2 and earlier this value is NO after an attempt has been made
+to start the location service and a delegate callback with a kCLErrorDenied error is 
+received. Enabling service again and attempting to restart location services will
+prompt the user if the location service permissions have not changed. 
  */
 @property (nonatomic, assign) BOOL locationServiceAllowed;
 
@@ -137,8 +135,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 - (id)initWithPurpose:(NSString*)purpose;
 
 /** Starts the Standard Location service and 
- sends location data to Urban Airship. This service
- will continue updating if the location property is
+ sends location data to Urban Airship. This service will continue updating if the location property is 
  declared in the Info.plist. Please see the Location Awareness Programming guide:
  http://developer.apple.com/library/ios/#documentation/UserExperience/Conceptual/LocationAwarenessPG/Introduction/Introduction.html
  for more information. If the standard location service is not setup for background
@@ -153,6 +150,7 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services
 ///---------------------------------------------------------------------------------------
+
 /** Start the standard location service */
 - (void)startUpdatingLocation;
 
@@ -184,10 +182,10 @@ extern NSString *const UALocationServiceDateOfLastReportKey;
 */ 
  - (void)sendLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
- /** Starts the standard location service, acquires a single location, sends
- it to Urban Airship, then shuts down the service. 
- */
-- (void)acquireSingleLocationAndUpload;
+/** Starts the standard location service long enough to obtain a location an then uploads
+ it to Urban Airship.
+*/
+- (void)reportCurrentLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Service Authorization

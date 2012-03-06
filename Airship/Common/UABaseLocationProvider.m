@@ -115,7 +115,7 @@
 #pragma mark -
 #pragma mark CLLocationManger Delegate
 
-//** iOS 4.2 or better */
+/** iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
 // TODO: Send analytics event if location service is denied?
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -133,16 +133,9 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    NSLog(@"LOCATION %@", newLocation.description);
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
         [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
-
-
-
-
-
-
 
 @end
