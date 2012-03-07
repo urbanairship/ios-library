@@ -48,9 +48,9 @@ typedef enum {
 /// This is a required parameter on the CLLocationManager and is presented to the user for authentication
 @property (nonatomic, copy) NSString *provider;
 /// Starts updating location
-- (void)startProvidingLocation;
+- (void)startReportingLocation;
 /// Stops providing location updates
-- (void)stopProvidingLocation;
+- (void)stopReportingLocation;
 @end
 
 /** Delegate methods for Location providers. All are required */

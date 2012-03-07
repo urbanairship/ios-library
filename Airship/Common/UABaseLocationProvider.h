@@ -71,7 +71,7 @@
 /**
  Current purpose attached to the CLLocationMananger locationManager
  @return Current purpose on the locationManager
-*/
+ */
 - (NSString*)purpose;
 
 ///---------------------------------------------------------------------------------------
@@ -106,10 +106,10 @@
  Empty method meant to be overridden. 
  @warning Default implementation does nothing
  */
-- (void)startProvidingLocation;
+- (void)startReportingLocation;
 /**
  Empty method meant to be overridden. 
  @warning Default implementation does nothing
  */
-- (void)stopProvidingLocation;
+- (void)stopReportingLocation;
 @end

@@ -40,9 +40,9 @@
 ///---------------------------------------------------------------------------------------
 
 /// Starts the significant change location service
-- (void)startProvidingLocation;
+- (void)startReportingLocation;
 /// Stops the significant change location service
-- (void)stopProvidingLocation;
+- (void)stopReportingLocation;
 
 /** The significant change location service does not get multiple calls, therefore any valid location is returned.
  

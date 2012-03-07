@@ -202,7 +202,7 @@
     locationService.standardLocationProvider = standardProvider;
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
-    [locationService startUpdatingLocation];
+    [locationService startReportingLocation];
     [mockLocationManager verify];
     [mockLocationService verify];
     STAssertEquals(UALocationProviderUpdating, locationService.standardLocationServiceStatus, @"Service status should be updating");
@@ -214,12 +214,12 @@
     id mockDelegate = [OCMockObject niceMockForClass:[CLLocationManager class]];
     standardDelegate.locationManager = mockDelegate;
     [[mockDelegate expect] stopUpdatingLocation];
-    [locationService stopUpdatingLocation];
+    [locationService stopReportingLocation];
     [mockDelegate verify];
     STAssertEquals(UALocationProviderNotUpdating, locationService.standardLocationServiceStatus, @"Service should not be updating");
 }
 
-#pragma mark Significant Change Service
+//#pragma mark Significant Change Service
 - (void)testStartMonitoringSignificantChanges {
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceEnabled];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
@@ -228,7 +228,7 @@
     sigChangeProvider.locationManager = mockLocationManager;
     [[mockLocationManager expect] startMonitoringSignificantLocationChanges];
     locationService.significantChangeProvider = sigChangeProvider;
-    [locationService startMonitoringSignificantLocationChanges];
+    [locationService startReportingSignificantLocationChanges];
     [mockLocationService verify];
     [mockLocationManager verify];
     STAssertEquals(locationService.significantChangeServiceStatus, UALocationProviderUpdating, @"Sig change should be updating");                              
@@ -240,55 +240,56 @@
     locationService.significantChangeProvider = sigChangeDelegate;
     sigChangeDelegate.locationManager = mockLocationManager;
     [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
-    [locationService stopMonitoringSignificantLocationChanges];
+    [locationService stopReportingSignificantLocationChanges];
     [mockLocationManager verify];
     STAssertEquals(UALocationProviderNotUpdating, locationService.significantChangeServiceStatus, @"Sig change should not be updating");
 }
-
-#pragma mark Standard Location when not enabled
+//
+//#pragma mark Standard Location when not enabled
 - (void)testStandardLocationServicesWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     // Fail if startProvidingLocation is called
-    [[mockLocationProvider reject] startProvidingLocation];
+    [[mockLocationProvider reject] startReportingLocation];
     locationService.standardLocationProvider = mockLocationProvider;
-    [locationService startUpdatingLocation];
+    [locationService startReportingLocation];
     [mockLocationService verify];
-    // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
-    // short circuits statment evaluation
+    // The service should short circuit before asking for locationServiceEnabled
+    [[mockLocationService reject] locationServiceEnabled];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-    [locationService startUpdatingLocation];
+    [locationService startReportingLocation];
     [mockLocationService verify];
 }
 
-#pragma mark Significant Change when not enabled
+//#pragma mark Significant Change when not enabled
 - (void)testSignificantChangeServicesWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
     // Fail if startProvidingLocation is called
-    [[mockLocationProvider reject] startProvidingLocation];
+    [[mockLocationProvider reject] startReportingLocation];
     locationService.significantChangeProvider = mockLocationProvider;
-    [locationService startMonitoringSignificantLocationChanges];
+    [locationService startReportingSignificantLocationChanges];
     [mockLocationService verify];
     // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
-    // short circuits statment evaluation
+    // short circuits statment evaluation. An explicit rejection makes debugging easier
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-    [locationService startMonitoringSignificantLocationChanges];
+    [[mockLocationService reject] locationServiceEnabled];
+    [locationService startReportingSignificantLocationChanges];
     [mockLocationService verify];
 }
 
-#pragma mark Single Location when not enabled
+//#pragma mark Single Location when not enabled
 - (void)testSingleLocationServiceWillNotStartWhenNotEnabled {
     // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceEnabled];
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
     id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     // Fail if startProvidingLocation is called
-    [[mockLocationProvider reject] startProvidingLocation];
+    [[mockLocationProvider reject] startReportingLocation];
     locationService.singleLocationProvider = mockLocationProvider;
     [locationService reportCurrentLocation];
     [mockLocationService verify];
@@ -447,26 +448,26 @@
 
 #pragma mark -
 #pragma mark Restarting Location service on startup
-
+//
 - (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
     locationService.backgroundLocationServiceEnabled = NO;
     locationService.locationServiceAllowed = YES;
     [self swizzleCLLocationClassEnabledAndAuthorized];
-    [locationService startUpdatingLocation];
-    [locationService startMonitoringSignificantLocationChanges];
-    [[[mockLocationService expect] andForwardToRealObject] stopUpdatingLocation];
-    [[[mockLocationService expect] andForwardToRealObject] stopMonitoringSignificantLocationChanges];
+    [locationService startReportingLocation];
+    [locationService startReportingSignificantLocationChanges];
+    [[[mockLocationService expect] andForwardToRealObject] stopReportingLocation];
+    [[[mockLocationService expect] andForwardToRealObject] stopReportingSignificantLocationChanges];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
     STAssertTrue([locationService boolForLocationServiceKey:@"standardLocationServiceStatusRestart"], nil);
     STAssertTrue([locationService boolForLocationServiceKey:@"significantChangeServiceStatusRestart"], nil);
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
-
+//
 - (void)testLocationServicesNotStoppedOnAppBackgroundWhenEnabled {
     locationService.backgroundLocationServiceEnabled = YES;
-    [[mockLocationService reject] stopUpdatingLocation];
-    [[mockLocationService reject] stopMonitoringSignificantLocationChanges];
+    [[mockLocationService reject] stopReportingLocation];
+    [[mockLocationService reject] stopReportingSignificantLocationChanges];
     [[[mockLocationService expect] andForwardToRealObject] appDidEnterBackground];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
@@ -476,8 +477,8 @@
 
 - (void)testLocationServicesNotStartedWhenBackgroundServicesEnabled {
     locationService.backgroundLocationServiceEnabled = YES;
-    [[mockLocationService reject] startUpdatingLocation];
-    [[mockLocationService reject] startMonitoringSignificantLocationChanges];
+    [[mockLocationService reject] startReportingLocation];
+    [[mockLocationService reject] startReportingSignificantLocationChanges];
     [[[mockLocationService expect] andForwardToRealObject] appWillEnterForeground];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
@@ -494,8 +495,8 @@
     locationService.significantChangeProvider.serviceStatus = UALocationProviderUpdating;
     // Make the class perform backgrounding tasks
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-    [[[mockLocationService expect] andForwardToRealObject] startUpdatingLocation];
-    [[[mockLocationService expect] andForwardToRealObject] startMonitoringSignificantLocationChanges];
+    [[[mockLocationService expect] andForwardToRealObject] startReportingLocation];
+    [[[mockLocationService expect] andForwardToRealObject] startReportingSignificantLocationChanges];
     // Setup proper expectations for app foreground
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];

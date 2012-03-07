@@ -43,10 +43,10 @@
  The standard location service uses the GPS capabilities of the device to provide location
  information to the delegate
  */
-- (void)startProvidingLocation;
+- (void)startReportingLocation;
 
 /** Stops the standard location service */
-- (void)stopProvidingLocation;
+- (void)stopReportingLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Creating a UAStandardLocationProvider

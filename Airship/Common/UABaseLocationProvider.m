@@ -75,7 +75,7 @@
 - (NSString*)purpose {
     return locationManager_.purpose;
 }
-                                    
+
 #pragma mark -
 #pragma mark CLLocationManager Accessors
 
@@ -102,41 +102,42 @@
 #pragma mark -
 #pragma mark UALocationProviderProtocol empty methods
 
-// Empty methods meant to be overidden in a subclass 
+// Methods only update the location status
 // Allows for consolodation of didFailWithError and didUpateToLocation and
 // delegate callbacks here
-- (void)startProvidingLocation {
+- (void)startReportingLocation {
     self.serviceStatus = UALocationProviderUpdating;
-}
-- (void)stopProvidingLocation {
+}    
+
+- (void)stopReportingLocation {
     self.serviceStatus = UALocationProviderNotUpdating;
 }
-
-
+    
+    
 #pragma mark -
 #pragma mark CLLocationManger Delegate
-
-/** iOS 4.2 or better */
-// This is the nuclear option. Subclasses should implement specific action
-// TODO: Send analytics event if location service is denied?
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    if (status != kCLAuthorizationStatusAuthorized) {
-        [locationManager_ stopUpdatingHeading];
-        [locationManager_ stopUpdatingLocation];
-        [locationManager_ stopMonitoringSignificantLocationChanges];
+    
+    /** iOS 4.2 or better */
+    // This is the nuclear option. Subclasses should implement specific action
+    // TODO: Send analytics event if location service is denied?
+    - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+        if (status != kCLAuthorizationStatusAuthorized) {
+            [locationManager_ stopUpdatingHeading];
+            [locationManager_ stopUpdatingLocation];
+            [locationManager_ stopMonitoringSignificantLocationChanges];
+        }
+        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
     }
-    [delegate_ UALocationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
-}
-
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    [delegate_ UALocationProvider:self withLocationManager:locationManager_ didFailWithError:error];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+    
+    
+    - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didFailWithError:error];
     }
-}
-
-@end
+    
+    - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+        if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+            [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+        }
+    }
+    
+    @end

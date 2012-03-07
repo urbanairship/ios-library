@@ -153,10 +153,10 @@ prompt the user if the location service permissions have not changed.
 ///---------------------------------------------------------------------------------------
 
 /** Start the standard location service */
-- (void)startUpdatingLocation;
+- (void)startReportingLocation;
 
 /** Stops the standard location service */
-- (void)stopUpdatingLocation;
+- (void)stopReportingLocation;
 
 /** Starts the Significant Change location service
  and sends location data to Urban Airship. This service 
@@ -168,10 +168,10 @@ prompt the user if the location service permissions have not changed.
  or if the user has purposely disabled location services. Given that location services were probably 
  disabled for a reason, this prompt might not be welcomed.
  **/
-- (void)startMonitoringSignificantLocationChanges;
+- (void)startReportingSignificantLocationChanges;
 
 /** Stops the Significant Change location service */
-- (void)stopMonitoringSignificantLocationChanges;
+- (void)stopReportingSignificantLocationChanges;
 
 ///---------------------------------------------------------------------------------------
 /// @name Analytics

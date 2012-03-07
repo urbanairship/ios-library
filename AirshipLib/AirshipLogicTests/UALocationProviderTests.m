@@ -250,8 +250,8 @@
     standardProvider.locationManager = mockLocationManager;
     [[mockLocationManager expect] startUpdatingLocation];
     [[mockLocationManager expect] stopUpdatingLocation];
-    [standardProvider startProvidingLocation];
-    [standardProvider stopProvidingLocation];
+    [standardProvider startReportingLocation];
+    [standardProvider stopReportingLocation];
     [mockLocationManager verify];
 }
 
@@ -261,10 +261,10 @@
     stignificantChange.locationManager = mockLocationManager;
     [[mockLocationManager expect] startMonitoringSignificantLocationChanges];
     [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
-    [stignificantChange startProvidingLocation];
-    [stignificantChange stopProvidingLocation];
+    [stignificantChange startReportingLocation];
+    [stignificantChange stopReportingLocation];
     [mockLocationManager verify];
 }
-                                            
+
 
 @end

@@ -144,8 +144,8 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     if(!backroundLocationServiceEnabled_){
         BOOL startStandard = [[locationServiceValues_ valueForKey:standardLocationServiceRestartKey] boolValue];
         BOOL startSignificantChange = [[locationServiceValues_ valueForKey:significantChangeServiceRestartKey] boolValue];
-        if (startStandard)[self startUpdatingLocation];
-        if (startSignificantChange)[self startMonitoringSignificantLocationChanges];
+        if (startStandard)[self startReportingLocation];
+        if (startSignificantChange)[self startReportingSignificantLocationChanges];
     }
 }
 
@@ -175,8 +175,8 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
         else {
             [self setBool:NO forLocationServiceKey:significantChangeServiceRestartKey];
         }
-        [self stopUpdatingLocation];
-        [self stopMonitoringSignificantLocationChanges];
+        [self stopReportingLocation];
+        [self stopReportingSignificantLocationChanges];
     }
 }
 
@@ -195,7 +195,7 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     return singleLocationProvider_.serviceStatus;
 }
 
-                                                
+
 #pragma mark -
 #pragma mark UALocationService NSUserDefaults
 
@@ -268,7 +268,7 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     // NSObject defines isEqual, and it's overidden by NSString and NSNumber
     if([old isEqual:new])return;
     [[NSUserDefaults standardUserDefaults] setObject:locationServiceValues_ forKey:UALocationServicePreferences];
-
+    
 }
 
 
@@ -292,7 +292,7 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self updateAllowedStatus:status];
     if(!locationServiceEnabled){
-        [locationProvider stopProvidingLocation];
+        [locationProvider stopReportingLocation];
     }
     if ([delegate_ respondsToSelector:@selector(UALocationService:didChangeAuthorizationStatus:)]) {
         [delegate_ UALocationService:self didChangeAuthorizationStatus:status];
@@ -305,7 +305,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
           didFailWithError:(NSError*)error {
     // Catch kCLErrorDenied for iOS < 4.2
     if (error.code == kCLErrorDenied) {
-        [locationProvider stopProvidingLocation];
+        [locationProvider stopReportingLocation];
         if(deprecatedLocation_){
             self.locationServiceAllowed = NO;
         }
@@ -327,7 +327,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     self.dateOfLastReport = [NSDate date];
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
-        [singleLocationProvider_.locationManager stopUpdatingLocation];
+        [singleLocationProvider_ stopReportingLocation];
         RELEASE_SAFELY(singleLocationProvider_);
         return;
     }
@@ -352,12 +352,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark UALocationProvider/CLLocationManager service controls
 
 #pragma mark Standard Location
-- (void)startUpdatingLocation {
+- (void)startReportingLocation {
     if(!standardLocationProvider_){
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
     }
     if(self.locationServiceAllowed && self.locationServiceEnabled) {
-        [standardLocationProvider_ startProvidingLocation];
+        [standardLocationProvider_ startReportingLocation];
         return;
     }
     // TODO: Make delegate error call with custom Error states for not authorized or not enabled
@@ -365,18 +365,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // Keep the standardLocationProvider around for the life of the object to receive didChangeAuthorization 
 // callbacks 
-- (void)stopUpdatingLocation {
-    [standardLocationProvider_.locationManager stopUpdatingLocation];
-    [standardLocationProvider_ stopProvidingLocation];
+- (void)stopReportingLocation {
+    [standardLocationProvider_ stopReportingLocation];
 }
 
 #pragma mark Significant Change
-- (void)startMonitoringSignificantLocationChanges {
+- (void)startReportingSignificantLocationChanges {
     if(!significantChangeProvider_){
         self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
     }
     if(self.locationServiceAllowed && self.locationServiceEnabled) {
-        [significantChangeProvider_ startProvidingLocation];
+        [significantChangeProvider_ startReportingLocation];
         return;
     }
     // TODO: Make delegate error call with custom Error states for not authorized or not enabled
@@ -384,9 +383,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // Release the significantChangeProvider to prevent double delegate callbacks
 // when authorization state changes
-- (void)stopMonitoringSignificantLocationChanges {
-    [significantChangeProvider_.locationManager stopMonitoringSignificantLocationChanges];
-    [significantChangeProvider_ stopProvidingLocation];
+- (void)stopReportingSignificantLocationChanges {
+    [significantChangeProvider_ stopReportingLocation];
     RELEASE_SAFELY(significantChangeProvider_);
 }
 
@@ -483,7 +481,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
     }
     if(self.locationServiceAllowed && self.locationServiceEnabled){
-        [singleLocationProvider_ startProvidingLocation];
+        [singleLocationProvider_ startReportingLocation];
     }
 }
 
@@ -498,7 +496,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 //"update_dist": "10.0,100.0,NONE" (required - string double distance in meters, or NONE if not available applicable)
 //"h_accuracy": "10.0, NONE" (required, string double - actual horizontal accuracy in meters, or NONE if not available)
 //"v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
- 
+
 // This is tested in a application test, and will show up red in the code coverage tool
 - (UALocationEvent*)createLocationEventWithLocation:(CLLocation*)location andProvider:(id<UALocationProviderProtocol>)provider {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];

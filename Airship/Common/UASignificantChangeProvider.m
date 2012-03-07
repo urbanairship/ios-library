@@ -65,12 +65,12 @@
     return [super locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation];
 }
 
-- (void)startProvidingLocation {
-    [super startProvidingLocation];
+- (void)startReportingLocation {
+    [super startReportingLocation];
     [locationManager_ startMonitoringSignificantLocationChanges];
 }
-- (void)stopProvidingLocation {
-    [super stopProvidingLocation];
+- (void)stopReportingLocation {
+    [super stopReportingLocation];
     [locationManager_ stopMonitoringSignificantLocationChanges];
 }
 

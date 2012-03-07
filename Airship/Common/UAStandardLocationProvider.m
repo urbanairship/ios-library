@@ -63,12 +63,12 @@
 #pragma mark -
 #pragma mark Empty Mehtods to be overridden
 
-- (void)startProvidingLocation {
-    [super startProvidingLocation];
+- (void)startReportingLocation {
+    [super startReportingLocation];
     [locationManager_ startUpdatingLocation];
 }
-- (void)stopProvidingLocation {
-    [super stopProvidingLocation];
+- (void)stopReportingLocation {
+    [super stopReportingLocation];
     [locationManager_ stopUpdatingLocation];
 }
 
