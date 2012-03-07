@@ -8,7 +8,6 @@
 //#import <OCMock/OCMock.h>
 //#import <OCMock/OCMConstraint.h>
 #import "UAEvent.h"
-#import "UALocationTestUtils.h"
 #import "UALocationServicesCommon.h"
 #import <SenTestingKit/SenTestingKit.h>
 

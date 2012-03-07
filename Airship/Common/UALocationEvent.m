@@ -24,7 +24,6 @@
  */
 
 #import "UALocationEvent.h"
-#import "UALocationUtils.h"
 #import "UAAnalytics.h"
 
 @implementation UALocationEvent
@@ -60,16 +59,18 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
     return [self initWithContext:context];
 }
 
-- (id)initWithLocation:(CLLocation *)location provider:(UALocationServiceProviderType *)provider desiredAccuracy:(CLLocationAccuracy)desiredAccuracy andDistanceFilter:(CLLocationDistance)distanceFilter {
+- (id)initWithLocation:(CLLocation*)location 
+              provider:(id<UALocationProviderProtocol>)provider 
+         andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    [context setValue:[UALocationUtils stringFromDouble:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
-    [context setValue:[UALocationUtils stringFromDouble:desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:provider.locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
     // update_dist
-    [context setValue:[UALocationUtils stringFromDouble:distanceFilter] forKey:UALocationEventDistanceFilterKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:provider.locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey];
     [context setValue:provider forKey:UALocationEventProviderKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
+    [context setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
     return [self initWithLocationContext:context];
     
 }
@@ -92,8 +93,15 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
     else [data setValue:UAAnalyticsFalseValue forKey:UALocationEventForegroundKey];
 }
 
-+ (UALocationEvent*)locationEventWithContext:(NSDictionary *)context {
-    return [[[UALocationEvent alloc] initWithLocationContext:context] autorelease];
+
+- (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue {
+    return [NSString stringWithFormat:@".7f", doubleValue];
+}
+
++ (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
+                                     provider:(id<UALocationProviderProtocol>)provider 
+                                andUpdateType:(UALocationEventUpdateType*)updateType {
+    return [[[UALocationEvent alloc] initWithLocation:location provider:provider andUpdateType:updateType] autorelease];
 }
 
 

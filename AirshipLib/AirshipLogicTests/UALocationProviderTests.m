@@ -7,13 +7,14 @@
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
+#import <SenTestingKit/SenTestingKit.h>
 #import "UALocationTestUtils.h"
 #import "UALocationServicesCommon.h"
 #import "UABaseLocationProvider.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
 #import "UALocationServicesCommon.h"
-#import <SenTestingKit/SenTestingKit.h>
+
 
 /** testing all the delegates in one class because
  *  they are all small. If this changes, break them out 
@@ -85,8 +86,21 @@
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
     provider.locationManager = locationManager;
     STAssertEqualObjects(locationManager.delegate, provider, @"The CLLocationManger delegate is not being set properly");
+    // The service reports not updating
+    STAssertEquals(provider.serviceStatus, UALocationProviderNotUpdating, nil);
     [provider release];
     [locationManager release];
+}
+
+- (void)testUABaseProviderCLLocationManagerGetSetMethods {
+    UABaseLocationProvider* base = [[[UABaseLocationProvider alloc] init] autorelease];
+    base.distanceFilter = 5.0;
+    base.desiredAccuracy = 5.0;
+    STAssertEquals(base.locationManager.distanceFilter, 5.0, nil);
+    STAssertEquals(base.locationManager.desiredAccuracy, 5.0, nil);
+    STAssertEquals(base.distanceFilter, 5.0, nil);
+    STAssertEquals(base.desiredAccuracy, 5.0, nil);
+    
 }
 
 #pragma mark -

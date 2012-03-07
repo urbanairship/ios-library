@@ -73,7 +73,7 @@
 - (void)beginObservingLocationSettings;
 - (void)endObservingLocationSettings;
 // Analytics
-- (UALocationEvent*)createLocationEventWithLocation:(CLLocation*)location andProvider:(id<UALocationProviderProtocol>)provider;
+
 // UIApplicationState observation
 - (void)beginObservingUIApplicationState;
 // Restart locaiton services if necessary, call single location if necessary

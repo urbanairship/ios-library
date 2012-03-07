@@ -51,7 +51,7 @@
 }
 
 ///---------------------------------------------------------------------------------------
-/// @name Properties
+/// @name Automatic Location Service
 ///---------------------------------------------------------------------------------------
 
 /** Minimum time between automatic updates that are tied to app foreground events.
@@ -63,6 +63,10 @@
 
 /// Accuarcy constraints passed to each location service 
 @property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
+
+///---------------------------------------------------------------------------------------
+/// @name Recent Activity
+///---------------------------------------------------------------------------------------
 
 /// Last location reported to Urban Airship 
 @property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
@@ -102,14 +106,8 @@ prompt the user if the location service permissions have not changed.
  */
 @property (nonatomic, assign) BOOL locationServiceAllowed;
 
-/// Provides GPS location events 
-@property (nonatomic, retain, readonly) UAStandardLocationProvider *standardLocationProvider;
-
 /// Status for GPS service 
 @property (nonatomic, assign, readonly) UALocationProviderStatus standardLocationServiceStatus;
-
-/// Cell tower location events 
-@property (nonatomic, retain, readonly) UASignificantChangeProvider *significantChangeProvider;
 
 /// Status for NETWORK (cell tower) events
 @property (nonatomic, assign, readonly) UALocationProviderStatus significantChangeServiceStatus;
@@ -126,7 +124,6 @@ prompt the user if the location service permissions have not changed.
 ///---------------------------------------------------------------------------------------
 /// @name Creating the Location Service
 ///---------------------------------------------------------------------------------------
-
 
 /** Returns a UALocationService object with the given purpose. The purpose
  string is passed to the UALocationProviders and set on the CLLocationManager. 
@@ -192,10 +189,14 @@ prompt the user if the location service permissions have not changed.
 /// @name Location Service Authorization
 ///---------------------------------------------------------------------------------------
 
-
 /** Returns YES if location services are enabled and authorized, NO in all other cases
  Only available on iOS 4.2 or greater
  */
 - (BOOL)isLocationServiceEnabledAndAuthorized;
 
+///---------------------------------------------------------------------------------------
+/// @name Analytics 
+///---------------------------------------------------------------------------------------
+
+// TODO add method to send an analytics object to urban airship
 @end

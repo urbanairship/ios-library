@@ -163,7 +163,6 @@
 		BBB87D62150574DE00971CEC /* UALocationEventLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */; };
 		BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */; };
 		BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */; };
-		BBB87D65150574DE00971CEC /* UALocationUtilsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5E150574DE00971CEC /* UALocationUtilsTest.m */; };
 		BBB87D671505758100971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87D72150575D200971CEC /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; };
 		BBB87D73150575D200971CEC /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1A4A122DB77000522B4E /* UAirship.h */; };
@@ -282,10 +281,6 @@
 		BBB87E2615057C7F00971CEC /* UALocationServicesCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1115057C7F00971CEC /* UALocationServicesCommon.h */; };
 		BBB87E2715057C7F00971CEC /* UALocationServicesCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1215057C7F00971CEC /* UALocationServicesCommon.m */; };
 		BBB87E2815057C7F00971CEC /* UALocationServicesCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1215057C7F00971CEC /* UALocationServicesCommon.m */; };
-		BBB87E2915057C7F00971CEC /* UALocationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1315057C7F00971CEC /* UALocationUtils.h */; };
-		BBB87E2A15057C7F00971CEC /* UALocationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1315057C7F00971CEC /* UALocationUtils.h */; };
-		BBB87E2B15057C7F00971CEC /* UALocationUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1415057C7F00971CEC /* UALocationUtils.m */; };
-		BBB87E2C15057C7F00971CEC /* UALocationUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1415057C7F00971CEC /* UALocationUtils.m */; };
 		BBB87E2D15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */; };
 		BBB87E2E15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */; };
 		BBB87E2F15057C7F00971CEC /* UASignificantChangeProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */; };
@@ -519,7 +514,6 @@
 		BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventLogicTests.m; sourceTree = "<group>"; };
 		BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationProviderTests.m; sourceTree = "<group>"; };
 		BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServiceTest.m; sourceTree = "<group>"; };
-		BBB87D5E150574DE00971CEC /* UALocationUtilsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationUtilsTest.m; sourceTree = "<group>"; };
 		BBB87D661505758100971CEC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBB87DED150575D200971CEC /* libAirshipLibGcov.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAirshipLibGcov.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBB87DEF1505777500971CEC /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
@@ -532,8 +526,6 @@
 		BBB87E1015057C7F00971CEC /* UALocationServiceDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationServiceDelegate.h; sourceTree = "<group>"; };
 		BBB87E1115057C7F00971CEC /* UALocationServicesCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationServicesCommon.h; sourceTree = "<group>"; };
 		BBB87E1215057C7F00971CEC /* UALocationServicesCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesCommon.m; sourceTree = "<group>"; };
-		BBB87E1315057C7F00971CEC /* UALocationUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationUtils.h; sourceTree = "<group>"; };
-		BBB87E1415057C7F00971CEC /* UALocationUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationUtils.m; sourceTree = "<group>"; };
 		BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASignificantChangeProvider.h; sourceTree = "<group>"; };
 		BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASignificantChangeProvider.m; sourceTree = "<group>"; };
 		BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAStandardLocationProvider.h; sourceTree = "<group>"; };
@@ -759,7 +751,6 @@
 				BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */,
 				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
 				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
-				BBB87D5E150574DE00971CEC /* UALocationUtilsTest.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
 				7BB679661429357100B877DB /* Frameworks */,
@@ -924,8 +915,6 @@
 				BBB87E1015057C7F00971CEC /* UALocationServiceDelegate.h */,
 				BBB87E1115057C7F00971CEC /* UALocationServicesCommon.h */,
 				BBB87E1215057C7F00971CEC /* UALocationServicesCommon.m */,
-				BBB87E1315057C7F00971CEC /* UALocationUtils.h */,
-				BBB87E1415057C7F00971CEC /* UALocationUtils.m */,
 				BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */,
 				BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */,
 				BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */,
@@ -1084,7 +1073,6 @@
 				BBB87E2015057C7F00971CEC /* UALocationService.h in Headers */,
 				BBB87E2415057C7F00971CEC /* UALocationServiceDelegate.h in Headers */,
 				BBB87E2615057C7F00971CEC /* UALocationServicesCommon.h in Headers */,
-				BBB87E2A15057C7F00971CEC /* UALocationUtils.h in Headers */,
 				BBB87E2E15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */,
 				BBB87E3215057C7F00971CEC /* UAStandardLocationProvider.h in Headers */,
 				BBB87E3815057CF200971CEC /* UABaseLocationProvider.h in Headers */,
@@ -1147,7 +1135,6 @@
 				BBB87E1F15057C7F00971CEC /* UALocationService.h in Headers */,
 				BBB87E2315057C7F00971CEC /* UALocationServiceDelegate.h in Headers */,
 				BBB87E2515057C7F00971CEC /* UALocationServicesCommon.h in Headers */,
-				BBB87E2915057C7F00971CEC /* UALocationUtils.h in Headers */,
 				BBB87E2D15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */,
 				BBB87E3115057C7F00971CEC /* UAStandardLocationProvider.h in Headers */,
 				BBB87E3715057CF200971CEC /* UABaseLocationProvider.h in Headers */,
@@ -1437,7 +1424,6 @@
 				BBB87D62150574DE00971CEC /* UALocationEventLogicTests.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
-				BBB87D65150574DE00971CEC /* UALocationUtilsTest.m in Sources */,
 				BBB87DF11505777500971CEC /* UALocationTestUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1490,7 +1476,6 @@
 				BBB87E1C15057C7F00971CEC /* UALocationEvent.m in Sources */,
 				BBB87E2215057C7F00971CEC /* UALocationService.m in Sources */,
 				BBB87E2815057C7F00971CEC /* UALocationServicesCommon.m in Sources */,
-				BBB87E2C15057C7F00971CEC /* UALocationUtils.m in Sources */,
 				BBB87E3015057C7F00971CEC /* UASignificantChangeProvider.m in Sources */,
 				BBB87E3415057C7F00971CEC /* UAStandardLocationProvider.m in Sources */,
 				BBB87E3A15057CF200971CEC /* UABaseLocationProvider.m in Sources */,
@@ -1545,7 +1530,6 @@
 				BBB87E1B15057C7F00971CEC /* UALocationEvent.m in Sources */,
 				BBB87E2115057C7F00971CEC /* UALocationService.m in Sources */,
 				BBB87E2715057C7F00971CEC /* UALocationServicesCommon.m in Sources */,
-				BBB87E2B15057C7F00971CEC /* UALocationUtils.m in Sources */,
 				BBB87E2F15057C7F00971CEC /* UASignificantChangeProvider.m in Sources */,
 				BBB87E3315057C7F00971CEC /* UAStandardLocationProvider.m in Sources */,
 				BBB87E3915057CF200971CEC /* UABaseLocationProvider.m in Sources */,

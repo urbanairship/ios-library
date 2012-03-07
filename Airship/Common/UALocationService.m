@@ -28,7 +28,6 @@
 #import "UALocationService_Private.h"
 #import "UABaseLocationProvider.h"
 #import "UAGlobal.h"
-#import "UALocationUtils.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
 #import "UAAnalytics.h"
@@ -430,16 +429,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark UALocationEvent Analytics
 
 - (void)sendLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
-    UALocationEvent *event = [self createLocationEventWithLocation:location andProvider:provider];
+    UALocationEvent *event = nil;
     if (provider == standardLocationProvider_) {
-        [event addDataWithValue:UALocationEventUpdateTypeCONTINUOUS forKey:UALocationEventUpdateTypeKey];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeCONTINUOUS];
     }
     if (provider == significantChangeProvider_) {
-        [event addDataWithValue:UALocationEventUpdateTypeCHANGE forKey:UALocationEventUpdateTypeKey];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeCHANGE];
     }
     if (provider == singleLocationProvider_) {
-        [event addDataWithValue:UALocationEventUpdateTypeSINGLE forKey:UALocationEventUpdateTypeKey];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSINGLE];
     }
+
     [[UAirship shared].analytics addEvent:event];
 }
 
@@ -485,31 +485,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 
-//The context includes all the data necessary for a 
-//location event. These are:
-//
-//"lat" : "31.3847" (required, DDD.dddd... string double)
-//"long": "32.3847" (required, DDD.dddd... string double)
-//"requested_accuracy": "10.0,100.0,NONE" (required, requested accuracy in meters as a string double)
-//"update_type": "CHANGE, CONTINUOUS, SINGLE, NONE" (required - string enum)
-//"provider": "GPS, NETWORK, PASSIVE, UNKNOWN" (required - string enum)
-//"update_dist": "10.0,100.0,NONE" (required - string double distance in meters, or NONE if not available applicable)
-//"h_accuracy": "10.0, NONE" (required, string double - actual horizontal accuracy in meters, or NONE if not available)
-//"v_accuracy": "10.0, NONE" (required, string double - actual vertical accuracy in meters, or NONE if not available)
-
-// This is tested in a application test, and will show up red in the code coverage tool
-- (UALocationEvent*)createLocationEventWithLocation:(CLLocation*)location andProvider:(id<UALocationProviderProtocol>)provider {
-    NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    [context setValue:[UALocationUtils stringFromDouble:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
-    [context setValue:[UALocationUtils stringFromDouble:provider.locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
-    // update_dist
-    [context setValue:[UALocationUtils stringFromDouble:provider.locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey];
-    [context setValue:provider.provider forKey:UALocationEventProviderKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
-    [context setValue:[UALocationUtils stringFromDouble:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
-    return [UALocationEvent locationEventWithContext:context];
-}
 
 @end
 

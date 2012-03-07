@@ -27,7 +27,6 @@
 #import "UABaseLocationProvider.h"
 #import "UAGlobal.h"
 #import "UAEvent.h"
-#import "UALocationUtils.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
@@ -66,7 +65,14 @@
 }
 
 #pragma mark -
-#pragma mark Purpose Accessors
+#pragma mark CLLocationManager Accessors
+
+- (void)setLocationManager:(CLLocationManager *)locationManager {
+    [locationManager_ autorelease];
+    locationManager_ = [locationManager retain];
+    locationManager.delegate = self;
+    self.serviceStatus = UALocationProviderNotUpdating;
+}
 
 - (void)setPurpose:(NSString *)purpose_ {
     locationManager_.purpose = purpose_;
@@ -76,13 +82,20 @@
     return locationManager_.purpose;
 }
 
-#pragma mark -
-#pragma mark CLLocationManager Accessors
+- (CLLocationDistance)distanceFilter {
+    return locationManager_.distanceFilter;
+}
 
-- (void)setLocationManager:(CLLocationManager *)locationManager {
-    [locationManager_ autorelease];
-    locationManager_ = [locationManager retain];
-    locationManager.delegate = self;
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter{
+    locationManager_.distanceFilter = distanceFilter;
+}
+
+- (CLLocationAccuracy)desiredAccuracy{
+    return locationManager_.desiredAccuracy;
+}
+
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy{
+    locationManager_.desiredAccuracy = desiredAccuracy;
 }
 
 

@@ -27,7 +27,8 @@
 
 /**
  This is the base class for location providers. You should not
- implement this class directly
+ implement this class directly. See the documentation for CLLocationManager for
+ CLLocationManager details. https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html
  */
 
 @interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol> {
@@ -37,12 +38,47 @@
     UALocationServiceProviderType *provider_;
 }
 
+///---------------------------------------------------------------------------------------
+/// @name CLLocationManager related methods
+///---------------------------------------------------------------------------------------
+
 /** 
  Location manager used for providing location data. Setting this value has
  the side effect of assigning this class as the delegate of the
  new CLLocationManager
  */
 @property (nonatomic, retain) CLLocationManager *locationManager;
+
+/// The distance filter one the locationManager
+- (CLLocationDistance)distanceFilter;
+/** Changes the distanceFilter on the locationManager
+ @param The new distance filter
+ */
+- (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+/// The desired accuracy currently set on the locationManager
+- (CLLocationAccuracy)desiredAccuracy;
+/** Changes the desiredAccuracy on the locationManager
+ @param desiredAccuracy The new desiredAccuracy
+ */
+- (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+
+/**
+ Current purpose attached to the CLLocationMananger locationManager
+ @return Current purpose on the locationManager
+ */
+- (NSString*)purpose;
+
+/**
+ Sets the purpose on the CLLocationManager locationManger which is displayed to the user
+ when the UIAlertView is displayed asking the user for locaiton permission
+ @param newPurpose String to be set on the locationManager
+ */
+- (void)setPurpose:(NSString*)newPurpose;
+
+///---------------------------------------------------------------------------------------
+/// @name Location Service methods
+///---------------------------------------------------------------------------------------
+
 
 /// Delegate that receives location updates 
 @property (nonatomic, assign) id <UALocationProviderDelegate> delegate;
@@ -60,19 +96,6 @@
 
 /// Provider type must be set by subclasses 
 @property (nonatomic, copy) UALocationServiceProviderType *provider;
-
-/**
- Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- when the UIAlertView is displayed asking the user for locaiton permission
- @param newPurpose String to be set on the locationManager
- */
-- (void)setPurpose:(NSString*)newPurpose;
-
-/**
- Current purpose attached to the CLLocationMananger locationManager
- @return Current purpose on the locationManager
- */
-- (NSString*)purpose;
 
 ///---------------------------------------------------------------------------------------
 /// @name Creating a UABaseLocationProvider
@@ -99,17 +122,19 @@
 - (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation;
 
 ///---------------------------------------------------------------------------------------
-/// @name Methods to override
+/// @name Starting and stopping location services
 ///---------------------------------------------------------------------------------------
 
 /**
  Empty method meant to be overridden. 
- @warning Default implementation does nothing
+ @warning This method only controls the service status on this object. Call super when
+ overriding this method
  */
 - (void)startReportingLocation;
 /**
  Empty method meant to be overridden. 
- @warning Default implementation does nothing
+ @warning This method only controls the service status on this object. Call super when
+ overriding this method
  */
 - (void)stopReportingLocation;
 @end

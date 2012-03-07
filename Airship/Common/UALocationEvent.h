@@ -45,17 +45,48 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeCONTINUOUS;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSINGLE;
 extern UALocationEventUpdateType * const UALocationEventUpdatetypeNONE;
 
-
+/** A UALocationEvent captures all the necessary information for 
+ UAAnalytics
+ */
 
 @interface UALocationEvent : UAEvent
 
 
+///---------------------------------------------------------------------------------------
+/// @name Object Creation
+///---------------------------------------------------------------------------------------
+
+/** Create a UALocationEvent
+ @param context A dictionary populated with all required data
+ @return A UALocationEvent populated with appropriate values
+ */
 - (id)initWithLocationContext:(NSDictionary*)context;
 
+/** Creates a UALocationEvent parsing the necessary data from the method parameters
+ @param location Location going to UAAnalytics
+ @param provider Provider that produced the location
+ @param updateType One of the UALocationEvent updated types, see header for more details
+ @return UALocationEvent populated with the necessary values
+ */
 - (id)initWithLocation:(CLLocation*)location 
-              provider:(UALocationServiceProviderType*)provider 
-       desiredAccuracy:(CLLocationAccuracy)desiredAccuracy 
-     andDistanceFilter:(CLLocationDistance)distanceFilter;
+              provider:(id<UALocationProviderProtocol>)provider 
+         andUpdateType:(UALocationEventUpdateType*)updateType; 
 
-+ (UALocationEvent*)locationEventWithContext:(NSDictionary*)context;
++ (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
+                                     provider:(id<UALocationProviderProtocol>)provider 
+                                andUpdateType:(UALocationEventUpdateType*)updateType;
+
+///---------------------------------------------------------------------------------------
+/// @name Convert a double to an NSString
+///---------------------------------------------------------------------------------------
+
+/** Converts a double to a string keeping seven digit of precision 
+ Seven digits produces sub meter accuracy at the equator.
+ http://en.wikipedia.org/wiki/Decimal_degrees
+ @param doubleValue The double to convert.
+ @return Returns an NSString representing the 7 digit value
+ */
+- (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue;
+
+
 @end

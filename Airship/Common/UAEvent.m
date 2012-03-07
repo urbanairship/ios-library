@@ -28,7 +28,6 @@
 #import "UAAnalytics.h"
 #import "UAUser.h"
 #import "UAUtils.h"
-#import "UALocationUtils.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
