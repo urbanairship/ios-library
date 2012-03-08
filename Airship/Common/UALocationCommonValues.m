@@ -13,7 +13,7 @@ NSString * const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
 NSString *const UALocationServicePurposeKey = @"UALocationServicePurpose";
 UALocationServiceProviderType * const UALocationServiceProviderGps = @"GPS";
 UALocationServiceProviderType *const UALocationServiceProviderNetwork = @"NETWORK";
-UALocationServiceProviderType *const UALocationServiceProviderUNKNOWN = @"UNKNOWN";
+UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOWN";
 
 @implementation UALocationCommonValues
 

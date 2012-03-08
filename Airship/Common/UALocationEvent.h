@@ -42,10 +42,10 @@ extern UALocationEventAnalyticsKey * const UALocationEventVerticalAccuracyKey;
 
 typedef NSString UALocationEventUpdateType;
 extern UALocationEventUpdateType * const UALocationEventAnalyticsType;
-extern UALocationEventUpdateType * const UALocationEventUpdateTypeCHANGE;
-extern UALocationEventUpdateType * const UALocationEventUpdateTypeCONTINUOUS;
-extern UALocationEventUpdateType * const UALocationEventUpdateTypeSINGLE;
-extern UALocationEventUpdateType * const UALocationEventUpdatetypeNONE;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeChange;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
+extern UALocationEventUpdateType * const UALocationEventUpdatetypeNone;
 
 /** A UALocationEvent captures all the necessary information for 
  UAAnalytics

@@ -37,7 +37,7 @@ extern NSString *const UALocationServicePurposeKey;
 typedef NSString UALocationServiceProviderType;
 extern UALocationServiceProviderType * const UALocationServiceProviderGps; 
 extern UALocationServiceProviderType *const UALocationServiceProviderNetwork;
-extern UALocationServiceProviderType *const UALocationServiceProviderUNKNOWN;
+extern UALocationServiceProviderType *const UALocationServiceProviderUnknown;
 
 @interface UALocationCommonValues : NSObject
 

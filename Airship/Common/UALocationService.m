@@ -431,13 +431,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)sendLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
     UALocationEvent *event = nil;
     if (provider == standardLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeCONTINUOUS];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeContinuous];
     }
     if (provider == significantChangeProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeCHANGE];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeChange];
     }
     if (provider == singleLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSINGLE];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSingle];
     }
 
     [[UAirship shared].analytics addEvent:event];

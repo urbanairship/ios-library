@@ -57,7 +57,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService];
     STAssertNotNil(base, nil);
-    STAssertEquals(base.provider, UALocationServiceProviderUNKNOWN, @"base.provider should be UNKNOWN");
+    STAssertEquals(base.provider, UALocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
     STAssertEqualObjects(mockUALocationService, base.delegate, nil);
     [base release];
 }

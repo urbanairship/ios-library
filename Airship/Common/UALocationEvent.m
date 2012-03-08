@@ -46,10 +46,10 @@ UALocationEventAnalyticsKey * const UALocationEventVerticalAccuracyKey = @"v_acc
 #pragma mark UALocationEventUpdateType
 
 UALocationEventUpdateType * const UALocationEventAnalyticsType = @"location";
-UALocationEventUpdateType * const UALocationEventUpdateTypeCHANGE = @"CHANGE";
-UALocationEventUpdateType * const UALocationEventUpdateTypeCONTINUOUS = @"CONTINUOUS";
-UALocationEventUpdateType * const UALocationEventUpdateTypeSINGLE = @"SINGLE";
-UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
+UALocationEventUpdateType * const UALocationEventUpdateTypeChange = @"CHANGE";
+UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous = @"CONTINUOUS";
+UALocationEventUpdateType * const UALocationEventUpdateTypeSingle = @"SINGLE";
+UALocationEventUpdateType * const UALocationEventUpdatetypeNone = @"NONE";
 
 #pragma mark -
 #pragma mark Initialization
@@ -64,7 +64,7 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
          andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:provider.provider forKey:UALocationEventProviderKey];
-    [self setValue:updateType forKey:UALocationEventUpdateTypeKey];
+    [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [self populateDictionary:context withLocationValues:location];
     [self populateDictionary:context withLocationProviderValues:provider];
     return [self initWithLocationContext:context];
@@ -75,7 +75,7 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
        andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
-    // Set provider
+    [context setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     [self populateDictionary:context withLocationValues:location];
     [self populateDictionary:context withLocationManagerValues:locationManager];
     return [self initWithLocationContext:context];
