@@ -23,7 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <CoreLocation/CoreLocation.h>
-#import "UALocationServicesCommon.h"
+#import "UALocationProviderDelegate.h"
+#import "UALocationProviderProtocol.h"
+#import "UALocationCommonValues.h"
 
 /**
  This is the base class for location providers. You should not

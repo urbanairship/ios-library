@@ -22,8 +22,10 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+#import <CoreLocation/CoreLocation.h>
 #import "UAEvent.h"
-#import "UALocationServicesCommon.h"
+#import "UALocationProviderProtocol.h"
 
 /** Keys and values for location analytics */
 typedef NSString UALocationEventAnalyticsKey;
@@ -72,13 +74,25 @@ extern UALocationEventUpdateType * const UALocationEventUpdatetypeNONE;
               provider:(id<UALocationProviderProtocol>)provider 
          andUpdateType:(UALocationEventUpdateType*)updateType; 
 
+/** Creates a UALocationEvent parsing the necessary data form the method parameters.
+ @param location Location going to UAAnalytics
+ @param locationManager The location manager that produced the location
+ @param updateType One of the UALocationEvent updated types, see header for more details
+ @return UALocationEvent populated with the necessary values
+ */
+ 
 - (id)initWithLocation:(CLLocation*)location 
        locationManager:(CLLocationManager*)locationManager 
-       andProviderType:(UALocationEventUpdateType*)updateType;
+         andUpdateType:(UALocationEventUpdateType*)updateType;
 
 + (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
                                      provider:(id<UALocationProviderProtocol>)provider 
                                 andUpdateType:(UALocationEventUpdateType*)updateType;
+
++ (UALocationEvent*)locationEventWithLocation:(CLLocation*)loction 
+                              locationManager:(CLLocationManager*)locationManager 
+                                andUpdateType:(UALocationEventUpdateType*)updateType;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Support Methods
@@ -99,6 +113,8 @@ extern UALocationEventUpdateType * const UALocationEventUpdatetypeNONE;
  @return Returns an NSString representing the 7 digit value
  */
 - (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue;
+
+
 
 
 @end

@@ -63,17 +63,19 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
               provider:(id<UALocationProviderProtocol>)provider 
          andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    
-
+    [context setValue:provider.provider forKey:UALocationEventProviderKey];
+    [self setValue:updateType forKey:UALocationEventUpdateTypeKey];
+    [self populateDictionary:context withLocationValues:location];
+    [self populateDictionary:context withLocationProviderValues:provider];
     return [self initWithLocationContext:context];
-    
 }
 
 - (id)initWithLocation:(CLLocation*)location 
        locationManager:(CLLocationManager*)locationManager 
-       andProviderType:(UALocationEventUpdateType*)updateType {
+       andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
+    // Set provider
     [self populateDictionary:context withLocationValues:location];
     [self populateDictionary:context withLocationManagerValues:locationManager];
     return [self initWithLocationContext:context];
@@ -116,13 +118,21 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
 
 
 - (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue {
-    return [NSString stringWithFormat:@".7f", doubleValue];
+    return [NSString stringWithFormat:@"%.7f", doubleValue];
 }
 
 + (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
                                      provider:(id<UALocationProviderProtocol>)provider 
                                 andUpdateType:(UALocationEventUpdateType*)updateType {
     return [[[UALocationEvent alloc] initWithLocation:location provider:provider andUpdateType:updateType] autorelease];
+}
+
++ (UALocationEvent*)locationEventWithLocation:(CLLocation*)loction 
+                             locationManager:(CLLocationManager*)locationManager 
+                                andUpdateType:(UALocationEventUpdateType*)updateType {
+    return [[[UALocationEvent alloc] initWithLocation:loction 
+                                      locationManager:locationManager 
+                                        andUpdateType:updateType] autorelease];  
 }
 
 

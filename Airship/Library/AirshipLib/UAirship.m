@@ -33,10 +33,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
-#import "UALocationServicesCommon.h"
+#import "UALocationCommonValues.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
+#define kUALocationServiceDefaultPurpose @"Urban Airship Location Services"
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";

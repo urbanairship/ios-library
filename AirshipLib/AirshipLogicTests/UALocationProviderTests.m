@@ -9,11 +9,10 @@
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import "UALocationTestUtils.h"
-#import "UALocationServicesCommon.h"
+#import "UALocationCommonValues.h"
 #import "UABaseLocationProvider.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
-#import "UALocationServicesCommon.h"
 
 
 /** testing all the delegates in one class because
@@ -69,7 +68,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(standard, nil);
-    STAssertEquals(standard.provider, UALocationServiceProviderGPS, @"provider should be GPS");
+    STAssertEquals(standard.provider, UALocationServiceProviderGps, @"provider should be GPS");
     STAssertEqualObjects(mockUALocationService, standard.delegate, nil);
 }
 
@@ -77,7 +76,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UASignificantChangeProvider *delegate = [UASignificantChangeProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(delegate, nil);
-    STAssertEquals(delegate.provider, UALocationServiceProviderNETWORK, @"provider should be NETWORK");
+    STAssertEquals(delegate.provider, UALocationServiceProviderNetwork, @"provider should be NETWORK");
     STAssertEqualObjects(mockUALocationService, delegate.delegate, nil);
 }
 

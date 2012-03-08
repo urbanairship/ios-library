@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UALocationServicesCommon.h"
 #import "UALocationService.h"
 #import "UALocationService_Private.h"
 #import "UABaseLocationProvider.h"
@@ -114,7 +113,7 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     self = [self init];
     if(self){
         if (purpose){
-            purpose_ = [purpose copy];
+            [self setPurpose:purpose];
             standardLocationProvider_.purpose = purpose;
         }
     }

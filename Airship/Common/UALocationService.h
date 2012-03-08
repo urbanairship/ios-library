@@ -25,9 +25,41 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import <Availability.h>
-#import "UALocationServicesCommon.h"
-#import "UALocationServiceDelegate.h"
+#import "UALocationCommonValues.h"
+#import "UALocationProviderDelegate.h"
 #import "UALocationEvent.h"
+
+@class UALocationService;
+/** The UALocationServiceDelegate receives 
+ location updates from any of the UALocationServices
+ */
+@protocol UALocationServiceDelegate <NSObject>
+
+///---------------------------------------------------------------------------------------
+/// @name UALocationServiceDelegate
+///---------------------------------------------------------------------------------------
+
+@optional
+/** Updates the delegate when the location service generates an error
+ @param service Location service that generated the error
+ @param error Error passed from a CLLocationManager
+ */
+- (void)UALocationService:(UALocationService*)service didFailWithError:(NSError*)error;
+/** Updates the delegate when authorization status has changed
+ @warning *Important:* Available on iOS 4.2 or greater only
+ @param service Location service reporting the change
+ @param status  The updated location authorization status
+ */
+- (void)UALocationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
+/** Delegate callbacks for updated locations only occur while the app is in the foreground. If you need background location updates
+ create a separate CLLocationManager
+ @warning *Important:* This call is not made to the delegate when the service is updating in the background
+ @param service The service reporting the location update
+ @param newLocation The updated location reported by the service
+ @param oldLocation The previously reported location
+ */
+- (void)UALocationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+@end
 
 @class UAStandardLocationProvider;
 @class UASignificantChangeProvider;

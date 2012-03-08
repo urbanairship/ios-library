@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import "UAStandardLocationProvider.h"
-#import "UALocationServicesCommon.h"
+#import "UALocationCommonValues.h"
 
 @implementation UAStandardLocationProvider
 
 - (id)init {
     self = [super init];
     if (self){
-        provider_ = UALocationServiceProviderGPS; 
+        provider_ = UALocationServiceProviderGps; 
     }
     return self;
 }

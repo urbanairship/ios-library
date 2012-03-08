@@ -27,7 +27,7 @@
 #import "UAirship.h"
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
-#import "UALocationServicesCommon.h"
+#import "UALocationCommonValues.h"
 #import "UALocationService.h"
 #import "UALocationService_Private.h"
 #import "UAStandardLocationProvider.h"

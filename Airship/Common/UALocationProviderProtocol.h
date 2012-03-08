@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2011 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,15 +23,18 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UALocationService.h"
-
-@implementation UALocationServicesCommon
-
-    NSString *const UALocationServiceAllowedKey = @"UALocationServiceAllowed";
-    NSString *const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
-    NSString *const UALocationServicePurposeKey = @"UALocationServicePurpose";
-    UALocationServiceProviderType *const UALocationServiceProviderGPS = @"GPS";
-    UALocationServiceProviderType *const UALocationServiceProviderNETWORK = @"NETWORK";
-    UALocationServiceProviderType *const UALocationServiceProviderUNKNOWN = @"UNKNOWN";
-
+/** Required for building a location provider */
+#import "UALocationCommonValues.h"
+@protocol UALocationProviderProtocol <NSObject>
+@required
+/// Required location manager for any location services
+@property (nonatomic, retain) CLLocationManager *locationManager;
+/// Current status of the location provider
+@property (nonatomic, assign) UALocationProviderStatus serviceStatus;
+/// This is a required parameter on the CLLocationManager and is presented to the user for authentication
+@property (nonatomic, copy) NSString *provider;
+/// Starts updating location
+- (void)startReportingLocation;
+/// Stops providing location updates
+- (void)stopReportingLocation;
 @end

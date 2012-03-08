@@ -21,6 +21,8 @@
     CLLocation *location;
 }
 @end
+// TODO: Check on whether the session_id is actually going up if you take it out of the 
+// payload
 
 /**
  *  The context includes all the data necessary for a 
@@ -48,28 +50,25 @@
     RELEASE(location);
 }
 
-- (void)testUALocationEventInit {
-    // Basic init
-    UALocationEvent *event = [[[UALocationEvent alloc] initWithLocationContext:[NSDictionary dictionaryWithObject:@"STUFF" forKey:@"CATS"]] autorelease];
-    STAssertEquals(@"STUFF", [event.data valueForKey:@"CATS"], nil);
-    /////
-    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-    CLLocationAccuracy locationAccuracy =  42.0;
-    CLLocationDistance distanceFilter = 7.0;
-    event = [[[UALocationEvent alloc] initWithLocation:pdx 
-                                             provider:UALocationServiceProviderGPS 
-                                      desiredAccuracy:locationAccuracy 
-                                    andDistanceFilter:distanceFilter] autorelease];
-    STAssertEquals(pdx.coordinate.latitude, [[event.data valueForKey:UALocationEventLatitudeKey] doubleValue], nil);
-    STAssertEquals(pdx.coordinate.longitude, [[event.data valueForKey:UALocationEventLongitudeKey] doubleValue], nil);
-    STAssertEquals(pdx.horizontalAccuracy, [[event.data valueForKey:UALocationEventHorizontalAccuracyKey] doubleValue], nil);
-    STAssertEquals(pdx.verticalAccuracy, [[event.data valueForKey:UALocationEventVerticalAccuracyKey] doubleValue], nil);
-    STAssertEquals(UALocationServiceProviderGPS, (UALocationServiceProviderType*)[event.data valueForKey:UALocationEventProviderKey], nil);
-    STAssertEquals(locationAccuracy, [[event.data valueForKey:UALocationEventDesiredAccuracyKey] doubleValue], nil);
-    STAssertEquals(distanceFilter, [[event.data valueForKey:UALocationEventDistanceFilterKey] doubleValue], nil);
-    STAssertEquals(YES, [[event.data valueForKey:UALocationEventForegroundKey] boolValue], nil);
-    NSDictionary *session = [UAirship shared].analytics.session;
-    STAssertEquals([session valueForKey:UALocationEventSessionIDKey], [event.data valueForKey:UALocationEventSessionIDKey], nil);
+- (void)testInitWithLocationManager {
+    CLLocationManager *locationManager = [[[CLLocationManager alloc] init] autorelease];
+    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
+    UALocationEvent *event = [UALocationEvent locationEventWithLocation:PDX 
+                                                        locationManager:locationManager 
+                                                          andUpdateType:UALocationEventUpdateTypeSINGLE];
+    NSDictionary *data = event.data;
+    
+    // 0.000001 equals sub meter accuracy at the equator. 
+    STAssertEqualsWithAccuracy(PDX.coordinate.latitude, [[data valueForKey:UALocationEventLatitudeKey] doubleValue], 0.000001, nil);
+    STAssertEqualsWithAccuracy(PDX.coordinate.longitude, [[data valueForKey:UALocationEventLongitudeKey] doubleValue],0.000001 ,nil);
+    STAssertEquals(PDX.horizontalAccuracy, [[data valueForKey:UALocationEventHorizontalAccuracyKey] doubleValue],nil);
+    STAssertEquals(PDX.verticalAccuracy, [[data valueForKey:UALocationEventVerticalAccuracyKey] doubleValue],nil);
+    STAssertEquals(locationManager.desiredAccuracy, [[data valueForKey:UALocationEventDesiredAccuracyKey] doubleValue],nil);
+    // update_type
+    STAssertEquals(locationManager.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] doubleValue] ,nil);
+    STAssertTrue([UALocationEventUpdateTypeSINGLE isEqualToString:[data valueForKey:UALocationEventUpdateTypeKey]] ,nil);
+    STAssertTrue([UAAnalyticsTrueValue isEqualToString:[data valueForKey:UALocationEventForegroundKey]], nil);
+    // SETUP PROVIDER
 }
 
 
