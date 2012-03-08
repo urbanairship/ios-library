@@ -63,16 +63,37 @@ UALocationEventUpdateType * const UALocationEventUpdatetypeNONE = @"NONE";
               provider:(id<UALocationProviderProtocol>)provider 
          andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    [context setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
-    [context setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
-    [context setValue:[self stringFromDoubleToSevenDigits:provider.locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
-    // update_dist
-    [context setValue:[self stringFromDoubleToSevenDigits:provider.locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey];
-    [context setValue:provider forKey:UALocationEventProviderKey];
-    [context setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
-    [context setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
+    
+
     return [self initWithLocationContext:context];
     
+}
+
+- (id)initWithLocation:(CLLocation*)location 
+       locationManager:(CLLocationManager*)locationManager 
+       andProviderType:(UALocationEventUpdateType*)updateType {
+    NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
+    [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
+    [self populateDictionary:context withLocationValues:location];
+    [self populateDictionary:context withLocationManagerValues:locationManager];
+    return [self initWithLocationContext:context];
+}
+
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location {
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
+}
+
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager *)locationManager {
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
+    // update_dist
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey]; 
+}
+
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider {
+    [self populateDictionary:dictionary withLocationManagerValues:locationProvider.locationManager];
 }
 
 

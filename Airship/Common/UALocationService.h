@@ -27,7 +27,7 @@
 #import <Availability.h>
 #import "UALocationServicesCommon.h"
 #import "UALocationServiceDelegate.h"
-
+#import "UALocationEvent.h"
 
 @class UAStandardLocationProvider;
 @class UASignificantChangeProvider;
@@ -198,5 +198,20 @@ prompt the user if the location service permissions have not changed.
 /// @name Analytics 
 ///---------------------------------------------------------------------------------------
 
-// TODO add method to send an analytics object to urban airship
+/** Sends a location directly to Urban Airship. The required parameters are taken from the CLLocation and 
+ the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information
+ regarding the use of location in app. The possible values are:
+ 
+ - UALocationEventUpdateTypeCHANGE This is one of the periodic services, intended for the significant change or region monitoring service
+ - UALocationEventUpdateTypeCONTINUOUS This is meant for the standard location service.
+ - UALocationEventUpdateTypeSINGLE This is meant for a one time service, like the reportCurrentLocation method on this class
+ @param location A CLLocation 
+ @param locationManager The location manager that provided the location
+ @param updateTypeOrNil The update type as described above or nil. 
+ */
+- (void)sendLocation:(CLLocation*)location 
+ fromLocationManager:(CLLocationManager*)locationManager 
+      withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil;
+
+
 @end

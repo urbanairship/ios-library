@@ -30,9 +30,10 @@
 #import "UAGlobal.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
-#import "UAAnalytics.h"
 #import "UAirship.h"
 #import "UALocationEvent.h"
+#import "UAAnalytics.h"
+
 
 //#define kAnalyticsTrue @"true"
 //#define kAnalyticsFalse @"false"
@@ -443,6 +444,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [[UAirship shared].analytics addEvent:event];
 }
 
+- (void)sendLocation:(CLLocation*)location 
+ fromLocationManager:(CLLocationManager*)locationManager 
+      withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil {
+
+}
 
 #pragma mark -
 #pragma mark CLLocationManager Authorization for Location Services

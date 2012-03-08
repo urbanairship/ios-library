@@ -72,13 +72,25 @@ extern UALocationEventUpdateType * const UALocationEventUpdatetypeNONE;
               provider:(id<UALocationProviderProtocol>)provider 
          andUpdateType:(UALocationEventUpdateType*)updateType; 
 
+- (id)initWithLocation:(CLLocation*)location 
+       locationManager:(CLLocationManager*)locationManager 
+       andProviderType:(UALocationEventUpdateType*)updateType;
+
 + (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
                                      provider:(id<UALocationProviderProtocol>)provider 
                                 andUpdateType:(UALocationEventUpdateType*)updateType;
 
 ///---------------------------------------------------------------------------------------
-/// @name Convert a double to an NSString
+/// @name Support Methods
 ///---------------------------------------------------------------------------------------
+
+/** Creates a dictionary with the appropriate data gather from the location and locationManager
+ */
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location;
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager*)locationManager;
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
+
+
 
 /** Converts a double to a string keeping seven digit of precision 
  Seven digits produces sub meter accuracy at the equator.
