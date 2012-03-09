@@ -30,14 +30,21 @@ typedef enum {
     UALocationProviderUpdating
 } UALocationProviderStatus;
 
-extern NSString * const UALocationServiceAllowedKey;
-extern NSString * const UALocationServiceEnabledKey;  
-extern NSString *const UALocationServicePurposeKey; 
-
+// The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;
-extern UALocationServiceProviderType * const UALocationServiceProviderGps; 
-extern UALocationServiceProviderType *const UALocationServiceProviderNetwork;
-extern UALocationServiceProviderType *const UALocationServiceProviderUnknown;
+extern UALocationServiceProviderType *const uaLocationServiceProviderGps; 
+extern UALocationServiceProviderType *const uaLocationServiceProviderNetwork;
+extern UALocationServiceProviderType *const uaLocationServiceProviderUnknown;
+
+// These are the keys for the stored UALocationService values in the NSUserDefaults
+typedef NSString UALocationServiceNSDefaultsKey;
+extern UALocationServiceNSDefaultsKey *const uaLocationServiceAllowedKey;
+extern UALocationServiceNSDefaultsKey *const uaLocationServiceEnabledKey;  
+extern UALocationServiceNSDefaultsKey *const uaLocationServicePurposeKey; 
+extern UALocationServiceNSDefaultsKey *const uaStandardLocationServiceRestartKey;
+extern UALocationServiceNSDefaultsKey *const uaSignificantChangeServiceRestartKey;
+extern UALocationServiceNSDefaultsKey *const uaStandardLocationDistanceFilterKey;
+extern UALocationServiceNSDefaultsKey *const uaStandardLocationDesiredAccuracyKey;
 
 @interface UALocationCommonValues : NSObject
 

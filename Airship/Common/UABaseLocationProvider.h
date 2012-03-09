@@ -53,12 +53,15 @@
 
 /// The distance filter one the locationManager
 - (CLLocationDistance)distanceFilter;
+
 /** Changes the distanceFilter on the locationManager
  @param The new distance filter
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+
 /// The desired accuracy currently set on the locationManager
 - (CLLocationAccuracy)desiredAccuracy;
+
 /** Changes the desiredAccuracy on the locationManager
  @param desiredAccuracy The new desiredAccuracy
  */

@@ -56,8 +56,7 @@
 - (void)testInitWithDelegate {
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService];
-    STAssertNotNil(base, nil);
-    STAssertEquals(base.provider, UALocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
+    STAssertEquals(base.provider, uaLocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
     STAssertEqualObjects(mockUALocationService, base.delegate, nil);
     [base release];
 }
@@ -68,7 +67,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(standard, nil);
-    STAssertEquals(standard.provider, UALocationServiceProviderGps, @"provider should be GPS");
+    STAssertEquals(standard.provider, uaLocationServiceProviderGps, @"provider should be GPS");
     STAssertEqualObjects(mockUALocationService, standard.delegate, nil);
 }
 
@@ -76,7 +75,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UASignificantChangeProvider *delegate = [UASignificantChangeProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(delegate, nil);
-    STAssertEquals(delegate.provider, UALocationServiceProviderNetwork, @"provider should be NETWORK");
+    STAssertEquals(delegate.provider, uaLocationServiceProviderNetwork, @"provider should be NETWORK");
     STAssertEqualObjects(mockUALocationService, delegate.delegate, nil);
 }
 
@@ -99,7 +98,6 @@
     STAssertEquals(base.locationManager.desiredAccuracy, 5.0, nil);
     STAssertEquals(base.distanceFilter, 5.0, nil);
     STAssertEquals(base.desiredAccuracy, 5.0, nil);
-    
 }
 
 #pragma mark -

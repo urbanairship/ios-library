@@ -58,6 +58,8 @@
 #pragma mark Setup Teardown
 
 - (void)setUp {
+    // Only works on the first pass, values will change when accessed. When fresh values are needed in 
+    // user defaults call the setTestValuesInNSUserDefaults method
     [UAirship registerNSUserDefaults];
     yes = YES;
     no = NO;
@@ -75,66 +77,88 @@
 #pragma mark Basic Object Initialization
 
 // TODO: change the default settings after preliminary developmet is done for desiredAccuracy and distanceFilter
-- (void)testBasicInit
-{
-    STAssertTrue([@"TEST" isEqualToString:locationService.purpose], nil);
-    STAssertEquals(locationService.standardLocationServiceStatus, UALocationProviderNotUpdating, @"standard location service should not be updating");
-    STAssertEquals(locationService.significantChangeServiceStatus, UALocationProviderNotUpdating, @"significant locaiton service should not be updating");
-    STAssertEquals(locationService.singleLocationServiceStatus, UALocationProviderNotUpdating ,@"single location service should not be updating");
-    CLLocationManager *test = [[[CLLocationManager alloc] init] autorelease];
-    STAssertEquals(locationService.desiredAccuracy, test.desiredAccuracy, @"Default CLManger values should match UALocationService defaults");
-    STAssertEquals(locationService.distanceFilter, test.distanceFilter, @"Default CLManger values should match UALocationService defaults");
-    STAssertNotNil(locationService.standardLocationProvider, @"standardLocationService should exist for authorization callbacks");
-    // Don't test locationService.purpose, it only needs to be tested with NSUserDefaults, that's where it's stored
+- (void)testBasicInit{
+    [self setTestValuesInNSUserDefaults];
+    NSDictionary* userDefaults = [[NSUserDefaults standardUserDefaults] dictionaryForKey:UALocationServicePreferences];
+    UALocationService *basic = [[[UALocationService alloc] init] autorelease];
+    STAssertTrue([userDefaults isEqualToDictionary:basic.locationServiceValues], @"Location service values should match what's on disk");
+    UALocationService *service = [[[UALocationService alloc] initWithPurpose:@"test"] autorelease];
+    STAssertTrue([@"test" isEqualToString:service.purpose],nil);
+    STAssertNotNil(service.standardLocationProvider, nil);
 }
 
 
-- (void)testUALocationServiceInitializationWithNSUserDefaults {
+- (void)testUALocationServiceUpdatesValuesOnInit {
     [self setTestValuesInNSUserDefaults];
     [self swizzleCLLocationClassEnabledAndAuthorized];
     UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"CATS"] autorelease];
     STAssertTrue(localService.locationServiceAllowed, @"Default is NO, CLLManager swizzled to YES, updated value should be YES");
-    STAssertFalse(localService.locationServiceEnabled, @"Default val is NO");
+    STAssertFalse(localService.locationServiceEnabled, @"Default val is NO, value should now be YES");
     STAssertTrue([localService.purpose isEqualToString:@"CATS"], nil);
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 
 #pragma mark -
 #pragma mark Getters and Setters
-// Only test getters/setters that are outside of the norm, e.g. forwarding to other objects, writing to disk, etc. 
 
-#pragma mark Purpose
-- (void)testBaseLocationPurpose {
-    UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"CATS"] autorelease];
-    STAssertTrue([localService.standardLocationProvider.purpose isEqualToString:@"CATS"], @"purpose should be passed to the LocationProvider");
+// don't test the single location purpose, because it's transient and would not be changed once started
+
+- (void)testMinimumTime {
+    locationService.minimumTimeBetweenForegroundUpdates = 42.0;
+    STAssertTrue(locationService.minimumTimeBetweenForegroundUpdates == 42.0,nil);
 }
+- (void)testSetPurpose {
+    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
+    NSString* awsm = @"awesomeness";
+    locationService.purpose = awsm;
+    STAssertTrue([awsm isEqualToString:locationService.standardLocationProvider.purpose],nil);
+    STAssertTrue([awsm isEqualToString:locationService.significantChangeProvider.purpose], nil);
+}
+
+- (void)testStandardLocationGetSet {
+    locationService.standardLocationDesiredAccuracy = 10.0;
+    locationService.standardLocationDistanceFilter = 24.0;
+    UAStandardLocationProvider *standard = locationService.standardLocationProvider;
+    STAssertTrue(standard.distanceFilter == 24.0,nil);
+    STAssertTrue(standard.desiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.standardLocationDesiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.standardLocationDistanceFilter == 24.0,nil);
+}
+
+- (void)testSignificantChangeGetSet {
+    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
+    locationService.significantChangeProvider = significant;
+    locationService.significantChangeDesiredAccuracy = 10.0;
+    locationService.significantChangeDistanceFilter = 24.0;
+    STAssertTrue(significant.distanceFilter == 24.0,nil);
+    STAssertTrue(significant.desiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.significantChangeDesiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.significantChangeDistanceFilter == 24.0,nil);    
+}
+
+//- (void)testSingleLocationGetSet {
+//    STFail(@"not done");
+//}
 
 #pragma mark Location Setters
 - (void)testStandardLocationSetter {
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:nil] autorelease];
     id mockStandard = [OCMockObject partialMockForObject:standard];
-    id mockLocation = [OCMockObject partialMockForObject:standard.locationManager];
-    [[[mockLocation expect] andForwardToRealObject] setDistanceFilter:locationService.distanceFilter];
-    [[[mockLocation expect] andForwardToRealObject] setDesiredAccuracy:locationService.desiredAccuracy];
     [[[mockStandard expect] andForwardToRealObject] setDelegate:locationService];
     [[[mockStandard expect] andForwardToRealObject] setPurpose:locationService.purpose];
+    [[[mockStandard expect] andForwardToRealObject] setDistanceFilter:locationService.standardLocationDistanceFilter];
+    [[[mockStandard expect] andForwardToRealObject] setDesiredAccuracy:locationService.standardLocationDesiredAccuracy];
     locationService.standardLocationProvider = standard;
-    [mockLocation verify];
     [mockStandard verify];
     STAssertEqualObjects(standard, locationService.standardLocationProvider, nil);
-    
 }
 
 - (void)testSignificantChangeSetter {
     UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
     id mockSignificant = [OCMockObject partialMockForObject:significant];
-    id mockLocation = [OCMockObject partialMockForObject:significant.locationManager];
-    [[[mockLocation expect] andForwardToRealObject] setDistanceFilter:locationService.distanceFilter];
-    [[[mockLocation expect] andForwardToRealObject] setDesiredAccuracy:locationService.desiredAccuracy];
     [[[mockSignificant expect] andForwardToRealObject] setDelegate:locationService];
     [[[mockSignificant expect] andForwardToRealObject] setPurpose:locationService.purpose];
     locationService.significantChangeProvider = significant;
-    [mockLocation verify];
     [mockSignificant verify];
     STAssertEqualObjects(significant, locationService.significantChangeProvider, nil);
 }
@@ -162,17 +186,17 @@
 
 - (void)setTestValuesInNSUserDefaults {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:3];
-    [dictionary setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [dictionary setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceAllowedKey];
-    [dictionary setValue:@"CATS" forKey:UALocationServicePurposeKey];
+    [dictionary setValue:[NSNumber numberWithBool:NO] forKey:uaLocationServiceEnabledKey];
+    [dictionary setValue:[NSNumber numberWithBool:NO] forKey:uaLocationServiceAllowedKey];
+    [dictionary setValue:@"CATS" forKey:uaLocationServicePurposeKey];
     [[NSUserDefaults standardUserDefaults] setObject:dictionary forKey:UALocationServicePreferences];
 }
 
 - (void)testKeyValueObserving {
     // Stub out KVO callbacks
-    [[mockLocationService expect] observeValueForKeyPath:UALocationServiceEnabledKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
-    [[mockLocationService expect] observeValueForKeyPath:UALocationServiceAllowedKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
-    [[mockLocationService expect] observeValueForKeyPath:UALocationServicePurposeKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
+    [[mockLocationService expect] observeValueForKeyPath:uaLocationServiceEnabledKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
+    [[mockLocationService expect] observeValueForKeyPath:uaLocationServiceAllowedKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
+    [[mockLocationService expect] observeValueForKeyPath:uaLocationServicePurposeKey ofObject:locationService.locationServiceValues change:[OCMArg any] context:[OCMArg anyPointer]];
     // Trigger all the appropriate callbacks
     [locationService setLocationServiceEnabled:YES];
     [locationService setLocationServiceAllowed:YES];
@@ -180,16 +204,17 @@
     [mockLocationService verify];
 }
 
-- (void)testGetSetLocationServiceValues {
-    locationService.purpose = @"CATS";
-    STAssertTrue([locationService.purpose isEqualToString:@"CATS"],nil);
-    locationService.locationServiceAllowed = YES;
-    STAssertTrue(locationService.locationServiceAllowed, nil);
-    locationService.locationServiceEnabled = YES;
-    STAssertTrue(locationService.locationServiceEnabled, nil);
-    [locationService setValue:@"SuperCat" forLocationServiceKey:@"TESTCAT"];
-    STAssertTrue([@"SuperCat" isEqualToString:(NSString*)[locationService valueForLocationServiceKey:@"TESTCAT"]], nil);
-}
+
+//- (void)testGetSetLocationServiceValues {
+//    locationService.purpose = @"CATS";
+//    STAssertTrue([locationService.purpose isEqualToString:@"CATS"],nil);
+//    locationService.locationServiceAllowed = YES;
+//    STAssertTrue(locationService.locationServiceAllowed, nil);
+//    locationService.locationServiceEnabled = YES;
+//    STAssertTrue(locationService.locationServiceEnabled, nil);
+//    [locationService setValue:@"SuperCat" forLocationServiceKey:@"TESTCAT"];
+//    STAssertTrue([@"SuperCat" isEqualToString:(NSString*)[locationService valueForLocationServiceKey:@"TESTCAT"]], nil);
+//}
 
 #pragma mark -
 #pragma mark Starting/Stopping Location Services 
@@ -533,7 +558,6 @@
     [mockLocationService verify];
     [mockDelegate verify];
     STAssertEquals(locationService.lastReportedLocation, pdx, nil);
-    
 }
 
 #pragma mark -

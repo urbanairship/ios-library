@@ -49,7 +49,7 @@
     if (self){
         locationManager_ = [[CLLocationManager alloc] init];
         locationManager_.delegate = self;
-        provider_ = UALocationServiceProviderUnknown;
+        provider_ = uaLocationServiceProviderUnknown;
         serviceStatus_ = UALocationProviderNotUpdating;
     }
     return self;

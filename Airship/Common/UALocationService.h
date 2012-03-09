@@ -25,7 +25,6 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import <Availability.h>
-#import "UALocationCommonValues.h"
 #import "UALocationProviderDelegate.h"
 #import "UALocationEvent.h"
 
@@ -71,8 +70,6 @@
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
     
     NSTimeInterval minimumTimeBetweenForegroundUpdates_;
-    CLLocationDistance distanceFilter_;
-    CLLocationAccuracy desiredAccuracy_;
     CLLocation *lastReportedLocation_;
     NSDate *dateOfLastReport_;
     id <UALocationServiceDelegate> delegate_;
@@ -90,11 +87,6 @@
  Default value is 120 seconds
  */
 @property (nonatomic, assign) NSTimeInterval minimumTimeBetweenForegroundUpdates;
-/// Distance filter that is set for each new location service 
-@property (nonatomic, assign) CLLocationDistance distanceFilter;
-
-/// Accuarcy constraints passed to each location service 
-@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
 
 ///---------------------------------------------------------------------------------------
 /// @name Recent Activity
@@ -109,11 +101,42 @@
 /// UALocationServiceDelage for location service callbacks
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
 
+///---------------------------------------------------------------------------------------
+/// @name Standard Location Accuracy and Distance
+///---------------------------------------------------------------------------------------
+
+/** The distance filter on the standard location provider
+ @returns CLLocationDistance The current distance filter on the standard location provider
+ */
+- (CLLocationDistance)standardLocationDistanceFilter;
+/** Sets the distance filter on the standard location provider. 
+ @param distanceFilter The new distance filter.
+ */
+- (void)setStandardLocationDistanceFilter:(CLLocationDistance)distanceFilter;
+/** The desired accuracy on the standard location provider
+ @return CLLocationAccuracy The current desired accuracy
+ */
+- (CLLocationAccuracy)standardLocationDesiredAccuracy;
+/** Sets the standard location desired accuracy
+ @param desiredAccuracy The new desired accuracy
+ */
+- (void)setStandardLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+
+///---------------------------------------------------------------------------------------
+/// @name Authorization methods
+///---------------------------------------------------------------------------------------
+
 /// Starts the GPS (Standard Location) and acquires a single location on every launch
 @property (nonatomic, assign) BOOL automaticLocationOnForegroundEnabled;
 
 /// Allows location services to continue in the background 
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
+
+/** Wether the location service is enabled
+ @returns NO The UA library will not attempt to start location services
+ @returns YES The UA library will attempt to start location services
+ */
+- (BOOL)locationServiceEnabled;
 
 /** 
  On initialization this is read from NSUserDefaults. This controls
@@ -122,21 +145,32 @@
  - A value of NO means no location services will run
  - A value of YES means location services will run if authorized.
  */
-@property (nonatomic, assign) BOOL locationServiceEnabled;
+- (void)setLocationServiceEnabled:(BOOL)locationServiceEnabled;
+
+/** Current setting for authorization. Stored in NSUserDefaults
+ @return YES if services are allowed
+ @return NO if services are not allowed
+ */
+- (BOOL)locationServiceAllowed;
 
 /** Enables or disables all UALocationServices 
-On iOS 4.2 or greater this value is NO when CLLocationManager reports
-- kCLAuthorizationStatusRestricted  
-- kCLAuthorizationStatusDenied
-and YES for 
-- kCLAuthorizationStatusAuthorized  
-- kCLAuthorizationStatusNotDetermined
-On iOS 4.2 and earlier this value is NO after an attempt has been made
-to start the location service and a delegate callback with a kCLErrorDenied error is 
-received. Enabling service again and attempting to restart location services will
-prompt the user if the location service permissions have not changed. 
+ On iOS 4.2 or greater this value is NO when CLLocationManager reports
+ - kCLAuthorizationStatusRestricted  
+ - kCLAuthorizationStatusDenied
+ and YES for 
+ - kCLAuthorizationStatusAuthorized  
+ - kCLAuthorizationStatusNotDetermined
+ On iOS 4.2 and earlier this value is NO after an attempt has been made
+ to start the location service and a delegate callback with a kCLErrorDenied error is 
+ received. Enabling service again and attempting to restart location services will
+ prompt the user if the location service permissions have not changed. 
  */
-@property (nonatomic, assign) BOOL locationServiceAllowed;
+- (void)setLocationServiceAllowed:(BOOL)locationServiceAllowed;
+
+///---------------------------------------------------------------------------------------
+/// @name Status of Services
+///---------------------------------------------------------------------------------------
+
 
 /// Status for GPS service 
 @property (nonatomic, assign, readonly) UALocationProviderStatus standardLocationServiceStatus;
@@ -147,11 +181,21 @@ prompt the user if the location service permissions have not changed.
 /** Status for single location service */
 @property (nonatomic, assign, readonly) UALocationProviderStatus singleLocationServiceStatus;
 
+///---------------------------------------------------------------------------------------
+/// @name Purpose 
+///---------------------------------------------------------------------------------------
+
+
 /** Purpose for location services shown to user
  when prompted to allow location services to begin. The default value
- is kUALocationServiceDefaultPurpose listed in UALocaitonServiceCommon.h
+ is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
+ all new location services.
  */
-@property (nonatomic, copy) NSString *purpose;
+- (NSString*)purpose;
+
+/** The current purpose 
+ @returns An NSString with the current purpose*/
+- (void)setPurpose:(NSString*)purpose;
 
 ///---------------------------------------------------------------------------------------
 /// @name Creating the Location Service
@@ -234,9 +278,9 @@ prompt the user if the location service permissions have not changed.
  the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information
  regarding the use of location in app. The possible values are:
  
- - UALocationEventUpdateTypeCHANGE This is one of the periodic services, intended for the significant change or region monitoring service
- - UALocationEventUpdateTypeCONTINUOUS This is meant for the standard location service.
- - UALocationEventUpdateTypeSINGLE This is meant for a one time service, like the reportCurrentLocation method on this class
+ - UALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
+ - UALocationEventUpdateTypeContinuous This is meant for the standard location service.
+ - UALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
  @param location A CLLocation 
  @param locationManager The location manager that provided the location
  @param updateTypeOrNil The update type as described above or nil. 

@@ -8,13 +8,22 @@
 
 #import "UALocationCommonValues.h"
 
-NSString * const UALocationServiceAllowedKey = @"UALocationServiceAllowed";
-NSString * const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
-NSString *const UALocationServicePurposeKey = @"UALocationServicePurpose";
-UALocationServiceProviderType * const UALocationServiceProviderGps = @"GPS";
-UALocationServiceProviderType *const UALocationServiceProviderNetwork = @"NETWORK";
-UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOWN";
+UALocationServiceProviderType *const uaLocationServiceProviderGps = @"GPS";
+UALocationServiceProviderType *const uaLocationServiceProviderNetwork = @"NETWORK";
+UALocationServiceProviderType *const uaLocationServiceProviderUnknown = @"UNKNOWN";
+
+#pragma mark -
+#pragma mark NSUserPreferences keys for location service persistence
+UALocationServiceNSDefaultsKey *const uaLocationServiceAllowedKey = @"UALocationServiceAllowed";
+UALocationServiceNSDefaultsKey *const uaLocationServiceEnabledKey = @"UALocationServiceEnabled";
+UALocationServiceNSDefaultsKey *const uaLocationServicePurposeKey = @"UALocationServicePurpose";
+UALocationServiceNSDefaultsKey *const uaStandardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const uaSignificantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const uaStandardLocationDistanceFilterKey = @"standardLocationDistanceFilter";
+UALocationServiceNSDefaultsKey *const uaStandardLocationDesiredAccuracyKey = @"standardLocationDesiredAccuracy";
 
 @implementation UALocationCommonValues
 
 @end
+
+

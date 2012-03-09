@@ -34,42 +34,21 @@
 #import "UAAnalytics.h"
 
 
-//#define kAnalyticsTrue @"true"
-//#define kAnalyticsFalse @"false"
-
-#pragma mark -
-#pragma mark NSUserPreferences keys for location service persistence
-static NSString* const standardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
-static NSString* const significantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
-
 @implementation UALocationService
 
 #pragma mark -
 #pragma mark UALocationService.h
 @synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
-@synthesize distanceFilter = distanceFilter_;
-@synthesize desiredAccuracy = desiredAccuracy_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize dateOfLastReport = dateOfLastReport_;
 @synthesize delegate = delegate_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
 @synthesize backgroundLocationServiceEnabled = backroundLocationServiceEnabled_;
-@synthesize standardLocationProvider = standardLocationProvider_;
-@synthesize significantChangeProvider = significantChangeProvider_;
 
 #pragma mark -
 #pragma mark UALocationService_Private.h
 @synthesize locationServiceValues = locationServiceValues_;
-@synthesize singleLocationProvider = singleLocationProvider_;
 @synthesize deprecatedLocation = deprecatedLocation_;
-
-#pragma mark -
-#pragma mark UALocationServicePreferences in locationServiceValues
-// These are stored in NSUserDefaults
-@synthesize locationServiceAllowed;
-@synthesize purpose = purpose_;
-@synthesize locationServiceEnabled;
-
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -96,8 +75,6 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
         // Default CLManagerValues
         // TODO: set these values to something more appropriate
         minimumTimeBetweenForegroundUpdates_ = 120.0;
-        desiredAccuracy_ = kCLLocationAccuracyBest;
-        distanceFilter_ = kCLDistanceFilterNone;
         // Read existing values and create a mutable object
         NSDictionary* currentPrefs = [[NSUserDefaults standardUserDefaults] dictionaryForKey:UALocationServicePreferences];
         locationServiceValues_ = [[NSMutableDictionary alloc] initWithDictionary:currentPrefs];
@@ -114,7 +91,6 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     if(self){
         if (purpose){
             [self setPurpose:purpose];
-            standardLocationProvider_.purpose = purpose;
         }
     }
     return self;
@@ -134,6 +110,7 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
                                                object:[UIApplication sharedApplication]];
 }
 
+// TODO: set distanceFilter/desiredAccuracy on location providers as they come back online
 - (void)appWillEnterForeground {
     if ([self shouldPerformAutoLocationUpdate]) {
         [self reportCurrentLocation];
@@ -141,9 +118,9 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
     // If the location services were not allowed in the background, and they were tracking when the app entered the background
     // restart them now. 
     if(!backroundLocationServiceEnabled_){
-        BOOL startStandard = [[locationServiceValues_ valueForKey:standardLocationServiceRestartKey] boolValue];
-        BOOL startSignificantChange = [[locationServiceValues_ valueForKey:significantChangeServiceRestartKey] boolValue];
-        if (startStandard)[self startReportingLocation];
+        BOOL startStandard = [self boolForLocationServiceKey:uaStandardLocationServiceRestartKey];
+        BOOL startSignificantChange = [self boolForLocationServiceKey:uaSignificantChangeServiceRestartKey];
+        if (startStandard)[self startReportingLocation]; 
         if (startSignificantChange)[self startReportingSignificantLocationChanges];
     }
 }
@@ -163,16 +140,16 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
 - (void)appDidEnterBackground {
     if (!backroundLocationServiceEnabled_) {
         if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating) {
-            [self setBool:YES forLocationServiceKey:standardLocationServiceRestartKey];
+            [self setBool:YES forLocationServiceKey:uaStandardLocationServiceRestartKey];
         }
         else {
-            [self setBool:NO forLocationServiceKey:standardLocationServiceRestartKey];
+            [self setBool:NO forLocationServiceKey:uaStandardLocationServiceRestartKey];
         }
         if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
-            [self setBool:YES forLocationServiceKey:significantChangeServiceRestartKey];
+            [self setBool:YES forLocationServiceKey:uaSignificantChangeServiceRestartKey];
         }
         else {
-            [self setBool:NO forLocationServiceKey:significantChangeServiceRestartKey];
+            [self setBool:NO forLocationServiceKey:uaSignificantChangeServiceRestartKey];
         }
         [self stopReportingLocation];
         [self stopReportingSignificantLocationChanges];
@@ -198,66 +175,106 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
 #pragma mark -
 #pragma mark UALocationService NSUserDefaults
 
+// These values are stored in NSUserDefaults, necessary for restarting services on foreground
+#pragma mark UAStandardLocation Location Accuracy and Distance
+- (CLLocationDistance)standardLocationDistanceFilter {
+    return standardLocationProvider_.distanceFilter;
+}
+- (void)setStandardLocationDistanceFilter:(CLLocationDistance)distanceFilter {
+    [self setValue:[NSNumber numberWithDouble:distanceFilter] forLocationServiceKey:uaStandardLocationDistanceFilterKey];
+    standardLocationProvider_.distanceFilter = distanceFilter;
+}
+
+- (CLLocationAccuracy)standardLocationDesiredAccuracy {
+    return standardLocationProvider_.desiredAccuracy;
+}
+- (void)setStandardLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy{
+    [self setDoubleValue:desiredAccuracy forLocationServiceKey:uaStandardLocationDesiredAccuracyKey];
+    standardLocationProvider_.desiredAccuracy = desiredAccuracy;
+}
+
 #pragma mark UALocationServiceValues Get/Set
+
 - (BOOL)locationServiceEnabled {
-    return [[locationServiceValues_ valueForKey:UALocationServiceEnabledKey] boolValue];
+    return [self boolForLocationServiceKey:uaLocationServiceEnabledKey];
 }
 
 - (BOOL)locationServiceAllowed {
-    return [[locationServiceValues_ valueForKey:UALocationServiceAllowedKey] boolValue];
+    return [self boolForLocationServiceKey:uaLocationServiceAllowedKey];
 }
 
 - (NSString*)purpose {
-    return [locationServiceValues_ valueForKey:UALocationServicePurposeKey];
+    return [self valueForLocationServiceKey:uaLocationServicePurposeKey];
 }
 
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
-- (void)setLocationServiceEnabled:(BOOL)UALocationServiceEnabled_ {
-    [self setBool:UALocationServiceEnabled_ forLocationServiceKey:UALocationServiceEnabledKey];
+- (void)setLocationServiceEnabled:(BOOL)locationServiceEnabled {
+    [self setBool:locationServiceEnabled forLocationServiceKey:uaLocationServiceEnabledKey];
 }
 
-- (void)setLocationServiceAllowed:(BOOL)UALocationServiceAllowed_ {
-    [self setBool:UALocationServiceAllowed_ forLocationServiceKey:UALocationServiceAllowedKey];
+- (void)setLocationServiceAllowed:(BOOL)locationServiceAllowed {
+    [self setBool:locationServiceAllowed forLocationServiceKey:uaLocationServiceAllowedKey];
 }
 
 - (void)setPurpose:(NSString *)purpose {
     // purpose gets a retain before being entered in the dictionary, and copy has a +1 count
     // at creation.
-    [locationServiceValues_ setValue:[[purpose copy] autorelease] forKey:UALocationServicePurposeKey];
+    NSString* uniquePurpose = [NSString stringWithString:purpose];
+    [self setValue:uniquePurpose forLocationServiceKey:uaLocationServicePurposeKey];
+    if (standardLocationProvider_) {
+        standardLocationProvider_.purpose = uniquePurpose;
+    }
+    if (significantChangeProvider_){
+        significantChangeProvider_.purpose = uniquePurpose;
+    }
 }
 //
 #pragma mark NSUserDefaults Get/Set
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
-
-- (void)setValue:(id)value forLocationServiceKey:(NSString*)key {
+// Setup wiring for written values on dealloc. 
+- (void)setValue:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
     [locationServiceValues_ setValue:value forKey:key];
 }
 
-- (void)setBool:(BOOL)boolValue forLocationServiceKey:(NSString*)key {
-    [self setValue:[NSNumber numberWithBool:boolValue] forLocationServiceKey:key];
-}
-
-- (id)valueForLocationServiceKey:(NSString*)key {
+- (id)valueForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
     return [locationServiceValues_ valueForKey:key];
 }
 
-- (BOOL)boolForLocationServiceKey:(NSString*)key {
+- (void)setBool:(BOOL)boolValue forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
+    [self setValue:[NSNumber numberWithBool:boolValue] forLocationServiceKey:key];
+}
+
+- (BOOL)boolForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
     return [[locationServiceValues_ valueForKey:key] boolValue];
 }
+
+- (void)setDoubleValue:(double)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
+    [self setValue:[NSNumber numberWithDouble:value] forLocationServiceKey:key];
+}
+
+- (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
+    return (CLLocationAccuracy)[[self valueForLocationServiceKey:key] doubleValue];
+}
+
+- (CLLocationDistance)distanceFilterForLocationSerivceKey:(UALocationServiceNSDefaultsKey*)key {
+    return (CLLocationDistance)[[self valueForLocationServiceKey:key] doubleValue];
+}
+
 
 #pragma mark kUALocationServicePreferences NSUserDefaults Key Value Observation
 
 - (void)beginObservingLocationSettings {
-    [locationServiceValues_ addObserver:self forKeyPath:UALocationServiceEnabledKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"allowed"];
-    [locationServiceValues_ addObserver:self forKeyPath:UALocationServiceAllowedKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"enabled"];
-    [locationServiceValues_ addObserver:self forKeyPath:UALocationServicePurposeKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"purpose"];
+    [locationServiceValues_ addObserver:self forKeyPath:uaLocationServiceEnabledKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"allowed"];
+    [locationServiceValues_ addObserver:self forKeyPath:uaLocationServiceAllowedKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"enabled"];
+    [locationServiceValues_ addObserver:self forKeyPath:uaLocationServicePurposeKey options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:@"purpose"];
 }
 
 - (void)endObservingLocationSettings {
-    [locationServiceValues_ removeObserver:self forKeyPath:UALocationServiceEnabledKey];
-    [locationServiceValues_ removeObserver:self forKeyPath:UALocationServiceAllowedKey];
-    [locationServiceValues_ removeObserver:self forKeyPath:UALocationServicePurposeKey];
+    [locationServiceValues_ removeObserver:self forKeyPath:uaLocationServiceEnabledKey];
+    [locationServiceValues_ removeObserver:self forKeyPath:uaLocationServiceAllowedKey];
+    [locationServiceValues_ removeObserver:self forKeyPath:uaLocationServicePurposeKey];
 }
+
 
 #pragma mark KVO Callback
 // Compares the two values from the KVO callback, and only updates the preferences if they have changed
@@ -286,11 +303,12 @@ static NSString* const significantChangeServiceRestartKey = @"significantChangeS
 #pragma mark -
 #pragma mark UALocationProviderDelegate Methods
 
+//TODO: Handle traffic from multiple locationProvider callbacks!!
 - (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self updateAllowedStatus:status];
-    if(!locationServiceEnabled){
+    if(self.locationServiceAllowed){
         [locationProvider stopReportingLocation];
     }
     if ([delegate_ respondsToSelector:@selector(UALocationService:didChangeAuthorizationStatus:)]) {
@@ -389,15 +407,26 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 
 #pragma mark -
-#pragma mark UALocationService Setters
+#pragma mark UALocationProviders Get/Set Methods
 //
 // releases the previous LocationProvider and retains the new one
 // sets the delegate of the provider to self
 //
+
+- (UAStandardLocationProvider*)standardLocationProvider {
+    return standardLocationProvider_;
+}
+
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider {
     [standardLocationProvider_ autorelease];
     standardLocationProvider_ = [standardLocationProvider retain];
     [self setCommonPropertiesOnProvider:standardLocationProvider_];
+    standardLocationProvider_.distanceFilter = self.standardLocationDistanceFilter;
+    standardLocationProvider_.desiredAccuracy = self.standardLocationDesiredAccuracy;
+}
+
+- (UASignificantChangeProvider*)significantChangeProvider {
+    return significantChangeProvider_;
 }
 
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider {
@@ -406,20 +435,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self setCommonPropertiesOnProvider:significantChangeProvider_];
 }
 
+- (UAStandardLocationProvider*)singleLocationProvider {
+    return singleLocationProvider_;
+}
+
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
     [singleLocationProvider_ autorelease];
     singleLocationProvider_ = [singleLocationProvider retain];
-    singleLocationProvider_.purpose = self.purpose;
     [self setCommonPropertiesOnProvider:singleLocationProvider_];
 }
 
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider {
-    if (distanceFilter_) {
-        locationProvider.locationManager.distanceFilter = distanceFilter_;
-    }
-    if (desiredAccuracy_) {
-        locationProvider.locationManager.desiredAccuracy = desiredAccuracy_;
-    }
     locationProvider.delegate = self;
     locationProvider.purpose = self.purpose;
 }
@@ -428,21 +454,23 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark UALocationEvent Analytics
 
+// TODO: rewire this to use the same method call as a dev would use
 - (void)sendLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
     UALocationEvent *event = nil;
     if (provider == standardLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeContinuous];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeContinuous];
     }
     if (provider == significantChangeProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeChange];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeChange];
     }
     if (provider == singleLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSingle];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeSingle];
     }
 
     [[UAirship shared].analytics addEvent:event];
 }
 
+// TODO: Finish this method call!
 - (void)sendLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil {
@@ -480,10 +508,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark Single Location Service
 
+// The default values on the core location object are preset to the highest level of accuracy
+// TODO: see if we want to leave it this way. 
 - (void)reportCurrentLocation {
     if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
+        singleLocationProvider_.purpose = self.purpose;
     }
     if(self.locationServiceAllowed && self.locationServiceEnabled){
         [singleLocationProvider_ startReportingLocation];

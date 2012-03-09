@@ -30,7 +30,8 @@
  The significant change provider uses the significant change service 
  provided by the CLLocationManager. This uses cell towers for triangulation for 
  location and is a low power alternative to GPS, with less accuracy. This will run
- in the background without entitlements
+ in the background without entitlements. The CLLocationManager distanceFilter and desiredAccuracy
+ settings have no affect on the significant change service. 
  */
 
 @interface UASignificantChangeProvider : UABaseLocationProvider

@@ -37,9 +37,6 @@
 //
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
 @property (nonatomic, retain) NSDate *dateOfLastReport;
-@property (nonatomic, retain) UAStandardLocationProvider *standardLocationProvider;
-@property (nonatomic, retain) UASignificantChangeProvider *significantChangeProvider;
-@property (nonatomic, retain) UAStandardLocationProvider *singleLocationProvider;
 //
 
 /* 
@@ -59,10 +56,21 @@
 // Sets appropriate bool in NSUserDefaults
 - (void)setBool:(BOOL)boolValue forLocationServiceKey:(NSString*)key;
 - (BOOL)boolForLocationServiceKey:(NSString*)key;
+// Wrap the double in a number;
+- (void)setDoubleValue:(double)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
+// CLLocationManager values in NSUserDefaults
+// Basically wrapped double values
+- (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key; 
+- (CLLocationDistance)distanceFilterForLocationSerivceKey:(UALocationServiceNSDefaultsKey*)key;
 // Private setters for location providers
+- (UAStandardLocationProvider*)standardLocationProvider;
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider;
+- (UASignificantChangeProvider*)significantChangeProvider;
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider;
+- (UAStandardLocationProvider*)singleLocationProvider;
+- (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider;
+//
 // Updates UALocationServicesAllowed with current CLLocationManger values
 // On iOS < 4.2, this is a no op, authorization is set with CLLocationManager callbacks
 - (void)refreshLocationServiceAuthorization;
