@@ -36,7 +36,7 @@
 // Override property declarations for implementation and testing
 //
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
-@property (nonatomic, retain) NSDate *dateOfLastReport;
+@property (nonatomic, retain) NSDate *dateOfLastLocation;
 //
 
 /* 

@@ -40,7 +40,7 @@
 #pragma mark UALocationService.h
 @synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
 @synthesize lastReportedLocation = lastReportedLocation_;
-@synthesize dateOfLastReport = dateOfLastReport_;
+@synthesize dateOfLastLocation = dateOfLastLocation_;
 @synthesize delegate = delegate_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
 @synthesize backgroundLocationServiceEnabled = backroundLocationServiceEnabled_;
@@ -64,7 +64,7 @@
     //
     // public
     RELEASE_SAFELY(lastReportedLocation_);
-    RELEASE_SAFELY(dateOfLastReport_);
+    RELEASE_SAFELY(dateOfLastLocation_);
     //
     [super dealloc];
 }
@@ -129,8 +129,8 @@
     // if not enabled, bail
     if (!automaticLocationOnForegroundEnabled_) return NO; 
     // If the date is nil, then a report is needed
-    if (!dateOfLastReport_) return YES;
-    NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:dateOfLastReport_];
+    if (!dateOfLastLocation_) return YES;
+    NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:dateOfLastLocation_];
     if(elapsedTime < minimumTimeBetweenForegroundUpdates_) {
         return NO;
     }
@@ -341,7 +341,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
               fromLocation:(CLLocation*)oldLocation {
     [self sendLocationToAnalytics:newLocation fromProvider:locationProvider];
     self.lastReportedLocation = newLocation; 
-    self.dateOfLastReport = [NSDate date];
+    self.dateOfLastLocation = [NSDate date];
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
         [singleLocationProvider_ stopReportingLocation];
