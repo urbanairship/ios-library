@@ -168,7 +168,7 @@
                                                         didUpdateLocation:pdx 
                                                              fromLocation:sfo];
     STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
-    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastReport timeIntervalSinceNow];
+    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
     STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
 }
 
@@ -449,7 +449,7 @@
     [[mockLocationService expect] reportCurrentLocation];
     // Setup a date over 120.0 seconds ago
     NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
-    locationService.dateOfLastReport = dateOver120;
+    locationService.dateOfLastLocation = dateOver120;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
     locationService.automaticLocationOnForegroundEnabled = NO;
@@ -458,7 +458,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     // reset the time stamp to now, should not trigger an update
     locationService.automaticLocationOnForegroundEnabled = YES;
-    locationService.dateOfLastReport = [NSDate date];
+    locationService.dateOfLastLocation = [NSDate date];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
 }
 
