@@ -71,7 +71,7 @@
     
     NSTimeInterval minimumTimeBetweenForegroundUpdates_;
     CLLocation *lastReportedLocation_;
-    NSDate *dateOfLastReport_;
+    NSDate *dateOfLastLocation_;
     id <UALocationServiceDelegate> delegate_;
     BOOL automaticLocationOnForegroundEnabled_;
     BOOL backroundLocationServiceEnabled_;
@@ -96,7 +96,7 @@
 @property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
 
 /// Date of last location event reported 
-@property (nonatomic, retain, readonly) NSDate *dateOfLastReport;
+@property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
 
 /// UALocationServiceDelage for location service callbacks
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
@@ -132,18 +132,16 @@
 /// Allows location services to continue in the background 
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
 
-/** Wether the location service is enabled
+/** Whether the location service is enabled. This could be deliberately disabled by the 
+ user
  @returns NO The UA library will not attempt to start location services
  @returns YES The UA library will attempt to start location services
  */
 - (BOOL)locationServiceEnabled;
 
-/** 
- On initialization this is read from NSUserDefaults. This controls
- all location services.
- 
- - A value of NO means no location services will run
- - A value of YES means location services will run if authorized.
+/** Sets the value in NSUserDefaults
+ @param locationServiceEnabled Value of YES means location services will run if authorized
+    Value of NO means no UA location services will run
  */
 - (void)setLocationServiceEnabled:(BOOL)locationServiceEnabled;
 
@@ -153,7 +151,7 @@
  */
 - (BOOL)locationServiceAllowed;
 
-/** Enables or disables all UALocationServices 
+/** Authorization provided by promting the user
  On iOS 4.2 or greater this value is NO when CLLocationManager reports
  - kCLAuthorizationStatusRestricted  
  - kCLAuthorizationStatusDenied
