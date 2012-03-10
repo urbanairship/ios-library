@@ -128,17 +128,8 @@
 - (void)testSignificantChangeGetSet {
     UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
     locationService.significantChangeProvider = significant;
-    locationService.significantChangeDesiredAccuracy = 10.0;
-    locationService.significantChangeDistanceFilter = 24.0;
-    STAssertTrue(significant.distanceFilter == 24.0,nil);
-    STAssertTrue(significant.desiredAccuracy == 10.0,nil);
-    STAssertTrue(locationService.significantChangeDesiredAccuracy == 10.0,nil);
-    STAssertTrue(locationService.significantChangeDistanceFilter == 24.0,nil);    
+    STAssertEqualObjects(locationService, locationService.significantChangeProvider.delegate,nil);
 }
-
-//- (void)testSingleLocationGetSet {
-//    STFail(@"not done");
-//}
 
 #pragma mark Location Setters
 - (void)testStandardLocationSetter {
@@ -484,8 +475,6 @@
     [[[mockLocationService expect] andForwardToRealObject] stopReportingSignificantLocationChanges];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
-    STAssertTrue([locationService boolForLocationServiceKey:@"standardLocationServiceStatusRestart"], nil);
-    STAssertTrue([locationService boolForLocationServiceKey:@"significantChangeServiceStatusRestart"], nil);
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 //
