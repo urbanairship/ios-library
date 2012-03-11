@@ -29,8 +29,9 @@
 
 @class UALocationEvent;
 @interface UALocationService () {
-    NSMutableDictionary* locationServiceValues_;
-    UAStandardLocationProvider *singleLocationProvider_;
+    UAStandardLocationProvider *standardLocationProvider_;
+    UAStandardLocationProvider *singleLocationProvider_;   
+    UASignificantChangeProvider *significantChangeProvider_;
     BOOL deprecatedLocation_;
 }
 // Override property declarations for implementation and testing
@@ -39,48 +40,33 @@
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
 //
 
-/* 
- Values written to disk each time they are set
- Values are stored as NSNumber objects.    
- */
-@property (nonatomic, retain) NSDictionary *locationServiceValues;
-
 // Indicates iOS < 4.2 and depricated method calls should be used
 @property (nonatomic, assign) BOOL deprecatedLocation;
 
-- (NSDictionary*)locationServiceValues;
 // Sets appropriate value in NSUserDefaults
-- (void)setValue:(id)value forLocationServiceKey:(NSString*)key;
++ (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 // gets values out of location service
-- (id)valueForLocationServiceKey:(NSString*)key;
++ (id)objectForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 // Sets appropriate bool in NSUserDefaults
-- (void)setBool:(BOOL)boolValue forLocationServiceKey:(NSString*)key;
-- (BOOL)boolForLocationServiceKey:(NSString*)key;
++ (void)setBool:(BOOL)boolValue forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
++ (BOOL)boolForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 // Wrap the double in a number;
-- (void)setDoubleValue:(double)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
++ (void)setDouble:(double)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
++ (double)doubleForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 // CLLocationManager values in NSUserDefaults
 // Basically wrapped double values
 - (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key; 
 - (CLLocationDistance)distanceFilterForLocationSerivceKey:(UALocationServiceNSDefaultsKey*)key;
 // Private setters for location providers
+// Custom get/set methods that have the side effect of setting the provider delegate
 - (UAStandardLocationProvider*)standardLocationProvider;
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider;
 - (UASignificantChangeProvider*)significantChangeProvider;
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider;
 - (UAStandardLocationProvider*)singleLocationProvider;
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
+// convinence method to set properties common to all providers
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider;
-//
-// Updates UALocationServicesAllowed with current CLLocationManger values
-// On iOS < 4.2, this is a no op, authorization is set with CLLocationManager callbacks
-- (void)refreshLocationServiceAuthorization;
-// Updates UALocationServiceAllowed when new
-// CLAuthorizationStatus updates are received 
-- (void)updateAllowedStatus:(CLAuthorizationStatus)status;
-// KVO magicness
-- (void)beginObservingLocationSettings;
-- (void)endObservingLocationSettings;
-// Analytics
 
 // UIApplicationState observation
 - (void)beginObservingUIApplicationState;
@@ -90,5 +76,7 @@
 - (void)appDidEnterBackground;
 // Checks the elapsed time and other variables to decide whether a foreground report is needed
 - (BOOL)shouldPerformAutoLocationUpdate;
+// Convinence method to check authorization before starting provider
+- (void)startReportingLocationWithProvider:(id)locationProvider;
 
 @end

@@ -73,33 +73,10 @@
     CLLocation *lastReportedLocation_;
     NSDate *dateOfLastLocation_;
     id <UALocationServiceDelegate> delegate_;
+    BOOL promptUserForLocationServices_;
     BOOL automaticLocationOnForegroundEnabled_;
     BOOL backroundLocationServiceEnabled_;
-    UAStandardLocationProvider *standardLocationProvider_;
-    UASignificantChangeProvider *significantChangeProvider_;
 }
-
-///---------------------------------------------------------------------------------------
-/// @name Automatic Location Service
-///---------------------------------------------------------------------------------------
-
-/** Minimum time between automatic updates that are tied to app foreground events.
- Default value is 120 seconds
- */
-@property (nonatomic, assign) NSTimeInterval minimumTimeBetweenForegroundUpdates;
-
-///---------------------------------------------------------------------------------------
-/// @name Recent Activity
-///---------------------------------------------------------------------------------------
-
-/// Last location reported to Urban Airship 
-@property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
-
-/// Date of last location event reported 
-@property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
-
-/// UALocationServiceDelage for location service callbacks
-@property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Standard Location Accuracy and Distance
@@ -123,8 +100,69 @@
 - (void)setStandardLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
 ///---------------------------------------------------------------------------------------
-/// @name Authorization methods
+/// @name Location Services Authorization
 ///---------------------------------------------------------------------------------------
+
+/** Current setting allowing UA location services
+ @return YES UA location services are allowed
+ @return NO UA location services are not allowed
+ */
++ (BOOL)airshipLocationServiceEnabled;
+
+/** The allows UA Location Services to report location
+ @param locationServicesEnabled If set to YES, all UA location services will run
+ if the system reports that location services are available and authorized. This setting will not
+ override the users choice to disable location services and is safe to enable when user preferences
+ have not been establishd. If NO, UA Location Services are disabled. This setting is persited in 
+ NSUserDefaults
+ */
++ (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServicesEnabled;
+
+/** Reports the current authorization status of location services as reported by the 
+ system. This refers to the global location service setting switch. 
+ 
+ @return YES if location services are reported as enabled by the system.
+ @return NO if location services are reported as not enabled by the system.
+ */
++ (BOOL)locationServiceEnabled;
+
+/** Reports the current authorization status of location services as reported by the
+ system. 
+ @warning For iOS < 4.2, this value is updated after an attempt has been made to start location
+ services, and is persisted from that point on. Prompting the user is the only way to set this value.
+ @return YES if the user has authorized location services, or has yet to be asked about location services.
+ @return NO if the user has explictly disabled location services
+ */
++ (BOOL)locationServiceAuthorized;
+
+/** This flag will allows UA Location Services to re prompt the user to allow services
+ The user may have explicitly disallowed location services, so reprompting them may not 
+ be welcome. A value of NO (default value) will ensure that the user is only prompted in the
+ case where system location services have indicated that the user has not disabled location 
+ services and has not been previously prompted for location services.
+ @return YES An attempt to start location services will be made even if this results in prompting
+ the user to allow location services.
+ @return NO Location services will not start if the user has previously disabled location services. 
+ */
+@property (nonatomic, assign) BOOL promptUserForLocationServices;
+
+///--------------------------------------------------------------------------------------
+/// @name Recent Activity
+///---------------------------------------------------------------------------------------
+
+/// Last location reported to Urban Airship 
+@property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
+
+/// Date of last location event reported 
+@property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
+
+/// UALocationServiceDelage for location service callbacks
+@property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
+
+///---------------------------------------------------------------------------------------
+/// @name Location Services 
+///---------------------------------------------------------------------------------------
+
 
 /// Starts the GPS (Standard Location) and acquires a single location on every launch
 @property (nonatomic, assign) BOOL automaticLocationOnForegroundEnabled;
@@ -137,38 +175,27 @@
  @returns NO The UA library will not attempt to start location services
  @returns YES The UA library will attempt to start location services
  */
-- (BOOL)locationServiceEnabled;
++ (BOOL)airshipLocationServiceEnabled;
 
 /** Sets the value in NSUserDefaults
- @param locationServiceEnabled Value of YES means location services will run if authorized
-    Value of NO means no UA location services will run
+ @param locationServiceEnabled 
+ Value of YES means location services will run if authorized
+ Value of NO means no UA location services will not run, even if authorized
  */
-- (void)setLocationServiceEnabled:(BOOL)locationServiceEnabled;
++ (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled;
 
-/** Current setting for authorization. Stored in NSUserDefaults
- @return YES if services are allowed
- @return NO if services are not allowed
- */
-- (BOOL)locationServiceAllowed;
+///---------------------------------------------------------------------------------------
+/// @name Automatic Location Service
+///---------------------------------------------------------------------------------------
 
-/** Authorization provided by promting the user
- On iOS 4.2 or greater this value is NO when CLLocationManager reports
- - kCLAuthorizationStatusRestricted  
- - kCLAuthorizationStatusDenied
- and YES for 
- - kCLAuthorizationStatusAuthorized  
- - kCLAuthorizationStatusNotDetermined
- On iOS 4.2 and earlier this value is NO after an attempt has been made
- to start the location service and a delegate callback with a kCLErrorDenied error is 
- received. Enabling service again and attempting to restart location services will
- prompt the user if the location service permissions have not changed. 
+/** Minimum time between automatic updates that are tied to app foreground events.
+ Default value is 120 seconds
  */
-- (void)setLocationServiceAllowed:(BOOL)locationServiceAllowed;
+@property (nonatomic, assign) NSTimeInterval minimumTimeBetweenForegroundUpdates;
 
 ///---------------------------------------------------------------------------------------
 /// @name Status of Services
 ///---------------------------------------------------------------------------------------
-
 
 /// Status for GPS service 
 @property (nonatomic, assign, readonly) UALocationProviderStatus standardLocationServiceStatus;
@@ -182,7 +209,6 @@
 ///---------------------------------------------------------------------------------------
 /// @name Purpose 
 ///---------------------------------------------------------------------------------------
-
 
 /** Purpose for location services shown to user
  when prompted to allow location services to begin. The default value
@@ -258,19 +284,6 @@
  it to Urban Airship.
 */
 - (void)reportCurrentLocation;
-
-///---------------------------------------------------------------------------------------
-/// @name Location Service Authorization
-///---------------------------------------------------------------------------------------
-
-/** Returns YES if location services are enabled and authorized, NO in all other cases
- Only available on iOS 4.2 or greater
- */
-- (BOOL)isLocationServiceEnabledAndAuthorized;
-
-///---------------------------------------------------------------------------------------
-/// @name Analytics 
-///---------------------------------------------------------------------------------------
 
 /** Sends a location directly to Urban Airship. The required parameters are taken from the CLLocation and 
  the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information

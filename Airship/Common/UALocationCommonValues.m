@@ -21,6 +21,7 @@ UALocationServiceNSDefaultsKey *const uaStandardLocationServiceRestartKey = @"st
 UALocationServiceNSDefaultsKey *const uaSignificantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
 UALocationServiceNSDefaultsKey *const uaStandardLocationDistanceFilterKey = @"standardLocationDistanceFilter";
 UALocationServiceNSDefaultsKey *const uaStandardLocationDesiredAccuracyKey = @"standardLocationDesiredAccuracy";
+UALocationServiceNSDefaultsKey *const uaDeprecatedLocationAuthorizationKey = @"deprecatedAuthorizationCLErrorDeniedRecieved";
 
 @implementation UALocationCommonValues
 
