@@ -104,19 +104,20 @@
 ///---------------------------------------------------------------------------------------
 
 /** Current setting allowing UA location services
- @return YES UA location services are allowed
- @return NO UA location services are not allowed
+ @return YES UA location services are allowed, and will start if authorized and enabled
+ @return NO UA location services are not allowed, and will not start, even if authorized and enabled
  */
 + (BOOL)airshipLocationServiceEnabled;
 
 /** The allows UA Location Services to report location
- @param locationServicesEnabled If set to YES, all UA location services will run
+ 
+ @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  if the system reports that location services are available and authorized. This setting will not
  override the users choice to disable location services and is safe to enable when user preferences
  have not been establishd. If NO, UA Location Services are disabled. This setting is persited in 
  NSUserDefaults
  */
-+ (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServicesEnabled;
++ (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled;
 
 /** Reports the current authorization status of location services as reported by the 
  system. This refers to the global location service setting switch. 
@@ -130,16 +131,29 @@
  system. 
  @warning For iOS < 4.2, this value is updated after an attempt has been made to start location
  services, and is persisted from that point on. Prompting the user is the only way to set this value.
+ 
  @return YES if the user has authorized location services, or has yet to be asked about location services.
  @return NO if the user has explictly disabled location services
  */
 + (BOOL)locationServiceAuthorized;
+
+/** This method checks the underlying Core Location service for to see if a user
+ will receive a prompt requesting permissino for Core Location services to run.
+ 
+ @return NO If Core Location services are enabled and the user has explicity authorized location services
+ @return YES If ANY of the following are true
+    - Location services are not enabled (The global locaiton service setting in Settings is disabled)
+    - Location services are explicitly not authorized (The per app location service setting in Settings is disabled)
+    - The user has not been asked yet to allow location services. (Location servies are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
+ */
++ (BOOL)coreLocationWillPromptUserForPermissionToRun;
 
 /** This flag will allows UA Location Services to re prompt the user to allow services
  The user may have explicitly disallowed location services, so reprompting them may not 
  be welcome. A value of NO (default value) will ensure that the user is only prompted in the
  case where system location services have indicated that the user has not disabled location 
  services and has not been previously prompted for location services.
+ 
  @return YES An attempt to start location services will be made even if this results in prompting
  the user to allow location services.
  @return NO Location services will not start if the user has previously disabled location services. 
@@ -160,33 +174,14 @@
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
-/// @name Location Services 
+/// @name Automatic Location Services 
 ///---------------------------------------------------------------------------------------
-
 
 /// Starts the GPS (Standard Location) and acquires a single location on every launch
 @property (nonatomic, assign) BOOL automaticLocationOnForegroundEnabled;
 
 /// Allows location services to continue in the background 
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
-
-/** Whether the location service is enabled. This could be deliberately disabled by the 
- user
- @returns NO The UA library will not attempt to start location services
- @returns YES The UA library will attempt to start location services
- */
-+ (BOOL)airshipLocationServiceEnabled;
-
-/** Sets the value in NSUserDefaults
- @param locationServiceEnabled 
- Value of YES means location services will run if authorized
- Value of NO means no UA location services will not run, even if authorized
- */
-+ (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled;
-
-///---------------------------------------------------------------------------------------
-/// @name Automatic Location Service
-///---------------------------------------------------------------------------------------
 
 /** Minimum time between automatic updates that are tied to app foreground events.
  Default value is 120 seconds

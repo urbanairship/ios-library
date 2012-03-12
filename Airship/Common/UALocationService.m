@@ -466,6 +466,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 
+// convenience method for devs
++ (BOOL)coreLocationWillPromptUserForPermissionToRun {
+    return [UALocationService locationServiceEnabled] && [UALocationService locationServiceAuthorized];
+}
+
 // This method uses a known depricated method, should be removed in the future. 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (BOOL)locationServiceEnabled {
