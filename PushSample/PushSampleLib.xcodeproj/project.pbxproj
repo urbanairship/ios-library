@@ -64,7 +64,6 @@
 		BBEFB01A1507F3A400976645 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		BBEFB01B1507F3A400976645 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BBEFB01F1507F3A400976645 /* InfoPlist.strings */; };
-		BBEFB02E1507F65700976645 /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02B1507F65700976645 /* Gcov_Fix.c */; };
 		BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */; };
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
@@ -759,7 +758,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBEFB02E1507F65700976645 /* Gcov_Fix.c in Sources */,
 				BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */,
 				BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */,
 				BB42FB7315094B4B00FC4B1B /* UALocationTestUtils.m in Sources */,
@@ -805,6 +803,8 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
