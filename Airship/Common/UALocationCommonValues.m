@@ -14,7 +14,6 @@ UALocationServiceProviderType *const uaLocationServiceProviderUnknown = @"UNKNOW
 
 #pragma mark -
 #pragma mark NSUserPreferences keys for location service persistence
-UALocationServiceNSDefaultsKey *const uaLocationServiceAllowedKey = @"UALocationServiceAllowed";
 UALocationServiceNSDefaultsKey *const uaLocationServiceEnabledKey = @"UALocationServiceEnabled";
 UALocationServiceNSDefaultsKey *const uaLocationServicePurposeKey = @"UALocationServicePurpose";
 UALocationServiceNSDefaultsKey *const uaStandardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";

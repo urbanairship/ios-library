@@ -36,6 +36,21 @@
 #import "JRSwizzle.h"
 #import <SenTestingKit/SenTestingKit.h>
 
+@interface UALocationService(Test)
+
++(BOOL)returnYES;
++(BOOL)returnNO;
+@end
+@implementation UALocationService(Test)
+
++(BOOL)returnYES {
+    return YES;
+}
++(BOOL)returnNO {
+    return NO;
+}
+
+@end
 
 @interface UALocationServiceTest : SenTestCase
 {
@@ -45,6 +60,7 @@
     BOOL no; // use for OCMockValue(val)
 }
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector;
+- (void)swizzleUALocationServiceClassMethod:(SEL)oneMethod withMethod:(SEL)anotherMethod;
 - (void)swizzleCLLocationClassEnabledAndAuthorized;
 - (void)swizzleCLLocationClassBackFromEnabledAndAuthorized;
 - (void)setTestValuesInNSUserDefaults;
@@ -77,428 +93,399 @@
 #pragma mark Basic Object Initialization
 
 // TODO: change the default settings after preliminary developmet is done for desiredAccuracy and distanceFilter
-//- (void)testBasicInit{
-//    [self setTestValuesInNSUserDefaults];
-//    NSDictionary* userDefaults = [[NSUserDefaults standardUserDefaults] dictionaryForKey:UALocationServicePreferences];
-//    UALocationService *basic = [[[UALocationService alloc] init] autorelease];
-//    STAssertTrue([userDefaults isEqualToDictionary:basic.locationServiceValues], @"Location service values should match what's on disk");
-//    UALocationService *service = [[[UALocationService alloc] initWithPurpose:@"test"] autorelease];
-//    STAssertTrue([@"test" isEqualToString:service.purpose],nil);
-//    STAssertNotNil(service.standardLocationProvider, nil);
-//}
-//
-//
-//- (void)testUALocationServiceUpdatesValuesOnInit {
-//    [self setTestValuesInNSUserDefaults];
-//    [self swizzleCLLocationClassEnabledAndAuthorized];
-//    UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"CATS"] autorelease];
-//    STAssertTrue(localService.locationServiceAllowed, @"Default is NO, CLLManager swizzled to YES, updated value should be YES");
-//    STAssertFalse(localService.locationServiceEnabled, @"Default val is NO, value should now be YES");
-//    STAssertTrue([localService.purpose isEqualToString:@"CATS"], nil);
-//    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
-//}
+- (void)testBasicInit{
+    [self setTestValuesInNSUserDefaults];
+    [[NSUserDefaults standardUserDefaults] setDouble:5.0 forKey:uaStandardLocationDistanceFilterKey];
+    [[NSUserDefaults standardUserDefaults] setDouble:6.0 forKey:uaStandardLocationDesiredAccuracyKey];
+    UALocationService *testService = [[[UALocationService alloc] init] autorelease];
+    STAssertTrue(120.00 == testService.minimumTimeBetweenForegroundUpdates, nil);
+    STAssertEqualObjects(locationService, locationService.standardLocationProvider.delegate,nil);
+    STAssertFalse([UALocationService airshipLocationServiceEnabled], nil);
+    STAssertTrue([@"TEST" isEqualToString:locationService.purpose], nil);
+}
+
+- (void)setInitWithPurpose {
+    STAssertTrue([locationService.purpose isEqualToString:@"TEST"],nil);
+}
+
+- (void)setTestValuesInNSUserDefaults {
+    // UALocationService defaults
+    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:uaLocationServiceEnabledKey];
+    [defaultLocationPreferences setValue:@"TEST" forKey:uaLocationServicePurposeKey];
+    
+    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
+}
 
 #pragma mark -
 #pragma mark Getters and Setters
 
 // don't test the single location purpose, because it's transient and would not be changed once started
 
-//- (void)testMinimumTime {
-//    locationService.minimumTimeBetweenForegroundUpdates = 42.0;
-//    STAssertTrue(locationService.minimumTimeBetweenForegroundUpdates == 42.0,nil);
-//}
-//- (void)testSetPurpose {
-//    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
-//    NSString* awsm = @"awesomeness";
-//    locationService.purpose = awsm;
-//    STAssertTrue([awsm isEqualToString:locationService.standardLocationProvider.purpose],nil);
-//    STAssertTrue([awsm isEqualToString:locationService.significantChangeProvider.purpose], nil);
-//}
-//
-//- (void)testStandardLocationGetSet {
-//    locationService.standardLocationDesiredAccuracy = 10.0;
-//    locationService.standardLocationDistanceFilter = 24.0;
-//    UAStandardLocationProvider *standard = locationService.standardLocationProvider;
-//    STAssertTrue(standard.distanceFilter == 24.0,nil);
-//    STAssertTrue(standard.desiredAccuracy == 10.0,nil);
-//    STAssertTrue(locationService.standardLocationDesiredAccuracy == 10.0,nil);
-//    STAssertTrue(locationService.standardLocationDistanceFilter == 24.0,nil);
-//}
-//
-//- (void)testSignificantChangeGetSet {
-//    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
-//    locationService.significantChangeProvider = significant;
-//    STAssertEqualObjects(locationService, locationService.significantChangeProvider.delegate,nil);
-//}
+- (void)testMinimumTime {
+    locationService.minimumTimeBetweenForegroundUpdates = 42.0;
+    STAssertTrue(locationService.minimumTimeBetweenForegroundUpdates == 42.0,nil);
+}
+- (void)testSetPurpose {
+    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
+    NSString* awsm = @"awesomeness";
+    locationService.purpose = awsm;
+    STAssertTrue([awsm isEqualToString:locationService.standardLocationProvider.purpose],nil);
+    STAssertTrue([awsm isEqualToString:locationService.significantChangeProvider.purpose], nil);
+    STAssertTrue(awsm == [[NSUserDefaults standardUserDefaults] valueForKey:uaLocationServicePurposeKey],nil);
+}
+
+- (void)testStandardLocationGetSet {
+    locationService.standardLocationDesiredAccuracy = 10.0;
+    locationService.standardLocationDistanceFilter = 24.0;
+    UAStandardLocationProvider *standard = locationService.standardLocationProvider;
+    STAssertTrue(standard.distanceFilter == 24.0,nil);
+    STAssertTrue(standard.desiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.standardLocationDesiredAccuracy == 10.0,nil);
+    STAssertTrue(locationService.standardLocationDistanceFilter == 24.0,nil);
+}
+
+- (void)testSignificantChangeGetSet {
+    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
+    locationService.significantChangeProvider = significant;
+    STAssertEqualObjects(locationService, locationService.significantChangeProvider.delegate,nil);
+}
+
+#pragma mark Standard Location distanceFilter desiredAccuracy NSUserDefaults
+
+
+#pragma mark NSUserDefaults class method access
+
+- (void)testNSUserDefaultsMethods {
+    NSString *cats = @"CATS_EVERYWHERE";
+    NSString *catKey = @"Cat";
+    [UALocationService setObject:cats forLocationServiceKey:catKey];
+    NSString *back = [[NSUserDefaults standardUserDefaults] valueForKey:catKey];
+    STAssertTrue([back isEqualToString:cats],nil);
+    back = [UALocationService objectForLocationServiceKey:catKey];
+    STAssertTrue([back isEqualToString:cats],nil);
+    NSString *boolKey = @"I_LIKE_CATS";
+    [UALocationService setBool:YES forLocationServiceKey:boolKey];
+    BOOL boolBack = [[NSUserDefaults standardUserDefaults] boolForKey:boolKey];
+    STAssertTrue(boolBack,nil);
+    STAssertTrue([UALocationService boolForLocationServiceKey:boolKey],nil);
+    double dbl = 42.0;
+    NSString *dblKey = @"test_double_key";
+    [UALocationService setDouble:dbl forLocationServiceKey:dblKey];
+    STAssertTrue(dbl == [[NSUserDefaults standardUserDefaults] doubleForKey:dblKey],nil);
+    STAssertTrue(dbl == [UALocationService doubleForLocationServiceKey:dblKey],nil);
+}
 
 #pragma mark Location Setters
-//- (void)testStandardLocationSetter {
-//    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:nil] autorelease];
-//    id mockStandard = [OCMockObject partialMockForObject:standard];
-//    [[[mockStandard expect] andForwardToRealObject] setDelegate:locationService];
-//    [[[mockStandard expect] andForwardToRealObject] setPurpose:locationService.purpose];
-//    [[[mockStandard expect] andForwardToRealObject] setDistanceFilter:locationService.standardLocationDistanceFilter];
-//    [[[mockStandard expect] andForwardToRealObject] setDesiredAccuracy:locationService.standardLocationDesiredAccuracy];
-//    locationService.standardLocationProvider = standard;
-//    [mockStandard verify];
-//    STAssertEqualObjects(standard, locationService.standardLocationProvider, nil);
-//}
-//
-//- (void)testSignificantChangeSetter {
-//    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
-//    id mockSignificant = [OCMockObject partialMockForObject:significant];
-//    [[[mockSignificant expect] andForwardToRealObject] setDelegate:locationService];
-//    [[[mockSignificant expect] andForwardToRealObject] setPurpose:locationService.purpose];
-//    locationService.significantChangeProvider = significant;
-//    [mockSignificant verify];
-//    STAssertEqualObjects(significant, locationService.significantChangeProvider, nil);
-//}
+- (void)testStandardLocationSetter {
+    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:nil] autorelease];
+    locationService.standardLocationProvider = standard;
+    STAssertEqualObjects(standard, locationService.standardLocationProvider, nil);
+    STAssertEqualObjects(locationService.standardLocationProvider.delegate, locationService,nil);
+    STAssertTrue(locationService.standardLocationDesiredAccuracy == locationService.standardLocationProvider.desiredAccuracy,nil);
+    STAssertTrue(locationService.standardLocationDistanceFilter == locationService.standardLocationProvider.distanceFilter,nil);
+}
+
+- (void)testSignificantChangeSetter {
+    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] initWithDelegate:nil] autorelease];
+    locationService.significantChangeProvider = significant;
+    STAssertEqualObjects(significant, locationService.significantChangeProvider, nil);
+    STAssertEqualObjects(locationService.significantChangeProvider.delegate, locationService,nil);
+}   
 
 
 
 #pragma mark -
 #pragma mark lastLocationAndDate
-//
-//- (void)testLastLocationAndDate {
-//    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-//    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
-//    [[mockLocationService stub] sendLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
-//    [locationService.standardLocationProvider.delegate UALocationProvider:locationService.standardLocationProvider 
-//                                                      withLocationManager:locationService.standardLocationProvider.locationManager 
-//                                                        didUpdateLocation:pdx 
-//                                                             fromLocation:sfo];
-//    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
-//    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
-//    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
-//}
 
+- (void)testLastLocationAndDate {
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+    [[mockLocationService stub] sendLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
+    [locationService.standardLocationProvider.delegate UALocationProvider:locationService.standardLocationProvider 
+                                                      withLocationManager:locationService.standardLocationProvider.locationManager 
+                                                        didUpdateLocation:pdx 
+                                                             fromLocation:sfo];
+    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
+    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
+    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
+}
+ 
 #pragma mark -
-#pragma mark locationServiceSettings Key Value Observing 
+#pragma mark Starting/Stopping Location Services 
+#pragma mark  Standard Location
+- (void)testStartReportingLocation {
+    [[mockLocationService expect] startReportingLocationWithProvider:OCMOCK_ANY];
+    [locationService startReportingLocation];
+    STAssertTrue([locationService.standardLocationProvider isKindOfClass:[UAStandardLocationProvider class]],nil);
+    [mockLocationService verify];
+}
 
+- (void)testStopUpdatingLocation {
+    UAStandardLocationProvider *standardDelegate = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
+    locationService.standardLocationProvider = standardDelegate;
+    id mockDelegate = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    standardDelegate.locationManager = mockDelegate;
+    [[mockDelegate expect] stopUpdatingLocation];
+    [locationService stopReportingLocation];
+    [mockDelegate verify];
+    STAssertEquals(UALocationProviderNotUpdating, locationService.standardLocationServiceStatus, @"Service should not be updating");
+}
 
-//- (void)testGetSetLocationServiceValues {
-//    locationService.purpose = @"CATS";
-//    STAssertTrue([locationService.purpose isEqualToString:@"CATS"],nil);
-//    locationService.locationServiceAllowed = YES;
-//    STAssertTrue(locationService.locationServiceAllowed, nil);
-//    locationService.locationServiceEnabled = YES;
-//    STAssertTrue(locationService.locationServiceEnabled, nil);
-//    [locationService setValue:@"SuperCat" forLocationServiceKey:@"TESTCAT"];
-//    STAssertTrue([@"SuperCat" isEqualToString:(NSString*)[locationService valueForLocationServiceKey:@"TESTCAT"]], nil);
-//}
+#pragma mark Significant Change Service
+- (void)testStartMonitoringSignificantChanges {
+    [[mockLocationService expect] startReportingLocationWithProvider:OCMOCK_ANY];
+    [locationService startReportingSignificantLocationChanges];
+    STAssertTrue([locationService.significantChangeProvider isKindOfClass:[UASignificantChangeProvider class]], nil);
+    [mockLocationService verify];
+}
 
-//#pragma mark -
-//#pragma mark Starting/Stopping Location Services 
-//#pragma mark  Standard Location
-//- (void)testStartUpdatingLocation {
-//    UAStandardLocationProvider *standardProvider = [[UAStandardLocationProvider alloc] initWithDelegate:locationService];
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    [[mockLocationManager expect] startUpdatingLocation];
-//    standardProvider.locationManager = mockLocationManager;
-//    locationService.standardLocationProvider = standardProvider;
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] airshipLocationServiceEnabled];
-//    [locationService startReportingLocation];
-//    [mockLocationManager verify];
-//    [mockLocationService verify];
-//    STAssertEquals(UALocationProviderUpdating, locationService.standardLocationServiceStatus, @"Service status should be updating");
-//}
-//
-//- (void)testStopUpdatingLocation {
-//    UAStandardLocationProvider *standardDelegate = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
-//    locationService.standardLocationProvider = standardDelegate;
-//    id mockDelegate = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    standardDelegate.locationManager = mockDelegate;
-//    [[mockDelegate expect] stopUpdatingLocation];
-//    [locationService stopReportingLocation];
-//    [mockDelegate verify];
-//    STAssertEquals(UALocationProviderNotUpdating, locationService.standardLocationServiceStatus, @"Service should not be updating");
-//}
-//
-////#pragma mark Significant Change Service
-//- (void)testStartMonitoringSignificantChanges {
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] airshipLocationServiceEnabled];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    UASignificantChangeProvider *sigChangeProvider = [[[UASignificantChangeProvider alloc] initWithDelegate:locationService] autorelease];
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    sigChangeProvider.locationManager = mockLocationManager;
-//    [[mockLocationManager expect] startMonitoringSignificantLocationChanges];
-//    locationService.significantChangeProvider = sigChangeProvider;
-//    [locationService startReportingSignificantLocationChanges];
-//    [mockLocationService verify];
-//    [mockLocationManager verify];
-//    STAssertEquals(locationService.significantChangeServiceStatus, UALocationProviderUpdating, @"Sig change should be updating");                              
-//}
-//
-//- (void)testStopMonitoringSignificantChanges {
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    UASignificantChangeProvider *sigChangeDelegate = [[[UASignificantChangeProvider alloc] initWithDelegate:locationService] autorelease];
-//    locationService.significantChangeProvider = sigChangeDelegate;
-//    sigChangeDelegate.locationManager = mockLocationManager;
-//    [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
-//    [locationService stopReportingSignificantLocationChanges];
-//    [mockLocationManager verify];
-//    STAssertEquals(UALocationProviderNotUpdating, locationService.significantChangeServiceStatus, @"Sig change should not be updating");
-//}
-////
-////#pragma mark Standard Location when not enabled
-//- (void)testStandardLocationServicesWillNotStartWhenNotEnabled {
-//    // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] airshipLocationServiceEnabled];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-//    // Fail if startProvidingLocation is called
-//    [[mockLocationProvider reject] startReportingLocation];
-//    locationService.standardLocationProvider = mockLocationProvider;
-//    [locationService startReportingLocation];
-//    [mockLocationService verify];
-//    // The service should short circuit before asking for locationServiceEnabled
-//    [[mockLocationService reject] airshipLocationServiceEnabled];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-//    [locationService startReportingLocation];
-//    [mockLocationService verify];
-//}
-//
-////#pragma mark Significant Change when not enabled
-//- (void)testSignificantChangeServicesWillNotStartWhenNotEnabled {
-//    // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] airshipLocationServiceEnabled];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    id mockLocationProvider = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
-//    // Fail if startProvidingLocation is called
-//    [[mockLocationProvider reject] startReportingLocation];
-//    locationService.significantChangeProvider = mockLocationProvider;
-//    [locationService startReportingSignificantLocationChanges];
-//    [mockLocationService verify];
-//    // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
-//    // short circuits statment evaluation. An explicit rejection makes debugging easier
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-//    [[mockLocationService reject] airshipLocationServiceEnabled];
-//    [locationService startReportingSignificantLocationChanges];
-//    [mockLocationService verify];
-//}
-//
-////#pragma mark Single Location when not enabled
-//- (void)testSingleLocationServiceWillNotStartWhenNotEnabled {
-//    // Services will not start if UALocationServiceAllowed || UALocationServiceEnabled returns NO
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] airshipLocationServiceEnabled];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    id mockLocationProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-//    // Fail if startProvidingLocation is called
-//    [[mockLocationProvider reject] startReportingLocation];
-//    locationService.singleLocationProvider = mockLocationProvider;
-//    [locationService reportCurrentLocation];
-//    [mockLocationService verify];
-//    // Don't set an expectation for both values to be called here, UALocationServiceAllowed set to NO
-//    // short circuits statment evaluation
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] locationServiceAllowed];
-//    [locationService reportCurrentLocation];
-//    [mockLocationService verify];
-//}
+- (void)testStopMonitoringSignificantChanges {
+    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    UASignificantChangeProvider *sigChangeDelegate = [[[UASignificantChangeProvider alloc] initWithDelegate:locationService] autorelease];
+    locationService.significantChangeProvider = sigChangeDelegate;
+    sigChangeDelegate.locationManager = mockLocationManager;
+    [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    [locationService stopReportingSignificantLocationChanges];
+    [mockLocationManager verify];
+    STAssertEquals(UALocationProviderNotUpdating, locationService.significantChangeServiceStatus, @"Sig change should not be updating");
+}
+
 
 #pragma mark -
 #pragma mark CLLocationManager Authorization
 
-//- (void)testCLLocationManagerAuthorization {
-//    [self swizzleCLLocationClassEnabledAndAuthorized];
-//    BOOL authorized = [locationService isLocationServiceEnabledAndAuthorized];
-//    STAssertTrue(authorized, @"This method should return true when services are enabled and authorized");
-//    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
-//    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusDenied)];
-//    authorized = [locationService isLocationServiceEnabledAndAuthorized];
-//    STAssertFalse(authorized, @"This method should return false when not authorized");
-//    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusDenied) withMethod:@selector(authorizationStatus)];
-//    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnNO)];
-//    authorized = [locationService isLocationServiceEnabledAndAuthorized];
-//    STAssertFalse(authorized, @"This method should return false when not enabled");
-//    [self swizzleCLLocationClassMethod:@selector(returnNO) withMethod:@selector(locationServicesEnabled)];
-//    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusRestricted)];
-//    authorized = [locationService isLocationServiceEnabledAndAuthorized];
-//    STAssertFalse(authorized, @"This method should return false when authorizationStatus is kCLAuthorizationStatusRestricted");
-//    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusRestricted) withMethod:@selector(authorizationStatus)];
-//    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusNotDetermined)];
-//    authorized = [locationService isLocationServiceEnabledAndAuthorized];
-//    STAssertTrue(authorized, @"This method should return true when authorizationStatus is kCLAuthorizationStatusNotDetermined");
-//    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusNotDetermined) withMethod:@selector(authorizationStatus)];
-//}
+- (void)testCLLocationManagerAuthorization {
+    // Check just CoreLocation authorization
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    STAssertTrue([UALocationService locationServiceEnabled],nil);
+    STAssertTrue([UALocationService locationServiceAuthorized],nil);
+    STAssertTrue([locationService isLocationServiceEnabledAndAuthorized], nil);
+    STAssertFalse([UALocationService coreLocationWillPromptUserForPermissionToRun],nil);
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusDenied)];
+    STAssertFalse([UALocationService locationServiceAuthorized],nil);
+    STAssertFalse([locationService isLocationServiceEnabledAndAuthorized],nil);
+    STAssertTrue([UALocationService coreLocationWillPromptUserForPermissionToRun],nil);
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusDenied) withMethod:@selector(authorizationStatus)];
+    [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnNO)];
+    STAssertFalse([UALocationService locationServiceEnabled],nil);
+    STAssertFalse([locationService isLocationServiceEnabledAndAuthorized],nil);
+    STAssertTrue([UALocationService coreLocationWillPromptUserForPermissionToRun],nil);
+    [self swizzleCLLocationClassMethod:@selector(returnNO) withMethod:@selector(locationServicesEnabled)];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusRestricted)];
+    STAssertFalse([UALocationService locationServiceAuthorized], nil);
+    STAssertFalse([locationService isLocationServiceEnabledAndAuthorized],nil);
+    STAssertTrue([UALocationService coreLocationWillPromptUserForPermissionToRun],nil);
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusRestricted) withMethod:@selector(authorizationStatus)];
+    [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusNotDetermined)];
+    STAssertTrue([UALocationService locationServiceAuthorized], nil);
+    STAssertTrue([locationService isLocationServiceEnabledAndAuthorized], nil);
+    STAssertFalse([UALocationService coreLocationWillPromptUserForPermissionToRun],nil); 
+    [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusNotDetermined) withMethod:@selector(authorizationStatus)];
+}
 
+- (void)testAirshipLocationAuthorization {
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    [UALocationService setAirshipLocationServiceEnabled:NO];
+    STAssertFalse([locationService isLocationServiceEnabledAndAuthorized], @"This should report NO when airship services are toggled off");
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+}
 
-#pragma mark -
-#pragma mark UALocationServiceAllowed
-// Testing these methods
-// - (void)updateLocationServiceStatus:(UALocationProviderStatus)status forProvider:(id<UALocationProviderProtocol>)provider;
-// - (void)updateAllowedStatus:(CLAuthorizationStatus)status
-
-//- (void)testUpdateAllowedStatus {
-//    locationService.locationServiceAllowed = YES;
-//    [locationService updateAllowedStatus:kCLAuthorizationStatusDenied];
-//    STAssertFalse(locationService.locationServiceAllowed, nil);
-//    locationService.locationServiceAllowed = YES;
-//    [locationService updateAllowedStatus:kCLAuthorizationStatusRestricted];
-//    STAssertFalse(locationService.locationServiceAllowed, nil);
-//    [locationService updateAllowedStatus:kCLAuthorizationStatusAuthorized];
-//    STAssertTrue(locationService.locationServiceAllowed, nil);
-//    locationService.locationServiceAllowed = NO;
-//    [locationService updateAllowedStatus:kCLAuthorizationStatusNotDetermined];
-//    STAssertTrue(locationService.locationServiceAllowed, nil);    
-//    
-//}
 
 #pragma mark -
 #pragma mark Single Location Service
 
-//- (void)testReportCurrentLocation{
-//    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    standard.locationManager = mockLocationManager;
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] locationServiceAllowed];
-//    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] airshipLocationServiceEnabled];
-//    [[mockLocationManager expect] startUpdatingLocation];
-//    locationService.singleLocationProvider = standard;
-//    [locationService reportCurrentLocation];
-//    [mockLocationService verify];
-//    [mockLocationManager verify];
-//    STAssertEquals(UALocationProviderUpdating, locationService.singleLocationServiceStatus, @"Single location service should be running");
-//    // Test the ability to get a pointer to the singleLocationProvider from the single location service
-//    // while it is running
-//    STAssertEqualObjects(locationService.singleLocationProvider, standard, nil);
-//}
+- (void)testReportCurrentLocation{
+    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
+    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    standard.locationManager = mockLocationManager;
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    [[mockLocationManager expect] startUpdatingLocation];
+    locationService.singleLocationProvider = standard;
+    [locationService reportCurrentLocation];
+    [mockLocationService verify];
+    [mockLocationManager verify];
+    STAssertEquals(UALocationProviderUpdating, locationService.singleLocationServiceStatus, @"Single location service should be running");
+    // Test the ability to get a pointer to the singleLocationProvider from the single location service
+    // while it is running
+    STAssertEqualObjects(locationService.singleLocationProvider, standard, nil);
+    // redo the test to make sure it runs with a nil provider
+    locationService.singleLocationProvider = nil;
+    [[mockLocationService expect] startReportingLocationWithProvider:OCMOCK_ANY];
+    [locationService reportCurrentLocation];
+    [mockLocationService verify];
+}
 
 //// singleLocation should not attempt to start again while updating
-//- (void)testAcquireSingleLocationWhenServiceReportsUpdating {
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
-//    locationService.singleLocationProvider = standard;
-//    standard.locationManager = mockLocationManager;
-//    [locationService reportCurrentLocation];
-//    //This will fail if any method is called on mockLocationManager
-//}
+- (void)testAcquireSingleLocationWhenServiceReportsUpdating {
+    // Make sure location services are authorized
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    // Explicitly rejected methods will cause niceMocks to fail
+    [[mockLocationService reject] startReportingLocationWithProvider:OCMOCK_ANY];
+    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
+    // Setup the service status to updating
+    standard.serviceStatus = UALocationProviderUpdating;
+    locationService.singleLocationProvider = standard;
+    [locationService reportCurrentLocation];
+}
 
 
 //// Verifies that the service stops after receiving a valid location
 //// and that an analytics call is made
-//- (void)testAcquireSingleLocationServiceShutdown {
-//    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
-//    CLLocation *SFO = [UALocationTestUtils testLocationSFO];
-//    UAStandardLocationProvider *provider = [UAStandardLocationProvider providerWithDelegate:locationService];
-//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-//    [[mockLocationManager expect] stopUpdatingLocation]; 
-//    provider.locationManager = mockLocationManager;
-//    locationService.singleLocationProvider = provider;
-//    [[mockLocationService expect] sendLocationToAnalytics:SFO fromProvider:provider];
-//    [provider.delegate UALocationProvider:provider withLocationManager:provider.locationManager didUpdateLocation:SFO fromLocation:PDX];
-//    [mockLocationManager verify];
-//    [mockLocationService verify];
-//    
-//}
+- (void)testAcquireSingleLocationServiceShutdown {
+    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
+    CLLocation *SFO = [UALocationTestUtils testLocationSFO];
+    UAStandardLocationProvider *provider = [UAStandardLocationProvider providerWithDelegate:locationService];
+    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    [[mockLocationManager expect] stopUpdatingLocation]; 
+    provider.locationManager = mockLocationManager;
+    locationService.singleLocationProvider = provider;
+    [[mockLocationService expect] sendLocationToAnalytics:SFO fromProvider:provider];
+    [provider.delegate UALocationProvider:provider withLocationManager:provider.locationManager didUpdateLocation:SFO fromLocation:PDX];
+    [mockLocationManager verify];
+    [mockLocationService verify];
+    
+}
 
 #pragma mark -
 #pragma mark Automatic Location Update on Foreground
 
-//-(void)testAutomaticLocationUpdateOnForeground {
-//    locationService.automaticLocationOnForegroundEnabled = YES;
-//    [[mockLocationService expect] reportCurrentLocation];
-//    // Setup a date over 120.0 seconds ago
-//    NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
-//    locationService.dateOfLastLocation = dateOver120;
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-//    [mockLocationService verify];
-//    locationService.automaticLocationOnForegroundEnabled = NO;
-//    [[mockLocationService reject] reportCurrentLocation];
-//    // If there is another call to acquireSingleLocaitonAndUpload, this will fail
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-//    // reset the time stamp to now, should not trigger an update
-//    locationService.automaticLocationOnForegroundEnabled = YES;
-//    locationService.dateOfLastLocation = [NSDate date];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
-//}
+-(void)testAutomaticLocationUpdateOnForeground {
+    locationService.automaticLocationOnForegroundEnabled = YES;
+    [[mockLocationService expect] reportCurrentLocation];
+    // Setup a date over 120.0 seconds ago
+    NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
+    locationService.dateOfLastLocation = dateOver120;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+    locationService.automaticLocationOnForegroundEnabled = NO;
+    [[mockLocationService reject] reportCurrentLocation];
+    // If there is another call to acquireSingleLocaitonAndUpload, this will fail
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    // reset the time stamp to now, should not trigger an update
+    locationService.automaticLocationOnForegroundEnabled = YES;
+    locationService.dateOfLastLocation = [NSDate date];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
+}
+
+- (void)testShouldPerformAutoLocationUpdate {
+    locationService.automaticLocationOnForegroundEnabled = NO;
+    STAssertFalse([locationService shouldPerformAutoLocationUpdate],nil);
+    locationService.automaticLocationOnForegroundEnabled = YES;
+    locationService.dateOfLastLocation = nil;
+    STAssertTrue([locationService shouldPerformAutoLocationUpdate],nil);
+    locationService.dateOfLastLocation = [NSDate dateWithTimeIntervalSinceNow:-121.0];
+    STAssertTrue([locationService shouldPerformAutoLocationUpdate],nil);
+    locationService.dateOfLastLocation = [NSDate dateWithTimeIntervalSinceNow:-90.0];
+    STAssertFalse([locationService shouldPerformAutoLocationUpdate],nil);
+    
+}
 
 #pragma mark -
 #pragma mark Restarting Location service on startup
-//
-//- (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
-//    locationService.backgroundLocationServiceEnabled = NO;
-//    locationService.locationServiceAllowed = YES;
-//    [self swizzleCLLocationClassEnabledAndAuthorized];
-//    [locationService startReportingLocation];
-//    [locationService startReportingSignificantLocationChanges];
-//    [[[mockLocationService expect] andForwardToRealObject] stopReportingLocation];
-//    [[[mockLocationService expect] andForwardToRealObject] stopReportingSignificantLocationChanges];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-//    [mockLocationService verify];
-//    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
-//}
-//
-//- (void)testLocationServicesNotStoppedOnAppBackgroundWhenEnabled {
-//    locationService.backgroundLocationServiceEnabled = YES;
-//    [[mockLocationService reject] stopReportingLocation];
-//    [[mockLocationService reject] stopReportingSignificantLocationChanges];
-//    [[[mockLocationService expect] andForwardToRealObject] appDidEnterBackground];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-//    [mockLocationService verify];
-//    STAssertFalse([locationService boolForLocationServiceKey:@"standardLocationServiceStatusRestart"], nil);
-//    STAssertFalse([locationService boolForLocationServiceKey:@"significantChangeServiceStatusRestart"], nil);
-//}
 
-//- (void)testLocationServicesNotStartedWhenBackgroundServicesEnabled {
-//    locationService.backgroundLocationServiceEnabled = YES;
-//    [[mockLocationService reject] startReportingLocation];
-//    [[mockLocationService reject] startReportingSignificantLocationChanges];
-//    [[[mockLocationService expect] andForwardToRealObject] appWillEnterForeground];
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-//    [mockLocationService verify];
-//    
-//}
+- (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
+    locationService.backgroundLocationServiceEnabled = NO;
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    [locationService startReportingLocation];
+    [locationService startReportingSignificantLocationChanges];
+    [[[mockLocationService expect] andForwardToRealObject] stopReportingLocation];
+    [[[mockLocationService expect] andForwardToRealObject] stopReportingSignificantLocationChanges];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+}
 
-//- (void)testStartLocationServiceOnAppForegroundWhenBackgroundServicesNotEnabled {
-//    // location services can't be started without authorization, and since objects are lazy loaded
-//    // skip starting and just add them manually. 
-//    locationService.standardLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
-//    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
-//    // setup the correct status
-//    locationService.standardLocationProvider.serviceStatus = UALocationProviderUpdating;
-//    locationService.significantChangeProvider.serviceStatus = UALocationProviderUpdating;
-//    // Make the class perform backgrounding tasks
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-//    [[[mockLocationService expect] andForwardToRealObject] startReportingLocation];
-//    [[[mockLocationService expect] andForwardToRealObject] startReportingSignificantLocationChanges];
-//    // Setup proper expectations for app foreground
-//    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-//    [mockLocationService verify];
-//}
+- (void)testLocationServicesNotStoppedOnAppBackgroundWhenEnabled {
+    locationService.backgroundLocationServiceEnabled = YES;
+    [[mockLocationService reject] stopReportingLocation];
+    [[mockLocationService reject] stopReportingSignificantLocationChanges];
+    [[[mockLocationService expect] andForwardToRealObject] appDidEnterBackground];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+    STAssertFalse([UALocationService boolForLocationServiceKey:@"standardLocationServiceStatusRestart"], nil);
+    STAssertFalse([UALocationService boolForLocationServiceKey:@"significantChangeServiceStatusRestart"], nil);
+}
+
+// If background services are enabled, they do not need to be restarted on foreground events
+- (void)testLocationServicesNotStartedWhenBackgroundServicesEnabled {
+    locationService.backgroundLocationServiceEnabled = YES;
+    [[mockLocationService reject] startReportingLocation];
+    [[mockLocationService reject] startReportingSignificantLocationChanges];
+    [[[mockLocationService expect] andForwardToRealObject] appWillEnterForeground];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+    
+}
+
+// When background location services are not enabled, they need to be restarted on app foreground
+- (void)testStartLocationServiceOnAppForegroundWhenBackgroundServicesNotEnabled {
+    // location services can't be started without authorization, and since objects are lazy loaded
+    // skip starting and just add them manually. 
+    locationService.standardLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
+    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
+    // setup the correct status
+    locationService.standardLocationProvider.serviceStatus = UALocationProviderUpdating;
+    locationService.significantChangeProvider.serviceStatus = UALocationProviderUpdating;
+    // Make the class perform backgrounding tasks
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    // Setup proper expectations for app foreground
+    [[[mockLocationService expect] andForwardToRealObject] startReportingLocation];
+    [[[mockLocationService expect] andForwardToRealObject] startReportingSignificantLocationChanges];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+}
+
+// When services arent running, and backround is not enabled, restart values are set to NO
+- (void)testBackgroundServiceValuesAreFalse {
+    locationService.backgroundLocationServiceEnabled = NO;
+    locationService.standardLocationProvider.serviceStatus = UALocationProviderNotUpdating;
+    locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
+    locationService.significantChangeProvider.serviceStatus = UALocationProviderNotUpdating;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    STAssertFalse([UALocationService boolForLocationServiceKey:uaStandardLocationDistanceFilterKey],nil);
+    STAssertFalse([UALocationService boolForLocationServiceKey:uaSignificantChangeServiceRestartKey],nil);
+    [[mockLocationService reject] startReportingLocation];
+    [[mockLocationService reject] startReportingSignificantLocationChanges];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [mockLocationService verify];
+}
 
 #pragma mark -
 #pragma mark UALocationProvider Delegate callbacks
 
-//- (void)testDidFailWithErrorAndDidChangeAuthorization {
-//    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
-//    locationService.delegate = mockDelegate;
-//    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
-//    locationService.standardLocationProvider = standard;
-//    [[mockDelegate expect] UALocationService:locationService didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
-//    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
-//    [mockDelegate verify];
-//    NSError *locationError = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
-//    [[mockDelegate expect] UALocationService:locationService didFailWithError:locationError];
-//    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didFailWithError:locationError];
-//    [mockDelegate verify];
-//}
-//
-//
-//- (void)testUpdateToNewLocation {
-//    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
-//    locationService.standardLocationProvider = standard;
-//    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-//    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
-//    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
-//    locationService.delegate = mockDelegate;
-//    [[mockDelegate expect] UALocationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
-//    [[mockLocationService expect] sendLocationToAnalytics:pdx fromProvider:standard];
-//    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didUpdateLocation:pdx fromLocation:sfo];
-//    [mockLocationService verify];
-//    [mockDelegate verify];
-//    STAssertEquals(locationService.lastReportedLocation, pdx, nil);
-//}
+- (void)testDidFailWithErrorAndDidChangeAuthorization {
+    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
+    locationService.delegate = mockDelegate;
+    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
+    locationService.standardLocationProvider = standard;
+    [[mockDelegate expect] UALocationService:locationService didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
+    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
+    [mockDelegate verify];
+    NSError *locationError = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
+    [[mockDelegate expect] UALocationService:locationService didFailWithError:locationError];
+    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didFailWithError:locationError];
+    [mockDelegate verify];
+}
+
+
+- (void)testUpdateToNewLocation {
+    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
+    locationService.standardLocationProvider = standard;
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
+    locationService.delegate = mockDelegate;
+    [[mockDelegate expect] UALocationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
+    [[mockLocationService expect] sendLocationToAnalytics:pdx fromProvider:standard];
+    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didUpdateLocation:pdx fromLocation:sfo];
+    [mockLocationService verify];
+    [mockDelegate verify];
+    STAssertEquals(locationService.lastReportedLocation, pdx, nil);
+}
 
 #pragma mark -
 #pragma mark Support Methods -> Swizzling
@@ -508,6 +495,11 @@
     NSError *swizzleError = nil;
     [CLLocationManager jr_swizzleClassMethod:oneSelector withClassMethod:anotherSelector error:&swizzleError];
     STAssertNil(swizzleError, @"Method swizzling for CLLocationManager failed with error %@", swizzleError.description);
+}
+- (void)swizzleUALocationServiceClassMethod:(SEL)oneMethod withMethod:(SEL)anotherMethod {
+    NSError *swizzleError = nil;
+    [UALocationService jr_swizzleClassMethod:oneMethod withClassMethod:anotherMethod error:&swizzleError];
+    STAssertNil(swizzleError,@"Method swizzling for UALocationService failed with error %@", swizzleError.description);
 }
 
 - (void)swizzleCLLocationClassEnabledAndAuthorized {

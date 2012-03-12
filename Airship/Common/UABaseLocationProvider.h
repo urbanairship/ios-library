@@ -75,7 +75,8 @@
 
 /**
  Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- when the UIAlertView is displayed asking the user for locaiton permission
+ when the UIAlertView is displayed asking the user for locaiton permission.
+ @warning This value cannot be nil.
  @param newPurpose String to be set on the locationManager
  */
 - (void)setPurpose:(NSString*)newPurpose;

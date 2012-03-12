@@ -73,8 +73,10 @@
     self.serviceStatus = UALocationProviderNotUpdating;
 }
 
-- (void)setPurpose:(NSString *)purpose_ {
-    locationManager_.purpose = purpose_;
+- (void)setPurpose:(NSString *)purpose {
+    if(purpose) {
+        locationManager_.purpose = purpose;
+    }
 }
 
 - (NSString*)purpose {

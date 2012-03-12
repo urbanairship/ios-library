@@ -49,10 +49,6 @@ static CLLocationManager *depricatedAuthorization_;
 @synthesize backgroundLocationServiceEnabled = backroundLocationServiceEnabled_;
 
 #pragma mark -
-#pragma mark UALocationService_Private.h
-@synthesize deprecatedLocation = deprecatedLocation_;
-
-#pragma mark -
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
@@ -76,9 +72,7 @@ static CLLocationManager *depricatedAuthorization_;
         // TODO: set these values to something more appropriate
         minimumTimeBetweenForegroundUpdates_ = 120.0;
         [self beginObservingUIApplicationState];
-        UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
-        // Setter will set purpose, delegate, distanceFilter, etc
-        [self setStandardLocationProvider:standard];
+        standardLocationProvider_ = [[UAStandardLocationProvider alloc] initWithDelegate:self];        
     }
     return self;
 }
@@ -274,12 +268,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark UALocationService authorization convenience methods
 
 - (BOOL)isLocationServiceEnabledAndAuthorized {
+    BOOL airshipEnabled = [UALocationService airshipLocationServiceEnabled];
     BOOL enabled = [UALocationService locationServiceEnabled];
     BOOL authorized = [UALocationService locationServiceAuthorized];
-    return enabled && authorized;
+    return enabled && authorized && airshipEnabled;
 }
-
-
 
 #pragma mark Standard Location
 - (void)startReportingLocation {
@@ -327,9 +320,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)startReportingLocationWithProvider:(id)locationProvider {
-    BOOL authorizedAndEnabled = [UALocationService locationServiceAuthorized] && [UALocationService locationServiceEnabled];
-    BOOL airshipEnabled = [UALocationService airshipLocationServiceEnabled];
-    if(promptUserForLocationServices_ || (airshipEnabled && authorizedAndEnabled)) {
+    BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
+    if(promptUserForLocationServices_ || authorizedAndEnabled) {
         [locationProvider startReportingLocation];
     }
     // TODO: add delegate error callback
@@ -352,8 +344,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [standardLocationProvider_ autorelease];
     standardLocationProvider_ = [standardLocationProvider retain];
     [self setCommonPropertiesOnProvider:standardLocationProvider_];
-//    standardLocationProvider_.distanceFilter = [self distanceFilterForLocationSerivceKey:
-//    standardLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:
+    standardLocationProvider_.distanceFilter = [self distanceFilterForLocationSerivceKey:uaStandardLocationDistanceFilterKey];
+    standardLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:uaStandardLocationDesiredAccuracyKey];
 }
 
 - (UASignificantChangeProvider*)significantChangeProvider {
@@ -378,7 +370,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider {
     locationProvider.delegate = self;
-    locationProvider.purpose = self.purpose;
+    if(self.purpose) {
+        locationProvider.purpose = self.purpose;
+    }
 }
 
 
@@ -401,11 +395,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [[UAirship shared].analytics addEvent:event];
 }
 
-// TODO: Finish this method call!
 - (void)sendLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil {
-
+    UALocationEvent *event = [UALocationEvent locationEventWithLocation:location locationManager:locationManager andUpdateType:updateTypeOrNil];
+    [[UAirship shared].analytics addEvent:event];
 }
 
 #pragma mark -
@@ -424,7 +418,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)boolForLocationServiceKey:(UALocationServiceNSDefaultsKey *)key {
-    return [[UALocationService objectForLocationServiceKey:key] boolValue];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:key];
 }
 
 + (void)setDouble:(double)doubleValue forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
@@ -432,7 +426,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (double)doubleForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
-    return [[UALocationService objectForLocationServiceKey:key] doubleValue];
+    return [[NSUserDefaults standardUserDefaults] doubleForKey:key];
 }
 
 
@@ -468,13 +462,15 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // convenience method for devs
 + (BOOL)coreLocationWillPromptUserForPermissionToRun {
-    return [UALocationService locationServiceEnabled] && [UALocationService locationServiceAuthorized];
+    BOOL enabled = [UALocationService locationServiceEnabled];
+    BOOL authorized = [UALocationService locationServiceAuthorized];
+    return !(enabled && authorized);
 }
 
 // This method uses a known depricated method, should be removed in the future. 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (BOOL)locationServiceEnabled {
-    if ([CLLocationManager respondsToSelector:@selector(locationServiceEnabled)]) {
+    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
         return [CLLocationManager locationServicesEnabled];
     }
     else {

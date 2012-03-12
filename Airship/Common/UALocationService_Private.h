@@ -32,16 +32,12 @@
     UAStandardLocationProvider *standardLocationProvider_;
     UAStandardLocationProvider *singleLocationProvider_;   
     UASignificantChangeProvider *significantChangeProvider_;
-    BOOL deprecatedLocation_;
 }
 // Override property declarations for implementation and testing
 //
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
 //
-
-// Indicates iOS < 4.2 and depricated method calls should be used
-@property (nonatomic, assign) BOOL deprecatedLocation;
 
 // Sets appropriate value in NSUserDefaults
 + (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
@@ -67,7 +63,8 @@
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 // convinence method to set properties common to all providers
 - (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider;
-
+// convienence method for calling enabled and authorized
+- (BOOL)isLocationServiceEnabledAndAuthorized;
 // UIApplicationState observation
 - (void)beginObservingUIApplicationState;
 // Restart locaiton services if necessary, call single location if necessary
