@@ -197,7 +197,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "SubscriptionLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -251,6 +251,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SubscriptionLib_Prefix.pch;
+				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = /Airship;
 				OTHER_CFLAGS = (
 					"-DUADEBUG",
@@ -273,6 +274,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SubscriptionLib_Prefix.pch;
+				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = /Airship;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subscription-$(CURRENT_PROJECT_VERSION)";
@@ -292,6 +294,7 @@
 				CURRENT_PROJECT_VERSION = 1.2.8;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -314,6 +317,7 @@
 				);
 				CURRENT_PROJECT_VERSION = 1.2.8;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
