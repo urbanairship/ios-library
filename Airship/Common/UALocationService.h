@@ -140,6 +140,10 @@
 /** This method checks the underlying Core Location service for to see if a user
  will receive a prompt requesting permissino for Core Location services to run.
  
+ @warning On iOS < 4.2 This method's default value is YES until after an intial attempt to start location services 
+ has been made by UALocationService. If the user declines location services, that value will be persited, and future attempts
+ to start location services will require that promptUserForLocationServices be set to YES
+ 
  @return NO If Core Location services are enabled and the user has explicity authorized location services
  @return YES If ANY of the following are true
     - Location services are not enabled (The global locaiton service setting in Settings is disabled)
@@ -153,7 +157,6 @@
  be welcome. A value of NO (default value) will ensure that the user is only prompted in the
  case where system location services have indicated that the user has not disabled location 
  services and has not been previously prompted for location services.
- @warning On iOS < 4.2, this value must be set to YES to attempt to start location services for the first time
  
  @return YES An attempt to start location services will be made even if this results in prompting
  the user to allow location services.
