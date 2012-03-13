@@ -77,5 +77,8 @@
 - (void)startReportingLocationWithProvider:(id)locationProvider;
 // Send the error to the delegate if it responds
 - (void)sendErrorToLocationServiceDelegate:(NSError*)error;
+// DEPRICATED LOCATION SUPPORT
+// Use depricated location calls
++ (BOOL)useDeprecatedMethods;
 
 @end

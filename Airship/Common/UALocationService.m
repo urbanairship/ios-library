@@ -33,9 +33,6 @@
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
 
-static CLLocationManager *depricatedAuthorization_;
-
-
 @implementation UALocationService
 
 #pragma mark -
@@ -162,11 +159,8 @@ static CLLocationManager *depricatedAuthorization_;
     return singleLocationProvider_.serviceStatus;
 }
 
-
-#pragma mark -
-#pragma mark UALocationService NSUserDefaults
-
 // These values are stored in NSUserDefaults, necessary for restarting services on foreground
+#pragma mark -
 #pragma mark UAStandardLocation Location Accuracy and Distance
 - (CLLocationDistance)standardLocationDistanceFilter {
     return standardLocationProvider_.distanceFilter;
@@ -193,8 +187,6 @@ static CLLocationManager *depricatedAuthorization_;
 - (NSString*)purpose {
     return [UALocationService objectForLocationServiceKey:uaLocationServicePurposeKey];
 }
-
-
 
 - (void)setPurpose:(NSString *)purpose {
     NSString* uniquePurpose = [NSString stringWithString:purpose];
@@ -274,16 +266,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 
-
-#pragma mark -
-#pragma mark UALocationProvider/CLLocationManager service controls
-
-#pragma mark -
 #pragma mark UALocationService authorization convenience methods
 
 - (BOOL)isLocationServiceEnabledAndAuthorized {
     BOOL airshipEnabled = [UALocationService airshipLocationServiceEnabled];
-    BOOL enabled = [UALocationService locationServiceEnabled];
+    BOOL enabled = [UALocationService locationServicesEnabled];
     BOOL authorized = [UALocationService locationServiceAuthorized];
     return enabled && authorized && airshipEnabled;
 }
@@ -393,23 +380,20 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark UALocationEvent Analytics
 
-// TODO: rewire this to use the same method call as a dev would use
 - (void)sendLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
-    UALocationEvent *event = nil;
     if (provider == standardLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeContinuous];
+        [self sendLocation:location fromLocationManager:provider.locationManager withUpdateType:uaLocationEventUpdateTypeContinuous];
+        
     }
     else if (provider == significantChangeProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeChange];
+        [self sendLocation:location fromLocationManager:provider.locationManager withUpdateType:uaLocationEventUpdateTypeChange];
     }
     else if (provider == singleLocationProvider_) {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeSingle];
+        [self sendLocation:location fromLocationManager:provider.locationManager withUpdateType:uaLocationEventUpdateTypeSingle];
     }
     else {
-        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeNone];
+        [self sendLocation:location fromLocationManager:provider.locationManager withUpdateType:uaLocationEventUpdateTypeNone];
     }
-
-    [[UAirship shared].analytics addEvent:event];
 }
 
 - (void)sendLocation:(CLLocation*)location 
@@ -457,7 +441,19 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL) locationServiceAuthorized {
-    if ([CLLocationManager respondsToSelector:@selector(authorizationStatus)]){
+    if ([UALocationService useDeprecatedMethods]){
+        NSNumber *deprecatedAuthorization = [UALocationService objectForLocationServiceKey:uaDeprecatedLocationAuthorizationKey];
+        // If this is nil, that means an intial value has never been set. Setting the default value of YES allows
+        // location services to start on iOS < 4.2 without setting the force prompt flag to YES.
+        if (!deprecatedAuthorization) {
+            [UALocationService setBool:YES forLocationServiceKey:uaDeprecatedLocationAuthorizationKey];
+            return YES;
+        }
+        else {
+            return [deprecatedAuthorization boolValue];
+        }
+    }
+    else {
         CLAuthorizationStatus authorization = [CLLocationManager authorizationStatus];
         switch (authorization) {
             case kCLAuthorizationStatusNotDetermined:
@@ -472,32 +468,30 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
                 return NO;
         }
     }
-    else {
-        return [UALocationService boolForLocationServiceKey:uaDeprecatedLocationAuthorizationKey];
-    }
 }
 
 // convenience method for devs
 + (BOOL)coreLocationWillPromptUserForPermissionToRun {
-    BOOL enabled = [UALocationService locationServiceEnabled];
+    BOOL enabled = [UALocationService locationServicesEnabled];
     BOOL authorized = [UALocationService locationServiceAuthorized];
     return !(enabled && authorized);
 }
 
++ (BOOL)useDeprecatedMethods {
+    return ![CLLocationManager respondsToSelector:@selector(locationServicesEnabled)];
+}
+
 // This method uses a known depricated method, should be removed in the future. 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-+ (BOOL)locationServiceEnabled {
-    if ([CLLocationManager respondsToSelector:@selector(locationServicesEnabled)]) {
-        return [CLLocationManager locationServicesEnabled];
++ (BOOL)locationServicesEnabled {
+    if ([UALocationService useDeprecatedMethods]) {
+        // Depricated method call, calling CLLocationManager instance for authorzation
+        CLLocationManager *depricatedAuthorization = [[[CLLocationManager alloc] init] autorelease];
+        BOOL enabled = [depricatedAuthorization locationServicesEnabled];
+        return enabled;
     }
     else {
-        // Depricated method call, calling CLLocationManager instance for authorzation
-        if(!depricatedAuthorization_){
-            depricatedAuthorization_ = [[[CLLocationManager alloc] init] autorelease];
-        }
-        BOOL enabled = [depricatedAuthorization_ locationServicesEnabled];
-        depricatedAuthorization_ = nil;
-        return enabled;
+        return [CLLocationManager locationServicesEnabled];
     }
 }
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"

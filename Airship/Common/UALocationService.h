@@ -125,7 +125,7 @@
  @return YES if location services are reported as enabled by the system.
  @return NO if location services are reported as not enabled by the system.
  */
-+ (BOOL)locationServiceEnabled;
++ (BOOL)locationServicesEnabled;
 
 /** Reports the current authorization status of location services as reported by the
  system. 
