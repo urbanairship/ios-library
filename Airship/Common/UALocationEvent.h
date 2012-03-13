@@ -45,7 +45,7 @@ extern UALocationEventUpdateType * const uaLocationEventAnalyticsType;
 extern UALocationEventUpdateType * const uaLocationEventUpdateTypeChange;
 extern UALocationEventUpdateType * const uaLocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const uaLocationEventUpdateTypeSingle;
-extern UALocationEventUpdateType * const uaLocationEventUpdatetypeNone;
+extern UALocationEventUpdateType * const uaLocationEventUpdateTypeNone;
 
 
 /** A UALocationEvent captures all the necessary information for 

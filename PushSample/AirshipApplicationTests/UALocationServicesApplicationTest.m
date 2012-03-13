@@ -12,7 +12,7 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "UALocationEvent.h"
 #import "UALocationService.h"
-#import "UALocationService_Private.h"
+#import "UALocationService+Internal.h"
 #import "UALocationCommonValues.h"
 #import "UABaseLocationProvider.h"
 #import "UAStandardLocationProvider.h"
@@ -93,8 +93,9 @@
     [service sendLocationToAnalytics:PDX fromProvider:sigChange];
     compare = [event.data valueForKey:uaLocationEventUpdateTypeKey] == uaLocationEventUpdateTypeChange;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UALocationEventUpdateTypeChange");
-    service.singleLocationProvider = standard;
-    [service sendLocationToAnalytics:PDX fromProvider:standard];
+    UAStandardLocationProvider *single = [[[UAStandardLocationProvider alloc] init] autorelease];
+    service.singleLocationProvider = single;
+    [service sendLocationToAnalytics:PDX fromProvider:single];
     compare = [event.data valueForKey:uaLocationEventUpdateTypeKey] == uaLocationEventUpdateTypeSingle;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UALocationEventUpdateTypeSingle");
     

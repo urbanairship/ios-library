@@ -29,7 +29,7 @@
 #import "UAAnalytics.h"
 #import "UALocationCommonValues.h"
 #import "UALocationService.h"
-#import "UALocationService_Private.h"
+#import "UALocationService+Internal.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
 #import "UALocationTestUtils.h"
@@ -217,6 +217,7 @@
 #pragma mark  Standard Location
 - (void)testStartReportingLocation {
     [[mockLocationService expect] startReportingLocationWithProvider:OCMOCK_ANY];
+    locationService.standardLocationProvider = nil;
     [locationService startReportingLocation];
     STAssertTrue([locationService.standardLocationProvider isKindOfClass:[UAStandardLocationProvider class]],nil);
     [mockLocationService verify];
@@ -292,6 +293,16 @@
     [UALocationService setAirshipLocationServiceEnabled:NO];
     STAssertFalse([locationService isLocationServiceEnabledAndAuthorized], @"This should report NO when airship services are toggled off");
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+}
+
+- (void)testForcePromptLocation {
+    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] isLocationServiceEnabledAndAuthorized];
+    id mockProvider = [OCMockObject mockForClass:[UAStandardLocationProvider class]];
+    [[mockProvider expect] startReportingLocation];
+    locationService.promptUserForLocationServices = YES;
+    [locationService startReportingLocationWithProvider:mockProvider];
+    [mockLocationService verify];
+    [mockProvider verify];
 }
 
 
@@ -468,6 +479,10 @@
     NSError *locationError = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
     [[mockDelegate expect] UALocationService:locationService didFailWithError:locationError];
     [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didFailWithError:locationError];
+    [mockDelegate verify];
+    NSError *error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil];
+    [[mockDelegate expect] UALocationService:locationService didFailWithError:error];
+    [standard.delegate UALocationProvider:standard withLocationManager:standard.locationManager didFailWithError:error];
     [mockDelegate verify];
 }
 

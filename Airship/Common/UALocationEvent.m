@@ -49,7 +49,7 @@ UALocationEventUpdateType * const uaLocationEventAnalyticsType = @"location";
 UALocationEventUpdateType * const uaLocationEventUpdateTypeChange = @"CHANGE";
 UALocationEventUpdateType * const uaLocationEventUpdateTypeContinuous = @"CONTINUOUS";
 UALocationEventUpdateType * const uaLocationEventUpdateTypeSingle = @"SINGLE";
-UALocationEventUpdateType * const uaLocationEventUpdatetypeNone = @"NONE";
+UALocationEventUpdateType * const uaLocationEventUpdateTypeNone = @"NONE";
 
 
 #pragma mark -

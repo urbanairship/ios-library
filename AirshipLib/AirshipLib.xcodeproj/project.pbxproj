@@ -276,8 +276,8 @@
 		BBB87E1A15057C7F00971CEC /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0B15057C7F00971CEC /* UALocationEvent.h */; };
 		BBB87E1B15057C7F00971CEC /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0C15057C7F00971CEC /* UALocationEvent.m */; };
 		BBB87E1C15057C7F00971CEC /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0C15057C7F00971CEC /* UALocationEvent.m */; };
-		BBB87E1D15057C7F00971CEC /* UALocationService_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService_Private.h */; };
-		BBB87E1E15057C7F00971CEC /* UALocationService_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService_Private.h */; };
+		BBB87E1D15057C7F00971CEC /* UALocationService+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */; };
+		BBB87E1E15057C7F00971CEC /* UALocationService+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */; };
 		BBB87E1F15057C7F00971CEC /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; };
 		BBB87E2015057C7F00971CEC /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; };
 		BBB87E2115057C7F00971CEC /* UALocationService.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0F15057C7F00971CEC /* UALocationService.m */; };
@@ -523,7 +523,7 @@
 		BBB87DF01505777500971CEC /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BBB87E0B15057C7F00971CEC /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationEvent.h; sourceTree = "<group>"; };
 		BBB87E0C15057C7F00971CEC /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEvent.m; sourceTree = "<group>"; };
-		BBB87E0D15057C7F00971CEC /* UALocationService_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationService_Private.h; sourceTree = "<group>"; };
+		BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocationService+Internal.h"; sourceTree = "<group>"; };
 		BBB87E0E15057C7F00971CEC /* UALocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationService.h; sourceTree = "<group>"; };
 		BBB87E0F15057C7F00971CEC /* UALocationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationService.m; sourceTree = "<group>"; };
 		BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASignificantChangeProvider.h; sourceTree = "<group>"; };
@@ -905,7 +905,7 @@
 				BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */,
 				BBB87E0B15057C7F00971CEC /* UALocationEvent.h */,
 				BBB87E0C15057C7F00971CEC /* UALocationEvent.m */,
-				BBB87E0D15057C7F00971CEC /* UALocationService_Private.h */,
+				BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */,
 				BBB87E0E15057C7F00971CEC /* UALocationService.h */,
 				BBB87E0F15057C7F00971CEC /* UALocationService.m */,
 				BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */,
@@ -1066,7 +1066,7 @@
 				BBB87D9F150575D200971CEC /* UALocalStorageDirectory.h in Headers */,
 				BBB87DA0150575D200971CEC /* UAContentURLCache.h in Headers */,
 				BBB87E1A15057C7F00971CEC /* UALocationEvent.h in Headers */,
-				BBB87E1E15057C7F00971CEC /* UALocationService_Private.h in Headers */,
+				BBB87E1E15057C7F00971CEC /* UALocationService+Internal.h in Headers */,
 				BBB87E2015057C7F00971CEC /* UALocationService.h in Headers */,
 				BBB87E2E15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */,
 				BBB87E3215057C7F00971CEC /* UAStandardLocationProvider.h in Headers */,
@@ -1128,7 +1128,7 @@
 				49BD5499148449DB009FD146 /* UALocalStorageDirectory.h in Headers */,
 				497D13F41488282F00FB0A8A /* UAContentURLCache.h in Headers */,
 				BBB87E1915057C7F00971CEC /* UALocationEvent.h in Headers */,
-				BBB87E1D15057C7F00971CEC /* UALocationService_Private.h in Headers */,
+				BBB87E1D15057C7F00971CEC /* UALocationService+Internal.h in Headers */,
 				BBB87E1F15057C7F00971CEC /* UALocationService.h in Headers */,
 				BBB87E2D15057C7F00971CEC /* UASignificantChangeProvider.h in Headers */,
 				BBB87E3115057C7F00971CEC /* UAStandardLocationProvider.h in Headers */,

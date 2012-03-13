@@ -8,7 +8,7 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UALocationService.h"
-#import "UALocationService_Private.h"
+#import "UALocationService+Internal.h"
 #import "UALocationEvent.h"
 #import "UALocationCommonValues.h"
 #import "UAirship.h"

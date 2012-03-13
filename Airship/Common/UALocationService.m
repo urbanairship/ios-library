@@ -24,7 +24,7 @@
  */
 
 #import "UALocationService.h"
-#import "UALocationService_Private.h"
+#import "UALocationService+Internal.h"
 #import "UABaseLocationProvider.h"
 #import "UAGlobal.h"
 #import "UAStandardLocationProvider.h"
@@ -223,7 +223,11 @@ static CLLocationManager *depricatedAuthorization_;
 - (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    
+    // Only use the authorizaiton change callbacks from the standardLocationProvider. 
+    // It exists for the life of the UALocaionService callback.
+    if(locationProvider != standardLocationProvider_){
+        return;
+    }
     if ([delegate_ respondsToSelector:@selector(UALocationService:didChangeAuthorizationStatus:)]) {
         [delegate_ UALocationService:self didChangeAuthorizationStatus:status];
     }
@@ -235,10 +239,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
           didFailWithError:(NSError*)error {
     // Catch kCLErrorDenied for iOS < 4.2
     if (error.code == kCLErrorDenied) {
-       
+        [UALocationService setBool:NO forLocationServiceKey:uaDeprecatedLocationAuthorizationKey];
+        [locationProvider stopReportingLocation];
+        [self sendErrorToLocationServiceDelegate:error];
+
     }
-    if([delegate_ respondsToSelector:@selector(UALocationService:didFailWithError:)]) {
-        [delegate_ UALocationService:self didFailWithError:error];
+    else {
+        [self sendErrorToLocationServiceDelegate:error];
     }
 }
 
@@ -260,6 +267,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [delegate_ UALocationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
     }
 }
+
+- (void)sendErrorToLocationServiceDelegate:(NSError *)error {
+    if([delegate_ respondsToSelector:@selector(UALocationService:didFailWithError:)]) {
+        [delegate_ UALocationService:self didFailWithError:error];
+    }
+}
+
 
 #pragma mark -
 #pragma mark UALocationProvider/CLLocationManager service controls
@@ -324,7 +338,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(promptUserForLocationServices_ || authorizedAndEnabled) {
         [locationProvider startReportingLocation];
     }
-    // TODO: add delegate error callback
 }
 
 
@@ -365,6 +378,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
     [singleLocationProvider_ autorelease];
     singleLocationProvider_ = [singleLocationProvider retain];
+    // distanceFilter and desiredAccuracy are left at default, the most accurate. 
     [self setCommonPropertiesOnProvider:singleLocationProvider_];
 }
 
@@ -385,11 +399,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (provider == standardLocationProvider_) {
         event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeContinuous];
     }
-    if (provider == significantChangeProvider_) {
+    else if (provider == significantChangeProvider_) {
         event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeChange];
     }
-    if (provider == singleLocationProvider_) {
+    else if (provider == singleLocationProvider_) {
         event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeSingle];
+    }
+    else {
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:uaLocationEventUpdateTypeNone];
     }
 
     [[UAirship shared].analytics addEvent:event];

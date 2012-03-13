@@ -153,6 +153,7 @@
  be welcome. A value of NO (default value) will ensure that the user is only prompted in the
  case where system location services have indicated that the user has not disabled location 
  services and has not been previously prompted for location services.
+ @warning On iOS < 4.2, this value must be set to YES to attempt to start location services for the first time
  
  @return YES An attempt to start location services will be made even if this results in prompting
  the user to allow location services.
