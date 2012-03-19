@@ -72,11 +72,20 @@
 #pragma mark Initialization
 
 - (void)testInitWithDelegate {
-    id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
-    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService];
-    STAssertEquals(base.provider, locationServiceProviderUnknown, @"base.provider should be UNKNOWN");
-    STAssertEqualObjects(mockUALocationService, base.delegate, nil);
+    id mockLocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
+    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockLocationService];
+    STAssertEquals(base.provider, UALocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
+    STAssertEqualObjects(mockLocationService, base.delegate, nil);
+}
+
+- (void)testNilDelegateOnRelease {
+    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_];
+    // Get a reference to the location manager, and keep it after releasing the UABaseLocationProvider
+    CLLocationManager *manager = [base.locationManager retain];
     [base release];
+    // Not setting the delegate to nil could result in a crash
+    STAssertNil(manager.delegate, @"UABaseLocationManager should nil the delegate on release");
+    [manager autorelease];
 }
 
 //TODO: add accuracy calculations here. 
@@ -85,7 +94,7 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(standard, nil);
-    STAssertEquals(standard.provider, locationServiceProviderGps, @"provider should be GPS");
+    STAssertEquals(standard.provider, UALocationServiceProviderGps, @"provider should be GPS");
     STAssertEqualObjects(mockUALocationService, standard.delegate, nil);
 }
 
@@ -93,17 +102,17 @@
     id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
     UASignificantChangeProvider *delegate = [UASignificantChangeProvider providerWithDelegate:mockUALocationService];
     STAssertNotNil(delegate, nil);
-    STAssertEquals(delegate.provider, locationServiceProviderNetwork, @"provider should be NETWORK");
+    STAssertEquals(delegate.provider, UALocationServiceProviderNetwork, @"provider should be NETWORK");
     STAssertEqualObjects(mockUALocationService, delegate.delegate, nil);
 }
 
-- (void)testCLLocationMangerSetter {
+- (void)testCLLocationManagerSetter {
     UABaseLocationProvider* provider = [[UABaseLocationProvider alloc] init];
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
     provider.locationManager = locationManager;
     STAssertEqualObjects(locationManager.delegate, provider, @"The CLLocationManger delegate is not being set properly");
     // The service reports not updating
-    STAssertEquals(provider.serviceStatus, kUALocationProviderNotUpdating, nil);
+    STAssertEquals(provider.serviceStatus, UALocationProviderNotUpdating, nil);
     [provider release];
     [locationManager release];
 }
@@ -193,45 +202,66 @@
 - (void)testAuthorizationChangeBaseDelegateResponse {
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
     id mockLocationManager = [OCMockObject partialMockForObject:base.locationManager];
+    base.serviceStatus = UALocationProviderUpdating;
     [[mockLocationManager expect] stopUpdatingHeading];
     [[mockLocationManager expect] stopUpdatingLocation];
     [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
     [base.locationManager.delegate locationManager:base.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
     [mockLocationManager verify];
+    STAssertTrue(base.serviceStatus == UALocationProviderNotUpdating, nil);
+    [[mockLocationManager expect] stopUpdatingHeading];
+    [[mockLocationManager expect] stopUpdatingLocation];
+    [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    [base.locationManager.delegate locationManager:base.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusRestricted];
+    [mockLocationManager verify];
+    [[mockLocationManager reject] stopUpdatingHeading];
+    [[mockLocationManager reject] stopUpdatingLocation];
+    [[mockLocationManager reject] stopMonitoringSignificantLocationChanges];
+    base.serviceStatus = UALocationProviderUpdating;
+    [base.locationManager.delegate locationManager:base.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [base.locationManager.delegate locationManager:base.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    STAssertTrue(base.serviceStatus == UALocationProviderUpdating, nil);
 }
 
 - (void)testAuthorizationChangedStandardDelegateResponse {
     UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:mockUALocationService_];
     id mockLocationManager = [OCMockObject partialMockForObject:standard.locationManager];
+    standard.serviceStatus = UALocationProviderUpdating;
     [[mockLocationManager expect] stopUpdatingLocation];
     [standard.locationManager.delegate locationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
     [mockLocationManager verify];
+    STAssertTrue(standard.serviceStatus == UALocationProviderNotUpdating, nil);
+    [[mockLocationManager expect] stopUpdatingLocation];
+    [standard.locationManager.delegate locationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusRestricted];
+    [mockLocationManager verify];
+    standard.serviceStatus = UALocationProviderUpdating;
+    [[mockLocationManager reject] stopUpdatingLocation];
+    [standard.locationManager.delegate locationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [standard.locationManager.delegate locationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    STAssertTrue(standard.serviceStatus == UALocationProviderUpdating, nil);
     [standard release];
+
 }
 
 - (void)testAuthorizationChangeSignificantDelegateResponse {
     UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:mockUALocationService_];
     id mockLocationManager = [OCMockObject partialMockForObject:significant.locationManager];
     [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    significant.serviceStatus = UALocationProviderUpdating;
     [significant.locationManager.delegate locationManager:significant.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
     [mockLocationManager verify];
+    STAssertTrue(significant.serviceStatus == UALocationProviderNotUpdating, nil);
+    [[mockLocationManager expect] stopMonitoringSignificantLocationChanges];
+    [significant.locationManager.delegate locationManager:significant.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusRestricted];
+    [mockLocationManager verify];
+    significant.serviceStatus = UALocationProviderUpdating;
+    [[mockLocationManager reject] stopMonitoringSignificantLocationChanges];
+    [significant.locationManager.delegate locationManager:significant.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [significant.locationManager.delegate locationManager:significant.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    STAssertTrue(significant.serviceStatus ==  UALocationProviderUpdating, nil);
     [significant release];
 }
 
-- (void)quickTestDifferentLocationAuthorization {
-    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
-    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
-    UASignificantChangeProvider *significant = [[[UASignificantChangeProvider alloc] init] autorelease];
-    id mockBase = [OCMockObject partialMockForObject:base];
-    id mockStandard = [OCMockObject partialMockForObject:standard];
-    id mockSignificant = [OCMockObject partialMockForObject:significant];
-    [base.locationManager.delegate locationManager:base.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-    [standard.locationManager.delegate locationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-    [significant.locationManager.delegate locationManager:significant.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-    [mockBase verify];
-    [mockStandard verify];
-    [mockSignificant verify];
-}
 
 #pragma mark -
 #pragma mark CLLocationManager didFailWithError

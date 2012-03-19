@@ -51,8 +51,11 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     // private
+    standardLocationProvider_.delegate = nil;
     RELEASE_SAFELY(standardLocationProvider_);
+    significantChangeProvider_.delegate = nil;
     RELEASE_SAFELY(significantChangeProvider_);
+    singleLocationProvider_.delegate = nil;
     RELEASE_SAFELY(singleLocationProvider_);
     //
     // public
@@ -106,9 +109,9 @@
     // If the location services were not allowed in the background, and they were tracking when the app entered the background
     // restart them now. 
     if(!backroundLocationServiceEnabled_){
-        BOOL startStandard = [UALocationService boolForLocationServiceKey:standardLocationServiceRestartKey];
-        BOOL startSignificantChange = [UALocationService boolForLocationServiceKey:significantChangeServiceRestartKey];
-        if (startStandard)[self startReportingLocation]; 
+        BOOL startStandard = [UALocationService boolForLocationServiceKey:UAStandardLocationServiceRestartKey];
+        BOOL startSignificantChange = [UALocationService boolForLocationServiceKey:UASignificantChangeServiceRestartKey];
+        if (startStandard)[self startReportingStandardLocation]; 
         if (startSignificantChange)[self startReportingSignificantLocationChanges];
     }
 }
@@ -127,19 +130,19 @@
 
 - (void)appDidEnterBackground {
     if (!backroundLocationServiceEnabled_) {
-        if (standardLocationProvider_.serviceStatus == kUALocationProviderUpdating) {
-            [UALocationService setBool:YES forLocationServiceKey:standardLocationServiceRestartKey];
+        if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating) {
+            [UALocationService setBool:YES forLocationServiceKey:UAStandardLocationServiceRestartKey];
         }
         else {
-            [UALocationService setBool:NO forLocationServiceKey:standardLocationServiceRestartKey];
+            [UALocationService setBool:NO forLocationServiceKey:UAStandardLocationServiceRestartKey];
         }
-        if (significantChangeProvider_.serviceStatus == kUALocationProviderUpdating){
-            [UALocationService setBool:YES forLocationServiceKey:significantChangeServiceRestartKey];
+        if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
+            [UALocationService setBool:YES forLocationServiceKey:UASignificantChangeServiceRestartKey];
         }
         else {
-            [UALocationService setBool:NO forLocationServiceKey:significantChangeServiceRestartKey];
+            [UALocationService setBool:NO forLocationServiceKey:UASignificantChangeServiceRestartKey];
         }
-        [self stopReportingLocation];
+        [self stopReportingStandardLocation];
         [self stopReportingSignificantLocationChanges];
     }
 }
@@ -167,7 +170,7 @@
 }
 
 - (void)setStandardLocationDistanceFilter:(CLLocationDistance)distanceFilter {
-    [UALocationService setDouble:distanceFilter forLocationServiceKey:standardLocationDistanceFilterKey];
+    [UALocationService setDouble:distanceFilter forLocationServiceKey:UAStandardLocationDistanceFilterKey];
     standardLocationProvider_.distanceFilter = distanceFilter;
 }
 
@@ -176,7 +179,7 @@
 }
 
 - (void)setStandardLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy{
-    [UALocationService setDouble:desiredAccuracy forLocationServiceKey:standardLocationDesiredAccuracyKey];
+    [UALocationService setDouble:desiredAccuracy forLocationServiceKey:UAStandardLocationDesiredAccuracyKey];
     standardLocationProvider_.desiredAccuracy = desiredAccuracy;
 }
 
@@ -185,12 +188,12 @@
 // This is stored in user defaults to assign a purpose to new CLLocationManager objects
 // on app foreground
 - (NSString*)purpose {
-    return [UALocationService objectForLocationServiceKey:locationServicePurposeKey];
+    return [UALocationService objectForLocationServiceKey:UALocationServicePurposeKey];
 }
 
 - (void)setPurpose:(NSString *)purpose {
     NSString* uniquePurpose = [NSString stringWithString:purpose];
-    [UALocationService setObject:uniquePurpose forLocationServiceKey:locationServicePurposeKey];
+    [UALocationService setObject:uniquePurpose forLocationServiceKey:UALocationServicePurposeKey];
     if (standardLocationProvider_) {
         standardLocationProvider_.purpose = uniquePurpose;
     }
@@ -215,7 +218,7 @@
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    // Only use the authorizaiton change callbacks from the standardLocationProvider. 
+    // Only use the authorization change callbacks from the standardLocationProvider. 
     // It exists for the life of the UALocaionService callback.
     if(locationProvider != standardLocationProvider_){
         return;
@@ -231,7 +234,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
           didFailWithError:(NSError*)error {
     // Catch kCLErrorDenied for iOS < 4.2
     if (error.code == kCLErrorDenied) {
-        [UALocationService setBool:NO forLocationServiceKey:deprecatedLocationAuthorizationKey];
+        [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
         [locationProvider stopReportingLocation];
         [self sendErrorToLocationServiceDelegate:error];
 
@@ -251,6 +254,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
         [singleLocationProvider_ stopReportingLocation];
+        singleLocationProvider_.delegate = nil;
         RELEASE_SAFELY(singleLocationProvider_);
         return;
     }
@@ -276,7 +280,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 #pragma mark Standard Location
-- (void)startReportingLocation {
+- (void)startReportingStandardLocation {
     if(!standardLocationProvider_){
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
@@ -286,7 +290,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // Keep the standardLocationProvider around for the life of the object to receive didChangeAuthorization 
 // callbacks 
-- (void)stopReportingLocation {
+- (void)stopReportingStandardLocation {
     [standardLocationProvider_ stopReportingLocation];
 }
 
@@ -303,6 +307,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // when authorization state changes
 - (void)stopReportingSignificantLocationChanges {
     [significantChangeProvider_ stopReportingLocation];
+    significantChangeProvider_.delegate = nil;
     RELEASE_SAFELY(significantChangeProvider_);
 }
 
@@ -312,7 +317,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // The default values on the core location object are preset to the highest level of accuracy
 // TODO: see if we want to leave it this way. 
 - (void)reportCurrentLocation {
-    if(singleLocationProvider_.serviceStatus == kUALocationProviderUpdating) return;    
+    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
         singleLocationProvider_.purpose = self.purpose;
@@ -328,7 +333,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 
-
 #pragma mark -
 #pragma mark UALocationProviders Get/Set Methods
 //
@@ -341,11 +345,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider {
+    [standardLocationProvider_ stopReportingLocation];
+    standardLocationProvider_.delegate = nil;
     [standardLocationProvider_ autorelease];
     standardLocationProvider_ = [standardLocationProvider retain];
     [self setCommonPropertiesOnProvider:standardLocationProvider_];
-    standardLocationProvider_.distanceFilter = [self distanceFilterForLocationSerivceKey:standardLocationDistanceFilterKey];
-    standardLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:standardLocationDesiredAccuracyKey];
+    standardLocationProvider_.distanceFilter = [self distanceFilterForLocationSerivceKey:UAStandardLocationDistanceFilterKey];
+    standardLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UAStandardLocationDesiredAccuracyKey];
 }
 
 - (UASignificantChangeProvider*)significantChangeProvider {
@@ -433,21 +439,21 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 
 + (BOOL)airshipLocationServiceEnabled {
-    return [UALocationService boolForLocationServiceKey:locationServiceEnabledKey];
+    return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey];
 }
 
 // Setting these values will trigger a NSUserDefaults update with a KVO notification
 + (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled{
-    [UALocationService setBool:airshipLocationServiceEnabled forLocationServiceKey:locationServiceEnabledKey];
+    [UALocationService setBool:airshipLocationServiceEnabled forLocationServiceKey:UALocationServiceEnabledKey];
 }
 
 + (BOOL) locationServiceAuthorized {
     if ([UALocationService useDeprecatedMethods]){
-        NSNumber *deprecatedAuthorization = [UALocationService objectForLocationServiceKey:deprecatedLocationAuthorizationKey];
+        NSNumber *deprecatedAuthorization = [UALocationService objectForLocationServiceKey:UADeprecatedLocationAuthorizationKey];
         // If this is nil, that means an intial value has never been set. Setting the default value of YES allows
         // location services to start on iOS < 4.2 without setting the force prompt flag to YES.
         if (!deprecatedAuthorization) {
-            [UALocationService setBool:YES forLocationServiceKey:deprecatedLocationAuthorizationKey];
+            [UALocationService setBool:YES forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
             return YES;
         }
         else {

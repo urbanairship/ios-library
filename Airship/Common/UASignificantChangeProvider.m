@@ -30,7 +30,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        provider_ = locationServiceProviderNetwork;
+        provider_ = UALocationServiceProviderNetwork;
     }
     return self;
 }
@@ -40,8 +40,19 @@
 #pragma mark CLLocationManager Delegate
 //** iOS 4.2 or better */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    if (status != kCLAuthorizationStatusAuthorized) {
-        [locationManager_ stopMonitoringSignificantLocationChanges];
+    switch (status) {
+        case kCLAuthorizationStatusAuthorized:
+            break;
+        case kCLAuthorizationStatusNotDetermined:
+            break;
+        case kCLAuthorizationStatusDenied:
+            [self stopReportingLocation];
+            break;
+        case kCLAuthorizationStatusRestricted:
+            [self stopReportingLocation];
+            break;
+        default:
+            break;
     }
     [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
 }

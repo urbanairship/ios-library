@@ -294,8 +294,8 @@ BOOL logging = false;
 + (void)registerNSUserDefaults {
     // UALocationService defaults
     NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
-    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:locationServiceEnabledKey];
-    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:locationServicePurposeKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
 
     NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
     [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];

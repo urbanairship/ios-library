@@ -25,19 +25,20 @@
 
 #import "UALocationCommonValues.h"
 
-UALocationServiceProviderType *const locationServiceProviderGps = @"GPS";
-UALocationServiceProviderType *const locationServiceProviderNetwork = @"NETWORK";
-UALocationServiceProviderType *const locationServiceProviderUnknown = @"UNKNOWN";
+UALocationServiceProviderType *const UALocationServiceProviderGps = @"GPS";
+UALocationServiceProviderType *const UALocationServiceProviderNetwork = @"NETWORK";
+UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOWN";
 
 #pragma mark -
 #pragma mark NSUserPreferences keys for location service persistence
-UALocationServiceNSDefaultsKey *const locationServiceEnabledKey = @"UALocationServiceEnabled";
-UALocationServiceNSDefaultsKey *const locationServicePurposeKey = @"UALocationServicePurpose";
-UALocationServiceNSDefaultsKey *const standardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const significantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const standardLocationDistanceFilterKey = @"standardLocationDistanceFilter";
-UALocationServiceNSDefaultsKey *const standardLocationDesiredAccuracyKey = @"standardLocationDesiredAccuracy";
-UALocationServiceNSDefaultsKey *const deprecatedLocationAuthorizationKey = @"deprecatedAuthorizationCLErrorDeniedRecieved";
+UALocationServiceNSDefaultsKey *const UALocationServiceAllowedKey = @"UALocationServiceAllowed";
+UALocationServiceNSDefaultsKey *const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
+UALocationServiceNSDefaultsKey *const UALocationServicePurposeKey = @"UALocationServicePurpose";
+UALocationServiceNSDefaultsKey *const UAStandardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const UASignificantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey = @"standardLocationDistanceFilter";
+UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey = @"standardLocationDesiredAccuracy";
+UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"deprecatedAuthorizationCLErrorDeniedRecieved";
 
 @implementation UALocationCommonValues
 

@@ -143,4 +143,5 @@
  overriding this method
  */
 - (void)stopReportingLocation;
+
 @end

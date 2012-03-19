@@ -248,10 +248,10 @@
 ///---------------------------------------------------------------------------------------
 
 /** Start the standard location service */
-- (void)startReportingLocation;
+- (void)startReportingStandardLocation;
 
 /** Stops the standard location service */
-- (void)stopReportingLocation;
+- (void)stopReportingStandardLocation;
 
 /** Starts the Significant Change location service
  and sends location data to Urban Airship. This service 
