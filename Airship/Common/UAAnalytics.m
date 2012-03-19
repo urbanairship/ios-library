@@ -322,6 +322,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     //TODO: clearing the session could cause an exit event to have an empty payload and it will be dropped - do we care?
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
+    //Set a blank session_id for app_exit events
+    [session setValue:@"" forKey:@"session_id"];
 }
 
 - (void)didBecomeActive {

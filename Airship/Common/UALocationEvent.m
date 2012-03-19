@@ -31,25 +31,25 @@
 #pragma mark -
 #pragma mark UALocationAnalyticsKey Values
 
-UALocationEventAnalyticsKey * const uaLocationEventSessionIDKey = @"session_id";
-UALocationEventAnalyticsKey * const uaLocationEventForegroundKey = @"foreground";
-UALocationEventAnalyticsKey * const uaLocationEventLatitudeKey = @"lat";
-UALocationEventAnalyticsKey * const uaLocationEventLongitudeKey = @"long";
-UALocationEventAnalyticsKey * const uaLocationEventDesiredAccuracyKey = @"requested_accuracy";
-UALocationEventAnalyticsKey * const uaLocationEventUpdateTypeKey = @"update_type";
-UALocationEventAnalyticsKey * const uaLocationEventProviderKey = @"provider";
-UALocationEventAnalyticsKey * const uaLocationEventDistanceFilterKey = @"update_dist";
-UALocationEventAnalyticsKey * const uaLocationEventHorizontalAccuracyKey = @"h_accuracy";
-UALocationEventAnalyticsKey * const uaLocationEventVerticalAccuracyKey = @"v_accuracy";
+UALocationEventAnalyticsKey * const locationEventSessionIDKey = @"session_id";
+UALocationEventAnalyticsKey * const locationEventForegroundKey = @"foreground";
+UALocationEventAnalyticsKey * const locationEventLatitudeKey = @"lat";
+UALocationEventAnalyticsKey * const locationEventLongitudeKey = @"long";
+UALocationEventAnalyticsKey * const locationEventDesiredAccuracyKey = @"requested_accuracy";
+UALocationEventAnalyticsKey * const locationEventUpdateTypeKey = @"update_type";
+UALocationEventAnalyticsKey * const locationEventProviderKey = @"provider";
+UALocationEventAnalyticsKey * const locationEventDistanceFilterKey = @"update_dist";
+UALocationEventAnalyticsKey * const locationEventHorizontalAccuracyKey = @"h_accuracy";
+UALocationEventAnalyticsKey * const locationEventVerticalAccuracyKey = @"v_accuracy";
 
 #pragma mark -
 #pragma mark UALocationEventUpdateType
 
-UALocationEventUpdateType * const uaLocationEventAnalyticsType = @"location";
-UALocationEventUpdateType * const uaLocationEventUpdateTypeChange = @"CHANGE";
-UALocationEventUpdateType * const uaLocationEventUpdateTypeContinuous = @"CONTINUOUS";
-UALocationEventUpdateType * const uaLocationEventUpdateTypeSingle = @"SINGLE";
-UALocationEventUpdateType * const uaLocationEventUpdateTypeNone = @"NONE";
+UALocationEventUpdateType * const locationEventAnalyticsType = @"location";
+UALocationEventUpdateType * const locationEventUpdateTypeChange = @"CHANGE";
+UALocationEventUpdateType * const locationEventUpdateTypeContinuous = @"CONTINUOUS";
+UALocationEventUpdateType * const locationEventUpdateTypeSingle = @"SINGLE";
+UALocationEventUpdateType * const locationEventUpdateTypeNone = @"NONE";
 
 
 #pragma mark -
@@ -64,8 +64,8 @@ UALocationEventUpdateType * const uaLocationEventUpdateTypeNone = @"NONE";
               provider:(id<UALocationProviderProtocol>)provider 
          andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    [context setValue:provider.provider forKey:uaLocationEventProviderKey];
-    [context setValue:updateType forKey:uaLocationEventUpdateTypeKey];
+    [context setValue:provider.provider forKey:locationEventProviderKey];
+    [context setValue:updateType forKey:locationEventUpdateTypeKey];
     [self populateDictionary:context withLocationValues:location];
     [self populateDictionary:context withLocationProviderValues:provider];
     return [self initWithLocationContext:context];
@@ -75,24 +75,24 @@ UALocationEventUpdateType * const uaLocationEventUpdateTypeNone = @"NONE";
        locationManager:(CLLocationManager*)locationManager 
        andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
-    [context setValue:updateType forKey:uaLocationEventUpdateTypeKey];
-    [context setValue:uaLocationServiceProviderUnknown forKey:uaLocationEventProviderKey];
+    [context setValue:updateType forKey:locationEventUpdateTypeKey];
+    [context setValue:locationServiceProviderUnknown forKey:locationEventProviderKey];
     [self populateDictionary:context withLocationValues:location];
     [self populateDictionary:context withLocationManagerValues:locationManager];
     return [self initWithLocationContext:context];
 }
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location {
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:uaLocationEventLatitudeKey];
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:uaLocationEventLongitudeKey];
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:uaLocationEventHorizontalAccuracyKey];
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:uaLocationEventVerticalAccuracyKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:locationEventLatitudeKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:locationEventLongitudeKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:locationEventHorizontalAccuracyKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:locationEventVerticalAccuracyKey];
 }
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager *)locationManager {
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.desiredAccuracy] forKey:uaLocationEventDesiredAccuracyKey];
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.desiredAccuracy] forKey:locationEventDesiredAccuracyKey];
     // update_dist
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.distanceFilter] forKey:uaLocationEventDistanceFilterKey]; 
+    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.distanceFilter] forKey:locationEventDistanceFilterKey]; 
 }
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider {
@@ -103,19 +103,18 @@ UALocationEventUpdateType * const uaLocationEventUpdateTypeNone = @"NONE";
 #pragma mark -
 #pragma mark UAEvent Required overrides
 
-// TODO: this doesn't look correct
 - (NSString*)getType {
-    return uaLocationEventAnalyticsType;
+    return locationEventAnalyticsType;
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
     [data addEntriesFromDictionary:context];
-    [self addDataFromSessionForKey:uaLocationEventSessionIDKey];
+    [self addDataFromSessionForKey:locationEventSessionIDKey];
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
     if (state == UIApplicationStateActive){
-        [data setValue:UAAnalyticsTrueValue forKey:uaLocationEventForegroundKey];
+        [data setValue:UAAnalyticsTrueValue forKey:locationEventForegroundKey];
     }
-    else [data setValue:UAAnalyticsFalseValue forKey:uaLocationEventForegroundKey];
+    else [data setValue:UAAnalyticsFalseValue forKey:locationEventForegroundKey];
 }
 
 

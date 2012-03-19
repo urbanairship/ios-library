@@ -167,7 +167,6 @@
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D60150574DE00971CEC /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 		BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5A150574DE00971CEC /* JRSwizzle.m */; };
-		BBB87D62150574DE00971CEC /* UALocationEventLogicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */; };
 		BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */; };
 		BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */; };
 		BBB87D671505758100971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
@@ -514,18 +513,17 @@
 		BBB87D58150574DE00971CEC /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Gcov_Fix.c; sourceTree = "<group>"; };
 		BBB87D59150574DE00971CEC /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		BBB87D5A150574DE00971CEC /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
-		BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventLogicTests.m; sourceTree = "<group>"; };
 		BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationProviderTests.m; sourceTree = "<group>"; };
 		BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServiceTest.m; sourceTree = "<group>"; };
 		BBB87D661505758100971CEC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBB87DED150575D200971CEC /* libAirshipLibGcov.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAirshipLibGcov.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBB87DEF1505777500971CEC /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BBB87DF01505777500971CEC /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
-		BBB87E0B15057C7F00971CEC /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationEvent.h; sourceTree = "<group>"; };
-		BBB87E0C15057C7F00971CEC /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEvent.m; sourceTree = "<group>"; };
+		BBB87E0B15057C7F00971CEC /* UALocationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UALocationEvent.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		BBB87E0C15057C7F00971CEC /* UALocationEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UALocationEvent.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UALocationService+Internal.h"; sourceTree = "<group>"; };
 		BBB87E0E15057C7F00971CEC /* UALocationService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationService.h; sourceTree = "<group>"; };
-		BBB87E0F15057C7F00971CEC /* UALocationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationService.m; sourceTree = "<group>"; };
+		BBB87E0F15057C7F00971CEC /* UALocationService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UALocationService.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASignificantChangeProvider.h; sourceTree = "<group>"; };
 		BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASignificantChangeProvider.m; sourceTree = "<group>"; };
 		BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAStandardLocationProvider.h; sourceTree = "<group>"; };
@@ -744,7 +742,6 @@
 				BBB87D58150574DE00971CEC /* Gcov_Fix.c */,
 				BBB87D59150574DE00971CEC /* JRSwizzle.h */,
 				BBB87D5A150574DE00971CEC /* JRSwizzle.m */,
-				BBB87D5B150574DE00971CEC /* UALocationEventLogicTests.m */,
 				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
 				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
@@ -1419,7 +1416,6 @@
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				BBB87D60150574DE00971CEC /* Gcov_Fix.c in Sources */,
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
-				BBB87D62150574DE00971CEC /* UALocationEventLogicTests.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				BBB87DF11505777500971CEC /* UALocationTestUtils.m in Sources */,

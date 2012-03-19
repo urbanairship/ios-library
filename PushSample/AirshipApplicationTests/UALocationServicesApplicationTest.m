@@ -85,18 +85,18 @@
         NSLog(@"EVENT DATA %@", event.data);
     };
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
-    [service sendLocationToAnalytics:PDX fromProvider:standard];
-    BOOL compare = [event.data valueForKey:uaLocationEventUpdateTypeKey] == uaLocationEventUpdateTypeContinuous;
+    [service reportLocationToAnalytics:PDX fromProvider:standard];
+    BOOL compare = [event.data valueForKey:locationEventUpdateTypeKey] == locationEventUpdateTypeContinuous;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UALocationEventUpdateTypeContinuous for standardLocationProvider");
     UASignificantChangeProvider* sigChange = [[[UASignificantChangeProvider alloc] init] autorelease];
     service.significantChangeProvider = sigChange;
-    [service sendLocationToAnalytics:PDX fromProvider:sigChange];
-    compare = [event.data valueForKey:uaLocationEventUpdateTypeKey] == uaLocationEventUpdateTypeChange;
+    [service reportLocationToAnalytics:PDX fromProvider:sigChange];
+    compare = [event.data valueForKey:locationEventUpdateTypeKey] == locationEventUpdateTypeChange;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UALocationEventUpdateTypeChange");
     UAStandardLocationProvider *single = [[[UAStandardLocationProvider alloc] init] autorelease];
     service.singleLocationProvider = single;
-    [service sendLocationToAnalytics:PDX fromProvider:single];
-    compare = [event.data valueForKey:uaLocationEventUpdateTypeKey] == uaLocationEventUpdateTypeSingle;
+    [service reportLocationToAnalytics:PDX fromProvider:single];
+    compare = [event.data valueForKey:locationEventUpdateTypeKey] == locationEventUpdateTypeSingle;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UALocationEventUpdateTypeSingle");
     
 }
@@ -107,7 +107,7 @@
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
     [[mockAnalytics expect] addEvent:[OCMArg any]];
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
-    [service sendLocationToAnalytics:PDX fromProvider:standard];
+    [service reportLocationToAnalytics:PDX fromProvider:standard];
     [mockAnalytics verify];
 }
 
@@ -125,16 +125,16 @@
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
     CLLocationManager *manager = [[[CLLocationManager alloc] init] autorelease];
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-    UALocationEventUpdateType *type = uaLocationEventUpdateTypeSingle;
-    [locationService sendLocation:pdx fromLocationManager:manager withUpdateType:type];
+    UALocationEventUpdateType *type = locationEventUpdateTypeSingle;
+    [locationService reportLocation:pdx fromLocationManager:manager withUpdateType:type];
     NSDictionary *data = event.data;
-    NSString* lat =  [data valueForKey:uaLocationEventLatitudeKey];
+    NSString* lat =  [data valueForKey:locationEventLatitudeKey];
     NSString* convertedLat = [NSString stringWithFormat:@"%.7f", pdx.coordinate.latitude];
     NSLog(@"LAT %@, CONVERTED LAT %@", lat, convertedLat);
     // Just do lightweight testing, heavy testing is done in the UALocationEvent class
     STAssertTrue([event isKindOfClass:[UALocationEvent class]],nil);
     STAssertTrue([lat isEqualToString:convertedLat], nil);
-    UALocationEventUpdateType *typeInDate = (UALocationEventUpdateType*)[data valueForKey:uaLocationEventUpdateTypeKey];
+    UALocationEventUpdateType *typeInDate = (UALocationEventUpdateType*)[data valueForKey:locationEventUpdateTypeKey];
     STAssertTrue(type == typeInDate, nil);
 }
 

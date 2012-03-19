@@ -94,8 +94,8 @@
  
  Possible values are
  
- + UALocationProviderUpdating The service is currently updating location
- + UALocationProviderNotUpdating The service is not updating location
+ + kUALocationProviderUpdating The service is currently updating location
+ + kUALocationProviderNotUpdating The service is not updating location
  
  */
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;

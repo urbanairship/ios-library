@@ -62,7 +62,6 @@
 
 @class UAStandardLocationProvider;
 @class UASignificantChangeProvider;
-@class UALocationService;
 
 /** The UALocationService class provides an interface to both the location services on 
  device and the Urban Airship API. 
@@ -277,7 +276,7 @@
  @param location The location to be sent to the Urban Airship analytics service
  @param provider The provider that generated the location. Data is pulled from the provider for analytics
 */ 
- - (void)sendLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
+ - (void)reportLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
 /** Starts the standard location service long enough to obtain a location an then uploads
  it to Urban Airship.
@@ -295,7 +294,7 @@
  @param locationManager The location manager that provided the location
  @param updateTypeOrNil The update type as described above or nil. 
  */
-- (void)sendLocation:(CLLocation*)location 
+- (void)reportLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil;
 

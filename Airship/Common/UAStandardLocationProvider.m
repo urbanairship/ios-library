@@ -30,7 +30,7 @@
 - (id)init {
     self = [super init];
     if (self){
-        provider_ = uaLocationServiceProviderGps; 
+        provider_ = locationServiceProviderGps; 
     }
     return self;
 }
@@ -43,17 +43,17 @@
     if (status != kCLAuthorizationStatusAuthorized) {
         [locationManager_ stopUpdatingLocation];
     }
-    [delegate_ UALocationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    [delegate_ UALocationProvider:self withLocationManager:locationManager_ didFailWithError:error];
+    [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     // TODO: create a more robust accuracy algorithm
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+        [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 

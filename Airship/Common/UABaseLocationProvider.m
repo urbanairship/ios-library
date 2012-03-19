@@ -49,8 +49,8 @@
     if (self){
         locationManager_ = [[CLLocationManager alloc] init];
         locationManager_.delegate = self;
-        provider_ = uaLocationServiceProviderUnknown;
-        serviceStatus_ = UALocationProviderNotUpdating;
+        provider_ = locationServiceProviderUnknown;
+        serviceStatus_ = kUALocationProviderNotUpdating;
     }
     return self;
 }
@@ -70,7 +70,7 @@
     [locationManager_ autorelease];
     locationManager_ = [locationManager retain];
     locationManager.delegate = self;
-    self.serviceStatus = UALocationProviderNotUpdating;
+    self.serviceStatus = kUALocationProviderNotUpdating;
 }
 
 - (void)setPurpose:(NSString *)purpose {
@@ -120,11 +120,11 @@
 // Allows for consolodation of didFailWithError and didUpateToLocation and
 // delegate callbacks here
 - (void)startReportingLocation {
-    self.serviceStatus = UALocationProviderUpdating;
+    self.serviceStatus = kUALocationProviderUpdating;
 }    
 
 - (void)stopReportingLocation {
-    self.serviceStatus = UALocationProviderNotUpdating;
+    self.serviceStatus = kUALocationProviderNotUpdating;
 }
     
     
@@ -140,17 +140,17 @@
             [locationManager_ stopUpdatingLocation];
             [locationManager_ stopMonitoringSignificantLocationChanges];
         }
-        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+        [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
     }
     
     
     - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-        [delegate_ UALocationProvider:self withLocationManager:locationManager_ didFailWithError:error];
+        [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
     }
     
     - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
         if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-            [delegate_ UALocationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+            [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
         }
     }
     

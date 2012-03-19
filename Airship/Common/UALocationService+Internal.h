@@ -62,7 +62,7 @@
 - (UAStandardLocationProvider*)singleLocationProvider;
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 // convinence method to set properties common to all providers
-- (void)setCommonPropertiesOnProvider:(UABaseLocationProvider*)locationProvider;
+- (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
 // convienence method for calling enabled and authorized
 - (BOOL)isLocationServiceEnabledAndAuthorized;
 // UIApplicationState observation

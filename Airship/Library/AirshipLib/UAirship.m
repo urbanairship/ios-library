@@ -37,7 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
-#define kUALocationServiceDefaultPurpose @"Urban Airship Location Services"
+#define kUALocationServiceDefaultPurpose @"Push to Location"
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
@@ -294,8 +294,8 @@ BOOL logging = false;
 + (void)registerNSUserDefaults {
     // UALocationService defaults
     NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
-    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:uaLocationServiceEnabledKey];
-    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:uaLocationServicePurposeKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:locationServiceEnabledKey];
+    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:locationServicePurposeKey];
 
     NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
     [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];

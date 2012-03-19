@@ -26,26 +26,26 @@
 /** These are common keys used in several location classes */
 
 typedef enum {
-    UALocationProviderNotUpdating = 0,
-    UALocationProviderUpdating
+    kUALocationProviderNotUpdating = 0,
+    kUALocationProviderUpdating
 } UALocationProviderStatus;
 
 // The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;
-extern UALocationServiceProviderType *const uaLocationServiceProviderGps; 
-extern UALocationServiceProviderType *const uaLocationServiceProviderNetwork;
-extern UALocationServiceProviderType *const uaLocationServiceProviderUnknown;
+extern UALocationServiceProviderType *const locationServiceProviderGps; 
+extern UALocationServiceProviderType *const locationServiceProviderNetwork;
+extern UALocationServiceProviderType *const locationServiceProviderUnknown;
 
 // These are the keys for the stored UALocationService values in the NSUserDefaults
 typedef NSString UALocationServiceNSDefaultsKey;
-extern UALocationServiceNSDefaultsKey *const uaLocationServiceAllowedKey;
-extern UALocationServiceNSDefaultsKey *const uaLocationServiceEnabledKey;  
-extern UALocationServiceNSDefaultsKey *const uaLocationServicePurposeKey; 
-extern UALocationServiceNSDefaultsKey *const uaStandardLocationServiceRestartKey;
-extern UALocationServiceNSDefaultsKey *const uaSignificantChangeServiceRestartKey;
-extern UALocationServiceNSDefaultsKey *const uaStandardLocationDistanceFilterKey;
-extern UALocationServiceNSDefaultsKey *const uaStandardLocationDesiredAccuracyKey;
-extern UALocationServiceNSDefaultsKey *const uaDeprecatedLocationAuthorizationKey;
+extern UALocationServiceNSDefaultsKey *const locationServiceAllowedKey;
+extern UALocationServiceNSDefaultsKey *const locationServiceEnabledKey;  
+extern UALocationServiceNSDefaultsKey *const locationServicePurposeKey; 
+extern UALocationServiceNSDefaultsKey *const standardLocationServiceRestartKey;
+extern UALocationServiceNSDefaultsKey *const significantChangeServiceRestartKey;
+extern UALocationServiceNSDefaultsKey *const standardLocationDistanceFilterKey;
+extern UALocationServiceNSDefaultsKey *const standardLocationDesiredAccuracyKey;
+extern UALocationServiceNSDefaultsKey *const deprecatedLocationAuthorizationKey;
 
 @interface UALocationCommonValues : NSObject
 

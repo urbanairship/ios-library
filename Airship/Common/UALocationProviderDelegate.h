@@ -34,7 +34,7 @@
  @param locationManager The CLLocationManager object
  @param status The new status
  */
-- (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
+- (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
@@ -43,7 +43,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
  @param locationManager  The CLLocationManager object
  @param error The NSError thrown by the locationManager
  */
-- (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider 
+- (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
           didFailWithError:(NSError*)error;
 
@@ -55,7 +55,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
  @param newLocation The new location reported by the provider
  @param oldLocation The previous location reported by the provider
  */
-- (void)UALocationProvider:(id<UALocationProviderProtocol>)locationProvider
+- (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
        withLocationManager:(CLLocationManager *)locationManager 
          didUpdateLocation:(CLLocation*)newLocation
               fromLocation:(CLLocation*)oldLocation;
