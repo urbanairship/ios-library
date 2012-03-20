@@ -43,21 +43,23 @@
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
  */
-- (void)UALocationService:(UALocationService*)service didFailWithError:(NSError*)error;
+- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error;
 /** Updates the delegate when authorization status has changed
  @warning *Important:* Available on iOS 4.2 or greater only
  @param service Location service reporting the change
  @param status  The updated location authorization status
  */
-- (void)UALocationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
+- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 /** Delegate callbacks for updated locations only occur while the app is in the foreground. If you need background location updates
  create a separate CLLocationManager
- @warning *Important:* This call is not made to the delegate when the service is updating in the background
+ @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
+ necessary to update UrbanAirship. Extensive work done by the method while backgrounded could result in location data not being
+ recorded or sent
  @param service The service reporting the location update
  @param newLocation The updated location reported by the service
  @param oldLocation The previously reported location
  */
-- (void)UALocationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
 
 @class UAStandardLocationProvider;

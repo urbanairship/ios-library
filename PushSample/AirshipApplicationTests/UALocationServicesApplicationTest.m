@@ -166,13 +166,13 @@
 #pragma mark -
 #pragma mark UALocationService Delegate methods
 
-- (void)UALocationService:(UALocationService*)service didFailWithError:(NSError*)error{
+- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error{
     STFail(@"Location service failed");    
 }
-- (void)UALocationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
+- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
     NSLog(@"Authorization status changed to %u",status);
 }
-- (void)UALocationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation{
+- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation{
     NSLog(@"Location received");
     locationRecieved = YES;
 }

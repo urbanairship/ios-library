@@ -218,7 +218,6 @@
 #pragma mark -
 #pragma mark UALocationProviderDelegate Methods
 
-//TODO: Handle traffic from multiple locationProvider callbacks!!
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -227,8 +226,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(locationProvider != standardLocationProvider_){
         return;
     }
-    if ([delegate_ respondsToSelector:@selector(UALocationService:didChangeAuthorizationStatus:)]) {
-        [delegate_ UALocationService:self didChangeAuthorizationStatus:status];
+    if ([delegate_ respondsToSelector:@selector(locationService:didChangeAuthorizationStatus:)]) {
+        [delegate_ locationService:self didChangeAuthorizationStatus:status];
     }
 }
 
@@ -241,7 +240,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
         [locationProvider stopReportingLocation];
         [self sendErrorToLocationServiceDelegate:error];
-
     }
     else {
         [self sendErrorToLocationServiceDelegate:error];
@@ -262,15 +260,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         RELEASE_SAFELY(singleLocationProvider_);
         return;
     }
-    BOOL isActive = ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive);
-    if (isActive && [delegate_ respondsToSelector:@selector(UALocationService:didUpdateToLocation:fromLocation:)]) {
-        [delegate_ UALocationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+        [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
     }
 }
 
 - (void)sendErrorToLocationServiceDelegate:(NSError *)error {
-    if([delegate_ respondsToSelector:@selector(UALocationService:didFailWithError:)]) {
-        [delegate_ UALocationService:self didFailWithError:error];
+    if([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
+        [delegate_ locationService:self didFailWithError:error];
     }
 }
 
@@ -372,10 +369,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return singleLocationProvider_;
 }
 
+// The distanceFilter and desiredAccuracy are not set as a side effect with this setter.
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
     [singleLocationProvider_ autorelease];
     singleLocationProvider_ = [singleLocationProvider retain];
-    // distanceFilter and desiredAccuracy are left at default, the most accurate. 
     [self setCommonPropertiesOnProvider:singleLocationProvider_];
 }
 

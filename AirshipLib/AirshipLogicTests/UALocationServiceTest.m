@@ -490,15 +490,15 @@
     locationService.delegate = mockDelegate;
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:locationService];
     locationService.standardLocationProvider = standard;
-    [[mockDelegate expect] UALocationService:locationService didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
+    [[mockDelegate expect] locationService:locationService didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didChangeAuthorizationStatus:kCLAuthorizationStatusDenied];
     [mockDelegate verify];
     NSError *locationError = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
-    [[mockDelegate expect] UALocationService:locationService didFailWithError:locationError];
+    [[mockDelegate expect] locationService:locationService didFailWithError:locationError];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didFailWithError:locationError];
     [mockDelegate verify];
     NSError *error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil];
-    [[mockDelegate expect] UALocationService:locationService didFailWithError:error];
+    [[mockDelegate expect] locationService:locationService didFailWithError:error];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didFailWithError:error];
     [mockDelegate verify];
     STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"Depricated key should return NO");
@@ -512,7 +512,7 @@
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
     id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
     locationService.delegate = mockDelegate;
-    [[mockDelegate expect] UALocationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
+    [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
     [[mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:standard];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didUpdateLocation:pdx fromLocation:sfo];
     [mockLocationService verify];
