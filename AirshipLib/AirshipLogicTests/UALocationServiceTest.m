@@ -465,6 +465,20 @@
     [mockLocationService verify];
 }
 
+- (void)testSingleLocationShutsDownOnAppBackground {
+    UAStandardLocationProvider *single = [UAStandardLocationProvider providerWithDelegate:locationService];
+    single.serviceStatus = UALocationProviderUpdating;
+    locationService.singleLocationProvider = single;
+    id mockSingle = [OCMockObject partialMockForObject:single];
+    [[mockSingle expect] stopReportingLocation];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [mockSingle verify];
+    [[mockSingle reject] stopReportingLocation];
+    single.serviceStatus = UALocationProviderNotUpdating;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    
+}
+
 #pragma mark -
 #pragma mark UALocationProvider Delegate callbacks
 

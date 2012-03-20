@@ -142,6 +142,10 @@
         else {
             [UALocationService setBool:NO forLocationServiceKey:UASignificantChangeServiceRestartKey];
         }
+        // If we are trying to acquire a single location, bail, and try on the next app start.
+        if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
+            [singleLocationProvider_ stopReportingLocation];
+        }
         [self stopReportingStandardLocation];
         [self stopReportingSignificantLocationChanges];
     }
