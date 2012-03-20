@@ -20,3 +20,5 @@ fabfile.py*
 *.un~
 # CoverStory tool script
 cover.py
+OCMockLibrary
+
