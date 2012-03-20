@@ -97,6 +97,7 @@
     [self setTestValuesInNSUserDefaults];
     [[NSUserDefaults standardUserDefaults] setDouble:5.0 forKey:UAStandardLocationDistanceFilterKey];
     [[NSUserDefaults standardUserDefaults] setDouble:6.0 forKey:UAStandardLocationDesiredAccuracyKey];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UALocationServiceEnabledKey];
     UALocationService *testService = [[[UALocationService alloc] init] autorelease];
     STAssertTrue(120.00 == testService.minimumTimeBetweenForegroundUpdates, nil);
     STAssertEqualObjects(locationService, locationService.standardLocationProvider.delegate,nil);
@@ -292,6 +293,8 @@
     [self swizzleCLLocationClassEnabledAndAuthorized];
     [UALocationService setAirshipLocationServiceEnabled:NO];
     STAssertFalse([locationService isLocationServiceEnabledAndAuthorized], @"This should report NO when airship services are toggled off");
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    STAssertTrue([locationService isLocationServiceEnabledAndAuthorized], nil);
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 
