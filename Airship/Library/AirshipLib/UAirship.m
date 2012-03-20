@@ -95,7 +95,7 @@ BOOL logging = false;
     if (_sharedAirship) {
         return;
     }
-    [self registerNSUserDefaults];
+    [UAirship registerNSUserDefaults];
     //Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
