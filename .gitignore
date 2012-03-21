@@ -21,4 +21,5 @@ fabfile.py*
 # CoverStory tool script
 cover.py
 OCMockLibrary
+*.swp
 
