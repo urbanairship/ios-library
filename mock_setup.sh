@@ -1,7 +1,8 @@
 #!/bin/sh
 
-In short, this script downloads the OCMockLibrary from https://github.com/erikdoe/ocmock.git, builds the project
-and copies the appropreaet
+# In short, this script downloads the OCMockLibrary from https://github.com/erikdoe/ocmock.git, builds the project
+# and copies the appropriate files to the test directory. The libOCMock.a file and the headers are all that's 
+# required
 
 url="https://github.com/erikdoe/ocmock.git" 
 temp_dir="/tmp/objectClone"
