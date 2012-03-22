@@ -103,6 +103,7 @@
 
 // TODO: set distanceFilter/desiredAccuracy on location providers as they come back online
 - (void)appWillEnterForeground {
+    UALOG(@"Location service did receive appWillEnterForeground");
     if ([self shouldPerformAutoLocationUpdate]) {
         [self reportCurrentLocation];
     }
@@ -129,6 +130,7 @@
 }
 
 - (void)appDidEnterBackground {
+    UALOG(@"Location service did enter background");
     if (!backroundLocationServiceEnabled_) {
         if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating) {
             [UALocationService setBool:YES forLocationServiceKey:UAStandardLocationServiceRestartKey];
@@ -221,6 +223,7 @@
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    UALOG(@"Location service did change authorization status %d", status);
     // Only use the authorization change callbacks from the standardLocationProvider. 
     // It exists for the life of the UALocaionService callback.
     if(locationProvider != standardLocationProvider_){
@@ -235,6 +238,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
           didFailWithError:(NSError*)error {
+    UALOG(@"Location service did fail with error %@", error.description);
     // Catch kCLErrorDenied for iOS < 4.2
     if (error.code == kCLErrorDenied) {
         [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
@@ -250,6 +254,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
        withLocationManager:(CLLocationManager *)locationManager 
          didUpdateLocation:(CLLocation*)newLocation
               fromLocation:(CLLocation*)oldLocation {
+    UALOG(@"Location service did update to location %@ from location %@", newLocation, oldLocation);
     [self reportLocationToAnalytics:newLocation fromProvider:locationProvider];
     self.lastReportedLocation = newLocation; 
     self.dateOfLastLocation = [NSDate date];
@@ -282,6 +287,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 #pragma mark Standard Location
 - (void)startReportingStandardLocation {
+    UALOG(@"Attemp to start standard location service");
     if(!standardLocationProvider_){
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
@@ -292,11 +298,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Keep the standardLocationProvider around for the life of the object to receive didChangeAuthorization 
 // callbacks 
 - (void)stopReportingStandardLocation {
+    UALOG(@"Location service stop reporting standard location");
     [standardLocationProvider_ stopReportingLocation];
 }
 
 #pragma mark Significant Change
 - (void)startReportingSignificantLocationChanges {
+    UALOG(@"Attempt to start significant change service");
     if(!significantChangeProvider_){
         // Factory methods aren't used to avoid setting the delegate twice
         self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
@@ -307,6 +315,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Release the significantChangeProvider to prevent double delegate callbacks
 // when authorization state changes
 - (void)stopReportingSignificantLocationChanges {
+    UALOG(@"Stop reporting significant change");
     [significantChangeProvider_ stopReportingLocation];
     significantChangeProvider_.delegate = nil;
     RELEASE_SAFELY(significantChangeProvider_);
@@ -329,8 +338,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)startReportingLocationWithProvider:(id)locationProvider {
     BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
     if(promptUserForLocationServices_ || authorizedAndEnabled) {
+        UALOG(@"Starting location service");
         [locationProvider startReportingLocation];
+        return;
     }
+    UALOG(@"Location service not authorized");
 }
 
 
@@ -388,9 +400,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark UALocationEvent Analytics
 
 - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
+    UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
     if (provider == standardLocationProvider_) {
         [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeContinuous];
-        
     }
     else if (provider == significantChangeProvider_) {
         [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeChange];
@@ -407,6 +419,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)reportLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil {
+    UALOG(@"Sending location to analytics -> %@ update type %@", location, updateTypeOrNil);
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:location locationManager:locationManager andUpdateType:updateTypeOrNil];
     [[UAirship shared].analytics addEvent:event];
 }
@@ -415,6 +428,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Class Methods
 
 + (void)setObject:(id)object forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
+    UALOG(@"Writing object %@ to user defaults for key %@", object, key);
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:key]; 
 }
 
@@ -450,6 +464,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 + (BOOL) locationServiceAuthorized {
     if ([UALocationService useDeprecatedMethods]){
+        UALOG(@"Using deprecated authorization methods");
         NSNumber *deprecatedAuthorization = [UALocationService objectForLocationServiceKey:UADeprecatedLocationAuthorizationKey];
         // If this is nil, that means an intial value has never been set. Setting the default value of YES allows
         // location services to start on iOS < 4.2 without setting the force prompt flag to YES.
@@ -465,14 +480,19 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         CLAuthorizationStatus authorization = [CLLocationManager authorizationStatus];
         switch (authorization) {
             case kCLAuthorizationStatusNotDetermined:
+                UALOG(@"Location authorization kCLAuthorizationStatusNotDetermined");
                 return YES;
             case kCLAuthorizationStatusAuthorized:
+                UALOG(@"Location authorization kCLAuthorizationStatusAuthorized");
                 return YES;
             case kCLAuthorizationStatusDenied:
+                UALOG(@"Location authorization kCLAuthorizationStatusDenied");
                 return NO;
             case kCLAuthorizationStatusRestricted:
+                UALOG(@"Location authorization kCLAuthorizationStatusRestricted");
                 return NO;
             default:
+                UALOG(@"Unexpected value for authorization");
                 return NO;
         }
     }
@@ -493,9 +513,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (BOOL)locationServicesEnabled {
     if ([UALocationService useDeprecatedMethods]) {
-        // Depricated method call, calling CLLocationManager instance for authorzation
-        CLLocationManager *depricatedAuthorization = [[[CLLocationManager alloc] init] autorelease];
-        BOOL enabled = [depricatedAuthorization locationServicesEnabled];
+        // Depricated method call, calling CLLocationManager instance for authorization
+        CLLocationManager *deprecatedAuthorization = [[[CLLocationManager alloc] init] autorelease];
+        BOOL enabled = [deprecatedAuthorization locationServicesEnabled];
         return enabled;
     }
     else {

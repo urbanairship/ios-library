@@ -24,6 +24,7 @@
  */
 #import "UAStandardLocationProvider.h"
 #import "UALocationCommonValues.h"
+#import "UAGlobal.h"
 
 @implementation UAStandardLocationProvider
 
@@ -40,6 +41,7 @@
 
 //** iOS 4.2 or better */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    UALOG(@"Standard location authorization changed %d", status);
     switch (status) {
         case kCLAuthorizationStatusAuthorized:
             break;
@@ -58,31 +60,32 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    UALOG(@"Standard location mananager did fail with error %@", error.description);
     [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
     // TODO: create a more robust accuracy algorithm
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
         [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
-
-
-
 #pragma mark -
-#pragma mark Empty Mehtods to be overridden
+#pragma mark Location Reporting
 
 - (void)startReportingLocation {
+    UALOG(@"Start standard location");
     [super startReportingLocation];
     [locationManager_ startUpdatingLocation];
 }
 - (void)stopReportingLocation {
+    UALOG(@"Stop standard location");
     [super stopReportingLocation];
     [locationManager_ stopUpdatingLocation];
 }
-
+ 
 + (UAStandardLocationProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
     return [[[UAStandardLocationProvider alloc] initWithDelegate:serviceDelegateOrNil] autorelease];
 }

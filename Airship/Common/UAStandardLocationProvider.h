@@ -36,8 +36,6 @@
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping the location service
 ///---------------------------------------------------------------------------------------
-
-
 /** Starts the standard location service 
  
  The standard location service uses the GPS capabilities of the device to provide location

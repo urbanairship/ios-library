@@ -70,6 +70,10 @@
     return self;
 }
 
+- (NSString*)description {
+    return provider_;
+}
+
 #pragma mark -
 #pragma mark CLLocationManager Accessors
 
@@ -106,8 +110,6 @@
     locationManager_.desiredAccuracy = desiredAccuracy;
 }
 
-
-
 #pragma mark -
 #pragma mark Location Accuracy calculations
 
@@ -115,8 +117,10 @@
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
     if (newLocation.horizontalAccuracy < 0) {
+        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;
     }
+    UALOG(@"Location %@ met accuracy requirements", newLocation);
     return YES;
 }
 
@@ -164,13 +168,16 @@
     [locationManager_ stopUpdatingLocation];
     [locationManager_ stopMonitoringSignificantLocationChanges]; 
     self.serviceStatus = UALocationProviderNotUpdating;
+    UALOG(@"Stopped all reporting");
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    UALOG(@"Base location mananger did fail with error %@", error.description);
     [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
         [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
     }

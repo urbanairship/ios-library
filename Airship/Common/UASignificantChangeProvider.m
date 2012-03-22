@@ -24,6 +24,7 @@
  */
 
 #import "UASignificantChangeProvider.h"
+#import "UAGlobal.h"
 
 @implementation UASignificantChangeProvider
 
@@ -40,6 +41,7 @@
 #pragma mark CLLocationManager Delegate
 //** iOS 4.2 or better */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    UALOG(@"Significant change did change authorization status %d", status);
     switch (status) {
         case kCLAuthorizationStatusAuthorized:
             break;
@@ -58,10 +60,12 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    UALOG(@"Significant change did fail with error %@", error.description);
     [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    UALOG(@"Significant change did update to location %@ from location %@", newLocation, oldLocation);
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
         [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
     }
@@ -77,10 +81,12 @@
 }
 
 - (void)startReportingLocation {
+    UALOG(@"Start significant change service");
     [super startReportingLocation];
     [locationManager_ startMonitoringSignificantLocationChanges];
 }
 - (void)stopReportingLocation {
+    UALOG(@"Stop reporting significant change service");
     [super stopReportingLocation];
     [locationManager_ stopMonitoringSignificantLocationChanges];
 }
