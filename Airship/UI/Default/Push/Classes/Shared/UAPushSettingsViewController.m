@@ -27,18 +27,29 @@
 #import "UAPush.h"
 #import "UAPushUI.h"
 #import "UAPushSettingsViewController.h"
+#import "UALocationService.h"
 
+// Overall counts for sectioned table view
 enum {
     SectionPushEnabled = 0,
-    SectionQuietTime   = 1,
-    SectionCount       = 2
+    SectionAirshipLocationEnabled = 1,
+    SectionQuietTime   = 2,
+    SectionCount       = 3
 };
 
+// The section for the push enabled switch is 0
+// The row count for the push table view is 1
 enum {
     PushEnabledSectionSwitchCell = 0,
     PushEnabledSectionRowCount   = 1
 };
 
+// The section for the Airship is 1
+// The row count is one
+//static NSUInteger AirshipLocationEnabledSectionSwitchCell = 1;
+static NSUInteger AirshipLocationEnabledSectionRowCount = 1;
+
+// Enums for the Quiet time table view
 enum {
     QuietTimeSectionSwitchCell  = 0,
     QuietTimeSectionStartCell   = 1,
@@ -60,6 +71,9 @@ enum {
 @synthesize quietTimeSwitch;
 @synthesize fromCell;
 @synthesize toCell;
+@synthesize airshipLocationEnabledSwitch = airshipLocationEnabledSwitch_;
+@synthesize airshipLocationEnabledLabel = airshipLocationEnabledLabel_;
+@synthesize airshipLocationEnabledCell = airshipLocationEnabledCell_;
 
 #pragma mark -
 #pragma mark Lifecycle methods
@@ -78,13 +92,15 @@ enum {
     
     self.tableView = nil;
     self.datePicker = nil;
-    
+    self.airshipLocationEnabledSwitch = nil;
+    self.airshipLocationEnabledLabel = nil;
+    self.airshipLocationEnabledCell = nil;
     [super dealloc];
 }
 
 - (void)viewDidLoad {
-    [self initViews];
     [super viewDidLoad];
+    [self initViews];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -105,7 +121,9 @@ enum {
     
     self.tableView = nil;
     self.datePicker = nil;
-
+    self.airshipLocationEnabledSwitch = nil;
+    self.airshipLocationEnabledLabel = nil;
+    self.airshipLocationEnabledCell = nil;
     [super viewDidUnload];
 }
 
@@ -113,7 +131,6 @@ enum {
     
     //Hide the picker if it was left up last time
     [self updateDatePicker:NO];
-    
     [super viewWillAppear:animated];
 }
 
@@ -140,6 +157,8 @@ enum {
     switch (section) {
         case SectionPushEnabled:
             return PushEnabledSectionRowCount;
+        case SectionAirshipLocationEnabled:
+            return AirshipLocationEnabledSectionRowCount;
         case SectionQuietTime:
         {
             if (pushEnabledSwitch.on && quietTimeSwitch.on) {
@@ -166,6 +185,8 @@ enum {
         }
     } else if (indexPath.section == SectionPushEnabled) {
         return pushEnabledCell;
+    } else if (indexPath.section == SectionAirshipLocationEnabled) {
+        return airshipLocationEnabledCell_;
     }
     return nil;
 }
@@ -180,6 +201,7 @@ enum {
     }
 }
 
+// UA_Push_Settings_Location_Enabled_Label
 #pragma mark -
 #pragma mark logic
 
@@ -332,6 +354,13 @@ IF_IOS4_OR_GREATER (
         [self updateDatePicker:NO];
     }
     [self.tableView reloadData];
+    
+    if (airshipLocationEnabledSwitch_.on){
+        [UALocationService setAirshipLocationServiceEnabled:YES];
+    }
+    else {
+        [UALocationService setAirshipLocationServiceEnabled:NO];
+    }
 
 }
 

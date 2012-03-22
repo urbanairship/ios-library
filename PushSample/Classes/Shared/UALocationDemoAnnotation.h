@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -22,36 +22,21 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 
-#import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "UAirship.h"
-
-@interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver> {
-    IBOutlet UITableView *tableView;
-    IBOutlet UIImageView *footerImageView;
-
-    UITableViewCell *deviceTokenCell;
-    UITableViewCell *deviceTokenTypesCell;
-    UITableViewCell *deviceTokenDisabledTypesCell;
-    UITableViewCell *deviceTokenAliasCell;
-    UITableViewCell *deviceTokenTagsCell;
-    
-    UITableViewCell *helpSoundsCell;
-    UITableViewCell *helpLogCell;
-    UITableViewCell *locationCell_;
-
-    UIViewController *tokenViewController;
-    UIViewController *aliasViewController;
-    UIViewController *tagsViewController;
-
+@interface UALocationDemoAnnotation : NSObject <MKAnnotation> {
+    CLLocationCoordinate2D coordinate_;
+    NSString *title_;
+    NSString *subtitle_;
 }
 
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) UIImageView *footerImageView;
-@property (nonatomic, retain) UITableViewCell *locationCell;
+@property (nonatomic, readonly, copy) NSString *title;
+@property (nonatomic, readonly, copy) NSString *subtitle;
 
-- (void)initCells;
-- (void)updateCellValues;
-
+- (CLLocationCoordinate2D)coordinate;
+- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate;
+- (NSString*)monthDateFromDate:(NSDate*)date;
+- (NSString*)description;
++ (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location;
 @end
