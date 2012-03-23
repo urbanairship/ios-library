@@ -57,6 +57,7 @@
     RELEASE_SAFELY(significantChangeProvider_);
     singleLocationProvider_.delegate = nil;
     RELEASE_SAFELY(singleLocationProvider_);
+    self.delegate = nil;
     //
     // public
     RELEASE_SAFELY(lastReportedLocation_);

@@ -53,6 +53,7 @@
 - (IBAction)clearLocationPressed:(id)sender;
 - (IBAction)clearSavedDataPressed:(id)sender;
 - (IBAction)toggleBackgroundLocation:(id)sender;
+- (IBAction)mapLocationPressed:(id)sender;
 - (void)addLocationToData:(CLLocation*)location;
 - (void)turnOffLocationDisplay;
 - (NSMutableArray*)readLocationsFromDisk;

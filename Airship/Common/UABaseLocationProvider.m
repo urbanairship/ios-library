@@ -45,9 +45,11 @@
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
+    [self stopAllReporting];
     locationManager_.delegate = nil;
     self.delegate = nil;
     RELEASE_SAFELY(locationManager_);
+    RELEASE_SAFELY(provider_);
     [super dealloc];
 }
 

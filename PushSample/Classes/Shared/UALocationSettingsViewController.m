@@ -27,6 +27,7 @@
 #import "UAMapPresentationController.h"
 #import "UAGlobal.h"
 #import "UALocationCommonValues.h"
+#import "UAMapPresentationController.h"
 
 @interface UALocationSettingsViewController ()
 
@@ -186,6 +187,14 @@
     }
 }
 
+- (IBAction)mapLocationPressed:(id)sender{
+    UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController" 
+                                                                                               bundle:[NSBundle mainBundle]];
+    mapController.locations = [NSMutableArray arrayWithArray:[reportedLocations_ allObjects]];
+    [mapController autorelease];
+    [self.navigationController pushViewController:mapController animated:YES];
+}
+
 
 #pragma mark -
 #pragma mark GUI operations
@@ -232,13 +241,13 @@
 #pragma mark -
 #pragma mark UALocationServiceDelegate
 
-- (void)UALocationService:(UALocationService*)service didFailWithError:(NSError*)error {
+- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error {
     NSLog(@"LOCATION_ERROR, %@", error.description);
 }
-- (void)UALocationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     NSLog(@"LOCATION_AUTHORIZATION_STATUS %u", status);
 }
-- (void)UALocationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
+- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
     NSLog(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
     [self addLocationToData:newLocation];
     if([UIApplication sharedApplication].applicationState != UIApplicationStateActive){

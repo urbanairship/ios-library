@@ -55,6 +55,7 @@
     self.annotations = [NSMutableArray array];
     self.annotationViews = [NSMutableArray array];
     [self convertLocationsToAnnotationsAndAnnotationViews];
+    self.navigationItem.rightBarButtonItem = rightButton_;
 }
 
 - (void)viewDidUnload
@@ -113,7 +114,8 @@
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
     // Return nil for the MKUserLocation object
-    if ([annotation isKindOfClass:[MKUserLocation class]] ) {
+    BOOL b = [annotation isKindOfClass:[MKUserLocation class]];
+    if (b) {
         return nil;
     }
     NSUInteger index = [annotations_ indexOfObject:annotation];
