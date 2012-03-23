@@ -258,6 +258,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self reportLocationToAnalytics:newLocation fromProvider:locationProvider];
     self.lastReportedLocation = newLocation; 
     self.dateOfLastLocation = [NSDate date];
+    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+        [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+    }
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
         [singleLocationProvider_ stopReportingLocation];
@@ -265,9 +268,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         RELEASE_SAFELY(singleLocationProvider_);
         return;
     }
-    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-        [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
-    }
+
 }
 
 - (void)sendErrorToLocationServiceDelegate:(NSError *)error {
