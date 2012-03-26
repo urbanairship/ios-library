@@ -44,12 +44,14 @@
  @param error Error passed from a CLLocationManager
  */
 - (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error;
+
 /** Updates the delegate when authorization status has changed
  @warning *Important:* Available on iOS 4.2 or greater only
  @param service Location service reporting the change
  @param status  The updated location authorization status
  */
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
+
 /** Delegate callbacks for updated locations only occur while the app is in the foreground. If you need background location updates
  create a separate CLLocationManager
  @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
@@ -169,8 +171,8 @@
 /// @name Recent Activity
 ///---------------------------------------------------------------------------------------
 
-/** The most recently received location accesible by the CLLocationManager. This may be more accurate than
- the last reported location, and it may also be nil
+/** The most recently received location available from the CLLocationManager objec. This may be more accurate than
+ the last reported location, and it may also be nil. See CLLocationManager documetation for more details. 
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */

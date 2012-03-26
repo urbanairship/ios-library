@@ -144,7 +144,6 @@
     self.serviceStatus = UALocationProviderNotUpdating;
 }
     
-    
 #pragma mark -
 #pragma mark CLLocationManger Delegate
     

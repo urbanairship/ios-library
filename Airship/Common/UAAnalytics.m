@@ -437,7 +437,10 @@ IF_IOS4_OR_GREATER(
     if ([[event getType] isEqualToString:@"app_exit"] || [[event getType] isEqualToString:@"app_background"]) {
         return;
     }
-    
+    // Don't send app init while in the background
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive && [[event getType] isEqualToString:@"app_init"]) {
+        return;
+    }
     [self sendIfNeeded];
 }
 
@@ -699,14 +702,6 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)sendIfNeeded {
-    
-    IF_IOS4_OR_GREATER(
-                       // if the application is not active, do not attempt to send
-                       // this will typically be the case for headless newsstant launches
-                       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
-                           return;
-                       }
-    )
     
     //try sending at this interval if no other thresholds
     //have been met
