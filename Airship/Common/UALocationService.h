@@ -169,6 +169,13 @@
 /// @name Recent Activity
 ///---------------------------------------------------------------------------------------
 
+/** The most recently received location accesible by the CLLocationManager. This may be more accurate than
+ the last reported location, and it may also be nil
+ @return The most recent location, if one is available
+ @return nil if no recent location is available
+ */
+- (CLLocation*)location;
+
 /// Last location reported to Urban Airship 
 @property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
 

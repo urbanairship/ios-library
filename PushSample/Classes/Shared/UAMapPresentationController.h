@@ -26,7 +26,9 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 
+@class UALocationService;
 @interface UAMapPresentationController : UIViewController <MKMapViewDelegate>  {
+    UALocationService *locationService_;
     NSMutableArray *locations_;
     MKMapView *mapView_;
     NSMutableArray *annotations_;
@@ -34,13 +36,16 @@
     UIBarButtonItem *rightButton_;
 }
 
+@property (nonatomic, retain) UALocationService *locationService;
 @property (nonatomic, retain) NSMutableArray *locations;
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 @property (nonatomic, retain) NSMutableArray *annotations;
 @property (nonatomic, retain) NSMutableArray *annotationViews;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;
 
--(void)convertLocationsToAnnotationsAndAnnotationViews;
+- (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;
+- (void)convertLocationsToAnnotationsAndAnnotationViews;
 - (void)annotateMap;
 - (IBAction)rightBarButtonPressed:(id)sender;
+
 @end

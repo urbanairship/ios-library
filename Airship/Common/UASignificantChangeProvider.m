@@ -61,13 +61,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     UALOG(@"Significant change did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
+    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Significant change did update to location %@ from location %@", newLocation, oldLocation);
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-        [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 

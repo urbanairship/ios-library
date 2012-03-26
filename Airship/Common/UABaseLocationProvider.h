@@ -86,6 +86,13 @@
  */
 - (void)setPurpose:(NSString*)newPurpose;
 
+/** The most recently received location accesible by the CLLocationManager. This may be more accurate than
+ the last reported location, and it may also be nil
+ @return The most recent location, if one is available
+ @return nil if no recent location is available
+ */
+- (CLLocation*)location;
+
 ///---------------------------------------------------------------------------------------
 /// @name Location Service methods
 ///---------------------------------------------------------------------------------------

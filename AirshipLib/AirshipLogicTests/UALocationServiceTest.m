@@ -153,6 +153,14 @@
     STAssertEqualObjects(locationService, locationService.significantChangeProvider.delegate,nil);
 }
 
+- (void)testCachedLocation {
+    id mockLocation = [OCMockObject niceMockForClass:[CLLocationManager class]];
+    locationService.standardLocationProvider.locationManager = mockLocation;
+    [[mockLocation expect] location];
+    [locationService location];
+    [mockLocation verify];
+}
+
 #pragma mark Standard Location distanceFilter desiredAccuracy NSUserDefaults
 
 

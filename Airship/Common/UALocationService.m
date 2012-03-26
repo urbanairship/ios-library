@@ -221,12 +221,13 @@
 #pragma mark -
 #pragma mark UALocationProviderDelegate Methods
 
+// Providers shut themselves down when authorization is denied. 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
        withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Location service did change authorization status %d", status);
     // Only use the authorization change callbacks from the standardLocationProvider. 
-    // It exists for the life of the UALocaionService callback.
+    // It exists for the life of the UALocationService callback.
     if(locationProvider != standardLocationProvider_){
         return;
     }
@@ -304,6 +305,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [standardLocationProvider_ stopReportingLocation];
 }
 
+- (CLLocation*)location {
+    return standardLocationProvider_.location;
+}
+
 #pragma mark Significant Change
 - (void)startReportingSignificantLocationChanges {
     UALOG(@"Attempt to start significant change service");
@@ -329,7 +334,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // The default values on the core location object are preset to the highest level of accuracy
 // TODO: see if we want to leave it this way. 
 - (void)reportCurrentLocation {
-    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
+    if(singleLocationProvider_ && singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
         singleLocationProvider_.purpose = self.purpose;

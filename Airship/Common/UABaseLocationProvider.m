@@ -42,7 +42,7 @@
 @synthesize provider = provider_;
 
 #pragma mark -
-#pragma mark Object Lifecycle
+#pragma mark Object Lifecycle/NSObject Methods
 
 - (void)dealloc {
     [self stopAllReporting];
@@ -73,7 +73,7 @@
 }
 
 - (NSString*)description {
-    return provider_;
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d", provider_, self.purpose, serviceStatus_];
 }
 
 #pragma mark -
@@ -110,6 +110,10 @@
 
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy{
     locationManager_.desiredAccuracy = desiredAccuracy;
+}
+
+- (CLLocation*)location {
+    return locationManager_.location;
 }
 
 #pragma mark -
@@ -175,13 +179,13 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     UALOG(@"Base location mananger did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
+    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-        [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
     

@@ -25,8 +25,10 @@
 #import "UAMapPresentationController.h"
 #import "UAGlobal.h"
 #import "UALocationDemoAnnotation.h"
+#import "UALocationService.h"
 
 @implementation UAMapPresentationController
+@synthesize locationService = locationService_;
 @synthesize locations = locations_;
 @synthesize mapView = mapView_;
 @synthesize annotations = annotations_;
@@ -34,6 +36,7 @@
 @synthesize rightButton = rightButton_;
 
 - (void) dealloc {
+    RELEASE_SAFELY(locationService_);
     RELEASE_SAFELY(locations_);
     RELEASE_SAFELY(annotations_);
     RELEASE_SAFELY(annotationViews_);
@@ -48,14 +51,28 @@
         self.locations = [NSMutableArray array];
     }
     NSLog(@"LOCATIONS ARRAY %@", locations_);
-    CLLocationCoordinate2D pdx = CLLocationCoordinate2DMake(45.525, -122.682);
-    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
-    MKCoordinateRegion region = MKCoordinateRegionMake(pdx, span);
-    [mapView_ setRegion:region animated:YES];
+    CLLocationCoordinate2D mapCenterLocation;
+    CLLocation *recentLocation = locationService_.location;
+    if(recentLocation){
+        mapCenterLocation = recentLocation.coordinate;
+    }
+    else if([locations_ count] > 0){
+        mapCenterLocation = [[locations_ objectAtIndex:0] coordinate];
+    }
+    else {
+        mapCenterLocation = CLLocationCoordinate2DMake(37.772643, -122.406095);
+    }
+    [self moveSpanToCoordinate:mapCenterLocation];
     self.annotations = [NSMutableArray array];
     self.annotationViews = [NSMutableArray array];
     [self convertLocationsToAnnotationsAndAnnotationViews];
     self.navigationItem.rightBarButtonItem = rightButton_;
+}
+
+- (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location {
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
+    MKCoordinateRegion region = MKCoordinateRegionMake(location, span);
+    [mapView_ setRegion:region animated:YES];
 }
 
 - (void)viewDidUnload

@@ -191,6 +191,7 @@
     UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController" 
                                                                                                bundle:[NSBundle mainBundle]];
     mapController.locations = [NSMutableArray arrayWithArray:[reportedLocations_ allObjects]];
+    mapController.locationService = locationService_;
     [mapController autorelease];
     [self.navigationController pushViewController:mapController animated:YES];
 }

@@ -56,19 +56,19 @@
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    [delegate_ locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     UALOG(@"Standard location mananager did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didFailWithError:error];
+    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
     // TODO: create a more robust accuracy algorithm
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
-        [delegate_ locationProvider:self withLocationManager:locationManager_ didUpdateLocation:newLocation fromLocation:oldLocation];
+        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
