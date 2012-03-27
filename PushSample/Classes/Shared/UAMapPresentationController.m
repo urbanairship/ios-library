@@ -131,11 +131,13 @@
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
     // Return nil for the MKUserLocation object
-    BOOL b = [annotation isKindOfClass:[MKUserLocation class]];
-    if (b) {
+    if ([annotation isKindOfClass:[MKUserLocation class]]) {
         return nil;
     }
     NSUInteger index = [annotations_ indexOfObject:annotation];
+    if (index == NSNotFound){
+        return nil;
+    }
     MKAnnotationView *view = [annotationViews_ objectAtIndex:index];
     return view;
 }
