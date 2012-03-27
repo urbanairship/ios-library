@@ -218,6 +218,12 @@ enum {
     } else {
         pushEnabledSwitch.on = YES;
     }
+    if ([UALocationService airshipLocationServiceEnabled]) {
+        airshipLocationEnabledSwitch_.on = YES;
+    }
+    else {
+        airshipLocationEnabledSwitch_.on = NO;
+    }
     
     pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
     quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");

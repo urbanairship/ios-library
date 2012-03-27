@@ -28,6 +28,15 @@
 
 @implementation UAStandardLocationProvider
 
+- (void)dealloc {
+    self.delegate = nil;
+    // Directly stop the location mananger for speed and clarity
+    [locationManager_ stopUpdatingLocation];
+    locationManager_.delegate = nil;
+    // Super class deallocates location manager
+    [super dealloc];
+}
+
 - (id)init {
     self = [super init];
     if (self){

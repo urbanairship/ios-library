@@ -40,7 +40,6 @@
 @synthesize reportedLocations = reportedLocations_;
 @synthesize latitudes = latitudes_;
 @synthesize longitudes = longitudes_;
-@synthesize locationsToPlot = locationsToPlot_;
 @synthesize locationTableView = locationTableView_;
 
 - (void)dealloc {
@@ -61,21 +60,27 @@
 
 - (void)viewDidLoad
 {
+    NSLog(@"viewDidLoad");
     [super viewDidLoad];
-    self.locationService = [[[UALocationService alloc] initWithPurpose:@"Location Demo"] autorelease];
-    self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
     self.reportedLocations = [NSMutableSet setWithCapacity:10];
     self.latitudes = [NSMutableArray arrayWithCapacity:10];
     self.longitudes = [NSMutableArray arrayWithCapacity:10];
-    self.locationsToPlot = [NSMutableArray array];
-    locationService_.delegate = self;
-    [UALocationService setAirshipLocationServiceEnabled:YES];
-    locationService_.promptUserForLocationServices = YES;
-    locationService_.backgroundLocationServiceEnabled = YES;
-    //locationService_.standardLocationDistanceFilter = 50.0;
-    [self setupLocationDisplay];
     [locationTableView_ setScrollEnabled:NO];
-	// Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
+    self.locationService = [[[UALocationService alloc] initWithPurpose:@"Location Demo"] autorelease];
+    locationService_.delegate = self;
+    [self setupLocationDisplay];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    locationService_.delegate = nil;
+    RELEASE_SAFELY(locationService_);
+    RELEASE_SAFELY(locationDisplay_);
+    [super viewWillDisappear:animated];
 }
 
 
@@ -109,81 +114,29 @@
     }
 }
 
-- (NSMutableArray*)readLocationsFromDisk {
-    NSString *docsDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-    NSString *storagePath = [docsDir stringByAppendingPathComponent:@"LocationTest.plist"];
-    return [NSKeyedUnarchiver unarchiveObjectWithFile:storagePath];   
-}
-
-- (BOOL)writeLocationsToDisk:(NSSet *)locations {
-    NSString *docsDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-    NSString *storagePath = [docsDir stringByAppendingPathComponent:@"LocationTest.plist"];
-    NSMutableArray *diskLocations = [self readLocationsFromDisk];
-    if (!diskLocations) {
-        diskLocations = [NSMutableArray array];
-    }
-    [diskLocations addObjectsFromArray:[locations allObjects]];
-    BOOL success = [NSKeyedArchiver archiveRootObject:diskLocations toFile:storagePath];
-    if (success) {
-        NSLog(@"Wrote values to disk %@", locations);
-    }
-    else {
-        NSLog(@"Failed to write values to disk %@", locations);
-    }
-    return success;
-}
-
-- (BOOL)writeLocationToDisk:(CLLocation *)location {
-  return [self writeLocationsToDisk:[NSSet setWithObject:location]];
-}
-
 #pragma mark -
 #pragma mark IBAction Button Methods
 
 - (IBAction)getLocationPressed:(id)sender {
     NSLog(@"Get Location pressed");
+    [self checkAndAlertForLocationAuthorization];
     [locationService_ reportCurrentLocation];
 }
 
-- (IBAction)saveLocationPressed:(id)sender {
-    NSLog(@"Stop Location pressed");
-    [self turnOffLocationDisplay];
-    [self writeLocationsToDisk:reportedLocations_];
-}
-
-- (IBAction)loadLocationPressed:(id)sender {
-    NSMutableArray *locations = [self readLocationsFromDisk];
-    if(!locations)return;
-    [reportedLocations_ addObjectsFromArray:locations];
-}
-
-- (IBAction)clearLocationPressed:(id)sender {
-    [reportedLocations_ removeAllObjects];
-}
-
-- (IBAction)clearSavedDataPressed:(id)sender{
-    NSString *docsDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
-    NSString *storagePath = [docsDir stringByAppendingPathComponent:@"LocationTest.plist"];
-    NSError *eraseError = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:storagePath error:&eraseError];
-    if(eraseError) {
-        NSLog(@"ERROR erasing %@ %@", storagePath, eraseError);
-    }
-    else {
-        NSLog(@"ERASED file at path %@", storagePath);
-    }
-}
-
-- (IBAction)toggleBackgroundLocation:(id)sender {
-    if (locationService_.standardLocationServiceStatus == UALocationProviderUpdating) {
-        [locationService_ stopReportingStandardLocation];
-        [(UIButton*)sender setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        NSLog(@"LOCATION STOPPED");
-    }
-    else {
-        [locationService_ startReportingStandardLocation];
-        [(UIButton*)sender setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
-        NSLog(@"LOCATION STARTED");
+- (void)checkAndAlertForLocationAuthorization {
+    // Check the system level permissions (global location settings)
+    BOOL locationServiceEnabled = [UALocationService locationServicesEnabled];
+    // Check the system level per app location settings
+    BOOL locationServiceAuthorized = [UALocationService locationServiceAuthorized];
+    // Check if Urban Airship is allowed to use location
+    BOOL airshipAllowedToUseLocation = [UALocationService airshipLocationServiceEnabled];
+    if (!(locationServiceEnabled && locationServiceAuthorized && airshipAllowedToUseLocation)) {
+        UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:@"Location Error" 
+                                                            message:@"The location service is either, not authorized, enabled, or Urban Airship does not have permissinon to use it" 
+                                                           delegate:nil 
+                                                  cancelButtonTitle:@"Dismiss" 
+                                                  otherButtonTitles:nil] autorelease];
+        [alertView show];
     }
 }
 
@@ -251,9 +204,6 @@
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
     NSLog(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
     [self addLocationToData:newLocation];
-    if([UIApplication sharedApplication].applicationState != UIApplicationStateActive){
-        [self writeLocationToDisk:newLocation];
-    }
 }
 
 

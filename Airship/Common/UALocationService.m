@@ -49,15 +49,15 @@
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    // private
-    standardLocationProvider_.delegate = nil;
-    RELEASE_SAFELY(standardLocationProvider_);
-    significantChangeProvider_.delegate = nil;
-    RELEASE_SAFELY(significantChangeProvider_);
-    singleLocationProvider_.delegate = nil;
-    RELEASE_SAFELY(singleLocationProvider_);
     self.delegate = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    standardLocationProvider_.delegate = nil;
+    significantChangeProvider_.delegate = nil;
+    singleLocationProvider_.delegate = nil;
+    // private
+    RELEASE_SAFELY(standardLocationProvider_);
+    RELEASE_SAFELY(significantChangeProvider_);
+    RELEASE_SAFELY(singleLocationProvider_);
     //
     // public
     RELEASE_SAFELY(lastReportedLocation_);
@@ -149,8 +149,12 @@
         if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
             [singleLocationProvider_ stopReportingLocation];
         }
-        [self stopReportingStandardLocation];
-        [self stopReportingSignificantLocationChanges];
+        if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating){
+            [self stopReportingStandardLocation];
+        }
+        if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
+            [self stopReportingSignificantLocationChanges];
+        }
     }
 }
 
@@ -290,7 +294,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 #pragma mark Standard Location
 - (void)startReportingStandardLocation {
-    UALOG(@"Attemp to start standard location service");
+    UALOG(@"Attempt to start standard location service");
     if(!standardLocationProvider_){
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
@@ -337,7 +341,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(singleLocationProvider_ && singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
-        singleLocationProvider_.purpose = self.purpose;
     }
     [self startReportingLocationWithProvider:singleLocationProvider_];
 }
@@ -349,7 +352,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [locationProvider startReportingLocation];
         return;
     }
-    UALOG(@"Location service not authorized");
+    UALOG(@"Location service not authorized or not enabled");
 }
 
 
@@ -367,7 +370,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider {
     [standardLocationProvider_ stopReportingLocation];
     standardLocationProvider_.delegate = nil;
-    [standardLocationProvider_ autorelease];
+    [standardLocationProvider_ release];
     standardLocationProvider_ = [standardLocationProvider retain];
     [self setCommonPropertiesOnProvider:standardLocationProvider_];
     standardLocationProvider_.distanceFilter = [self distanceFilterForLocationSerivceKey:UAStandardLocationDistanceFilterKey];
@@ -379,7 +382,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider {
-    [significantChangeProvider_ autorelease];
+    [significantChangeProvider_ release];
     significantChangeProvider_ = [significantChangeProvider retain];
     [self setCommonPropertiesOnProvider:significantChangeProvider_];
 }
@@ -390,7 +393,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // The distanceFilter and desiredAccuracy are not set as a side effect with this setter.
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
-    [singleLocationProvider_ autorelease];
+    [singleLocationProvider_ release];
     singleLocationProvider_ = [singleLocationProvider retain];
     [self setCommonPropertiesOnProvider:singleLocationProvider_];
 }
@@ -440,7 +443,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 +(id)objectForLocationServiceKey:(UALocationServiceNSDefaultsKey *)key {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    id object = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    UALOG(@"Returning object %@ from user defaults for key %@", object, key);
+    return object;
 }
 
 + (void)setBool:(BOOL)boolValue forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
@@ -459,9 +464,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return [[NSUserDefaults standardUserDefaults] doubleForKey:key];
 }
 
-
 + (BOOL)airshipLocationServiceEnabled {
-    return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey];
+    return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey]; 
 }
 
 // Setting these values will trigger a NSUserDefaults update with a KVO notification

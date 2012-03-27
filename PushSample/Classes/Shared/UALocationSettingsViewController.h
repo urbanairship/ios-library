@@ -32,7 +32,6 @@
     NSMutableSet *reportedLocations_;
     NSMutableArray *latitudes_;
     NSMutableArray *longitudes_;
-    NSMutableArray *locationsToPlot_;
     UITableView *locationTableView_;
     
 }
@@ -42,22 +41,13 @@
 @property (nonatomic, retain) NSMutableSet *reportedLocations;
 @property (nonatomic, retain) NSMutableArray *latitudes;
 @property (nonatomic, retain) NSMutableArray *longitudes;
-@property (nonatomic, retain) NSMutableArray *locationsToPlot;
 @property (nonatomic, retain) IBOutlet UITableView *locationTableView;
 
 - (void)setupLocationDisplay;
 
 - (IBAction)getLocationPressed:(id)sender;
-- (IBAction)saveLocationPressed:(id)sender;
-- (IBAction)loadLocationPressed:(id)sender;
-- (IBAction)clearLocationPressed:(id)sender;
-- (IBAction)clearSavedDataPressed:(id)sender;
-- (IBAction)toggleBackgroundLocation:(id)sender;
 - (IBAction)mapLocationPressed:(id)sender;
 - (void)addLocationToData:(CLLocation*)location;
 - (void)turnOffLocationDisplay;
-- (NSMutableArray*)readLocationsFromDisk;
-- (BOOL)writeLocationsToDisk:(NSSet*)locations;
-- (BOOL)writeLocationToDisk:(CLLocation*)location;
-
+- (void)checkAndAlertForLocationAuthorization;
 @end

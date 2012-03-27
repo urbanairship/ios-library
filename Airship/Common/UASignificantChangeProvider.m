@@ -28,6 +28,14 @@
 
 @implementation UASignificantChangeProvider
 
+- (void)dealloc {
+    
+    self.delegate = nil;
+    [locationManager_ stopMonitoringSignificantLocationChanges];
+    locationManager_.delegate = nil;
+    [super dealloc];
+}
+
 - (id)init {
     self = [super init];
     if (self) {
