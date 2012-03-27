@@ -24,6 +24,7 @@
  */
 
 #import "UAContentURLCache.h"
+#import "UAGlobal.h"
 
 @interface UAContentURLCache()
 
@@ -74,10 +75,20 @@
 - (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL {
     NSString *contentURLString = [contentURL absoluteString];
     NSString *productURLString = [productURL absoluteString];
-    [contentDictionary setObject:contentURLString forKey:productURLString];
-    [timestampDictionary setObject:[NSNumber numberWithDouble:
-                                   [[NSDate date]timeIntervalSince1970]]
-                           forKey:productURLString];
+    @try {
+        [contentDictionary setObject:contentURLString forKey:productURLString];
+    }
+    @catch (NSException *exception) {
+        if (exception.name == NSInvalidArgumentException) {
+            UALOG(@"Attempt to set nil key or object in contentDictionary in setContent:forProductURL");
+            return; 
+        }
+        else {
+            @throw exception;
+        }
+    }
+    [timestampDictionary setObject:[NSNumber numberWithDouble:[[NSDate date]timeIntervalSince1970]]
+                            forKey:productURLString];
     [self saveToDisk];
 }
 
