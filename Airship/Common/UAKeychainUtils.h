@@ -45,8 +45,8 @@
 + (NSString *)getEmailAddress:(NSString *)identifier;
 
 /**
- * Gets the device ID, creating or refreshing if necessary. Device IDs will be replaced if a
- * device change is detected.
+ * Gets the device ID, creating or refreshing if necessary. Device IDs will be regenerated if a
+ * device change is detected (though UAUser IDs remain the same in that case).
  *
  * @return The Urban Airship device ID or an empty string if an error occurred.
  */

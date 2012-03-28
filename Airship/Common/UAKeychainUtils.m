@@ -213,8 +213,6 @@
 #pragma mark -
 #pragma UA Device ID
 
-//TODO: #define the keychain id
-
 + (NSString *)createDeviceID {
     //UALOG(@"Storing Username: %@ and Password: %@", username, password);
 	
@@ -282,6 +280,10 @@
     
     // If the stored deviceID is nil (it has never been set) or the stored the model name is not
     // equal to the current device's model name, generate a new ID
+    //
+    // The device ID is reset on a hardware change so that we have a device-unique ID. The UAUser ID
+    // will be migrated in the case of a device upgrade, so we will be able to maintain continuity
+    // and a history of devices per user.
     if (!deviceID || ![modelName isEqualToString:[UAUtils deviceModelName]]) {
         UALOG(@"Device model changed. Regenerating the device ID.");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
