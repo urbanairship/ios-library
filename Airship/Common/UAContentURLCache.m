@@ -24,14 +24,8 @@
  */
 
 #import "UAContentURLCache.h"
+#import "UAContentURLCache+Internal.h"
 #import "UAGlobal.h"
-
-@interface UAContentURLCache()
-
-- (void)readFromDisk;
-- (void)saveToDisk;
-
-@end
 
 @implementation UAContentURLCache
 
@@ -39,6 +33,9 @@
 @synthesize timestampDictionary;
 @synthesize path;
 @synthesize expirationInterval;
+
+#pragma mark -
+#pragma mark Object Lifecycle
 
 + (UAContentURLCache *)cacheWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString {
     return [[[UAContentURLCache alloc] initWithExpirationInterval:interval withPath:pathString] autorelease];
@@ -57,65 +54,6 @@
     return self;
 }
 
-- (void)saveToDisk {
-    NSMutableDictionary *serialized = [NSMutableDictionary dictionary];
-    [serialized setObject:contentDictionary forKey:@"content"];
-    [serialized setObject:timestampDictionary forKey:@"timestamps"];
-    if (![serialized writeToFile:path atomically:YES]) {
-        NSLog(@"failed to serialize content url cache");
-    };
-}
-
-- (void)readFromDisk {
-    NSMutableDictionary *serialized = [NSMutableDictionary dictionaryWithContentsOfFile:path];
-    [contentDictionary addEntriesFromDictionary:[serialized objectForKey:@"content"]];
-    [timestampDictionary addEntriesFromDictionary:[serialized objectForKey:@"timestamps"]];
-}
-
-- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL {
-    NSString *contentURLString = [contentURL absoluteString];
-    NSString *productURLString = [productURL absoluteString];
-    @try {
-        [contentDictionary setObject:contentURLString forKey:productURLString];
-    }
-    @catch (NSException *exception) {
-        if (exception.name == NSInvalidArgumentException) {
-            UALOG(@"Attempt to set nil key or object in contentDictionary in setContent:forProductURL");
-            return; 
-        }
-        else {
-            @throw exception;
-        }
-    }
-    [timestampDictionary setObject:[NSNumber numberWithDouble:[[NSDate date]timeIntervalSince1970]]
-                            forKey:productURLString];
-    [self saveToDisk];
-}
-
-- (NSURL *)contentForProductURL:(NSURL *)productURL {
-    NSString *productURLString = [productURL absoluteString];
-    NSString *contentURLString = [contentDictionary objectForKey:productURLString];
-    
-    NSURL *content = [NSURL URLWithString:contentURLString];
-    
-    if (content) {
-        NSNumber *num = [timestampDictionary objectForKey:productURLString];
-        if (num) {
-            NSTimeInterval timestamp = [num doubleValue];
-            NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-            if (now - timestamp < expirationInterval) {
-                return content;
-            } else {
-                NSLog(@"cached entry for %@ is expired, removing", productURL);
-                [contentDictionary removeObjectForKey:productURLString];
-                [timestampDictionary removeObjectForKey:productURLString];
-            }
-        }
-    }
-    
-    return nil;
-}
-
 - (void)dealloc {
     self.contentDictionary = nil;
     self.timestampDictionary = nil;
@@ -123,5 +61,92 @@
     [super dealloc];
 }
 
+
+#pragma mark -
+#pragma mark Persistent Storage
+- (void)saveToDisk {
+    NSMutableDictionary *serialized = [NSMutableDictionary dictionary];
+    [serialized setObject:contentDictionary forKey:kUrlCacheContentDictonaryKey];
+    [serialized setObject:timestampDictionary forKey:kUrlCacheTimestampDictionaryKey];
+    if (![serialized writeToFile:path atomically:YES]) {
+        NSLog(@"failed to serialize content url cache");
+    };
+}
+
+- (void)readFromDisk {
+    NSMutableDictionary *serialized = [NSMutableDictionary dictionaryWithContentsOfFile:path];
+    [contentDictionary addEntriesFromDictionary:[serialized objectForKey:kUrlCacheContentDictonaryKey]];
+    [timestampDictionary addEntriesFromDictionary:[serialized objectForKey:kUrlCacheTimestampDictionaryKey]];
+}
+
+#pragma mark -
+#pragma mark Cache Methods
+
+- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL withVersion:(NSNumber *)version {
+    NSString *contentURLString = [contentURL absoluteString];
+    NSString *cacheKey = [self compoundKeyFromURL:productURL andVersion:version];
+    // Bail on malfomed keys
+    if (!cacheKey) {
+        return;
+    }
+    @try {
+        [contentDictionary setObject:contentURLString forKey:cacheKey];
+    }
+    @catch (NSException *exception) {
+        if (exception.name == NSInvalidArgumentException) {
+            UALOG(@"Attempt to set nil object in contentDictionary in setContent:forProductURL:withVersion:");
+            return; 
+        }
+        else {
+            @throw exception;
+        }
+    }
+    [timestampDictionary setObject:[NSNumber numberWithDouble:[[NSDate date]timeIntervalSince1970]]
+                            forKey:cacheKey];
+    [self saveToDisk];
+}
+
+- (NSString*)compoundKeyFromURL:(NSURL*)URL andVersion:(NSNumber*)version {
+    if (!URL || !version)return nil;
+    return [NSString stringWithFormat:@"%@%@%@", [version stringValue], kUrlCacheCompoundKeyDelimiter, [URL absoluteString]];
+}
+
+- (NSDictionary*)productURLAndVersionFromCompoundKey:(NSString *)compoundKey {
+    // Key is in the format version, delimiter, key
+    NSArray* split = [compoundKey componentsSeparatedByString:kUrlCacheCompoundKeyDelimiter];
+    if ([split count] != 2) {
+        return nil;
+    }
+    // check for nil or empty
+    for (NSString* string in split) {
+        if (!string || [string length] == 0) {
+            return nil;
+        }
+    }
+    return [NSDictionary dictionaryWithObjects:split forKeys:[NSArray arrayWithObjects:kUrlCacheProductVersionKey, kUrlCacheProductURLKey, nil]];
+}
+
+- (NSURL *)contentForProductURL:(NSURL *)productURL withVersion:(NSNumber *)version {
+    NSString *cacheKey = [self compoundKeyFromURL:productURL andVersion:version];
+    NSString *contentURLString = [contentDictionary objectForKey:cacheKey];
+    NSURL *content = [NSURL URLWithString:contentURLString];
+    
+    if (content) {
+        NSNumber *num = [timestampDictionary objectForKey:cacheKey];
+        if (num) {
+            NSTimeInterval timestamp = [num doubleValue];
+            NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+            if (now - timestamp < expirationInterval) {
+                return content;
+            } else {
+                NSLog(@"cached entry for %@ is expired, removing", productURL);
+                [contentDictionary removeObjectForKey:cacheKey];
+                [timestampDictionary removeObjectForKey:cacheKey];
+            }
+        }
+    }
+    
+    return nil;
+}
 
 @end

@@ -27,6 +27,13 @@
 
 // one day in seconds
 #define kDefaultUrlCacheExpirationInterval 86400
+#define kUrlCacheCompoundKeyDelimiter @"<-version_product->"
+#define kUrlCacheProductURLKey @"productURL"
+#define kUrlCacheProductVersionKey @"version"
+#define kUrlCacheContentDictonaryKey @"content"
+#define kUrlCacheTimestampDictionaryKey @"timestamps"
+
+
 
 @interface UAContentURLCache : NSObject {
     NSMutableDictionary *contentDictionary; //of product url string -> content NSURL
@@ -38,8 +45,24 @@
 + (UAContentURLCache *)cacheWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
 - (id)initWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
 
-- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL;
-- (NSURL *)contentForProductURL:(NSURL *)productURL;
+- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL withVersion:(NSNumber*)version;
+- (NSURL *)contentForProductURL:(NSURL *)productURL withVersion:(NSNumber*)version;
+
+/** Sets up a compound key for use with the content cache
+ @param URL The NSURL that will be the first part of the key
+ @param version The NSNumber that represents the version number of the product to be cached
+ @return NSString Compound key created by concatenating the two values with a delimiter "<-version_product->"
+ */
+- (NSString*)compoundKeyFromURL:(NSURL*)URL andVersion:(NSNumber*)version;
+
+/** Deconstructs a compound key for the product
+ @param compoundKey NSString in the form versionNumber<delimiter>productURL
+ @return NSDictionary with the values for the version number and the productURL
+ @return nil If the product is not found, or the key is not parsible
+ */
+- (NSDictionary*)productURLAndVersionFromCompoundKey:(NSString*)compoundKey;
+
+
 
 @property (nonatomic, retain) NSMutableDictionary *contentDictionary;
 @property (nonatomic, retain) NSMutableDictionary *timestampDictionary;

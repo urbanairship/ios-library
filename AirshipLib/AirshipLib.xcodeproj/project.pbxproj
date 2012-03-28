@@ -165,6 +165,8 @@
 		BB42FB7C1509622700FC4B1B /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; };
 		BB42FB7E150969F200FC4B1B /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
 		BB42FB7F150969F200FC4B1B /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
+		BB805C781523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */; };
+		BB805C791523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D60150574DE00971CEC /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 		BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5A150574DE00971CEC /* JRSwizzle.m */; };
@@ -510,6 +512,7 @@
 		BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderProtocol.h; sourceTree = "<group>"; };
 		BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderDelegate.h; sourceTree = "<group>"; };
 		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
+		BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAContentURLCache+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
 		BBB87D58150574DE00971CEC /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Gcov_Fix.c; sourceTree = "<group>"; };
@@ -948,6 +951,7 @@
 				49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */,
 				49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */,
 				497D13F21488282F00FB0A8A /* UAContentURLCache.h */,
+				BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */,
 				497D13F31488282F00FB0A8A /* UAContentURLCache.m */,
 				BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */,
 				BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */,
@@ -1073,6 +1077,7 @@
 				BBB87E3815057CF200971CEC /* UABaseLocationProvider.h in Headers */,
 				BB42FB79150961F800FC4B1B /* UALocationProviderProtocol.h in Headers */,
 				BB42FB7C1509622700FC4B1B /* UALocationProviderDelegate.h in Headers */,
+				BB805C791523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1136,6 +1141,7 @@
 				BB42FB751509553F00FC4B1B /* UALocationCommonValues.h in Headers */,
 				BB42FB78150961F800FC4B1B /* UALocationProviderProtocol.h in Headers */,
 				BB42FB7B1509622700FC4B1B /* UALocationProviderDelegate.h in Headers */,
+				BB805C781523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
