@@ -178,8 +178,12 @@ BOOL logging = false;
         //the keychain credentials, as they will otherwise be persisted
         //even when the application is uninstalled.
         if ([[config objectForKey:@"DELETE_KEYCHAIN_CREDENTIALS"] boolValue]) {
+            
             UALOG(@"Deleting the keychain credentials");
             [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
+            
+            UALOG(@"Deleting the UA device ID");
+            [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
         }
         
     } else {

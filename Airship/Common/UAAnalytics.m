@@ -35,6 +35,7 @@
 #import "UAUtils.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
+#import "UAUser.h"
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
@@ -589,7 +590,8 @@ IF_IOS4_OR_GREATER(
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
     [request addRequestHeader:@"X-UA-Package-Version" value:packageVersion];
-    [request addRequestHeader:@"X-UA-Device-ID" value:[UAUtils udidHash]];
+    [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
+    [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
     
     // Optional Items
