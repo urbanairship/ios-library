@@ -25,10 +25,20 @@
 
 #import "UAKeychainUtils.h"
 #import "UAGlobal.h"
+#import "UAirship.h"
+#import "UAUtils.h"
+
 #import <Security/Security.h>
 
 @interface UAKeychainUtils()
 + (NSMutableDictionary *)newSearchDictionary:(NSString *)identifier;
+
+/**
+ * Creates a new UA Device ID (UUID) and stores it in the keychain.
+ *
+ * @return The device ID.
+ */
++ (NSString *)createDeviceID;
 @end
 	
 
@@ -40,6 +50,10 @@
 	
     NSMutableDictionary *dictionary = [UAKeychainUtils newSearchDictionary:identifier];
 	
+    //set access permission - we use the keychain for it's stickiness, not security,
+    //so the least permissive setting is acceptable here
+    [dictionary setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
+    
 	//set username data
 	[dictionary setObject:username forKey:(id)kSecAttrAccount];
 	
@@ -194,6 +208,90 @@
     [searchDictionary setObject:bundleId forKey:(id)kSecAttrService];
 	
     return searchDictionary; 
+}
+
+#pragma mark -
+#pragma UA Device ID
+
++ (NSString *)createDeviceID {
+    //UALOG(@"Storing Username: %@ and Password: %@", username, password);
+	
+    NSString *deviceID = [UAUtils UUID];
+
+    NSMutableDictionary *keychainValues = [UAKeychainUtils newSearchDictionary:kUAKeychainDeviceIDKey];
+
+    //set access permission - we use the keychain for it's stickiness, not security,
+    //so the least permissive setting is acceptable here
+    [keychainValues setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
+    
+    //set model name (username) data
+    [keychainValues setObject:[UAUtils deviceModelName] forKey:(id)kSecAttrAccount];
+
+    //set device id (password) data
+    NSData *deviceIdData = [deviceID dataUsingEncoding:NSUTF8StringEncoding];
+    [keychainValues setObject:deviceIdData forKey:(id)kSecValueData];
+	
+    OSStatus status = SecItemAdd((CFDictionaryRef)keychainValues, NULL);
+    [keychainValues release];
+	
+    if (status == errSecSuccess) {
+        return deviceID;
+    } else {
+        return @"";
+    }
+}
+
++ (NSString *)getDeviceID {
+
+    //Get password next
+    NSMutableDictionary *deviceIDQuery = [[UAKeychainUtils newSearchDictionary:kUAKeychainDeviceIDKey] autorelease];
+
+    // Add search attributes
+    [deviceIDQuery setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
+
+    // Add search return types
+    [deviceIDQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
+    [deviceIDQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
+	
+    NSDictionary *result;
+    OSStatus status = SecItemCopyMatching((CFDictionaryRef)deviceIDQuery, (CFTypeRef *)&result);
+	
+    NSString *deviceID = nil;
+    NSString *modelName = nil;
+	if (status == errSecSuccess) {
+        
+        UALOG(@"Retrieved device id info from keychain.");
+		
+        if (result) {
+            
+            UALOG(@"Device ID result is not nil.");
+            
+            //grab the deviceId and associated model name
+            deviceID = [[[NSString alloc] initWithData:[result valueForKey:(id)kSecValueData] encoding:NSUTF8StringEncoding] autorelease];
+            modelName = [[[result objectForKey:(id)kSecAttrAccount] mutableCopy] autorelease];
+
+            [result release];
+            result = nil;
+
+            UALOG(@"Loaded Device ID: %@", deviceID);
+            UALOG(@"Loaded Model Name: %@", modelName);
+        }
+	}
+    
+    // If the stored deviceID is nil (it has never been set) or the stored the model name is not
+    // equal to the current device's model name, generate a new ID
+    //
+    // The device ID is reset on a hardware change so that we have a device-unique ID. The UAUser ID
+    // will be migrated in the case of a device upgrade, so we will be able to maintain continuity
+    // and a history of devices per user.
+    if (!deviceID || ![modelName isEqualToString:[UAUtils deviceModelName]]) {
+        UALOG(@"Device model changed. Regenerating the device ID.");
+        [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
+        deviceID = [UAKeychainUtils createDeviceID];
+        UALOG(@"New device ID: %@", deviceID);
+    }
+
+    return deviceID;
 }
 
 @end

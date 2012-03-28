@@ -292,7 +292,9 @@ static UAUser *_defaultUser;
     // First thing we need to do is make sure we have a valid User.
 
     if (username != nil && password != nil) {
-        // If the user and password are set, then we are not in a "no user"/"initial run" case - do nothing, we're done
+        // If the user and password are set, then we are not in a "no user"/"initial run" case - just set it in defaults
+        // for the app to access with a Settings bundle
+        [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
     } else {
         // Either the user or password is not set, so the "no user"/"initial run" case is still true, try to recreate the user
 
@@ -386,6 +388,9 @@ static UAUser *_defaultUser;
     [userDictionary setValue:self.alias forKey:kAliasKey];
     [userDictionary setValue:self.url forKey:kUserUrlKey];
     [userDictionary setValue:[self.tags allObjects] forKey:kTagsKey];
+    
+    // Save in defaults for access with a Settings bundle
+    [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
     
     [[NSUserDefaults standardUserDefaults] setObject:userDictionary forKey:[[UAirship shared] appId]];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -654,8 +659,8 @@ static UAUser *_defaultUser;
     NSDictionary* data = [[NSDictionary alloc] initWithObjectsAndKeys:
                           self.recoveryEmail,
                           @"email",
-                          [UAUtils udidHash],
-                          @"udid",
+                          [UAUtils deviceID],
+                          @"ua_device_id",
                           nil];
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
@@ -1038,7 +1043,7 @@ static UAUser *_defaultUser;
  
     //set up basic payload
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                 [UAUtils udidHash], @"udid", nil ];
+                                 [UAUtils deviceID], @"ua_device_id", nil ];
     
     [data setValue:self.alias forKey:@"alias"];                             
     [data setValue:self.url forKey:@"user_url"];
