@@ -32,7 +32,6 @@
     NSMutableArray *locations_;
     MKMapView *mapView_;
     NSMutableArray *annotations_;
-    NSMutableArray *annotationViews_;
     UIBarButtonItem *rightButton_;
 }
 
@@ -40,11 +39,10 @@
 @property (nonatomic, retain) NSMutableArray *locations;
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 @property (nonatomic, retain) NSMutableArray *annotations;
-@property (nonatomic, retain) NSMutableArray *annotationViews;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;
 
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;
-- (void)convertLocationsToAnnotationsAndAnnotationViews;
+- (void)convertLocationsToAnnotations;
 - (void)annotateMap;
 - (IBAction)rightBarButtonPressed:(id)sender;
 

@@ -32,15 +32,12 @@
 @synthesize locations = locations_;
 @synthesize mapView = mapView_;
 @synthesize annotations = annotations_;
-@synthesize annotationViews = annotationViews_;
 @synthesize rightButton = rightButton_;
 
 - (void) dealloc {
     RELEASE_SAFELY(locationService_);
     RELEASE_SAFELY(locations_);
     RELEASE_SAFELY(annotations_);
-    RELEASE_SAFELY(annotationViews_);
-    RELEASE_SAFELY(rightButton_);
     [super dealloc];
 }
 
@@ -64,8 +61,7 @@
     }
     [self moveSpanToCoordinate:mapCenterLocation];
     self.annotations = [NSMutableArray array];
-    self.annotationViews = [NSMutableArray array];
-    [self convertLocationsToAnnotationsAndAnnotationViews];
+    [self convertLocationsToAnnotations];
     self.navigationItem.rightBarButtonItem = rightButton_;
 }
 
@@ -77,6 +73,7 @@
 
 - (void)viewDidUnload
 {
+    mapView_.delegate = nil; //delegate is set in xib
     RELEASE_SAFELY(mapView_);
     RELEASE_SAFELY(rightButton_);
     [super viewDidUnload];
@@ -87,23 +84,16 @@
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-- (void)convertLocationsToAnnotationsAndAnnotationViews {
-    int count = 1;
+- (void)convertLocationsToAnnotations {
     for (CLLocation* location in locations_) {
         UALocationDemoAnnotation *annotation = [UALocationDemoAnnotation locationAnnotationFromLocation:location];
         [annotations_ addObject:annotation];
-        MKPinAnnotationView *pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:[NSString stringWithFormat:@"%d", count]];
-        pinView.pinColor = MKPinAnnotationColorPurple;
-        pinView.animatesDrop = YES;
-        [annotationViews_ addObject:pinView];
-        [pinView release];
-        count++;
     }
     NSLog(@"ANNOTATIONS %@", annotations_);
-    NSLog(@"ANNOTATION_VIEWS %@", annotationViews_);
 }
 
 - (void)annotateMap {
+    NSLog(@"annotateMap");
     [mapView_ addAnnotations:annotations_];
     rightButton_.title = @"-Pin";
 }
@@ -112,10 +102,12 @@
     NSLog(@"Right bar button pressed");
     // The Map                   
     if ([[mapView_ annotations] count] > 1) {
+        NSLog(@"Removing annotations");
         [mapView_ removeAnnotations:annotations_];
         rightButton_.title = @"+Pin";
     }
     else {
+        NSLog(@"Adding annotations");
         [self annotateMap];
     }
     
@@ -132,14 +124,18 @@
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
     // Return nil for the MKUserLocation object
     if ([annotation isKindOfClass:[MKUserLocation class]]) {
+        NSLog(@"Returning nil for MKUserLocation Lat:%f Long:%f", annotation.coordinate.latitude, annotation.coordinate.longitude);
         return nil;
     }
-    NSUInteger index = [annotations_ indexOfObject:annotation];
-    if (index == NSNotFound){
-        return nil;
+    NSLog(@"Creating view for annotation %@", annotation);
+    
+    if (!annotation) {
+        NSLog(@"ANNOTATION IS NIL!!!!");
     }
-    MKAnnotationView *view = [annotationViews_ objectAtIndex:index];
-    return view;
+    MKPinAnnotationView *pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
+    pinView.pinColor = MKPinAnnotationColorPurple;
+    pinView.animatesDrop = YES;
+    return [pinView autorelease];
 }
 
 

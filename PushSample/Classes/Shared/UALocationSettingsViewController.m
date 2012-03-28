@@ -53,7 +53,9 @@
 
 - (void)viewDidUnload
 {
+    [self turnOffLocationDisplay];
     RELEASE_SAFELY(locationTableView_);
+    RELEASE_SAFELY(locationDisplay_);
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -65,21 +67,20 @@
     self.reportedLocations = [NSMutableSet setWithCapacity:10];
     self.latitudes = [NSMutableArray arrayWithCapacity:10];
     self.longitudes = [NSMutableArray arrayWithCapacity:10];
+    self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
+    [self setupLocationDisplay];
     [locationTableView_ setScrollEnabled:NO];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
     self.locationService = [[[UALocationService alloc] initWithPurpose:@"Location Demo"] autorelease];
     locationService_.delegate = self;
-    [self setupLocationDisplay];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     locationService_.delegate = nil;
     RELEASE_SAFELY(locationService_);
-    RELEASE_SAFELY(locationDisplay_);
     [super viewWillDisappear:animated];
 }
 
@@ -91,7 +92,24 @@
     return NO;
 }
 
+#pragma mark -
+#pragma mark GUI operations
+
+- (void)turnOffLocationDisplay {
+    [locationDisplay_ removeObjectsInRange:NSMakeRange(1, ([locationDisplay_ count] -1))];
+    NSUInteger rows = [locationTableView_ numberOfRowsInSection:0];
+    NSMutableArray *arrayOfDeletes = [NSMutableArray arrayWithCapacity:3];
+    for (NSUInteger i=1; i < rows; i++) {
+        NSIndexPath *path = [NSIndexPath indexPathForRow:i inSection:0];
+        [arrayOfDeletes addObject:path];
+    }
+    [locationTableView_ deleteRowsAtIndexPaths:arrayOfDeletes withRowAnimation:UITableViewRowAnimationFade];
+}
+
 - (void)setupLocationDisplay {
+    if (locationDisplay_) {
+        [locationDisplay_ removeAllObjects];
+    }
     [locationDisplay_ addObject:@"Location"];
 }
 
@@ -144,24 +162,8 @@
     UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController" 
                                                                                                bundle:[NSBundle mainBundle]];
     mapController.locations = [NSMutableArray arrayWithArray:[reportedLocations_ allObjects]];
-    mapController.locationService = locationService_;
     [mapController autorelease];
     [self.navigationController pushViewController:mapController animated:YES];
-}
-
-
-#pragma mark -
-#pragma mark GUI operations
-
-- (void)turnOffLocationDisplay {
-    [locationDisplay_ removeObjectsInRange:NSMakeRange(1, ([locationDisplay_ count] -1))];
-    NSUInteger rows = [locationTableView_ numberOfRowsInSection:0];
-    NSMutableArray *arrayOfDeletes = [NSMutableArray arrayWithCapacity:3];
-    for (NSUInteger i=1; i < rows; i++) {
-        NSIndexPath *path = [NSIndexPath indexPathForRow:i inSection:0];
-        [arrayOfDeletes addObject:path];
-    }
-    [locationTableView_ deleteRowsAtIndexPaths:arrayOfDeletes withRowAnimation:UITableViewRowAnimationFade];
 }
 
 #pragma mark -
@@ -184,7 +186,6 @@
         cell.textLabel.text = [locationDisplay_ objectAtIndex:[indexPath indexAtPosition:1]];
         cell.detailTextLabel.text = [[longitudes_ lastObject] stringValue];
     }
-    
     return cell ;
 }
 

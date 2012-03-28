@@ -26,6 +26,7 @@
 #import "UAGlobal.h"
 
 @implementation UALocationDemoAnnotation
+@synthesize coordinate = coordinate_;
 @synthesize title = title_;
 @synthesize subtitle = subtitle_;
 
@@ -35,26 +36,14 @@
     [super dealloc];
 }
 
-- (id)init {
-    return [super init];
-}
-
 - (id)initWithLocation:(CLLocation*)location {
-    self = [self init];
+    self = [super init];
     if (self){
         coordinate_ = location.coordinate;
         title_ = @"Location";
         subtitle_ = [[self monthDateFromDate:location.timestamp] retain];
     }
     return self;
-}
-
-- (CLLocationCoordinate2D)coordinate {
-    return coordinate_;
-}
-
-- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate {
-    coordinate_ = newCoordinate;
 }
 
 - (NSString*)monthDateFromDate:(NSDate *)date {
@@ -69,11 +58,6 @@
 
 - (NSString*)description {
     return [NSString stringWithFormat:@"%@ %@ %f %f", title_, subtitle_, coordinate_.longitude, coordinate_.latitude];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
 

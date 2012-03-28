@@ -31,11 +31,10 @@
     NSString *subtitle_;
 }
 
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readonly, copy) NSString *title;
 @property (nonatomic, readonly, copy) NSString *subtitle;
 
-- (CLLocationCoordinate2D)coordinate;
-- (void)setCoordinate:(CLLocationCoordinate2D)newCoordinate;
 - (NSString*)monthDateFromDate:(NSDate*)date;
 - (NSString*)description;
 + (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location;
