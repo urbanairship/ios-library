@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUAKeychainDeviceIDKey [NSString stringWithFormat:@"com.urbanairship.deviceID.%@", [UAirship shared].appId]
+#define kUAKeychainDeviceIDKey @"com.urbanairship.deviceID"
 
 @interface UAKeychainUtils : NSObject {
 	
