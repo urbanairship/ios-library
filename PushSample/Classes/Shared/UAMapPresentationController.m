@@ -48,18 +48,6 @@
         self.locations = [NSMutableArray array];
     }
     NSLog(@"LOCATIONS ARRAY %@", locations_);
-    CLLocationCoordinate2D mapCenterLocation;
-    CLLocation *recentLocation = locationService_.location;
-    if(recentLocation){
-        mapCenterLocation = recentLocation.coordinate;
-    }
-    else if([locations_ count] > 0){
-        mapCenterLocation = [[locations_ objectAtIndex:0] coordinate];
-    }
-    else {
-        mapCenterLocation = CLLocationCoordinate2DMake(37.772643, -122.406095);
-    }
-    [self moveSpanToCoordinate:mapCenterLocation];
     self.annotations = [NSMutableArray array];
     [self convertLocationsToAnnotations];
     self.navigationItem.rightBarButtonItem = rightButton_;
@@ -73,10 +61,14 @@
 
 - (void)viewDidUnload
 {
-    mapView_.delegate = nil; //delegate is set in xib
-    RELEASE_SAFELY(mapView_);
-    RELEASE_SAFELY(rightButton_);
+    self.mapView = nil;
+    self.rightButton = nil;
     [super viewDidUnload];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    mapView_.delegate = nil; // delegate is set in xib
+    [super viewWillDisappear:animated];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -110,7 +102,6 @@
         NSLog(@"Adding annotations");
         [self annotateMap];
     }
-    
 }
 
 

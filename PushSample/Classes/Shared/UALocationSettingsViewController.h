@@ -29,18 +29,14 @@
 @interface UALocationSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UALocationServiceDelegate> {
     UALocationService *locationService_;
     NSMutableArray *locationDisplay_;
-    NSMutableSet *reportedLocations_;
-    NSMutableArray *latitudes_;
-    NSMutableArray *longitudes_;
+    NSMutableArray *reportedLocations_;
     UITableView *locationTableView_;
     
 }
 
 @property (nonatomic, retain) UALocationService *locationService;
 @property (nonatomic, retain) NSMutableArray *locationDisplay;
-@property (nonatomic, retain) NSMutableSet *reportedLocations;
-@property (nonatomic, retain) NSMutableArray *latitudes;
-@property (nonatomic, retain) NSMutableArray *longitudes;
+@property (nonatomic, retain) NSMutableArray *reportedLocations;
 @property (nonatomic, retain) IBOutlet UITableView *locationTableView;
 
 - (void)setupLocationDisplay;
