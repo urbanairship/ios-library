@@ -170,7 +170,7 @@
     // Roll back the timestamp
     [timestamps setValue:[NSNumber numberWithDouble:(now - 100)] forKey:cacheKey];
     [onDisk writeToFile:testCachePath atomically:YES];
-    UAContentURLCache *local = [[UAContentURLCache alloc] initWithExpirationInterval:90 withPath:testCachePath];
+    UAContentURLCache *local = [UAContentURLCache cacheWithExpirationInterval:90 withPath:testCachePath];
     NSURL *cacheURL = [local contentForProductURL:product withVersion:version1];
     STAssertNil(cacheURL, @"Content should return nil, it is expired");
 }

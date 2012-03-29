@@ -78,6 +78,7 @@
 		B6EF6B2A127A7563007E0DE5 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B28127A7563007E0DE5 /* Icon.png */; };
 		B6EF6C54127A9FD4007E0DE5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314725122FAB0E008F2D48 /* Default.png */; };
 		B6EF6C55127A9FD4007E0DE5 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314726122FAB0E008F2D48 /* Icon-Small.png */; };
+		BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB4136151524D985008EE873 /* CoreLocation.framework */; };
 		D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60612C154C0009731BE /* Icon@2x.png */; };
 		D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60812C154CA009731BE /* iTunesArtwork */; };
 		D5C759AC12BAE0EF0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759AB12BAE0EF0041239E /* Default@2x.png */; };
@@ -209,6 +210,7 @@
 		B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Landscape.png"; sourceTree = "<group>"; };
 		B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Portrait.png"; sourceTree = "<group>"; };
 		B6EF6B28127A7563007E0DE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		BB4136151524D985008EE873 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D5A3F60612C154C0009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F60812C154CA009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5C759AB12BAE0EF0041239E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */,
 				1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */,
 				D9983CAB123829DB00B7E69F /* libUAirship-1.1.4.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -348,6 +351,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB4136151524D985008EE873 /* CoreLocation.framework */,
 				B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */,
 				0DE288F311CF310D0013D2F1 /* StoreKit.framework */,
 				0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */,
@@ -450,8 +454,8 @@
 		6331475C122FAC96008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63314760122FAC96008F2D48 /* libUAirship-1.1.3.a */,
-				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */,
+				63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */,
+				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
 				BBCE96C2151D13D700371B10 /* libAirshipLibGcov.a */,
 			);
@@ -601,14 +605,14 @@
 			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */ = {
+		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirshipPush-1.1.4.a";
 			remoteRef = 1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		63314760122FAC96008F2D48 /* libUAirship-1.1.3.a */ = {
+		63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirship-1.1.4.a";

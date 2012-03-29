@@ -91,6 +91,7 @@
     }
     @try {
         [contentDictionary setObject:contentURLString forKey:cacheKey];
+        UALOG(@"Caching %@ for key %@", contentURLString, cacheKey);
     }
     @catch (NSException *exception) {
         if (exception.name == NSInvalidArgumentException) {
@@ -123,6 +124,7 @@
             return nil;
         }
     }
+    UALOG(@"Compound key %@ split into %@", compoundKey, split);
     return [NSDictionary dictionaryWithObjects:split forKeys:[NSArray arrayWithObjects:kUrlCacheProductVersionKey, kUrlCacheProductURLKey, nil]];
 }
 
@@ -130,7 +132,7 @@
     NSString *cacheKey = [self compoundKeyFromURL:productURL andVersion:version];
     NSString *contentURLString = [contentDictionary objectForKey:cacheKey];
     NSURL *content = [NSURL URLWithString:contentURLString];
-    
+    UALOG(@"Returning contentURL %@ for cacheKey %@", content, cacheKey);
     if (content) {
         NSNumber *num = [timestampDictionary objectForKey:cacheKey];
         if (num) {
@@ -139,7 +141,7 @@
             if (now - timestamp < expirationInterval) {
                 return content;
             } else {
-                NSLog(@"cached entry for %@ is expired, removing", productURL);
+                UALOG(@"Cached entry for %@ with key %@ is expired, removing", productURL, cacheKey);
                 [contentDictionary removeObjectForKey:cacheKey];
                 [timestampDictionary removeObjectForKey:cacheKey];
             }
