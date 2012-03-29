@@ -520,11 +520,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return ![CLLocationManager respondsToSelector:@selector(locationServicesEnabled)];
 }
 
-// This method uses a known depricated method, should be removed in the future. 
+// This method uses a known deprecated method, should be removed in the future. 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (BOOL)locationServicesEnabled {
     if ([UALocationService useDeprecatedMethods]) {
-        // Depricated method call, calling CLLocationManager instance for authorization
+        // deprecated method call, calling CLLocationManager instance for authorization
         CLLocationManager *deprecatedAuthorization = [[[CLLocationManager alloc] init] autorelease];
         BOOL enabled = [deprecatedAuthorization locationServicesEnabled];
         return enabled;

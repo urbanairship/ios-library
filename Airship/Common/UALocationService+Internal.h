@@ -100,8 +100,8 @@
 // Send the error to the delegate if it responds
 - (void)sendErrorToLocationServiceDelegate:(NSError*)error;
 
-// DEPRICATED LOCATION SUPPORT
-// Use depricated location calls
+// deprecated LOCATION SUPPORT
+// Use deprecated location calls
 + (BOOL)useDeprecatedMethods;
 
 @end

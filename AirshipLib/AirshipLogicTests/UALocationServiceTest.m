@@ -509,7 +509,7 @@
     [[mockDelegate expect] locationService:locationService didFailWithError:error];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didFailWithError:error];
     [mockDelegate verify];
-    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"Depricated key should return NO");
+    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"deprecated key should return NO");
 }
 
 
@@ -567,10 +567,10 @@
 #pragma mark Deprecated Location Methods
 
 
-- (void)testDepricatedLocationAuthorization {
+- (void)testdeprecatedLocationAuthorization {
     STAssertFalse([UALocationService useDeprecatedMethods], nil);
     [self swizzleUALocationServiceClassMethod:@selector(useDeprecatedMethods) withMethod:@selector(returnYES)];
-    // The above swizzle should force code execution throgh the depricated methods.
+    // The above swizzle should force code execution throgh the deprecated methods.
     STAssertEquals([UALocationService locationServicesEnabled], [CLLocationManager locationServicesEnabled], @"This should call the class and instance method of CLLocationManager, should be equal");
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UADeprecatedLocationAuthorizationKey];
     STAssertTrue([UALocationService locationServiceAuthorized], @"This should be YES, it's read out of NSUserDefaults");
