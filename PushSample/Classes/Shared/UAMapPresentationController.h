@@ -33,6 +33,7 @@
     MKMapView *mapView_;
     NSMutableArray *annotations_;
     UIBarButtonItem *rightButton_;
+    id <MKAnnotation> lastUserAnnotation_;
 }
 
 @property (nonatomic, retain) UALocationService *locationService;
@@ -40,6 +41,7 @@
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 @property (nonatomic, retain) NSMutableArray *annotations;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;
+@property (nonatomic, retain) id <MKAnnotation> lastUserAnnotation;
 
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;
 - (void)convertLocationsToAnnotations;

@@ -33,14 +33,22 @@
 @synthesize mapView = mapView_;
 @synthesize annotations = annotations_;
 @synthesize rightButton = rightButton_;
+@synthesize lastUserAnnotation = lastUserAnnotation_;
+
+#pragma mark -
+#pragma mark Memory
 
 - (void) dealloc {
     RELEASE_SAFELY(locationService_);
     RELEASE_SAFELY(locations_);
     RELEASE_SAFELY(annotations_);
+    RELEASE_SAFELY(lastUserAnnotation_);
     [super dealloc];
 }
 
+
+#pragma mark -
+#pragma mark View Cycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -51,12 +59,6 @@
     self.annotations = [NSMutableArray array];
     [self convertLocationsToAnnotations];
     self.navigationItem.rightBarButtonItem = rightButton_;
-}
-
-- (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location {
-    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
-    MKCoordinateRegion region = MKCoordinateRegionMake(location, span);
-    [mapView_ setRegion:region animated:YES];
 }
 
 - (void)viewDidUnload
@@ -71,9 +73,21 @@
     [super viewWillDisappear:animated];
 }
 
+#pragma mark -
+#pragma mark Autorotation
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+}
+
+#pragma mark -
+#pragma mark Class Methods
+
+- (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location {
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
+    MKCoordinateRegion region = MKCoordinateRegionMake(location, span);
+    [mapView_ setRegion:region animated:NO];
 }
 
 - (void)convertLocationsToAnnotations {
@@ -115,6 +129,7 @@
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
     // Return nil for the MKUserLocation object
     if ([annotation isKindOfClass:[MKUserLocation class]]) {
+        self.lastUserAnnotation = annotation;
         NSLog(@"Returning nil for MKUserLocation Lat:%f Long:%f", annotation.coordinate.latitude, annotation.coordinate.longitude);
         return nil;
     }
@@ -129,7 +144,13 @@
     return [pinView autorelease];
 }
 
-
-
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+    NSLog(@"Annotations added to map %@", views);
+    if ([views count] > 0) {
+       MKAnnotationView *view = [views objectAtIndex:0];
+        CLLocationCoordinate2D coord = view.annotation.coordinate;
+        [self moveSpanToCoordinate:coord];
+    }
+}
 
 @end
