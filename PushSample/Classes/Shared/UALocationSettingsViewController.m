@@ -38,16 +38,11 @@
 @synthesize locationService = locationService_;
 @synthesize locationDisplay = locationDisplay_;
 @synthesize reportedLocations = reportedLocations_;
-@synthesize latitudes = latitudes_;
-@synthesize longitudes = longitudes_;
 @synthesize locationTableView = locationTableView_;
 
 - (void)dealloc {
-    RELEASE_SAFELY(locationService_);
     RELEASE_SAFELY(locationDisplay_);
     RELEASE_SAFELY(reportedLocations_);
-    RELEASE_SAFELY(latitudes_);
-    RELEASE_SAFELY(longitudes_);
     [super dealloc];
 }
 
@@ -64,9 +59,7 @@
 {
     NSLog(@"viewDidLoad");
     [super viewDidLoad];
-    self.reportedLocations = [NSMutableSet setWithCapacity:10];
-    self.latitudes = [NSMutableArray arrayWithCapacity:10];
-    self.longitudes = [NSMutableArray arrayWithCapacity:10];
+    self.reportedLocations = [NSMutableArray arrayWithCapacity:10];
     self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
     [self setupLocationDisplay];
     [locationTableView_ setScrollEnabled:NO];
@@ -107,10 +100,9 @@
 }
 
 - (void)setupLocationDisplay {
-    if (locationDisplay_) {
-        [locationDisplay_ removeAllObjects];
-    }
     [locationDisplay_ addObject:@"Location"];
+    [locationDisplay_ addObject:@"Latitude: "];
+    [locationDisplay_ addObject:@"Longitude: "];
 }
 
 #pragma mark -
@@ -118,18 +110,7 @@
 
 - (void)addLocationToData:(CLLocation*)location {
     [reportedLocations_ addObject:location];
-    NSNumber *latitude = [NSNumber numberWithDouble:location.coordinate.latitude];
-    NSNumber *longitude = [NSNumber numberWithDouble:location.coordinate.longitude];
-    [latitudes_ addObject:latitude];
-    [longitudes_ addObject:longitude];
-    if ([locationDisplay_ count] < 3) {
-        [locationDisplay_ addObject:@"Lat:"];
-        [locationDisplay_ addObject:@"Long:"];
-        NSIndexPath *latPath = [NSIndexPath indexPathForRow:1 inSection:0];
-        NSIndexPath *longPath = [NSIndexPath indexPathForRow:2 inSection:0];
-        NSArray *indexPaths = [NSArray arrayWithObjects:latPath,longPath, nil];
-        [locationTableView_ insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    }
+    [locationTableView_ reloadData];
 }
 
 #pragma mark -
@@ -161,7 +142,7 @@
 - (IBAction)mapLocationPressed:(id)sender{
     UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController" 
                                                                                                bundle:[NSBundle mainBundle]];
-    mapController.locations = [NSMutableArray arrayWithArray:[reportedLocations_ allObjects]];
+    mapController.locations = [reportedLocations_ copy];
     [mapController autorelease];
     [self.navigationController pushViewController:mapController animated:YES];
 }
@@ -179,12 +160,24 @@
     if(1 == [indexPath indexAtPosition:1]) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"latitude"] autorelease];
         cell.textLabel.text = [locationDisplay_ objectAtIndex:[indexPath indexAtPosition:1]];
-        cell.detailTextLabel.text = [[latitudes_ lastObject] stringValue];
+        CLLocation  *location = [reportedLocations_ lastObject];
+        if (!location) {
+            NSLog(@"Empty lat value");
+            cell.detailTextLabel.text = @"";
+            return cell;
+        }
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.7f", location.coordinate.latitude];
     }
     if (2 == [indexPath indexAtPosition:1]) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"longitude"] autorelease];
         cell.textLabel.text = [locationDisplay_ objectAtIndex:[indexPath indexAtPosition:1]];
-        cell.detailTextLabel.text = [[longitudes_ lastObject] stringValue];
+        CLLocation *location = [reportedLocations_ lastObject];
+        if (!location) {
+            NSLog(@"Empty long value");
+            cell.detailTextLabel.text = @"";
+            return cell;
+        }
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%.7f", location.coordinate.longitude];                    
     }
     return cell ;
 }
