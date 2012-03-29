@@ -47,10 +47,8 @@
         self.timestampDictionary = [NSMutableDictionary dictionary];
         self.path = pathString;
         self.expirationInterval = interval;
-        
         [self readFromDisk];
     }
-    
     return self;
 }
 
