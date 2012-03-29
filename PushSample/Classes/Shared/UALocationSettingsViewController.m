@@ -28,6 +28,7 @@
 #import "UAGlobal.h"
 #import "UALocationCommonValues.h"
 #import "UAMapPresentationController.h"
+#import "UAirship.h"
 
 @interface UALocationSettingsViewController ()
 
@@ -67,7 +68,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    self.locationService = [[[UALocationService alloc] initWithPurpose:@"Location Demo"] autorelease];
+    self.locationService = [[UAirship shared] locationService];
     locationService_.delegate = self;
 }
 

@@ -28,6 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAAnalytics;
 @class UA_ASIHTTPRequest;
+@class UALocationService;
 
 UA_VERSION_INTERFACE(AirshipVersion)
 
@@ -99,7 +100,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     NSString *deviceToken;
     BOOL deviceTokenHasChanged;
     BOOL ready;
-
+    
 }
 
 /**
@@ -148,6 +149,13 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * UAirship has been initialized and is ready for use.
  */
 @property (nonatomic, assign) BOOL ready;
+
+///---------------------------------------------------------------------------------------
+/// @name Location Services
+///---------------------------------------------------------------------------------------
+
+@property (nonatomic, retain, getter = locationService) UALocationService *locationService;
+- (UALocationService*)locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging

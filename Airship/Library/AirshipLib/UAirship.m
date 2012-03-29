@@ -34,6 +34,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
 #import "UALocationCommonValues.h"
+#import "UALocationService.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
@@ -50,11 +51,14 @@ NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOpt
 static UAirship *_sharedAirship;
 BOOL logging = false;
 
-@interface UAirship()
+@interface UAirship() {
+    UALocationService* locationService_;
+}
 // Update device token without remote registration
 // Private
 - (void)updateDeviceToken:(NSData *)token;
 - (void)configureUserAgent;
+
 @end
 
 @implementation UAirship
@@ -65,18 +69,33 @@ BOOL logging = false;
 @synthesize deviceTokenHasChanged;
 @synthesize ready;
 @synthesize analytics;
+@synthesize locationService = locationService_;
 
+#pragma mark -
+#pragma mark Logging
 + (void)setLogging:(BOOL)value {
     logging = value;
 }
 
+#pragma mark -
+#pragma mark Location Get/Set Methods
+
+- (UALocationService*)locationService {
+    if (!locationService_) {
+        locationService_ = [[UALocationService alloc] init];
+    }
+    return locationService_;
+}
+
+#pragma mark -
+#pragma mark Object Lifecycle
 - (void)dealloc {
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
     RELEASE_SAFELY(deviceToken);
     RELEASE_SAFELY(analytics);
-
+    RELEASE_SAFELY(locationService_);
     [super dealloc];
 }
 
