@@ -37,7 +37,7 @@
 }
 
 @property (nonatomic, retain) UALocationService *locationService;
-@property (nonatomic, retain) NSMutableArray *locations;
+@property (nonatomic, copy) NSMutableArray *locations;
 @property (nonatomic, retain) IBOutlet MKMapView *mapView;
 @property (nonatomic, retain) NSMutableArray *annotations;
 @property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;

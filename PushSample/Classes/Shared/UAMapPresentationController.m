@@ -87,7 +87,7 @@
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location {
     MKCoordinateSpan span = MKCoordinateSpanMake(0.05, 0.05);
     MKCoordinateRegion region = MKCoordinateRegionMake(location, span);
-    [mapView_ setRegion:region animated:NO];
+    [mapView_ setRegion:region animated:NO  ];
 }
 
 - (void)convertLocationsToAnnotations {

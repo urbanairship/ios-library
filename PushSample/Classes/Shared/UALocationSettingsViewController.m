@@ -143,7 +143,7 @@
 - (IBAction)mapLocationPressed:(id)sender{
     UAMapPresentationController *mapController = [[UAMapPresentationController alloc] initWithNibName:@"UAMapPresentationViewController" 
                                                                                                bundle:[NSBundle mainBundle]];
-    mapController.locations = [reportedLocations_ copy];
+    mapController.locations = reportedLocations_;
     [mapController autorelease];
     [self.navigationController pushViewController:mapController animated:YES];
 }
@@ -154,7 +154,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = nil;
     if (0 == [indexPath indexAtPosition:1]) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"location"] autorelease];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
         cell.textLabel.text = [locationDisplay_ objectAtIndex:0];
         cell.textLabel.textAlignment = UITextAlignmentCenter;
     }
