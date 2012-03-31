@@ -23,6 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import <CoreLocation/CoreLocation.h>
 #import "UAirship.h"
 
 #import "UA_ASIHTTPRequest.h"
@@ -315,7 +316,9 @@ BOOL logging = false;
     NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
     [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
     [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
-
+    //kCLLocationAccuracyHundredMeters works, since it is also a double, this may change in future
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDistanceFilterKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDesiredAccuracyKey];
     NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
     [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
 }
