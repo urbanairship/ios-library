@@ -95,7 +95,9 @@
 - (BOOL)shouldPerformAutoLocationUpdate;
 
 // Convinence method to check authorization before starting provider
-- (void)startReportingLocationWithProvider:(id)locationProvider;
+// Has the side effect of setting the delegate on the provider to self if the 
+// delegate is nil
+- (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
 
 // Send the error to the delegate if it responds
 - (void)sendErrorToLocationServiceDelegate:(NSError*)error;

@@ -308,7 +308,7 @@
 
 - (void)testForcePromptLocation {
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] isLocationServiceEnabledAndAuthorized];
-    id mockProvider = [OCMockObject mockForClass:[UAStandardLocationProvider class]];
+    id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     [[mockProvider expect] startReportingLocation];
     locationService.promptUserForLocationServices = YES;
     [locationService startReportingLocationWithProvider:mockProvider];

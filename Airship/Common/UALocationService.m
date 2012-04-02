@@ -272,16 +272,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
         [singleLocationProvider_ stopReportingLocation];
-        // On iOS < 4.2, releasing the locataition service too quickly after stopping it results in the 
-        // CLClientRegister: could not send registration request to daemon crash or other problems. 
-        // The short circuit here prevents this. 
-        if([UALocationService useDeprecatedMethods]) return;
-
+        // Nil the delegate to prevent extraneous messages
         singleLocationProvider_.delegate = nil;
-        RELEASE_SAFELY(singleLocationProvider_);
-        return;
     }
-
 }
 
 - (void)sendErrorToLocationServiceDelegate:(NSError *)error {
@@ -335,8 +328,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)stopReportingSignificantLocationChanges {
     UALOG(@"Stop reporting significant change");
     [significantChangeProvider_ stopReportingLocation];
+    // Nil out the delegate to prevent extraneous delegate callbacks
     significantChangeProvider_.delegate = nil;
-    RELEASE_SAFELY(significantChangeProvider_);
 }
 
 #pragma mark -
@@ -355,10 +348,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self startReportingLocationWithProvider:singleLocationProvider_];
 }
 
-- (void)startReportingLocationWithProvider:(id)locationProvider {
+- (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider {
     BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
     if(promptUserForLocationServices_ || authorizedAndEnabled) {
         UALOG(@"Starting location service");
+        if(locationProvider.delegate == nil){
+            locationProvider.delegate = self;
+        }
         [locationProvider startReportingLocation];
         return;
     }
