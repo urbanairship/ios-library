@@ -34,7 +34,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
 
-#define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
