@@ -36,6 +36,7 @@
 // UALib
 #import "UAUser.h"
 #import "UAirship.h"
+#import "UAKeychainUtils.h"
 
 // C includes
 #include <sys/types.h>
@@ -57,9 +58,8 @@
             ];
 }
 
-+ (NSString *)udidHash {
-    NSString* udid = [[UIDevice currentDevice] uniqueIdentifier];
-    return [UAUtils md5:udid];
++ (NSString *)deviceID {
+    return [UAKeychainUtils getDeviceID];
 }
 
 + (NSString *) UUID {

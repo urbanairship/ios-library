@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
+#define kUAKeychainDeviceIDKey @"com.urbanairship.deviceID"
 
 @interface UAKeychainUtils : NSObject {
 	
@@ -42,5 +43,13 @@
 + (NSString *)getPassword:(NSString *)identifier;
 + (NSString *)getUsername:(NSString *)identifier;
 + (NSString *)getEmailAddress:(NSString *)identifier;
+
+/**
+ * Gets the device ID, creating or refreshing if necessary. Device IDs will be regenerated if a
+ * device change is detected (though UAUser IDs remain the same in that case).
+ *
+ * @return The Urban Airship device ID or an empty string if an error occurred.
+ */
++ (NSString *)getDeviceID;
 
 @end

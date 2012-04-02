@@ -135,7 +135,7 @@
     NSURL *itemURL = [NSURL URLWithString: urlString];
     
     NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 [UAUtils udidHash], @"udid",
+                                 [UAUtils deviceID], @"ua_device_id",
                                  [StoreFrontVersion get], @"version", nil];
     if (receipt != nil) {
         [data setObject:receipt forKey:@"transaction_receipt"];
