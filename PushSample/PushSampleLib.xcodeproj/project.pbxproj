@@ -827,7 +827,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				BUILD_STYLE = Debug;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -842,6 +845,7 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
@@ -855,6 +859,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				BUILD_STYLE = Release;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -864,6 +872,7 @@
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				PROVISIONING_PROFILE = "";
@@ -938,7 +947,10 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				BUILD_STYLE = Debug;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -962,7 +974,10 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					armv7,
+					armv6,
+				);
 				BUILD_STYLE = Release;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";

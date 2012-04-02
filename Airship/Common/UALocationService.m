@@ -272,6 +272,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // Single location auto shutdown
     if (locationProvider == singleLocationProvider_) {
         [singleLocationProvider_ stopReportingLocation];
+        // On iOS < 4.2, releasing the locataition service too quickly after stopping it results in the 
+        // CLClientRegister: could not send registration request to daemon crash or other problems. 
+        // The short circuit here prevents this. 
+        if([UALocationService useDeprecatedMethods]) return;
+
         singleLocationProvider_.delegate = nil;
         RELEASE_SAFELY(singleLocationProvider_);
         return;
@@ -339,7 +344,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // The default values on the core location object are preset to the highest level of accuracy
 - (void)reportCurrentLocation {
-    if(singleLocationProvider_ && singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
+    // If the single location provider is nil, this will evaluate to false, and a 
+    // new location provider will be instantiated. 
+    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating){
+        return;
+    }    
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
     }
@@ -517,8 +526,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return !(enabled && authorized);
 }
 
-+ (BOOL)useDeprecatedMethods {
-    return ![CLLocationManager respondsToSelector:@selector(locationServicesEnabled)];
++ (BOOL)useDeprecatedMethods { ;
+    return ![CLLocationManager respondsToSelector:@selector(authorizationStatus)];
 }
 
 // This method uses a known deprecated method, should be removed in the future. 
