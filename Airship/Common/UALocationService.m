@@ -73,7 +73,9 @@
         // TODO: set these values to something more appropriate
         minimumTimeBetweenForegroundUpdates_ = 120.0;
         [self beginObservingUIApplicationState];
-        standardLocationProvider_ = [[UAStandardLocationProvider alloc] initWithDelegate:self];        
+        // The standard location setter method pulls the distanceFilter and desiredAccuracy from
+        // NSUserDefaults. 
+        [self setStandardLocationProvider:[[[UAStandardLocationProvider alloc] init] autorelease]];        
     }
     return self;
 }
@@ -336,7 +338,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark Single Location Service
 
 // The default values on the core location object are preset to the highest level of accuracy
-// TODO: see if we want to leave it this way. 
 - (void)reportCurrentLocation {
     if(singleLocationProvider_ && singleLocationProvider_.serviceStatus == UALocationProviderUpdating) return;    
     if (!singleLocationProvider_) {

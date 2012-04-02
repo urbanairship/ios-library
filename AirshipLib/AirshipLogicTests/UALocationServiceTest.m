@@ -36,6 +36,8 @@
 #import "JRSwizzle.h"
 #import <SenTestingKit/SenTestingKit.h>
 
+// This needs to be kept in sync with the value in UAirship
+
 @interface UALocationService(Test)
 
 +(BOOL)returnYES;
@@ -92,31 +94,29 @@
 #pragma mark -
 #pragma mark Basic Object Initialization
 
-// TODO: change the default settings after preliminary developmet is done for desiredAccuracy and distanceFilter
 - (void)testBasicInit{
     [self setTestValuesInNSUserDefaults];
-    [[NSUserDefaults standardUserDefaults] setDouble:5.0 forKey:UAStandardLocationDistanceFilterKey];
-    [[NSUserDefaults standardUserDefaults] setDouble:6.0 forKey:UAStandardLocationDesiredAccuracyKey];
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UALocationServiceEnabledKey];
     UALocationService *testService = [[[UALocationService alloc] init] autorelease];
     STAssertTrue(120.00 == testService.minimumTimeBetweenForegroundUpdates, nil);
-    STAssertEqualObjects(locationService, locationService.standardLocationProvider.delegate,nil);
     STAssertFalse([UALocationService airshipLocationServiceEnabled], nil);
-    STAssertTrue([@"TEST" isEqualToString:locationService.purpose], nil);
+    STAssertEquals(testService.standardLocationDesiredAccuracy, kCLLocationAccuracyHundredMeters, nil);
+    STAssertEquals(testService.standardLocationDistanceFilter, kCLLocationAccuracyHundredMeters, nil);
 }
 
 - (void)setInitWithPurpose {
     STAssertTrue([locationService.purpose isEqualToString:@"TEST"],nil);
 }
 
+// Register user defaults only works on the first app run. Reset the values here to make sure
+// they are read from user defaults. 
 - (void)setTestValuesInNSUserDefaults {
-    // UALocationService defaults
-    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
-    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [defaultLocationPreferences setValue:@"TEST" forKey:UALocationServicePurposeKey];
-    
-    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
+    // UALocationService defaults. This needs to be kept in sync with the method in UAirship
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [userDefaults setValue:@"TEST" forKey:UALocationServicePurposeKey];
+    //kCLLocationAccuracyHundredMeters works, since it is also a double, this may change in future
+    [userDefaults setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDistanceFilterKey];
+    [userDefaults setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDesiredAccuracyKey];
 }
 
 #pragma mark -
@@ -459,6 +459,12 @@
     [[[mockLocationService expect] andForwardToRealObject] startReportingSignificantLocationChanges];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
+    // Check that distanceFilter and desiredAccuracy match whatever is in NSUserDefaults at this point
+    CLLocationAccuracy accuracy = [[NSUserDefaults standardUserDefaults] doubleForKey:UAStandardLocationDesiredAccuracyKey];
+    CLLocationDistance distance = [[NSUserDefaults standardUserDefaults] doubleForKey:UAStandardLocationDistanceFilterKey];
+    // The location values returned by the UALocationService come directly off the CLLocationManager object
+    STAssertEquals(accuracy, locationService.standardLocationDesiredAccuracy, nil);
+    STAssertEquals(distance, locationService.standardLocationDistanceFilter, nil);
 }
 
 // When services arent running, and backround is not enabled, restart values are set to NO
