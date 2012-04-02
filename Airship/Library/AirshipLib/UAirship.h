@@ -108,7 +108,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 @property (nonatomic, retain) UAAnalytics *analytics;
 
 /**
- * The Urban Airship API server. Defaults to https://go.urbanairship.com.
+ * The Urban Airship API server. Defaults to https://device-api.urbanairship.com.
  */
 @property (nonatomic, copy) NSString *server;
 
