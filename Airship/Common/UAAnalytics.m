@@ -409,10 +409,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 - (void)handleNotification:(NSDictionary*)userInfo {
     
     BOOL isActive = YES;
-IF_IOS4_OR_GREATER(
-                   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-                   )
-    
+    IF_IOS4_OR_GREATER(
+        isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    )
     if (isActive) {
         [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
     } else {
@@ -438,9 +437,12 @@ IF_IOS4_OR_GREATER(
         return;
     }
     // Don't send app init while in the background
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive && [[event getType] isEqualToString:@"app_init"]) {
-        return;
-    }
+    IF_IOS4_OR_GREATER(
+       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive && [[event getType] isEqualToString:@"app_init"]) {
+           return;
+       }
+    )
+
     [self sendIfNeeded];
 }
 

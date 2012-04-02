@@ -36,6 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAKeychainUtils.h"
 #import "UALocationCommonValues.h"
 #import "UALocationService.h"
+#import "UAGlobal.h"
 
 #define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
@@ -82,10 +83,13 @@ BOOL logging = false;
 #pragma mark Location Get/Set Methods
 
 - (UALocationService*)locationService {
-    if (!locationService_) {
-        locationService_ = [[UALocationService alloc] init];
-    }
-    return locationService_;
+    IF_IOS4_OR_GREATER(
+       if (!locationService_) {
+           locationService_ = [[UALocationService alloc] init];
+       }
+       return locationService_;
+    )
+    return nil;
 }
 
 #pragma mark -
