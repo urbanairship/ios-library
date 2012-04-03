@@ -35,6 +35,7 @@
 #import "UAUtils.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
+#import "UALocationEvent.h"
 #import "UAUser.h"
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
@@ -81,6 +82,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     RELEASE_SAFELY(lastSendTime);
     RELEASE_SAFELY(reSendTimer);
     RELEASE_SAFELY(server);
+    RELEASE_SAFELY(lastLocationSendTime);
     
     [super dealloc];
 }
@@ -421,7 +423,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     }
 }
 
-- (void)addEvent:(UAEvent*)event {
+- (void)addEvent:(UAEvent *)event {
     
     UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
     
@@ -432,17 +434,39 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
     }
-        
+
     // Don't try to send if the event indicates the app is losing focus
     if ([[event getType] isEqualToString:@"app_exit"] || [[event getType] isEqualToString:@"app_background"]) {
         return;
     }
-    // Don't send app init while in the background
+
+    // if iOS 3.x, assume active
+    BOOL active = YES;
     IF_IOS4_OR_GREATER(
-       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive && [[event getType] isEqualToString:@"app_init"]) {
-           return;
-       }
-    )
+        active = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    );
+
+    // Don't send app init while in the background
+    if (!active && [[event getType] isEqualToString:@"app_init"]) {
+        return;
+    }
+
+    // Do not send locations in the background too often
+    if ([[event getType] isEqualToString:locationEventAnalyticsType]) {
+        
+        // Initialize to sometime really long ago
+        if (!lastLocationSendTime) {
+            lastLocationSendTime = [[NSDate distantPast] retain];
+        }
+        
+        NSTimeInterval timeSinceLastLocation = [[NSDate date] timeIntervalSinceDate:lastLocationSendTime];
+        if (!active && timeSinceLastLocation < 15 * 60/* fifteen minutes */) {
+            return;
+        } else {
+            RELEASE_SAFELY(lastLocationSendTime);
+            lastLocationSendTime = [[NSDate date] retain];
+        }
+    }
 
     [self sendIfNeeded];
 }

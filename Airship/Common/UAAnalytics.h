@@ -68,7 +68,10 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
     int databaseSize;
     NSTimeInterval oldestEventTime;
+    
     NSDate *lastSendTime;
+    NSDate *lastLocationSendTime;
+    
     NSTimer *reSendTimer;
     
     BOOL analyticsLoggingEnabled;
@@ -86,6 +89,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (assign, nonatomic) int sendInterval;
 @property (assign, readonly) NSTimeInterval oldestEventTime;
 @property (retain, readonly) NSDate *lastSendTime;
+
 
 - (id)initWithOptions:(NSDictionary *)options;
 - (void)restoreFromDefault;
