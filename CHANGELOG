@@ -1,4 +1,9 @@
 --------------------------
+1.2.0 - April 3, 2012
+--------------------------
+- Added location support
+- IAP and Subscription content URL cache fixes
+
 1.1.5 - March 28, 2012
 --------------------------
 - Removed all UDID usage

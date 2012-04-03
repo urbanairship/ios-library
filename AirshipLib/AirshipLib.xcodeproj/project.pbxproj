@@ -1285,7 +1285,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libStoreFront-2.2.11.a";
-			path = "libStoreFront-2.2.12.a";
+			path = "libStoreFront-2.2.13.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1293,7 +1293,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libPush-1.2.6.a";
-			path = "libPush-1.2.8.a";
+			path = "libPush-1.2.9.a";
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1301,7 +1301,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libSubscription-1.2.11.a";
-			path = "libSubscription-1.2.12.a";
+			path = "libSubscription-1.2.13.a";
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1309,7 +1309,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libInbox-2.0.3.a";
-			path = "libInbox-2.0.4.a";
+			path = "libInbox-2.0.5.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
