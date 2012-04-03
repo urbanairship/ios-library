@@ -43,7 +43,7 @@
 		1827ED4512364571004001E2 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3612364571004001E2 /* Default.png */; };
 		1827ED4612364571004001E2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3712364571004001E2 /* Icon-Small.png */; };
 		1827ED4712364571004001E2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3812364571004001E2 /* Icon.png */; };
-		184E3F77129E4CB6004465C8 /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F76129E4CB6004465C8 /* libUAirship-1.1.4.a */; };
+		184E3F77129E4CB6004465C8 /* libUAirship-1.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F76129E4CB6004465C8 /* libUAirship-1.2.0.a */; };
 		1F79713412DE3D2600D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79713312DE3D2600D4937F /* AirshipConfig.plist */; };
 		1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EC613FB33BB00DBC45F /* libz.dylib */; };
 		636CB320128D0CB300481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
@@ -112,7 +112,7 @@
 		1827ED3612364571004001E2 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		1827ED3712364571004001E2 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
 		1827ED3812364571004001E2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
-		184E3F76129E4CB6004465C8 /* libUAirship-1.1.4.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.1.4.a"; path = "../Airship/libUAirship-1.1.4.a"; sourceTree = SOURCE_ROOT; };
+		184E3F76129E4CB6004465C8 /* libUAirship-1.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.2.0.a"; path = "../Airship/libUAirship-1.2.0.a"; sourceTree = SOURCE_ROOT; };
 		1D6058910D05DD3D006BFB54 /* StoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F79713312DE3D2600D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FD26EC613FB33BB00DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -151,7 +151,7 @@
 				638EA09A11C4D515009F6B9C /* StoreKit.framework in Frameworks */,
 				636CB320128D0CB300481EFC /* Security.framework in Frameworks */,
 				636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */,
-				184E3F77129E4CB6004465C8 /* libUAirship-1.1.4.a in Frameworks */,
+				184E3F77129E4CB6004465C8 /* libUAirship-1.2.0.a in Frameworks */,
 				E9CB327D12B85C44002E39EA /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,7 +340,7 @@
 		184E3F75129E4CA9004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				184E3F76129E4CB6004465C8 /* libUAirship-1.1.4.a */,
+				184E3F76129E4CB6004465C8 /* libUAirship-1.2.0.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";

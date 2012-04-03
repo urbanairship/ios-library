@@ -28,7 +28,7 @@
 
 /* Begin PBXFileReference section */
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libInbox-2.0.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libInbox-2.0.3.a"; path = "libInbox-2.0.4.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libInbox-2.0.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libInbox-2.0.3.a"; path = "libInbox-2.0.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9AED95912B7931500441700 /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInbox.h; sourceTree = "<group>"; };
 		E9AED95A12B7931500441700 /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInbox.m; sourceTree = "<group>"; };
 		E9AED95B12B7931500441700 /* UAInboxDBManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxDBManager.h; sourceTree = "<group>"; };
@@ -248,7 +248,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 2.0.5;
+				CURRENT_PROJECT_VERSION = 2.1.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -279,7 +279,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 2.0.5;
+				CURRENT_PROJECT_VERSION = 2.1.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
