@@ -35,6 +35,13 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
+		BB935DA5152B6081006E6A92 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DA4152B6081006E6A92 /* CoreLocation.framework */; };
+		BB935DAD152B60BD006E6A92 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */; };
+		BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */; };
+		BB935DAF152B60BD006E6A92 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935DAC152B60BD006E6A92 /* UAMapPresentationController.m */; };
+		BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DB0152B614A006E6A92 /* MapKit.framework */; };
+		BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */; };
+		BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */; };
 		D5184E841315F2F900A40CAC /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */; };
 		D5184E851315F2F900A40CAC /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */; };
 		D5184E861315F2F900A40CAC /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D5184E7F1315F2F900A40CAC /* UAPushSettingsSoundsViewController.m */; };
@@ -103,6 +110,16 @@
 		1F79711512DE3C1000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FD26EBE13FB318700DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BB935DA4152B6081006E6A92 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
+		BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationDemoAnnotation.m; sourceTree = "<group>"; };
+		BB935DA9152B60BD006E6A92 /* UALocationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationSettingsViewController.h; sourceTree = "<group>"; };
+		BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationSettingsViewController.m; sourceTree = "<group>"; };
+		BB935DAB152B60BD006E6A92 /* UAMapPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMapPresentationController.h; sourceTree = "<group>"; };
+		BB935DAC152B60BD006E6A92 /* UAMapPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMapPresentationController.m; sourceTree = "<group>"; };
+		BB935DB0152B614A006E6A92 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
+		BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
 		D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushNotificationHandler.m; sourceTree = "<group>"; };
 		D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsTagsViewController.m; sourceTree = "<group>"; };
 		D5184E7E1315F2F900A40CAC /* UAPushSettingsTagsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsTagsViewController.h; sourceTree = "<group>"; };
@@ -154,6 +171,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB935DB1152B614A006E6A92 /* MapKit.framework in Frameworks */,
+				BB935DA5152B6081006E6A92 /* CoreLocation.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -227,6 +246,12 @@
 		1890BA051251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */,
+				BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */,
+				BB935DA9152B60BD006E6A92 /* UALocationSettingsViewController.h */,
+				BB935DAA152B60BD006E6A92 /* UALocationSettingsViewController.m */,
+				BB935DAB152B60BD006E6A92 /* UAMapPresentationController.h */,
+				BB935DAC152B60BD006E6A92 /* UAMapPresentationController.m */,
 				D5184E7C1315F2F900A40CAC /* UAPushNotificationHandler.m */,
 				D5184E7D1315F2F900A40CAC /* UAPushSettingsTagsViewController.m */,
 				D5184E7E1315F2F900A40CAC /* UAPushSettingsTagsViewController.h */,
@@ -260,6 +285,8 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */,
+				BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */,
 				D5184E881315F33900A40CAC /* UAPushSettingsTagsViewController.xib */,
 				D5184E891315F33900A40CAC /* UAPushSettingsSoundsViewController.xib */,
 				D5184E8A1315F33900A40CAC /* UAPushSettingsAddTagViewController.xib */,
@@ -401,6 +428,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB935DB0152B614A006E6A92 /* MapKit.framework */,
+				BB935DA4152B6081006E6A92 /* CoreLocation.framework */,
 				1FD26EBE13FB318700DBC45F /* libz.dylib */,
 				18C02A08124F250000D49CD5 /* libsqlite3.dylib */,
 				0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */,
@@ -502,6 +531,8 @@
 				D5184E991315F39C00A40CAC /* frog.caf in Resources */,
 				D5184E9A1315F39C00A40CAC /* cow.caf in Resources */,
 				D5184E9B1315F39C00A40CAC /* cat.caf in Resources */,
+				BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */,
+				BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,6 +572,9 @@
 				D5184E851315F2F900A40CAC /* UAPushSettingsTagsViewController.m in Sources */,
 				D5184E861315F2F900A40CAC /* UAPushSettingsSoundsViewController.m in Sources */,
 				D5184E871315F2F900A40CAC /* UAPushSettingsAddTagViewController.m in Sources */,
+				BB935DAD152B60BD006E6A92 /* UALocationDemoAnnotation.m in Sources */,
+				BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */,
+				BB935DAF152B60BD006E6A92 /* UAMapPresentationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
