@@ -489,15 +489,14 @@
 }
 
 // Some of these background/foreground tests are probably redundant, and should be refactored
-- (void)testStartStopServicesThroughForegroundBackgroundEvents {
-    id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-    id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
-    locationService.standardLocationProvider = mockStandard;
-    locationService.significantChangeProvider = mockSignificant;
-    // Guarantee location starts without mocking authorization
-    locationService.promptUserForLocationServices = YES;
-    [
-}
+//- (void)testStartStopServicesThroughForegroundBackgroundEvents {
+//    id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
+//    id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
+//    locationService.standardLocationProvider = mockStandard;
+//    locationService.significantChangeProvider = mockSignificant;
+//    // Guarantee location starts without mocking authorization
+//    locationService.promptUserForLocationServices = YES;
+//}
 
 // When services arent running, and backround is not enabled, restart values are set to NO
 - (void)testBackgroundServiceValuesAreFalse {
