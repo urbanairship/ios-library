@@ -378,6 +378,10 @@
 - (void)testStartRestartBooleansOnProviders {
     id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
+    // Setting this to YES is a quick way to get the startReportingLocationWithProvider: method to 
+    // allow the location service to be started. 
+    locationService.promptUserForLocationServices = YES;
+    //
     locationService.standardLocationProvider = mockStandard;
     locationService.significantChangeProvider = mockSignificant;
     [locationService startReportingStandardLocation];
@@ -484,6 +488,17 @@
     STAssertEquals(distance, locationService.standardLocationDistanceFilter, nil);
 }
 
+// Some of these background/foreground tests are probably redundant, and should be refactored
+- (void)testStartStopServicesThroughForegroundBackgroundEvents {
+    id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
+    id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
+    locationService.standardLocationProvider = mockStandard;
+    locationService.significantChangeProvider = mockSignificant;
+    // Guarantee location starts without mocking authorization
+    locationService.promptUserForLocationServices = YES;
+    [
+}
+
 // When services arent running, and backround is not enabled, restart values are set to NO
 - (void)testBackgroundServiceValuesAreFalse {
     locationService.backgroundLocationServiceEnabled = NO;
@@ -491,8 +506,8 @@
     locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
     locationService.significantChangeProvider.serviceStatus = UALocationProviderNotUpdating;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-    STAssertFalse([UALocationService boolForLocationServiceKey:UAStandardLocationDistanceFilterKey],nil);
-    STAssertFalse([UALocationService boolForLocationServiceKey:UASignificantChangeServiceRestartKey],nil);
+    STAssertFalse(locationService.shouldStartReportingStandardLocation ,nil);
+    STAssertFalse(locationService.shouldStartReportingSignificantChange ,nil);
     [[mockLocationService reject] startReportingStandardLocation];
     [[mockLocationService reject] startReportingSignificantLocationChanges];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
@@ -510,7 +525,6 @@
     [[mockSingle reject] stopReportingLocation];
     single.serviceStatus = UALocationProviderNotUpdating;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-    
 }
 
 #pragma mark -

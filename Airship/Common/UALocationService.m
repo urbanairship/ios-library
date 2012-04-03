@@ -109,6 +109,7 @@
 
 - (void)restartPreviousLocationServices {
     if(!backroundLocationServiceEnabled_){
+        UALOG(@"Restarting location providers that were previously running");
         if (shouldStartReportingStandardLocation_)[self startReportingStandardLocation]; 
         if (shouldStartReportingSignificantChange_)[self startReportingSignificantLocationChanges];
     }
@@ -134,9 +135,14 @@
         }
         if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating){
             [self stopReportingStandardLocation];
+            // Setup the service to restart since it was running, and background services are not enabled
+            // and shutting down the service sets shouldStartReportingStandardLocation to NO;
+            self.shouldStartReportingStandardLocation = YES;
         }
         if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
             [self stopReportingSignificantLocationChanges];
+            // See the comment above, service needs to be setup to restart
+            self.shouldStartReportingSignificantChange = YES;
         }
     }
 }
@@ -292,7 +298,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
     }
-    self.shouldStartReportingStandardLocation = YES;
     [self startReportingLocationWithProvider:standardLocationProvider_];
 }
 
@@ -315,7 +320,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Factory methods aren't used to avoid setting the delegate twice
         self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
     }
-    self.shouldStartReportingSignificantChange = YES;
     [self startReportingLocationWithProvider:significantChangeProvider_];
 }
 
@@ -351,6 +355,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         UALOG(@"Starting location service");
         if(locationProvider.delegate == nil){
             locationProvider.delegate = self;
+        }
+        if (locationProvider == standardLocationProvider_) {
+            self.shouldStartReportingStandardLocation = YES;
+        }
+        if (locationProvider == significantChangeProvider_) {
+            self.shouldStartReportingSignificantChange = YES;
         }
         [locationProvider startReportingLocation];
         return;
