@@ -58,7 +58,7 @@
 
 - (void)viewDidLoad
 {
-    NSLog(@"viewDidLoad");
+    UALOG(@"viewDidLoad");
     [super viewDidLoad];
     self.reportedLocations = [NSMutableArray arrayWithCapacity:10];
     self.locationDisplay = [NSMutableArray arrayWithCapacity:3];
@@ -118,7 +118,7 @@
 #pragma mark IBAction Button Methods
 
 - (IBAction)getLocationPressed:(id)sender {
-    NSLog(@"Get Location pressed");
+    UALOG(@"Get Location pressed");
     [self checkAndAlertForLocationAuthorization];
     [locationService_ reportCurrentLocation];
 }
@@ -163,7 +163,7 @@
         cell.textLabel.text = [locationDisplay_ objectAtIndex:[indexPath indexAtPosition:1]];
         CLLocation  *location = [reportedLocations_ lastObject];
         if (!location) {
-            NSLog(@"Empty lat value");
+            UALOG(@"Empty lat value");
             cell.detailTextLabel.text = @"";
             return cell;
         }
@@ -174,7 +174,7 @@
         cell.textLabel.text = [locationDisplay_ objectAtIndex:[indexPath indexAtPosition:1]];
         CLLocation *location = [reportedLocations_ lastObject];
         if (!location) {
-            NSLog(@"Empty long value");
+            UALOG(@"Empty long value");
             cell.detailTextLabel.text = @"";
             return cell;
         }
@@ -191,13 +191,13 @@
 #pragma mark UALocationServiceDelegate
 
 - (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error {
-    NSLog(@"LOCATION_ERROR, %@", error.description);
+    UALOG(@"LOCATION_ERROR, %@", error.description);
 }
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    NSLog(@"LOCATION_AUTHORIZATION_STATUS %u", status);
+    UALOG(@"LOCATION_AUTHORIZATION_STATUS %u", status);
 }
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation {
-    NSLog(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
+    UALOG(@"LOCATION_UPDATE LAT:%f LONG:%f", newLocation.coordinate.latitude, newLocation.coordinate.longitude);
     [self addLocationToData:newLocation];
 }
 

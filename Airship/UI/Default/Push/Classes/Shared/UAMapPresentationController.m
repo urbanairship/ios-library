@@ -26,6 +26,7 @@
 #import "UAGlobal.h"
 #import "UALocationDemoAnnotation.h"
 #import "UALocationService.h"
+#import "UAGlobal.h"
 
 @implementation UAMapPresentationController
 @synthesize locationService = locationService_;
@@ -55,7 +56,7 @@
     if (!locations_) {
         self.locations = [NSMutableArray array];
     }
-    NSLog(@"LOCATIONS ARRAY %@", locations_);
+    UALOG(@"LOCATIONS ARRAY %@", locations_);
     self.annotations = [NSMutableArray array];
     [self convertLocationsToAnnotations];
     self.navigationItem.rightBarButtonItem = rightButton_;
@@ -95,25 +96,25 @@
         UALocationDemoAnnotation *annotation = [UALocationDemoAnnotation locationAnnotationFromLocation:location];
         [annotations_ addObject:annotation];
     }
-    NSLog(@"ANNOTATIONS %@", annotations_);
+    UALOG(@"ANNOTATIONS %@", annotations_);
 }
 
 - (void)annotateMap {
-    NSLog(@"annotateMap");
+    UALOG(@"annotateMap");
     [mapView_ addAnnotations:annotations_];
     rightButton_.title = @"-Pin";
 }
 
 - (IBAction)rightBarButtonPressed:(id)sender {
-    NSLog(@"Right bar button pressed");
+    UALOG(@"Right bar button pressed");
     // The Map                   
     if ([[mapView_ annotations] count] > 1) {
-        NSLog(@"Removing annotations");
+        UALOG(@"Removing annotations");
         [mapView_ removeAnnotations:annotations_];
         rightButton_.title = @"+Pin";
     }
     else {
-        NSLog(@"Adding annotations");
+        UALOG(@"Adding annotations");
         [self annotateMap];
     }
 }
@@ -123,20 +124,20 @@
 #pragma mark MKMapViewDelegate 
 
 - (void)mapView:(MKMapView *)mapView didChangeUserTrackingMode:(MKUserTrackingMode)mode animated:(BOOL)animated {
-    NSLog(@"didChangeUserTrackingMode");
+    UALOG(@"didChangeUserTrackingMode");
 }
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id < MKAnnotation >)annotation {
     // Return nil for the MKUserLocation object
     if ([annotation isKindOfClass:[MKUserLocation class]]) {
         self.lastUserAnnotation = annotation;
-        NSLog(@"Returning nil for MKUserLocation Lat:%f Long:%f", annotation.coordinate.latitude, annotation.coordinate.longitude);
+        UALOG(@"Returning nil for MKUserLocation Lat:%f Long:%f", annotation.coordinate.latitude, annotation.coordinate.longitude);
         return nil;
     }
-    NSLog(@"Creating view for annotation %@", annotation);
+    UALOG(@"Creating view for annotation %@", annotation);
     
     if (!annotation) {
-        NSLog(@"ANNOTATION IS NIL!!!!");
+        UALOG(@"ANNOTATION IS NIL!!!!");
     }
     MKPinAnnotationView *pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
     pinView.pinColor = MKPinAnnotationColorPurple;
@@ -145,7 +146,7 @@
 }
 
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
-    NSLog(@"Annotations added to map %@", views);
+    UALOG(@"Annotations added to map %@", views);
     if ([views count] > 0) {
        MKAnnotationView *view = [views objectAtIndex:0];
         CLLocationCoordinate2D coord = view.annotation.coordinate;
