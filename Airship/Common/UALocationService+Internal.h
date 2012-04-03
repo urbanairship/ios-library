@@ -32,11 +32,15 @@
     UAStandardLocationProvider *standardLocationProvider_;
     UAStandardLocationProvider *singleLocationProvider_;   
     UASignificantChangeProvider *significantChangeProvider_;
+    BOOL shouldStartReportingStandardLocation_;
+    BOOL shouldStartReportingSignificantChange_;
 }
 // Override property declarations for implementation and testing
 //
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
+@property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
+@property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
 //
 
 // Sets appropriate value in NSUserDefaults
@@ -54,6 +58,9 @@
 + (void)setDouble:(double)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 
 + (double)doubleForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
+
+// Restart any location services that were previously running
+- (void)restartPreviousLocationServices;
 
 // CLLocationManager values in NSUserDefaults
 // Basically wrapped double values

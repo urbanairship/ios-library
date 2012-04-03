@@ -40,10 +40,13 @@
 @synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize dateOfLastLocation = dateOfLastLocation_;
+@synthesize shouldStartReportingStandardLocation = shouldStartReportingStandardLocation_;
+@synthesize shouldStartReportingSignificantChange = shouldStartReportingSignificantChange_;
 @synthesize delegate = delegate_;
 @synthesize promptUserForLocationServices = promptUserForLocationServices_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
 @synthesize backgroundLocationServiceEnabled = backroundLocationServiceEnabled_;
+
 
 #pragma mark -
 #pragma mark Object Lifecycle
@@ -75,7 +78,7 @@
         [self beginObservingUIApplicationState];
         // The standard location setter method pulls the distanceFilter and desiredAccuracy from
         // NSUserDefaults. 
-        [self setStandardLocationProvider:[[[UAStandardLocationProvider alloc] init] autorelease]];        
+        [self setStandardLocationProvider:[[[UAStandardLocationProvider alloc] init] autorelease]]; 
     }
     return self;
 }
@@ -104,6 +107,13 @@
                                                object:[UIApplication sharedApplication]];
 }
 
+- (void)restartPreviousLocationServices {
+    if(!backroundLocationServiceEnabled_){
+        if (shouldStartReportingStandardLocation_)[self startReportingStandardLocation]; 
+        if (shouldStartReportingSignificantChange_)[self startReportingSignificantLocationChanges];
+    }
+}
+
 // TODO: set distanceFilter/desiredAccuracy on location providers as they come back online
 - (void)appWillEnterForeground {
     UALOG(@"Location service did receive appWillEnterForeground");
@@ -112,11 +122,22 @@
     }
     // If the location services were not allowed in the background, and they were tracking when the app entered the background
     // restart them now. 
-    if(!backroundLocationServiceEnabled_){
-        BOOL startStandard = [UALocationService boolForLocationServiceKey:UAStandardLocationServiceRestartKey];
-        BOOL startSignificantChange = [UALocationService boolForLocationServiceKey:UASignificantChangeServiceRestartKey];
-        if (startStandard)[self startReportingStandardLocation]; 
-        if (startSignificantChange)[self startReportingSignificantLocationChanges];
+    [self restartPreviousLocationServices];
+}
+
+- (void)appDidEnterBackground {
+    UALOG(@"Location service did enter background");
+    if (!backroundLocationServiceEnabled_) {
+        // If we are trying to acquire a single location, bail, and try on the next app start.
+        if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
+            [singleLocationProvider_ stopReportingLocation];
+        }
+        if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating){
+            [self stopReportingStandardLocation];
+        }
+        if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
+            [self stopReportingSignificantLocationChanges];
+        }
     }
 }
 
@@ -130,34 +151,6 @@
         return NO;
     }
     return YES;
-}
-
-- (void)appDidEnterBackground {
-    UALOG(@"Location service did enter background");
-    if (!backroundLocationServiceEnabled_) {
-        if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating) {
-            [UALocationService setBool:YES forLocationServiceKey:UAStandardLocationServiceRestartKey];
-        }
-        else {
-            [UALocationService setBool:NO forLocationServiceKey:UAStandardLocationServiceRestartKey];
-        }
-        if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
-            [UALocationService setBool:YES forLocationServiceKey:UASignificantChangeServiceRestartKey];
-        }
-        else {
-            [UALocationService setBool:NO forLocationServiceKey:UASignificantChangeServiceRestartKey];
-        }
-        // If we are trying to acquire a single location, bail, and try on the next app start.
-        if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
-            [singleLocationProvider_ stopReportingLocation];
-        }
-        if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating){
-            [self stopReportingStandardLocation];
-        }
-        if (significantChangeProvider_.serviceStatus == UALocationProviderUpdating){
-            [self stopReportingSignificantLocationChanges];
-        }
-    }
 }
 
 #pragma mark -
@@ -299,6 +292,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Factory methods aren't used to avoid setting the delegate twice
         self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
     }
+    self.shouldStartReportingStandardLocation = YES;
     [self startReportingLocationWithProvider:standardLocationProvider_];
 }
 
@@ -307,6 +301,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)stopReportingStandardLocation {
     UALOG(@"Location service stop reporting standard location");
     [standardLocationProvider_ stopReportingLocation];
+    self.shouldStartReportingStandardLocation = NO;
 }
 
 - (CLLocation*)location {
@@ -320,6 +315,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Factory methods aren't used to avoid setting the delegate twice
         self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
     }
+    self.shouldStartReportingSignificantChange = YES;
     [self startReportingLocationWithProvider:significantChangeProvider_];
 }
 
@@ -328,6 +324,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)stopReportingSignificantLocationChanges {
     UALOG(@"Stop reporting significant change");
     [significantChangeProvider_ stopReportingLocation];
+    self.shouldStartReportingSignificantChange = NO;
     // Nil out the delegate to prevent extraneous delegate callbacks
     significantChangeProvider_.delegate = nil;
 }

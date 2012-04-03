@@ -373,6 +373,24 @@
 }
 
 #pragma mark -
+#pragma mark Location Service Provider start/restart BOOLS
+
+- (void)testStartRestartBooleansOnProviders {
+    id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
+    id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
+    locationService.standardLocationProvider = mockStandard;
+    locationService.significantChangeProvider = mockSignificant;
+    [locationService startReportingStandardLocation];
+    STAssertTrue(locationService.shouldStartReportingStandardLocation, nil);
+    [locationService startReportingSignificantLocationChanges];
+    STAssertTrue(locationService.shouldStartReportingSignificantChange, nil);
+    [locationService stopReportingStandardLocation];
+    STAssertFalse(locationService.shouldStartReportingStandardLocation, nil);
+    [locationService stopReportingSignificantLocationChanges];
+    STAssertFalse(locationService.shouldStartReportingSignificantChange, nil);
+}
+
+#pragma mark -
 #pragma mark Automatic Location Update on Foreground
 
 -(void)testAutomaticLocationUpdateOnForeground {
@@ -449,10 +467,9 @@
     // skip starting and just add them manually. 
     locationService.standardLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
     locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:locationService];
-    // setup the correct status
-    locationService.standardLocationProvider.serviceStatus = UALocationProviderUpdating;
-    locationService.significantChangeProvider.serviceStatus = UALocationProviderUpdating;
-    // Make the class perform backgrounding tasks
+    // Setup booleans as if location services were started previously
+    locationService.shouldStartReportingStandardLocation = YES;
+    locationService.shouldStartReportingSignificantChange = YES;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
     // Setup proper expectations for app foreground
     [[[mockLocationService expect] andForwardToRealObject] startReportingStandardLocation];
