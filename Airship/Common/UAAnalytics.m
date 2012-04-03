@@ -35,6 +35,7 @@
 #import "UAUtils.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
+#import "UALocationEvent.h"
 #import "UAUser.h"
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
@@ -50,6 +51,9 @@ NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 NSString * const UAAnalyticsOptionsLoggingKey = @"UAAnalyticsOptionsLoggingKey";
+
+UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
+UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
@@ -78,6 +82,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     RELEASE_SAFELY(lastSendTime);
     RELEASE_SAFELY(reSendTimer);
     RELEASE_SAFELY(server);
+    RELEASE_SAFELY(lastLocationSendTime);
     
     [super dealloc];
 }
@@ -203,6 +208,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 
 - (void)initSession {
     session = [[NSMutableDictionary alloc] init];
+    
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
@@ -316,6 +322,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
 
+    //TODO: clearing the session could cause an exit event to have an empty payload and it will be dropped - do we care?
     RELEASE_SAFELY(notificationUserInfo);
     [session removeAllObjects];
     //Set a blank session_id for app_exit events
@@ -405,10 +412,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 - (void)handleNotification:(NSDictionary*)userInfo {
     
     BOOL isActive = YES;
-IF_IOS4_OR_GREATER(
-                   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-                   )
-    
+    IF_IOS4_OR_GREATER(
+        isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    )
     if (isActive) {
         [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
     } else {
@@ -417,7 +423,7 @@ IF_IOS4_OR_GREATER(
     }
 }
 
-- (void)addEvent:(UAEvent*)event {
+- (void)addEvent:(UAEvent *)event {
     
     UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
     
@@ -428,12 +434,40 @@ IF_IOS4_OR_GREATER(
     if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
     }
-        
+
     // Don't try to send if the event indicates the app is losing focus
     if ([[event getType] isEqualToString:@"app_exit"] || [[event getType] isEqualToString:@"app_background"]) {
         return;
     }
-    
+
+    // if iOS 3.x, assume active
+    BOOL active = YES;
+    IF_IOS4_OR_GREATER(
+        active = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
+    );
+
+    // Don't send app init while in the background
+    if (!active && [[event getType] isEqualToString:@"app_init"]) {
+        return;
+    }
+
+    // Do not send locations in the background too often
+    if ([[event getType] isEqualToString:locationEventAnalyticsType]) {
+        
+        // Initialize to sometime really long ago
+        if (!lastLocationSendTime) {
+            lastLocationSendTime = [[NSDate distantPast] retain];
+        }
+        
+        NSTimeInterval timeSinceLastLocation = [[NSDate date] timeIntervalSinceDate:lastLocationSendTime];
+        if (!active && timeSinceLastLocation < 15 * 60/* fifteen minutes */) {
+            return;
+        } else {
+            RELEASE_SAFELY(lastLocationSendTime);
+            lastLocationSendTime = [[NSDate date] retain];
+        }
+    }
+
     [self sendIfNeeded];
 }
 
@@ -444,10 +478,10 @@ IF_IOS4_OR_GREATER(
                  response:(NSHTTPURLResponse *)response
              responseData:(NSData *)responseData {
     
-    /*
+    
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-     */
+     
      
     RELEASE_SAFELY(connection);
     
@@ -696,14 +730,6 @@ IF_IOS4_OR_GREATER(
 }
 
 - (void)sendIfNeeded {
-    
-    IF_IOS4_OR_GREATER(
-                       // if the application is not active, do not attempt to send
-                       // this will typically be the case for headless newsstant launches
-                       if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
-                           return;
-                       }
-    )
     
     //try sending at this interval if no other thresholds
     //have been met

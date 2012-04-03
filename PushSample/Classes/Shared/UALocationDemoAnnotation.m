@@ -1,17 +1,17 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -22,22 +22,43 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#import <Foundation/Foundation.h>
-#import "NSObject+UATestMockable.h"
+#import "UALocationDemoAnnotation.h"
 #import "UAGlobal.h"
 
-@interface UATestCase : GHTestCase {
-    NSMutableSet *testCaseMocks;
-    NSMutableSet *singleTestMocks;
-    id currentMockRecorder;
+@implementation UALocationDemoAnnotation
+@synthesize coordinate = coordinate_;
+@synthesize title = title_;
+@synthesize subtitle = subtitle_;
+
+- (void)dealloc {
+    RELEASE_SAFELY(title_);
+    RELEASE_SAFELY(subtitle_);
+    [super dealloc];
 }
 
-+ (void)prepareAllTestCases;
+- (id)initWithLocation:(CLLocation*)location {
+    self = [super init];
+    if (self){
+        coordinate_ = location.coordinate;
+        title_ = @"Location";
+        subtitle_ = [[self monthDateFromDate:location.timestamp] retain];
+    }
+    return self;
+}
 
-- (void)mock:(Class)klass method:(SEL)origSel_ withMethod:(SEL)altSel_;
+- (NSString*)monthDateFromDate:(NSDate *)date {
+    NSUInteger components = NSMonthCalendarUnit | NSDayCalendarUnit;
+    NSDateComponents *monthDay = [[NSCalendar currentCalendar] components:components fromDate:date];
+    return [NSString stringWithFormat:@"%d/%d", monthDay.month, monthDay.day];
+}
 
-- (BOOL)spinRunThreadWithTimeOut:(int)seconds finishedCheckFunc:(SEL)checkFun processingString:(NSString *)processing;
-- (BOOL)spinRunThreadWithTimeOut:(int)seconds finishedFlag:(BOOL *)finished processingString:(NSString *)processing;
++ (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location {
+    return [[[UALocationDemoAnnotation alloc] initWithLocation:location] autorelease];
+}
+
+- (NSString*)description {
+    return [NSString stringWithFormat:@"%@ %@ %f %f", title_, subtitle_, coordinate_.longitude, coordinate_.latitude];
+}
+
 
 @end

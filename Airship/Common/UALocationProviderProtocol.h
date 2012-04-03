@@ -1,17 +1,17 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,10 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+/** Required for building a location provider */
+#import "UALocationCommonValues.h"
 
-@interface UAGHUnitTestAppDelegate : GHUnitIPhoneAppDelegate {
+@protocol UALocationProviderProtocol <NSObject>
+@required
+/// Required location manager for any location services
+@property (nonatomic, retain) CLLocationManager *locationManager;
+/// Current status of the location provider
+@property (nonatomic, assign) UALocationProviderStatus serviceStatus;
+/// This is a required parameter on the CLLocationManager and is presented to the user for authentication
+@property (nonatomic, copy) NSString *provider;
+/** This is intended to be a UALocationProviderDelegate */
+@property (nonatomic, assign) id delegate;
+/** 
+ This is the purpose associated with the CLLocationManager that is displayed to the user when
+ permission for location services is required
+ */
+- (NSString*)purpose;
+- (void)setPurpose:(NSString*)newPurpose;
 
-}
-
+/// Starts updating location
+- (void)startReportingLocation;
+/// Stops providing location updates
+- (void)stopReportingLocation;
 @end

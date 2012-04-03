@@ -132,7 +132,7 @@
     //cache the content url
     UALOG(@"caching content url: %@ for download url: %@", contentURLString, content.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
-    [contentURLCache setContent:contentURL forProductURL:content.downloadURL];
+    [contentURLCache setContent:contentURL forProductURL:content.downloadURL withVersion:[NSNumber numberWithInt:content.revision]];
     
     [self downloadContent:content withContentURL:contentURL];
 }
@@ -372,7 +372,7 @@
     
     [self addPendingSubscriptionContent:content];
 
-    NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL];
+    NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL withVersion:[NSNumber numberWithInt:content.revision]];
     if (contentURL) {
         UALOG(@"downloading from cached contentURL: %@", contentURL);
         [self downloadContent:content withContentURL:contentURL];

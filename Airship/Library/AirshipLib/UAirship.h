@@ -28,8 +28,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAAnalytics;
 @class UA_ASIHTTPRequest;
+@class UALocationService;
 
 UA_VERSION_INTERFACE(AirshipVersion)
+
+/**
+ * Key for the default preferences dictionary that 
+ * is loaded into NSUserDefaults on start for location services
+ */
+extern NSString * const UALocationServicePreferences;
 
 /**
  * The takeOff options key for setting custom AirshipConfig options. The value
@@ -93,7 +100,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     NSString *deviceToken;
     BOOL deviceTokenHasChanged;
     BOOL ready;
-
+    
 }
 
 /**
@@ -142,6 +149,13 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * UAirship has been initialized and is ready for use.
  */
 @property (nonatomic, assign) BOOL ready;
+
+///---------------------------------------------------------------------------------------
+/// @name Location Services
+///---------------------------------------------------------------------------------------
+
+@property (nonatomic, retain, getter = locationService) UALocationService *locationService;
+- (UALocationService*)locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
@@ -255,5 +269,10 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
  */
 - (void)unRegisterDeviceToken;
+
+/** 
+ * Creates persistent default storage if necessary
+ */
++ (void)registerNSUserDefaults;
 
 @end

@@ -45,6 +45,10 @@ extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
 extern NSString * const UAAnalyticsOptionsLoggingKey;
 
+typedef NSString UAAnalyticsValue;
+extern UAAnalyticsValue * const UAAnalyticsTrueValue;
+extern UAAnalyticsValue * const UAAnalyticsFalseValue;
+
 @interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
   @private
     NSString *server;
@@ -64,7 +68,10 @@ extern NSString * const UAAnalyticsOptionsLoggingKey;
 
     int databaseSize;
     NSTimeInterval oldestEventTime;
+    
     NSDate *lastSendTime;
+    NSDate *lastLocationSendTime;
+    
     NSTimer *reSendTimer;
     
     BOOL analyticsLoggingEnabled;
@@ -82,6 +89,7 @@ extern NSString * const UAAnalyticsOptionsLoggingKey;
 @property (assign, nonatomic) int sendInterval;
 @property (assign, readonly) NSTimeInterval oldestEventTime;
 @property (retain, readonly) NSDate *lastSendTime;
+
 
 - (id)initWithOptions:(NSDictionary *)options;
 - (void)restoreFromDefault;

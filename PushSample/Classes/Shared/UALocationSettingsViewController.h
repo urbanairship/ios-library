@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,27 +23,27 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UATestGlobal.h"
+#import <UIKit/UIKit.h>
+#import "UALocationService.h"
 
-@implementation UATestGlobal
-
-@synthesize calls;
-@synthesize value;
-
-SINGLETON_IMPLEMENTATION(UATestGlobal)
-
-- (id)init {
-    if (self=[super init]) {
-        calls = [[NSMutableDictionary alloc] init];
-        return self;
-    }
-    return nil;
+@interface UALocationSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UALocationServiceDelegate> {
+    UALocationService *locationService_;
+    NSMutableArray *locationDisplay_;
+    NSMutableArray *reportedLocations_;
+    UITableView *locationTableView_;
+    
 }
 
-- (void)dealloc {
-    [value release];
-    [calls release];
-    [super dealloc];
-}
+@property (nonatomic, retain) UALocationService *locationService;
+@property (nonatomic, retain) NSMutableArray *locationDisplay;
+@property (nonatomic, retain) NSMutableArray *reportedLocations;
+@property (nonatomic, retain) IBOutlet UITableView *locationTableView;
 
+- (void)setupLocationDisplay;
+
+- (IBAction)getLocationPressed:(id)sender;
+- (IBAction)mapLocationPressed:(id)sender;
+- (void)addLocationToData:(CLLocation*)location;
+- (void)turnOffLocationDisplay;
+- (void)checkAndAlertForLocationAuthorization;
 @end

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -22,27 +22,23 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <CoreLocation/CoreLocation.h>
 
-/******************************************************************************
- The swizzle method is copy/modify from JRSwizzle, thanks
- Copyright (c) 2007 Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
- Some rights reserved: <http://opensource.org/licenses/mit-license.php>
- *****************************************************************************/
+#define kTestLatPDX 45.525352839897
+#define kTestLongPDX -122.682115697712
+#define kTestLatSFO 37.772643
+#define kTestLongSFO -122.406095
+#define kTestAlt 100.0
+#define kTestHorizontalAccuracy 5.0
+#define kTestVerticalAccuracy 5.0
+#define kTestDistanceFilter 10.0
+#define kTestDesiredAccuracy 5.0
 
-#import <Foundation/Foundation.h>
+@interface UALocationTestUtils : NSObject
 
-
-@interface NSObject(UATestMockable)
-
-+ (BOOL)swizzleMethod:(SEL)origSel_ withMethod:(SEL)altSel_ error:(NSError**)error_;
-+ (BOOL)swizzleMethod:(SEL)origSel_ withClass:(Class)klass method:(SEL)altSel_ error:(NSError**)error_;
-
-+ (void)recordCallSelector:(SEL)aSelector withArgs:(NSArray *)args;
-+ (void)removeAllCalls;
-+ (void)removeCalls:(SEL)aSelector;
-+ (NSArray *)getCalls:(SEL)aSelector;
-+ (NSInteger)getCallTimes:(SEL)aSelector;
-+ (NSArray *)getCallArgs:(SEL)aSelector;
-+ (NSArray *)getCallArgs:(SEL)aSelector atIndex:(NSInteger)index;
-
+/** Creates and returns a location with the above values */
++ (CLLocation*)testLocationPDX;
++ (CLLocation*)testLocationSFO;
+/** Creates and returns a location manager with the above values */
++ (CLLocationManager*)testLocationManager;
 @end
