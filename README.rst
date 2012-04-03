@@ -108,3 +108,5 @@ Google Toolkit	Apache 2	Copyright 2007 Google Inc.
 Reachability	BSD		Copyright (C) 2010 Apple Inc.
 
 MTPopupWindow	MIT		Copyright 2011 Marin Todorov
+
+JRSwizzle MIT Copyright 2012 Jonathan Rentzsch

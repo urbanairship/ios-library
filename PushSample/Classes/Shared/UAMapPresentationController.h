@@ -1,17 +1,17 @@
 /*
  Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,20 +23,29 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAGHUnitTestAppDelegate.h"
+#import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 
+@class UALocationService;
+@interface UAMapPresentationController : UIViewController <MKMapViewDelegate>  {
+    UALocationService *locationService_;
+    NSMutableArray *locations_;
+    MKMapView *mapView_;
+    NSMutableArray *annotations_;
+    UIBarButtonItem *rightButton_;
+    id <MKAnnotation> lastUserAnnotation_;
+}
 
-@implementation UAGHUnitTestAppDelegate
+@property (nonatomic, retain) UALocationService *locationService;
+@property (nonatomic, copy) NSMutableArray *locations;
+@property (nonatomic, retain) IBOutlet MKMapView *mapView;
+@property (nonatomic, retain) NSMutableArray *annotations;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;
+@property (nonatomic, retain) id <MKAnnotation> lastUserAnnotation;
 
-//- (void)applicationDidFinishLaunching:(UIApplication *)application {
-//    NSCoder *coder = [[NSCoder alloc] init];
-//    [coder encodeInt:180 forKey:@"key1"];
-//    [coder encodeInt:200 forKey:@"statusCode"];
-//
-//    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithCoder:coder];
-//    NSLog(@"[response statusCode]=%d", [response statusCode]);
-//    NSLog(@"%@", [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"]);
-//
-//}
+- (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;
+- (void)convertLocationsToAnnotations;
+- (void)annotateMap;
+- (IBAction)rightBarButtonPressed:(id)sender;
 
 @end

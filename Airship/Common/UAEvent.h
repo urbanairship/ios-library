@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 
 #define kEventAppInitSize               450//397 w/ push id, no inbox id
 #define kEventAppExitSize               200//136 w/ only network type
@@ -48,7 +47,8 @@
 - (NSString *)getType;
 - (void)gatherData:(NSDictionary*)context;
 - (int)getEstimatedSize;
-
+- (void)addDataFromSessionForKey:(NSString*)dataKey;
+- (void)addDataWithValue:(id)value forKey:(NSString*)key;
 @end
 
 @interface UAEventCustom : UAEvent {
@@ -63,28 +63,27 @@
 
 
 @interface UAEventAppInit : UAEvent
-{}
 @end
 
 @interface UAEventAppForeground : UAEventAppInit
-{}
 @end
 
 @interface UAEventAppExit : UAEvent
-{}
 @end
 
 @interface UAEventAppBackground : UAEventAppExit
-{}
 @end
 
 @interface UAEventDeviceRegistration : UAEvent
-{}
 @end
 
 @interface UAEventPushReceived : UAEvent
-{}
 @end
+/**
+ * This event is recored when one of the UALocationServices objects
+ * acquires a new location
+ */
+
 
 /**
  * This event is recorded when the app becomes active: on foreground
@@ -92,7 +91,6 @@
  * trigger a UAEventAppInactive event.
  */
 @interface UAEventAppActive : UAEvent
-{}
 @end
 
 /**
@@ -101,5 +99,4 @@
  * notification center in iOS5+, the user launches the task-bar, etc.
  */
 @interface UAEventAppInactive : UAEvent
-{}
 @end

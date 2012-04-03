@@ -31,11 +31,13 @@
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsSoundsViewController.h"
+#import "UALocationSettingsViewController.h"
 
 enum {
     SectionDeviceToken = 0,
     SectionHelp        = 1,
-    SectionCount       = 2
+    SectionLocation    = 2,
+    SectionCount       = 3
 };
 
 enum {
@@ -53,10 +55,13 @@ enum {
     HelpSectionRowCount = 1
 };
 
+static NSUInteger locationRowCount = 1;
+
 @implementation UAPushMoreSettingsViewController
 
 @synthesize footerImageView;
 @synthesize tableView;
+@synthesize locationCell = locationCell_;
 
 - (void)dealloc {
     [[UAirship shared] removeObserver:self];
@@ -75,7 +80,7 @@ enum {
     RELEASE_SAFELY(tokenViewController);
     RELEASE_SAFELY(aliasViewController);
     RELEASE_SAFELY(tagsViewController);
-    
+    RELEASE_SAFELY(locationCell_)
     [super dealloc];
 }
 
@@ -129,10 +134,11 @@ enum {
     RELEASE_SAFELY(deviceTokenTagsCell);
     RELEASE_SAFELY(helpSoundsCell);
     RELEASE_SAFELY(helpLogCell);
-    
+    RELEASE_SAFELY(locationCell_);
     
     self.footerImageView = nil;
     self.tableView = nil;
+    
 }
 
 #pragma mark -
@@ -164,6 +170,9 @@ enum {
     helpLogCell.textLabel.text = @"Device Log";
     helpLogCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
+    self.locationCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
+    locationCell_.textLabel.text = @"Location";
+    
     [self updateCellValues];
 }
 
@@ -184,6 +193,8 @@ enum {
             return DeviceTokenSectionRowCount;
         case SectionHelp:
             return HelpSectionRowCount;
+        case SectionLocation:
+            return locationRowCount;
         default:
             break;
     }
@@ -197,6 +208,8 @@ enum {
             return @"Token Settings";
         case SectionHelp:
             return @"Bundle Info";
+        case SectionLocation:
+            return @"Location";
         default:
             break;
     }
@@ -233,6 +246,8 @@ enum {
             cell = helpSoundsCell;
         } 
         
+    } else if (indexPath.section == SectionLocation) {
+        cell = locationCell_;
     }
 
     return cell;
@@ -272,16 +287,22 @@ enum {
         }
     } else if (indexPath.section == SectionHelp) {
         if (indexPath.row == HelpSectionSounds) {
-
             UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] 
                                                                          initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil] autorelease];
             [self.navigationController pushViewController:soundsViewController animated:YES];
         } else {
             [tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
+        
 
-
-    } else {
+    } else if(indexPath.section == SectionLocation) {
+        UALocationSettingsViewController* locationViewController = [[[UALocationSettingsViewController alloc] 
+                                                                     initWithNibName:@"UALocationSettingsViewController" 
+                                                                     bundle:nil] autorelease];
+        [self.navigationController pushViewController:locationViewController animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
+    else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 

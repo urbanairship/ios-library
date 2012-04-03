@@ -141,7 +141,7 @@
         [data setObject:receipt forKey:@"transaction_receipt"];
     }
     
-    NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
+    NSURL *contentURL = [contentURLCache contentForProductURL:itemURL withVersion:[NSNumber numberWithInt:product.revision]];
 
     [self addPendingProduct:product];
     
@@ -425,7 +425,7 @@
     //cache the content url
     UALOG(@"caching content url: %@ for download url: %@", contentURLString, product.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
-    [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
+    [contentURLCache setContent:contentURL forProductURL:product.downloadURL withVersion:[NSNumber numberWithInt:product.revision]];
         
     [self downloadProduct:product withContentURL:contentURL];
 }

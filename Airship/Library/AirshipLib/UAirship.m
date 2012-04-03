@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -23,6 +23,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#import <CoreLocation/CoreLocation.h>
 #import "UAirship.h"
 
 #import "UA_ASIHTTPRequest.h"
@@ -33,12 +34,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
+#import "UALocationCommonValues.h"
+#import "UALocationService.h"
+#import "UAGlobal.h"
 
-#define kAirshipProductionServer @"https://go.urbanairship.com"
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
+#define kUALocationServiceDefaultPurpose @"Push to Location"
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
-
+NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
 NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
 NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAnalyticsKey";
@@ -48,11 +52,14 @@ NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOpt
 static UAirship *_sharedAirship;
 BOOL logging = false;
 
-@interface UAirship()
+@interface UAirship() {
+    UALocationService* locationService_;
+}
 // Update device token without remote registration
 // Private
 - (void)updateDeviceToken:(NSData *)token;
 - (void)configureUserAgent;
+
 @end
 
 @implementation UAirship
@@ -63,18 +70,36 @@ BOOL logging = false;
 @synthesize deviceTokenHasChanged;
 @synthesize ready;
 @synthesize analytics;
+@synthesize locationService = locationService_;
 
+#pragma mark -
+#pragma mark Logging
 + (void)setLogging:(BOOL)value {
     logging = value;
 }
 
+#pragma mark -
+#pragma mark Location Get/Set Methods
+
+- (UALocationService*)locationService {
+    IF_IOS4_OR_GREATER(
+       if (!locationService_) {
+           locationService_ = [[UALocationService alloc] init];
+       }
+       return locationService_;
+    )
+    return nil;
+}
+
+#pragma mark -
+#pragma mark Object Lifecycle
 - (void)dealloc {
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
     RELEASE_SAFELY(deviceToken);
     RELEASE_SAFELY(analytics);
-
+    RELEASE_SAFELY(locationService_);
     [super dealloc];
 }
 
@@ -89,12 +114,11 @@ BOOL logging = false;
 }
 
 + (void)takeOff:(NSDictionary *)options {
-    
     //Airships only take off once!
     if (_sharedAirship) {
         return;
     }
-    
+    [UAirship registerNSUserDefaults];
     //Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
@@ -289,6 +313,21 @@ BOOL logging = false;
                     format:@"Attempted to access instance before initializaion. Please call takeOff: first."];
     }
     return _sharedAirship;
+}
+
+#pragma mark -
+#pragma mark NSUserDefaults Setup
+
++ (void)registerNSUserDefaults {
+    // UALocationService defaults
+    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
+    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
+    //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
+    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
 }
 
 #pragma mark -

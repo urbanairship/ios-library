@@ -1,17 +1,17 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
-
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ 
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,27 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "NSObject+UATestMockable.h"
-#import "UATestCase.h"
-#import "UATestGlobal.h"
-#import "UAAnalytics.h"
-#import "UAEvent.h"
+#import <CoreLocation/CoreLocation.h>
 
-@interface UAAnalyticsSendIfNeededTest : UATestCase {
-    UAAnalytics *analytics;
-}
-
+@interface CLLocationManager (Test)
++ (BOOL)returnYES;
++ (BOOL)returnNO;
++ (CLAuthorizationStatus)returnCLLocationStatusAuthorized;
++ (CLAuthorizationStatus)returnCLLocationStatusDenied;
++ (CLAuthorizationStatus)returnCLLocationStatusRestricted;
++ (CLAuthorizationStatus)returnCLLocationStatusNotDetermined;
+- (void)sendAuthorizationChangedDelegateCallWithAuthorization:(CLAuthorizationStatus)status;
+- (void)sendLocationDidFailWithErrorDelegateCallWithError:(NSError*)error;
+- (void)sendDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
-
-
-@interface UAAnalytics(Mocked)
-- (void)resetLastSendTimeAndOldestEvent;
-- (void)setBatchInterval:(int)value;
-@end
-
-@interface UAEvent(Mocked)
-- (void)setTimeMocked:(NSString*)t;
-- (int)getEstimateSizeMocked;
-@end
-
