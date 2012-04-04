@@ -441,16 +441,16 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
     UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
     if (provider == standardLocationProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeContinuous];
+        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeContinuous];
     }
     else if (provider == significantChangeProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeChange];
+        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeChange];
     }
     else if (provider == singleLocationProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeSingle];
+        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeSingle];
     }
     else {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeNone];
+        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeNone];
     }
 }
 

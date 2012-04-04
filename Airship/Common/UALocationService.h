@@ -312,9 +312,9 @@
  the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information
  regarding the use of location in app. The possible values are:
  
- - UALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
- - UALocationEventUpdateTypeContinuous This is meant for the standard location service.
- - UALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
+ - UAUALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
+ - UAUALocationEventUpdateTypeContinuous This is meant for the standard location service.
+ - UAUALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
  @param location A CLLocation 
  @param locationManager The location manager that provided the location
  @param updateTypeOrNil The update type as described above or nil. 

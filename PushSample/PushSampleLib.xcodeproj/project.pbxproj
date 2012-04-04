@@ -638,14 +638,16 @@
 		18C02973124F21B800D49CD5 /* libUAirship-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.1.4.a";
+			name = "libUAirship-1.1.4.a";
+			path = "libUAirship-1.2.0.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		49A7077414AE7DA600A262DD /* libUAirshipPush-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipPush-1.1.4.a";
+			name = "libUAirshipPush-1.1.4.a";
+			path = "libUAirshipPush-1.2.0.a";
 			remoteRef = 49A7077314AE7DA600A262DD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

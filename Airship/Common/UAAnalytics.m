@@ -452,7 +452,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     }
 
     // Do not send locations in the background too often
-    if ([[event getType] isEqualToString:locationEventAnalyticsType]) {
+    if ([[event getType] isEqualToString:UALocationEventAnalyticsType]) {
         
         // Initialize to sometime really long ago
         if (!lastLocationSendTime) {

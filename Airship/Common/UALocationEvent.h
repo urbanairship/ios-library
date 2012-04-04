@@ -29,23 +29,23 @@
 
 /** Keys and values for location analytics */
 typedef NSString UALocationEventAnalyticsKey;
-extern UALocationEventAnalyticsKey * const locationEventForegroundKey; 
-extern UALocationEventAnalyticsKey * const locationEventForegroundKey; 
-extern UALocationEventAnalyticsKey * const locationEventLatitudeKey;
-extern UALocationEventAnalyticsKey * const locationEventLongitudeKey;
-extern UALocationEventAnalyticsKey * const locationEventDesiredAccuracyKey;
-extern UALocationEventAnalyticsKey * const locationEventUpdateTypeKey;
-extern UALocationEventAnalyticsKey * const locationEventProviderKey;
-extern UALocationEventAnalyticsKey * const locationEventDistanceFilterKey;
-extern UALocationEventAnalyticsKey * const locationEventHorizontalAccuracyKey;
-extern UALocationEventAnalyticsKey * const locationEventVerticalAccuracyKey;
+extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey; 
+extern UALocationEventAnalyticsKey * const UALocationEventForegroundKey; 
+extern UALocationEventAnalyticsKey * const UALocationEventLatitudeKey;
+extern UALocationEventAnalyticsKey * const UALocationEventLongitudeKey;
+extern UALocationEventAnalyticsKey * const UALocationEventDesiredAccuracyKey;
+extern UALocationEventAnalyticsKey * const UALocationEventUpdateTypeKey;
+extern UALocationEventAnalyticsKey * const UALocationEventProviderKey;
+extern UALocationEventAnalyticsKey * const UALocationEventDistanceFilterKey;
+extern UALocationEventAnalyticsKey * const UALocationEventHorizontalAccuracyKey;
+extern UALocationEventAnalyticsKey * const UALocationEventVerticalAccuracyKey;
 
 typedef NSString UALocationEventUpdateType;
-extern UALocationEventUpdateType * const locationEventAnalyticsType;
-extern UALocationEventUpdateType * const locationEventUpdateTypeChange;
-extern UALocationEventUpdateType * const locationEventUpdateTypeContinuous;
-extern UALocationEventUpdateType * const locationEventUpdateTypeSingle;
-extern UALocationEventUpdateType * const locationEventUpdateTypeNone;
+extern UALocationEventUpdateType * const UALocationEventAnalyticsType;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeChange;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
+extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
 
 /** A UALocationEvent captures all the necessary information for 
