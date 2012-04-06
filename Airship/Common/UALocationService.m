@@ -253,7 +253,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
             [locationProvider stopReportingLocation];
             break;
         case kCLErrorNetwork:
-                [locationProvider stopReportingLocation];
+            [locationProvider stopReportingLocation];
             break;
         default:
             break;
