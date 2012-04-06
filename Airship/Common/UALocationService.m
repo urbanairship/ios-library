@@ -247,14 +247,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
           didFailWithError:(NSError*)error {
     UALOG(@"Location service did fail with error %@", error.description);
     // Catch kCLErrorDenied for iOS < 4.2
-    if (error.code == kCLErrorDenied) {
-        [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
-        [locationProvider stopReportingLocation];
-        [self sendErrorToLocationServiceDelegate:error];
+    switch (error.code) {
+        case kCLErrorDenied:
+            [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
+            [locationProvider stopReportingLocation];
+            break;
+        case kCLErrorNetwork:
+            [locationProvider stopReportingLocation];
+        default:
+            break;
     }
-    else {
-        [self sendErrorToLocationServiceDelegate:error];
-    }
+    [self sendErrorToLocationServiceDelegate:error];
 }
 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
