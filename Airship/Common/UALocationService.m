@@ -422,6 +422,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 
+- (void)setAutomaticLocationOnForegroundEnabled:(BOOL)automaticLocationOnForegroundEnabled {
+    automaticLocationOnForegroundEnabled_ = automaticLocationOnForegroundEnabled;
+    if (automaticLocationOnForegroundEnabled) {
+        [self reportCurrentLocation];
+    }
+}
+
 
 #pragma mark -
 #pragma mark UALocationEvent Analytics

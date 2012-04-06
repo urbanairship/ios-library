@@ -195,8 +195,10 @@
 /// @name Automatic Location Services 
 ///---------------------------------------------------------------------------------------
 
-/// Starts the GPS (Standard Location) and acquires a single location on every launch
-@property (nonatomic, assign) BOOL automaticLocationOnForegroundEnabled;
+/** Starts the GPS (Standard Location) and acquires a single location on every launch.
+ Setting this property to YES has the side effect of calling reportCurrentLocation.
+ */
+@property (nonatomic, assign, setter=setAutomaticLocationOnForegroundEnabled:) BOOL automaticLocationOnForegroundEnabled;
 
 /// Allows location services to continue in the background 
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;

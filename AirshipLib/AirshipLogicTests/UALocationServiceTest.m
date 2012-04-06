@@ -397,22 +397,35 @@
 #pragma mark -
 #pragma mark Automatic Location Update on Foreground
 
--(void)testAutomaticLocationUpdateOnForeground {
+-(void)testAutomaticLocationUpdateOnForegroundShouldUpdateCases {
+    // setting automatic location on foreground has the side effect of
+    // calling reportCurrentLocation
+    [[mockLocationService expect] reportCurrentLocation];
     locationService.automaticLocationOnForegroundEnabled = YES;
+    [mockLocationService verify];
     [[mockLocationService expect] reportCurrentLocation];
     // Setup a date over 120.0 seconds ago
     NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
     locationService.dateOfLastLocation = dateOver120;
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [mockLocationService verify];
+}
+
+- (void)testAutomaticLocationOnForegroundShouldNotUpdateCases {
     locationService.automaticLocationOnForegroundEnabled = NO;
     [[mockLocationService reject] reportCurrentLocation];
     // If there is another call to acquireSingleLocaitonAndUpload, this will fail
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
-    // reset the time stamp to now, should not trigger an update
-    locationService.automaticLocationOnForegroundEnabled = YES;
     locationService.dateOfLastLocation = [NSDate date];
+    [[mockLocationService reject] reportCurrentLocation];
     [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
+    UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"test"] autorelease];
+    id localMockService = [OCMockObject partialMockForObject:localService];
+    localService.automaticLocationOnForegroundEnabled = YES;
+    // setup a date for the current time
+    localService.dateOfLastLocation = [NSDate date];
+    [[localMockService reject] reportCurrentLocation];
+    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
 }
 
 - (void)testShouldPerformAutoLocationUpdate {
