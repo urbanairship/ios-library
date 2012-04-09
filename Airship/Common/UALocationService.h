@@ -42,7 +42,7 @@
 /** Updates the delegate when the location service generates an error
 
  @warning *Note:* Two error conditions will stop the location service before
- this method is called on the delegate, kCLErrorDenied && kCLErrorNetwork. All other
+ this method is called on the delegate. kCLErrorDenied && kCLErrorNetwork. All other
  CoreLocation errors are passed directly to the delegate without any side effects.
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
