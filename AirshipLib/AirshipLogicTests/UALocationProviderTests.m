@@ -160,22 +160,6 @@
 #pragma mark -
 #pragma mark Location Provider Accuracy calculations
 
-- (void)testCLLocationWithLessThanZeroAccuracyFail {
-    id mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
-    CLLocationAccuracy accuracy = -5.0;
-    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
-    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
-    UAStandardLocationProvider *stand = [[[UAStandardLocationProvider alloc] init] autorelease];
-    UASignificantChangeProvider *sig = [[[UASignificantChangeProvider alloc] init] autorelease];
-    STAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
-    STAssertFalse([stand locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
-    STAssertFalse([sig locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail"); 
-    accuracy = 5;
-    STAssertTrue([base locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-    STAssertTrue([stand locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-    STAssertTrue([sig locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-}
-
 - (void)testCachedLocation {
     id mockLocation = [OCMockObject niceMockForClass:[CLLocationManager class]];
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
@@ -183,6 +167,30 @@
     [[mockLocation expect] location];
     [base location];
     [mockLocation verify];
+}
+
+- (void)testBaseProviderAccuracyFailsOnInvalidLocation {
+    id mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
+    CLLocationAccuracy accuracy = -5.0;
+    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
+    STAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
+    accuracy = 5.0;
+    mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
+    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
+    STAssertTrue([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], nil);
+}
+
+- (void)testBaseProviderAccuracyTimestampCalculation {
+    NSDate *date = [NSDate date];
+    id location = [OCMockObject niceMockForClass:[CLLocation class]];
+    [(CLLocation*)[[location stub] andReturn:date] timestamp];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
+    STAssertTrue([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
+    date = [NSDate dateWithTimeIntervalSinceNow:-400];
+    location = [OCMockObject niceMockForClass:[CLLocation class]];
+    [(CLLocation*)[[location stub] andReturn:date] timestamp];
+    STAssertFalse([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
 }
 
 #pragma mark -
@@ -345,7 +353,6 @@
     STAssertEquals(significantChange.serviceStatus, UALocationProviderUpdating, nil);
     [significantChange stopReportingLocation];
     STAssertEquals(significantChange.serviceStatus, UALocationProviderNotUpdating, nil);
-
     [mockLocationManager verify];
 }
 
