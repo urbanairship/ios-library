@@ -34,6 +34,8 @@
     UASignificantChangeProvider *significantChangeProvider_;
     BOOL shouldStartReportingStandardLocation_;
     BOOL shouldStartReportingSignificantChange_;
+    CLLocation *bestAvailableStandardLocation_;
+    CLLocation *bestAvailableSingleLocation_;
 }
 // Override property declarations for implementation and testing
 //
@@ -41,6 +43,12 @@
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
+/* Keep a record of the location with the highest horizontalAccuracy in case
+ the single location service times out before acquiring a location that meets
+ accuracy requirements setup in desiredAccuracy
+ */
+@property (nonatomic, retain) CLLocation *bestAvailableStandardLocation;
+@property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
 //
 
 // Sets appropriate value in NSUserDefaults
@@ -65,7 +73,7 @@
 // CLLocationManager values in NSUserDefaults
 // Basically wrapped double values
 - (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key; 
-- (CLLocationDistance)distanceFilterForLocationSerivceKey:(UALocationServiceNSDefaultsKey*)key;
+- (CLLocationDistance)distanceFilterForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 
 // Private setters for location providers
 // Custom get/set methods that have the side effect of setting the provider delegate
@@ -113,4 +121,17 @@
 // Use deprecated location calls
 + (BOOL)useDeprecatedMethods;
 
+// Single Location update logic
+- (void)singleLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+// Shutdown service after location is received. If the passed in location is nil, the service is 
+// shutdown, and an error is returned to the delegate
+- (void)shutdownSingleLocationServiceAndSendLocation:(CLLocation*)location;
+
+// Accuracy calculations
+- (BOOL)locationProvider:(id<UALocationProviderProtocol>)provider 
+            shouldReport:(CLLocation*)newLocation 
+                    from:(CLLocation*)oldLocation;
+
+// Shutdown timers for single and standard location
+- (void)standardLocationTimedOut;
 @end

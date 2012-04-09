@@ -27,8 +27,10 @@
 #import "UAGlobal.h"
 
 @implementation UAStandardLocationProvider
+@synthesize lastReceivedLocation = lastRecievedLocation_;
 
 - (void)dealloc {
+    RELEASE_SAFELY(lastRecievedLocation_);
     self.delegate = nil;
     // Directly stop the location mananger for speed and clarity
     [locationManager_ stopUpdatingLocation];
@@ -75,8 +77,8 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
-    // TODO: create a more robust accuracy algorithm
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+        self.lastReceivedLocation = newLocation;
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }

@@ -27,6 +27,7 @@
 #import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
+extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
 /**
  This is the base class for location providers. You should not
  implement this class directly. See the documentation for CLLocationManager for
@@ -35,6 +36,7 @@
 
 @interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol> {
     CLLocationManager *locationManager_;
+    NSTimeInterval maximumElapsedTimeForCachedLocation_;
     id <UALocationProviderDelegate> delegate_;
     UALocationProviderStatus serviceStatus_;
     UALocationServiceProviderType *provider_;
@@ -45,6 +47,7 @@
 ///---------------------------------------------------------------------------------------
 
 -(NSString*)description;
+
 ///---------------------------------------------------------------------------------------
 /// @name CLLocationManager related methods
 ///---------------------------------------------------------------------------------------
@@ -55,6 +58,11 @@
  new CLLocationManager
  */
 @property (nonatomic, retain) CLLocationManager *locationManager;
+
+/** In certain cases, cached values are immediately returned when starting a location service.
+ Any location with a time interval older than this value will be considered invalid. 
+*/
+@property (nonatomic, assign) NSTimeInterval maximumElapsedTimeForCachedLocation;
 
 /// The distance filter one the locationManager
 - (CLLocationDistance)distanceFilter;

@@ -31,7 +31,11 @@
  the standard location service. 
  */
 
-@interface UAStandardLocationProvider : UABaseLocationProvider
+@interface UAStandardLocationProvider : UABaseLocationProvider {
+    CLLocation* lastRecievedLocation_;
+}
+
+@property (nonatomic, copy) CLLocation *lastReceivedLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping the location service

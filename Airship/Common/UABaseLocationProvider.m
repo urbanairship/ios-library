@@ -29,6 +29,8 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
+NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 360;
+
 @interface UABaseLocationProvider ()
 // Stop reporting any location service
 - (void)stopAllReporting;
@@ -37,6 +39,7 @@
 @implementation UABaseLocationProvider
 
 @synthesize locationManager = locationManager_;
+@synthesize maximumElapsedTimeForCachedLocation = maximumElapsedTimeForCachedLocation_;
 @synthesize serviceStatus = serviceStatus_;
 @synthesize delegate = delegate_;
 @synthesize provider = provider_;
@@ -58,6 +61,7 @@
         locationManager_.delegate = self;
         provider_ = UALocationServiceProviderUnknown;
         serviceStatus_ = UALocationProviderNotUpdating;
+        maximumElapsedTimeForCachedLocation_ = defaultMaximumElapsedTimeForCachedLocation;
     }
     return self;
 }
@@ -118,8 +122,12 @@
 #pragma mark Location Accuracy calculations
 
 - (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
+    // Throw out old values
+    NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
+    if (old > maximumElapsedTimeForCachedLocation_) return NO;
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
+    NSLog(@"ACCURACY %f", newLocation.horizontalAccuracy);
     if (newLocation.horizontalAccuracy < 0) {
         UALOG(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;

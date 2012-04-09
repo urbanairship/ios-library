@@ -56,8 +56,7 @@
  */
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
-/** Delegate callbacks for updated locations only occur while the app is in the foreground. If you need background location updates
- create a separate CLLocationManager
+/** Updates the delegate when a new location is received
  @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
  necessary to update UrbanAirship. Extensive work done by the method while backgrounded could result in location data not being
  recorded or sent
@@ -182,8 +181,8 @@
  */
 - (CLLocation*)location;
 
-/// Last location reported to Urban Airship 
-@property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
+/// Last location reported to Urban Airship
+@property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
 
 /// Date of last location event reported 
 @property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
