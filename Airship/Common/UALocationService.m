@@ -228,7 +228,7 @@
 
 // Providers shut themselves down when authorization is denied. 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
-       withLocationManager:(CLLocationManager*)locationManager 
+     withLocationManager:(CLLocationManager*)locationManager 
 didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Location service did change authorization status %d", status);
     // Only use the authorization change callbacks from the standardLocationProvider. 
@@ -243,8 +243,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
-       withLocationManager:(CLLocationManager*)locationManager 
-          didFailWithError:(NSError*)error {
+     withLocationManager:(CLLocationManager*)locationManager 
+        didFailWithError:(NSError*)error {
     UALOG(@"Location service did fail with error %@", error.description);
     // Catch kCLErrorDenied for iOS < 4.2
     switch (error.code) {
@@ -253,7 +253,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
             [locationProvider stopReportingLocation];
             break;
         case kCLErrorNetwork:
-            [locationProvider stopReportingLocation];
+            // Stop our provider for reportCurrentLocation and automaticForegroundUpdates
+            if (locationProvider == singleLocationProvider_) {
+                [locationProvider stopReportingLocation];
+            }
         default:
             break;
     }
@@ -261,9 +264,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
-       withLocationManager:(CLLocationManager *)locationManager 
-         didUpdateLocation:(CLLocation*)newLocation
-              fromLocation:(CLLocation*)oldLocation {
+     withLocationManager:(CLLocationManager *)locationManager 
+       didUpdateLocation:(CLLocation*)newLocation
+            fromLocation:(CLLocation*)oldLocation {
     UALOG(@"Location service did update to location %@ from location %@", newLocation, oldLocation);
     [self reportLocationToAnalytics:newLocation fromProvider:locationProvider];
     self.lastReportedLocation = newLocation; 
