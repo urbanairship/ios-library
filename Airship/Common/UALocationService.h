@@ -40,6 +40,10 @@
 
 @optional
 /** Updates the delegate when the location service generates an error
+
+ @warning *Note:* Two error conditions will stop the location service before
+ this method is called on the delegate, kCLErrorDenied && kCLErrorNetwork. All other
+ CoreLocation errors are passed directly to the delegate without any side effects.
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
  */
@@ -117,7 +121,7 @@
  @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  if the system reports that location services are available and authorized. This setting will not
  override the users choice to disable location services and is safe to enable when user preferences
- have not been establishd. If NO, UA Location Services are disabled. This setting is persited in 
+ have not been established. If NO, UA Location Services are disabled. This setting is persisted in 
  NSUserDefaults
  */
 + (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled;
@@ -136,22 +140,22 @@
  services, and is persisted from that point on. Prompting the user is the only way to set this value.
  
  @return YES if the user has authorized location services, or has yet to be asked about location services.
- @return NO if the user has explictly disabled location services
+ @return NO if the user has explicitly disabled location services
  */
 + (BOOL)locationServiceAuthorized;
 
 /** This method checks the underlying Core Location service for to see if a user
- will receive a prompt requesting permissino for Core Location services to run.
+ will receive a prompt requesting permission for Core Location services to run.
  
- @warning On iOS < 4.2 This method's default value is YES until after an intial attempt to start location services 
- has been made by UALocationService. If the user declines location services, that value will be persited, and future attempts
+ @warning On iOS < 4.2 This method's default value is YES until after an initial attempt to start location services 
+ has been made by UALocationService. If the user declines location services, that value will be persisted, and future attempts
  to start location services will require that promptUserForLocationServices be set to YES
  
- @return NO If Core Location services are enabled and the user has explicity authorized location services
+ @return NO If Core Location services are enabled and the user has explicitly authorized location services
  @return YES If ANY of the following are true
-    - Location services are not enabled (The global locaiton service setting in Settings is disabled)
+    - Location services are not enabled (The global location service setting in Settings is disabled)
     - Location services are explicitly not authorized (The per app location service setting in Settings is disabled)
-    - The user has not been asked yet to allow location services. (Location servies are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
+    - The user has not been asked yet to allow location services. (Location services are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
  */
 + (BOOL)coreLocationWillPromptUserForPermissionToRun;
 
@@ -252,7 +256,11 @@
  This will prompt the user for permission if location services have not been started previously,
  or if the user has purposely disabled location services. Given that location services were probably 
  disabled for a reason, this prompt might not be welcomed. 
- */
+ 
+ @warning *Important:* If the kCLErrorDenied or kCLErrorNetwork errors are returned from the Core Location
+ service, this service will be automatically shut down before the locationService:didFailWithError: delegate call
+ to conserve battery. Be aware of this, and take appropriate action to restart the service if necessary. 
+ **/
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services
@@ -273,6 +281,10 @@
  This will prompt the user for permission if location services have not been started previously,
  or if the user has purposely disabled location services. Given that location services were probably 
  disabled for a reason, this prompt might not be welcomed.
+ 
+ @warning *Important:* If the kCLErrorDenied or kCLErrorNetwork errors are returned from the Core Location
+ service, this service will be automatically shut down before the locationService:didFailWithError: deleage call
+ to conserve battery. Be aware of this, and take appropriate action to restart the service if necessary. 
  **/
 - (void)startReportingSignificantLocationChanges;
 
@@ -283,7 +295,7 @@
 /// @name Analytics
 ///---------------------------------------------------------------------------------------
 
-/** Creates a UALocationEvent and enques it with the Analytics service
+/** Creates a UALocationEvent and enqueues it with the Analytics service
  @param location The location to be sent to the Urban Airship analytics service
  @param provider The provider that generated the location. Data is pulled from the provider for analytics
 */ 

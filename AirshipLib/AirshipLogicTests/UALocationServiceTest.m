@@ -548,6 +548,15 @@
     STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"deprecated key should return NO");
 }
 
+// Don't test all the delegate calls, they are covered well elsewhere 
+- (void)didFailWithNetworkError {
+    id mockLocationProvider = [OCMockObject mockForProtocol:@protocol(UALocationProviderProtocol)];
+    [[mockLocationProvider expect] stopReportingLocation];
+    CLLocationManager *placeholder = [[[CLLocationManager alloc] init] autorelease];
+    [locationService locationProvider:mockLocationProvider withLocationManager:placeholder didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil]];
+    [mockLocationProvider verify];
+}
+
 
 - (void)testUpdateToNewLocation {
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
@@ -618,9 +627,5 @@
     STAssertTrue([UALocationService locationServiceAuthorized], nil);
     [self swizzleUALocationServiceClassMethod:@selector(returnYES) withMethod:@selector(useDeprecatedMethods)];
 }
-
-    
-
-
 
 @end
