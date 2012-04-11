@@ -45,6 +45,7 @@ extern UALocationServiceNSDefaultsKey *const UAStandardLocationServiceRestartKey
 extern UALocationServiceNSDefaultsKey *const UASignificantChangeServiceRestartKey;
 extern UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey;
 extern UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey;
+extern UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey;
 extern UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey;
 
 @interface UALocationCommonValues : NSObject

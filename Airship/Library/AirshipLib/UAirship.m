@@ -326,6 +326,7 @@ BOOL logging = false;
     //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
     NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
     [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
 }
