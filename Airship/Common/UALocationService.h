@@ -296,14 +296,19 @@
 /// @name Single Location Service
 ///---------------------------------------------------------------------------------------
 
+/** Time interval representing the amount of time that the single location service will
+ run while waiting for a location value that meets the desired accuracy
+ @return NSTimeInterval representing the current timeout value
+ */
+- (NSTimeInterval)timeoutForSingleLocationService;
+
 /** Time interval representing the length of time the single location service will
  attempt to acquire a location that meets accuracy requirements. At the end of the time
  interval, the most accurate location received will be sent. If no location has
  been received, the service is shut down.
- @param NSTimeInterval representing run time
- @return NSTimeInterval representing the current timeout value
+ @param timeoutForSingleLocationService NSTimeInterval for the new timeout value
  */
-@property (nonatomic, assign) NSTimeInterval timeoutForSingleLocationService;
+- (void)setTimeoutForSingleLocationService:(NSTimeInterval)timeoutForSingleLocationService;
 
 /** Desired accuracy for single location service. Used by the reportCurrentLocation: method
  and the automatic foreground location */

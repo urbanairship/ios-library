@@ -38,12 +38,10 @@
 #pragma mark -
 #pragma mark UALocationService.h
 @synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
-@synthesize timeoutForSingleLocationService = timeoutForSingleLocationService_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize dateOfLastLocation = dateOfLastLocation_;
 @synthesize shouldStartReportingStandardLocation = shouldStartReportingStandardLocation_;
 @synthesize shouldStartReportingSignificantChange = shouldStartReportingSignificantChange_;
-@synthesize bestAvailableStandardLocation = bestAvailableStandardLocation_;
 @synthesize bestAvailableSingleLocation = bestAvailableSingleLocation_;
 @synthesize delegate = delegate_;
 @synthesize promptUserForLocationServices = promptUserForLocationServices_;
@@ -64,7 +62,6 @@
     RELEASE_SAFELY(standardLocationProvider_);
     RELEASE_SAFELY(significantChangeProvider_);
     RELEASE_SAFELY(singleLocationProvider_);
-    RELEASE_SAFELY(bestAvailableStandardLocation_);
     RELEASE_SAFELY(bestAvailableSingleLocation_);
     //
     // public
@@ -273,45 +270,26 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 
+// This method just directs traffic
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
      withLocationManager:(CLLocationManager *)locationManager 
        didUpdateLocation:(CLLocation*)newLocation
             fromLocation:(CLLocation*)oldLocation {
-    // The single location provider has special logic, so short circuit to that.
+    UALOG(@"Location service did update to location %@ from location %@", newLocation, oldLocation);
     if (locationProvider == singleLocationProvider_) {
         [self singleLocationDidUpdateToLocation:newLocation fromLocation:oldLocation];
         return;
     }
-    UALOG(@"Location service did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL locationMeetsAccuracyRequirements = [self locationProvider:locationProvider shouldReport:newLocation from:oldLocation];
-    if (locationMeetsAccuracyRequirements) {
-        [self reportLocationToAnalytics:newLocation fromProvider:locationProvider];
-        self.lastReportedLocation = newLocation; 
-        self.dateOfLastLocation = [NSDate date];
-        if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-            [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
-        }
+    if (locationProvider == standardLocationProvider_) {
+        [self standardLocationDidUpdateToLocation:newLocation fromLocation:oldLocation];
+        return;
     }
-
-}
-
-#pragma mark -
-#pragma mark Accuracy calculations
-
-- (BOOL)locationProvider:(id<UALocationProviderProtocol>)provider 
-            shouldReport:(CLLocation*)newLocation 
-                    from:(CLLocation*)oldLocation {
-    // There is only one guess for sig change, just return it
-    // Validity and freshness are checked by the provider
-    if (provider == significantChangeProvider_)return YES;
-    // Check remaining values against distanceFilter and desiredAccuracy
-    if (newLocation.horizontalAccuracy < provider.desiredAccuracy) {
-        return YES;
-    }
-    else {
-        return NO;
+    if (locationProvider == significantChangeProvider_){
+        [self significantChangeDidUpdateToLocation:newLocation fromLocation:oldLocation];
     }
 }
+
+
 
 #pragma mark -
 #pragma mark Standard Location Methods
@@ -330,6 +308,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Location service stop reporting standard location");
     [standardLocationProvider_ stopReportingLocation];
     self.shouldStartReportingStandardLocation = NO;
+}
+
+// Eventually add the auto shutdown to this method as well if locations aren't 
+// improving
+- (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation {
+    if(newLocation.horizontalAccuracy < standardLocationProvider_.desiredAccuracy) {
+        [self reportLocationToAnalytics:newLocation fromProvider:standardLocationProvider_];
+    }
 }
 
 - (CLLocation*)location {
@@ -356,8 +342,23 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     significantChangeProvider_.delegate = nil;
 }
 
+// Report any valid location from Sig change, validity is checked by the providers themselves
+// Valid values have horizontalAccuracy > 0 and timestamps that are no older than the 
+// maximum, which is set on the provider as well
+- (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    [self reportLocationToAnalytics:newLocation fromProvider:significantChangeProvider_];
+}
+
 #pragma mark -
 #pragma mark Single Location Service
+
+- (NSTimeInterval)timeoutForSingleLocationService {
+    return (NSTimeInterval)[UALocationService doubleForLocationServiceKey:UASingleLocationTimeoutKey];
+}
+
+- (void)setTimeoutForSingleLocationService:(NSTimeInterval)timeoutForSingleLocationService {
+    [UALocationService setDouble:timeoutForSingleLocationService forLocationServiceKey:UASingleLocationTimeoutKey];
+}
 
 - (CLLocationAccuracy)singleLocationDesiredAccuracy {
     return [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
@@ -372,42 +373,27 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // new location provider will be instantiated. 
     if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating){
         return;
-    }    
+    }
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
+        // The distance filter needs to be set to none to get locations immediately. Increasing the value
+        // will only keep the service running longer.
         singleLocationProvider_.distanceFilter = kCLDistanceFilterNone;
-        singleLocationProvider_.desiredAccuracy =[self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
+        singleLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
     }
-    // TODO: add performSelector:withObject:afterDelay: here
+    
     [self startReportingLocationWithProvider:singleLocationProvider_];
 }
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    BOOL isAccurate = [self locationProvider:singleLocationProvider_ shouldReport:newLocation from:oldLocation];
-    if (isAccurate) {
-        [self shutdownSingleLocationServiceAndSendLocation:newLocation];
-    }
-    else {
-        // If the new location is better, use that
-        if (self.bestAvailableSingleLocation.horizontalAccuracy < newLocation.horizontalAccuracy) {
-            self.bestAvailableSingleLocation = newLocation;
-        }
+    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
+        [self shutdownSingleLocationServiceWithLocationAndError:[NSArray arrayWithObject:newLocation]];
     }
 }
 
-- (void)shutdownSingleLocationServiceAndSendLocation:(CLLocation*)location {
-    if (location) {
-        [self reportLocationToAnalytics:location fromProvider:singleLocationProvider_];
-    }
-    // TODO: create timeout error, and notify our delegate
-    [self stopSingleLocationService];
+- (void)shutdownSingleLocationServiceWithLocationAndError:(NSArray*)locationAndPossibleError{
+    
 }
-
-- (void)stopSingleLocationService {
-    [singleLocationProvider_ stopReportingLocation];
-    singleLocationProvider_.delegate = nil;
-}
-
 
 #pragma mark -
 #pragma mark Common Methods for Providers
@@ -467,10 +453,11 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return singleLocationProvider_;
 }
 
-// The distanceFilter and desiredAccuracy are not set as a side effect with this setter.
+// The distanceFilter is not set as a side effect with this setter.
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
     [singleLocationProvider_ release];
     singleLocationProvider_ = [singleLocationProvider retain];
+    singleLocationProvider.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
     [self setCommonPropertiesOnProvider:singleLocationProvider_];
 }
 
@@ -487,6 +474,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
     UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
+    self.lastReportedLocation = location;
+    self.dateOfLastLocation = location.timestamp;
     if (provider == standardLocationProvider_) {
         [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:locationEventUpdateTypeContinuous];
     }
@@ -549,6 +538,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 + (double)doubleForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
     return [[NSUserDefaults standardUserDefaults] doubleForKey:key];
 }
+
+
 
 + (BOOL)airshipLocationServiceEnabled {
     return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey]; 

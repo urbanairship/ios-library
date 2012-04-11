@@ -34,7 +34,6 @@
     UASignificantChangeProvider *significantChangeProvider_;
     BOOL shouldStartReportingStandardLocation_;
     BOOL shouldStartReportingSignificantChange_;
-    CLLocation *bestAvailableStandardLocation_;
     CLLocation *bestAvailableSingleLocation_;
 }
 // Override property declarations for implementation and testing
@@ -47,7 +46,6 @@
  the single location service times out before acquiring a location that meets
  accuracy requirements setup in desiredAccuracy
  */
-@property (nonatomic, retain) CLLocation *bestAvailableStandardLocation;
 @property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
 
 // Sets appropriate value in NSUserDefaults
@@ -120,17 +118,18 @@
 // Use deprecated location calls
 + (BOOL)useDeprecatedMethods;
 
+// Standard location location update 
+- (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
+// Sig change update method
+- (void)significantChangeDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
 // Single Location update logic
 - (void)singleLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
 // Shutdown service after location is received. If the passed in location is nil, the service is 
 // shutdown, and an error is returned to the delegate
-- (void)shutdownSingleLocationServiceAndSendLocation:(CLLocation*)location;
-// Stop the single location service and invalidate the NSTimer
-- (void)stopSingleLocationService;
-
-// Accuracy calculations
-- (BOOL)locationProvider:(id<UALocationProviderProtocol>)provider 
-            shouldReport:(CLLocation*)newLocation 
-                    from:(CLLocation*)oldLocation;
+// @param locationAndPossibleError [location] or [location, error] 
+- (void)shutdownSingleLocationServiceWithLocationAndError:(NSArray*)locationAndPossibleError;
 
 @end

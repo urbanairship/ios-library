@@ -40,6 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define kLastDeviceTokenKey @"UADeviceTokenChanged" 
 #define kUALocationServiceDefaultPurpose @"Push to Location"
+#define kUALocationServiceSingleLocationDefaultTimeout 30.0
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
@@ -327,6 +328,7 @@ BOOL logging = false;
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
+    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
     NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
     [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
 }

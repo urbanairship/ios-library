@@ -79,6 +79,8 @@
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockLocationService];
     STAssertEquals(base.provider, UALocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
     STAssertEqualObjects(mockLocationService, base.delegate, nil);
+    NSTimeInterval time = 300.0;
+    STAssertEquals(base.maximumElapsedTimeForCachedLocation, time, nil);
 }
 
 - (void)testNilDelegateOnRelease {
@@ -187,7 +189,8 @@
     [(CLLocation*)[[location stub] andReturn:date] timestamp];
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
     STAssertTrue([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
-    date = [NSDate dateWithTimeIntervalSinceNow:-400];
+    base.maximumElapsedTimeForCachedLocation = 20.0;
+    date = [NSDate dateWithTimeIntervalSinceNow:-50];
     location = [OCMockObject niceMockForClass:[CLLocation class]];
     [(CLLocation*)[[location stub] andReturn:date] timestamp];
     STAssertFalse([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
