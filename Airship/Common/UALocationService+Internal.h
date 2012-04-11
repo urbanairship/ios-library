@@ -49,7 +49,6 @@
  */
 @property (nonatomic, retain) CLLocation *bestAvailableStandardLocation;
 @property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
-//
 
 // Sets appropriate value in NSUserDefaults
 + (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
@@ -126,12 +125,12 @@
 // Shutdown service after location is received. If the passed in location is nil, the service is 
 // shutdown, and an error is returned to the delegate
 - (void)shutdownSingleLocationServiceAndSendLocation:(CLLocation*)location;
+// Stop the single location service and invalidate the NSTimer
+- (void)stopSingleLocationService;
 
 // Accuracy calculations
 - (BOOL)locationProvider:(id<UALocationProviderProtocol>)provider 
             shouldReport:(CLLocation*)newLocation 
                     from:(CLLocation*)oldLocation;
 
-// Shutdown timers for single and standard location
-- (void)standardLocationTimedOut;
 @end

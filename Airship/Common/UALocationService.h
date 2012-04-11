@@ -76,6 +76,7 @@
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
     
     NSTimeInterval minimumTimeBetweenForegroundUpdates_;
+    NSTimeInterval timeoutForSingleLocationService_;
     CLLocation *lastReportedLocation_;
     NSDate *dateOfLastLocation_;
     id <UALocationServiceDelegate> delegate_;
@@ -302,8 +303,34 @@
 */ 
  - (void)reportLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
-/** Starts the standard location service long enough to obtain a location an then uploads
- it to Urban Airship.
+///---------------------------------------------------------------------------------------
+/// @name Single Location Service
+///---------------------------------------------------------------------------------------
+
+/** Time interval representing the length of time the single location service will
+ attempt to acquire a location that meets accuracy requirements. At the end of the time
+ interval, the most accurate location received will be sent. If no location has
+ been received, the service is shut down.
+ @param NSTimeInterval representing run time
+ @return NSTimeInterval representing the current timeout value
+ */
+@property (nonatomic, assign) NSTimeInterval timeoutForSingleLocationService;
+
+/** Desired accuracy for single location service. Used by the reportCurrentLocation: method
+ and the automatic foreground location */
+- (CLLocationAccuracy)singleLocationDesiredAccuracy;
+
+/** Sets the desiredAccuracy for the single location service. Used by the reportCurrentLocation: method
+ and the automatic foreground location 
+ @param desiredAccuracy CLLocationAccuracy The new desiredAccuracy
+ */
+- (void)setSingleLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+
+/** Starts the single location service (standard location) long enough to obtain a location an then uploads
+ it to Urban Airship. This method will send the first location that meets the accuracy set in 
+ the singleLocationDesiredAccuracy property. If a location is not found before the timeout, the most
+ accurate location returned by CoreLocation is returned. If no location is found, the service is
+ simply terminated. 
 */
 - (void)reportCurrentLocation;
 

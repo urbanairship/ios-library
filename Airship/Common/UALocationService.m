@@ -38,6 +38,7 @@
 #pragma mark -
 #pragma mark UALocationService.h
 @synthesize minimumTimeBetweenForegroundUpdates = minimumTimeBetweenForegroundUpdates_;
+@synthesize timeoutForSingleLocationService = timeoutForSingleLocationService_;
 @synthesize lastReportedLocation = lastReportedLocation_;
 @synthesize dateOfLastLocation = dateOfLastLocation_;
 @synthesize shouldStartReportingStandardLocation = shouldStartReportingStandardLocation_;
@@ -214,7 +215,9 @@
         significantChangeProvider_.purpose = uniquePurpose;
     }
 }
- 
+
+#pragma mark -
+#pragma mark Desired Accuracy and Distance Filter setters
 - (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key {
     return (CLLocationAccuracy)[UALocationService doubleForLocationServiceKey:key];
 }
@@ -354,7 +357,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma mark -
 #pragma mark Single Location Service
 
-// The default values on the core location object are preset to the highest level of accuracy
+- (CLLocationAccuracy)singleLocationDesiredAccuracy {
+    return [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
+}
+
+- (void)setSingleLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy {
+    [UALocationService setDouble:desiredAccuracy forLocationServiceKey:UASingleLocationDesiredAccuracyKey];
+}
+
 - (void)reportCurrentLocation {
     // If the single location provider is nil, this will evaluate to false, and a 
     // new location provider will be instantiated. 
@@ -364,9 +374,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
         singleLocationProvider_.distanceFilter = kCLDistanceFilterNone;
-        singleLocationProvider_.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        singleLocationProvider_.desiredAccuracy =[self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
     }
-    
+    // TODO: add performSelector:withObject:afterDelay: here
     [self startReportingLocationWithProvider:singleLocationProvider_];
 }
 
@@ -388,10 +398,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [self reportLocationToAnalytics:location fromProvider:singleLocationProvider_];
     }
     // TODO: create timeout error, and notify our delegate
-    [singleLocationProvider_ stopReportingLocation];
-    self.bestAvailableSingleLocation = nil;
-    self.singleLocationProvider = nil;
+    [self stopSingleLocationService];
 }
+
+- (void)stopSingleLocationService {
+    [singleLocationProvider_ stopReportingLocation];
+    singleLocationProvider_.delegate = nil;
+}
+
 
 #pragma mark -
 #pragma mark Common Methods for Providers
