@@ -29,7 +29,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
-NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 360;
+NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 
 @interface UABaseLocationProvider ()
 // Stop reporting any location service
@@ -119,24 +119,6 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 360;
 }
 
 #pragma mark -
-#pragma mark Location Accuracy calculations
-
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
-    // Throw out old values
-    NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
-    if (old > maximumElapsedTimeForCachedLocation_) return NO;
-    // accuracy values less than zero represent invalid lat/long values
-    // If altitude becomes important in the future, add the check here for verticalAccuracy
-    NSLog(@"ACCURACY %f", newLocation.horizontalAccuracy);
-    if (newLocation.horizontalAccuracy < 0) {
-        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
-        return NO;
-    }
-    UALOG(@"Location %@ met accuracy requirements", newLocation);
-    return YES;
-}
-
-#pragma mark -
 #pragma mark UALocationProviderProtocol empty methods
 
 // Methods only update the location status
@@ -193,5 +175,23 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 360;
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
-    
-    @end
+
+#pragma mark -
+#pragma mark Location Accuracy calculations
+
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
+    // Throw out old values
+    NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
+    if (old > maximumElapsedTimeForCachedLocation_) return NO;
+    // accuracy values less than zero represent invalid lat/long values
+    // If altitude becomes important in the future, add the check here for verticalAccuracy
+    NSLog(@"ACCURACY %f", newLocation.horizontalAccuracy);
+    if (newLocation.horizontalAccuracy < 0) {
+        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
+        return NO;
+    }
+    UALOG(@"Location %@ met accuracy requirements", newLocation);
+    return YES;
+}
+
+@end

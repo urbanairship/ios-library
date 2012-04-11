@@ -82,12 +82,6 @@
 #pragma mark -
 #pragma mark Location Accuracy
 
-// Take any location when recieving a significant change
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
-    // return any valid location since we will not get multiple calls, the call to super checks for a 
-    // valid, non cached value only. 
-    return [super locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation];
-}
 
 - (void)startReportingLocation {
     UALOG(@"Start significant change service");

@@ -208,18 +208,18 @@
 #pragma mark -
 #pragma mark lastLocationAndDate
 
-- (void)testLastLocationAndDate {
-    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
-    [[mockLocationService stub] reportLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
-    [locationService.standardLocationProvider.delegate locationProvider:locationService.standardLocationProvider 
-                                                      withLocationManager:locationService.standardLocationProvider.locationManager 
-                                                        didUpdateLocation:pdx 
-                                                             fromLocation:sfo];
-    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
-    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
-    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
-}
+//- (void)testLastLocationAndDate {
+//    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+//    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+//    [[mockLocationService stub] reportLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
+//    [locationService.standardLocationProvider.delegate locationProvider:locationService.standardLocationProvider 
+//                                                      withLocationManager:locationService.standardLocationProvider.locationManager 
+//                                                        didUpdateLocation:pdx 
+//                                                             fromLocation:sfo];
+//    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
+//    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
+//    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.001, 0.005, nil);
+//}
  
 #pragma mark -
 #pragma mark Starting/Stopping Location Services 
@@ -320,7 +320,10 @@
 #pragma mark -
 #pragma mark Single Location Service
 
-- (void)testReportCurrentLocation{
+/* Test the single location provider starts with a given provider, and
+ sets the status appropriately. Also tests that the service starts and
+ lazy loads a location manager */
+- (void)testReportCurrentLocationStartsAndSetsStatus{
     UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
     id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
     standard.locationManager = mockLocationManager;
@@ -341,7 +344,7 @@
     [mockLocationService verify];
 }
 
-//// singleLocation should not attempt to start again while updating
+/* Tests that the single location service won't start when already updating */
 - (void)testAcquireSingleLocationWhenServiceReportsUpdating {
     // Make sure location services are authorized
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
@@ -354,23 +357,26 @@
     [locationService reportCurrentLocation];
 }
 
+/* Test that the single location service won't start if a valid location has been 
+ received in the past 120 seconds. This important for the automatic single location service,
+ multitasking, and the fact that the single location service is run as a background task
+ */
 
 //// Verifies that the service stops after receiving a valid location
 //// and that an analytics call is made
-- (void)testAcquireSingleLocationServiceShutdown {
-    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
-    CLLocation *SFO = [UALocationTestUtils testLocationSFO];
-    UAStandardLocationProvider *provider = [UAStandardLocationProvider providerWithDelegate:locationService];
-    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
-    [[mockLocationManager expect] stopUpdatingLocation]; 
-    provider.locationManager = mockLocationManager;
-    locationService.singleLocationProvider = provider;
-    [[mockLocationService expect] reportLocationToAnalytics:SFO fromProvider:provider];
-    [provider.delegate locationProvider:provider withLocationManager:provider.locationManager didUpdateLocation:SFO fromLocation:PDX];
-    [mockLocationManager verify];
-    [mockLocationService verify];
-    
-}
+//- (void)testAcquireSingleLocationServiceShutdown {
+//    CLLocation *PDX = [UALocationTestUtils testLocationPDX];
+//    CLLocation *SFO = [UALocationTestUtils testLocationSFO];
+//    UAStandardLocationProvider *provider = [UAStandardLocationProvider providerWithDelegate:locationService];
+//    id mockLocationManager = [OCMockObject niceMockForClass:[CLLocationManager class]];
+//    [[mockLocationManager expect] stopUpdatingLocation]; 
+//    provider.locationManager = mockLocationManager;
+//    locationService.singleLocationProvider = provider;
+//    [[mockLocationService expect] reportLocationToAnalytics:SFO fromProvider:provider];
+//    [provider.delegate locationProvider:provider withLocationManager:provider.locationManager didUpdateLocation:SFO fromLocation:PDX];
+//    [mockLocationManager verify];
+//    [mockLocationService verify];
+//}
 
 #pragma mark -
 #pragma mark Location Service Provider start/restart BOOLS
@@ -582,20 +588,20 @@
 }
 
 
-- (void)testUpdateToNewLocation {
-    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
-    locationService.standardLocationProvider = standard;
-    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
-    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
-    locationService.delegate = mockDelegate;
-    [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
-    [[mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:standard];
-    [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didUpdateLocation:pdx fromLocation:sfo];
-    [mockLocationService verify];
-    [mockDelegate verify];
-    STAssertEquals(locationService.lastReportedLocation, pdx, nil);
-}
+//- (void)testUpdateToNewLocation {
+//    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
+//    locationService.standardLocationProvider = standard;
+//    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+//    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+//    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UALocationServiceDelegate)];
+//    locationService.delegate = mockDelegate;
+//    [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
+//    [[mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:standard];
+//    [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didUpdateLocation:pdx fromLocation:sfo];
+//    [mockLocationService verify];
+//    [mockDelegate verify];
+//    STAssertEquals(locationService.lastReportedLocation, pdx, nil);
+//}
 
 #pragma mark -
 #pragma mark Support Methods -> Swizzling

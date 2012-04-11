@@ -127,8 +127,9 @@
     STAssertTrue(contentWasSaved, @"Content should exist in dictionary");
     NSTimeInterval timestamp = [[timestampDictionary valueForKey:cacheKey] doubleValue];
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-    // Check for within a tenth of a second difference
-    STAssertEqualsWithAccuracy(timestamp, now, 0.1, nil);
+    // Check for within a .5 of a second difference, strech this out as tests take longer
+    // to run
+    STAssertEqualsWithAccuracy(timestamp, now, 0.5, nil);
 }
 
 //2012-03-28 14:30:26.523 otest[14390:7b03] onDisk {
