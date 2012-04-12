@@ -42,6 +42,11 @@ UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey = @"sin
 UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey = @"singleLocationTimeout";
 UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"deprecatedAuthorizationStatus";
 
+#pragma mark -
+#pragma mark UALocationServiceErrors
+UALocationServiceErrorDomain *const UALocationServiceTimeoutError = @"locationServiceTimedOut";
+
+
 @implementation UALocationCommonValues
 
 @end

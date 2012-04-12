@@ -30,6 +30,10 @@ typedef enum {
     UALocationProviderUpdating
 } UALocationProviderStatus;
 
+typedef enum {
+    UALocationServiceTimedOut = 0
+} UALocationServiceError;
+
 // The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;
 extern UALocationServiceProviderType *const UALocationServiceProviderGps; 
@@ -48,6 +52,9 @@ extern UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKe
 extern UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey;
 extern UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey;
 extern UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey;
+
+typedef NSString UALocationServiceErrorDomain;
+extern UALocationServiceErrorDomain *const UALocationServiceTimeoutError;
 
 @interface UALocationCommonValues : NSObject
 
