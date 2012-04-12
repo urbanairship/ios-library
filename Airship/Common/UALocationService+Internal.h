@@ -27,6 +27,9 @@
 #import "UALocationService.h"
 #import "UABaseLocationProvider.h"
 
+
+extern NSString *const UABestAvailableSingleLocationKey;
+
 @class UALocationEvent;
 @interface UALocationService () {
     UAStandardLocationProvider *standardLocationProvider_;
@@ -35,6 +38,7 @@
     BOOL shouldStartReportingStandardLocation_;
     BOOL shouldStartReportingSignificantChange_;
     CLLocation *bestAvailableSingleLocation_;
+    UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier_;
 }
 // Override property declarations for implementation and testing
 //
@@ -47,6 +51,8 @@
  accuracy requirements setup in desiredAccuracy
  */
 @property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
+/* Background identifier for the singleLocationService */
+@property (nonatomic, assign) UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier;
 
 // Sets appropriate value in NSUserDefaults
 + (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
@@ -127,9 +133,18 @@
 // Single Location update logic
 - (void)singleLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 
-// Shutdown service after location is received. If the passed in location is nil, the service is 
-// shutdown, and an error is returned to the delegate
-// @param locationAndPossibleError [location] or [location, error] 
-- (void)shutdownSingleLocationServiceWithLocationAndError:(NSArray*)locationAndPossibleError;
+// Single Location when a good location is received
+- (void)stopSingleLocationWithLocation:(CLLocation*)location;
+
+// Stop single location when an error is returned, or the service timed out
+- (void)stopSingleLocationWithError:(NSError*)locationError;
+
+// Stop the single location service and cleanup the background task
+// Do not call this directly, instead, use stopSingleLocationWithLocation
+// or stopSingleLocationWithError
+- (void)stopSingleLocation;
+
+// Error indicating a location service timed out before getting a location that meets accuracy requirements
+- (NSError*)locationTimeoutError;
 
 @end

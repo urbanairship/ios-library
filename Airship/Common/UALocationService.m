@@ -33,6 +33,8 @@
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
 
+NSString *const UABestAvailableSingleLocationKey = @"UABestAvailableLocation";
+
 @implementation UALocationService
 
 #pragma mark -
@@ -43,6 +45,7 @@
 @synthesize shouldStartReportingStandardLocation = shouldStartReportingStandardLocation_;
 @synthesize shouldStartReportingSignificantChange = shouldStartReportingSignificantChange_;
 @synthesize bestAvailableSingleLocation = bestAvailableSingleLocation_;
+@synthesize singleLocationBackgroundIdentifier = singleLocationBackgroundIdentifier_;
 @synthesize delegate = delegate_;
 @synthesize promptUserForLocationServices = promptUserForLocationServices_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
@@ -57,12 +60,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     standardLocationProvider_.delegate = nil;
     significantChangeProvider_.delegate = nil;
-    singleLocationProvider_.delegate = nil;
     // private
     RELEASE_SAFELY(standardLocationProvider_);
     RELEASE_SAFELY(significantChangeProvider_);
-    RELEASE_SAFELY(singleLocationProvider_);
     RELEASE_SAFELY(bestAvailableSingleLocation_);
+    // Single location deleagate is set to nil in stop method
+    [self stopSingleLocation];
     //
     // public
     RELEASE_SAFELY(lastReportedLocation_);
@@ -374,6 +377,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating){
         return;
     }
+    // Setup the background task
+    self.singleLocationBackgroundIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        NSError* locationError = [self locationTimeoutError];
+        [self stopSingleLocationWithError:locationError];
+        [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
+        self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
+    }];
     if (!singleLocationProvider_) {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
         // The distance filter needs to be set to none to get locations immediately. Increasing the value
@@ -382,18 +392,41 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         singleLocationProvider_.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
     }
     
-    [self startReportingLocationWithProvider:singleLocationProvider_];
 }
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
-        [self shutdownSingleLocationServiceWithLocationAndError:[NSArray arrayWithObject:newLocation]];
+        [self stopSingleLocationWithLocation:newLocation];
     }
 }
 
-- (void)shutdownSingleLocationServiceWithLocationAndError:(NSArray*)locationAndPossibleError{
-    
+- (void)stopSingleLocationWithLocation:(CLLocation*)location {
+    [self reportLocationToAnalytics:location fromProvider:singleLocationProvider_];
+    [self stopSingleLocation];
 }
+
+- (void)stopSingleLocationWithError:(NSError*)locationError {
+    if ([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
+        [delegate_ locationService:self didFailWithError:locationError];
+    }
+    if (bestAvailableSingleLocation_) {
+        [self reportLocationToAnalytics:bestAvailableSingleLocation_ fromProvider:singleLocationProvider_];
+    }
+    [self stopSingleLocation];  
+}
+
+// Every stopLocation method turtles down here
+// this cancels the background task
+- (void)stopSingleLocation {
+    if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
+        [singleLocationProvider_ stopReportingLocation];
+    }
+    singleLocationProvider_.delegate = nil;
+    RELEASE_SAFELY(singleLocationProvider_);
+}
+         
+         
+
 
 #pragma mark -
 #pragma mark Common Methods for Providers
@@ -539,8 +572,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return [[NSUserDefaults standardUserDefaults] doubleForKey:key];
 }
 
-
-
 + (BOOL)airshipLocationServiceEnabled {
     return [UALocationService boolForLocationServiceKey:UALocationServiceEnabledKey]; 
 }
@@ -611,6 +642,16 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
 }
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
+
+- (NSError*)locationTimeoutError {
+    // TODO: This needs to be setup in the localization bundle
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:@"The location service timed out before receiving a location that meets accuracy requirements" forKey:NSLocalizedDescriptionKey];
+    if (bestAvailableSingleLocation_) {
+        [userInfo setObject:bestAvailableSingleLocation_ forKey:UABestAvailableSingleLocationKey];
+    }
+    NSError *error = [NSError errorWithDomain:UALocationServiceTimeoutError code:UALocationServiceTimedOut userInfo:userInfo];
+    return error;
+}
 
 
 
