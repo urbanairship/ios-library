@@ -28,10 +28,16 @@
 #import "UALocationProviderDelegate.h"
 #import "UALocationEvent.h"
 
+
 @class UALocationService;
 /** The UALocationServiceDelegate receives 
  location updates from any of the UALocationServices
  */
+
+/** The best location received by the loction service if the desiredAccuracy
+ is not available */
+extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
+
 @protocol UALocationServiceDelegate <NSObject>
 
 ///---------------------------------------------------------------------------------------

@@ -26,6 +26,7 @@
 #import "AppDelegate_Phone.h"
 #import "UAirship.h"
 #import "UAPush.h"
+#import "UALocationCommonValues.h"
 
 @implementation AppDelegate_Phone
 
@@ -58,7 +59,8 @@
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
-    
+    [[NSUserDefaults standardUserDefaults] setDouble:5 forKey:UASingleLocationTimeoutKey];
+    [[NSUserDefaults standardUserDefaults] setDouble:-1 forKey:UASingleLocationDesiredAccuracyKey];
     return YES;
 }
 

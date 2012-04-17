@@ -34,17 +34,17 @@ UALocationServiceProviderType *const UALocationServiceProviderUnknown = @"UNKNOW
 UALocationServiceNSDefaultsKey *const UALocationServiceAllowedKey = @"UALocationServiceAllowed";
 UALocationServiceNSDefaultsKey *const UALocationServiceEnabledKey = @"UALocationServiceEnabled";
 UALocationServiceNSDefaultsKey *const UALocationServicePurposeKey = @"UALocationServicePurpose";
-UALocationServiceNSDefaultsKey *const UAStandardLocationServiceRestartKey = @"standardLocationServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const UASignificantChangeServiceRestartKey = @"significantChangeServiceStatusRestart";
-UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey = @"standardLocationDistanceFilter";
-UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey = @"standardLocationDesiredAccuracy";
-UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey = @"singleLocationDesiredAccuracy";
-UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey = @"singleLocationTimeout";
-UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"deprecatedAuthorizationStatus";
+UALocationServiceNSDefaultsKey *const UAStandardLocationServiceRestartKey = @"UALocationServiceStandardLocationServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const UASignificantChangeServiceRestartKey = @"UALocationServiceSignificantChangeServiceStatusRestart";
+UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey = @"UALocationServiceStandardLocationDistanceFilter";
+UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey = @"UALocationServiceStandardLocationDesiredAccuracy";
+UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey = @"UALocationServiceSingleLocationDesiredAccuracy";
+UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey = @"UALocationServiceSingleLocationTimeout";
+UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"UALocationServiceUseDeprecatedAuthorizationStatus";
 
 #pragma mark -
 #pragma mark UALocationServiceErrors
-UALocationServiceErrorDomain *const UALocationServiceTimeoutError = @"locationServiceTimedOut";
+UALocationServiceErrorDomain *const UALocationServiceTimeoutError = @"UALocationServiceTimedOut";
 
 
 @implementation UALocationCommonValues
