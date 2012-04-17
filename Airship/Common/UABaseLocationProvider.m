@@ -75,7 +75,7 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %d", 
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %f", 
             provider_, self.purpose, serviceStatus_, locationManager_.desiredAccuracy, locationManager_.distanceFilter];
 }
 
@@ -186,7 +186,6 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
     if (old > maximumElapsedTimeForCachedLocation_) return NO;
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
-    NSLog(@"ACCURACY %f", newLocation.horizontalAccuracy);
     if (newLocation.horizontalAccuracy < 0) {
         UALOG(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;

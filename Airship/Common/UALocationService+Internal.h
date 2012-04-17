@@ -145,4 +145,7 @@
 // Error indicating a location service timed out before getting a location that meets accuracy requirements
 - (NSError*)locationTimeoutError;
 
+// Shuts down the single location service with a timeout error
+- (void)shutdownSingleLocationWithTimeoutError;
+
 @end

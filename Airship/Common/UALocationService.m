@@ -77,13 +77,12 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
 - (id)init {
     self = [super init];
     if (self) {
-        // Default CLManagerValues
-        // TODO: set these values to something more appropriate
         minimumTimeBetweenForegroundUpdates_ = 120.0;
         [self beginObservingUIApplicationState];
         // The standard location setter method pulls the distanceFilter and desiredAccuracy from
         // NSUserDefaults. 
         [self setStandardLocationProvider:[[[UAStandardLocationProvider alloc] init] autorelease]]; 
+        self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
     }
     return self;
 }
@@ -134,7 +133,7 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
     UALOG(@"Location service did enter background");
     if (!backroundLocationServiceEnabled_) {
         // Single Location service does not get stopped here, there is a background task that will stop automatically
-        // when a locatin is reported, or the service times out (default timeout 30 seconds 16APR12)
+        // when a location is reported, or the service times out (default timeout 30 seconds 16APR12)
         if (standardLocationProvider_.serviceStatus == UALocationProviderUpdating){
             [self stopReportingStandardLocation];
             // Setup the service to restart since it was running, and background services are not enabled
@@ -314,6 +313,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation {
     if(newLocation.horizontalAccuracy < standardLocationProvider_.desiredAccuracy) {
         [self reportLocationToAnalytics:newLocation fromProvider:standardLocationProvider_];
+        if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+            [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+        }
     }
 }
 
@@ -370,7 +372,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)reportCurrentLocation {
     // If the single location provider is nil, this will evaluate to false, and a 
     // new location provider will be instantiated. 
-    if(singleLocationProvider_.serviceStatus == UALocationProviderUpdating){
+    if(self.singleLocationServiceStatus == UALocationProviderUpdating){
         return;
     }
     if(![self isLocationServiceEnabledAndAuthorized]) {
@@ -380,24 +382,29 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         self.singleLocationProvider = [UAStandardLocationProvider  providerWithDelegate:self];
     }
     // Setup the background task
+    // This exits the same way as the performSelector:withObject:afterDelay method
     self.singleLocationBackgroundIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        NSError* locationError = [self locationTimeoutError];
-        [self stopSingleLocationWithError:locationError];
-        [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
-        self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
+        // This eventually calls stopSingleLocation, which shuts down the background task
+        // Same task as performSelector:withObject:afterDelay, so if that works, this works
+        [self shutdownSingleLocationWithTimeoutError];
     }];
-    // Setup error timout
-    [self performSelector:@selector(stopSingleLocationWithError:) 
-               withObject:[self locationTimeoutError] 
+    // Setup error timeout
+    [self performSelector:@selector(shutdownSingleLocationWithTimeoutError) 
+               withObject:nil
                afterDelay:self.timeoutForSingleLocationService];
     [singleLocationProvider_ startReportingLocation];
 }
 
+// Shuts down the single location service with a location timeout error
+// Covered in Application tests
+- (void)shutdownSingleLocationWithTimeoutError {
+    NSError* locationError = [self locationTimeoutError];
+    [self stopSingleLocationWithError:locationError];
+}
+
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
-        BOOL delegateResponds = [delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)];
-        BOOL isActive = [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive;
-        if (delegateResponds && isActive) {
+        if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
             [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
         [self stopSingleLocationWithLocation:newLocation];
@@ -423,6 +430,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithError:(NSError*)locationError {
+    // If there are ever more performRequests, use the other cancel method call
+    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     UALOG(@"Single location failed with error %@", locationError);
     if ([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
         [delegate_ locationService:self didFailWithError:locationError];
@@ -436,14 +446,16 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Every stopLocation method turtles down here
 // this cancels the background task
 - (void)stopSingleLocation {
+    // If there are ever more performRequests, use the other cancel method call
+    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
         [singleLocationProvider_ stopReportingLocation];
     }
     singleLocationProvider_.delegate = nil;
     UALOG(@"Shutdown single location background task");
-    RELEASE_SAFELY(singleLocationProvider_);
-    // Order is import if this task is refactored, as execution terminates immediately with
-    // endBackgroundTask
+    // Order is import if this task is refactored, as execution terminates very quickly with
+    // endBackgroundTask. The background task will be invalidated. 
     [[UIApplication sharedApplication] endBackgroundTask:self.singleLocationBackgroundIdentifier];
     self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
 }
@@ -536,6 +548,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 #pragma mark -
 #pragma mark UALocationEvent Analytics
+// All analytics events are covered in application testing because of the dependency on 
+// UAirship
 
 - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider {
     UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
