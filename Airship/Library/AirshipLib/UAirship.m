@@ -329,8 +329,7 @@ BOOL logging = false;
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
     [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
-    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultLocationPreferences];
 }
 
 #pragma mark -

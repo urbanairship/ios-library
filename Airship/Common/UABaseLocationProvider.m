@@ -75,7 +75,8 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d", provider_, self.purpose, serviceStatus_];
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %d", 
+            provider_, self.purpose, serviceStatus_, locationManager_.desiredAccuracy, locationManager_.distanceFilter];
 }
 
 #pragma mark -

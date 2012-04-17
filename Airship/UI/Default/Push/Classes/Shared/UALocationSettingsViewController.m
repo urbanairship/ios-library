@@ -29,6 +29,7 @@
 #import "UALocationCommonValues.h"
 #import "UAMapPresentationController.h"
 #import "UAirship.h"
+#import "UALocationService.h"
 
 @interface UALocationSettingsViewController ()
 
@@ -192,6 +193,11 @@
 
 - (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error {
     UALOG(@"LOCATION_ERROR, %@", error.description);
+    CLLocation *bestAvailableLocation = [[error userInfo] valueForKey:UALocationServiceBestAvailableSingleLocationKey];
+    // Desired accuracy couldn't be met, the service timed out to save battery, this is the best location obtained
+    if (bestAvailableLocation) {
+        [self addLocationToData:bestAvailableLocation];
+    }
 }
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"LOCATION_AUTHORIZATION_STATUS %u", status);

@@ -28,8 +28,6 @@
 #import "UABaseLocationProvider.h"
 
 
-extern NSString *const UABestAvailableSingleLocationKey;
-
 @class UALocationEvent;
 @interface UALocationService () {
     UAStandardLocationProvider *standardLocationProvider_;
