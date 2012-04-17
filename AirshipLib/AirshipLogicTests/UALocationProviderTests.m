@@ -99,6 +99,8 @@
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:nil] autorelease];
     base.serviceStatus = UALocationProviderNotUpdating;
     base.purpose = @"CATS";
+    base.distanceFilter = 21;
+    base.desiredAccuracy = 21;
     NSString *description = base.description;
     // check for Provider Purpose Updating
     STAssertTrue([self regexString:description forRegexPattern:@"Provider"], nil);
@@ -107,6 +109,12 @@
     STAssertTrue([self regexString:description forRegexPattern:@"\\w:0"], nil);
     STAssertTrue([self regexString:description forRegexPattern:@"CATS"], nil);
     STAssertTrue([self regexString:description forRegexPattern:@"UNKNOWN"], nil);
+    STAssertTrue([self regexString:description forRegexPattern:@"desiredAccuracy"], nil);
+    STAssertTrue([self regexString:description forRegexPattern:@"distanceFilter"], nil);
+    NSString *distanceFilterRegex = [NSString stringWithFormat:@"%f", base.distanceFilter];
+    NSString *desiredAccueracyRegex = [NSString stringWithFormat:@"%f", base.desiredAccuracy];
+    STAssertTrue([self regexString:description forRegexPattern:distanceFilterRegex], nil);
+    STAssertTrue([self regexString:description forRegexPattern:desiredAccueracyRegex    ], nil);
 }
 
 - (void)testRegexSupport {
@@ -114,12 +122,13 @@
     STAssertFalse([self regexString:@"CATS" forRegexPattern:@"BORK"] ,nil);
 }
 
+// Returns yes if one or more matches exist in the string
 - (BOOL)regexString:(NSString*)target forRegexPattern:(NSString*)regexPattern {
     NSError *regexError = nil;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:NSRegularExpressionCaseInsensitive error:&regexError];
     STAssertNil(regexError,nil);
     NSUInteger match = [regex numberOfMatchesInString:target options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, target.length)];
-    return match == 1 ? YES:NO;
+    return match >= 1 ? YES:NO;
 }
 
 - (void)testStandardInitWithDelegate {

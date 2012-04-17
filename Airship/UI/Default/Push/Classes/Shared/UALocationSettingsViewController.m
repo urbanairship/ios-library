@@ -70,6 +70,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.locationService = [[UAirship shared] locationService];
+    self.locationService.singleLocationDesiredAccuracy = kCLLocationAccuracyHundredMeters;
+    self.locationService.timeoutForSingleLocationService = 10.0;
     locationService_.delegate = self;
 }
 

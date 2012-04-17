@@ -29,7 +29,7 @@
     UALocationService *locationService;
     NSDate *timeout;
 }
-- (BOOL)serviceAcquiredLocation;
+//- (BOOL)serviceAcquiredLocation;
 @end
 
 
@@ -57,13 +57,6 @@
     NSNumber *numberFromDouble = [NSNumber numberWithDouble:doubleValue];
     [formatter release];
     return [numberFromDouble isEqualToNumber:numberFromString];
-}
-
-#pragma mark -
-#pragma mark NSUserDefaults UALocationServicePreferences
-- (void)testUserDefaults {
-    NSDictionary* locationDefaults = [[NSUserDefaults standardUserDefaults] dictionaryForKey:UALocationServicePreferences];
-    STAssertNotNil(locationDefaults, @"Location defaults should exist");
 }
 
 #pragma mark -
@@ -152,15 +145,55 @@
 //    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
 //}
 
-- (BOOL)serviceAcquiredLocation {
-    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
-    while (!locationRecieved) {
-        [[NSRunLoop currentRunLoop] runMode:NSRunLoopCommonModes beforeDate:timeout];
-        if ([timeout timeIntervalSinceNow] < 0.0) {
+//- (BOOL)serviceAcquiredLocation {
+//    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
+//    while (!locationRecieved) {
+//        [[NSRunLoop currentRunLoop] runMode:NSRunLoopCommonModes beforeDate:timeout];
+//        if ([timeout timeIntervalSinceNow] < 0.0) {
+//            break;
+//        }
+//    }
+//    return locationRecieved;
+//}
+
+#pragma mark -
+#pragma mark Single Location Service Report Current location background
+
+- (void)testReportCurrentLocationTimesOutWithError {
+    BOOL yes = YES;
+    locationService = [[UALocationService alloc] initWithPurpose:@"current location test"];
+    locationService.timeoutForSingleLocationService = 1;
+    id mockLocationService = [OCMockObject partialMockForObject:locationService];
+    [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    id mockSingleProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
+    locationService.singleLocationProvider = mockSingleProvider;
+    [[mockSingleProvider expect] startReportingLocation];
+    [[[mockLocationService expect] andForwardToRealObject] stopSingleLocation];
+    [locationService reportCurrentLocation];
+    STAssertFalse(UIBackgroundTaskInvalid == locationService.singleLocationBackgroundIdentifier, nil);
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    NSString *runMode = [runLoop currentMode];
+    while (locationService.singleLocationBackgroundIdentifier != UIBackgroundTaskInvalid) {
+        // Just keep moving the run loop date forward slightly, so the exit is quick
+        [[NSRunLoop currentRunLoop] runMode:runMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+        if([timeout timeIntervalSinceNow] < 0.0) {
             break;
         }
     }
-    return locationRecieved;
+    [mockSingleProvider verify];
+    [mockLocationService verify];
+}
+
+#pragma mark -
+#pragma mark Last Location and Date
+
+- (void)testLastLocationAndDate {
+    locationService = [[UALocationService alloc] initWithPurpose:@"app_test"];
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+    [locationService reportLocationToAnalytics:pdx fromProvider:locationService.standardLocationProvider];
+    STAssertEqualObjects(pdx, locationService.lastReportedLocation, nil);
+    NSTimeInterval smallAmountOfTime = [locationService.dateOfLastLocation timeIntervalSinceNow];
+    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.1, 0.5, nil);
 }
 
 #pragma mark -
