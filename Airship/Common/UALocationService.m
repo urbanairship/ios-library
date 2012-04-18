@@ -313,7 +313,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Eventually add the auto shutdown to this method as well if locations aren't 
 // improving
 - (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation {
-    if(newLocation.horizontalAccuracy < standardLocationProvider_.desiredAccuracy) {
+    if(newLocation.horizontalAccuracy < standardLocationProvider_.desiredAccuracy || standardLocationProvider_.desiredAccuracy <= kCLLocationAccuracyBest) {
         [self reportLocationToAnalytics:newLocation fromProvider:standardLocationProvider_];
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
             [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
@@ -405,7 +405,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
+    // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
+    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy || singleLocationProvider_.desiredAccuracy <= kCLLocationAccuracyBest){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
             [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
