@@ -72,7 +72,7 @@
     self.locationService = [[UAirship shared] locationService];
     self.locationService.singleLocationDesiredAccuracy = kCLLocationAccuracyHundredMeters;
     self.locationService.timeoutForSingleLocationService = 10.0;
-    locationService_.delegate = self;
+    self.locationService.delegate = self;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -123,7 +123,7 @@
 - (IBAction)getLocationPressed:(id)sender {
     UALOG(@"Get Location pressed");
     [self checkAndAlertForLocationAuthorization];
-    [locationService_ reportCurrentLocation];
+    [self.locationService reportCurrentLocation];
 }
 
 - (void)checkAndAlertForLocationAuthorization {

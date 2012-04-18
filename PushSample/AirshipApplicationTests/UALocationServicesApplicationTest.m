@@ -136,25 +136,24 @@
 // tanks the run loop update
 // TODO: figure out a way around this
 
-//- (void)testUALocationServiceDoesGetLocation {
-//    locationService = [[UALocationService alloc] initWithPurpose:@"testing"];
-//    locationService.locationServiceAllowed = YES;
-//    locationService.locationServiceEnabled = YES;
-//    locationService.delegate = self;
-//    [locationService startReportingLocation];    
-//    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
-//}
+- (void)testUALocationServiceDoesGetLocation {
+    locationService = [[UALocationService alloc] initWithPurpose:@"testing"];
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    locationService.delegate = self;
+    [locationService startReportingStandardLocation];    
+    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
+}
 
-//- (BOOL)serviceAcquiredLocation {
-//    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
-//    while (!locationRecieved) {
-//        [[NSRunLoop currentRunLoop] runMode:NSRunLoopCommonModes beforeDate:timeout];
-//        if ([timeout timeIntervalSinceNow] < 0.0) {
-//            break;
-//        }
-//    }
-//    return locationRecieved;
-//}
+- (BOOL)serviceAcquiredLocation {
+    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
+    while (!locationRecieved) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+        if ([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    return locationRecieved;
+}
 
 #pragma mark -
 #pragma mark Single Location Service Report Current location background

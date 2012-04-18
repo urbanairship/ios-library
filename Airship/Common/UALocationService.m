@@ -394,6 +394,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self performSelector:@selector(shutdownSingleLocationWithTimeoutError) 
                withObject:nil
                afterDelay:self.timeoutForSingleLocationService];
+    singleLocationProvider_.delegate = self;
     [singleLocationProvider_ startReportingLocation];
 }
 
@@ -413,12 +414,12 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [self stopSingleLocationWithLocation:newLocation];
     }
     else {
+        UALOG(@"Location %@ did not meet accuracy requirement", newLocation);
         if (bestAvailableSingleLocation_.horizontalAccuracy < newLocation.horizontalAccuracy) {
             UALOG(@"Updated location %@\nreplaced current best location %@", self.bestAvailableSingleLocation, newLocation);
             self.bestAvailableSingleLocation = newLocation;
         }
     }
-    UALOG(@"Location %@ did not meet accuracy requirement", newLocation);
 }
 
 //Make sure stopSingleLocation is called to shutdown background task
@@ -470,6 +471,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
     if(promptUserForLocationServices_ || authorizedAndEnabled) {
         UALOG(@"Starting location service");
+        // Delegates are set to nil when the service is shut down
         if(locationProvider.delegate == nil){
             locationProvider.delegate = self;
         }

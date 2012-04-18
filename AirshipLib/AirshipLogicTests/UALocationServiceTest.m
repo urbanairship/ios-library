@@ -363,11 +363,16 @@
  sets the status appropriately. Also tests that the service starts and
  lazy loads a location manager */
 - (void)testReportCurrentLocationStarts{
-    id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-    locationService.singleLocationProvider = mockProvider;
+    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:nil] autorelease];
+    id mockProvider = [OCMockObject partialMockForObject:standard];
+    locationService.singleLocationProvider = standard;
+    STAssertEqualObjects(locationService, locationService.singleLocationProvider.delegate, nil);
+    // Nil the delegate, it should be reset when the service is started
+    locationService.singleLocationProvider.delegate = nil;
     [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
     [[mockProvider expect] startReportingLocation];
     [locationService reportCurrentLocation];
+    STAssertEqualObjects(locationService, locationService.singleLocationProvider.delegate, nil);
     [mockLocationService verify];
     [mockProvider verify];
     
