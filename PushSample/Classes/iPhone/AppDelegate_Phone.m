@@ -59,8 +59,6 @@
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
-    [[NSUserDefaults standardUserDefaults] setDouble:5 forKey:UASingleLocationTimeoutKey];
-    [[NSUserDefaults standardUserDefaults] setDouble:-1 forKey:UASingleLocationDesiredAccuracyKey];
     return YES;
 }
 
