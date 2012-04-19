@@ -53,29 +53,19 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
   @private
     NSString *server;
     NSMutableDictionary *session;
-
     NSDictionary *notificationUserInfo;
-
-    BOOL wasBackgrounded;
     UAHTTPConnection *connection;
-
     int x_ua_max_total;
     int x_ua_max_batch;
     int x_ua_max_wait;
-    int x_ua_min_batch_interval;
-	
+    int x_ua_min_batch_interval;	
 	int sendInterval;
-
     int databaseSize;
-    NSTimeInterval oldestEventTime;
-    
+    NSTimeInterval oldestEventTime;    
     NSDate *lastSendTime;
-    NSDate *lastLocationSendTime;
-    
-    NSTimer *reSendTimer;
-    
-    BOOL analyticsLoggingEnabled;
-    
+    NSDate *lastLocationSendTime;    
+    NSTimer *sendTimer;    
+    BOOL analyticsLoggingEnabled;    
     NSString *packageVersion;
 }
 
@@ -89,16 +79,14 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (assign, nonatomic) int sendInterval;
 @property (assign, readonly) NSTimeInterval oldestEventTime;
 @property (retain, readonly) NSDate *lastSendTime;
+@property (nonatomic, assign) NSTimer *sendTimer;
 
 
 - (id)initWithOptions:(NSDictionary *)options;
 - (void)restoreFromDefault;
 - (void)saveDefault;
-
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
-
 - (void)resetEventsDatabaseStatus;
-- (void)sendIfNeeded;
-
+- (void)send;
 @end
