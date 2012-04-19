@@ -27,6 +27,7 @@
 #import <CoreTelephony/CTCarrier.h>
 
 #import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 
 #import "UA_SBJSON.h"
 #import "UA_Reachability.h"

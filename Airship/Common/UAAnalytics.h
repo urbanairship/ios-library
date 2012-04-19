@@ -53,47 +53,25 @@ typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
 extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
-@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
-  @private
-    NSString *server;
-    NSMutableDictionary *session;
-    NSDictionary *notificationUserInfo_;
-    UAHTTPConnection *connection;
-    int x_ua_max_total;
-    int x_ua_max_batch;
-    int x_ua_max_wait;
-    int x_ua_min_batch_interval;	
-	int sendInterval;
-    int databaseSize;
-    NSTimeInterval oldestEventTime;    
-    NSDate *lastSendTime_;
-    NSDate *lastLocationSendTime;    
-    NSTimer *sendTimer_;    
-    BOOL analyticsLoggingEnabled;    
-    NSString *packageVersion;
-    UIBackgroundTaskIdentifier sendBackgroundTask_;
-}
+@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> 
 
-@property (retain) NSString *server;
-@property (retain, readonly) NSMutableDictionary *session;
+@property (nonatomic, copy, readonly) NSString *server;
+@property (nonatomic, retain, readonly) NSMutableDictionary *session;
 @property (assign, readonly) int databaseSize;
 @property (assign, readonly) int x_ua_max_total;
 @property (assign, readonly) int x_ua_max_batch;
 @property (assign, readonly) int x_ua_max_wait;
 @property (assign, readonly) int x_ua_min_batch_interval;
-@property (assign, nonatomic) int sendInterval;
-@property (assign, readonly) NSTimeInterval oldestEventTime;
-@property (nonatomic, retain) NSDate *lastSendTime;
-@property (nonatomic, assign) NSTimer *sendTimer;
-@property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+@property (nonatomic, assign) int sendInterval;
+@property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
+@property (nonatomic, retain, readonly) NSDate *lastSendTime;
+@property (nonatomic, assign, readonly) NSTimer *sendTimer;
+@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
+@property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
 - (id)initWithOptions:(NSDictionary *)options;
-- (void)restoreFromDefault;
-- (void)saveDefault;
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
-- (void)resetEventsDatabaseStatus;
-- (void)send;
+
 @end
