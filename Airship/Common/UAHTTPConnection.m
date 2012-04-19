@@ -85,6 +85,7 @@
 @end
 
 @implementation UAHTTPConnection
+@synthesize urlConnection = urlConnection_;
 @synthesize delegate;
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
@@ -92,9 +93,9 @@
 }
 
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest {
-    if ((self = [self init])) {
+    self = [super init];
+    if (self) {
         request = [httpRequest retain];
-        urlConnection = nil;
         responseData = nil;
         urlResponse = nil;
     }
@@ -103,14 +104,14 @@
 
 - (void) dealloc {
     RELEASE_SAFELY(request);
-    RELEASE_SAFELY(urlConnection);
+    RELEASE_SAFELY(urlConnection_);
     RELEASE_SAFELY(urlResponse);
     RELEASE_SAFELY(responseData);
     [super dealloc];
 }
 
 - (BOOL)start {
-    if (urlConnection != nil) {
+    if (urlConnection_ != nil) {
         UALOG(@"ERROR: UAHTTPConnection already started: %@", self);
         return NO;
     } else {
@@ -161,7 +162,7 @@
         }
         
 		responseData = [[NSMutableData alloc] init];
-        urlConnection = [[NSURLConnection connectionWithRequest:urlRequest delegate:self] retain];
+        self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
         return YES;
     }
 }

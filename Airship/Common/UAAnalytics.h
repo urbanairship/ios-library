@@ -41,6 +41,10 @@
 // minimum amount of time in seconds that should elapse between event-server posts
 #define X_UA_MIN_BATCH_INTERVAL 60	// local min of 60s
 
+// minimum amount of time between background location events
+// 900 seconds = 15 minutes
+#define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900
+
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
 extern NSString * const UAAnalyticsOptionsLoggingKey;
@@ -53,7 +57,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
   @private
     NSString *server;
     NSMutableDictionary *session;
-    NSDictionary *notificationUserInfo;
+    NSDictionary *notificationUserInfo_;
     UAHTTPConnection *connection;
     int x_ua_max_total;
     int x_ua_max_batch;
@@ -62,11 +66,12 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 	int sendInterval;
     int databaseSize;
     NSTimeInterval oldestEventTime;    
-    NSDate *lastSendTime;
+    NSDate *lastSendTime_;
     NSDate *lastLocationSendTime;    
-    NSTimer *sendTimer;    
+    NSTimer *sendTimer_;    
     BOOL analyticsLoggingEnabled;    
     NSString *packageVersion;
+    UIBackgroundTaskIdentifier sendBackgroundTask_;
 }
 
 @property (retain) NSString *server;
@@ -78,8 +83,10 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (assign, readonly) int x_ua_min_batch_interval;
 @property (assign, nonatomic) int sendInterval;
 @property (assign, readonly) NSTimeInterval oldestEventTime;
-@property (retain, readonly) NSDate *lastSendTime;
+@property (nonatomic, retain) NSDate *lastSendTime;
 @property (nonatomic, assign) NSTimer *sendTimer;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
+@property (nonatomic, retain) NSDictionary *notificationUserInfo;
 
 
 - (id)initWithOptions:(NSDictionary *)options;
