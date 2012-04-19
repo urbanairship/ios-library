@@ -34,6 +34,10 @@
 @class UAStoreFrontViewController;
 @class UAStoreFrontAlertProtocol;
 
+/**
+ * This class is the reference implementation of the UAStoreFrontUIProtocol.
+ */
+
 @interface UAStoreFrontUI : NSObject <UAStoreFrontUIProtocol> {
 
     UIWindow *uaWindow;

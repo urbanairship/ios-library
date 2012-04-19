@@ -41,11 +41,16 @@
 /// @name Device ID Utils
 ///---------------------------------------------------------------------------------------
 
-+ (NSString *)udidHash;
-
 + (NSString *)UUID;
 
 + (NSString *)deviceModelName;
+
+/**
+ * Gets the Urban Airship Device ID.
+ *
+ * @return The device ID, or an empty string if the ID cannot be retrieved or created.
+ */
++ (NSString *)deviceID;
 
 ///---------------------------------------------------------------------------------------
 /// @name URL Encoding

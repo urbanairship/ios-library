@@ -15,6 +15,12 @@ xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
 fabfile.py*
-
 Cupcakes/
 TestFlight/
+*.build_output
+# Undo files for MacVim 
+*.un~
+# CoverStory tool script
+cover.py
+OCMockLibrary
+*.swp

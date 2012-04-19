@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
  
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -22,18 +22,20 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+#import <MapKit/MapKit.h>
 
-@interface UATestGlobal : NSObject {
-    NSMutableDictionary *calls;
-    id value;
+@interface UALocationDemoAnnotation : NSObject <MKAnnotation> {
+    CLLocationCoordinate2D coordinate_;
+    NSString *title_;
+    NSString *subtitle_;
 }
 
-SINGLETON_INTERFACE(UATestGlobal)
+@property (nonatomic, assign) CLLocationCoordinate2D coordinate;
+@property (nonatomic, readonly, copy) NSString *title;
+@property (nonatomic, readonly, copy) NSString *subtitle;
 
-@property (nonatomic, retain) NSMutableDictionary *calls;
-@property (nonatomic, retain) id value;
-
+- (NSString*)monthDateFromDate:(NSDate*)date;
+- (NSString*)description;
++ (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location;
 @end

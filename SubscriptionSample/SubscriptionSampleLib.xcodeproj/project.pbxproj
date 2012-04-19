@@ -68,7 +68,7 @@
 		B6BC28B7127950B5005CBE16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		B6BC28B8127950B5005CBE16 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		B6BC28B9127950B5005CBE16 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ED91246383700145424 /* libsqlite3.dylib */; };
-		B6BC28DE12795459005CBE16 /* libUAirship-1.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */; };
+		B6BC28DE12795459005CBE16 /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */; };
 		B6BC28FA1279557A005CBE16 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */; };
 		B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */; };
 		B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */; };
@@ -78,12 +78,13 @@
 		B6EF6B2A127A7563007E0DE5 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B28127A7563007E0DE5 /* Icon.png */; };
 		B6EF6C54127A9FD4007E0DE5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314725122FAB0E008F2D48 /* Default.png */; };
 		B6EF6C55127A9FD4007E0DE5 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314726122FAB0E008F2D48 /* Icon-Small.png */; };
+		BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB4136151524D985008EE873 /* CoreLocation.framework */; };
 		D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60612C154C0009731BE /* Icon@2x.png */; };
 		D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60812C154CA009731BE /* iTunesArtwork */; };
 		D5C759AC12BAE0EF0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759AB12BAE0EF0041239E /* Default@2x.png */; };
 		D5C75AFD12BBEF9B0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFC12BBEF9B0041239E /* Icon-Small@2x.png */; };
 		D5C75AFF12BBEFA80041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFE12BBEFA80041239E /* Icon-72.png */; };
-		D9983CAB123829DB00B7E69F /* libUAirship-1.1.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */; };
+		D9983CAB123829DB00B7E69F /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,13 +101,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1FBF50D014646AC500554710;
 			remoteInfo = AirshipMiniPushLib;
-		};
-		1FA23849130460BE005A4DEC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D5A4B9411300A8F200002F71;
-			remoteInfo = AirshipTest;
 		};
 		6331475F122FAC96008F2D48 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -128,6 +122,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
+		};
+		BBCE96C1151D13D700371B10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBB87DED150575D200971CEC;
+			remoteInfo = AirshipLibGcov;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -209,6 +210,7 @@
 		B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Landscape.png"; sourceTree = "<group>"; };
 		B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Portrait.png"; sourceTree = "<group>"; };
 		B6EF6B28127A7563007E0DE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		BB4136151524D985008EE873 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D5A3F60612C154C0009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F60812C154CA009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5C759AB12BAE0EF0041239E /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
@@ -221,8 +223,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */,
 				1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */,
-				D9983CAB123829DB00B7E69F /* libUAirship-1.1.2.a in Frameworks */,
+				D9983CAB123829DB00B7E69F /* libUAirship-1.1.4.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -240,7 +243,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6BC28DE12795459005CBE16 /* libUAirship-1.1.2.a in Frameworks */,
+				B6BC28DE12795459005CBE16 /* libUAirship-1.1.4.a in Frameworks */,
 				B6BC28B1127950B5005CBE16 /* StoreKit.framework in Frameworks */,
 				B6BC28B2127950B5005CBE16 /* SystemConfiguration.framework in Frameworks */,
 				B6BC28B4127950B5005CBE16 /* MobileCoreServices.framework in Frameworks */,
@@ -348,6 +351,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB4136151524D985008EE873 /* CoreLocation.framework */,
 				B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */,
 				0DE288F311CF310D0013D2F1 /* StoreKit.framework */,
 				0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */,
@@ -450,10 +454,10 @@
 		6331475C122FAC96008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */,
-				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */,
-				1FA2384A130460BE005A4DEC /* AirshipTest.app */,
+				63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */,
+				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
+				BBCE96C2151D13D700371B10 /* libAirshipLibGcov.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -601,25 +605,25 @@
 			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.2.a */ = {
+		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipPush-1.1.2.a";
+			path = "libUAirshipPush-1.1.4.a";
 			remoteRef = 1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1FA2384A130460BE005A4DEC /* AirshipTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = AirshipTest.app;
-			remoteRef = 1FA23849130460BE005A4DEC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		63314760122FAC96008F2D48 /* libUAirship-1.1.2.a */ = {
+		63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.1.2.a";
+			path = "libUAirship-1.1.4.a";
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BBCE96C2151D13D700371B10 /* libAirshipLibGcov.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAirshipLibGcov.a;
+			remoteRef = BBCE96C1151D13D700371B10 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

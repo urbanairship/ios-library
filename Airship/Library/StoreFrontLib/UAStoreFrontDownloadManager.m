@@ -135,13 +135,13 @@
     NSURL *itemURL = [NSURL URLWithString: urlString];
     
     NSMutableDictionary *data = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 [UAUtils udidHash], @"udid",
+                                 [UAUtils deviceID], @"ua_device_id",
                                  [StoreFrontVersion get], @"version", nil];
     if (receipt != nil) {
         [data setObject:receipt forKey:@"transaction_receipt"];
     }
     
-    NSURL *contentURL = [contentURLCache contentForProductURL:itemURL];
+    NSURL *contentURL = [contentURLCache contentForProductURL:itemURL withVersion:[NSNumber numberWithInt:product.revision]];
 
     [self addPendingProduct:product];
     
@@ -252,15 +252,31 @@
 
 - (void)resumePendingProducts {
     UALOG(@"Resume pending products in purchasing queue %@", pendingProducts);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if ([UAStoreFront shared].inventory.status == UAInventoryStatusDownloading) {
+        UALOG(@"Warning: inventory is currently downloading, cancelling resume");
+        return;
+    }
+
     for (NSString *identifier in [pendingProducts allKeys]) {
         UAProduct *pendingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
-        pendingProduct.receipt = [pendingProducts objectForKey:identifier];
-        [self downloadPurchasedProduct:pendingProduct];
+
+        //if pendingProduct is nil, it's not currently in the inventory. This is either because the
+        //inventory contents have been invalidated, or because it's contents have been changed remotely
+        //since the product was initially downloaded
+        if (pendingProduct) {
+            pendingProduct.receipt = [pendingProducts objectForKey:identifier];
+            [self downloadPurchasedProduct:pendingProduct];
+        } else {
+            UALOG(@"Warning: product not found for pending download with identifier %@", identifier);
+        }
     }
-    
+
     // Reconnect downloading request with newly created product
     for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
-        
+
         UAProduct *oldProduct = [downloadContent userInfo];
         UAProduct *newProduct = [[UAStoreFront shared].inventory productWithIdentifier:oldProduct.productIdentifier];
         
@@ -342,14 +358,30 @@
 }
 
 - (void)resumeDecompressingProducts {
+    UALOG(@"Resume decompressing products in queue %@", decompressingProducts);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if ([UAStoreFront shared].inventory.status == UAInventoryStatusDownloading) {
+        UALOG(@"Warning: inventory is currently downloading, cancelling resume");
+        return;
+    }
     for (NSString *identifier in [decompressingProducts allKeys]) {
         //only resume decompression for products that aren't currently doing so
         if (![currentlyDecompressingProducts containsObject:identifier]) {
             UAProduct *decompressingProduct = [[UAStoreFront shared].inventory productWithIdentifier:identifier];
-            decompressingProduct.receipt = [decompressingProducts objectForKey:identifier];
-            
-            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
-            [self decompressZipDownloadContent:zipDownloadContent];
+
+            //if decompressingProduct is nil, it's not currently in the inventory. This is either because the
+            //inventory contents have been invalidated, or because it's contents have been changed remotely
+            //since the product was initially downloaded
+            if (decompressingProduct) {
+                decompressingProduct.receipt = [decompressingProducts objectForKey:identifier];
+
+                UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForProduct:decompressingProduct];
+                [self decompressZipDownloadContent:zipDownloadContent];
+            } else {
+                UALOG(@"Warning: product not found for pending decompression with identifier %@", identifier);
+            }
         }
     }
 }
@@ -393,7 +425,7 @@
     //cache the content url
     UALOG(@"caching content url: %@ for download url: %@", contentURLString, product.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
-    [contentURLCache setContent:contentURL forProductURL:product.downloadURL];
+    [contentURLCache setContent:contentURL forProductURL:product.downloadURL withVersion:[NSNumber numberWithInt:product.revision]];
         
     [self downloadProduct:product withContentURL:contentURL];
 }

@@ -41,6 +41,9 @@
 @class UAProduct;
 @class SKPaymentTransaction;
 
+/**
+ * This class handles IAP product downloads and decompression.
+ */
 @interface UAStoreFrontDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
     NSMutableDictionary *pendingProducts;
@@ -51,10 +54,20 @@
     UAContentURLCache *contentURLCache;
     BOOL createProductIDSubdir;
 }
+
+/**
+ * The download directory.  If not set by the user, this will return a default value.
+ */
 @property (nonatomic, copy) NSString *downloadDirectory;
+
 @property (nonatomic, retain) UAContentURLCache *contentURLCache;
+/**
+ * A BOOL indicating whether to create a product ID subdirectory for downloaded content.
+ * Defaults to YES.
+ */
 @property (nonatomic, assign) BOOL createProductIDSubdir;
-@property (nonatomic, retain) NSMutableDictionary *pendingProducts; //productIdentifier -> receipt
+
+@property (nonatomic, retain) NSMutableDictionary *pendingProducts;
 @property (nonatomic, retain) NSMutableDictionary *decompressingProducts; //productIdentifier -> receipt
 @property (nonatomic, retain) NSMutableArray *currentlyDecompressingProducts; //of productIdentifier
 

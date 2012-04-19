@@ -123,11 +123,41 @@
 /// @name Query Subscriptions
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Return the subscription content matching a particular content key.
+ * @param contentKey The content key.
+ * @return A matching UASubscriptionContent instance.
+ */
 - (UASubscriptionContent *)contentForKey:(NSString *)contentKey;
+/**
+ * Return the subscription matching a particular subscription key.
+ * @param subscriptionKey The subscription key.
+ * @return A matching UASubscription instance.
+ */
 - (UASubscription *)subscriptionForKey:(NSString *)subscriptionKey;
+/**
+ * Return the subscription matching a particular subscription product.
+ * @param product The subscription product.
+ * @return A matching UASubscription instance.
+ */
 - (UASubscription *)subscriptionForProduct:(UASubscriptionProduct *)product;
+/**
+ * Return the subscription matching a particular instance of subscription content.
+ * @param content The subscription content.
+ * @return A matching UASubscription instance.
+ */
 - (UASubscription *)subscriptionForContent:(UASubscriptionContent *)content;
+/**
+ * Check whether the inventory contains a particular product by identifier.
+ * @param productID The product identifier.
+ * @return YES if the inventory contains the associated product, NO otherwise.
+ */
 - (BOOL)containsProduct:(NSString *)productID;
+/**
+ * Return the subscription product matching a particular subscription product key.
+ * @param productKey The subscription product key.
+ * @return A matching UASubscriptionProduct.
+ */
 - (UASubscriptionProduct *)productForKey:(NSString *)productKey;
 
 //Private

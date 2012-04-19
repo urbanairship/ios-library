@@ -27,6 +27,13 @@
 
 // one day in seconds
 #define kDefaultUrlCacheExpirationInterval 86400
+#define kUrlCacheCompoundKeyDelimiter @"<-version_product->"
+#define kUrlCacheProductURLKey @"productURL"
+#define kUrlCacheProductVersionKey @"version"
+#define kUrlCacheContentDictonaryKey @"content"
+#define kUrlCacheTimestampDictionaryKey @"timestamps"
+
+
 
 @interface UAContentURLCache : NSObject {
     NSMutableDictionary *contentDictionary; //of product url string -> content NSURL
@@ -38,8 +45,8 @@
 + (UAContentURLCache *)cacheWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
 - (id)initWithExpirationInterval:(NSTimeInterval)interval withPath:(NSString *)pathString;
 
-- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL;
-- (NSURL *)contentForProductURL:(NSURL *)productURL;
+- (void)setContent:(NSURL *)contentURL forProductURL:(NSURL *)productURL withVersion:(NSNumber*)version;
+- (NSURL *)contentForProductURL:(NSURL *)productURL withVersion:(NSNumber*)version;
 
 @property (nonatomic, retain) NSMutableDictionary *contentDictionary;
 @property (nonatomic, retain) NSMutableDictionary *timestampDictionary;

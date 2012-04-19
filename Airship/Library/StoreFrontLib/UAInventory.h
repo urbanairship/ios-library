@@ -33,6 +33,9 @@
 @class UA_Reachability;
 @class UAProduct;
 
+/**
+ * This class manages the IAP inventory.
+ */
 @interface UAInventory : UAObservable<SKProductsRequestDelegate> {
 
   @private
@@ -52,26 +55,63 @@
     NSString *purchasingProductIdentifier;
 }
 
+/**
+ * The the inventory's status, as a UAInventoryStatus enum value.
+ */
 @property (nonatomic, assign) UAInventoryStatus status;
+/**
+ * The key used to determine the inventory's sort order.
+ */
 @property (nonatomic, retain) NSString *orderBy;
+
 @property (nonatomic, retain) NSString *purchasingProductIdentifier;
 
+/**
+ * Loads the inventory.
+ */
 - (void)loadInventory;
 - (void)groupInventory;
 - (void)resetReloadCount;
 - (void)reloadInventory;
 
-
+/**
+ * Returns a subset of products corresponding to a particular product type.
+ * @param type The UAProductType enum value corresponding to the product type.
+ * @return A subset of products as an NSArray.
+ */
 - (NSArray *)productsForType:(UAProductType)type;
+/**
+ * Returns the UAProduct instance from the inventory that corresponds to a particular identifier.
+ * @param productId The associated product identifier.
+ * @return A UAProduct instance.
+ */
 - (UAProduct *)productWithIdentifier:(NSString *)productId;
+/**
+ * Checks whether the inventory contains a particular product by identifier.
+ * @param productId The product identifier.
+ * @return YES if the associated product is present in the inventory, NO otherwise.
+ */
 - (BOOL)hasProductWithIdentifier:(NSString *)productId;
+
 - (UAProduct *)productAtIndex:(int)index;
 
-
+/**
+ * Sets the product display order.
+ * @param key A key constant that determines the sort order.
+ * @param ascending A BOOL indicating whether to sort in ascending order.
+ */
 - (void)setOrderBy:(NSString *)key ascending:(BOOL)ascending;
+
 - (void)sortInventory;
 
+/**
+ * Purchases a particular product by identifier.
+ * @param productIdentifier The product's associated identifier.
+ */
 - (void)purchase:(NSString *)productIdentifier;
+/**
+ * Purchases all updated products.
+ */
 - (void)updateAll;
 
 + (NSString *)localizedPrice:(SKProduct *)product;

@@ -37,6 +37,9 @@
 @class UAContentURLCache;
 @class UASubscriptionContent;
 
+/**
+ * This class handles subscription downloads and decompression.
+ */
 @interface UASubscriptionDownloadManager : NSObject <UADownloadManagerDelegate> {
   @private
     NSMutableArray *pendingSubscriptionContent;
@@ -48,8 +51,15 @@
     BOOL createProductIDSubdir;
 }
 
+/**
+ * The download directory.  If not set by the user, this will return a default value.
+ */
 @property (nonatomic, retain) NSString *downloadDirectory;
 @property (nonatomic, retain) UAContentURLCache *contentURLCache;
+/**
+ * Indicates whether to create a subscription key or product ID subdirectory for downloaded content.
+ * Defaults to YES.
+ */
 @property (nonatomic, assign) BOOL createProductIDSubdir;
 @property (nonatomic, retain) NSMutableArray *pendingSubscriptionContent;
 @property (nonatomic, retain) NSMutableArray *decompressingSubscriptionContent;

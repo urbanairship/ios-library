@@ -24,8 +24,8 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "UAirship.h"
-
 
 @interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver> {
     IBOutlet UITableView *tableView;
@@ -39,14 +39,17 @@
     
     UITableViewCell *helpSoundsCell;
     UITableViewCell *helpLogCell;
+    UITableViewCell *locationCell_;
 
     UIViewController *tokenViewController;
     UIViewController *aliasViewController;
     UIViewController *tagsViewController;
+
 }
 
 @property (nonatomic, retain) UITableView *tableView;
 @property (nonatomic, retain) UIImageView *footerImageView;
+@property (nonatomic, retain) UITableViewCell *locationCell;
 
 - (void)initCells;
 - (void)updateCellValues;

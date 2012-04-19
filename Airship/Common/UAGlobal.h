@@ -45,7 +45,7 @@ extern BOOL logging; // Default is false
 #define UALOG UA_DLog
 
 // constants
-#define kAirshipProductionServer @"https://go.urbanairship.com"
+#define kAirshipProductionServer @"https://device-api.urbanairship.com"
 
 //legacy paths
 #define kUAOldDirectory [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \

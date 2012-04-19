@@ -105,7 +105,7 @@ UA_VERSION_INTERFACE(UAInboxVersion)
 /**
  * The main class for interacting with the Rich Push Inbox.
  *
- * This class bridges library functionaly and UI and is the main point of interaction.
+ * This class bridges library functionality with the UI and is the main point of interaction.
  * Most implementations will only use functionality found in this class.
  */
 @interface UAInbox : NSObject {

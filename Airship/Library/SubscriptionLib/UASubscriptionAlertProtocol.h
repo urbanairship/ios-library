@@ -25,14 +25,32 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * An enum of the possible subscription alerts.
+ */
 typedef enum {
+    //TODO: remove?
     UASubscriptionAlertShowUserEmail = 0,
+    /**
+     * The transaction failed.
+     */
     UASubscriptionAlertFailedTransaction,
+    /**
+     * A restore failed.
+     */
     UASubscriptionAlertFailedRestore
 } UASubscriptionAlertType;
 
+/**
+ * Implementers of this protocol will receive callbacks
+ * when IAP events requiring the display of alerts occur.
+ */
 @protocol UASubscriptionAlertProtocol <NSObject>
 
+/**
+ * Show an alert appropriate for the passed type.
+ * @param typee A UASubscriptionAlertType enum value.
+ */
 - (void)showAlert:(UASubscriptionAlertType)type for:(id)sender;
 
 @end

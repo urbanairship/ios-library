@@ -132,7 +132,7 @@
     //cache the content url
     UALOG(@"caching content url: %@ for download url: %@", contentURLString, content.downloadURL);
     NSURL *contentURL = [NSURL URLWithString:contentURLString];
-    [contentURLCache setContent:contentURL forProductURL:content.downloadURL];
+    [contentURLCache setContent:contentURL forProductURL:content.downloadURL withVersion:[NSNumber numberWithInt:content.revision]];
     
     [self downloadContent:content withContentURL:contentURL];
 }
@@ -180,9 +180,23 @@
 
 - (void)resumePendingSubscriptionContent {
     UALOG(@"Resume pending SubscriptionContent in purchasing queue %@", pendingSubscriptionContent);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if (![UASubscriptionManager shared].inventory.hasLoaded) {
+        UALOG(@"Warning: inventory has not yet loaded, cancelling resume");
+        return;
+    }
+
     for (NSString *identifier in pendingSubscriptionContent) {
         UASubscriptionContent *subscriptionContent = [[UASubscriptionManager shared].inventory contentForKey:identifier];
-        [self download:subscriptionContent];
+        //if subscriptionContent is nil, the inventory is either currently invalidated or the contents have been
+        //changed remotely
+        if (subscriptionContent) {
+            [self download:subscriptionContent];
+        } else {
+            UALOG(@"Warning: no subscription content found for pending download identifier %@", identifier);
+        }
     }
     
     // Reconnect downloading request with newly created subscription content
@@ -217,12 +231,20 @@
     
     zipDownloadContent.decompressDelegate = self;
     
-    if(self.createProductIDSubdir) {
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:zipDownloadContent.downloadFileName]];
-    } else {
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@", self.downloadDirectory];
+    zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                  [self.downloadDirectory stringByAppendingPathComponent:content.subscriptionKey]];
+    
+    if (self.createProductIDSubdir) {
         
+        // Use the content key as the subdirectory unless the
+        // product ID is available
+        NSString *subdirectory = content.contentKey;
+        if ([content.productIdentifier length] > 0) {
+            subdirectory = content.productIdentifier;
+        }
+        
+        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
+                                                      [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
     }
     
     UALOG(@"DecompressedContentPath - '%@",zipDownloadContent.decompressedContentPath);
@@ -260,11 +282,24 @@
 }
 
 - (void)resumeDecompressingSubscriptionContent {
+    UALOG(@"Resume decompressing subscription content in queue %@", decompressingSubscriptionContent);
+
+    //if the inventory is currently loading the contents will be empty, so there is
+    //no point in continuing. log a warning so that it's clear this is the case
+    if (![UASubscriptionManager shared].inventory.hasLoaded) {
+        UALOG(@"Warning: inventory has not yet loaded, cancelling resume");
+        return;
+    }
+
     for (NSString *identifier in decompressingSubscriptionContent) {
         if (![currentlyDecompressingContent containsObject:identifier]) {
-            UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];        
-            UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
-            [self decompressZipDownloadContent:zipDownloadContent];
+            UASubscriptionContent *content = [[UASubscriptionManager shared].inventory contentForKey:identifier];
+            if (content) {
+                UAZipDownloadContent *zipDownloadContent = [self zipDownloadContentForSubscriptionContent:content];
+                [self decompressZipDownloadContent:zipDownloadContent];
+            } else {
+                UALOG(@"Warning: no subscription content found for pending decompression with identifier %@", identifier);
+            }
         }
     }
 }
@@ -290,25 +325,9 @@
 - (void)requestDidSucceed:(id)downloadContent {
     if ([downloadContent isKindOfClass:[UAZipDownloadContent class]]) {
         UAZipDownloadContent *zipDownloadContent = (UAZipDownloadContent *)downloadContent;
-        zipDownloadContent.decompressDelegate = self;
         
         UASubscriptionContent *subscriptionContent = (UASubscriptionContent *)zipDownloadContent.userInfo;
-        zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                      [self.downloadDirectory stringByAppendingPathComponent:subscriptionContent.subscriptionKey]];
 
-        if (self.createProductIDSubdir) {
-            
-            // Use the content key as the subdirectory unless the
-            // product ID is available
-            NSString *subdirectory = subscriptionContent.contentKey;
-            if ([subscriptionContent.productIdentifier length] > 0) {
-                subdirectory = subscriptionContent.productIdentifier;
-            }
-            
-            zipDownloadContent.decompressedContentPath = [NSString stringWithFormat:@"%@/",
-                                                          [zipDownloadContent.decompressedContentPath stringByAppendingPathComponent:subdirectory]];
-        }
-        
         [self addDecompressingSubscriptionContent:subscriptionContent];
         [self removePendingSubscriptionContent:subscriptionContent];
         
@@ -353,7 +372,7 @@
     
     [self addPendingSubscriptionContent:content];
 
-    NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL];
+    NSURL *contentURL = [contentURLCache contentForProductURL:content.downloadURL withVersion:[NSNumber numberWithInt:content.revision]];
     if (contentURL) {
         UALOG(@"downloading from cached contentURL: %@", contentURL);
         [self downloadContent:content withContentURL:contentURL];

@@ -37,6 +37,10 @@
     IBOutlet UISwitch *quietTimeSwitch;
     UITableViewCell *fromCell;
     UITableViewCell *toCell;
+    
+    UITableViewCell *airshipLocationEnabledCell_;
+    UILabel *airshipLocationEnabledLabel_;
+    UISwitch *airshipLocationEnabledSwitch_;
 
     IBOutlet UIDatePicker *datePicker;
     CGRect pickerShownFrame, pickerHiddenFrame;
@@ -58,6 +62,10 @@
 @property (nonatomic, retain)UISwitch *quietTimeSwitch;
 @property (nonatomic, retain)UITableViewCell *fromCell;
 @property (nonatomic, retain)UITableViewCell *toCell;
+
+@property (nonatomic, retain) IBOutlet UISwitch *airshipLocationEnabledSwitch;
+@property (nonatomic, retain) IBOutlet UILabel *airshipLocationEnabledLabel;
+@property (nonatomic, retain) IBOutlet UITableViewCell *airshipLocationEnabledCell;
 
 
 - (IBAction)quit;

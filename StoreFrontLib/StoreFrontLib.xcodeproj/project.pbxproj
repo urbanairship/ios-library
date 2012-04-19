@@ -38,7 +38,7 @@
 		1813EC3212796005009DEB29 /* UAStoreKitObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStoreKitObserver.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* StoreFrontLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFrontLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libStoreFront-2.2.10.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libStoreFront-2.2.10.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libStoreFront-2.2.11.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libStoreFront-2.2.11.a"; path = "libStoreFront-2.2.13.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +56,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libStoreFront-2.2.10.a */,
+				D2AAC07E0554694100DB518D /* libStoreFront-2.2.11.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -159,7 +159,7 @@
 			);
 			name = StoreFrontLib;
 			productName = StoreFrontLib;
-			productReference = D2AAC07E0554694100DB518D /* libStoreFront-2.2.10.a */;
+			productReference = D2AAC07E0554694100DB518D /* libStoreFront-2.2.11.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -211,7 +211,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2.2.10;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/StoreFrontLib.dst;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -234,7 +234,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CURRENT_PROJECT_VERSION = 2.2.10;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/StoreFrontLib.dst;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -254,7 +254,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 2.2.7;
+				CURRENT_PROJECT_VERSION = 2.3.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_THUMB_SUPPORT = NO;
@@ -281,7 +281,7 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 2.2.7;
+				CURRENT_PROJECT_VERSION = 2.3.0;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

@@ -32,20 +32,49 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @class UAAsyncImageView;
 
-// this enum has overlapping status states
-// UAProductStatusDownloading includes
+/**
+ * An enum of the possible product states.
+ */
 typedef enum UAProductStatus {
+    /**
+     * The product has not been purchased.
+     */
     UAProductStatusUnpurchased = 0,
+    /**
+     * The product is currently being purchased.
+     */
     UAProductStatusPurchasing,
+    /**
+     * The product's receipt is being verified.
+     */
     UAProductStatusVerifyingReceipt,
-    UAProductStatusPurchased, // purchased, but a download is pending
-    UAProductStatusDownloading, // transient state
+    /**
+     * The product is purchased, but a download is still pending.
+     */
+    UAProductStatusPurchased,
+    /**
+     * The product is currently downloading.
+     */
+    UAProductStatusDownloading,
+    /**
+     * The product is currently decompressing.
+     */
     UAProductStatusDecompressing, // transient state 
+    /**
+     * The product is installed.
+     */
     UAProductStatusInstalled,
+    /**
+     * The product is installed but an update is available.
+     */
     UAProductStatusHasUpdate
 } UAProductStatus;
 
-
+/**
+ * This class represents a product in the IAP inventory.  Instances of
+ * UAProduct should be considered ephemeral, as they are instantiated
+ * when the inventory is loaded.
+ */
 @interface UAProduct : UAObservable <NSCopying, UA_ASIProgressDelegate> {
   @private
     NSString *productIdentifier;
@@ -71,30 +100,87 @@ typedef enum UAProductStatus {
     SKPaymentTransaction *transaction;
 }
 
+/**
+ * The associated SKProduct instance.
+ */
 @property (nonatomic, retain) SKProduct *skProduct;
+/**
+ * The product identifier string.
+ */
 @property (nonatomic, retain) NSString *productIdentifier;
+/**
+ * The preview image URL.
+ */
 @property (nonatomic, retain) NSURL *previewURL;
+/**
+ * The preview image view.
+ */
 @property (nonatomic, retain) UAAsyncImageView *preview;
+/**
+ * The icon URL.
+ */
 @property (nonatomic, retain) NSURL *iconURL;
+/**
+ * The icon image view.
+ */
 @property (nonatomic, retain) UAAsyncImageView *icon;
+/**
+ * The download URL.
+ */
 @property (nonatomic, retain) NSURL *downloadURL;
+/**
+ * The revision number.
+ */
 @property (nonatomic, assign) int revision;
+/**
+ * The file size in bytes.
+ */
 @property (nonatomic, assign) double fileSize;
+/**
+ * The price as a string.
+ */
 @property (nonatomic, retain) NSString *price;
+/**
+ * The price as an NSDecimalNumber.
+ */
 @property (nonatomic, retain) NSDecimalNumber *priceNumber;
+/**
+ * The product description.
+ */
 @property (nonatomic, retain) NSString *productDescription;
+/**
+ * The product title.
+ */
 @property (nonatomic, retain) NSString *title;
+/**
+ * The purchase receipt, if present.
+ */
 @property (nonatomic, copy) NSString *receipt;
+/**
+ * A BOOL indicating whether the product is free.
+ */
 @property (nonatomic, assign) BOOL isFree;
+/**
+ * The current status of the product, as a UAProductStatus enum value.
+ */
 @property (nonatomic, assign) UAProductStatus status;
+/**
+ * The product's download progress as a float between 0 and 1.
+ */
 @property (nonatomic, assign) float progress;
-
+/**
+ * The product's associated SKPaymentTranscation.
+ */
 @property (nonatomic, assign) SKPaymentTransaction *transaction;
 
 - (id)init;
 + (UAProduct *)productFromDictionary:(NSDictionary *)item;
 - (NSComparisonResult)compare:(UAProduct *)product;
 - (void)resetStatus;
+/**
+ * Indicates whether the product has an update available.
+ * @return YES if an update is available, NO otherwise.
+ */
 - (BOOL)hasUpdate;
 
 - (void)setProgress:(float)_progress;
