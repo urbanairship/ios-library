@@ -397,7 +397,18 @@
 #pragma mark -
 #pragma mark Automatic Location Update on Foreground
 
--(void)testAutomaticLocationUpdateOnForegroundShouldUpdateCases {
+- (void)testAutomaticLocationOnForegroundEnabledCallsReportCurrentLocation {
+    id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
+    locationService.automaticLocationOnForegroundEnabled = NO;
+    locationService.singleLocationProvider = mockStandard;
+    [[mockLocationService expect] reportCurrentLocation];
+    locationService.automaticLocationOnForegroundEnabled = YES;
+    [mockLocationService verify];
+    [[mockLocationService reject] reportCurrentLocation];
+    locationService.automaticLocationOnForegroundEnabled = YES;
+}
+
+- (void)testAutomaticLocationUpdateOnForegroundShouldUpdateCases {
     // setting automatic location on foreground has the side effect of
     // calling reportCurrentLocation
     [[mockLocationService expect] reportCurrentLocation];

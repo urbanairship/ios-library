@@ -423,10 +423,15 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)setAutomaticLocationOnForegroundEnabled:(BOOL)automaticLocationOnForegroundEnabled {
-    automaticLocationOnForegroundEnabled_ = automaticLocationOnForegroundEnabled;
-    if (automaticLocationOnForegroundEnabled) {
-        [self reportCurrentLocation];
+    if (automaticLocationOnForegroundEnabled_ == automaticLocationOnForegroundEnabled) {
+        return;
     }
+    else {
+        automaticLocationOnForegroundEnabled_ = automaticLocationOnForegroundEnabled;
+        if (automaticLocationOnForegroundEnabled) {
+            [self reportCurrentLocation];
+        }//if(automatic
+    }//else
 }
 
 
