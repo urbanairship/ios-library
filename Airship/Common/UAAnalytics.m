@@ -54,18 +54,16 @@ NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 NSString * const UAAnalyticsOptionsLoggingKey = @"UAAnalyticsOptionsLoggingKey";
+NSString * const UAAnalyticsOptionsLastLocationSendTime = @"UAAnalyticsOptionsLastLocationSendTime";
+// This is only for date formatting when writing to disk.
+NSString * const UAAnalyticsOptionsLocalStorageDateLocal = @"en_US";
 
 UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
 UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
-// Weak link to this notification since it doesn't exist in iOS 3.x
-UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
-UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
-
-@interface UAAnalytics()
-- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
-- (BOOL)shouldSendAnalytics;
-@end
+//// Weak link to this notification since it doesn't exist in iOS 3.x
+//UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
+//UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
 
 @implementation UAAnalytics
 
@@ -78,10 +76,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 @synthesize x_ua_min_batch_interval;
 @synthesize sendInterval;
 @synthesize oldestEventTime;
-@synthesize lastSendTime = lastSendTime_;
 @synthesize sendTimer = sendTimer_;
 @synthesize sendBackgroundTask = sendBackgroundTask_;
 @synthesize notificationUserInfo = notificationUserInfo_;
+
+#pragma mark -
+#pragma mark Object Lifecycle
+
+- (void)invalidate {
+    [sendTimer_ invalidate];
+    self.sendTimer = nil;
+}
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -93,6 +98,83 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     RELEASE_SAFELY(lastLocationSendTime);
     [super dealloc];
 }
+
+- (id)initWithOptions:(NSDictionary *)options {
+    if (self = [super init]) {
+        //set server to default if not specified in options
+        self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
+        analyticsLoggingEnabled = [[options objectForKey:UAAnalyticsOptionsLoggingKey] boolValue];
+        UALOG(@"Analytics logging %@enabled", (analyticsLoggingEnabled ? @"" : @"not "));
+        
+        if (self.server == nil) {
+            self.server = kAnalyticsProductionServer;
+        }
+        
+        connection = nil;
+        
+        databaseSize = 0;
+        [self resetEventsDatabaseStatus];
+        
+        x_ua_max_total = X_UA_MAX_TOTAL;
+        x_ua_max_batch = X_UA_MAX_BATCH;
+        x_ua_max_wait = X_UA_MAX_WAIT;
+        x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+        
+        // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
+        sendInterval = X_UA_MIN_BATCH_INTERVAL;
+        
+        [self restoreFromDefault];
+        [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(refreshSessionWhenNetworkChanged)
+                                                     name:kUA_ReachabilityChangedNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(enterBackground)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(enterForeground)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
+        // App inactive/active for incoming calls, notification center, and taskbar 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(willResignActive)
+                                                     name:UIApplicationWillResignActiveNotification
+                                                   object:nil];
+        
+        self.notificationUserInfo = [options objectForKey:UAAnalyticsOptionsRemoteNotificationKey];
+        
+        /*
+         * This is the Build field in Xcode. If it's not set, use a blank string.
+         */
+        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        if (packageVersion == nil) {
+            packageVersion = @"";
+        }
+        
+        [self initSession];
+        [self setupSendTimer:X_UA_MIN_FIRST_BATCH_UPLOAD];
+        sendBackgroundTask_ = UIBackgroundTaskInvalid;
+        // TODO: add a one time perform selector after delay for init analytics on cold start (app_open)
+    }
+    return self;
+}
+
+- (void)initSession {
+    session = [[NSMutableDictionary alloc] init];
+    [self refreshSessionWhenNetworkChanged];
+    [self refreshSessionWhenActive];
+}
+
+#pragma mark -
+#pragma mark Network Changes
 
 - (void)refreshSessionWhenNetworkChanged {
     
@@ -203,92 +285,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     [session setObject:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 }
 
-- (void)initSession {
-    session = [[NSMutableDictionary alloc] init];
-    [self refreshSessionWhenNetworkChanged];
-    [self refreshSessionWhenActive];
-}
-
-- (id)initWithOptions:(NSDictionary *)options {
-    if (self = [super init]) {
-        //set server to default if not specified in options
-        self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
-        analyticsLoggingEnabled = [[options objectForKey:UAAnalyticsOptionsLoggingKey] boolValue];
-        // TODO: remove this line after testing is complete
-        analyticsLoggingEnabled = YES;
-        UALOG(@"Analytics logging %@enabled", (analyticsLoggingEnabled ? @"" : @"not "));
-        
-        if (self.server == nil) {
-            self.server = kAnalyticsProductionServer;
-        }
-        
-        connection = nil;
-        
-        databaseSize = 0;
-        [self resetEventsDatabaseStatus];
-        
-        x_ua_max_total = X_UA_MAX_TOTAL;
-        x_ua_max_batch = X_UA_MAX_BATCH;
-        x_ua_max_wait = X_UA_MAX_WAIT;
-        x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-        
-        // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
-        sendInterval = X_UA_MIN_BATCH_INTERVAL;
-        
-        [self restoreFromDefault];
-        [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(refreshSessionWhenNetworkChanged)
-                                                     name:kUA_ReachabilityChangedNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(enterBackground)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
-       [[NSNotificationCenter defaultCenter] addObserver:self
-                                                selector:@selector(enterForeground)
-                                                    name:UIApplicationWillEnterForegroundNotification
-                                                  object:nil];
-        // App inactive/active for incoming calls, notification center, and taskbar 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didBecomeActive)
-                                                     name:UIApplicationDidBecomeActiveNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(willResignActive)
-                                                     name:UIApplicationWillResignActiveNotification
-                                                   object:nil];
-
-        self.notificationUserInfo = [options objectForKey:UAAnalyticsOptionsRemoteNotificationKey];
-        
-        /*
-         * This is the Build field in Xcode. If it's not set, use a blank string.
-         */
-        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        if (packageVersion == nil) {
-            packageVersion = @"";
-        }
-        
-        [self initSession];
-        [self setupSendTimer];
-        sendBackgroundTask_ = UIBackgroundTaskInvalid;
-        // TODO: add a one time perform selector after delay for init analytics on cold start (app_open)
-    }
-    return self;
-}
-
-- (void)setupSendTimer {
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:@selector(send)];
-    NSInvocation *sendInvocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    [sendInvocation setTarget:self];
-    [sendInvocation setSelector:@selector(send)];
-    // In Objective C, you don't retain timer, timer retains you
-    // TODO: Remove this test time
-    sendTimer_ = [NSTimer scheduledTimerWithTimeInterval:10.0 invocation:sendInvocation repeats:YES];
-    UA_ANALYTICS_LOG(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
-}
+#pragma mark -
+#pragma mark Application State
 
 - (void)enterForeground {
     UA_ANALYTICS_LOG(@"Enter Foreground.");
@@ -299,7 +297,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     //add app_foreground event
     [self addEvent:[UAEventAppForeground eventWithContext:nil]];
     [self invalidateBackgroundTask];
-    [self setupSendTimer];
+    [self setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
 }
 
 - (void)enterBackground {
@@ -313,15 +311,12 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         if (connection.urlConnection) {
             [connection.urlConnection cancel];
         } 
-        if(sendTimer_){
-            [sendTimer_ invalidate];
-            self.sendTimer = nil;
-        }
+        // NOTE: invalidating the timer at this point is unecessary, because we are rapidly going under
+        // and there is a risk that the unretain reference to the NSTimer is junk anayway
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
     [sendTimer_ invalidate];
-    self.sendTimer = nil;
     [self send];
 }
 
@@ -343,6 +338,36 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     //add activity_stopped / AppInactive event
     [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
+
+#pragma mark -
+#pragma mark NSUserDefaults
+
+- (NSDate*)lastSendTime {
+    NSString* dateString = [[NSUserDefaults standardUserDefaults] stringForKey:UAAnalyticsOptionsLastLocationSendTime];
+    if (!dateString) {
+        return [NSDate distantPast];
+    }
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    // Always use US, for consistency, and because it is not exposed
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
+    [dateFormatter setLocale:locale];
+    NSDate *date = [dateFormatter dateFromString:dateString];
+    if (!date) {
+        return [NSDate distantPast];
+    }
+    return date;
+}
+
+- (void)setLastSendTime:(NSDate *)lastSendTime {
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
+    [dateFormatter setLocale:locale];
+    NSString* dateString = [dateFormatter stringFromDate:lastSendTime];
+    if (dateString) {
+        [[NSUserDefaults standardUserDefaults] setObject:dateString forKey:UAAnalyticsOptionsLastLocationSendTime];
+    }
+}
+
 
 - (void)restoreFromDefault {
     
@@ -390,8 +415,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     */
 }
 
-// TODO: This actually clobbers values in NSUserDefaults if they have been set. Registering defaults is a 
-// different method call
+// TODO: Change this method call to a more descriptive name, and add some documentation
 - (void)saveDefault {
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_total forKey:@"X-UA-Max-Total"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_batch forKey:@"X-UA-Max-Batch"];
@@ -517,7 +541,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     [self invalidateBackgroundTask];
 }
 
-#pragma mark - Custom Property Setters
+#pragma mark - 
+#pragma mark Custom Property Setters
 
 - (void)setSendInterval:(int)newVal {
     if(newVal < x_ua_min_batch_interval) {
@@ -528,7 +553,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         sendInterval = newVal;
     }
 }
-#pragma mark - Send Logic
+
+#pragma mark - 
+#pragma Send Logic
 
 - (void)resetEventsDatabaseStatus {
     databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
@@ -571,9 +598,9 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         // If there is no background task, and the app is in the background, it is likely that
         // this is a location related event and we should only send every 15 minutes
         else {
-            NSTimeInterval timeSinceLastSend = [lastSendTime_ timeIntervalSinceDate:[NSDate date]]; 
+            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:lastSendTime_]; 
             // timeSinceLastSend should be a negative timer interval since it occured in the past
-            if (timeSinceLastSend < -X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !lastSendTime_) {
+            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !lastSendTime_) {
                 return YES;
             }
             else {
@@ -686,6 +713,24 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     connection = [[UAHTTPConnection connectionWithRequest:request] retain];
     connection.delegate = self;
     [connection start];
+}
+
+#pragma mark -
+#pragma mark NSTimer methods
+- (void)setupSendTimer:(NSTimeInterval)timeInterval {
+    if ([sendTimer_ isValid]) {
+        // Simply invalidating the timer and adding another one is less prone to error. Timers fire date
+        // need to be modified from the thread that the timer is attached to.
+        [sendTimer_ invalidate];
+    }
+    NSMethodSignature *methodSignature = [self methodSignatureForSelector:@selector(send)];
+    NSInvocation *sendInvocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+    [sendInvocation setTarget:self];
+    [sendInvocation setSelector:@selector(send)];
+    // In Objective C, you don't retain timer, timer retains you
+    // TODO: Remove this test time
+    self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval invocation:sendInvocation repeats:YES];
+    UA_ANALYTICS_LOG(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
 }
 
 @end

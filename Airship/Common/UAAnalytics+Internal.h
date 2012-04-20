@@ -51,8 +51,7 @@
 @property (nonatomic, copy) NSString *server;
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
-@property (nonatomic, retain) NSDate *lastSendTime;
-@property (nonatomic, assign) NSTimer *sendTimer;
+@property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
 
@@ -60,4 +59,8 @@
 - (void)saveDefault;
 - (void)resetEventsDatabaseStatus;
 - (void)send;
+- (void)setupSendTimer:(NSTimeInterval)timeInterval;
+- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
+- (BOOL)shouldSendAnalytics;
+- (void)setLastSendTime:(NSDate*)lastSendTime;
 @end

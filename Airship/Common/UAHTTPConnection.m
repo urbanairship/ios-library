@@ -76,8 +76,6 @@
     [body appendData:data];
 }
 
-
-
 @end
 
 @interface UAHTTPConnection()
@@ -92,12 +90,14 @@
     return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
 }
 
+- (id)init {
+    return [super init];
+}
+
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest {
-    self = [super init];
+    self = [self init];
     if (self) {
         request = [httpRequest retain];
-        responseData = nil;
-        urlResponse = nil;
     }
     return self;
 }

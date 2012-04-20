@@ -24,20 +24,35 @@
  */
 
 #import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
+#import "UAirship.h"
 #import <SenTestingKit/SenTestingKit.h>
 
-// Uncomment the next two lines to use OCHamcrest for test assertions:
-//#define HC_SHORTHAND
-//#import <OCHamcrestIOS/OCHamcrestIOS.h>
 
-
-@interface UAAnalyticsTest : SenTestCase
-
+@interface UAAnalyticsTest : SenTestCase {
+    UAAnalytics *analytics;
+}
 @end
-
 
 @implementation UAAnalyticsTest
 
+- (void)setUp {
+    NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
+                                                                      forKey:UAAnalyticsOptionsLoggingKey];
+    analytics = [[UAAnalytics alloc] initWithOptions:options];
+}
+
+- (void)tearDown {
+    RELEASE(analytics);
+}
+
+- (void)testLastSendTimeGetSetMethods {
+    NSDate *testDate = [NSDate dateWithTimeIntervalSinceNow:-42];
+    [analytics setLastSendTime:testDate];
+    NSDate* analyticsDateFromDefaults = [analytics lastSendTime];
+    STAssertEquals(testDate, analyticsDateFromDefaults, nil);
+    
+}
 
 
 @end

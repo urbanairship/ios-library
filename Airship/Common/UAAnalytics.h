@@ -38,12 +38,16 @@
 // maximum amount of time in seconds that events should queue for
 #define X_UA_MAX_WAIT 7*24*3600		// local max of 7 days
 
+// Offset time for use when the app init. This is the time between object
+// creation and first upload. Subsequent uploads are defined by 
+// X_UA_MIN_BATCH_INTERVAL
+#define X_UA_MIN_FIRST_BATCH_UPLOAD 15 // time in seconds
+
 // minimum amount of time in seconds that should elapse between event-server posts
 #define X_UA_MIN_BATCH_INTERVAL 60	// local min of 60s
 
 // minimum amount of time between background location events
-// 900 seconds = 15 minutes
-#define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900
+#define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900 // 900 seconds = 15 minutes
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
@@ -64,8 +68,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (assign, readonly) int x_ua_min_batch_interval;
 @property (nonatomic, assign) int sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
-@property (nonatomic, retain, readonly) NSDate *lastSendTime;
-@property (nonatomic, assign, readonly) NSTimer *sendTimer;
+@property (nonatomic, retain, readonly) NSTimer *sendTimer;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
@@ -73,5 +76,13 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 - (id)initWithOptions:(NSDictionary *)options;
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
+
+/** This class contains an NSTimer. This timer must be invalidated before
+ this class is released, or there will be a memory leak. Call invalidate
+ before deallocating this class */
+- (void)invalidate;
+
+/** Date representing the last attempt to send analytics */
+- (NSDate*)lastSendTime;
 
 @end

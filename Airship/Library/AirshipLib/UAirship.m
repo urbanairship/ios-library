@@ -99,6 +99,9 @@ BOOL logging = false;
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
     RELEASE_SAFELY(deviceToken);
+    // Analytics contains an NSTimer, and the invalidate method is required
+    // before dealloc
+    [analytics invalidate];
     RELEASE_SAFELY(analytics);
     RELEASE_SAFELY(locationService_);
     [super dealloc];

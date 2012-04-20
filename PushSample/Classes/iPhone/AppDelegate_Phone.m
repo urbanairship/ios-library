@@ -27,6 +27,7 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UALocationCommonValues.h"
+#import "UAAnalytics.h"
 
 @implementation AppDelegate_Phone
 
@@ -48,6 +49,7 @@
     
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    [takeOffOptions setValue:[NSNumber numberWithBool:YES] forKey:UAAnalyticsOptionsLoggingKey];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
     // Create Airship singleton that's used to talk to Urban Airhship servers.
