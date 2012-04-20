@@ -23,35 +23,64 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <OCMock/OCMock.h>
+#import <OCMock/OCMConstraint.h>
+#import <SenTestingKit/SenTestingKit.h>
 #import "UAAnalytics.h"
+#import "UAEvent.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship.h"
-#import <SenTestingKit/SenTestingKit.h>
 
 
 @interface UAAnalyticsTest : SenTestCase {
     UAAnalytics *analytics;
 }
+
 @end
 
 @implementation UAAnalyticsTest
+
 
 - (void)setUp {
     NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
                                                                       forKey:UAAnalyticsOptionsLoggingKey];
     analytics = [[UAAnalytics alloc] initWithOptions:options];
+//    arg = nil;
+//    getSingleArg = ^(NSInvocation *invocation){
+//        [invocation getArgument:&arg atIndex:2];
+//    };
 }
 
 - (void)tearDown {
+    [analytics invalidate];
     RELEASE(analytics);
 }
 
 - (void)testLastSendTimeGetSetMethods {
-    NSDate *testDate = [NSDate dateWithTimeIntervalSinceNow:-42];
+    // setup a date with a random number to make sure values aren't stale
+    NSDate *testDate = [NSDate dateWithTimeIntervalSinceNow:arc4random() % 9999];
     [analytics setLastSendTime:testDate];
     NSDate* analyticsDateFromDefaults = [analytics lastSendTime];
-    STAssertEquals(testDate, analyticsDateFromDefaults, nil);
-    
+    NSTimeInterval timeBetweenDates = [testDate timeIntervalSinceDate:analyticsDateFromDefaults];
+    // Date formatting for string representation truncates the date value to the nearest second
+    // hence, expect to be off by a second
+    STAssertEqualsWithAccuracy(timeBetweenDates, (NSTimeInterval)0, 1, nil);
+}
+
+- (void)testHandleNotification {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    __block id arg;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    [analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"]];
+    STAssertNotNil(arg, nil);
+    STAssertTrue([arg isKindOfClass:[UAEventPushReceived class]], nil);    
+}
+
+- (void)testEnterForeground {
+    [analytics enterForeground];
 }
 
 

@@ -63,4 +63,6 @@
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
 - (BOOL)shouldSendAnalytics;
 - (void)setLastSendTime:(NSDate*)lastSendTime;
+- (void)enterForeground;
+- (void)enterBackground;
 @end

@@ -351,6 +351,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     // Always use US, for consistency, and because it is not exposed
     NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
     [dateFormatter setLocale:locale];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
     NSDate *date = [dateFormatter dateFromString:dateString];
     if (!date) {
         return [NSDate distantPast];
@@ -362,6 +364,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
     [dateFormatter setLocale:locale];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
     NSString* dateString = [dateFormatter stringFromDate:lastSendTime];
     if (dateString) {
         [[NSUserDefaults standardUserDefaults] setObject:dateString forKey:UAAnalyticsOptionsLastLocationSendTime];
