@@ -52,7 +52,7 @@
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
 extern NSString * const UAAnalyticsOptionsLoggingKey;
-
+extern NSString * const UAAnalyticsOptionsLastLocationSendTime;
 typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
 extern UAAnalyticsValue * const UAAnalyticsFalseValue;
@@ -61,12 +61,12 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
 @property (nonatomic, copy, readonly) NSString *server;
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
-@property (assign, readonly) int databaseSize;
-@property (assign, readonly) int x_ua_max_total;
-@property (assign, readonly) int x_ua_max_batch;
-@property (assign, readonly) int x_ua_max_wait;
-@property (assign, readonly) int x_ua_min_batch_interval;
-@property (nonatomic, assign) int sendInterval;
+@property (nonatomic, assign, readonly) int databaseSize;
+@property (nonatomic, assign, readonly) int x_ua_max_total;
+@property (nonatomic, assign, readonly) int x_ua_max_batch;
+@property (nonatomic, assign, readonly) int x_ua_max_wait;
+@property (nonatomic, assign, readonly) int x_ua_min_batch_interval;
+@property (nonatomic, assign, readonly) int sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain, readonly) NSTimer *sendTimer;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;

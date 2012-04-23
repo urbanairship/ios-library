@@ -69,7 +69,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 @synthesize server;
 @synthesize session;
-@synthesize databaseSize;
+@synthesize notificationUserInfo = notificationUserInfo_;
+@synthesize connection = connection_;
+@synthesize databaseSize = databaseSize_;
 @synthesize x_ua_max_total;
 @synthesize x_ua_max_batch;
 @synthesize x_ua_max_wait;
@@ -78,11 +80,12 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 @synthesize oldestEventTime;
 @synthesize sendTimer = sendTimer_;
 @synthesize sendBackgroundTask = sendBackgroundTask_;
-@synthesize notificationUserInfo = notificationUserInfo_;
 
 #pragma mark -
 #pragma mark Object Lifecycle
 
+// This has to be called before dealloc, or dealloc will never be called
+// There is a retain cycle setup between this class and the timer.
 - (void)invalidate {
     [sendTimer_ invalidate];
     self.sendTimer = nil;
@@ -92,8 +95,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     RELEASE_SAFELY(notificationUserInfo_);
     RELEASE_SAFELY(session);
-    RELEASE_SAFELY(connection);
-    RELEASE_SAFELY(lastSendTime_);
+    RELEASE_SAFELY(connection_);
     RELEASE_SAFELY(server);
     RELEASE_SAFELY(lastLocationSendTime);
     [super dealloc];
@@ -110,9 +112,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             self.server = kAnalyticsProductionServer;
         }
         
-        connection = nil;
-        
-        databaseSize = 0;
         [self resetEventsDatabaseStatus];
         
         x_ua_max_total = X_UA_MAX_TOTAL;
@@ -308,11 +307,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     self.notificationUserInfo = nil;
     // Only place where a background task is created
     self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        if (connection.urlConnection) {
-            [connection.urlConnection cancel];
+        if (connection_.urlConnection) {
+            [connection_.urlConnection cancel];
         } 
-        // NOTE: invalidating the timer at this point is unecessary, because we are rapidly going under
-        // and there is a risk that the unretain reference to the NSTimer is junk anayway
+        [sendTimer_ invalidate];
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
@@ -322,6 +320,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)invalidateBackgroundTask {
     if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
+        UA_ANALYTICS_LOG(@"Ending analytics background task %u", sendBackgroundTask_);
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }
@@ -340,6 +339,28 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 #pragma mark -
+#pragma mark NSDate Formatting Methods
+
+- (NSDate*) dateFromString:(NSString*)stringRepresentation {
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    // Always use US, for consistency, and because it is not exposed
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
+    [dateFormatter setLocale:locale];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+    return [dateFormatter dateFromString:stringRepresentation];
+}
+
+- (NSString*)stringFromDate:(NSDate*)date {
+    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
+    [dateFormatter setLocale:locale];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
+    return [dateFormatter stringFromDate:date];
+}
+
+#pragma mark -
 #pragma mark NSUserDefaults
 
 - (NSDate*)lastSendTime {
@@ -347,13 +368,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     if (!dateString) {
         return [NSDate distantPast];
     }
-    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    // Always use US, for consistency, and because it is not exposed
-    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
-    [dateFormatter setLocale:locale];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
-    NSDate *date = [dateFormatter dateFromString:dateString];
+    NSDate* date = [self dateFromString:dateString];
     if (!date) {
         return [NSDate distantPast];
     }
@@ -361,16 +376,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)setLastSendTime:(NSDate *)lastSendTime {
-    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:UAAnalyticsOptionsLocalStorageDateLocal] autorelease];
-    [dateFormatter setLocale:locale];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
-    NSString* dateString = [dateFormatter stringFromDate:lastSendTime];
+    NSString *dateString = [self stringFromDate:lastSendTime];
     if (dateString) {
         [[NSUserDefaults standardUserDefaults] setObject:dateString forKey:UAAnalyticsOptionsLastLocationSendTime];
     }
 }
+
+
 
 
 - (void)restoreFromDefault {
@@ -402,7 +414,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     
     self.sendInterval = sendInterval;
     
-    NSDate *date = [[NSUserDefaults standardUserDefaults] objectForKey:@"X-UA-Last-Send-Time"];
+    NSDate *date = [[NSUserDefaults standardUserDefaults] objectForKey:UAAnalyticsOptionsLastLocationSendTime];
     
     if (date != nil) {
         self.lastSendTime = date;
@@ -425,8 +437,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_batch forKey:@"X-UA-Max-Batch"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_wait forKey:@"X-UA-Max-Wait"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
-    [[NSUserDefaults standardUserDefaults] setObject:lastSendTime_ forKey:@"X-UA-Last-Send-Time"];
-    
+    // Only write a new date to defaults if existing date is nil. lastSendTime is written to defaults
+    // on every assignment
+    if (self.lastSendTime == nil) {
+        self.lastSendTime = [NSDate date];
+    }
     /*
     UALOG(@"Response Headers Saved:");
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
@@ -452,7 +467,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)addEvent:(UAEvent *)event {
     UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
     [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
-    databaseSize += [event getEstimatedSize];
+    self.databaseSize += [event getEstimatedSize];
     if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
     }
@@ -467,10 +482,15 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
     UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
-     
-    RELEASE_SAFELY(connection);
+    self.connection = nil;
     if ([response statusCode] == 200) {
-        [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
+        id userInfo = request.userInfo;
+        if([userInfo isKindOfClass:[NSArray class]]){
+            [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
+        }
+        else {
+            UALOG(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
+        }
         [self resetEventsDatabaseStatus];
     } 
     // Update analytics settings with new header values
@@ -534,14 +554,21 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             x_ua_min_batch_interval = tmp;
         }
         
-        self.sendInterval = sendInterval;        
+        NSString* stringDate = [[response allHeaderFields] valueForKey:UAAnalyticsOptionsLastLocationSendTime];
+            
+        if (stringDate) {
+            NSDate *date = [self dateFromString:stringDate];
+            if (date) {
+                self.lastSendTime = date;
+            }
+        }
         [self saveDefault];
     }
 }
 
 - (void)requestDidFail:(UAHTTPRequest *)request {
     UA_ANALYTICS_LOG(@"Send analytics data request failed.");
-    RELEASE_SAFELY(connection);
+    self.connection = nil;
     [self invalidateBackgroundTask];
 }
 
@@ -559,10 +586,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 #pragma mark - 
-#pragma Send Logic
+#pragma mark Send Logic
 
 - (void)resetEventsDatabaseStatus {
-    databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
+    self.databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
     if ([events count] > 0) {
         NSDictionary *event = [events objectAtIndex:0];
@@ -570,7 +597,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     } else {
         oldestEventTime = 0;
     }    
-    UA_ANALYTICS_LOG(@"Database size: %d", databaseSize);
+    UA_ANALYTICS_LOG(@"Database size: %d", databaseSize_);
     UA_ANALYTICS_LOG(@"Oldest Event: %f", oldestEventTime);
 }
 
@@ -579,7 +606,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_ANALYTICS_LOG("Analytics disabled.");
         return NO;
     }
-    if (connection != nil) {
+    if (connection_ != nil) {
         UA_ANALYTICS_LOG(@"Analytics upload in progress");
         return NO;
     }    
@@ -588,7 +615,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_ANALYTICS_LOG(@"No analytics events to upload");
         return NO;
     }   
-    if (databaseSize <= 0) {
+    if (databaseSize_ <= 0) {
         UA_ANALYTICS_LOG(@"Analytics database size is zero, no analytics sent");
         return NO;
     }
@@ -602,9 +629,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         // If there is no background task, and the app is in the background, it is likely that
         // this is a location related event and we should only send every 15 minutes
         else {
-            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:lastSendTime_]; 
+            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime]; 
             // timeSinceLastSend should be a negative timer interval since it occured in the past
-            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !lastSendTime_) {
+            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !self.lastSendTime) {
                 return YES;
             }
             else {
@@ -642,13 +669,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 // as a dictionary
 - (NSArray*) prepareEventsForUpload {
     //Delete older events until upload size threshold is met
-    while (databaseSize > x_ua_max_total) {
+    while (databaseSize_ > x_ua_max_total) {
         UA_ANALYTICS_LOG(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
     int eventCount = [[UAAnalyticsDBManager shared] eventCount];
-    int avgEventSize = databaseSize / eventCount;
+    int avgEventSize = databaseSize_ / eventCount;
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:x_ua_max_batch/avgEventSize];
     NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
     int actualSize = 0;
@@ -714,9 +741,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UA_ANALYTICS_LOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UA_ANALYTICS_LOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];
-    connection = [[UAHTTPConnection connectionWithRequest:request] retain];
-    connection.delegate = self;
-    [connection start];
+    self.connection = [UAHTTPConnection connectionWithRequest:request];
+    connection_.delegate = self;
+    [connection_ start];
 }
 
 #pragma mark -

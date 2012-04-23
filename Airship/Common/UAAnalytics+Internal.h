@@ -32,15 +32,14 @@
     NSString *server;
     NSMutableDictionary *session;
     NSDictionary *notificationUserInfo_;
-    UAHTTPConnection *connection;
+    UAHTTPConnection *connection_;
     int x_ua_max_total;
     int x_ua_max_batch;
     int x_ua_max_wait;
     int x_ua_min_batch_interval;	
 	int sendInterval;
-    int databaseSize;
+    int databaseSize_;
     NSTimeInterval oldestEventTime;    
-    NSDate *lastSendTime_;
     NSDate *lastLocationSendTime;    
     NSTimer *sendTimer_;    
     BOOL analyticsLoggingEnabled;    
@@ -50,19 +49,61 @@
 
 @property (nonatomic, copy) NSString *server;
 @property (nonatomic, retain) NSMutableDictionary *session;
+@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+@property (nonatomic, retain) UAHTTPConnection *connection;
+@property (nonatomic, assign) int x_ua_max_total;
+@property (nonatomic, assign) int x_ua_max_batch;
+@property (nonatomic, assign) int x_ua_max_wait;
+@property (nonatomic, assign) int x_ua_min_batch_interval;
+@property (nonatomic, assign) int databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+
 
 - (void)restoreFromDefault;
 - (void)saveDefault;
 - (void)resetEventsDatabaseStatus;
+
+/* Sending analytics */
 - (void)send;
+
+/* Refresh the send timer */
 - (void)setupSendTimer:(NSTimeInterval)timeInterval;
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
+
 - (BOOL)shouldSendAnalytics;
 - (void)setLastSendTime:(NSDate*)lastSendTime;
+
+/* App State */
 - (void)enterForeground;
 - (void)enterBackground;
+- (void)didBecomeActive;
+- (void)willResignActive;
+
+/* Network connectivity */
+- (void)refreshSessionWhenNetworkChanged;
+- (void)refreshSessionWhenActive;
+
+/* Invalidate the background task that will be running
+ if the app has been backgrounded after being active. */
+- (void)invalidateBackgroundTask;
+
+/* Date formatting methods, for writing to NSUserDefaults
+ and potentially for reading data from response headers
+ */
+- (NSDate*) dateFromString:(NSString*)stringRepresentation;
+- (NSString*)stringFromDate:(NSDate*)date;
+
+/* Generate an analytics request with the proper fields */
+- (UAHTTPRequest*)analyticsRequest;
+
+/* Clean up event data for sending
+ Enforce max batch limits
+ Loop through events and discard DB-only items
+ format the JSON field as a dictionary
+ */
+- (NSArray*)prepareEventsForUpload;
+
+
 @end

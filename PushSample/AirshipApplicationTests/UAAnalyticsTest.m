@@ -27,9 +27,15 @@
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import "UAAnalytics.h"
+#import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship.h"
+
+/* This class involves lots of async calls to the web
+ Care should be taken to mock out responses and calls, race conditions
+ can cause tests to fail, these conditions would not occur in normal app 
+ usage */
 
 
 @interface UAAnalyticsTest : SenTestCase {
@@ -45,15 +51,13 @@
     NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
                                                                       forKey:UAAnalyticsOptionsLoggingKey];
     analytics = [[UAAnalytics alloc] initWithOptions:options];
-//    arg = nil;
-//    getSingleArg = ^(NSInvocation *invocation){
-//        [invocation getArgument:&arg atIndex:2];
-//    };
 }
 
 - (void)tearDown {
     [analytics invalidate];
     RELEASE(analytics);
+//    [analytics autorelease];
+//    analytics = nil;
 }
 
 - (void)testLastSendTimeGetSetMethods {
@@ -69,7 +73,7 @@
 
 - (void)testHandleNotification {
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    __block id arg;
+    __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -79,9 +83,275 @@
     STAssertTrue([arg isKindOfClass:[UAEventPushReceived class]], nil);    
 }
 
+//// Refactor this next time it's changed
 - (void)testEnterForeground {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] refreshSessionWhenNetworkChanged];
+    [[mockAnalytics expect]  refreshSessionWhenActive];
+    [[mockAnalytics expect]  invalidateBackgroundTask];
+    [[mockAnalytics expect]  setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [analytics enterForeground];
+    STAssertTrue([arg isKindOfClass:[UAEventAppForeground class]], @"Enter foreground should fire UAEventAppForeground");
+    [mockAnalytics verify];
 }
+- (void)testEnterBackground {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] send];
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    [analytics enterBackground];
+    STAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
+    STAssertTrue(analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
+    STAssertFalse([analytics.sendTimer isValid], @"sendTimer should be invalid");
+    [mockAnalytics verify];
+}
+
+- (void)testInvalidateBackgroundTask {
+    analytics.sendBackgroundTask = 5.0;
+    [analytics invalidateBackgroundTask];
+    STAssertTrue(analytics.sendBackgroundTask == UIBackgroundTaskInvalid, nil);
+}
+
+- (void)testDidBecomeActive {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    [analytics didBecomeActive];
+    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+}
+
+- (void)testWillResignActive {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    [analytics willResignActive];
+    STAssertTrue([arg isKindOfClass:[UAEventAppInactive class]], @"willResignActive should fire UAEventAppInactive");
+}
+
+- (void)testRestoreFromDefault {
+    analytics.x_ua_max_batch = 0;
+    analytics.x_ua_max_total = 0;
+    analytics.x_ua_max_wait = 0;
+    analytics.x_ua_min_batch_interval = 0;
+    [[NSUserDefaults standardUserDefaults] setValue:nil forKey:UAAnalyticsOptionsLastLocationSendTime];
+    [analytics restoreFromDefault];
+    NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+    STAssertTrue(analytics.x_ua_max_total == [[defaults valueForKey:@"X-UA-Max-Total"] intValue], nil);
+    STAssertTrue(analytics.x_ua_max_batch == [[defaults valueForKey:@"X-UA-Max-Batch"] intValue], nil);
+    STAssertTrue(analytics.x_ua_max_wait == [[defaults valueForKey:@"X-UA-Max-Wait"] intValue], nil);
+    /* The code establishes the current date as the last send date when NSUserDefaults returns nil
+     This is a cheap two step check, writing this date too and from user defaults occurs elsewhere */
+    STAssertNotNil([[NSUserDefaults standardUserDefaults] valueForKey:UAAnalyticsOptionsLastLocationSendTime], nil);
+    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0.0, 1, nil);
+}
+
+- (void)testSaveDefault  {
+    analytics.x_ua_max_batch = 7;
+    analytics.x_ua_max_total = 7;
+    analytics.x_ua_max_wait = 7;
+    analytics.x_ua_min_batch_interval = 7; 
+    analytics.lastSendTime = nil;
+    [analytics saveDefault];
+    NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == 7, nil);
+    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Batch"] intValue] == 7, nil);
+    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Wait"] intValue] == 7, nil);
+    STAssertTrue([[defaults valueForKey:@"X-UA-Min-Batch-Interval"] intValue] == 7, nil);
+    STAssertNotNil([[NSUserDefaults standardUserDefaults] valueForKey:UAAnalyticsOptionsLastLocationSendTime], nil);
+    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0.0, 1, nil);
+}
+
+- (void)testAddEvent {
+    UAEventAppActive *event = [[[UAEventAppActive alloc] init] autorelease];
+    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    [[mockDBManager expect] addEvent:event withSession:analytics.session];
+    analytics.oldestEventTime = 0;
+    [analytics addEvent:event];
+    [mockDBManager verify];
+    STAssertTrue(analytics.oldestEventTime == [event.time doubleValue], nil);
+}
+
+- (void)testRequestDidSucceed {
+    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
+    NSArray *info = [NSArray arrayWithObject:@"one"];
+    [[[mockRequest stub] andReturn:info] userInfo];
+    id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
+    NSInteger code = 200;
+    [[[mockResponse stub] andReturnValue:OCMOCK_VALUE(code)] statusCode];
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] updateAnalyticsParametersWithHeaderValues:mockResponse];
+    [[mockAnalytics expect] resetEventsDatabaseStatus];
+    [[mockAnalytics expect] invalidateBackgroundTask];
+    [[mockDBManager expect] deleteEvents:info];
+    [analytics requestDidSucceed:mockRequest response:mockResponse responseData:nil];
+    [mockAnalytics verify];
+    [mockDBManager verify];
+    [mockResponse verify];
+    [mockRequest verify];
+    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0, 2, nil);
+}
+
+- (void)testUpdateAnalyticsParameters {
+    NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
+    // Hit all the if statements that prevent values from changing
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_TOTAL + 1] forKey:@"X-Ua-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_BATCH + 1] forKey:@"X-Ua-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT + 1] forKey:@"X-Ua-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL - 1] forKey:@"X-Ua-Min-Batch-Interval"];
+    id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] saveDefault];
+    [[[mockResponse stub] andReturn:headers] allHeaderFields];
+    [analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
+    STAssertEquals(analytics.x_ua_max_total, X_UA_MAX_TOTAL, nil);
+    STAssertEquals(analytics.x_ua_max_batch, X_UA_MAX_BATCH, nil);
+    STAssertEquals(analytics.x_ua_max_wait, X_UA_MAX_WAIT, nil);
+    STAssertEquals(analytics.x_ua_min_batch_interval, X_UA_MIN_BATCH_INTERVAL, nil);
+    [mockAnalytics verify];
+    // end the ifs
+    // hit all the elses
+    headers = [NSMutableDictionary dictionaryWithCapacity:4];
+    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-Ua-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-Ua-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT - 1] forKey:@"X-Ua-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL + 1] forKey:@"X-Ua-Min-Batch-Interval"];
+    [headers setValue:@"4/20/12 4:20:00 PM" forKey:UAAnalyticsOptionsLastLocationSendTime];
+    mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
+    mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] saveDefault];
+    [[[mockResponse stub] andReturn:headers] allHeaderFields];
+    [analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
+    // There is some math here, account for these in the test
+    STAssertEquals(analytics.x_ua_max_total, 5 * 1024, nil);
+    STAssertEquals(analytics.x_ua_max_batch, 5 * 1024, nil);
+    //
+    STAssertEquals(analytics.x_ua_max_wait, X_UA_MAX_WAIT - 1, nil);
+    STAssertEquals(analytics.x_ua_min_batch_interval, X_UA_MIN_BATCH_INTERVAL + 1, nil);
+    NSUInteger dateComponentsRequired = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:dateComponentsRequired
+                                                                       fromDate:analytics.lastSendTime];
+    STAssertEquals(dateComponents.month, 4, nil);
+    STAssertEquals(dateComponents.day, 20, nil);
+    STAssertEquals(dateComponents.year, 2012, nil);
+    STAssertEquals(dateComponents.hour, 16, nil);
+    STAssertEquals(dateComponents.minute, 20, nil);
+    STAssertEquals(dateComponents.second, 0, nil);
+}
+
+- (void)testRequestDidFail {
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] invalidateBackgroundTask];
+    analytics.connection = [UAHTTPConnection connectionWithRequest:mockRequest];
+    [analytics requestDidFail:mockRequest];
+    [mockAnalytics verify];
+    STAssertNil(analytics.connection, nil);
+}
+
+- (void)testShouldSendAnalyticsCore {
+    analytics.server = nil;
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    analytics.server = @"cats";
+    analytics.connection = [UAHTTPConnection connectionWithRequest:nil];
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    analytics.connection = nil;
+    id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    NSInteger zero = 0;
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(zero)] eventCount];
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    analytics.databaseSize = 0;
+    mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    NSInteger five = 5;
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(five)] eventCount];
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+}
+
+- (void)testShouldSendAnalyticsBackgroundLogic {
+    analytics.server = @"cats";
+    analytics.connection = nil;
+    id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    NSInteger five = 5;
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(five)] eventCount];
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    UIApplicationState state = UIApplicationStateBackground;
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
+    analytics.sendBackgroundTask = 9;
+    STAssertTrue([analytics shouldSendAnalytics], nil);
+    analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
+    analytics.lastSendTime = [NSDate distantPast];
+    STAssertTrue([analytics shouldSendAnalytics], nil);
+    analytics.lastSendTime = [NSDate date];
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    state = UIApplicationStateActive;
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
+    STAssertTrue([analytics shouldSendAnalytics], nil);
+}
+
+- (void)testSend {
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        [invocation getArgument:&arg atIndex:2];
+    };
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    id mockConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
+    analytics.connection = mockConnection;
+    // Intercept setConnection to prevent the mock that was just setup from being 
+    // replaced during execution of the send method
+    [[mockAnalytics stub] setConnection:OCMOCK_ANY];
+    [[mockConnection expect] setDelegate:analytics];
+    // Casting this object prevents a compiler warning
+    [(UAHTTPConnection*)[mockConnection expect] start];
+    BOOL yes = YES;
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(yes)] shouldSendAnalytics];
+    UAHTTPRequest *request = [analytics analyticsRequest];
+    id mockRequest = [OCMockObject partialMockForObject:request];
+    [[[mockRequest stub] andDo:getSingleArg] setUserInfo:OCMOCK_ANY];
+    [[[mockAnalytics stub] andReturn:request] analyticsRequest];
+    NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
+    [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
+    [analytics send];
+    [mockConnection verify];
+    STAssertEqualObjects(arg, data, @"UAAnalytics send method not populating request userInfo object with correct data");
+}
+
+// This test is not comprehensive for this method, as the method needs refactoring.
+- (void)testPrepareEventsForUpload {
+    UAEventAppForeground *appEvent = [[UAEventAppForeground alloc] init];
+    // If the events database is empty, everything crashes
+    STAssertNotNil(appEvent, nil);
+    // Remember, the NSUserPreferences are in an unknown state in every test, so reset
+    // preferences if the methods under test rely on them
+    analytics.x_ua_max_total = X_UA_MAX_TOTAL;
+    analytics.x_ua_max_batch = X_UA_MAX_BATCH;
+    [analytics addEvent:appEvent];
+    NSArray* events = [analytics prepareEventsForUpload];
+    STAssertTrue([events isKindOfClass:[NSArray class]], nil);
+    STAssertTrue([events count] > 0, nil);
+}
+
+
+
+
+
+
+
 
 
 @end
