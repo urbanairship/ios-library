@@ -83,6 +83,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark -
 #pragma mark Object Lifecycle
 
+// This has to be called before dealloc, or dealloc will never be called
+// There is a retain cycle setup between this class and the timer.
 - (void)invalidate {
     [sendTimer_ invalidate];
     self.sendTimer = nil;
@@ -311,8 +313,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         if (connection.urlConnection) {
             [connection.urlConnection cancel];
         } 
-        // NOTE: invalidating the timer at this point is unecessary, because we are rapidly going under
-        // and there is a risk that the unretain reference to the NSTimer is junk anayway
+        [sendTimer_ invalidate];
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
@@ -322,6 +323,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)invalidateBackgroundTask {
     if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
+        UA_ANALYTICS_LOG(@"Ending analytics background task %u", sendBackgroundTask_);
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }
@@ -425,8 +427,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_batch forKey:@"X-UA-Max-Batch"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_wait forKey:@"X-UA-Max-Wait"];
     [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
-    [[NSUserDefaults standardUserDefaults] setObject:lastSendTime_ forKey:@"X-UA-Last-Send-Time"];
-    
+    // Only write a new date to defaults if existing date is nil. lastSendTime is written to defaults
+    // on every assignment
+    if (!lastSendTime_) {
+        self.lastSendTime = [NSDate date];
+    }
     /*
     UALOG(@"Response Headers Saved:");
     UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
@@ -470,7 +475,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
      
     RELEASE_SAFELY(connection);
     if ([response statusCode] == 200) {
-        [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
+        id userInfo = request.userInfo;
+        if([userInfo isKindOfClass:[NSArray class]]){
+            [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
+        }
         [self resetEventsDatabaseStatus];
     } 
     // Update analytics settings with new header values
@@ -534,7 +542,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             x_ua_min_batch_interval = tmp;
         }
         
-        self.sendInterval = sendInterval;        
         [self saveDefault];
     }
 }

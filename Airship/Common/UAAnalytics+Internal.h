@@ -50,19 +50,43 @@
 
 @property (nonatomic, copy) NSString *server;
 @property (nonatomic, retain) NSMutableDictionary *session;
+@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+@property (nonatomic, assign) int x_ua_max_total;
+@property (nonatomic, assign) int x_ua_max_batch;
+@property (nonatomic, assign) int x_ua_max_wait;
+@property (nonatomic, assign) int x_ua_min_batch_interval;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+
 
 - (void)restoreFromDefault;
 - (void)saveDefault;
 - (void)resetEventsDatabaseStatus;
+
+/* Sending analytics */
 - (void)send;
+
+/* Refresh the send timer */
 - (void)setupSendTimer:(NSTimeInterval)timeInterval;
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
+
 - (BOOL)shouldSendAnalytics;
 - (void)setLastSendTime:(NSDate*)lastSendTime;
+
+/* App State */
 - (void)enterForeground;
 - (void)enterBackground;
+- (void)didBecomeActive;
+- (void)willResignActive;
+
+/* Network connectivity */
+- (void)refreshSessionWhenNetworkChanged;
+- (void)refreshSessionWhenActive;
+
+/* Invalidate the background task that will be running
+ if the app has been backgrounded after being active. */
+- (void)invalidateBackgroundTask;
+
+
 @end

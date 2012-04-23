@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1813EDE412796188009DEB29 /* libStoreFront-2.2.11.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */; };
+		1813EDE412796188009DEB29 /* libStoreFront-2.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.3.0.a */; };
 		1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
 		1890B8A712519FCD00E6EBF1 /* libPush-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
@@ -264,7 +264,7 @@
 		BBB87DD3150575D200971CEC /* UALocalStorageDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */; };
 		BBB87DD4150575D200971CEC /* UAContentURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 497D13F31488282F00FB0A8A /* UAContentURLCache.m */; };
 		BBB87DDE150575D200971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
-		BBB87DDF150575D200971CEC /* libInbox-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */; };
+		BBB87DDF150575D200971CEC /* libInbox-2.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */; };
 		BBB87DE0150575D200971CEC /* libSubscription-1.2.11.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6331469C122FA34B008F2D48 /* libSubscription-1.2.11.a */; };
 		BBB87DE1150575D200971CEC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		BBB87DE2150575D200971CEC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
@@ -272,7 +272,7 @@
 		BBB87DE4150575D200971CEC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
 		BBB87DE5150575D200971CEC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
 		BBB87DE6150575D200971CEC /* libPush-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */; };
-		BBB87DE7150575D200971CEC /* libStoreFront-2.2.11.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */; };
+		BBB87DE7150575D200971CEC /* libStoreFront-2.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.3.0.a */; };
 		BBB87DE8150575D200971CEC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		BBB87DF11505777500971CEC /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87DF01505777500971CEC /* UALocationTestUtils.m */; };
 		BBB87DF21505799400971CEC /* libAirshipLibGcov.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87DED150575D200971CEC /* libAirshipLibGcov.a */; };
@@ -300,7 +300,7 @@
 		BBB87E3A15057CF200971CEC /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
-		D5A1928712C15A4E006AF4AE /* libInbox-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */; };
+		D5A1928712C15A4E006AF4AE /* libInbox-2.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */; };
 		D5BED7C312FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5BED7C412FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
 		D5BED7C512FC787900057449 /* UAHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B512FC787900057449 /* UAHTTPConnection.m */; };
@@ -539,7 +539,7 @@
 		BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseLocationProvider.h; sourceTree = "<group>"; };
 		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libUAirship-1.1.4.a"; path = "libUAirship-1.2.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.2.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.2.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -624,7 +624,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBB87DDE150575D200971CEC /* CoreLocation.framework in Frameworks */,
-				BBB87DDF150575D200971CEC /* libInbox-2.0.3.a in Frameworks */,
+				BBB87DDF150575D200971CEC /* libInbox-2.1.0.a in Frameworks */,
 				BBB87DE0150575D200971CEC /* libSubscription-1.2.11.a in Frameworks */,
 				BBB87DE1150575D200971CEC /* Foundation.framework in Frameworks */,
 				BBB87DE2150575D200971CEC /* SystemConfiguration.framework in Frameworks */,
@@ -632,7 +632,7 @@
 				BBB87DE4150575D200971CEC /* libsqlite3.dylib in Frameworks */,
 				BBB87DE5150575D200971CEC /* StoreKit.framework in Frameworks */,
 				BBB87DE6150575D200971CEC /* libPush-1.2.6.a in Frameworks */,
-				BBB87DE7150575D200971CEC /* libStoreFront-2.2.11.a in Frameworks */,
+				BBB87DE7150575D200971CEC /* libStoreFront-2.3.0.a in Frameworks */,
 				BBB87DE8150575D200971CEC /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -642,7 +642,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBB87D671505758100971CEC /* CoreLocation.framework in Frameworks */,
-				D5A1928712C15A4E006AF4AE /* libInbox-2.0.3.a in Frameworks */,
+				D5A1928712C15A4E006AF4AE /* libInbox-2.1.0.a in Frameworks */,
 				6331479E122FB0AA008F2D48 /* libSubscription-1.2.11.a in Frameworks */,
 				633147E7122FBE5D008F2D48 /* Foundation.framework in Frameworks */,
 				633147E8122FBE5F008F2D48 /* SystemConfiguration.framework in Frameworks */,
@@ -650,7 +650,7 @@
 				B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */,
 				63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */,
 				1890B8A712519FCD00E6EBF1 /* libPush-1.2.6.a in Frameworks */,
-				1813EDE412796188009DEB29 /* libStoreFront-2.2.11.a in Frameworks */,
+				1813EDE412796188009DEB29 /* libStoreFront-2.3.0.a in Frameworks */,
 				1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -661,7 +661,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.2.0.a */,
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
 				1FBF50D014646AC500554710 /* libUAirshipPush-1.1.4.a */,
 				BBB87DED150575D200971CEC /* libAirshipLibGcov.a */,
@@ -708,7 +708,7 @@
 		1813EDDC12796185009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */,
+				1813EDE312796185009DEB29 /* libStoreFront-2.3.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -871,7 +871,7 @@
 		D5A1927412C158A8006AF4AE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */,
+				D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -948,6 +948,7 @@
 				E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */,
 				E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */,
 				1F23001212B2B7BA001DB898 /* UAAnalytics.h */,
+				BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */,
 				1F23001312B2B7BA001DB898 /* UAAnalytics.m */,
 				1F2B10C312DD01B60020843D /* UATagUtils.h */,
 				1F2B10C412DD01B60020843D /* UATagUtils.m */,
@@ -960,7 +961,6 @@
 				BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */,
 				BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */,
 				BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */,
-				BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1232,7 +1232,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.1.4.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.2.0.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1287,10 +1287,9 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813EDE312796185009DEB29 /* libStoreFront-2.2.11.a */ = {
+		1813EDE312796185009DEB29 /* libStoreFront-2.3.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libStoreFront-2.2.11.a";
 			path = "libStoreFront-2.3.0.a";
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1311,10 +1310,9 @@
 			remoteRef = 6331469B122FA34B008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		D5A1927812C158A8006AF4AE /* libInbox-2.0.3.a */ = {
+		D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libInbox-2.0.3.a";
 			path = "libInbox-2.1.0.a";
 			remoteRef = D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1616,6 +1614,7 @@
 					armv7,
 					armv6,
 				);
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/AirshipLib.dst;
@@ -1624,6 +1623,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1653,6 +1654,7 @@
 					armv7,
 					armv6,
 				);
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/AirshipLib.dst;
 				FRAMEWORK_SEARCH_PATHS = (
