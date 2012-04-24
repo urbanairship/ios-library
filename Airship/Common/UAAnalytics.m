@@ -760,7 +760,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [sendInvocation setTarget:self];
     [sendInvocation setSelector:@selector(send)];
     // In Objective C, you don't retain timer, timer retains you
-    // TODO: Remove this test time
     self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval invocation:sendInvocation repeats:YES];
     UA_ANALYTICS_LOG(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
 }
