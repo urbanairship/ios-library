@@ -498,6 +498,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     
     if ([response statusCode] != 200) {
         UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [response statusCode]);
+        [self invalidateBackgroundTask];
         return;
     } 
     self.lastSendTime = [NSDate date];
