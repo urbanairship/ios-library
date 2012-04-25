@@ -89,12 +89,6 @@
  if the app has been backgrounded after being active. */
 - (void)invalidateBackgroundTask;
 
-/* Date formatting methods, for writing to NSUserDefaults
- and potentially for reading data from response headers
- */
-- (NSDate*) dateFromString:(NSString*)stringRepresentation;
-- (NSString*)stringFromDate:(NSDate*)date;
-
 /* Generate an analytics request with the proper fields */
 - (UAHTTPRequest*)analyticsRequest;
 

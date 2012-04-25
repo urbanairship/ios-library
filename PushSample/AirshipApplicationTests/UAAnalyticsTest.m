@@ -56,8 +56,6 @@
 - (void)tearDown {
     [analytics invalidate];
     RELEASE(analytics);
-//    [analytics autorelease];
-//    analytics = nil;
 }
 
 - (void)testLastSendTimeGetSetMethods {
@@ -147,16 +145,12 @@
     analytics.x_ua_max_total = 0;
     analytics.x_ua_max_wait = 0;
     analytics.x_ua_min_batch_interval = 0;
-    [[NSUserDefaults standardUserDefaults] setValue:nil forKey:UAAnalyticsOptionsLastLocationSendTime];
     [analytics restoreFromDefault];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue(analytics.x_ua_max_total == [[defaults valueForKey:@"X-UA-Max-Total"] intValue], nil);
     STAssertTrue(analytics.x_ua_max_batch == [[defaults valueForKey:@"X-UA-Max-Batch"] intValue], nil);
     STAssertTrue(analytics.x_ua_max_wait == [[defaults valueForKey:@"X-UA-Max-Wait"] intValue], nil);
-    /* The code establishes the current date as the last send date when NSUserDefaults returns nil
-     This is a cheap two step check, writing this date too and from user defaults occurs elsewhere */
-    STAssertNotNil([[NSUserDefaults standardUserDefaults] valueForKey:UAAnalyticsOptionsLastLocationSendTime], nil);
-    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0.0, 1, nil);
+    STAssertTrue(analytics.x_ua_min_batch_interval == [[defaults valueForKey:@"X-UA-Min-Batch-Interval"] intValue], nil);
 }
 
 - (void)testSaveDefault  {
@@ -164,15 +158,13 @@
     analytics.x_ua_max_total = 7;
     analytics.x_ua_max_wait = 7;
     analytics.x_ua_min_batch_interval = 7; 
-    analytics.lastSendTime = nil;
     [analytics saveDefault];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == 7, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Batch"] intValue] == 7, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Wait"] intValue] == 7, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Min-Batch-Interval"] intValue] == 7, nil);
-    STAssertNotNil([[NSUserDefaults standardUserDefaults] valueForKey:UAAnalyticsOptionsLastLocationSendTime], nil);
-    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0.0, 1, nil);
+
 }
 
 - (void)testAddEvent {
@@ -230,7 +222,6 @@
     [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-Ua-Max-Batch"];
     [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT - 1] forKey:@"X-Ua-Max-Wait"];
     [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL + 1] forKey:@"X-Ua-Min-Batch-Interval"];
-    [headers setValue:@"4/20/12 4:20:00 PM" forKey:UAAnalyticsOptionsLastLocationSendTime];
     mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     mockAnalytics = [OCMockObject partialMockForObject:analytics];
     [[mockAnalytics expect] saveDefault];
@@ -242,15 +233,6 @@
     //
     STAssertEquals(analytics.x_ua_max_wait, X_UA_MAX_WAIT - 1, nil);
     STAssertEquals(analytics.x_ua_min_batch_interval, X_UA_MIN_BATCH_INTERVAL + 1, nil);
-    NSUInteger dateComponentsRequired = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
-    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:dateComponentsRequired
-                                                                       fromDate:analytics.lastSendTime];
-    STAssertEquals(dateComponents.month, 4, nil);
-    STAssertEquals(dateComponents.day, 20, nil);
-    STAssertEquals(dateComponents.year, 2012, nil);
-    STAssertEquals(dateComponents.hour, 16, nil);
-    STAssertEquals(dateComponents.minute, 20, nil);
-    STAssertEquals(dateComponents.second, 0, nil);
 }
 
 - (void)testRequestDidFail {
@@ -345,13 +327,6 @@
     STAssertTrue([events isKindOfClass:[NSArray class]], nil);
     STAssertTrue([events count] > 0, nil);
 }
-
-
-
-
-
-
-
 
 
 @end
