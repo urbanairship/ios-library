@@ -73,7 +73,7 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 
 - (id)initWithLocation:(CLLocation*)location 
        locationManager:(CLLocationManager*)locationManager 
-       andUpdateType:(UALocationEventUpdateType*)updateType {
+         andUpdateType:(UALocationEventUpdateType*)updateType {
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [context setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];

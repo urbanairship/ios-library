@@ -558,18 +558,20 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Reporting location %@ to analytics from provider %@", location, provider);
     self.lastReportedLocation = location;
     self.dateOfLastLocation = location.timestamp;
+    UALocationEvent *event = nil;
     if (provider == standardLocationProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeContinuous];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeContinuous];
     }
     else if (provider == significantChangeProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeChange];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeChange];
     }
     else if (provider == singleLocationProvider_) {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeSingle];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeSingle];
     }
     else {
-        [self reportLocation:location fromLocationManager:provider.locationManager withUpdateType:UALocationEventUpdateTypeNone];
+        event = [UALocationEvent locationEventWithLocation:location provider:provider andUpdateType:UALocationEventUpdateTypeNone];
     }
+    [[UAirship shared].analytics addEvent:event];
 }
 
 

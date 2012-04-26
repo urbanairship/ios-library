@@ -81,17 +81,23 @@
     [service reportLocationToAnalytics:PDX fromProvider:standard];
     BOOL compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeContinuous;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeContinuous for standardLocationProvider");
+    compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
+    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
     UASignificantChangeProvider* sigChange = [[[UASignificantChangeProvider alloc] init] autorelease];
     service.significantChangeProvider = sigChange;
     [service reportLocationToAnalytics:PDX fromProvider:sigChange];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeChange;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeChange");
+    compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderNetwork;
+    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderNetwork");
     UAStandardLocationProvider *single = [[[UAStandardLocationProvider alloc] init] autorelease];
     service.singleLocationProvider = single;
     [service reportLocationToAnalytics:PDX fromProvider:single];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeSingle;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeSingle");
-    
+    compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
+    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
+
 }
 
 - (void)testUALocationServiceSendsLocationToAnalytics {
