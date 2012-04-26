@@ -61,11 +61,11 @@
     // 0.000001 equals sub meter accuracy at the equator. 
     STAssertEqualsWithAccuracy(location.coordinate.latitude, [[data valueForKey:UALocationEventLatitudeKey] doubleValue], 0.000001, nil);
     STAssertEqualsWithAccuracy(location.coordinate.longitude, [[data valueForKey:UALocationEventLongitudeKey] doubleValue],0.000001 ,nil);
-    STAssertEquals(location.horizontalAccuracy, [[data valueForKey:UALocationEventHorizontalAccuracyKey] doubleValue],nil);
-    STAssertEquals(location.verticalAccuracy, [[data valueForKey:UALocationEventVerticalAccuracyKey] doubleValue],nil);
-    STAssertEquals(locationManager.desiredAccuracy, [[data valueForKey:UALocationEventDesiredAccuracyKey] doubleValue],nil);
+    STAssertEquals((int)location.horizontalAccuracy, [[data valueForKey:UALocationEventHorizontalAccuracyKey] intValue],nil);
+    STAssertEquals((int)location.verticalAccuracy, [[data valueForKey:UALocationEventVerticalAccuracyKey] intValue],nil);
+    STAssertEquals((int)locationManager.desiredAccuracy, [[data valueForKey:UALocationEventDesiredAccuracyKey] intValue],nil);
     // update_type
-    STAssertEquals(locationManager.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] doubleValue] ,nil);
+    STAssertEquals((int )locationManager.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] intValue] ,nil);
     STAssertTrue((UALocationEventUpdateTypeSingle == [data valueForKey:UALocationEventUpdateTypeKey]) ,nil);
     STAssertTrue((UAAnalyticsTrueValue == [data valueForKey:UALocationEventForegroundKey]), nil);
     STAssertTrue((UALocationServiceProviderUnknown == [data valueForKey:UALocationEventProviderKey]), nil);

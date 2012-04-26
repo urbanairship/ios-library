@@ -111,11 +111,16 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
  Seven digits produces sub meter accuracy at the equator.
  http://en.wikipedia.org/wiki/Decimal_degrees
  @param doubleValue The double to convert.
- @return Returns an NSString representing the 7 digit value
+ @return NSString representing the 7 digit value
  */
 - (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue;
 
-
+/** Converts a double to a string and truncating it
+ to an int.
+ @param doubleValue The double to convert and truncate
+ @return NSString representing the double as an int
+ */
+- (NSString*)stringAsIntFromDouble:(double)doubleValue;
 
 
 @end

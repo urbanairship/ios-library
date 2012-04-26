@@ -85,14 +85,14 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location {
     [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
     [dictionary setValue:[self stringFromDoubleToSevenDigits:location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
+    [dictionary setValue:[self stringAsIntFromDouble:location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
+    [dictionary setValue:[self stringAsIntFromDouble:location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
 }
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager *)locationManager {
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
+    [dictionary setValue:[self stringAsIntFromDouble:locationManager.desiredAccuracy] forKey:UALocationEventDesiredAccuracyKey];
     // update_dist
-    [dictionary setValue:[self stringFromDoubleToSevenDigits:locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey]; 
+    [dictionary setValue:[self stringAsIntFromDouble:locationManager.distanceFilter] forKey:UALocationEventDistanceFilterKey]; 
 }
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider {
@@ -120,6 +120,10 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 
 - (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue {
     return [NSString stringWithFormat:@"%.7f", doubleValue];
+}
+
+- (NSString*)stringAsIntFromDouble:(double)doubleValue {
+    return [NSString stringWithFormat:@"%i", (int)doubleValue];
 }
 
 + (UALocationEvent*)locationEventWithLocation:(CLLocation*)location 
