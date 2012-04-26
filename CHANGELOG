@@ -1,4 +1,12 @@
 --------------------------
+1.2.1 - April 26, 2012
+--------------------------
+- modified UALocationServiceNSDefaultsKey values to contain the
+ "UALocationService" prefix
+  example: "singleLocationTimeout" changed to
+  "UALocationServiceSingleLocationTimeout"
+
+--------------------------
 1.2.0 - April 3, 2012
 --------------------------
 - Added location support
