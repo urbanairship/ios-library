@@ -40,7 +40,7 @@
 - (id)init {
     self = [super init];
     if (self){
-        super.provider = UALocationServiceProviderGps; 
+        provider_ = UALocationServiceProviderGps; 
     }
     return self;
 }
