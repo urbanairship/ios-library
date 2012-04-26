@@ -175,6 +175,17 @@
     [analytics addEvent:event];
     [mockDBManager verify];
     STAssertTrue(analytics.oldestEventTime == [event.time doubleValue], nil);
+    [[mockDBManager expect] addEvent:event withSession:analytics.session];
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    UIApplicationState state = UIApplicationStateBackground;
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
+    analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] send];
+    [analytics addEvent:event];
+    [mockAnalytics verify];
+    
+                          
 }
 
 - (void)testRequestDidSucceed {

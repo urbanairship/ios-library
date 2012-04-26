@@ -421,6 +421,12 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     if (oldestEventTime == 0) {
         oldestEventTime = [event.time doubleValue];
     }
+    // If the app is in the background without a background task id, then this is a location
+    // event, and we should attempt to send. 
+    UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
+    if (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground) {
+        [self send];
+    }
 }
 
 #pragma mark -
