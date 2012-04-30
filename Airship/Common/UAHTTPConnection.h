@@ -66,13 +66,14 @@
 @interface UAHTTPConnection : NSObject {
     UAHTTPRequest *request;
 
-    NSURLConnection *urlConnection;
+    NSURLConnection *urlConnection_;
     NSHTTPURLResponse *urlResponse;
 	NSMutableData *responseData;
 
     id<UAHTTPConnectionDelegate> delegate;
 }
 @property (assign, nonatomic) id<UAHTTPConnectionDelegate> delegate;
+@property (nonatomic, retain) NSURLConnection *urlConnection;
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;

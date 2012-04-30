@@ -101,7 +101,7 @@
 // UIApplicationState observation
 - (void)beginObservingUIApplicationState;
 
-// Restart locaiton services if necessary, call single location if necessary
+// Restart location services if necessary, call single location if necessary
 - (void)appWillEnterForeground; 
 
 // Shutdown location services if not enabled. 

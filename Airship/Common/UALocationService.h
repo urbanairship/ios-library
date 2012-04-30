@@ -238,11 +238,16 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  when prompted to allow location services to begin. The default value
  is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
  all new location services.
+ @returns An NSString with the current purpose
  */
 - (NSString*)purpose;
 
-/** The current purpose 
- @returns An NSString with the current purpose*/
+/** Purpose for location services shown to user
+ when prompted to allow location services to begin. The default value
+ is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
+ all new location services.
+ @param purpose The new purpose of the service
+ */
 - (void)setPurpose:(NSString*)purpose;
 
 ///---------------------------------------------------------------------------------------
@@ -309,6 +314,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 /** Creates a UALocationEvent and enqueues it with the Analytics service
  @param location The location to be sent to the Urban Airship analytics service
  @param provider The provider that generated the location. Data is pulled from the provider for analytics
+ @warning This must be called on the main thread. Not doing so will result in a crash
 */ 
  - (void)reportLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
@@ -358,6 +364,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @param location A CLLocation 
  @param locationManager The location manager that provided the location
  @param updateTypeOrNil The update type as described above or nil. 
+ @warning This must be called from the main thread. Not doing so will result in a crash. 
  */
 - (void)reportLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
