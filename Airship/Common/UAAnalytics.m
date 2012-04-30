@@ -580,7 +580,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         else {
             // self.lastSendTime is not nil, in case a value doesn't exist, it will be [NSDate distantPast]
             NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime]; 
-            // timeSinceLastSend should be a negative timer interval since it occured in the past
             if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !self.lastSendTime) {
                 return YES;
             }
