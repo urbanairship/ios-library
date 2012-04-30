@@ -37,7 +37,7 @@
     int x_ua_max_batch;
     int x_ua_max_wait;
     int x_ua_min_batch_interval;	
-	int sendInterval;
+	int sendInterval_;
     int databaseSize_;
     NSTimeInterval oldestEventTime;    
     NSDate *lastLocationSendTime;    
@@ -55,6 +55,7 @@
 @property (nonatomic, assign) int x_ua_max_batch;
 @property (nonatomic, assign) int x_ua_max_wait;
 @property (nonatomic, assign) int x_ua_min_batch_interval;
+@property (nonatomic, assign, setter = setSendInterval:) int sendInterval;
 @property (nonatomic, assign) int databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain) NSTimer *sendTimer;
@@ -67,6 +68,10 @@
 
 /* Sending analytics */
 - (void)send;
+
+/* Set send interval. This has the side effect of creating a new NSTimer
+ in sendTimer with the new interval. */
+- (void)setSendInterval:(int)sendTimer;
 
 /* Refresh the send timer */
 - (void)setupSendTimer:(NSTimeInterval)timeInterval;

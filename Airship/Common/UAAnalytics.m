@@ -69,7 +69,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 @synthesize x_ua_max_batch;
 @synthesize x_ua_max_wait;
 @synthesize x_ua_min_batch_interval;
-@synthesize sendInterval;
+@synthesize sendInterval = sendInterval_;
 @synthesize oldestEventTime;
 @synthesize sendTimer = sendTimer_;
 @synthesize sendBackgroundTask = sendBackgroundTask_;
@@ -113,7 +113,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
         
         // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
-        sendInterval = X_UA_MIN_BATCH_INTERVAL;
+        sendInterval_ = X_UA_MIN_BATCH_INTERVAL;
         
         [self restoreFromDefault];
         [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
@@ -525,13 +525,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)setSendInterval:(int)newVal {
     if(newVal < x_ua_min_batch_interval) {
-        sendInterval = x_ua_min_batch_interval;
+        sendInterval_ = x_ua_min_batch_interval;
     } else if (newVal > x_ua_max_wait) {
-        sendInterval = x_ua_max_wait;
+        sendInterval_ = x_ua_max_wait;
     } else {
-        sendInterval = newVal;
+        sendInterval_ = newVal;
+        [self setupSendTimer:(NSTimeInterval)newVal];
     }
-    [self setupSendTimer:(NSTimeInterval)newVal];
 }
 
 #pragma mark - 
