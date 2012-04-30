@@ -29,6 +29,7 @@
 #import "UAAnalytics.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
+#import "UALocationEvent.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship.h"
 
@@ -168,12 +169,15 @@
 }
 
 - (void)testAddEvent {
+    // Should add an event in the foreground
     UAEventAppActive *event = [[[UAEventAppActive alloc] init] autorelease];
     id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     [[mockDBManager expect] addEvent:event withSession:analytics.session];
     analytics.oldestEventTime = 0;
     [analytics addEvent:event];
     [mockDBManager verify];
+    //
+    // Should not send an event in the background when not location event
     STAssertTrue(analytics.oldestEventTime == [event.time doubleValue], nil);
     [[mockDBManager expect] addEvent:event withSession:analytics.session];
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
@@ -181,11 +185,17 @@
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
     analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] send];
+    [[mockAnalytics reject] send];
     [analytics addEvent:event];
     [mockAnalytics verify];
-    
-                          
+    //
+    // Should send a location event in the background
+    mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    UALocationEvent *locationEvent = [[[UALocationEvent alloc] initWithLocationContext:nil] autorelease];
+    [[mockDBManager expect] addEvent:locationEvent withSession:analytics.session];
+    [[mockAnalytics expect] send];
+    [analytics addEvent:locationEvent];
+    [mockAnalytics verify];
 }
 
 - (void)testRequestDidSucceed {
