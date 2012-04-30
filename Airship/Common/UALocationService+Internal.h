@@ -148,4 +148,7 @@
 // Shuts down the single location service with a timeout error
 - (void)shutdownSingleLocationWithTimeoutError;
 
+// Add Analytics to the UAAnalytics object and ensure it's done
+// on the main thread
+- (void)sendEventToAnalytics:(UALocationEvent*)locationEvent;
 @end

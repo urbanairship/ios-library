@@ -46,10 +46,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 
 @optional
 /** Updates the delegate when the location service generates an error
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/LIB-184_Location_Accuracy
+ 
  @warning *Note:* Two error conditions will stop the location service before
  this method is called on the delegate. kCLErrorDenied && kCLErrorNetwork. All other
  CoreLocation errors are passed directly to the delegate without any side effects.
