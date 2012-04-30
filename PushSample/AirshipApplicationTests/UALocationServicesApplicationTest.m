@@ -30,6 +30,7 @@
     NSDate *timeout;
 }
 //- (BOOL)serviceAcquiredLocation;
+- (void)peformInvocationInBackground:(NSInvocation*)invocation;
 @end
 
 
@@ -213,6 +214,42 @@
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation{
     NSLog(@"Location received");
     locationRecieved = YES;
+}
+
+- (void)testSendEventOnlyCallsOnMainThread {
+    UALocationService *service = [[UALocationService alloc] initWithPurpose:@"Test"];
+    __block BOOL onMainThread = NO;
+    void (^argBlock)(NSInvocation*) = ^(NSInvocation* invocation) {
+        onMainThread = [[NSThread currentThread] isMainThread];
+    };
+    CLLocation *location = [UALocationTestUtils testLocationPDX];
+    UAAnalytics *analytics = [[UAirship shared] analytics];
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[[mockAnalytics stub] andDo:argBlock] addEvent:OCMOCK_ANY];
+    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:[service methodSignatureForSelector:@selector(reportLocationToAnalytics:fromProvider:)]];
+    [invocation setTarget:service];
+    [invocation setSelector:@selector(reportLocationToAnalytics:fromProvider:)];
+    [invocation setArgument:&location atIndex:2];
+    UAStandardLocationProvider *provider = locationService.standardLocationProvider;
+    [invocation setArgument:&provider atIndex:3];
+    [invocation retainArguments];
+    [invocation invoke];
+    STAssertTrue(onMainThread, nil);
+    onMainThread = NO;
+    NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(peformInvocationInBackground:) object:invocation];
+    [thread start];
+    do {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+    } while(![thread isFinished]);
+    STAssertTrue(onMainThread, nil);
+    [thread release];
+    [service autorelease];
+}
+                                                                            
+- (void)peformInvocationInBackground:(NSInvocation*)invocation {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [invocation invoke];
+    [pool drain];
 }
 
 
