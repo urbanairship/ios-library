@@ -350,7 +350,7 @@
 }
 
 - (void)testSetSendInterval {
-    STAssertEquals(UAAnalyticsFirstBatchUpload, (int)analytics.sendTimer.timeInterval, nil);
+    STAssertEquals(UAAnalyticsFirstBatchUploadInterval, (int)analytics.sendTimer.timeInterval, nil);
     STAssertTrue([analytics.sendTimer isValid], nil);
     int newVal = 42;
     analytics.x_ua_min_batch_interval = 5;

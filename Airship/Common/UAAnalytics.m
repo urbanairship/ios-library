@@ -152,7 +152,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         }
         
         [self initSession];
-        [self setupSendTimer:UAAnalyticsFirstBatchUpload];
+        [self setupSendTimer:UAAnalyticsFirstBatchUploadInterval];
         sendBackgroundTask_ = UIBackgroundTaskInvalid;
         // TODO: add a one time perform selector after delay for init analytics on cold start (app_open)
     }

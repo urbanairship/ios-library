@@ -48,7 +48,7 @@
 // Offset time for use when the app init. This is the time between object
 // creation and first upload. Subsequent uploads are defined by 
 // X_UA_MIN_BATCH_INTERVAL
-#define UAAnalyticsFirstBatchUpload 15 // time in seconds
+#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
