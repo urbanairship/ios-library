@@ -578,9 +578,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         // If there is no background task, and the app is in the background, it is likely that
         // this is a location related event and we should only send every 15 minutes
         else {
-            // self.lastSendTime is not nil, in case a value doesn't exist, it will be [NSDate distantPast]
+            // self.lastSendTime is not nil, in case a value doesn't exist or is not parsable
+            // , it will be [NSDate distantPast]
             NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime]; 
-            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL || !self.lastSendTime) {
+            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL) {
                 return YES;
             }
             else {
