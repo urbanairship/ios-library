@@ -580,7 +580,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil {
     UALOG(@"Sending location to analytics -> %@ update type %@", location, updateTypeOrNil);
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:location locationManager:locationManager andUpdateType:updateTypeOrNil];
-    [[UAirship shared].analytics addEvent:event];
+    UAAnalytics *analytics = [[UAirship shared] analytics];
+    // Adding analytics off the main thead corrupts the analytics database
+    if ([NSThread currentThread] == [NSThread mainThread]){
+        [analytics addEvent:event];
+    }
+    else {
+        [analytics performSelectorOnMainThread:@selector(addEvent:) withObject:event waitUntilDone:NO];
+    }
 }
 
 #pragma mark -
