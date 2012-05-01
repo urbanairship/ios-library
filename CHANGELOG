@@ -5,8 +5,7 @@
 - location service improvements
 - fixed crash when reporting location to UALocationService from background thread
 - modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
-- CoreLocation is now required 
-- CoreTelephone is now required
+- CoreTelephony is now required
 
 --------------------------
 1.2.0 - April 3, 2012
