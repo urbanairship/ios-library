@@ -62,6 +62,8 @@
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 
 
+- (void)initSession;
+
 - (void)restoreFromDefault;
 - (void)saveDefault;
 - (void)resetEventsDatabaseStatus;
