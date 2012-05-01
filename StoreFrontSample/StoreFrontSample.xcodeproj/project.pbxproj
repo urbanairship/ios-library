@@ -359,7 +359,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				49E00247154F67CA009305B7 /* CoreLocation.framework */,
 				184E3F75129E4CA9004465C8 /* Support */,
 				1813EE451279620E009DEB29 /* Airship */,
 				1827ED2012364571004001E2 /* Classes */,
@@ -386,6 +385,7 @@
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49E00247154F67CA009305B7 /* CoreLocation.framework */,
 				9A50FAE80FCA81810007E1BE /* CFNetwork.framework */,
 				9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */,
 				9A50FAEE0FCA81A40007E1BE /* Foundation.framework */,

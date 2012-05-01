@@ -273,7 +273,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				49E001AF154F6535009305B7 /* CoreLocation.framework */,
 				184E3F3A129E4C0D004465C8 /* Support */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -300,6 +299,7 @@
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49E001AF154F6535009305B7 /* CoreLocation.framework */,
 				E9CB326512B85A87002E39EA /* CoreTelephony.framework */,
 				0D5F511011744AF5004AE48F /* MobileCoreServices.framework */,
 				9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */,
