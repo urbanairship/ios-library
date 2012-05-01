@@ -35,6 +35,7 @@
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
 		4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */; };
+		49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		636CB49A128D0D9500481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -58,7 +59,7 @@
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
-		B676C1D7123A1CA100AF6A81 /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.1.4.a */; };
+		B676C1D7123A1CA100AF6A81 /* libUAirship-1.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.2.0.a */; };
 		B6BC287512794F4D005CBE16 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6BC287412794F4D005CBE16 /* GHUnitIOS.framework */; };
 		C14786001164675600F17AB8 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = C14785FF1164675600F17AB8 /* checkConfig.sh */; };
 		D5A3F5D412C15333009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
@@ -70,7 +71,7 @@
 		D5C75B6312BC20320041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6112BC20320041239E /* Default@2x.png */; };
 		D5C75B6412BC20320041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B6212BC20320041239E /* Icon.png */; };
 		D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */; };
-		E9AED7D512B7831600441700 /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.1.4.a */; };
+		E9AED7D512B7831600441700 /* libUAirship-1.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.2.0.a */; };
 		E9CB35BB12B89AC0002E39EA /* UAInboxUI.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CB359C12B89AC0002E39EA /* UAInboxUI.m */; };
 		E9CB35C212B89AC0002E39EA /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A712B89AC0002E39EA /* check.png */; };
 		E9CB35C312B89AC0002E39EA /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB35A812B89AC0002E39EA /* check@2x.png */; };
@@ -187,6 +188,7 @@
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4952F9BA141E77D200FE280C /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
 		4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
+		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54B91247107C00DF2EBC /* InboxTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
 		63CB54DC1247122500DF2EBC /* InboxAPITests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxAPITests.h; sourceTree = "<group>"; };
@@ -236,13 +238,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
 				1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
 				9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */,
 				9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */,
-				B676C1D7123A1CA100AF6A81 /* libUAirship-1.1.4.a in Frameworks */,
+				B676C1D7123A1CA100AF6A81 /* libUAirship-1.2.0.a in Frameworks */,
 				63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */,
 				63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */,
 				63CB563A1247164900DF2EBC /* StoreKit.framework in Frameworks */,
@@ -257,7 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F69B10513BD1A41002CA606 /* libz.dylib in Frameworks */,
-				E9AED7D512B7831600441700 /* libUAirship-1.1.4.a in Frameworks */,
+				E9AED7D512B7831600441700 /* libUAirship-1.2.0.a in Frameworks */,
 				63CB55111247125E00DF2EBC /* UIKit.framework in Frameworks */,
 				63CB55121247125F00DF2EBC /* libsqlite3.dylib in Frameworks */,
 				63CB55131247126000DF2EBC /* Foundation.framework in Frameworks */,
@@ -361,6 +364,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				49E001A8154F63F3009305B7 /* CoreLocation.framework */,
 				B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -434,8 +438,8 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B6E7F8441239FFD5009BC92D /* libUAirship-1.1.3.a */,
-				1F9542AB1468820A009DDB0C /* libUAirshipPush-1.1.2.a */,
+				B6E7F8441239FFD5009BC92D /* libUAirship-1.2.0.a */,
+				1F9542AB1468820A009DDB0C /* libUAirshipPush-1.1.4.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.octest */,
 				BB99B3751535F45D000678B5 /* libAirshipLibGcov.a */,
 			);
@@ -623,11 +627,11 @@
 			remoteRef = 0D962FED11699572008D18A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1F9542AB1468820A009DDB0C /* libUAirshipPush-1.1.2.a */ = {
+		1F9542AB1468820A009DDB0C /* libUAirshipPush-1.1.4.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.0.a";
+			path = "libUAirshipPush-1.2.1.a";
 			remoteRef = 1F9542AA1468820A009DDB0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -638,11 +642,11 @@
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B6E7F8441239FFD5009BC92D /* libUAirship-1.1.3.a */ = {
+		B6E7F8441239FFD5009BC92D /* libUAirship-1.2.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libUAirship-1.1.4.a";
-			path = "libUAirship-1.2.0.a";
+			name = "libUAirship-1.2.0.a";
+			path = "libUAirship-1.2.1.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
