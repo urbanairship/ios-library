@@ -4,10 +4,10 @@
 - dropped support for iOS versions prior to 4.0
 - location service improvements
 - fixed crash when reporting location to UALocationService from background thread
-- modified UALocationServiceNSDefaultsKey values to contain the
- "UALocationService" prefix
-  example: "singleLocationTimeout" changed to
-  "UALocationServiceSingleLocationTimeout"
+- modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
+- CoreLocation is now required 
+- CoreTelephone is now required
+
 --------------------------
 1.2.0 - April 3, 2012
 --------------------------
