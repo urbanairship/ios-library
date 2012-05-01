@@ -47,6 +47,7 @@
 		1F79715212DE3DEB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79715112DE3DEB00D4937F /* AirshipConfig.plist */; };
 		1FF23F1A15238FEB00EC482C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1FF23F1915238FEB00EC482C /* Settings.bundle */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		49E0026C154F684B009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E0026B154F684B009305B7 /* CoreLocation.framework */; };
 		63314727122FAB0E008F2D48 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6331471E122FAB0E008F2D48 /* Icon-Small-50.png */; };
 		63314729122FAB0E008F2D48 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63314720122FAB0E008F2D48 /* MainWindow_Pad.xib */; };
 		6331472B122FAB0E008F2D48 /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63314723122FAB0E008F2D48 /* MainWindow_Phone.xib */; };
@@ -65,7 +66,7 @@
 		D5C759B912BAE1F30041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759B812BAE1F30041239E /* Default@2x.png */; };
 		D5C75B4712BC1FDD0041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B4612BC1FDD0041239E /* Icon-72.png */; };
 		D5C75B4912BC1FEA0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75B4812BC1FEA0041239E /* Icon-Small@2x.png */; };
-		E9CB329412B85C7E002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB329312B85C7E002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E9CB329412B85C7E002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB329312B85C7E002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -122,6 +123,7 @@
 		1FF23F1915238FEB00EC482C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* SubscriptionSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
+		49E0026B154F684B009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		6331471E122FAB0E008F2D48 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
 		63314720122FAB0E008F2D48 /* MainWindow_Pad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Pad.xib; sourceTree = "<group>"; };
 		63314723122FAB0E008F2D48 /* MainWindow_Phone.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow_Phone.xib; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E0026C154F684B009305B7 /* CoreLocation.framework in Frameworks */,
 				1F51F2F013D9026800932853 /* libz.dylib in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -241,6 +244,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				49E0026B154F684B009305B7 /* CoreLocation.framework */,
 				181A7701129E494A0061547A /* Support */,
 				63EFBBA41230E7B900A3B55D /* Airship */,
 				63314730122FAB2D008F2D48 /* Classes */,
@@ -602,7 +606,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DDEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
@@ -627,7 +631,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;

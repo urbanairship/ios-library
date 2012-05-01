@@ -67,7 +67,7 @@
 		D56857CA12C183D900BBF31A /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D56857C612C183D900BBF31A /* UAPushSettingsView.xib */; };
 		D5A192BD12C15ADD006AF4AE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BC12C15ADD006AF4AE /* iTunesArtwork */; };
 		D5A192BF12C15AE5006AF4AE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A192BE12C15AE5006AF4AE /* Icon@2x.png */; };
-		D5C75CED12BC29710041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CEC12BC29710041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		D5C75CED12BC29710041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CEC12BC29710041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		D5C75CF412BC29800041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF012BC29800041239E /* Icon-72.png */; };
 		D5C75CF512BC29800041239E /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF112BC29800041239E /* Icon-Small-50.png */; };
 		D5C75CF612BC29800041239E /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CF212BC29800041239E /* iPadDefault-Landscape.png */; };
@@ -640,7 +640,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
@@ -665,7 +665,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;

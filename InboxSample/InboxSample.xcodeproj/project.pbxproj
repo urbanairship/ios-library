@@ -26,6 +26,7 @@
 		1F69B12913BD1DF4002CA606 /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */; };
 		1F79710112DE3B7100D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79710012DE3B7100D4937F /* AirshipConfig.plist */; };
 		4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
+		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
@@ -48,7 +49,7 @@
 		D5C75C9E12BC23D20041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9C12BC23D20041239E /* Default@2x.png */; };
 		D5C75C9F12BC23D20041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75C9D12BC23D20041239E /* Icon.png */; };
 		D5F1AB3F1367397900A1DFA5 /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 184E3F3B129E4C1A004465C8 /* libUAirship-1.2.1.a */; };
-		E9CB326612B85A87002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E9CB326612B85A87002E39EA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		E9CB367212B89BA5002E39EA /* check.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB365712B89BA5002E39EA /* check.png */; };
 		E9CB367312B89BA5002E39EA /* check@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB365812B89BA5002E39EA /* check@2x.png */; };
 		E9CB367412B89BA5002E39EA /* down.png in Resources */ = {isa = PBXBuildFile; fileRef = E9CB365912B89BA5002E39EA /* down.png */; };
@@ -107,6 +108,7 @@
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4977C18B141ECF31009263FA /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
 		4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
+		49E001AF154F6535009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB56381247163D00DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -150,6 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */,
 				1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
@@ -270,6 +273,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				49E001AF154F6535009305B7 /* CoreLocation.framework */,
 				184E3F3A129E4C0D004465C8 /* Support */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -615,7 +619,7 @@
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
@@ -640,7 +644,7 @@
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";

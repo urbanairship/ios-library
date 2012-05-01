@@ -86,7 +86,7 @@
 		D5C75CBC12BC24210041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBB12BC24210041239E /* Icon-Small@2x.png */; };
 		D5C75CBF12BC242F0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBD12BC242F0041239E /* Default@2x.png */; };
 		D5C75CC012BC242F0041239E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBE12BC242F0041239E /* Icon.png */; };
-		D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		D5C75CD712BC28EA0041239E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -642,7 +642,8 @@
 		18C02973124F21B800D49CD5 /* libUAirship-1.2.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.2.0.a";
+			name = "libUAirship-1.2.0.a";
+			path = "libUAirship-1.2.1.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -650,7 +651,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.0.a";
+			path = "libUAirshipPush-1.2.1.a";
 			remoteRef = 49A7077314AE7DA600A262DD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

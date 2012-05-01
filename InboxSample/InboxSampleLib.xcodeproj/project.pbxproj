@@ -31,7 +31,7 @@
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F79715A12DE3E3B00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
-		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
 		4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */; };
@@ -933,7 +933,7 @@
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
@@ -956,7 +956,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
