@@ -101,7 +101,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
         }
     } else {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
         [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
         
         NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];
@@ -112,7 +112,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
 - (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Product inventory request failed.");
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
     [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
     
     NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];

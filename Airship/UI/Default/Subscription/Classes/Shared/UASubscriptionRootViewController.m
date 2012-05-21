@@ -191,7 +191,7 @@
     UALOG(@"Inventory update failed with error code %d and domain %@ and description: %@",error.code, error.domain, error.localizedDescription);
     if ([error.domain isEqualToString:UASubscriptionRequestErrorDomain]) {
         NSDictionary *userInfo = error.userInfo;
-        UALOG(@"URL Failed: %@", [userInfo objectForKey:NSErrorFailingURLStringKey]);
+        UALOG(@"URL Failed: %@", [userInfo objectForKey:NSURLErrorFailingURLStringErrorKey]);
     }
 }
 

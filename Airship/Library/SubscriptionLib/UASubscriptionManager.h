@@ -116,7 +116,7 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * be passed as the parameter. If the error occurs when contacting UA,
  * the error code will be an HTTP response code (or 0 if no response),
  * the failure URL will be available in the userInfo dictionary
- * using NSErrorFailingURLStringKey or NSURLErrorFailingURLStringErrorKey (4.0+)
+ * using NSURLErrorFailingURLStringErrorKey (4.0+)
  * and the localizedDescription will be one of:
  *       
  *       - UASubscriptionPurchaseInventoryFailure
