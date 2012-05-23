@@ -296,7 +296,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  disabled for a reason, this prompt might not be welcomed.
  
  @warning *Important:* If the kCLErrorDenied or kCLErrorNetwork errors are returned from the Core Location
- service, this service will be automatically shut down before the locationService:didFailWithError: deleage call
+ service, this service will be automatically shut down before the locationService:didFailWithError: delegate call
  to conserve battery. Be aware of this, and take appropriate action to restart the service if necessary. 
  **/
 - (void)startReportingSignificantLocationChanges;
