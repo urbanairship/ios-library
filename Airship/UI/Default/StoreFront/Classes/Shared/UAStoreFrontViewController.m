@@ -232,11 +232,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UAStoreFrontCell *cell = (UAStoreFrontCell *)[tableView dequeueReusableCellWithIdentifier:@"store-front-cell"];
-    // Remove existing observers if the dequeued cell contains a product
-    if (cell.product) {
-        [cell.product removeObserver:cell];
-    }
-    
     if (cell == nil) {
         cell = [[[UAStoreFrontCell alloc] initWithStyle:UITableViewCellStyleDefault
                                         reuseIdentifier:@"store-front-cell"] autorelease];

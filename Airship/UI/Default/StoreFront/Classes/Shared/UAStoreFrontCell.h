@@ -42,7 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, assign) UAAsyncImageView *iconContainer;
 @property (nonatomic, assign) UIActivityIndicatorView *activityView;
 @property (nonatomic, assign) UIProgressView *progressView;
-@property (nonatomic, retain) UAProduct *product;
+@property (nonatomic, assign) UAProduct *product;
 @property (nonatomic, assign) UAStoreFrontCellView *cellView;
 
 
