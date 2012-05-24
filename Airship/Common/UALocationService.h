@@ -340,6 +340,8 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 /** Sets the desiredAccuracy for the single location service. Used by the reportCurrentLocation: method
  and the automatic foreground location 
  @param desiredAccuracy CLLocationAccuracy The new desiredAccuracy
+ @warning *Important* Setting this value to high (such as kCLLocationAccuracyBest) will result in timeouts
+ on every location service call in areas with poor GPS. This will result in degraded device battery life.
  */
 - (void)setSingleLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
