@@ -40,9 +40,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 @synthesize cellView;
 
 
+
 - (void)dealloc {
     [product removeObserver:self];
-    product = nil;
+    RELEASE_SAFELY(product);
     cellView.product = nil;
 
     RELEASE_SAFELY(iconContainer);
@@ -90,11 +91,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 - (void)enterBackground {
     [product removeObserver:self];
     cellView.product = nil;
-    product = nil;
+    self.product = nil;
 }
 
 - (void)prepareForReuse { 
-    product = nil; 
+    self.product = nil; 
     cellView.product = nil;
     
     [super prepareForReuse]; 
@@ -137,10 +138,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         return;
 
     [product removeObserver:self];
-    product = nil;
+    [product release];
     cellView.product = nil;
 
-    product = newProduct;
+    product = [newProduct retain];
     if (product.isFree) {
         product.price = UA_SF_TR(@"UA_Free");
     }

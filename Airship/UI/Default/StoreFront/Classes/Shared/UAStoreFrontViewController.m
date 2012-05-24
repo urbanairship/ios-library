@@ -231,14 +231,18 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark UITableViewDataSource
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
     UAStoreFrontCell *cell = (UAStoreFrontCell *)[tableView dequeueReusableCellWithIdentifier:@"store-front-cell"];
+    // Remove existing observers if the dequeued cell contains a product
+    if (cell.product) {
+        [cell.product removeObserver:cell];
+    }
+    
     if (cell == nil) {
         cell = [[[UAStoreFrontCell alloc] initWithStyle:UITableViewCellStyleDefault
                                         reuseIdentifier:@"store-front-cell"] autorelease];
         [UAViewUtils roundView:cell.iconContainer borderRadius:10 borderWidth:1 color:[UIColor darkGrayColor]];
     }
-
+    
     NSArray *tableProducts = [self productsForTableView:tableView];
     if (indexPath.row < [tableProducts count]) {
         cell.product = [tableProducts objectAtIndex:indexPath.row];
