@@ -99,7 +99,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     } else {
         // else iPad
         if (ui.uaWindow == nil) {
-            ui.uaWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+            ui.uaWindow = [[[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds] autorelease];
             [ui.uaWindow addSubview:ui.rootViewController.view];
         }
 
