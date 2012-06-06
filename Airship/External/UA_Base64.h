@@ -47,7 +47,7 @@ NSData* UA_dataFromBase64String(NSString* aString);
  of data, for our purposes this is a NSString of the app key or 
  secret converted to an NSData object
  @param data NSData representation of a string that needs to be converted
-    to 64 bit encoding, expects NSASCIIStringEncoding
+    to base 64 encoding, expects NSASCIIStringEncoding
  @return NSString, base 64 encoded using NSASCIIStringEncoding
  */
 NSString* UA_base64EncodedStringFromData(NSData* data);
