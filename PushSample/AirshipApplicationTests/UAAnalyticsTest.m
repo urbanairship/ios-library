@@ -83,21 +83,135 @@
 }
 
 //// Refactor this next time it's changed
+
+/*
+ * Ensure that an app entering the foreground resets state and sets
+ * the flag that will insert a flag on didBecomeActive.
+ */
 - (void)testEnterForeground {
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] refreshSessionWhenNetworkChanged];
-    [[mockAnalytics expect]  refreshSessionWhenActive];
-    [[mockAnalytics expect]  invalidateBackgroundTask];
-    [[mockAnalytics expect]  setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
+    [[mockAnalytics expect] invalidateBackgroundTask];
+    [[mockAnalytics expect] setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
+    
+    //set up event capture
     __block id arg = nil;
-    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+    void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    
     [analytics enterForeground];
-    STAssertTrue([arg isKindOfClass:[UAEventAppForeground class]], @"Enter foreground should fire UAEventAppForeground");
+    
+    STAssertTrue(analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to YES");
+    STAssertNil(arg, @"`enterForeground` should not insert an event");
+    
     [mockAnalytics verify];
 }
+
+- (void)testDidBecomeActiveAfterForeground {
+    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    [[mockAnalytics expect] refreshSessionWhenNetworkChanged];
+    [[mockAnalytics expect] refreshSessionWhenActive];
+    
+    __block int foregroundCount = 0;
+    __block int activeCount = 0;
+    __block int eventCount = 0;
+    __block id arg = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        
+        [invocation getArgument:&arg atIndex:2];
+        if ([arg isKindOfClass:[UAEventAppActive class]]) {
+            activeCount++;
+        }
+        
+        if ([arg isKindOfClass:[UAEventAppForeground class]]) {
+            foregroundCount++;
+        }
+        
+        eventCount++;
+        
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    
+    analytics.isEnteringForeground = YES;
+    [analytics didBecomeActive];
+    
+    STAssertFalse(analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
+    
+    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+    
+    STAssertEquals(foregroundCount, 1, @"One foreground event inserted.");
+    STAssertEquals(activeCount, 1, @"One active event inserted.");
+    STAssertEquals(eventCount, 2, @"Two total events inserted.");
+    
+    [mockAnalytics verify];
+}
+
+/*
+ * This is a larger test, but the intent is to test the full foreground from notification flow
+ */
+- (void)testForegroundFromPush {
+    //We have to mock the singleton analytics rather than the analytics ivar
+    //so we can test analytics insert end to end - the event generation code
+    //uses the singleton version, so if we want to pull the right session into
+    //an event, we have to use that one.
+    id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
+    
+    NSString *incomingPushId = @"the_push_id";
+    
+    //count events and grab the push ID
+    __block int foregroundCount = 0;
+    __block int activeCount = 0;
+    __block int eventCount = 0;
+    __block id arg = nil;
+    __block NSString *eventPushId = nil;
+    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+        
+        [invocation getArgument:&arg atIndex:2];
+        if ([arg isKindOfClass:[UAEventAppActive class]]) {
+            activeCount++;
+        }
+        
+        if ([arg isKindOfClass:[UAEventAppForeground class]]) {
+            foregroundCount++;
+            
+            // save the push id for later
+            UAEventAppForeground *fgEvent = (UAEventAppForeground *)arg;
+            eventPushId = [fgEvent.data objectForKey:@"push_id"];
+        }
+        
+        eventCount++;
+        
+    };
+    [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    
+    // We're in the background
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    UIApplicationState state = UIApplicationStateBackground;
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
+    
+    [[UAirship shared].analytics enterForeground];// fired from NSNotificationCenter
+    
+    //mock a notification - the "_" id is all that matters - we don't need an aps payload
+    //this value is passed in through the app delegate's didReceiveRemoteNotification method
+    [[UAirship shared].analytics handleNotification:[NSDictionary dictionaryWithObject:incomingPushId forKey:@"_"]];
+    
+    //now the app is active, according to NSNotificationCenter
+    [[UAirship shared].analytics didBecomeActive];
+    
+    STAssertFalse([UAirship shared].analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
+    
+    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+    
+    STAssertEquals(foregroundCount, 1, @"One foreground event should be inserted.");
+    STAssertEquals(activeCount, 1, @"One active event should be inserted.");
+    STAssertEquals(eventCount, 2, @"Two total events should be inserted.");
+    STAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
+    
+    [mockAnalytics verify];
+}
+
+
 - (void)testEnterBackground {
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
     [[mockAnalytics expect] send];
@@ -121,12 +235,18 @@
 
 - (void)testDidBecomeActive {
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
+    
+    //set up event capture
     __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
+    
     [analytics didBecomeActive];
+    
+    STAssertFalse(analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to NO");
+    
     STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
 }
 

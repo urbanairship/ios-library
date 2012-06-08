@@ -74,6 +74,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 @synthesize sendTimer = sendTimer_;
 @synthesize sendBackgroundTask = sendBackgroundTask_;
 
+// Testing properties
+@synthesize isEnteringForeground = isEnteringForeground_;
+
 #pragma mark -
 #pragma mark Object Lifecycle
 
@@ -118,18 +121,24 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [self restoreFromDefault];
         [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
         
+        // Register for interface-change notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(refreshSessionWhenNetworkChanged)
                                                      name:kUA_ReachabilityChangedNotification
                                                    object:nil];
+        
+        // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
+        
+        // Register for foreground notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(enterForeground)
                                                      name:UIApplicationWillEnterForegroundNotification
                                                    object:nil];
+        
         // App inactive/active for incoming calls, notification center, and taskbar 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(didBecomeActive)
@@ -282,13 +291,14 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)enterForeground {
     UA_ANALYTICS_LOG(@"Enter Foreground.");
-    [self refreshSessionWhenNetworkChanged];
-    //update session in case the app lunched from push while sleep in background
-    [self refreshSessionWhenActive];
-    //add app_foreground event
-    [self addEvent:[UAEventAppForeground eventWithContext:nil]];
+
     [self invalidateBackgroundTask];
     [self setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
+    
+    // do not send the foreground event yet, as we are not actually in the foreground
+    // (we are merely in the process of foregorunding)
+    // set this flag so that the even will be sent as soon as the app is active.
+    isEnteringForeground_ = YES;
 }
 
 - (void)enterBackground {
@@ -320,7 +330,24 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)didBecomeActive {
-    UA_ANALYTICS_LOG(@"Application did become active.");    
+    UA_ANALYTICS_LOG(@"Application did become active.");
+    
+    // If this is the first 'inactive->active' transition in this session,
+    // send 
+    if (isEnteringForeground_) {
+        NSLog(@"isEnteringForeground");
+        isEnteringForeground_ = NO;
+        
+        //update the network connection_type value
+        [self refreshSessionWhenNetworkChanged];
+
+        //update session in case the app lunched from push while sleep in background
+        [self refreshSessionWhenActive];
+        NSLog(@"session 1: %@", session);
+        //add app_foreground event
+        [self addEvent:[UAEventAppForeground eventWithContext:nil]];
+    }
+    
     //add activity_started / AppActive event
     [self addEvent:[UAEventAppActive eventWithContext:nil]];
 }
