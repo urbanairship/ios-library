@@ -163,10 +163,10 @@
     __block int foregroundCount = 0;
     __block int activeCount = 0;
     __block int eventCount = 0;
-    __block id arg = nil;
     __block NSString *eventPushId = nil;
-    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
+    void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         
+        id arg = nil;
         [invocation getArgument:&arg atIndex:2];
         if ([arg isKindOfClass:[UAEventAppActive class]]) {
             activeCount++;
@@ -200,9 +200,7 @@
     [[UAirship shared].analytics didBecomeActive];
     
     STAssertFalse([UAirship shared].analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
-    
-    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
-    
+        
     STAssertEquals(foregroundCount, 1, @"One foreground event should be inserted.");
     STAssertEquals(activeCount, 1, @"One active event should be inserted.");
     STAssertEquals(eventCount, 2, @"Two total events should be inserted.");

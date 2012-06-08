@@ -335,7 +335,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     // If this is the first 'inactive->active' transition in this session,
     // send 
     if (isEnteringForeground_) {
-        NSLog(@"isEnteringForeground");
+
         isEnteringForeground_ = NO;
         
         //update the network connection_type value
@@ -343,7 +343,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
         //update session in case the app lunched from push while sleep in background
         [self refreshSessionWhenActive];
-        NSLog(@"session 1: %@", session);
+
         //add app_foreground event
         [self addEvent:[UAEventAppForeground eventWithContext:nil]];
     }
