@@ -195,6 +195,25 @@
     [mockSingleProvider verify];
     [mockLocationService verify];
     STAssertTrue(locationRecieved, @"Location service should have reported a location");
+
+}
+
+- (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
+    BOOL yes = YES;
+    locationService = [[UALocationService alloc] initWithPurpose:@"backgound shutdown test"];
+    id mockLocationService = [OCMockObject partialMockForObject:locationService];
+    [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
+    id mockProvider = [OCMockObject partialMockForObject:locationService.singleLocationProvider];
+    [[mockProvider stub] startReportingLocation];
+    [locationService reportCurrentLocation];
+    STAssertFalse(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LocationService background identifier should be valid");
+    [locationService.singleLocationProvider.delegate locationProvider:locationService.singleLocationProvider 
+                                                  withLocationManager:locationService.singleLocationProvider.locationManager 
+                                                     didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil]];
+     STAssertTrue(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LcoationService background identifier should be invalid");
+    
+
 }
 
 #pragma mark -

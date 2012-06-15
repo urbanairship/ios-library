@@ -115,9 +115,6 @@
 // delegate is nil
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
 
-// Send the error to the delegate if it responds
-- (void)sendErrorToLocationServiceDelegate:(NSError*)error;
-
 // deprecated LOCATION SUPPORT
 // Use deprecated location calls
 + (BOOL)useDeprecatedMethods;

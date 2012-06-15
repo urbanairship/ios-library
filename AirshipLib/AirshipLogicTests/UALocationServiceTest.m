@@ -107,8 +107,9 @@
     STAssertTrue([locationService.purpose isEqualToString:@"TEST"],nil);
 }
 
-// Register user defaults only works on the first app run. Reset the values here to make sure
-// they are read from user defaults. 
+// Register user defaults only works on the first app run. This is also called in UAirship, and may or may
+// not have occured at this point. The setting in NSUserDefaults may have been changed, keep this in mind
+// when testing the values in user defaults
 - (void)setTestValuesInNSUserDefaults {
     // UALocationService defaults. This needs to be kept in sync with the method in UAirship
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -477,6 +478,7 @@
     STAssertEqualObjects(error, locationError, nil);
     STAssertEqualObjects(service, locationService, nil);
     STAssertTrue([locationError.domain isEqualToString:UALocationServiceTimeoutError], nil);
+    STAssertTrue(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"BackgroundTaskIdentifier in UALocationService needs to be invalid");
 }
 
 
@@ -656,16 +658,6 @@
     [mockDelegate verify];
     STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"deprecated key should return NO");
 }
-
-// Don't test all the delegate calls, they are covered well elsewhere 
-- (void)didFailWithNetworkError {
-    id mockLocationProvider = [OCMockObject mockForProtocol:@protocol(UALocationProviderProtocol)];
-    [[mockLocationProvider expect] stopReportingLocation];
-    CLLocationManager *placeholder = [[[CLLocationManager alloc] init] autorelease];
-    [locationService locationProvider:mockLocationProvider withLocationManager:placeholder didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil]];
-    [mockLocationProvider verify];
-}
-
 
 - (void)testUpdateToNewLocation {
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
