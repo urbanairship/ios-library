@@ -291,7 +291,7 @@
         default:
         {
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+            [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
             [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
             
             NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain
@@ -309,7 +309,7 @@
     UALOG(@"Purchase info request failed.");
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
     [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
     
     NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain
