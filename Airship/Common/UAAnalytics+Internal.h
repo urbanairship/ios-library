@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -29,6 +29,7 @@
 @class UAEvent;
 
 @interface UAAnalytics () {
+  @private
     NSString *server;
     NSMutableDictionary *session;
     NSDictionary *notificationUserInfo_;
@@ -36,15 +37,20 @@
     int x_ua_max_total;
     int x_ua_max_batch;
     int x_ua_max_wait;
-    int x_ua_min_batch_interval;	
-	int sendInterval_;
+    int x_ua_min_batch_interval;
+    int sendInterval_;
     int databaseSize_;
     NSTimeInterval oldestEventTime;    
     NSDate *lastLocationSendTime;    
     NSTimer *sendTimer_;    
     BOOL analyticsLoggingEnabled;    
     NSString *packageVersion;
-    UIBackgroundTaskIdentifier sendBackgroundTask_; 
+    UIBackgroundTaskIdentifier sendBackgroundTask_;
+    
+    // YES if the app is in the process of entering the foreground, but is not yet active.
+    // This flag is used to delay sending an `app_foreground` event until the app is active
+    // and all of the launch/notification data is present.
+    BOOL isEnteringForeground_;
 }
 
 @property (nonatomic, copy) NSString *server;
@@ -60,6 +66,9 @@
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
+
+// For testing purposes
+@property (nonatomic, assign) BOOL isEnteringForeground;
 
 
 - (void)initSession;
