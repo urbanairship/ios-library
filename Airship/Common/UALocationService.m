@@ -436,6 +436,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     UALOG(@"Single location failed with error %@", locationError);
+    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)] && bestAvailableSingleLocation_) {
+        [delegate_ locationService:self didUpdateToLocation:bestAvailableSingleLocation_ fromLocation:nil];
+    }
     if ([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
         [delegate_ locationService:self didFailWithError:locationError];
     }

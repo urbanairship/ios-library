@@ -445,7 +445,7 @@
 }
 
 // Lightweight tests for method calls only
-- (void)testStopSingleLocaitonWithLocation {
+- (void)testStopSingleLocationWithLocation {
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
     [[mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:locationService.singleLocationProvider];
@@ -469,6 +469,7 @@
     [[[mockLocationDelegate expect] andDo:argBlock] locationService:locationService didFailWithError:OCMOCK_ANY];
     locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
     locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
+    [[mockLocationDelegate expect] locationService:locationService didUpdateToLocation:locationService.bestAvailableSingleLocation fromLocation:nil];
     locationService.delegate = mockLocationDelegate;
     [[mockLocationService expect] reportLocationToAnalytics:locationService.bestAvailableSingleLocation fromProvider:locationService.singleLocationProvider];
     [[mockLocationService expect] stopSingleLocation];

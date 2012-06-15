@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
  
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
  
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -49,7 +49,12 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  
  @warning *Note:* Two error conditions will stop the location service before
  this method is called on the delegate. kCLErrorDenied && kCLErrorNetwork. All other
- CoreLocation errors are passed directly to the delegate without any side effects.
+ CoreLocation errors are passed directly to the delegate without any side effects. For the case
+ when the location service times out, an NSError* UALocationServiceError will be returned with
+ the best available location in the userInfo dictionary with UALocationServiceBestAvailableSingleLocationKey
+ as the key if a location was returned. In the case of a timeout, the locationService:didUpdateToLocation:fromLocation will also
+ be called with the best available location if it is available. There is no guarantee as to the accuracy of this location.
+ 
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
  */
@@ -65,10 +70,13 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 /** Updates the delegate when a new location is received
  @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
  necessary to update UrbanAirship. Extensive work done by the method while backgrounded could result in location data not being
- recorded or sent
+ recorded or sent. In the case of a timeout error, this delegate is called with the best location acquired by the location 
+ service. The locationService:didFailWithError will also be called in this case, with the best available location in the
+ userInfo dictionary if available.
+ 
  @param service The service reporting the location update
  @param newLocation The updated location reported by the service
- @param oldLocation The previously reported location
+ @param oldLocation The previously reported location. This value may be nil, if there is no previous location.
  */
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
