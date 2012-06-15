@@ -405,12 +405,14 @@
     locationService.singleLocationProvider = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
     locationService.delegate = mockDelegate;
+    // Test that the location service is stopped when a good location is received.
     CLLocation *pdx = [[[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:5 verticalAccuracy:5 timestamp:[NSDate date]] autorelease];
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
     [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
     [[mockLocationService expect] stopSingleLocationWithLocation:pdx];
     [locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
     [mockDelegate verify];
+    // Test that location that is not accurate enough does not stop the location service
     pdx = [[[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:12.0 verticalAccuracy:5 timestamp:[NSDate date]] autorelease];
     [[mockLocationService reject] stopSingleLocationWithLocation:OCMOCK_ANY];
     [locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];

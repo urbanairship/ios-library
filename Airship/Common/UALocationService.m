@@ -405,7 +405,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
-    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy || singleLocationProvider_.desiredAccuracy <= kCLLocationAccuracyBest){
+    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
             [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
