@@ -53,6 +53,10 @@ cd "${destPath}"
 
 find Library \! -name "*.h" -type f -delete
 find Common \! -name "*.h" -type f -delete
+
+#delete internal test headers
+rm -rf `find . -name "*+Internal.h" `
+
 find External \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
 find External -type d -empty -delete
 rm -rf External/GHUnitIOS.framework

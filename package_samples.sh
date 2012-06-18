@@ -42,7 +42,12 @@ rm -rf `find . -name "*Test*.plist"`
 rm -rf `find . -name "*Test*.pch"`
 rm -rf `find . -name "*.orig" `
 
+rm -rf `find . -name "AirshipDevelopment.plist" `
+
 # copy the sample plist into place
 for sample in InboxSample PushSample StoreFrontSample SubscriptionSample; do
+    cp ../CHANGELOG $sample
+    cp ../LICENSE $sample
+    cp ../README.rst $sample
     mv -f $sample/AirshipConfig.plist.sample $sample/AirshipConfig.plist
 done
