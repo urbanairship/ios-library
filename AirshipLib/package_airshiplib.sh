@@ -73,4 +73,10 @@ rm AppledocSettings.plist
 
 find . -name "*.orig" -delete
 
+#copy LICENSE, README and CHANGELOG
+cp "${srcPath}/../CHANGELOG" "${destPath}"
+cp "${srcPath}/../README.rst" "${destPath}"
+cp "${srcPath}/../LICENSE" "${destPath}"
+
+
 fi
