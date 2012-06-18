@@ -2,22 +2,22 @@
 --------------------------
 1.2.2 - June 18, 2012
 --------------------------
-- fixed analytics problem where app foreground events were dropped
-- updated UALocationService to shut down single location tasks in a timely
+- Fixed problem reporting hard push conversions in some situations
+- Updated UALocationService to shut down single location tasks in a timely
   manner when unrecoverable CLLocationManager errors occured
-- modfied UALocationService single location settings to prevent high accuracy
-  location calls from constantly timing out in poor network conditions
-- changed UALocationService delgate callbacks when the location service cannot
+- Modfied UALocationService single location settings to prevent high accuracy
+  location calls from constantly timing out in poor GPS conditions
+- Changed UALocationService delgate callbacks when the location service cannot
   retrieve a location that meets accuracy requirements
 
 	
 --------------------------
 1.2.1 - April 26, 2012
 --------------------------
-- dropped support for iOS versions prior to 4.0
-- location service improvements
-- fixed crash when reporting location to UALocationService from background thread
-- modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
+- Dropped support for iOS versions prior to 4.0
+- Location service improvements
+- Fixed crash when reporting location to UALocationService from background thread
+- Modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
 - CoreTelephony is now required
 
 --------------------------
