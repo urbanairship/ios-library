@@ -68,7 +68,7 @@ extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
 - (CLLocationDistance)distanceFilter;
 
 /** Changes the distanceFilter on the locationManager
- @param The new distance filter
+ @param distanceFilter The new distance filter
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 

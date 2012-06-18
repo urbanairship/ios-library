@@ -80,7 +80,7 @@
 @interface UAEventPushReceived : UAEvent
 @end
 /**
- * This event is recored when one of the UALocationServices objects
+ * This event is recoreded when one of the UALocationServices objects
  * acquires a new location
  */
 

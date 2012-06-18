@@ -1,3 +1,16 @@
+
+--------------------------
+1.2.2 - June 18, 2012
+--------------------------
+- fixed analytics problem where app foreground events were dropped
+- updated UALocationService to shut down single location tasks in a timely
+  manner when unrecoverable CLLocationManager errors occured
+- modfied UALocationService single location settings to prevent high accuracy
+  location calls from constantly timing out in poor network conditions
+- changed UALocationService delgate callbacks when the location service cannot
+  retrieve a location that meets accuracy requirements
+
+	
 --------------------------
 1.2.1 - April 26, 2012
 --------------------------

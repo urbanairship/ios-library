@@ -99,10 +99,22 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 /// @name Support Methods
 ///---------------------------------------------------------------------------------------
 
-/** Creates a dictionary with the appropriate data gather from the location and locationManager
+/** Creates a dictionary with the appropriate data gathered from the CLLocation
+ @param dictionary The dictionary to populate with values
+ @param location Location to parse values from
  */
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location;
+
+/** Creates a dictionary with the appropriate data gathered from the CLLocationManager
+ @param dictionary The dictionary to populate with values
+ @param locationManager The location manager to parse values from
+ */
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager*)locationManager;
+
+/** Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
+ @param dictionary The dictionary to populate with values
+ @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
+ */
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
 
 
