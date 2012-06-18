@@ -14,6 +14,7 @@ Airship/*.a
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
+AirshipDevelopment.plist
 fabfile.py*
 *.build_output
 # Undo files for MacVim 
