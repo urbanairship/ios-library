@@ -58,15 +58,16 @@
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
-		BB42FB7315094B4B00FC4B1B /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7215094B4B00FC4B1B /* UALocationTestUtils.m */; };
 		BB4E134A1545D05E0076EC1B /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02B1507F65700976645 /* Gcov_Fix.c */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
+		BB502F9C156AA20800714FFC /* UATestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BB502F9B156AA20800714FFC /* UATestUtilities.m */; };
 		BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
 		BB75D9AF151BEB1600F4241E /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */; };
 		BB935D9D152B5E9C006E6A92 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
 		BB935D9E152B5E9C006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
 		BB935D9F152B5E9C006E6A92 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
 		BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
+		BBCD16B3157827BF008FA05B /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCD16B2157827BF008FA05B /* UAPushTest.m */; };
 		BBDAEF1E1525264C007F7D92 /* UAirshipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */; };
 		BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
@@ -199,9 +200,9 @@
 		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		BB42FB7115094B4B00FC4B1B /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
-		BB42FB7215094B4B00FC4B1B /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
+		BB502F9A156AA20800714FFC /* UATestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATestUtilities.h; path = ../../TestCommon/LocationTest/UATestUtilities.h; sourceTree = "<group>"; };
+		BB502F9B156AA20800714FFC /* UATestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATestUtilities.m; path = ../../TestCommon/LocationTest/UATestUtilities.m; sourceTree = "<group>"; };
 		BB75D9AC151BEAAC00F4241E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
 		BB935D97152B5E9C006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
@@ -211,6 +212,7 @@
 		BB935D9B152B5E9C006E6A92 /* UAMapPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMapPresentationController.h; sourceTree = "<group>"; };
 		BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMapPresentationController.m; sourceTree = "<group>"; };
 		BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
+		BBCD16B2157827BF008FA05B /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPushTest.m; path = ../../AirshipLib/AirshipLogicTests/UAPushTest.m; sourceTree = "<group>"; };
 		BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTests.m; sourceTree = "<group>"; };
 		BBEFB0101507F37200976645 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -539,9 +541,10 @@
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXGroup;
 			children = (
-				BB42FB7115094B4B00FC4B1B /* UALocationTestUtils.h */,
+				BBCD16B2157827BF008FA05B /* UAPushTest.m */,
+				BB502F9A156AA20800714FFC /* UATestUtilities.h */,
+				BB502F9B156AA20800714FFC /* UATestUtilities.m */,
 				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,
-				BB42FB7215094B4B00FC4B1B /* UALocationTestUtils.m */,
 				BBEFB02B1507F65700976645 /* Gcov_Fix.c */,
 				BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */,
 				BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */,
@@ -642,8 +645,7 @@
 		18C02973124F21B800D49CD5 /* libUAirship-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libUAirship-1.2.1.a";
-			path = "libUAirship-1.2.2.a";
+			path = "libUAirship-1.2.1.a";
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -651,7 +653,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.2.a";
+			path = "libUAirshipPush-1.2.1.a";
 			remoteRef = 49A7077314AE7DA600A262DD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -799,8 +801,9 @@
 				BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */,
 				BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */,
 				BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */,
-				BB42FB7315094B4B00FC4B1B /* UALocationTestUtils.m in Sources */,
 				BBDAEF1E1525264C007F7D92 /* UAirshipTests.m in Sources */,
+				BB502F9C156AA20800714FFC /* UATestUtilities.m in Sources */,
+				BBCD16B3157827BF008FA05B /* UAPushTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

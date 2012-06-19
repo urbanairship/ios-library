@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2012 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,35 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
 #import "UAPush.h"
+#import "UAPush+Internal.h"
 
-@interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver> {
-    IBOutlet UITableView *tableView;
-    IBOutlet UIImageView *footerImageView;
+#import <SenTestingKit/SenTestingKit.h>
 
-    UITableViewCell *deviceTokenCell;
-    UITableViewCell *deviceTokenTypesCell;
-    UITableViewCell *deviceTokenDisabledTypesCell;
-    UITableViewCell *deviceTokenAliasCell;
-    UITableViewCell *deviceTokenTagsCell;
+@interface UAPushTest : SenTestCase
     
-    UITableViewCell *helpSoundsCell;
-    UITableViewCell *helpLogCell;
-    UITableViewCell *locationCell_;
 
-    UIViewController *tokenViewController;
-    UIViewController *aliasViewController;
-    UIViewController *tagsViewController;
+@end
 
+
+@implementation UAPushTest
+
+- (void)testDefaults{
+    UAPush *p = [UAPush shared];
+    p.pushEnabled = YES;
+    BOOL what = p.pushEnabled;
+    BOOL yes = [[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey];
+    STAssertEquals(yes, p.pushEnabled, nil);
+    
 }
-
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) UIImageView *footerImageView;
-@property (nonatomic, retain) UITableViewCell *locationCell;
-
-- (void)initCells;
-- (void)updateCellValues;
 
 @end

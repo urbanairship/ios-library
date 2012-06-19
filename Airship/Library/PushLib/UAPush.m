@@ -31,19 +31,39 @@
 #import "UAViewUtils.h"
 #import "UAUtils.h"
 #import "UAAnalytics.h"
+#import "UAPush+Internal.h"
+#import "UA_SBJsonWriter.h"
+#import "UAEvent.h"
 
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
+UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
+UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
+UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
+UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
+UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
+UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
+UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
+
+UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
+UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
+UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
+UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
+UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
+UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+
+UAPushStorageKey *const UAPushTimezoneNameKey = @"UAPushTimezoneName";
+UAPushStorageKey *const UAPushTimezoneOffesetKey = @"UAPushTimezoneOffset";
+UAPushStorageKey *const UAPushTimezoneIsDaylightSavingsKey = @"UAPushTimezoneIsDaylightSavings";
+
+
 @implementation UAPush
 
 @synthesize delegate;
-@synthesize pushEnabled;
-@synthesize alias;
-@synthesize tags;
-@synthesize quietTime;
-@synthesize tz;
+@synthesize autobadgeEnabled = autobadgeEnabled_;
 @synthesize notificationTypes;
+@synthesize standardUserDefaults = standardUserDefaults_;
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -51,43 +71,140 @@ static Class _uiClass;
 
 -(void)dealloc {
     [[UAirship shared] removeObserver:self];
-    
     RELEASE_SAFELY(defaultPushHandler);
-    RELEASE_SAFELY(alias);
-    RELEASE_SAFELY(tags);
-    RELEASE_SAFELY(quietTime);
-    RELEASE_SAFELY(tz);
-    
+    RELEASE_SAFELY(deviceToken_);
     [super dealloc];
 }
 
 - (id)init {
     self = [super init];
     if (self) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        alias = [[defaults objectForKey:kAlias] retain];
-        tags = [[defaults objectForKey:kTags] retain];
-        if (tags == nil) {
-            tags = [[NSMutableArray alloc] init];
-        }
-        quietTime = [[defaults objectForKey:kQuietTime] retain];
-        tz = [[defaults objectForKey:kTimeZone] retain];
-        
-        //enable push by default
-        if ([defaults objectForKey:kEnabled]) {
-            pushEnabled = [defaults boolForKey:kEnabled];
-        } else {
-            pushEnabled = YES;
-        }
-        
         //init with default delegate implementation
+        // TODO: This leaks, change so that it is lazy loaded when needed and 
+        // released when replaced
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.delegate = defaultPushHandler;
-
+        standardUserDefaults_ = [NSUserDefaults standardUserDefaults];
+        // Push enabled defaults to on
+        if (![self pushEnabled]) {
+            [self setPushEnabled:YES];
+        }
         [[UAirship shared] addObserver:self];
     }
     return self;
 }
+
+#pragma mark -
+#pragma mark Device Token Get/Set Methods
+
+- (NSString *)deviceToken {
+    return deviceToken_;
+}
+
+- (void)setDeviceToken:(NSData *)deviceToken {
+    NSString* token = [self parseDeviceToken:[deviceToken description]];
+    if (!token) {
+        UALOG(@"Problem with parsing the device token");
+    }
+    else {
+        [deviceToken_ release];
+        deviceToken_ = [token copy];
+        UALOG(@"Device token: %@", deviceToken_);    
+        NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
+        if(![oldValue isEqualToString: deviceToken_]) {
+            deviceTokenHasChanged_ = YES;
+            [[NSUserDefaults standardUserDefaults] setObject:deviceToken_ forKey:UAPushDeviceTokenSettingsKey];
+        }
+    }
+    return;
+}
+
+- (NSString*)parseDeviceToken:(NSString*)tokenStr {
+    return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
+             stringByReplacingOccurrencesOfString:@">" withString:@""]
+            stringByReplacingOccurrencesOfString:@" " withString:@""];
+}
+
+#pragma mark -
+#pragma mark Get/Set Methods
+
+- (BOOL)deviceTokenHasChanged {
+    return deviceTokenHasChanged_;
+}
+
+- (NSString *)alias {
+    return [standardUserDefaults_ stringForKey:UAPushAliasJSONKey];
+}
+
+- (void)setAlias:(NSString *)alias {
+    [standardUserDefaults_ setObject:alias forKey:UAPushAliasJSONKey];
+}
+
+- (NSMutableArray *)tags {
+    NSArray *array = [standardUserDefaults_ objectForKey:UAPushTagsSettingsKey];
+    return [NSMutableArray arrayWithArray:array];
+}
+
+- (void)setTags:(NSMutableArray *)tags {
+    // TODO: Setup block to search for duplicates and get rid of them
+    [standardUserDefaults_ setObject:tags forKey:UAPushTagsSettingsKey];
+}
+
+- (BOOL)pushEnabled {
+    return [standardUserDefaults_ boolForKey:UAPushEnabledSettingsKey];
+}
+
+- (void)setPushEnabled:(BOOL)pushEnabled {
+    [standardUserDefaults_ setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
+}
+
+- (NSMutableDictionary *)quietTime {
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey]];
+    return dictionary;
+}
+
+- (void)setQuietTime:(NSMutableDictionary *)quietTime {
+    [standardUserDefaults_ setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
+}
+
+- (NSString *)tz {
+    return self.timeZone.name;
+}
+
+- (void)setTz:(NSString *)tz {
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:tz];
+    self.timeZone = timeZone;
+}
+
+- (NSTimeZone *)timeZone {
+    NSDictionary* timeZoneStorage = [standardUserDefaults_ dictionaryForKey:UAPushTimeZoneSettingsKey];
+    if (!timeZoneStorage) {
+        self.timeZone = nil; // write out the default time zone to user defaults
+        return self.defaultTimeZoneForPush;
+    }
+    NSTimeZone *storedTimeZone = [NSTimeZone timeZoneWithName:[timeZoneStorage valueForKey:UAPushTimezoneNameKey]]; 
+    // If that came back nil, create a time zone based on offset
+    if(!storedTimeZone){
+        storedTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:[[timeZoneStorage valueForKey:UAPushTimezoneOffesetKey] intValue]];
+    }
+    return storedTimeZone;
+}
+
+- (void)setTimeZone:(NSTimeZone *)timeZone {
+    NSMutableDictionary* timeZoneStorage = [NSMutableDictionary dictionaryWithCapacity:3];
+    if (!timeZone) {
+        timeZone = [self defaultTimeZoneForPush];
+    }
+    [timeZoneStorage setValue:timeZone.name forKey:UAPushTimezoneNameKey];
+    [timeZoneStorage setValue:[NSNumber numberWithBool:timeZone.isDaylightSavingTime] forKey:UAPushTimezoneIsDaylightSavingsKey];
+    [timeZoneStorage setValue:[NSNumber numberWithInt:timeZone.secondsFromGMT] forKey:UAPushTimezoneOffesetKey];
+    [standardUserDefaults_ setObject:timeZoneStorage forKey:UAPushTimeZoneSettingsKey];
+}
+
+- (NSTimeZone *)defaultTimeZoneForPush {
+    return [NSTimeZone localTimeZone];
+}
+
 
 #pragma mark -
 #pragma mark Private methods
@@ -109,9 +226,10 @@ static Class _uiClass;
 }
 
 - (void)updateRegistration {
-    
+    [standardUserDefaults_ synchronize];
     //if on, but not yet registered, re-register -- was likely just enabled
-    if (pushEnabled && [UAirship shared].deviceToken == nil) {
+    BOOL pushEnabled = self.pushEnabled;
+    if (pushEnabled && deviceToken_) {
         [self registerForRemoteNotificationTypes:notificationTypes];
         
     //if enabled, simply update existing device token
@@ -120,20 +238,8 @@ static Class _uiClass;
         
     // unregister token w/ UA
     } else {
-        [[UAirship shared] unRegisterDeviceToken];
+        [self unRegisterDeviceToken];
     }
-}
-
-- (void)saveDefaults {
-    UALOG(@"Save user defaults, enabled: %d, alias: %@; tags: %@; quiettime: %@, tz: %@",
-          pushEnabled, alias, tags, quietTime, tz);
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:pushEnabled forKey:kEnabled];
-    [defaults setObject:tags forKey:kTags];
-    [defaults setObject:alias forKey:kAlias];
-    [defaults setObject:quietTime forKey:kQuietTime];
-    [defaults setObject:tz forKey:kTimeZone];
-    [defaults synchronize];
 }
 
 #pragma mark -
@@ -141,52 +247,47 @@ static Class _uiClass;
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
     notificationTypes = types;
     
-    if (pushEnabled) {
+    if (self.pushEnabled) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
     }
 }
 
 //The new token to register, or nil if updating the existing token
 - (void)registerDeviceToken:(NSData *)token {
-    
-    NSMutableDictionary *body = [NSMutableDictionary dictionary];
-    if (alias != nil) {
-        [body setObject:alias forKey:@"alias"];
-    }
-    if (tags != nil && tags.count != 0) {
-        [body setObject:tags forKey:@"tags"];
-    }
-    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
-        [body setObject:tz forKey:@"tz"];
-        [body setObject:quietTime forKey:@"quiettime"];
-    }
-    if (autobadgeEnabled) {
-        [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:@"badge"];
-    }
-    
+    NSMutableDictionary *body = [self registrationPayload];
     if (token != nil) {
 		UALOG("Updating device token (%@) with: %@", token, body);
-        [[UAirship shared] registerDeviceToken:token withExtraInfo:body];
+        [self registerDeviceToken:token withExtraInfo:body];
     } else {
 		UALOG("Updating device existing token with: %@", body);
-        [[UAirship shared] registerDeviceTokenWithExtraInfo:body];
+        [self registerDeviceTokenWithExtraInfo:body];
     }
 
 }
 
-#pragma mark -
-#pragma mark UA Registration Observer methods
-
-- (void)registerDeviceTokenSucceeded {
-    UALOG(@"UAPush - Device Token Registration Succeeded");
-    [self saveDefaults];
+- (NSMutableDictionary *)registrationPayload {
+    
+    NSMutableDictionary *body = [NSMutableDictionary dictionary];
+    NSString* alias =  self.alias;
+    if (alias != nil) {
+        [body setObject:alias forKey:UAPushAliasJSONKey];
+    }
+    NSMutableArray *tags = self.tags;
+    if (tags != nil && tags.count != 0) {
+        [body setObject:tags forKey:UAPushMultipleTagsJSONKey];
+    }
+    
+    NSString* tz = self.timeZone.name;
+    NSMutableDictionary *quietTime = self.quietTime;
+    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
+        [body setObject:tz forKey:UAPushTimeZoneJSONKey];
+        [body setObject:quietTime forKey:UAPushQuietTimeJSONKey];
+    }
+    if (autobadgeEnabled_) {
+        [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:UAPushBadgeJSONKey];
+    }
+    return body;
 }
-
-- (void)unRegisterDeviceTokenSucceeded {
-    UALOG(@"UAPush - Device Token Unregistered Successfully");
-    [self saveDefaults];
-}
-
 #pragma mark -
 #pragma mark UA Registration callbacks
 
@@ -201,12 +302,6 @@ static Class _uiClass;
         [self addTagToDeviceFailed:request];
     } else {
         UALOG(@"Tag added successfully: %d - %@", request.responseStatusCode, request.url);
-        NSDictionary* userInfo = request.userInfo;
-        NSString *tag = [userInfo valueForKey:@"tag"];
-        if (![tags containsObject:tag]) {
-            [tags addObject:tag];
-        }
-        [self saveDefaults];
         [self notifyObservers:@selector(addTagToDeviceSucceeded)];
     }
 }
@@ -222,11 +317,7 @@ static Class _uiClass;
     switch (request.responseStatusCode) {
         case 204://just removed
         case 404://already removed
-            UALOG(@"Tag removed successfully: %d - %@", request.responseStatusCode, request.url);
-            NSDictionary* userInfo = request.userInfo;
-            NSString *tag = [userInfo valueForKey:@"tag"];
-            [tags removeObject:tag];
-            [self saveDefaults];
+            UALOG(@"Tag removed from server successfully: %d - %@", request.responseStatusCode, request.url);
             [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
             break;
         default:
@@ -239,25 +330,23 @@ static Class _uiClass;
 #pragma mark Open APIs - Property Setters
 
 - (void)updateAlias:(NSString *)value {
-    
     self.alias = value;
     [self updateRegistration];
-    
 }
 
 - (void)updateTags:(NSMutableArray *)value {
-    
     self.tags = value;
     [self updateRegistration];
-    
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
-    if (!from || !to || !timezone) {
-        UALOG(@"Set Quiet Time - parameter is nil. from: %@ to: %@ timezone: %@", from, to, timezone);
+    if (!from || !to) {
+        UALOG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
         return;
     }
-
+    if(!timezone){
+        timezone = [self defaultTimeZoneForPush];
+    }
     NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
                          [cal components:NSHourCalendarUnit fromDate:from].hour,
@@ -271,7 +360,7 @@ static Class _uiClass;
                       fromStr, @"start",
                       toStr, @"end", nil];
     
-    self.tz = [timezone name];
+    self.timeZone = timezone;
     [self updateRegistration];
 }
 
@@ -337,7 +426,7 @@ static Class _uiClass;
                                          fail:@selector(addTagToDeviceFailed:)];
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:tag forKey:@"tag"];
+    [userInfo setValue:tag forKey:UAPushSingleTagJSONKey];
     request.userInfo = userInfo;
     
     [request startAsynchronous];
@@ -358,14 +447,14 @@ static Class _uiClass;
                                          fail:@selector(removeTagFromDeviceFailed:)];
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:tag forKey:@"tag"];
+    [userInfo setValue:tag forKey:UAPushSingleTagJSONKey];
     request.userInfo = userInfo;
 
     [request startAsynchronous];
 }
 
 - (void)enableAutobadge:(BOOL)autobadge {
-    autobadgeEnabled = autobadge;
+    autobadgeEnabled_ = autobadge;
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -381,7 +470,7 @@ static Class _uiClass;
     // if the device token has already been set then
     // we are post-registration and will need to make
     // and update call
-    if (autobadgeEnabled && [UAirship shared].deviceToken) {
+    if (autobadgeEnabled_ && [UAirship shared].deviceToken) {
         UALOG(@"Sending autobadge update to UA server");
         [self updateRegistration];
     }
@@ -430,7 +519,7 @@ static Class _uiClass;
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
 			
-			if(autobadgeEnabled) {
+			if(autobadgeEnabled_) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
 				[delegate handleBadgeUpdate:[badgeNumber intValue]];
@@ -459,7 +548,7 @@ static Class _uiClass;
 	}
 	
 	// If any top level items remain, those are custom payload, pass it to the handler
-	// Note: There is come convenience built into this check, if for some reason there's a key collision
+	// Note: There is some convenience built into this check, if for some reason there's a key collision
 	//	and we're stripping yours above, it's safe to remove this conditional
 	if([[customPayload allKeys] count] > 0 && [delegate respondsToSelector:@selector(handleNotification:withCustomPayload:)]) {
 		[delegate handleNotification:notification withCustomPayload:customPayload];
@@ -492,6 +581,107 @@ static Class _uiClass;
     }
     
     return @"None";
+}
+
+
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
+    
+    // if the application is backgrounded, do not send a registration
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UALOG(@"Skipping DT registration. The app is currently backgrounded.");
+        return;
+    }
+    
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
+                           [UAirship shared].server, @"/api/device_tokens/",
+                           deviceToken_];
+    NSURL *url = [NSURL URLWithString:urlString];
+    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
+                                                  method:@"PUT"
+                                                delegate:self
+                                                  finish:@selector(registerDeviceTokenSucceeded:)
+                                                    fail:@selector(registerDeviceTokenFailed:)];
+    if (info != nil) {
+        [request addRequestHeader: @"Content-Type" value: @"application/json"];
+        UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+        [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
+        [writer release];
+    }
+    
+    [request startAsynchronous];
+    
+}
+
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
+    
+    self.deviceToken = [self parseDeviceToken:[token description]];
+    [self registerDeviceTokenWithExtraInfo:info];
+    
+    // add device_registration event
+    [[UAirship shared].analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
+}
+
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
+    NSMutableDictionary *body = [NSMutableDictionary dictionary];
+    if (alias != nil) {
+        [body setObject:alias forKey:@"alias"];
+    }
+    [self registerDeviceToken:token withExtraInfo:body];
+}
+
+- (void)unRegisterDeviceToken {
+    
+    if (deviceToken_ == nil) {
+        UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
+        return;
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
+                           [UAirship shared].server,
+                           deviceToken_];
+    NSURL *url = [NSURL URLWithString:urlString];
+    UALOG(@"Request to unregister device token.");
+    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
+                                                  method:@"DELETE"
+                                                delegate:self
+                                                  finish:@selector(unRegisterDeviceTokenSucceeded:)
+                                                    fail:@selector(unRegisterDeviceTokenFailed:)];
+    [request startAsynchronous];
+}
+
+#pragma mark -
+#pragma mark UA Registration callbacks
+
+- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
+    [UAUtils requestWentWrong:request keyword:@"registering device token"];
+    [self notifyObservers:@selector(registerDeviceTokenFailed:)
+               withObject:request];
+}
+
+- (void)registerDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
+    if(request.responseStatusCode != 200 && request.responseStatusCode != 201) {
+        [self registerDeviceTokenFailed:request];
+    } else {
+        UALOG(@"Device token registered on Urban Airship successfully.");
+        [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
+    }
+}
+
+- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
+    [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
+    [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
+               withObject:request];
+}
+
+- (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
+    if (request.responseStatusCode != 204){
+        [self unRegisterDeviceTokenFailed:request];
+    } else {
+        UALOG(@"Device token unregistered on Urban Airship successfully.");
+        self.deviceToken = nil;
+        [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
+    }
 }
 
 @end

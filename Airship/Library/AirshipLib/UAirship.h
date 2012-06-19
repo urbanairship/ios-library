@@ -70,22 +70,6 @@ extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
- * Implement this protocol and register with the UAirship shared instance to receive
- * device token registration success and failure callbacks.
- */
-@protocol UARegistrationObserver
-@optional
-- (void)registerDeviceTokenSucceeded;
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
-- (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
-- (void)addTagToDeviceSucceeded;
-- (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request;
-- (void)removeTagFromDeviceSucceeded;
-- (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
-@end
-
-/**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
  * called from [UIApplication application:didFinishLaunchingWithOptions] to initialize the shared
  * instance.
@@ -97,7 +81,6 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     NSString *appId;
     NSString *appSecret;
 
-    NSString *deviceToken;
     BOOL deviceTokenHasChanged;
     BOOL ready;
     
@@ -257,7 +240,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  *
  * @param token The device token to register.
  * @param info An NSDictionary containing registraton keys and values. See
- * http://urbanairship.com/docs/push.html#registration for details.
+ * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
  */
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;
 
