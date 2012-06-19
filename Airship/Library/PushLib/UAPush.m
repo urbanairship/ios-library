@@ -38,32 +38,9 @@
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
-UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
-UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
-UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
-UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
-UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
-UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
-
-UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
-UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
-UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
-UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
-UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
-UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
-UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
-UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
-
-UAPushStorageKey *const UAPushTimeZoneNameKey = @"UAPushTimeZoneName";
-UAPushStorageKey *const UAPushTimeZoneOffesetKey = @"UAPushTimeZoneOffset";
-UAPushStorageKey *const UAPushTimeZoneIsDaylightSavingsKey = @"UAPushTimeZoneIsDaylightSavings";
-
-
 @implementation UAPush
 
 @synthesize delegate;
-@synthesize autobadgeEnabled = autobadgeEnabled_;
 @synthesize notificationTypes = notificationTypes_;
 @synthesize standardUserDefaults = standardUserDefaults_;
 
@@ -72,7 +49,6 @@ SINGLETON_IMPLEMENTATION(UAPush)
 static Class _uiClass;
 
 -(void)dealloc {
-    [[UAirship shared] removeObserver:self];
     RELEASE_SAFELY(defaultPushHandler);
     RELEASE_SAFELY(deviceToken_);
     [super dealloc];
@@ -82,7 +58,6 @@ static Class _uiClass;
     self = [super init];
     if (self) {
         //init with default delegate implementation
-        // TODO: This leaks, change so that it is lazy loaded when needed and 
         // released when replaced
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.delegate = defaultPushHandler;
@@ -100,8 +75,7 @@ static Class _uiClass;
 
 - (void)setDeviceToken:(NSString*)deviceToken{
     [deviceToken_ release];
-    deviceToken_ = [deviceToken
-                    copy];
+    deviceToken_ = [deviceToken copy];
     UALOG(@"Device token: %@", deviceToken_);    
     NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
     if(![oldValue isEqualToString: deviceToken_]) {
@@ -118,6 +92,15 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Get/Set Methods
+
+- (BOOL)autobadgeEnabled {
+    return [standardUserDefaults_ boolForKey:UAPushBadgeSettingsKey];
+}
+
+- (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled {
+    [standardUserDefaults_ setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
+}
+
 
 - (BOOL)deviceTokenHasChanged {
     return deviceTokenHasChanged_;
@@ -167,7 +150,7 @@ static Class _uiClass;
 }
 
 - (NSString *)tz {
-    return self.timeZone.name;
+    return [[self timeZone] name];
 }
 
 - (void)setTz:(NSString *)tz {
@@ -176,27 +159,12 @@ static Class _uiClass;
 }
 
 - (NSTimeZone *)timeZone {
-    NSDictionary* timeZoneStorage = [standardUserDefaults_ dictionaryForKey:UAPushTimeZoneSettingsKey];
-    if (!timeZoneStorage) {
-        return [self defaultTimeZoneForPush];
-    }
-    NSTimeZone *storedTimeZone = [NSTimeZone timeZoneWithName:[timeZoneStorage valueForKey:UAPushTimeZoneNameKey]]; 
-    // If that came back nil, create a time zone based on offset
-    if(!storedTimeZone){
-        storedTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:[[timeZoneStorage valueForKey:UAPushTimeZoneOffesetKey] intValue]];
-    }
-    return storedTimeZone;
+    NSString* timeZoneName = [standardUserDefaults_ stringForKey:UAPushTimeZoneSettingsKey];
+    return [NSTimeZone timeZoneWithName:timeZoneName];
 }
 
 - (void)setTimeZone:(NSTimeZone *)timeZone {
-    NSMutableDictionary* timeZoneStorage = [NSMutableDictionary dictionaryWithCapacity:3];
-    if (!timeZone) {
-        timeZone = [self defaultTimeZoneForPush];
-    }
-    [timeZoneStorage setValue:timeZone.name forKey:UAPushTimeZoneNameKey];
-    [timeZoneStorage setValue:[NSNumber numberWithBool:timeZone.isDaylightSavingTime] forKey:UAPushTimeZoneIsDaylightSavingsKey];
-    [timeZoneStorage setValue:[NSNumber numberWithInt:timeZone.secondsFromGMT] forKey:UAPushTimeZoneOffesetKey];
-    [standardUserDefaults_ setObject:timeZoneStorage forKey:UAPushTimeZoneSettingsKey];
+    [standardUserDefaults_ setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
 }
 
 - (NSTimeZone *)defaultTimeZoneForPush {
@@ -254,13 +222,13 @@ static Class _uiClass;
         [body setObject:tz forKey:UAPushTimeZoneJSONKey];
         [body setObject:quietTime forKey:UAPushQuietTimeJSONKey];
     }
-    if (autobadgeEnabled_) {
+    if ([self autobadgeEnabled]) {
         [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:UAPushBadgeJSONKey];
     }
     return body;
 }
 #pragma mark -
-#pragma mark UA Registration callbacks
+#pragma mark UA API Tag callbacks
 
 - (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Using U/P: %@ / %@", request.username, request.password);
@@ -268,7 +236,7 @@ static Class _uiClass;
     [self notifyObservers:@selector(addTagToDeviceFailed:) withObject:[request error]];
 }
 
-- (void)addTagToDeviceSucceed:(UA_ASIHTTPRequest *)request {
+- (void)addTagToDeviceSucceeded:(UA_ASIHTTPRequest *)request {
     if (request.responseStatusCode != 200 && request.responseStatusCode != 201){
         [self addTagToDeviceFailed:request];
     } else {
@@ -383,49 +351,50 @@ static Class _uiClass;
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
-    NSString *encodedTag = [UAUtils urlEncodedStringWithString:tag encoding:NSUTF8StringEncoding];
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
-                           [[UAirship shared] server],
-                           [[UAirship shared] deviceToken],
-                           encodedTag];
-    
-    NSURL *url = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                       method:@"PUT"
-                                     delegate:self
-                                       finish:@selector(addTagToDeviceSucceed:)
-                                         fail:@selector(addTagToDeviceFailed:)];
-    
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:tag forKey:UAPushSingleTagJSONKey];
-    request.userInfo = userInfo;
-    
+    UA_ASIHTTPRequest* request = [self requestToManipulateTag:tag withHTTPMethod:@"PUT"];
     [request startAsynchronous];
 }
 
-- (void)removeTagFromCurrentDevice:(NSString *)tag {
+
+- (UA_ASIHTTPRequest*)requestToManipulateTag:(NSString*)tag withHTTPMethod:(NSString*)method {
+    NSURL* tagURL = [self URLForTagManipulationWithTag:tag];
+    UA_ASIHTTPRequest *request = [[UA_ASIHTTPRequest alloc] initWithURL:tagURL];
+    request.requestMethod = method;
+    SEL succeed = nil;
+    SEL fail = nil;
+    if ([request.requestMethod isEqualToString:@"PUT"]) {
+        succeed = @selector(addTagToDeviceSucceeded:);
+        fail = @selector(addTagToDeviceFailed:);
+    }
+    if ([request.requestMethod isEqualToString:@"DELETE"]) {
+        succeed = @selector(removeTagFromDeviceSucceed:);
+        fail = @selector(removeTagFromDeviceFailed:);
+    }
+    // This is not a JSON object, but the key is used for convenience
+    NSDictionary* userInfo = [NSDictionary dictionaryWithObject:tag forKey:UAPushSingleTagJSONKey];
+    request.userInfo = userInfo;
+    request.didFailSelector = fail;
+    request.didFinishSelector = succeed;
+    return [request autorelease];
+}
+
+- (NSURL*)URLForTagManipulationWithTag:(NSString*)tag {
     NSString *encodedTag = [UAUtils urlEncodedStringWithString:tag encoding:NSUTF8StringEncoding];
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
                            [[UAirship shared] server],
                            [[UAirship shared] deviceToken],
                            encodedTag];
     
-    NSURL *url = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                       method:@"DELETE"
-                                     delegate:self
-                                       finish:@selector(removeTagFromDeviceSucceed:)
-                                         fail:@selector(removeTagFromDeviceFailed:)];
-    
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setValue:tag forKey:UAPushSingleTagJSONKey];
-    request.userInfo = userInfo;
+    return [NSURL URLWithString:urlString];
+}
 
+- (void)removeTagFromCurrentDevice:(NSString *)tag {
+    UA_ASIHTTPRequest *request = [self requestToManipulateTag:tag withHTTPMethod:@"DELETE"];
     [request startAsynchronous];
 }
 
 - (void)enableAutobadge:(BOOL)autobadge {
-    autobadgeEnabled_ = autobadge;
+    [self setAutobadgeEnabled:autobadge];
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -441,7 +410,7 @@ static Class _uiClass;
     // if the device token has already been set then
     // we are post-registration and will need to make
     // and update call
-    if (autobadgeEnabled_ && [UAirship shared].deviceToken) {
+    if ([self autobadgeEnabled] && [UAirship shared].deviceToken) {
         UALOG(@"Sending autobadge update to UA server");
         [self updateRegistration];
     }
@@ -489,8 +458,8 @@ static Class _uiClass;
         //badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
-			
-			if(autobadgeEnabled_) {
+            
+			if([self autobadgeEnabled]) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
 				[delegate handleBadgeUpdate:[badgeNumber intValue]];
@@ -611,7 +580,7 @@ static Class _uiClass;
                                                     fail:@selector(registerDeviceTokenFailed:)];
     if (info != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+        UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
         [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
         [writer release];
     }   
@@ -660,7 +629,7 @@ static Class _uiClass;
 }
 
 #pragma mark -
-#pragma mark UA Registration callbacks
+#pragma mark UA API Registration callbacks
 
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
@@ -688,9 +657,19 @@ static Class _uiClass;
         [self unRegisterDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token unregistered on Urban Airship successfully.");
-        self.deviceToken = nil;
+        [self setDeviceToken:nil];
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
 }
+
+#pragma mark -
+#pragma mark NSUserDefaults
+
++ (void)registerNSUserDefaults {
+    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
+                                                     forKey:UAPushEnabledSettingsKey]];
+    
+}
+
 
 @end

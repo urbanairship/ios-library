@@ -318,7 +318,7 @@ BOOL logging = false;
     // Urban Airship defaults
     NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
     // UAPush default values
-    [defaultPreferences setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
+    [UAPush registerNSUserDefaults];
      // UALocationService default values
     [defaultPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
     [defaultPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
