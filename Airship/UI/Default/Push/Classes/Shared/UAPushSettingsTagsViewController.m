@@ -233,9 +233,11 @@ enum {
      }
      
      NSInteger index = [[UAPush shared].tags count];
+     // TODO: setup new tag update functionality here
 //     [[UAPush shared].tags insertObject:tag atIndex:index];
      NSMutableArray* tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
-     
+     [tagUpdate addObject:tag];
+     [[UAPush shared] setTags:tagUpdate];
      NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
      
