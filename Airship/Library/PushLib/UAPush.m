@@ -114,14 +114,46 @@ static Class _uiClass;
     [standardUserDefaults_ setObject:alias forKey:UAPushAliasJSONKey];
 }
 
-- (NSMutableArray *)tags {
-    NSArray *array = [standardUserDefaults_ objectForKey:UAPushTagsSettingsKey];
-    return [NSMutableArray arrayWithArray:array];
+- (NSArray *)tags {
+    return [standardUserDefaults_ objectForKey:UAPushTagsSettingsKey];
 }
 
-- (void)setTags:(NSMutableArray *)tags {
-    // TODO: Setup block to search for duplicates and get rid of them
-    [standardUserDefaults_ setObject:tags forKey:UAPushTagsSettingsKey];
+- (void)addTagsToCurrentDevice:(NSArray *)tags {
+    // TODO: Is there a need to verify that all objects are NSStrings?
+    NSMutableArray *mutableIncomingTags = [tags mutableCopy];
+    // Check incoming array for duplicates with existing tags
+    __block NSArray *currentTags = [self tags];
+    // If there are no  existing tags, take these and return
+    if (!currentTags) {
+        [standardUserDefaults_ setObject:mutableIncomingTags forKey:UAPushTagsSettingsKey];
+        return;
+    }
+    void (^checkForDuplicates)(NSString* tag, NSUInteger index, BOOL *stop);
+    checkForDuplicates = ^(NSString *tag, NSUInteger index, BOOL *stop){
+        // No non NSStrings allowed
+        if ([mutableIncomingTags containsObject:tag]){
+            [mutableIncomingTags removeObject:tag]; 
+        }
+    };
+    [currentTags enumerateObjectsUsingBlock:checkForDuplicates];
+    if ([mutableIncomingTags count] == 0 ) {
+        return;
+    }
+    else {
+        [mutableIncomingTags addObjectsFromArray:currentTags];
+        [standardUserDefaults_ setObject:mutableIncomingTags forKey:UAPushTagsSettingsKey];
+    }
+    
+}
+
+- (void)setTags:(NSArray *)tags {
+    if (tags) {
+        // FIXME: Figure out a legit way to do this
+        [standardUserDefaults_ setObject:tags forKey:UAPushTagsSettingsKey];
+    }
+    else {
+        [standardUserDefaults_ removeObjectForKey:UAPushTagsSettingsKey];
+    }
 }
 
 - (BOOL)pushEnabled {
@@ -132,14 +164,8 @@ static Class _uiClass;
     [standardUserDefaults_ setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
 }
 
-- (NSMutableDictionary *)quietTime {
-    NSDictionary* dictionary = [standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey];
-    if (dictionary) {
-        return [NSMutableDictionary dictionaryWithDictionary:dictionary];
-    }
-    else {
-        return nil;
-    }
+- (NSDictionary *)quietTime {
+    return [standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
 
 - (void)setQuietTime:(NSMutableDictionary *)quietTime {
@@ -211,13 +237,13 @@ static Class _uiClass;
     if (alias != nil) {
         [body setObject:alias forKey:UAPushAliasJSONKey];
     }
-    NSMutableArray *tags = self.tags;
+    NSArray *tags = [self tags];
     if (tags != nil && tags.count != 0) {
         [body setObject:tags forKey:UAPushMultipleTagsJSONKey];
     }
     
     NSString* tz = self.timeZone.name;
-    NSMutableDictionary *quietTime = self.quietTime;
+    NSDictionary *quietTime = self.quietTime;
     if (tz != nil && quietTime != nil && [quietTime count] > 0) {
         [body setObject:tz forKey:UAPushTimeZoneJSONKey];
         [body setObject:quietTime forKey:UAPushQuietTimeJSONKey];
@@ -351,8 +377,7 @@ static Class _uiClass;
 #pragma mark Open APIs - UA Registration Tags APIs
 
 - (void)addTagToCurrentDevice:(NSString *)tag {
-    UA_ASIHTTPRequest* request = [self requestToManipulateTag:tag withHTTPMethod:@"PUT"];
-    [request startAsynchronous];
+    [self addTagsToCurrentDevice:[NSArray arrayWithObject:tag]];
 }
 
 
@@ -389,8 +414,13 @@ static Class _uiClass;
 }
 
 - (void)removeTagFromCurrentDevice:(NSString *)tag {
-    UA_ASIHTTPRequest *request = [self requestToManipulateTag:tag withHTTPMethod:@"DELETE"];
-    [request startAsynchronous];
+    [self removeTagsFromCurrentDevice:[NSArray arrayWithObject:tag]];
+}
+
+- (void)removeTagsFromCurrentDevice:(NSArray *)tags {
+    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[standardUserDefaults_ objectForKey:UAPushTagsSettingsKey]];
+    [mutableTags removeObjectsInArray:tags];
+    [standardUserDefaults_ setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
 - (void)enableAutobadge:(BOOL)autobadge {

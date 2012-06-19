@@ -61,6 +61,7 @@
 		BB4E134A1545D05E0076EC1B /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02B1507F65700976645 /* Gcov_Fix.c */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
 		BB502F9C156AA20800714FFC /* UATestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BB502F9B156AA20800714FFC /* UATestUtilities.m */; };
+		BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB6B828B15892C0D00C42B03 /* TagTest.plist */; };
 		BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
 		BB75D9AF151BEB1600F4241E /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */; };
 		BB935D9D152B5E9C006E6A92 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
@@ -205,6 +206,7 @@
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		BB502F9A156AA20800714FFC /* UATestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATestUtilities.h; path = ../../TestCommon/LocationTest/UATestUtilities.h; sourceTree = "<group>"; };
 		BB502F9B156AA20800714FFC /* UATestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATestUtilities.m; path = ../../TestCommon/LocationTest/UATestUtilities.m; sourceTree = "<group>"; };
+		BB6B828B15892C0D00C42B03 /* TagTest.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = TagTest.plist; path = ../../TestCommon/Support/TagTest.plist; sourceTree = "<group>"; };
 		BB75D9AC151BEAAC00F4241E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UALocationSettingsViewController.xib; sourceTree = "<group>"; };
 		BB935D97152B5E9C006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
@@ -562,6 +564,7 @@
 		BBEFB01D1507F3A400976645 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BB6B828B15892C0D00C42B03 /* TagTest.plist */,
 				BBC5163B157D2D1F00CB0DA9 /* deviceToken.data */,
 				BBEFB01E1507F3A400976645 /* AirshipApplicationTests-Info.plist */,
 				BBEFB01F1507F3A400976645 /* InfoPlist.strings */,
@@ -729,6 +732,7 @@
 			files = (
 				BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */,
 				BBC5163C157D2D1F00CB0DA9 /* deviceToken.data in Resources */,
+				BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

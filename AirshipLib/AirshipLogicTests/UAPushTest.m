@@ -55,10 +55,10 @@ static BOOL messageReceived = NO;
 - (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request;
 @end
 
-
 @interface UAPushTest : SenTestCase{
     UAPush *push;
     NSString *token;
+    
 }
 @end
 
@@ -73,8 +73,57 @@ static BOOL messageReceived = NO;
     [push removeObservers];
 }
 
-- (void)testInit {
+//- (void)testInit {
 //    STAssertTrue(push.)
+//}
+
+// There is an algorithm here to prevent duplicate and non object tags
+// from ending up in the tag array or going to the server
+- (void)testSetTags {
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];
+    NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
+    STAssertNotNil(testTags, @"Array of test tags failed to load");
+    // Test setTags
+    [push setTags:nil];
+    [push setTags:testTags];
+    STAssertTrue([testTags isEqualToArray:[push tags]], @"Tag arrays should be equal");
+}
+
+- (void)testSetAlias {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushAliasSettingsKey];
+    [push setAlias:@"cats"];
+    STAssertTrue([[push alias] isEqualToString:@"cats"], @"Alias set/get methods are broken");
+}
+
+- (void)testAddTagsToCurrentDevice {
+    //There should be no cats in defaults, and addTagToCurrentDevice: becomes addTagsToCurrentDevice
+    [[NSUserDefaults standardUserDefaults] setObject:[NSMutableArray array] forKey:UAPushTagsSettingsKey];
+    [push addTagToCurrentDevice:@"cats"]; 
+    NSArray *tagsWithCats = [push tags];
+    STAssertTrue([tagsWithCats containsObject:@"cats"], @"There should be cats in the tags");
+    // Test first run
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushTagsSettingsKey];
+    [push addTagToCurrentDevice:@"CATS"];
+    tagsWithCats = [push tags];
+    STAssertTrue([tagsWithCats containsObject:@"CATS"], @"There should be CATS in the tags");
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];
+    NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
+    [push setTags:testTags];
+    NSArray *subArray = [testTags subarrayWithRange:NSMakeRange(0, 750)];
+    id mockDefaults = [OCMockObject partialMockForObject:push.standardUserDefaults] ;
+    // There should be no call to update user defaults, all the tags are duplicates
+    [[mockDefaults reject] setObject:OCMOCK_ANY forKey:UAPushTagsSettingsKey];
+    [push addTagsToCurrentDevice:subArray];
+}
+
+- (void)testRemoveTags {
+    NSArray *someTags = [NSArray arrayWithObjects:@"one", @"two", @"cats", nil];
+    [push setTags:someTags];
+    [push removeTagsFromCurrentDevice:[NSArray arrayWithObjects:@"one", @"two", nil]];
+    STAssertTrue([[push tags] count] == 1, @"There should only be one tag remaining");
+    STAssertTrue([@"cats" isEqualToString:[[push tags] objectAtIndex:0]], @"Remaining tag is incorrect");
+    [push removeTagFromCurrentDevice:@"cats"];
+    STAssertTrue([[push tags] count] == 0, @"Tag array should be empty");
 }
 
 // Token and data were pulled from a funcitoning test app.
@@ -107,43 +156,44 @@ static BOOL messageReceived = NO;
     STAssertTrue([[[NSTimeZone localTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
 }
 
-- (void)testRegistrationPayload {
-    NSString *testAlias = @"test_alias";
-    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"tag_one", @"tag_two", nil];
-    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"America/Dawson_Creek"]; // Ah, Dawson's creek.....
-    NSDate *now = [NSDate date];
-    NSDate *oneHour = [NSDate dateWithTimeIntervalSinceNow:360];
-    [push setAlias:testAlias];
-    [push setTags:tags];
-    [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
-    [push setAutobadgeEnabled:YES];
-    NSDictionary *payload = [push registrationPayload];
-    NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
-    STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
-    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-    NSDateComponents *fromComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:now];
-    NSDateComponents *toComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:oneHour];
-    NSArray *fromHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeStartJSONKey] componentsSeparatedByString:@":"];
-    NSArray *toHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeEndJSONKey] componentsSeparatedByString:@":"];
-    // Quiet times
-    STAssertTrue([[timeZone name] isEqualToString:[payload valueForKey:UAPushTimeZoneJSONKey]], nil);
-    STAssertTrue(fromComponents.hour == [[fromHourMinute objectAtIndex:0] doubleValue], nil);
-    STAssertTrue(fromComponents.minute == [[fromHourMinute objectAtIndex:1] doubleValue], nil);
-    STAssertTrue(toComponents.hour == [[toHourMinute objectAtIndex:0] doubleValue], nil);
-    STAssertTrue(toComponents.minute == [[toHourMinute objectAtIndex:1] doubleValue], nil);
-    // Alias
-    STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
-    // Tags
-    STAssertTrue([tags isEqualToArray:[payload valueForKey:UAPushMultipleTagsJSONKey]], nil);
-    STAssertTrue([[payload valueForKey:UAPushBadgeJSONKey] intValue] == 
-                 [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
-}
+//- (void)testRegistrationPayload {
+//    NSString *testAlias = @"test_alias";
+//    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"tag_one", @"tag_two", nil];
+//    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"America/Dawson_Creek"]; // Ah, Dawson's creek.....
+//    NSDate *now = [NSDate date];
+//    NSDate *oneHour = [NSDate dateWithTimeIntervalSinceNow:360];
+//    [push setAlias:testAlias];
+//    [push setTags:tags];
+//    [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
+//    [push setAutobadgeEnabled:YES];
+//    NSDictionary *payload = [push registrationPayload];
+//    NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
+//    STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
+//    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+//    NSDateComponents *fromComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:now];
+//    NSDateComponents *toComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:oneHour];
+//    NSArray *fromHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeStartJSONKey] componentsSeparatedByString:@":"];
+//    NSArray *toHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeEndJSONKey] componentsSeparatedByString:@":"];
+//    // Quiet times
+//    STAssertTrue([[timeZone name] isEqualToString:[payload valueForKey:UAPushTimeZoneJSONKey]], nil);
+//    STAssertTrue(fromComponents.hour == [[fromHourMinute objectAtIndex:0] doubleValue], nil);
+//    STAssertTrue(fromComponents.minute == [[fromHourMinute objectAtIndex:1] doubleValue], nil);
+//    STAssertTrue(toComponents.hour == [[toHourMinute objectAtIndex:0] doubleValue], nil);
+//    STAssertTrue(toComponents.minute == [[toHourMinute objectAtIndex:1] doubleValue], nil);
+//    // Alias
+//    STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
+//    // Tags
+//    STAssertTrue([tags isEqualToArray:[payload valueForKey:UAPushMultipleTagsJSONKey]], nil);
+//    STAssertTrue([[payload valueForKey:UAPushBadgeJSONKey] intValue] == 
+//                 [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
+//}
 
 //Quiet time was tested above, set test with a nil timezone 
 - (void)testQuietTimeWithNilTimeZone {
     [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:35] withTimeZone:nil];
     STAssertTrue([[[NSTimeZone defaultTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
 }
+ 
 
 - (void)testUpdateRegistrationLogic {
     [push setPushEnabled:YES];
@@ -302,26 +352,6 @@ static BOOL messageReceived = NO;
     STAssertTrue([match count] == 1, @"URL for tag manipulations in UAPush is incorrect");
 }
 
-- (void)testAddTagToCurrentDevice {
-    id mockPush = [OCMockObject partialMockForObject:push];
-    __block id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    [[mockRequest expect] startAsynchronous];
-    __block NSString* tagArg = nil;
-    __block NSString* methodArg = nil;
-    void (^theBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
-    {
-        [invocation getArgument:&tagArg atIndex:2];
-        [invocation getArgument:&methodArg atIndex:3];
-        [invocation setReturnValue:&mockRequest];
-    };
-    NSString *tag = @"TEST_TAG";
-    NSString *put = @"PUT";
-    [[[mockPush stub] andDo:theBlock] requestToManipulateTag:OCMOCK_ANY withHTTPMethod:OCMOCK_ANY];
-    [push addTagToCurrentDevice:tag];
-    [mockRequest verify];
-    STAssertTrue([tagArg isEqualToString:tag], nil);
-    STAssertTrue([methodArg isEqualToString:put], nil);
-}
 
 - (void)testRequestToManipulateTag {
     id mockPush = [OCMockObject partialMockForObject:push];
@@ -345,14 +375,6 @@ static BOOL messageReceived = NO;
     STAssertTrue(sel_isEqual(failSelector, request.didFailSelector) ,nil);
 }
 
-- (void)testRemoveTagStartsReqeust {
-    id mockRequest = [OCMockObject mockForClass:[UA_ASIHTTPRequest class]];
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[[mockPush stub] andReturn:mockRequest] requestToManipulateTag:OCMOCK_ANY withHTTPMethod:OCMOCK_ANY];
-    [[mockRequest expect] startAsynchronous];
-    [push removeTagFromCurrentDevice:@"TAG"];
-    [mockRequest verify];
-}
 
 - (void)testSetBadgeNumber {
     [push setAutobadgeEnabled:NO];

@@ -162,8 +162,8 @@ enum {
         // Commit to server
         [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
 
-        // Delete the row from the data source.
-        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
+//        // Delete the row from the data source.
+//        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
         
         // Delete the row from the view
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -233,7 +233,8 @@ enum {
      }
      
      NSInteger index = [[UAPush shared].tags count];
-     [[UAPush shared].tags insertObject:tag atIndex:index];
+//     [[UAPush shared].tags insertObject:tag atIndex:index];
+     NSMutableArray* tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
      
      NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
