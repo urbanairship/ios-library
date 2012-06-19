@@ -57,8 +57,7 @@ static BOOL messageReceived = NO;
 
 @interface UAPushTest : SenTestCase{
     UAPush *push;
-    NSString *token;
-    
+    NSString *token;    
 }
 @end
 
@@ -71,11 +70,9 @@ static BOOL messageReceived = NO;
     token = @"5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2";
     messageReceived = NO;
     [push removeObservers];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushTagsSettingsKey];
 }
 
-//- (void)testInit {
-//    STAssertTrue(push.)
-//}
 
 // There is an algorithm here to prevent duplicate and non object tags
 // from ending up in the tag array or going to the server
@@ -110,10 +107,11 @@ static BOOL messageReceived = NO;
     NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
     [push setTags:testTags];
     NSArray *subArray = [testTags subarrayWithRange:NSMakeRange(0, 750)];
-    id mockDefaults = [OCMockObject partialMockForObject:push.standardUserDefaults] ;
+    id mockDefaults = [OCMockObject partialMockForObject:push.standardUserDefaults]  ;
     // There should be no call to update user defaults, all the tags are duplicates
     [[mockDefaults reject] setObject:OCMOCK_ANY forKey:UAPushTagsSettingsKey];
     [push addTagsToCurrentDevice:subArray];
+    
 }
 
 - (void)testRemoveTags {
