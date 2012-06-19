@@ -68,14 +68,11 @@
     [delegate_ locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    UALOG(@"Standard location mananager did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
-}
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
-    if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }

@@ -631,7 +631,7 @@
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.1.a";
+			path = "libUAirshipPush-1.2.2.a";
 			remoteRef = 1F9542AA1468820A009DDB0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -645,7 +645,8 @@
 		B6E7F8441239FFD5009BC92D /* libUAirship-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.2.1.a";
+			name = "libUAirship-1.2.1.a";
+			path = "libUAirship-1.2.2.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

@@ -107,8 +107,9 @@
     STAssertTrue([locationService.purpose isEqualToString:@"TEST"],nil);
 }
 
-// Register user defaults only works on the first app run. Reset the values here to make sure
-// they are read from user defaults. 
+// Register user defaults only works on the first app run. This is also called in UAirship, and may or may
+// not have occured at this point. The setting in NSUserDefaults may have been changed, keep this in mind
+// when testing the values in user defaults
 - (void)setTestValuesInNSUserDefaults {
     // UALocationService defaults. This needs to be kept in sync with the method in UAirship
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -405,12 +406,14 @@
     locationService.singleLocationProvider = [[[UAStandardLocationProvider alloc] initWithDelegate:locationService] autorelease];
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
     locationService.delegate = mockDelegate;
+    // Test that the location service is stopped when a good location is received.
     CLLocation *pdx = [[[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:5 verticalAccuracy:5 timestamp:[NSDate date]] autorelease];
     CLLocation *sfo = [UALocationTestUtils testLocationSFO];
     [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
     [[mockLocationService expect] stopSingleLocationWithLocation:pdx];
     [locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
     [mockDelegate verify];
+    // Test that location that is not accurate enough does not stop the location service
     pdx = [[[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(50, 50) altitude:100.0 horizontalAccuracy:12.0 verticalAccuracy:5 timestamp:[NSDate date]] autorelease];
     [[mockLocationService reject] stopSingleLocationWithLocation:OCMOCK_ANY];
     [locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
@@ -443,7 +446,7 @@
 }
 
 // Lightweight tests for method calls only
-- (void)testStopSingleLocaitonWithLocation {
+- (void)testStopSingleLocationWithLocation {
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
     [[mockLocationService expect] reportLocationToAnalytics:pdx fromProvider:locationService.singleLocationProvider];
@@ -467,6 +470,7 @@
     [[[mockLocationDelegate expect] andDo:argBlock] locationService:locationService didFailWithError:OCMOCK_ANY];
     locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
     locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
+    [[mockLocationDelegate expect] locationService:locationService didUpdateToLocation:locationService.bestAvailableSingleLocation fromLocation:nil];
     locationService.delegate = mockLocationDelegate;
     [[mockLocationService expect] reportLocationToAnalytics:locationService.bestAvailableSingleLocation fromProvider:locationService.singleLocationProvider];
     [[mockLocationService expect] stopSingleLocation];
@@ -474,6 +478,7 @@
     STAssertEqualObjects(error, locationError, nil);
     STAssertEqualObjects(service, locationService, nil);
     STAssertTrue([locationError.domain isEqualToString:UALocationServiceTimeoutError], nil);
+    STAssertTrue(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"BackgroundTaskIdentifier in UALocationService needs to be invalid");
 }
 
 
@@ -653,16 +658,6 @@
     [mockDelegate verify];
     STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"deprecated key should return NO");
 }
-
-// Don't test all the delegate calls, they are covered well elsewhere 
-- (void)didFailWithNetworkError {
-    id mockLocationProvider = [OCMockObject mockForProtocol:@protocol(UALocationProviderProtocol)];
-    [[mockLocationProvider expect] stopReportingLocation];
-    CLLocationManager *placeholder = [[[CLLocationManager alloc] init] autorelease];
-    [locationService locationProvider:mockLocationProvider withLocationManager:placeholder didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil]];
-    [mockLocationProvider verify];
-}
-
 
 - (void)testUpdateToNewLocation {
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];

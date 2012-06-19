@@ -30,7 +30,7 @@ Required Libraries
 The core library requires your application to link against the following Frameworks (sample UIs
 have additional linking requirements)::
 
-    libUAirship-1.1.2.a
+    libUAirship-<current_version>.a
     CFNetwork.framework
     CoreGraphics.framework
     Foundation.framework

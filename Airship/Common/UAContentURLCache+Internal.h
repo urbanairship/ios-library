@@ -37,7 +37,7 @@
 /** Deconstructs a compound key for the product
  @param compoundKey NSString in the form versionNumber<delimiter>productURL
  @return NSDictionary with the values for the version number and the productURL
- @return nil If the product is not found, or the key is not parsible
+ @return nil If the product is not found, or the key cannot be parsed
  */
 - (NSDictionary*)productURLAndVersionFromCompoundKey:(NSString*)compoundKey;
 

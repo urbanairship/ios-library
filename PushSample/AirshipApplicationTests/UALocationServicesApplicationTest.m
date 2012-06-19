@@ -26,6 +26,7 @@
 
 @interface UALocationServicesApplicationTest : SenTestCase <UALocationServiceDelegate> {
     BOOL locationRecieved;
+    BOOL errorRecieved;
     UALocationService *locationService;
     NSDate *timeout;
 }
@@ -38,6 +39,7 @@
 
 - (void)setUp{
     locationRecieved = NO;
+    errorRecieved = YES;
     locationService = nil;
     timeout = nil;
 }
@@ -169,12 +171,16 @@
     BOOL yes = YES;
     locationService = [[UALocationService alloc] initWithPurpose:@"current location test"];
     locationService.timeoutForSingleLocationService = 1;
+    // Setup a best available location, since we are using a mock location service.
+    locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
+    locationService.delegate = self;
     id mockLocationService = [OCMockObject partialMockForObject:locationService];
     [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
     id mockSingleProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     locationService.singleLocationProvider = mockSingleProvider;
     [[mockSingleProvider expect] startReportingLocation];
     [[[mockLocationService expect] andForwardToRealObject] stopSingleLocation];
+    [[mockLocationService expect] reportLocationToAnalytics:locationService.bestAvailableSingleLocation fromProvider:mockSingleProvider];
     [locationService reportCurrentLocation];
     STAssertFalse(UIBackgroundTaskInvalid == locationService.singleLocationBackgroundIdentifier, nil);
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
@@ -188,6 +194,26 @@
     }
     [mockSingleProvider verify];
     [mockLocationService verify];
+    STAssertTrue(locationRecieved, @"Location service should have reported a location");
+
+}
+
+- (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
+    BOOL yes = YES;
+    locationService = [[UALocationService alloc] initWithPurpose:@"backgound shutdown test"];
+    id mockLocationService = [OCMockObject partialMockForObject:locationService];
+    [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:locationService];
+    id mockProvider = [OCMockObject partialMockForObject:locationService.singleLocationProvider];
+    [[mockProvider stub] startReportingLocation];
+    [locationService reportCurrentLocation];
+    STAssertFalse(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LocationService background identifier should be valid");
+    [locationService.singleLocationProvider.delegate locationProvider:locationService.singleLocationProvider 
+                                                  withLocationManager:locationService.singleLocationProvider.locationManager 
+                                                     didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil]];
+     STAssertTrue(locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LcoationService background identifier should be invalid");
+    
+
 }
 
 #pragma mark -
@@ -206,7 +232,8 @@
 #pragma mark UALocationService Delegate methods
 
 - (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error{
-    STFail(@"Location service failed");    
+    NSLog(@"Location error received %@", error);
+    errorRecieved = YES;
 }
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
     NSLog(@"Authorization status changed to %u",status);

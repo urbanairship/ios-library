@@ -136,7 +136,7 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 #pragma mark -
 #pragma mark CLLocationManger Delegate
     
-/** iOS 4.2 or better */
+/* iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
 // TODO: Send analytics event if location service is denied?
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -154,7 +154,9 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    if([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
+        [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    }
 }
 
 - (void)stopAllReporting {
@@ -166,13 +168,29 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    UALOG(@"Base location mananger did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
+    // Catch kCLErrorDenied for iOS < 4.2. Also, catch the errors that would stop the service, vs. other
+    // errors which would just indicate that the service is in a transient error state that might clear
+    // up given time. 
+    switch (error.code) {
+        case kCLErrorDenied:
+            [self stopReportingLocation];
+            break;
+        case kCLErrorNetwork:
+            [self stopReportingLocation];
+            break;
+        default:
+            break;
+    }
+    UALOG(@"UA Location Manager %@ did fail with error %@", [self class], error);
+    if ([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
+        [delegate_ locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }

@@ -305,7 +305,7 @@
 #pragma mark -
 #pragma mark CLLocationManager didFailWithError
 
-- (void)testDidFailWithErrorBase {
+- (void)testDidFailWithErrorNonShutdown {
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
     id mockBase = [OCMockObject partialMockForObject:base];
     NSError* test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
@@ -316,6 +316,21 @@
     [mockBase verify];
 }
 
+// Test the two cases where UABaseLocationProvider needs to shutdown
+- (void)testDidFailWithErrorShutdown {
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
+    id mockBase = [OCMockObject partialMockForObject:base];
+    [[mockBase expect] stopReportingLocation];
+    NSError *error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil];
+    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:error];
+    [mockBase verify];
+    error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
+    [[mockBase expect] stopReportingLocation];
+    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:error];
+    [mockBase verify];
+    
+}
+
 - (void)testDidFailWithErrorStandard {
     UABaseLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
     id mockStandard = [OCMockObject partialMockForObject:standard];
@@ -324,7 +339,7 @@
     [[(OCMockObject*) mockUALocationService_ expect] locationProvider:standard withLocationManager:standard.locationManager didFailWithError:test];
     [standard.locationManager.delegate locationManager:standard.locationManager didFailWithError:test];
     [(OCMockObject*)mockUALocationService_ verify];
-    [mockStandard verify];
+    [mockStandard verify];    
 }
 
 - (void)testDidFailWithErrorSignificant {

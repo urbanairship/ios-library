@@ -203,13 +203,12 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
 }
 
 - (void)setPurpose:(NSString *)purpose {
-    NSString* uniquePurpose = [NSString stringWithString:purpose];
-    [UALocationService setObject:uniquePurpose forLocationServiceKey:UALocationServicePurposeKey];
+    [UALocationService setObject:purpose forLocationServiceKey:UALocationServicePurposeKey];
     if (standardLocationProvider_) {
-        standardLocationProvider_.purpose = uniquePurpose;
+        standardLocationProvider_.purpose = purpose;
     }
     if (significantChangeProvider_){
-        significantChangeProvider_.purpose = uniquePurpose;
+        significantChangeProvider_.purpose = purpose;
     }
 }
 
@@ -247,22 +246,15 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
      withLocationManager:(CLLocationManager*)locationManager 
         didFailWithError:(NSError*)error {
     UALOG(@"Location service did fail with error %@", error.description);
-    // Catch kCLErrorDenied for iOS < 4.2
-    switch (error.code) {
-        case kCLErrorDenied:
-            [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
-            [locationProvider stopReportingLocation];
-            break;
-        case kCLErrorNetwork:
-            [locationProvider stopReportingLocation];
-            break;
-        default:
-            break;
+    // There is different logic for the single location service, since it could be a background
+    // task
+    if (error.code == kCLErrorDenied) {
+        [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
     }
-    [self sendErrorToLocationServiceDelegate:error];
-}
-
-- (void)sendErrorToLocationServiceDelegate:(NSError *)error {
+    if (locationProvider == singleLocationProvider_) {
+        [self stopSingleLocationWithError:error];
+        return;
+    }
     if([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
         [delegate_ locationService:self didFailWithError:error];
     }
@@ -405,7 +397,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
-    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy || singleLocationProvider_.desiredAccuracy <= kCLLocationAccuracyBest){
+    if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
             [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
@@ -422,9 +414,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithLocation:(CLLocation*)location {
-    // If there are ever more performRequests, use the other cancel method call
-    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     UALOG(@"Single location acquired location %@", location);
     [self reportLocationToAnalytics:location fromProvider:singleLocationProvider_];
     [self stopSingleLocation];
@@ -432,15 +421,17 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithError:(NSError*)locationError {
-    // If there are ever more performRequests, use the other cancel method call
-    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     UALOG(@"Single location failed with error %@", locationError);
-    if ([delegate_ respondsToSelector:@selector(locationService:didFailWithError:)]) {
-        [delegate_ locationService:self didFailWithError:locationError];
+    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)] && bestAvailableSingleLocation_) {
+        [delegate_ locationService:self didUpdateToLocation:bestAvailableSingleLocation_ fromLocation:nil];
     }
     if (bestAvailableSingleLocation_) {
         [self reportLocationToAnalytics:bestAvailableSingleLocation_ fromProvider:singleLocationProvider_];
+    }
+    BOOL notifyDelegate = [delegate_ respondsToSelector:@selector(locationService:didFailWithError:)];
+    // Don't notify in case of a background error, there is most likely no way to recover
+    if (singleLocationBackgroundIdentifier_ == UIBackgroundTaskInvalid && notifyDelegate) {
+        [delegate_ locationService:self didFailWithError:locationError];
     }
     [self stopSingleLocation];  
 }
@@ -451,9 +442,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     // If there are ever more performRequests, use the other cancel method call
     // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    if (singleLocationProvider_.serviceStatus == UALocationProviderUpdating) {
-        [singleLocationProvider_ stopReportingLocation];
-    }
+    [singleLocationProvider_ stopReportingLocation];
     singleLocationProvider_.delegate = nil;
     UALOG(@"Shutdown single location background task");
     // Order is import if this task is refactored, as execution terminates very quickly with
