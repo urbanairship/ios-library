@@ -69,6 +69,7 @@
 		BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
 		BBC5163C157D2D1F00CB0DA9 /* deviceToken.data in Resources */ = {isa = PBXBuildFile; fileRef = BBC5163B157D2D1F00CB0DA9 /* deviceToken.data */; };
 		BBCD16B3157827BF008FA05B /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCD16B2157827BF008FA05B /* UAPushTest.m */; };
+		BBD52B831587E4CC00AE32FD /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD52B821587E4CC00AE32FD /* JRSwizzle.m */; };
 		BBDAEF1E1525264C007F7D92 /* UAirshipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */; };
 		BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
@@ -215,6 +216,7 @@
 		BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
 		BBC5163B157D2D1F00CB0DA9 /* deviceToken.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = deviceToken.data; path = ../../TestCommon/Support/deviceToken.data; sourceTree = "<group>"; };
 		BBCD16B2157827BF008FA05B /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPushTest.m; path = ../../AirshipLib/AirshipLogicTests/UAPushTest.m; sourceTree = "<group>"; };
+		BBD52B821587E4CC00AE32FD /* JRSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../../AirshipLib/AirshipLogicTests/JRSwizzle.m; sourceTree = "<group>"; };
 		BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTests.m; sourceTree = "<group>"; };
 		BBEFB0101507F37200976645 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -543,6 +545,7 @@
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXGroup;
 			children = (
+				BBD52B821587E4CC00AE32FD /* JRSwizzle.m */,
 				BBCD16B2157827BF008FA05B /* UAPushTest.m */,
 				BB502F9A156AA20800714FFC /* UATestUtilities.h */,
 				BB502F9B156AA20800714FFC /* UATestUtilities.m */,
@@ -802,6 +805,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBD52B831587E4CC00AE32FD /* JRSwizzle.m in Sources */,
 				BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */,
 				BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */,
 				BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */,

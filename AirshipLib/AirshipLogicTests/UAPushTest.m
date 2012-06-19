@@ -29,10 +29,31 @@
 #import "UAAnalytics.h"
 #import "UAUtils.h"
 #import "UA_ASIHTTPRequest.h"
+#import "UA_ASIHTTPRequestDelegate.h"
+#import "JRSwizzle.h"
 #import <objc/runtime.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
+
+static BOOL messageReceived = NO;
+
+@interface UAUtils (Test)
++ (void)setMessageReceivedYES;
+@end
+@implementation UAUtils (Test)
++ (void)setMessageReceivedYES {
+    messageReceived = YES;
+}
+@end
+
+// inteface to delegate callback methods
+@interface UAPush (Test)
+- (void)registerDeviceTokenSucceeded:(UA_ASIHTTPRequest*)request;
+- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request;
+@end
 
 
 @interface UAPushTest : SenTestCase{
@@ -48,6 +69,8 @@
 - (void)setUp {
     push = [UAPush shared];
     token = @"5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2";
+    messageReceived = NO;
+    [push removeObservers];
 }
 
 - (void)testInit {
@@ -414,9 +437,83 @@
     [[mockDelegate expect] handleBackgroundNotification:notification];
     [push handleNotification:notification applicationState:UIApplicationStateBackground];
     [mockDelegate verify];
-    
+}
+
+#pragma mark -
+#pragma mark UA API Registration callbacks
+
+- (void)testRegisterDeviceTokenFailed {
+    NSError *swizzleError = nil;
+    [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
+    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:@"cats"]] autorelease];
+    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
+    [push addObserver:mockObserver];
+    [[mockObserver expect] registerDeviceTokenFailed:request];
+    [push registerDeviceTokenFailed:request];
+    [mockObserver verify];
+    STAssertTrue(messageReceived, nil);
+    [UAUtils jr_swizzleClassMethod:@selector(setMessageReceivedYES) withClassMethod:@selector(requestWentWrong:keyword:) error:&swizzleError];
+    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+}
+
+- (void)testRegisterDeviceTokenSucceeded {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int code = 42;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] registerDeviceTokenFailed:mockRequest];
+    [push registerDeviceTokenSucceeded:mockRequest];
+    [mockPush verify];
+    id mockObserver = [OCMockObject niceMockForProtocol:@protocol(UARegistrationObserver)];
+    [[mockObserver expect] registerDeviceTokenSucceeded];
+    [push addObserver:mockObserver];
+    code = 200;
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    [push registerDeviceTokenSucceeded:mockRequest];
+    [mockObserver verify];
+                       
+}
+
+- (void)testUnregisterDeviceTokenFailed {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int code = 200;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    NSError *swizzleError = nil;
+    [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
+    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
+    [[mockObserver expect] unRegisterDeviceTokenFailed:mockRequest];
+    [push addObserver:mockObserver];
+    [push unRegisterDeviceTokenFailed:mockRequest];
+    [mockObserver verify];
+    STAssertTrue(messageReceived, nil);
+    [UAUtils jr_swizzleClassMethod:@selector(setMessageReceivedYES) withClassMethod:@selector(requestWentWrong:keyword:) error:&swizzleError];
+    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+}
+
+- (void)testUnregisterDeviceTokenSucceeded {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int code = 200;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] unRegisterDeviceTokenFailed:mockRequest];
+    [push unRegisterDeviceTokenSucceeded:mockRequest];
+    [mockPush verify];
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    code = 204;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    [[mockPush expect] setDeviceToken:nil];
+    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
+    [[mockObserver expect] unRegisterDeviceTokenSucceeded];
+    [push addObserver:mockObserver];
+    [push unRegisterDeviceTokenSucceeded:mockRequest];
+    [mockPush verify];
+    [mockObserver verify];
     
 }
+
 
 
 
