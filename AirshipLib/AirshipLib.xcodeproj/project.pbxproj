@@ -167,6 +167,7 @@
 		BB42FB7C1509622700FC4B1B /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; };
 		BB42FB7E150969F200FC4B1B /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
 		BB42FB7F150969F200FC4B1B /* UALocationCommonValues.m in Sources */ = {isa = PBXBuildFile; fileRef = BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */; };
+		BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2A15910C370097B38C /* UALocationTestUtils.m */; };
 		BB805C781523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */; };
 		BB805C791523ACAD004FA950 /* UAContentURLCache+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */; };
 		BB926B3D1540D1D000003975 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
@@ -301,10 +302,6 @@
 		BBB87E3A15057CF200971CEC /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
-		BBCC64001550AF3C00887257 /* UATestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCC63FF1550AF3C00887257 /* UATestUtilities.m */; };
-		BBCC64021550B05100887257 /* UADownloadContentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCC64011550B05100887257 /* UADownloadContentTests.m */; };
-		BBCC64051550B2BF00887257 /* BadZipDownload.zip in Resources */ = {isa = PBXBuildFile; fileRef = BBCC64031550B2BF00887257 /* BadZipDownload.zip */; };
-		BBCC64061550B2BF00887257 /* GoodZipDownload.zip in Resources */ = {isa = PBXBuildFile; fileRef = BBCC64041550B2BF00887257 /* GoodZipDownload.zip */; };
 		D5A1928712C15A4E006AF4AE /* libInbox-2.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */; };
 		D5BED7C312FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5BED7C412FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
@@ -527,6 +524,8 @@
 		BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderProtocol.h; sourceTree = "<group>"; };
 		BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderDelegate.h; sourceTree = "<group>"; };
 		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
+		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
+		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAContentURLCache+Internal.h"; sourceTree = "<group>"; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
@@ -550,11 +549,6 @@
 		BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseLocationProvider.h; sourceTree = "<group>"; };
 		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
-		BBCC63FE1550AF3C00887257 /* UATestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UATestUtilities.h; path = ../../TestCommon/LocationTest/UATestUtilities.h; sourceTree = "<group>"; };
-		BBCC63FF1550AF3C00887257 /* UATestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UATestUtilities.m; path = ../../TestCommon/LocationTest/UATestUtilities.m; sourceTree = "<group>"; };
-		BBCC64011550B05100887257 /* UADownloadContentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADownloadContentTests.m; sourceTree = "<group>"; };
-		BBCC64031550B2BF00887257 /* BadZipDownload.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; name = BadZipDownload.zip; path = ../../TestCommon/Support/BadZipDownload.zip; sourceTree = "<group>"; };
-		BBCC64041550B2BF00887257 /* GoodZipDownload.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; name = GoodZipDownload.zip; path = ../../TestCommon/Support/GoodZipDownload.zip; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libUAirship-1.2.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.2.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -759,9 +753,8 @@
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXGroup;
 			children = (
-				BBCC64011550B05100887257 /* UADownloadContentTests.m */,
-				BBCC63FE1550AF3C00887257 /* UATestUtilities.h */,
-				BBCC63FF1550AF3C00887257 /* UATestUtilities.m */,
+				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
+				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
 				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
 				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
 				BBB87D58150574DE00971CEC /* Gcov_Fix.c */,
@@ -782,8 +775,6 @@
 		7BB6790D1429288D00B877DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				BBCC64031550B2BF00887257 /* BadZipDownload.zip */,
-				BBCC64041550B2BF00887257 /* GoodZipDownload.zip */,
 				7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */,
 				7BB6790F1429288D00B877DB /* InfoPlist.strings */,
 				7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */,
@@ -1349,8 +1340,6 @@
 			files = (
 				7BB679111429288D00B877DB /* InfoPlist.strings in Resources */,
 				7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */,
-				BBCC64051550B2BF00887257 /* BadZipDownload.zip in Resources */,
-				BBCC64061550B2BF00887257 /* GoodZipDownload.zip in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1457,9 +1446,8 @@
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				BB1188CD15225E1E00E3D3F0 /* UAContentURLCacheTests.m in Sources */,
-				BBCC64001550AF3C00887257 /* UATestUtilities.m in Sources */,
-				BBCC64021550B05100887257 /* UADownloadContentTests.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
+				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
