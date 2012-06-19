@@ -34,10 +34,11 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 
+
 @interface UAPushTest : SenTestCase{
     UAPush *push;
+    NSString *token;
 }
-
 @end
 
 
@@ -46,6 +47,7 @@
 
 - (void)setUp {
     push = [UAPush shared];
+    token = @"5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2";
 }
 
 - (void)testInit {
@@ -59,31 +61,27 @@
     NSError *dataError = nil;
     NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
     STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
-    NSString* actualToken = @"5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2";
+    NSString* actualToken = token;
     [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenSettingsKey];
     [push setDeviceToken:actualToken];
     NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
     STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
+    // This method uses a known deprecated method, should be removed in the future. 
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed");
     NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
     [push setDeviceToken:newToken];
     STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
     STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed");
+    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
 
 - (void)testTimeZoneSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setValue:nil forKey:UAPushTimeZoneSettingsKey];
-    NSTimeZone *timeZone = [push timeZone];
-    STAssertTrue(timeZone.secondsFromGMT == [NSTimeZone localTimeZone].secondsFromGMT, @"Default time zone in UAPush is incorrect");
-    [push setTimeZone:nil]; // this should set the default time zone in NSUserDefaults
-    NSDictionary* timeZoneSettings = [defaults dictionaryForKey:UAPushTimeZoneSettingsKey];
-    STAssertNotNil(timeZoneSettings, @"Error in time zone settings dictionary in UAPush");  
-    NSTimeZone *defaultTimeZone = [NSTimeZone defaultTimeZone];
-    BOOL isDaylight = [[timeZoneSettings valueForKey:UAPushTimeZoneIsDaylightSavingsKey] boolValue];
-    NSInteger offset = [[timeZoneSettings valueForKey:UAPushTimeZoneOffesetKey] intValue];
-    STAssertTrue(isDaylight == defaultTimeZone.isDaylightSavingTime, nil);
-    STAssertTrue(offset == defaultTimeZone.secondsFromGMT, nil);
+    STAssertNil([push timeZone], nil);
+    [push setTimeZone:[NSTimeZone localTimeZone]];
+    STAssertTrue([[[NSTimeZone localTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
 }
 
 - (void)testRegistrationPayload {
@@ -95,6 +93,7 @@
     [push setAlias:testAlias];
     [push setTags:tags];
     [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
+    [push setAutobadgeEnabled:YES];
     NSDictionary *payload = [push registrationPayload];
     NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
     STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
@@ -113,15 +112,14 @@
     STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
     // Tags
     STAssertTrue([tags isEqualToArray:[payload valueForKey:UAPushMultipleTagsJSONKey]], nil);
+    STAssertTrue([[payload valueForKey:UAPushBadgeJSONKey] intValue] == 
+                 [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
 }
 
-- (void)testTimeZoneFallback {
-    NSArray *timeZoneObjects = [NSArray arrayWithObjects:[NSNumber numberWithBool:NO], @"junk", [NSNumber numberWithInt:-25200], nil];
-    NSArray *timeZoneKeys = [NSArray arrayWithObjects:UAPushTimeZoneIsDaylightSavingsKey, UAPushTimeZoneNameKey, UAPushTimeZoneOffesetKey, nil];
-    NSDictionary *timeZoneData = [NSDictionary dictionaryWithObjects:timeZoneObjects forKeys:timeZoneKeys];
-    [[NSUserDefaults standardUserDefaults] setValue:timeZoneData forKey:UAPushTimeZoneSettingsKey];
-    NSTimeZone* timeZone = [push timeZone];
-    STAssertTrue(timeZone.secondsFromGMT == [[timeZoneObjects objectAtIndex:2] intValue], nil);
+//Quiet time was tested above, set test with a nil timezone 
+- (void)testQuietTimeWithNilTimeZone {
+    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:35] withTimeZone:nil];
+    STAssertTrue([[[NSTimeZone defaultTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
 }
 
 - (void)testUpdateRegistrationLogic {
@@ -147,6 +145,15 @@
     [[mockPush expect] unRegisterDeviceToken];
     [push updateRegistration];
     [mockPush verify];
+}
+
+- (void)testRegisterForRemoteNotificationTypes {
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    UIRemoteNotificationType type = UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert;
+    [[mockApplication expect] registerForRemoteNotificationTypes:type];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushEnabledSettingsKey];
+    [push registerForRemoteNotificationTypes:type];
+    [mockApplication verify];
 }
 
 // Test device token registration, with the proper analytics event
@@ -255,8 +262,163 @@
     [push disableQuietTime];
     NSDictionary* quietTime = [push quietTime];
     STAssertNil(quietTime, nil);
+    [mockPush verify];
+}
+
+// Brittle test, not designed for doing much except verfying that the tag URL is correct, will
+// need to be kept updated, and will fail if a 64 character string is not present (device token)
+- (void)testURLForTagManipulationWithTag {
+    NSString *tag = @"TEST_TAG";
+    NSURL* URL = [push URLForTagManipulationWithTag:tag];
+    NSString* stringURL = [URL absoluteString];
+    // https://device-api.urbanairship.com/api/device_tokens/5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2/tags/TEST_TAG
+    NSError *regexError = nil;
+    NSString* regexString = @"https://device-api.urbanairship.com/api/device_tokens/(\\w){64}/tags/TEST_TAG";
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&regexError];
+    NSArray *match = [regex matchesInString:stringURL options:0 range:NSMakeRange(0, [stringURL length])];
+    STAssertTrue([match count] == 1, @"URL for tag manipulations in UAPush is incorrect");
+}
+
+- (void)testAddTagToCurrentDevice {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    __block id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    [[mockRequest expect] startAsynchronous];
+    __block NSString* tagArg = nil;
+    __block NSString* methodArg = nil;
+    void (^theBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
+    {
+        [invocation getArgument:&tagArg atIndex:2];
+        [invocation getArgument:&methodArg atIndex:3];
+        [invocation setReturnValue:&mockRequest];
+    };
+    NSString *tag = @"TEST_TAG";
+    NSString *put = @"PUT";
+    [[[mockPush stub] andDo:theBlock] requestToManipulateTag:OCMOCK_ANY withHTTPMethod:OCMOCK_ANY];
+    [push addTagToCurrentDevice:tag];
+    [mockRequest verify];
+    STAssertTrue([tagArg isEqualToString:tag], nil);
+    STAssertTrue([methodArg isEqualToString:put], nil);
+}
+
+- (void)testRequestToManipulateTag {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    NSURL* testURL = [NSURL URLWithString:@"test"];
+    [[[mockPush stub] andReturn:testURL] URLForTagManipulationWithTag:OCMOCK_ANY];
+    UA_ASIHTTPRequest *request = [push requestToManipulateTag:@"TAG" withHTTPMethod:@"PUT"];
+    NSURL *URL = request.url;
+    STAssertTrue([URL.absoluteString isEqualToString:testURL.absoluteString], nil);
+    SEL succeedSelector = @selector(addTagToDeviceSucceeded:);
+    SEL failSelector = @selector(addTagToDeviceFailed:);
+    SEL requestSucceedSelector = request.didFinishSelector;
+    SEL requestFailSelector = request.didFailSelector;
+    STAssertTrue(sel_isEqual(succeedSelector, requestSucceedSelector) ,nil);
+    STAssertTrue(sel_isEqual(failSelector, requestFailSelector) ,nil);
+    STAssertTrue([(NSString*)[request.userInfo valueForKey:UAPushSingleTagJSONKey] isEqualToString:@"TAG"], nil);
+    // Just check the selectors for the @"DELETE" request, the rest is the same
+    request = [push requestToManipulateTag:@"TAG" withHTTPMethod:@"DELETE"];
+    succeedSelector = @selector(removeTagFromDeviceSucceed:);
+    failSelector = @selector(removeTagFromDeviceFailed:);
+    STAssertTrue(sel_isEqual(succeedSelector, request.didFinishSelector) ,nil);
+    STAssertTrue(sel_isEqual(failSelector, request.didFailSelector) ,nil);
+}
+
+- (void)testRemoveTagStartsReqeust {
+    id mockRequest = [OCMockObject mockForClass:[UA_ASIHTTPRequest class]];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[[mockPush stub] andReturn:mockRequest] requestToManipulateTag:OCMOCK_ANY withHTTPMethod:OCMOCK_ANY];
+    [[mockRequest expect] startAsynchronous];
+    [push removeTagFromCurrentDevice:@"TAG"];
+    [mockRequest verify];
+}
+
+- (void)testSetBadgeNumber {
+    [push setAutobadgeEnabled:NO];
+    [push setBadgeNumber:42];
+    STAssertTrue(42 == [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
+    [push setDeviceToken:token];
+    [push setAutobadgeEnabled:YES];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] updateRegistration];
+    [push setBadgeNumber:7];
+    [mockPush verify];
+}
+
+- (void)testPushTypeString {
+    UIRemoteNotificationType types = (UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert);
+    NSString *string = [UAPush pushTypeString:types];
+    NSArray *array = [string componentsSeparatedByString:@","];
+    // Don't forget the whitespace when separating components
+    STAssertTrue([array containsObject:@"Badges"], nil);
+    STAssertTrue([array containsObject:@" Alerts"], nil);
+    STAssertTrue([array containsObject:@" Sounds"], nil);
+}
+
+- (void)testRegisterDeviceTokenWithAlias {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    __block NSMutableDictionary *body = nil;
+    void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation) 
+    {
+        [invocation getArgument:&body atIndex:3];
+    };
+    [[[mockPush stub] andDo:getSingleArg] registerDeviceToken:OCMOCK_ANY withExtraInfo:OCMOCK_ANY];
+    [push registerDeviceToken:nil withAlias:@"CATS"];
+    STAssertTrue([(NSString*)[body valueForKey:@"alias"] isEqualToString:@"CATS"], nil);
+}
+
+- (void)testHandleNotificationApplicationState {
+    NSMutableDictionary* notification = [NSMutableDictionary dictionaryWithCapacity:4];
+    NSMutableDictionary* apsDict = [NSMutableDictionary dictionary];
+    [push setAutobadgeEnabled:YES];
+    [apsDict setValue:@"ALERT" forKey:@"alert"];
+    [apsDict setValue:@"42" forKey:@"badge"];
+    [apsDict setValue:@"SOUND" forKey:@"sound"];
+    [apsDict setValue:@"CUSTOM" forKey:@"custom"];
+    [notification setObject:apsDict forKey:@"aps"];
+    id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
+    [[mockAnalytics expect] handleNotification:notification];
+    id mockDelegate = [OCMockObject mockForProtocol:@protocol(UAPushNotificationDelegate)];
+    [push setDelegate:mockDelegate];
+    [[mockDelegate expect] displayNotificationAlert:@"ALERT"];
+    [[mockDelegate expect] playNotificationSound:@"SOUND"];
+    [push handleNotification:notification applicationState:UIApplicationStateActive];
+    [mockAnalytics verify];
+    [mockDelegate verify];
+    // Setup logic for handleBadgeUpdate call
+    [[mockAnalytics stub] handleNotification:notification];
+    [push setAutobadgeEnabled:NO];
+    [apsDict removeObjectForKey:@"alert"];
+    [apsDict removeObjectForKey:@"sound"];
+    [[mockDelegate expect] handleBadgeUpdate:42];
+    [push handleNotification:notification applicationState:UIApplicationStateActive];
+    [mockDelegate verify];
+    // Setup localized notification
+    [apsDict removeObjectForKey:@"badge"];
+    NSDictionary *alertDictionary = [NSDictionary dictionaryWithObject:@"not a" forKey:@"string"];
+    [apsDict setObject:alertDictionary forKey:@"alert"];
+    [[mockDelegate expect] displayLocalizedNotificationAlert:alertDictionary];
+    [push handleNotification:notification applicationState:UIApplicationStateActive];
+    [mockDelegate verify];
+    // Setup a custom payload to see if it's parsed out correctly
+    NSDictionary* customPayload = [NSDictionary dictionaryWithObject:@"PAYLOAD" forKey:@"custom_payload"];
+    [notification setObject:customPayload forKey:@"custom_payload"];
+    [apsDict removeAllObjects];
+    __block NSDictionary *customPayloadArg = nil;
+    void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation) 
+    {
+        [invocation getArgument:&customPayloadArg atIndex:3];
+    };
+    [[[mockDelegate stub] andDo:getSingleArg]handleNotification:notification withCustomPayload:OCMOCK_ANY];
+    [push handleNotification:notification applicationState:UIApplicationStateActive];
+    STAssertTrue([[customPayloadArg objectForKey:@"custom_payload"] isEqualToDictionary:customPayload],nil);    
+    // UIApplication state testing
+    [[mockDelegate expect] handleBackgroundNotification:notification];
+    [push handleNotification:notification applicationState:UIApplicationStateBackground];
+    [mockDelegate verify];
+    
     
 }
+
+
 
 
 

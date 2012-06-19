@@ -27,26 +27,6 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
-typedef NSString UAPushSettingsKey;
-extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
-extern UAPushSettingsKey *const UAPushAliasSettingsKey;
-extern UAPushSettingsKey *const UAPushTagsSettingsKey;
-extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
-extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
-extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
-extern UAPushSettingsKey *const UAPushDeviceTokenSettingsKey;
-
-typedef NSString UAPushJSONKey;
-extern UAPushJSONKey *const UAPushMultipleTagsJSONKey;
-extern UAPushJSONKey *const UAPushSingleTagJSONKey;
-extern UAPushJSONKey *const UAPushAliasJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeStartJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeEndJSONKey;
-extern UAPushJSONKey *const UAPushTimeZoneJSONKey;
-extern UAPushJSONKey *const UAPushBadgeJSONKey;
-
-
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
@@ -130,9 +110,6 @@ UA_VERSION_INTERFACE(UAPushVersion)
 
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 
-/** Autobadge */
-@property (nonatomic, assign) BOOL autobadgeEnabled;
-
 /** Notification types this device is registered for */
 @property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
 
@@ -168,7 +145,46 @@ SINGLETON_INTERFACE(UAPush);
 
 /** Clean up when app is terminated, you should not need to call this unless you are working
  outside of UAirship. The UAirship land method calls this method. */
+
 + (void)land;
+
+///---------------------------------------------------------------------------------------
+/// @name Autobadge
+///---------------------------------------------------------------------------------------
+
+
+/** Current state of the autobadge. Autobadge allows the use of server side incrementing/decrementing
+ of the badge value 
+ */
+- (BOOL)autobadgeEnabled;
+
+/** Enables or disables the autobadge feature. Autobadge allows the use of server side incrementing/decrementing
+ of the badge value 
+ @param autobadgeEnabled The new badge value 
+ */
+- (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled;
+
+/** Sets the badge number on the device and 
+ on the Urban Airship server 
+ @param badgeNumber The number to set the badge to
+ */
+- (void)setBadgeNumber:(NSInteger)badgeNumber;
+
+/** Resets the badge to zero (0) both on the
+ device and on Urban Airships servers. Convenience method
+ for setBadgeNumber:0
+ */
+- (void)resetBadge;
+
+/** Enable the Urban Airship autobadge feature
+ @param enabled New value
+ @warning *Deprecated* Use the setAutobadgeEnabled: method instead
+ */
+- (void)enableAutobadge:(BOOL)enabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+///---------------------------------------------------------------------------------------
+/// @name Device Token
+///---------------------------------------------------------------------------------------
 
 /** Most recent device token, or nil if the device has not registered for push 
  @return The current, or most recent device token */
@@ -187,7 +203,12 @@ SINGLETON_INTERFACE(UAPush);
 
 /** Whether there has been a change from the previous device token 
  @return YES if the device token has changed, NO otherwise */
-- (BOOL)deviceTokenHasChanged;
+- (BOOL)deviceTokenHasChanged __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0); 
+
+///---------------------------------------------------------------------------------------
+/// @name Push Settings
+///---------------------------------------------------------------------------------------
+
 
 /** Current setting for Push notifications 
  @return BOOL representing wether push is enabled
@@ -199,6 +220,11 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)setPushEnabled:(BOOL)pushEnabled;
 
+///---------------------------------------------------------------------------------------
+/// @name Alias
+///---------------------------------------------------------------------------------------
+
+
 /** Device Alias 
  @return The current device alias */
 - (NSString*)alias;
@@ -206,6 +232,10 @@ SINGLETON_INTERFACE(UAPush);
 /** Set the device alias 
  @param alias NSString representing the new alias */
 - (void)setAlias:(NSString*)alias;
+
+///---------------------------------------------------------------------------------------
+/// @name Tags
+///---------------------------------------------------------------------------------------
 
 /** Tags associated with this device 
  @warning *Deprecated* Use deviceTags instead
@@ -217,6 +247,31 @@ SINGLETON_INTERFACE(UAPush);
  @warning *Deprecated* Use setDeviceTags instead
  @param tags NSMutableArray of the new tags*/
 - (void)setTags:(NSMutableArray *)tags;
+
+/** Adds a tag to the list of tags for the device
+ 
+ @param tag Tag to be added
+ */
+- (void)addTagToCurrentDevice:(NSString *)tag;
+
+/** Removes a tag from the current tag list
+ @param tag Tag to be removed
+ */
+- (void)removeTagFromCurrentDevice:(NSString *)tag;
+
+/** Updates the tag list on the device and on Urban Airship. Use setTags:
+ instead.
+ @param values The new tag values
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+ */
+- (void)updateTags:(NSMutableArray *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+///---------------------------------------------------------------------------------------
+/// @name Time Zone
+///---------------------------------------------------------------------------------------
 
 /** Current time zone used for notification purposes
  @return The current time zone
@@ -239,25 +294,10 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)setTz:(NSString *)tz __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
 
-/** Register the device for remote notifications (see Apple documentation for more
- detail)
- @param types Bitmask of notification types
- */
-- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
+///---------------------------------------------------------------------------------------
+/// @name Alias
+///---------------------------------------------------------------------------------------
 
-//TODO: Change the description, figure out what this method does
-- (void)updateRegistration;
-
-/** Adds a tag to the list of tags for the device
-
- @param tag Tag to be added
- */
-- (void)addTagToCurrentDevice:(NSString *)tag;
-
-/** Removes a tag from the current tag list
- @param tag Tag to be removed
- */
-- (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 /** Updates the alias on the device and on Urban Airship. Use only 
  when the alias is the only value that needs to be updated. 
@@ -270,15 +310,10 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)updateAlias:(NSString *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
 
-/** Updates the tag list on the device and on Urban Airship. Use setTags:
- instead.
- @param values The new tag values
- @warning *Warning* When updating several 
- server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
-*/
-- (void)updateTags:(NSMutableArray *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+///---------------------------------------------------------------------------------------
+/// @name Quiet Time
+///---------------------------------------------------------------------------------------
+
 
 /** The current quiet time settings for this device
  @return NSMutableDictionary with the current quiet time settings
@@ -295,22 +330,6 @@ SINGLETON_INTERFACE(UAPush);
 /** Disables quiet time settings */
 - (void)disableQuietTime;
 
-/** Enable the Urban Airship autobadge feature
- @param enabled New value
- */
-- (void)enableAutobadge:(BOOL)enabled;
-
-/** Sets the badge number on the device and 
- on the Urban Airship server 
- @param badgeNumber The number to set the badge to
- */
-- (void)setBadgeNumber:(NSInteger)badgeNumber;
-
-/** Resets the badge to zero (0) both on the
- device and on Urban Airships servers. Convenience method
- for setBadgeNumber:0
-*/
-- (void)resetBadge;
 
 ///---------------------------------------------------------------------------------------
 /// @name Urban Airship Device Token Registration
@@ -372,9 +391,33 @@ SINGLETON_INTERFACE(UAPush);
  Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
 */
 - (void)unRegisterDeviceToken;
+
+/** Register the device for remote notifications (see Apple documentation for more
+ detail)
+ @param types Bitmask of notification types
+ */
+- (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
+
+/** Registers or updates the current registration. If push notifications are not enabled,
+ this unregisters the device token */
+- (void)updateRegistration;
+
+///---------------------------------------------------------------------------------------
+/// @name Push Notification UI Methods
+///---------------------------------------------------------------------------------------
+
 //Handle incoming push notifications
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
 + (NSString *)pushTypeString:(UIRemoteNotificationType)types;
+
+///---------------------------------------------------------------------------------------
+/// @name NSUserDefaults
+///---------------------------------------------------------------------------------------
+
+/** Register the user defaults for this class. You should not need to call this method
+ unless you are bypassing UAirship
+ */
++ (void)registerNSUserDefaults;
 
 @end
