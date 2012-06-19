@@ -27,22 +27,30 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
-#define kEnabled @"UAPushEnabled"
-#define kAlias @"UAPushAlias"
-#define kTags @"UAPushTags"
-#define kBadge @"UAPushBadge"
-#define kQuietTime @"UAPushQuietTime"
-#define kTimeZone @"UAPushTimeZone"
+typedef NSString UAPushSettingsKey;
+extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
+extern UAPushSettingsKey *const UAPushAliasSettingsKey;
+extern UAPushSettingsKey *const UAPushTagsSettingsKey;
+extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
+extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
+extern UAPushSettingsKey *const UAPustTimeZoneSettingsKey;
+extern UAPushSettingsKey *const UAPushDeviceTokenSettingsKey;
+
+typedef NSString UAPushJSONKey;
+extern UAPushJSONKey *const UAPushMultipleTagsJSONKey;
+extern UAPushJSONKey *const UAPushSingleTagJSONKey;
+extern UAPushJSONKey *const UAPushAliasJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeJSONKey;
+extern UAPushJSONKey *const UAPushTimeZoneJSONKey;
+extern UAPushJSONKey *const UAPushBadgeJSONKey;
+
+
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
 UA_VERSION_INTERFACE(UAPushVersion)
 
-/**
- * 
- *
- */
 @protocol UAPushUIProtocol
 + (void)openApnsSettings:(UIViewController *)viewController
                    animated:(BOOL)animated;
@@ -51,6 +59,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;//TODO: remove from lib - it's a demo feature
 @end
+
 
 /**
  * Protocol to be implemented by push notification clients. All methods are optional.
@@ -97,34 +106,42 @@ UA_VERSION_INTERFACE(UAPushVersion)
 - (void)handleBackgroundNotification:(NSDictionary *)notification;
 @end
 
-
 /**
- * 
+ * Implement this protocol and register with the UAirship shared instance to receive
+ * device token registration success and failure callbacks.
  */
-@interface UAPush : UAObservable<UARegistrationObserver> {
+@protocol UARegistrationObserver
+@optional
+- (void)registerDeviceTokenSucceeded;
+- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)unRegisterDeviceTokenSucceeded;
+- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)addTagToDeviceSucceeded;
+- (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request;
+- (void)removeTagFromDeviceSucceeded;
+- (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
+@end
 
-  @private
-    id<UAPushNotificationDelegate> delegate; /* Push notification delegate. Handles incoming notifications */
-    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /* A default implementation of the push notification delegate */
 
-    BOOL pushEnabled; /* Push enabled flag. */
-    BOOL autobadgeEnabled;
-    UIRemoteNotificationType notificationTypes; /* Requested notification types */
-    NSString *alias; /* Device token alias. */
-    NSMutableArray *tags; /* Device token tags */
-    NSMutableDictionary *quietTime; /* Quiet time period. */
-    NSString *tz; /* Timezone, for quiet time */
-}
+
+@interface UAPush : UAObservable
+
 
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
-@property (nonatomic, assign) BOOL pushEnabled;
-@property (nonatomic, retain) NSString *alias;
-@property (nonatomic, retain) NSMutableArray *tags;
-@property (nonatomic, retain) NSMutableDictionary *quietTime;
-@property (nonatomic, retain) NSString *tz;
+
+/** Autobadge */
+@property (nonatomic, assign) BOOL autobadgeEnabled;
+
+/** Notification types this device is registered for */
 @property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
 
+
 SINGLETON_INTERFACE(UAPush);
+
+///---------------------------------------------------------------------------------------
+/// @name UAPush UI
+///---------------------------------------------------------------------------------------
+
 
 /**
  * Use a custom UI implementation.
@@ -144,28 +161,200 @@ SINGLETON_INTERFACE(UAPush);
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 + (void)closeTokenSettingsAnimated:(BOOL)animated;
 
+///---------------------------------------------------------------------------------------
+/// @name UAPush
+///---------------------------------------------------------------------------------------
+
+/** Clean up when app is terminated, you should not need to call this unless you are working
+ outside of UAirship. The UAirship land method calls this method. */
 + (void)land;
 
+/** Most recent device token, or nil if the device has not registered for push 
+ @return The current, or most recent device token */
+- (NSString *)deviceToken;
+
+/** Whether there has been a change from the previous device token 
+ @return YES if the device token has changed, NO otherwise*/
+- (BOOL)deviceTokenHasChanged;
+
+/** Current setting for Push notifications 
+ @return BOOL representing wether push is enabled
+*/
+- (BOOL)pushEnabled;
+
+/** Enables/Disables Push Notifications
+ @param pushEnabled New value for enabling/disabling push
+ */
+- (void)setPushEnabled:(BOOL)pushEnabled;
+
+/** Device Alias 
+ @return The current device alias */
+- (NSString*)alias;
+
+/** Set the device alias 
+ @param alias NSString representing the new alias */
+- (void)setAlias:(NSString*)alias;
+
+/** Tags associated with this device 
+ @warning *Deprecated* Use deviceTags instead
+ @return The current tags associated with this device or nil
+ */ // TODO: Mark as depricated, make note of new NSSet
+- (NSMutableArray *)tags;
+
+/** Set the tags for this device 
+ @warning *Deprecated* Use setDeviceTags instead
+ @param tags NSMutableArray of the new tags*/
+- (void)setTags:(NSMutableArray *)tags;
+
+/** Current time zone used for notification purposes
+ @return The current time zone
+ */
+- (NSTimeZone *)timeZone;
+
+/** Sets the time zone for notification purposes 
+ @param timeZone The new time zone.
+ */
+- (void)setTimeZone:(NSTimeZone *)timeZone;
+
+/** The current time zone setting
+ @return The time zone name
+ */
+- (NSString *)tz __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+/** Set a new time zone for the device
+ @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
+ the default time zone [NSTimeZone localTimeZone] is used
+ */
+- (void)setTz:(NSString *)tz __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+/** Register the device for remote notifications (see Apple documentation for more
+ detail)
+ @param types Bitmask of notification types
+ */
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
-- (void)registerDeviceToken:(NSData *)token;
+
+//TODO: Change the description, figure out what this method does
 - (void)updateRegistration;
 
-// Change tags for current device token
+/** Adds a tag to the list of tags for the device
+
+ @param tag Tag to be added
+ */
 - (void)addTagToCurrentDevice:(NSString *)tag;
+
+/** Removes a tag from the current tag list
+ @param tag Tag to be removed
+ */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
-// Update (replace) token attributes
-- (void)updateAlias:(NSString *)value;
-- (void)updateTags:(NSMutableArray *)value;
+/** Updates the alias on the device and on Urban Airship. Use only 
+ when the alias is the only value that needs to be updated. 
 
-// Change quiet time for current device token, only take hh:mm into account
+ @param value Updated alias
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+ */
+- (void)updateAlias:(NSString *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+/** Updates the tag list on the device and on Urban Airship. Use setTags:
+ instead.
+ @param values The new tag values
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+*/
+- (void)updateTags:(NSMutableArray *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+
+/** Change quiet time for current device token, only take hh:mm into account
+ @param from Date for start of quiet time
+ @param to Date for end of quiet time
+ @param tz Time zone the dates are in reference to
+*/
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
+
+/** Disables quiet time settings */
 - (void)disableQuietTime;
 
+/** Enable the Urban Airship autobadge feature
+ @param enabled New value
+ */
 - (void)enableAutobadge:(BOOL)enabled;
+
+/** Sets the badge number on the device and 
+ on the Urban Airship server 
+ @param badgeNumber The number to set the badge to
+ */
 - (void)setBadgeNumber:(NSInteger)badgeNumber;
+
+/** Resets the badge to zero (0) both on the
+ device and on Urban Airships servers. Convenience method
+ for setBadgeNumber:0
+*/
 - (void)resetBadge;
 
+///---------------------------------------------------------------------------------------
+/// @name Urban Airship Device Token Registration
+///---------------------------------------------------------------------------------------
+
+/** This registers the device token and all current associated Urban Airship custom
+ features that are currently set.
+
+ Features set with this call if available:
+ 
+ - tags
+ - alias
+ - time zone
+ - autobadge
+
+ Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ @param token The device token to register.
+ */
+- (void)registerDeviceToken:(NSData *)token;
+
+/**
+  Register the current device token with UA.
+ 
+  @param info An NSDictionary containing registraton keys and values. See
+  http://urbanairship.com/docs/push.html#registration for details.
+ 
+  Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+*/
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info;
+
+/**
+  Register a device token and alias with UA.  An alias should only have a small
+  number (< 10) of device tokens associated with it. Use the tags API for arbitrary
+  groupings.
+ 
+  Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+ 
+  @param token The device token to register.
+  @param alias The alias to register for this device token.
+*/
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias;
+
+/**
+ Register a device token with a custom API payload.
+
+ Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+
+ @param token The device token to register.
+ @param info An NSDictionary containing registraton keys and values. See
+ https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
+*/
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;
+
+/**
+ Remove this device token's registration from the server.
+ This call is equivalent to an API DELETE call, as described here:
+ https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
+ 
+ Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+*/
+- (void)unRegisterDeviceToken;
 //Handle incoming push notifications
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 

@@ -206,70 +206,70 @@ enum {
 #pragma mark logic
 
 - (void)initViews {
-    self.title = UA_PU_TR(@"UA_Push_Settings_Title");
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                            target:self
-                                                                                            action:@selector(quit)]
-                                              autorelease];
-
-    UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
-        pushEnabledSwitch.on = NO;
-    } else {
-        pushEnabledSwitch.on = YES;
-    }
-    if ([UALocationService airshipLocationServiceEnabled]) {
-        airshipLocationEnabledSwitch_.on = YES;
-    }
-    else {
-        airshipLocationEnabledSwitch_.on = NO;
-    }
-    
-    pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
-    quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");
-    
-    fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
-    fromCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_From");
-    toCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_To");
-
-    
-    NSDate *date1 = nil;
-    NSDate *date2 = nil;
-    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
-    
-    
-    NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
-    [formatter setDateFormat:@"HH:mm"];
-    if (quietTime != nil) {
-        UALOG(@"Quiet time dict found: %@ to %@", [quietTime objectForKey:@"start"], [quietTime objectForKey:@"end"]);
-        quietTimeSwitch.on = YES;
-        date1 = [formatter dateFromString:[quietTime objectForKey:@"start"]];
-        date2 = [formatter dateFromString:[quietTime objectForKey:@"end"]];
-    }
-    
-    if (date1 == nil || date2 == nil) {
-        quietTimeSwitch.on = NO;
-        date1 = [formatter dateFromString:@"22:00"];//default start
-        date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
-    }
-
-    [formatter setLocale:[NSLocale currentLocale]];
-    [formatter setDateStyle:NSDateFormatterNoStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    fromCell.detailTextLabel.text = [formatter stringFromDate:date1];
-    toCell.detailTextLabel.text = [formatter stringFromDate:date2];
-
-    NSDate *now = [[NSDate alloc] init];
-    [datePicker setDate:now animated:NO];
-    [now release];
-
-    pickerDisplayed = NO;
-    pickerShownFrame = CGRectZero;
-    pickerHiddenFrame = CGRectZero;
-    
-    [self.view setNeedsLayout];
+//    self.title = UA_PU_TR(@"UA_Push_Settings_Title");
+//    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+//                                                                                            target:self
+//                                                                                            action:@selector(quit)]
+//                                              autorelease];
+//
+//    UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+//    if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
+//        pushEnabledSwitch.on = NO;
+//    } else {
+//        pushEnabledSwitch.on = YES;
+//    }
+//    if ([UALocationService airshipLocationServiceEnabled]) {
+//        airshipLocationEnabledSwitch_.on = YES;
+//    }
+//    else {
+//        airshipLocationEnabledSwitch_.on = NO;
+//    }
+//    
+//    pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
+//    quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");
+//    
+//    fromCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+//    toCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil];
+//    fromCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_From");
+//    toCell.textLabel.text = UA_PU_TR(@"UA_Quiet_Time_To");
+//
+//    
+//    NSDate *date1 = nil;
+//    NSDate *date2 = nil;
+//    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+//    [formatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
+//    
+//    
+//    NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
+//    [formatter setDateFormat:@"HH:mm"];
+//    if (quietTime != nil) {
+//        UALOG(@"Quiet time dict found: %@ to %@", [quietTime objectForKey:@"start"], [quietTime objectForKey:@"end"]);
+//        quietTimeSwitch.on = YES;
+//        date1 = [formatter dateFromString:[quietTime objectForKey:@"start"]];
+//        date2 = [formatter dateFromString:[quietTime objectForKey:@"end"]];
+//    }
+//    
+//    if (date1 == nil || date2 == nil) {
+//        quietTimeSwitch.on = NO;
+//        date1 = [formatter dateFromString:@"22:00"];//default start
+//        date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
+//    }
+//
+//    [formatter setLocale:[NSLocale currentLocale]];
+//    [formatter setDateStyle:NSDateFormatterNoStyle];
+//    [formatter setTimeStyle:NSDateFormatterShortStyle];
+//    fromCell.detailTextLabel.text = [formatter stringFromDate:date1];
+//    toCell.detailTextLabel.text = [formatter stringFromDate:date2];
+//
+//    NSDate *now = [[NSDate alloc] init];
+//    [datePicker setDate:now animated:NO];
+//    [now release];
+//
+//    pickerDisplayed = NO;
+//    pickerShownFrame = CGRectZero;
+//    pickerHiddenFrame = CGRectZero;
+//    
+//    [self.view setNeedsLayout];
 }
 
 - (void)updatePickerLayout {
