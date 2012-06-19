@@ -33,7 +33,7 @@ extern UAPushSettingsKey *const UAPushAliasSettingsKey;
 extern UAPushSettingsKey *const UAPushTagsSettingsKey;
 extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
 extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
-extern UAPushSettingsKey *const UAPustTimeZoneSettingsKey;
+extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
 extern UAPushSettingsKey *const UAPushDeviceTokenSettingsKey;
 
 typedef NSString UAPushJSONKey;
@@ -41,6 +41,8 @@ extern UAPushJSONKey *const UAPushMultipleTagsJSONKey;
 extern UAPushJSONKey *const UAPushSingleTagJSONKey;
 extern UAPushJSONKey *const UAPushAliasJSONKey;
 extern UAPushJSONKey *const UAPushQuietTimeJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeStartJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeEndJSONKey;
 extern UAPushJSONKey *const UAPushTimeZoneJSONKey;
 extern UAPushJSONKey *const UAPushBadgeJSONKey;
 
@@ -126,7 +128,6 @@ UA_VERSION_INTERFACE(UAPushVersion)
 
 @interface UAPush : UAObservable
 
-
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 
 /** Autobadge */
@@ -173,8 +174,19 @@ SINGLETON_INTERFACE(UAPush);
  @return The current, or most recent device token */
 - (NSString *)deviceToken;
 
+/** Sets the device token. Refer to the parseDeviceToken: method in UAPush for the proper procedure 
+ for parsing a device token. You should not need to call this method directly, instead, use one of the 
+ registerDeviceToken: methods and the NSData object returned from Apple in the
+ application:didRegisterForRemoteNotificationsWithDeviceToken: delegate callback. 
+ This method has the side effect of modifying the deviceTokenHasChanged BOOL if the token
+ has changed.
+ 
+ @param deviceToken The device token parsed into a string
+ */
+- (void)setDeviceToken:(NSString *)deviceToken;
+
 /** Whether there has been a change from the previous device token 
- @return YES if the device token has changed, NO otherwise*/
+ @return YES if the device token has changed, NO otherwise */
 - (BOOL)deviceTokenHasChanged;
 
 /** Current setting for Push notifications 

@@ -27,22 +27,117 @@
 #import "UAPush+Internal.h"
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <OCMock/OCMock.h>
+#import <OCMock/OCMConstraint.h>
 
-@interface UAPushTest : SenTestCase
-    
+@interface UAPushTest : SenTestCase{
+    UAPush *push;
+}
 
 @end
 
 
+
 @implementation UAPushTest
 
-- (void)testDefaults{
-    UAPush *p = [UAPush shared];
-    p.pushEnabled = YES;
-    BOOL what = p.pushEnabled;
-    BOOL yes = [[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey];
-    STAssertEquals(yes, p.pushEnabled, nil);
+- (void)setUp {
+    push = [UAPush shared];
+}
+
+- (void)testInit {
+//    STAssertTrue(push.)
+}
+
+// Token and data were pulled from a funcitoning test app.
+- (void)testDeviceTokenParsing{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
+    NSError *dataError = nil;
+    NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
+    STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
+    NSString* actualToken = @"5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2";
+    [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenSettingsKey];
+    [push setDeviceToken:actualToken];
+    NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
+    STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
+    STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed");
+    NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
+    [push setDeviceToken:newToken];
+    STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
+    STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed");
+}
+
+- (void)testTimeZoneSettings {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setValue:nil forKey:UAPushTimeZoneSettingsKey];
+    NSTimeZone *timeZone = [push timeZone];
+    STAssertTrue(timeZone.secondsFromGMT == [NSTimeZone localTimeZone].secondsFromGMT, @"Default time zone in UAPush is incorrect");
+    [push setTimeZone:nil]; // this should set the default time zone in NSUserDefaults
+    NSDictionary* timeZoneSettings = [defaults dictionaryForKey:UAPushTimeZoneSettingsKey];
+    STAssertNotNil(timeZoneSettings, @"Error in time zone settings dictionary in UAPush");  
+    NSTimeZone *defaultTimeZone = [NSTimeZone defaultTimeZone];
+    BOOL isDaylight = [[timeZoneSettings valueForKey:UAPushTimeZoneIsDaylightSavingsKey] boolValue];
+    NSInteger offset = [[timeZoneSettings valueForKey:UAPushTimeZoneOffesetKey] intValue];
+    STAssertTrue(isDaylight == defaultTimeZone.isDaylightSavingTime, nil);
+    STAssertTrue(offset == defaultTimeZone.secondsFromGMT, nil);
+}
+
+- (void)testRegistrationPayload {
+    NSString *testAlias = @"test_alias";
+    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"tag_one", @"tag_two", nil];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"America/Dawson_Creek"]; // Ah, Dawson's creek.....
+    NSDate *now = [NSDate date];
+    NSDate *oneHour = [NSDate dateWithTimeIntervalSinceNow:360];
+    [push setAlias:testAlias];
+    [push setTags:tags];
+    [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
+    NSDictionary *payload = [push registrationPayload];
+    NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
+    STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
+    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSDateComponents *fromComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:now];
+    NSDateComponents *toComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:oneHour];
+    NSArray *fromHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeStartJSONKey] componentsSeparatedByString:@":"];
+    NSArray *toHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeEndJSONKey] componentsSeparatedByString:@":"];
+    // Quiet times
+    STAssertTrue([[timeZone name] isEqualToString:[payload valueForKey:UAPushTimeZoneJSONKey]], nil);
+    STAssertTrue(fromComponents.hour == [[fromHourMinute objectAtIndex:0] doubleValue], nil);
+    STAssertTrue(fromComponents.minute == [[fromHourMinute objectAtIndex:1] doubleValue], nil);
+    STAssertTrue(toComponents.hour == [[toHourMinute objectAtIndex:0] doubleValue], nil);
+    STAssertTrue(toComponents.minute == [[toHourMinute objectAtIndex:1] doubleValue], nil);
+    // Alias
+    STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
+    // Tags
+    STAssertTrue([tags isEqualToArray:[payload valueForKey:UAPushMultipleTagsJSONKey]], nil);
+}
+
+- (void)testTimeZoneFallback {
+    NSArray *timeZoneObjects = [NSArray arrayWithObjects:[NSNumber numberWithBool:NO], @"junk", [NSNumber numberWithInt:-25200], nil];
+    NSArray *timeZoneKeys = [NSArray arrayWithObjects:UAPushTimeZoneIsDaylightSavingsKey, UAPushTimeZoneNameKey, UAPushTimeZoneOffesetKey, nil];
+    NSDictionary *timeZoneData = [NSDictionary dictionaryWithObjects:timeZoneObjects forKeys:timeZoneKeys];
+    [[NSUserDefaults standardUserDefaults] setValue:timeZoneData forKey:UAPushTimeZoneSettingsKey];
+    NSTimeZone* timeZone = [push timeZone];
+    STAssertTrue(timeZone.secondsFromGMT == [[timeZoneObjects objectAtIndex:2] intValue], nil);
+}
+
+- (void)testUpdateRegistrationLogic {
+    [push setPushEnabled:YES];
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
+    NSError *dataError = nil;
+    NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
+    STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
+    ;
+    push.notificationTypes = UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert;
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] registerForRemoteNotificationTypes:push.notificationTypes];
+    [push updateRegistration];
+    [mockPush verify];
     
 }
+
+
+
+
 
 @end

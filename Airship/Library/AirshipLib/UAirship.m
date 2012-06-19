@@ -315,16 +315,21 @@ BOOL logging = false;
 #pragma mark NSUserDefaults Setup
 
 + (void)registerNSUserDefaults {
-    // UALocationService defaults
-    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
-    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
+    // Urban Airship defaults
+    NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
+    // UAPush default values
+    [defaultPreferences setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
+     // UALocationService default values
+    [defaultPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [defaultPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
     //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultLocationPreferences];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationMinimumAccuracyKey] forKey:UALocationServiceSingleLocationMinimumAccuracyKey];
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
 }
 
 #pragma mark -
@@ -333,10 +338,10 @@ BOOL logging = false;
 - (NSString*)deviceToken {
     return [[UAPush shared] deviceToken];
 }
-
-- (void)setDeviceToken:(NSString *)deviceToken {
-    
-}
+//
+//- (void)setDeviceToken:(NSString *)deviceToken {
+//    [[UAPush shared] setDeviceToken:deviceToken];
+//}
 
 - (void)configureUserAgent
 {
