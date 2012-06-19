@@ -42,4 +42,12 @@ extern UAPushStorageKey *const UAPushTimeZoneIsDaylightSavingsKey;
  @param tokenStr NSString returned from [NSData* description]
  */
 - (NSString*)parseDeviceToken:(NSString*)tokenStr;
+
+/* Build a http request with an optional JSON body 
+ @praram info NSDictionary or nil for no body
+ */
+- (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info;
+
+/* Build a http reqeust to delete the device token from the UA API */
+- (UA_ASIHTTPRequest*)requestToDeleteDeviceToken;
 @end
