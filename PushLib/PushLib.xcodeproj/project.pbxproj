@@ -11,6 +11,7 @@
 		1890B81812519CBC00E6EBF1 /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890B6FE12519CBC00E6EBF1 /* UAPush.m */; };
 		AA747D9F0F9514B9006C5449 /* PushLib_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		BB38DEB4157D3779003D0D4A /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BB38DEB3157D3779003D0D4A /* Gcov_Fix.c */; };
 		BBC0AFEC1577D38F00B3B385 /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBC0AFEB1577D38F00B3B385 /* UAPush+Internal.h */; };
 /* End PBXBuildFile section */
 
@@ -19,6 +20,7 @@
 		1890B6FE12519CBC00E6EBF1 /* UAPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPush.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		BB38DEB3157D3779003D0D4A /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Gcov_Fix.c; path = ../AirshipLib/AirshipLogicTests/Gcov_Fix.c; sourceTree = "<group>"; };
 		BBC0AFEB1577D38F00B3B385 /* UAPush+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPush+Internal.h"; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libPush-1.2.6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPush-1.2.6.a"; path = "libPush-1.3.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -92,6 +94,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BB38DEB3157D3779003D0D4A /* Gcov_Fix.c */,
 				AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */,
 			);
 			name = "Other Sources";
@@ -164,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1890B81812519CBC00E6EBF1 /* UAPush.m in Sources */,
+				BB38DEB4157D3779003D0D4A /* Gcov_Fix.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +222,8 @@
 				);
 				CURRENT_PROJECT_VERSION = 1.3.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -244,6 +250,8 @@
 				);
 				CURRENT_PROJECT_VERSION = 1.3.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

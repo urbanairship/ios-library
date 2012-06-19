@@ -50,19 +50,21 @@ UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
 UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
 UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
 UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
+UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
+UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-UAPushStorageKey *const UAPushTimezoneNameKey = @"UAPushTimezoneName";
-UAPushStorageKey *const UAPushTimezoneOffesetKey = @"UAPushTimezoneOffset";
-UAPushStorageKey *const UAPushTimezoneIsDaylightSavingsKey = @"UAPushTimezoneIsDaylightSavings";
+UAPushStorageKey *const UAPushTimeZoneNameKey = @"UAPushTimeZoneName";
+UAPushStorageKey *const UAPushTimeZoneOffesetKey = @"UAPushTimeZoneOffset";
+UAPushStorageKey *const UAPushTimeZoneIsDaylightSavingsKey = @"UAPushTimeZoneIsDaylightSavings";
 
 
 @implementation UAPush
 
 @synthesize delegate;
 @synthesize autobadgeEnabled = autobadgeEnabled_;
-@synthesize notificationTypes;
+@synthesize notificationTypes = notificationTypes_;
 @synthesize standardUserDefaults = standardUserDefaults_;
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -85,11 +87,6 @@ static Class _uiClass;
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.delegate = defaultPushHandler;
         standardUserDefaults_ = [NSUserDefaults standardUserDefaults];
-        // Push enabled defaults to on
-        if (![self pushEnabled]) {
-            [self setPushEnabled:YES];
-        }
-        [[UAirship shared] addObserver:self];
     }
     return self;
 }
@@ -101,22 +98,28 @@ static Class _uiClass;
     return deviceToken_;
 }
 
-- (void)setDeviceToken:(NSData *)deviceToken {
-    NSString* token = [self parseDeviceToken:[deviceToken description]];
-    if (!token) {
-        UALOG(@"Problem with parsing the device token");
+//- (void)setDeviceToken:(NSString*)tokenStr {
+//    [deviceToken release];
+//    deviceToken = [[self parseDeviceToken:tokenStr] retain];
+//    UALOG(@"Device token: %@", deviceToken);
+//    
+//    // Check to see if the device token has changed
+//    NSString* oldValue = [[NSUserDefaults standardUserDefaults] objectForKey:kLastDeviceTokenKey];
+//    if(![oldValue isEqualToString: deviceToken]) {
+//        deviceTokenHasChanged = YES;
+//        [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:kLastDeviceTokenKey];
+//    }
+//}
+
+- (void)setDeviceToken:(NSstring*)deviceToken{
+    [deviceToken_ release];
+    deviceToken_ = [token copy];
+    UALOG(@"Device token: %@", deviceToken_);    
+    NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
+    if(![oldValue isEqualToString: deviceToken_]) {
+        deviceTokenHasChanged_ = YES;
+        [[NSUserDefaults standardUserDefaults] setObject:deviceToken_ forKey:UAPushDeviceTokenSettingsKey];
     }
-    else {
-        [deviceToken_ release];
-        deviceToken_ = [token copy];
-        UALOG(@"Device token: %@", deviceToken_);    
-        NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
-        if(![oldValue isEqualToString: deviceToken_]) {
-            deviceTokenHasChanged_ = YES;
-            [[NSUserDefaults standardUserDefaults] setObject:deviceToken_ forKey:UAPushDeviceTokenSettingsKey];
-        }
-    }
-    return;
 }
 
 - (NSString*)parseDeviceToken:(NSString*)tokenStr {
@@ -179,13 +182,12 @@ static Class _uiClass;
 - (NSTimeZone *)timeZone {
     NSDictionary* timeZoneStorage = [standardUserDefaults_ dictionaryForKey:UAPushTimeZoneSettingsKey];
     if (!timeZoneStorage) {
-        self.timeZone = nil; // write out the default time zone to user defaults
-        return self.defaultTimeZoneForPush;
+        return [self defaultTimeZoneForPush];
     }
-    NSTimeZone *storedTimeZone = [NSTimeZone timeZoneWithName:[timeZoneStorage valueForKey:UAPushTimezoneNameKey]]; 
+    NSTimeZone *storedTimeZone = [NSTimeZone timeZoneWithName:[timeZoneStorage valueForKey:UAPushTimeZoneNameKey]]; 
     // If that came back nil, create a time zone based on offset
     if(!storedTimeZone){
-        storedTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:[[timeZoneStorage valueForKey:UAPushTimezoneOffesetKey] intValue]];
+        storedTimeZone = [NSTimeZone timeZoneForSecondsFromGMT:[[timeZoneStorage valueForKey:UAPushTimeZoneOffesetKey] intValue]];
     }
     return storedTimeZone;
 }
@@ -195,9 +197,9 @@ static Class _uiClass;
     if (!timeZone) {
         timeZone = [self defaultTimeZoneForPush];
     }
-    [timeZoneStorage setValue:timeZone.name forKey:UAPushTimezoneNameKey];
-    [timeZoneStorage setValue:[NSNumber numberWithBool:timeZone.isDaylightSavingTime] forKey:UAPushTimezoneIsDaylightSavingsKey];
-    [timeZoneStorage setValue:[NSNumber numberWithInt:timeZone.secondsFromGMT] forKey:UAPushTimezoneOffesetKey];
+    [timeZoneStorage setValue:timeZone.name forKey:UAPushTimeZoneNameKey];
+    [timeZoneStorage setValue:[NSNumber numberWithBool:timeZone.isDaylightSavingTime] forKey:UAPushTimeZoneIsDaylightSavingsKey];
+    [timeZoneStorage setValue:[NSNumber numberWithInt:timeZone.secondsFromGMT] forKey:UAPushTimeZoneOffesetKey];
     [standardUserDefaults_ setObject:timeZoneStorage forKey:UAPushTimeZoneSettingsKey];
 }
 
@@ -229,8 +231,8 @@ static Class _uiClass;
     [standardUserDefaults_ synchronize];
     //if on, but not yet registered, re-register -- was likely just enabled
     BOOL pushEnabled = self.pushEnabled;
-    if (pushEnabled && deviceToken_) {
-        [self registerForRemoteNotificationTypes:notificationTypes];
+    if (pushEnabled && !deviceToken_) {
+        [self registerForRemoteNotificationTypes:notificationTypes_];
         
     //if enabled, simply update existing device token
     } else if (pushEnabled) {
@@ -245,25 +247,15 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark APNS wrapper
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
-    notificationTypes = types;
+    self.notificationTypes = types;
     
     if (self.pushEnabled) {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes_];
     }
 }
 
-//The new token to register, or nil if updating the existing token
-- (void)registerDeviceToken:(NSData *)token {
-    NSMutableDictionary *body = [self registrationPayload];
-    if (token != nil) {
-		UALOG("Updating device token (%@) with: %@", token, body);
-        [self registerDeviceToken:token withExtraInfo:body];
-    } else {
-		UALOG("Updating device existing token with: %@", body);
-        [self registerDeviceTokenWithExtraInfo:body];
-    }
-
-}
+#pragma mark -
+#pragma mark UA API JSON Payload
 
 - (NSMutableDictionary *)registrationPayload {
     
@@ -357,8 +349,8 @@ static Class _uiClass;
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
     
     self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                      fromStr, @"start",
-                      toStr, @"end", nil];
+                      fromStr, UAPushQuietTimeStartJSONKey,
+                      toStr, UAPushQuietTimeEndJSONKey, nil];
     
     self.timeZone = timezone;
     [self updateRegistration];
@@ -583,6 +575,21 @@ static Class _uiClass;
     return @"None";
 }
 
+#pragma mark -
+#pragma mark UA Registration Methods
+
+//The new token to register, or nil if updating the existing token
+- (void)registerDeviceToken:(NSData *)token {
+    NSMutableDictionary *body = [self registrationPayload];
+    if (token != nil) {
+		UALOG("Updating device token (%@) with: %@", token, body);
+        [self registerDeviceToken:token withExtraInfo:body];
+    } else {
+		UALOG("Updating device existing token with: %@", body);
+        [self registerDeviceTokenWithExtraInfo:body];
+    }
+    
+}
 
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
     

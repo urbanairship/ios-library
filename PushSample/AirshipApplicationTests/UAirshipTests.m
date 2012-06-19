@@ -17,7 +17,7 @@
 // Testing because of lazy instantiation
 - (void)testLocationGetSet {
     UAirship *airship = [UAirship shared];
-    UALocationService *location = [airship.locationService retain];
+    UALocationService *location = airship.locationService ;
     STAssertTrue([location isKindOfClass:[UALocationService class]],nil);
 }
 @end

@@ -10,19 +10,23 @@
 #import "UAPush.h"
 
 typedef NSString UAPushStorageKey;
+extern UAPushStorageKey *const UAPushTimeZoneNameKey;
+extern UAPushStorageKey *const UAPushTimeZoneOffesetKey;
+extern UAPushStorageKey *const UAPushTimeZoneIsDaylightSavingsKey;
 
 @interface UAPush () {
 
     id<UAPushNotificationDelegate> delegate_; /* Push notification delegate. Handles incoming notifications */
     NSObject<UAPushNotificationDelegate> *defaultPushHandler; /* A default implementation of the push notification delegate */
     BOOL autobadgeEnabled_;
-    UIRemoteNotificationType notificationTypes; /* Requested notification types */
+    UIRemoteNotificationType notificationTypes_; /* Requested notification types */
     NSUserDefaults *standardUserDefaults_;
     NSString* deviceToken_;
     BOOL deviceTokenHasChanged_;
 }
 
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
+@property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /* Set quite time */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
@@ -30,11 +34,12 @@ typedef NSString UAPushStorageKey;
 /* Get the local time zone, considered the default */
 - (NSTimeZone *)defaultTimeZoneForPush;
 
-/* Set the device token. Has the side effect of copying the token
- to user defaults, and updating the deviceTokenHasChanged BOOL */
-- (void)setDeviceToken:(NSString *)deviceToken;
-
 /* Get a dictionary with the necessary info for tags, alias, autobadge, and
  timezone */
 - (NSMutableDictionary *)registrationPayload; 
+
+/* Parse a device token string out of the NSData string representation
+ @param tokenStr NSString returned from [NSData* description]
+ */
+- (NSString*)parseDeviceToken:(NSString*)tokenStr;
 @end
