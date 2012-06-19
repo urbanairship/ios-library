@@ -231,6 +231,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark UITableViewDataSource
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UAStoreFrontCell *cell = (UAStoreFrontCell *)[tableView dequeueReusableCellWithIdentifier:@"store-front-cell"];
     if (cell == nil) {
         cell = [[[UAStoreFrontCell alloc] initWithStyle:UITableViewCellStyleDefault
