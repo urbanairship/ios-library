@@ -280,6 +280,11 @@ SINGLETON_INTERFACE(UAPush);
 */
 - (void)updateTags:(NSMutableArray *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
 
+/** The current quiet time settings for this device
+ @return NSMutableDictionary with the current quiet time settings
+ */
+- (NSMutableDictionary*)quietTime;
+
 /** Change quiet time for current device token, only take hh:mm into account
  @param from Date for start of quiet time
  @param to Date for end of quiet time

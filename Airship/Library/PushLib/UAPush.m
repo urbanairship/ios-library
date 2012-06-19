@@ -98,22 +98,10 @@ static Class _uiClass;
     return deviceToken_;
 }
 
-//- (void)setDeviceToken:(NSString*)tokenStr {
-//    [deviceToken release];
-//    deviceToken = [[self parseDeviceToken:tokenStr] retain];
-//    UALOG(@"Device token: %@", deviceToken);
-//    
-//    // Check to see if the device token has changed
-//    NSString* oldValue = [[NSUserDefaults standardUserDefaults] objectForKey:kLastDeviceTokenKey];
-//    if(![oldValue isEqualToString: deviceToken]) {
-//        deviceTokenHasChanged = YES;
-//        [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:kLastDeviceTokenKey];
-//    }
-//}
-
-- (void)setDeviceToken:(NSstring*)deviceToken{
+- (void)setDeviceToken:(NSString*)deviceToken{
     [deviceToken_ release];
-    deviceToken_ = [token copy];
+    deviceToken_ = [deviceToken
+                    copy];
     UALOG(@"Device token: %@", deviceToken_);    
     NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
     if(![oldValue isEqualToString: deviceToken_]) {
@@ -162,11 +150,19 @@ static Class _uiClass;
 }
 
 - (NSMutableDictionary *)quietTime {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey]];
-    return dictionary;
+    NSDictionary* dictionary = [standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey];
+    if (dictionary) {
+        return [NSMutableDictionary dictionaryWithDictionary:dictionary];
+    }
+    else {
+        return nil;
+    }
 }
 
 - (void)setQuietTime:(NSMutableDictionary *)quietTime {
+    if (!quietTime) {
+        [standardUserDefaults_ removeObjectForKey:UAPushQuietTimeSettingsKey];
+    }
     [standardUserDefaults_ setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
@@ -225,23 +221,6 @@ static Class _uiClass;
 
 - (NSString *)getTagFromUrl:(NSURL *)url {
     return [[url.relativePath componentsSeparatedByString:@"/"] lastObject];
-}
-
-- (void)updateRegistration {
-    [standardUserDefaults_ synchronize];
-    //if on, but not yet registered, re-register -- was likely just enabled
-    BOOL pushEnabled = self.pushEnabled;
-    if (pushEnabled && !deviceToken_) {
-        [self registerForRemoteNotificationTypes:notificationTypes_];
-        
-    //if enabled, simply update existing device token
-    } else if (pushEnabled) {
-        [self registerDeviceToken:nil];
-        
-    // unregister token w/ UA
-    } else {
-        [self unRegisterDeviceToken];
-    }
 }
 
 #pragma mark -
@@ -357,7 +336,7 @@ static Class _uiClass;
 }
 
 - (void)disableQuietTime {
-    [self.quietTime removeAllObjects];
+    [self setQuietTime:nil];
     [self updateRegistration];
 }
 
@@ -578,6 +557,23 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark UA Registration Methods
 
+- (void)updateRegistration {
+    [standardUserDefaults_ synchronize];
+    //if on, but not yet registered, re-register -- was likely just enabled
+    BOOL pushEnabled = self.pushEnabled;
+    if (pushEnabled && !deviceToken_) {
+        [self registerForRemoteNotificationTypes:notificationTypes_];
+        
+        //if enabled, simply update existing device token
+    } else if (pushEnabled) {
+        [self registerDeviceToken:nil];
+        
+        // unregister token w/ UA
+    } else {
+        [self unRegisterDeviceToken];
+    }
+}
+
 //The new token to register, or nil if updating the existing token
 - (void)registerDeviceToken:(NSData *)token {
     NSMutableDictionary *body = [self registrationPayload];
@@ -598,8 +594,12 @@ static Class _uiClass;
         UALOG(@"Skipping DT registration. The app is currently backgrounded.");
         return;
     }
+    UA_ASIHTTPRequest *request = [self requestToRegisterDeviceTokenWithInfo:info];
+    [request startAsynchronous];
     
-    
+}
+
+- (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            [UAirship shared].server, @"/api/device_tokens/",
                            deviceToken_];
@@ -614,10 +614,8 @@ static Class _uiClass;
         UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
         [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
         [writer release];
-    }
-    
-    [request startAsynchronous];
-    
+    }   
+    return request;
 }
 
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
@@ -643,7 +641,11 @@ static Class _uiClass;
         UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
         return;
     }
-    
+    UA_ASIHTTPRequest* request = [self requestToDeleteDeviceToken];
+    [request startAsynchronous];
+}
+
+- (UA_ASIHTTPRequest*)requestToDeleteDeviceToken {
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
                            [UAirship shared].server,
                            deviceToken_];
@@ -654,7 +656,7 @@ static Class _uiClass;
                                                 delegate:self
                                                   finish:@selector(unRegisterDeviceTokenSucceeded:)
                                                     fail:@selector(unRegisterDeviceTokenFailed:)];
-    [request startAsynchronous];
+    return request;
 }
 
 #pragma mark -
