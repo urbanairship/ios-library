@@ -166,6 +166,7 @@ SINGLETON_INTERFACE(UAPush);
 
 /** Sets the badge number on the device and 
  on the Urban Airship server 
+ 
  @param badgeNumber The number to set the badge to
  */
 - (void)setBadgeNumber:(NSInteger)badgeNumber;
@@ -177,6 +178,7 @@ SINGLETON_INTERFACE(UAPush);
 - (void)resetBadge;
 
 /** Enable the Urban Airship autobadge feature
+ 
  @param enabled New value
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
  */
@@ -187,6 +189,7 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 /** Most recent device token, or nil if the device has not registered for push 
+ 
  @return The current, or most recent device token */
 - (NSString *)deviceToken;
 
@@ -202,6 +205,7 @@ SINGLETON_INTERFACE(UAPush);
 - (void)setDeviceToken:(NSString *)deviceToken;
 
 /** Whether there has been a change from the previous device token 
+ 
  @return YES if the device token has changed, NO otherwise */
 - (BOOL)deviceTokenHasChanged __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0); 
 
@@ -211,11 +215,13 @@ SINGLETON_INTERFACE(UAPush);
 
 
 /** Current setting for Push notifications 
+ 
  @return BOOL representing wether push is enabled
 */
 - (BOOL)pushEnabled;
 
 /** Enables/Disables Push Notifications
+ 
  @param pushEnabled New value for enabling/disabling push
  */
 - (void)setPushEnabled:(BOOL)pushEnabled;
@@ -226,11 +232,18 @@ SINGLETON_INTERFACE(UAPush);
 
 
 /** Device Alias 
+ 
  @return The current device alias */
 - (NSString*)alias;
 
 /** Set the device alias 
- @param alias NSString representing the new alias */
+ 
+ @param alias NSString representing the new alias 
+    @warning *Warning* When updating several 
+    server side values (tags, alias, time zone, quiettime) set the values first, then
+    call the updateUA method. Failure to comply will result in your applications API calls
+    being throttled.
+ */
 - (void)setAlias:(NSString*)alias;
 
 ///---------------------------------------------------------------------------------------
@@ -238,29 +251,76 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 /** Tags associated with this device 
- @warning *Deprecated* Use deviceTags instead
+ 
  @return The current tags associated with this device or nil
- */ // TODO: Mark as depricated, make note of new NSSet
-- (NSMutableArray *)tags;
+ */
+- (NSArray *)tags;
 
-/** Set the tags for this device 
- @warning *Deprecated* Use setDeviceTags instead
- @param tags NSMutableArray of the new tags*/
-- (void)setTags:(NSMutableArray *)tags;
+/** Set the tags for this device. This replaces all the current tags with
+ the new tags. Make sure to call updateRegistration after modifying the
+ tags
+ 
+ @param tags New tags for the device
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+ */
+- (void)setTags:(NSArray *)tags;
 
 /** Adds a tag to the list of tags for the device
+ To update the server, make all of you changes, then call
+ [[UAPush shared] updateRegisration] to update the UA server.
  
  @param tag Tag to be added
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
  */
 - (void)addTagToCurrentDevice:(NSString *)tag;
 
-/** Removes a tag from the current tag list
+/** Adds a group of tags to the current list of 
+ device tags.  To update the server, make all of you changes, then call
+ [[UAPush shared] updateRegisration]
+ 
+ @param tags Array of new tags
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+ */
+
+- (void)addTagsToCurrentDevice:(NSArray*)tags;
+
+/** Removes a tag from the current tag list. To update the server, make all of you changes, then call
+ [[UAPush shared] updateRegisration]
+ 
  @param tag Tag to be removed
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
  */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
+/** Removes a group of tags from a device.  To update the server, make all of you changes, then call
+ [[UAPush shared] updateRegisration]
+ 
+ @param tags Array of tags to be removed
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
+ being throttled.
+ */
+- (void)removeTagsFromCurrentDevice:(NSArray*)tags;
+
+
 /** Updates the tag list on the device and on Urban Airship. Use setTags:
- instead.
+ instead. This method updates the server after setting the tags. Use
+ the other tag manipulation methods instead, and update the server
+ when appropriate.
+ 
  @param values The new tag values
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
@@ -278,8 +338,13 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (NSTimeZone *)timeZone;
 
-/** Sets the time zone for notification purposes 
+/** Sets the time zone for notification purposes. To update the server, make all of you changes, then call
+ [[UAPush shared] updateRegisration]
+ 
  @param timeZone The new time zone.
+ @warning *Warning* When updating several 
+ server side values (tags, alias, time zone, quiettime) set the values first, then
+ call the updateUA method. Failure to comply will result in your applications API calls
  */
 - (void)setTimeZone:(NSTimeZone *)timeZone;
 
@@ -318,7 +383,7 @@ SINGLETON_INTERFACE(UAPush);
 /** The current quiet time settings for this device
  @return NSMutableDictionary with the current quiet time settings
  */
-- (NSMutableDictionary*)quietTime;
+- (NSDictionary*)quietTime;
 
 /** Change quiet time for current device token, only take hh:mm into account
  @param from Date for start of quiet time
