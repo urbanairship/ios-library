@@ -80,11 +80,14 @@ static Class _uiClass;
 }
 
 - (void)setDeviceToken:(NSString*)deviceToken{
-    [deviceToken_ release];
+    [deviceToken_ autorelease];
     deviceToken_ = [deviceToken copy];
     UALOG(@"Device token: %@", deviceToken_);    
     NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
-    if(![oldValue isEqualToString: deviceToken_]) {
+    if([oldValue isEqualToString:deviceToken_]) {
+        deviceTokenHasChanged_ = NO;
+    }
+    else {
         deviceTokenHasChanged_ = YES;
         [[NSUserDefaults standardUserDefaults] setObject:deviceToken_ forKey:UAPushDeviceTokenSettingsKey];
     }
@@ -218,22 +221,22 @@ static Class _uiClass;
     
     NSMutableDictionary *body = [NSMutableDictionary dictionary];
     NSString* alias =  self.alias;
-    if (alias != nil) {
-        [body setObject:alias forKey:UAPushAliasJSONKey];
-    }
+
+    [body setValue:alias forKey:UAPushAliasJSONKey];
+
     NSArray *tags = [self tags];
-    if (tags != nil && tags.count != 0) {
-        [body setObject:tags forKey:UAPushMultipleTagsJSONKey];
+    if ( tags.count != 0) {
+        [body setValue:tags forKey:UAPushMultipleTagsJSONKey];
     }
     
     NSString* tz = self.timeZone.name;
     NSDictionary *quietTime = self.quietTime;
     if (tz != nil && quietTime != nil && [quietTime count] > 0) {
-        [body setObject:tz forKey:UAPushTimeZoneJSONKey];
-        [body setObject:quietTime forKey:UAPushQuietTimeJSONKey];
+        [body setValue:tz forKey:UAPushTimeZoneJSONKey];
+        [body setValue:quietTime forKey:UAPushQuietTimeJSONKey];
     }
     if ([self autobadgeEnabled]) {
-        [body setObject:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:UAPushBadgeJSONKey];
+        [body setValue:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:UAPushBadgeJSONKey];
     }
     return body;
 }
