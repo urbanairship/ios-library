@@ -33,15 +33,7 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-@interface UAPush () {
-
-    id<UAPushNotificationDelegate> delegate_; /* Push notification delegate. Handles incoming notifications */
-    NSObject<UAPushNotificationDelegate> *defaultPushHandler; /* A default implementation of the push notification delegate */
-    UIRemoteNotificationType notificationTypes_; /* Requested notification types */
-    NSUserDefaults *standardUserDefaults_;
-    NSString* deviceToken_;
-    BOOL deviceTokenHasChanged_;
-}
+@interface UAPush ()
 
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;

@@ -107,7 +107,17 @@ UA_VERSION_INTERFACE(UAPushVersion)
 
 
 
-@interface UAPush : UAObservable
+@interface UAPush : UAObservable {
+    @private
+        /* Push notification delegate. Handles incoming notifications */
+        id<UAPushNotificationDelegate> delegate_; 
+         /* A default implementation of the push notification delegate */
+        NSObject<UAPushNotificationDelegate> *defaultPushHandler;
+        UIRemoteNotificationType notificationTypes_;
+        NSString *deviceToken_;
+        BOOL deviceTokenHasChanged_;
+        NSUserDefaults *standardUserDefaults_;
+}
 
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 
@@ -124,11 +134,11 @@ UA_VERSION_INTERFACE(UAPushVersion)
 
 /** Alias for this device */
 @property (nonatomic, copy, getter = alias,
-           setter = setAlias:) NSString* alias;
+           setter = setAlias:) NSString *alias;
 
 /** Tags for this device */
 @property (nonatomic, copy, getter = tags,
-           setter = setTags:) NSArray* tags;
+           setter = setTags:) NSArray *tags;
 
 /** Quiet time settings for this device */
 @property (nonatomic, copy, readonly, getter = quietTime) NSDictionary *quietTime;
