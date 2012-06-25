@@ -274,8 +274,7 @@ SINGLETON_INTERFACE(UAPush);
  @param alias NSString representing the new alias 
     @warning *Warning* When updating several 
     server side values (tags, alias, time zone, quiettime) set the values first, then
-    call the updateUA method. Failure to comply will result in your applications API calls
-    being throttled.
+    call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)setAlias:(NSString*)alias;
 
@@ -296,8 +295,7 @@ SINGLETON_INTERFACE(UAPush);
  @param tags New tags for the device
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)setTags:(NSArray *)tags;
 
@@ -308,8 +306,7 @@ SINGLETON_INTERFACE(UAPush);
  @param tag Tag to be added
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)addTagToCurrentDevice:(NSString *)tag;
 
@@ -320,8 +317,7 @@ SINGLETON_INTERFACE(UAPush);
  @param tags Array of new tags
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 
 - (void)addTagsToCurrentDevice:(NSArray*)tags;
@@ -332,8 +328,7 @@ SINGLETON_INTERFACE(UAPush);
  @param tag Tag to be removed
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
@@ -343,8 +338,7 @@ SINGLETON_INTERFACE(UAPush);
  @param tags Array of tags to be removed
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)removeTagsFromCurrentDevice:(NSArray*)tags;
 
@@ -357,8 +351,7 @@ SINGLETON_INTERFACE(UAPush);
  @param values The new tag values
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)updateTags:(NSMutableArray *)value UA_DEPRECATED(__LIB_1_2_2__);
 
@@ -377,7 +370,7 @@ SINGLETON_INTERFACE(UAPush);
  @param timeZone The new time zone.
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)setTimeZone:(NSTimeZone *)timeZone;
 
@@ -403,8 +396,7 @@ SINGLETON_INTERFACE(UAPush);
  @param value Updated alias
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Failure to comply will result in your applications API calls
- being throttled.
+ call the updateUA method. Batching these calls improves API and client perfomance.
  */
 - (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_2_2__);
 
