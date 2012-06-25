@@ -28,6 +28,7 @@
 #import "UAObservable.h"
 
 
+
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
@@ -113,6 +114,27 @@ UA_VERSION_INTERFACE(UAPushVersion)
 /** Notification types this device is registered for */
 @property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
 
+/** Enables/disables push notifications on this device through Urban Airship */
+@property (nonatomic, getter = pushEnabled,
+           setter = setPushEnabled:) BOOL pushEnabled;
+
+/** The device token for this device, as a string */
+@property (nonatomic, copy, getter = deviceToken,
+           setter = setDeviceToken:) NSString *deviceToken;
+
+/** Alias for this device */
+@property (nonatomic, copy, getter = alias,
+           setter = setAlias:) NSString* alias;
+
+/** Tags for this device */
+@property (nonatomic, copy, getter = tags,
+           setter = setTags:) NSArray* tags;
+
+/** Quiet time settings for this device */
+@property (nonatomic, copy, readonly, getter = quietTime) NSDictionary *quietTime;
+
+
+
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -182,8 +204,9 @@ SINGLETON_INTERFACE(UAPush);
  @param enabled New value
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
  */
-- (void)enableAutobadge:(BOOL)enabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+//- (void)enableAutobadge:(BOOL)enabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
 
+- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__LIB_1_2_2__);
 ///---------------------------------------------------------------------------------------
 /// @name Device Token
 ///---------------------------------------------------------------------------------------
@@ -207,7 +230,7 @@ SINGLETON_INTERFACE(UAPush);
 /** Whether there has been a change from the previous device token 
  
  @return YES if the device token has changed, NO otherwise */
-- (BOOL)deviceTokenHasChanged __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0); 
+- (BOOL)deviceTokenHasChanged UA_DEPRECATED(__LIB_1_2_2__); 
 
 ///---------------------------------------------------------------------------------------
 /// @name Push Settings
@@ -327,7 +350,7 @@ SINGLETON_INTERFACE(UAPush);
  call the updateUA method. Failure to comply will result in your applications API calls
  being throttled.
  */
-- (void)updateTags:(NSMutableArray *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+- (void)updateTags:(NSMutableArray *)value UA_DEPRECATED(__LIB_1_2_2__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Time Zone
@@ -351,13 +374,13 @@ SINGLETON_INTERFACE(UAPush);
 /** The current time zone setting
  @return The time zone name
  */
-- (NSString *)tz __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+- (NSString *)tz UA_DEPRECATED(__LIB_1_2_2__);
 
 /** Set a new time zone for the device
  @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
  the default time zone [NSTimeZone localTimeZone] is used
  */
-- (void)setTz:(NSString *)tz __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+- (void)setTz:(NSString *)tz UA_DEPRECATED(__LIB_1_2_2__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -373,7 +396,7 @@ SINGLETON_INTERFACE(UAPush);
  call the updateUA method. Failure to comply will result in your applications API calls
  being throttled.
  */
-- (void)updateAlias:(NSString *)value __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
+- (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_2_2__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
