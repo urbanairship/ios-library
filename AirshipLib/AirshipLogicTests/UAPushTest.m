@@ -416,6 +416,7 @@ static BOOL messageReceived = NO;
 }
 
 - (void)testHandleNotificationApplicationState {
+    // Setup a notification payload
     NSMutableDictionary* notification = [NSMutableDictionary dictionaryWithCapacity:4];
     NSMutableDictionary* apsDict = [NSMutableDictionary dictionary];
     [push setAutobadgeEnabled:YES];
@@ -424,16 +425,21 @@ static BOOL messageReceived = NO;
     [apsDict setValue:@"SOUND" forKey:@"sound"];
     [apsDict setValue:@"CUSTOM" forKey:@"custom"];
     [notification setObject:apsDict forKey:@"aps"];
+    // Setup a mock object to receive the parsed payload
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
     [[mockAnalytics expect] handleNotification:notification];
+    // Setup a mock delegate to make sure the proper messages are passed when a notification
+    // has been received 
     id mockDelegate = [OCMockObject mockForProtocol:@protocol(UAPushNotificationDelegate)];
     [push setDelegate:mockDelegate];
     [[mockDelegate expect] displayNotificationAlert:@"ALERT"];
     [[mockDelegate expect] playNotificationSound:@"SOUND"];
+    // Call the handle notification method with our fake payload
     [push handleNotification:notification applicationState:UIApplicationStateActive];
+    // Verify the calls were received
     [mockAnalytics verify];
     [mockDelegate verify];
-    // Setup logic for handleBadgeUpdate call
+    // Setup a notification that is just a badge update
     [[mockAnalytics stub] handleNotification:notification];
     [push setAutobadgeEnabled:NO];
     [apsDict removeObjectForKey:@"alert"];
@@ -452,6 +458,7 @@ static BOOL messageReceived = NO;
     NSDictionary* customPayload = [NSDictionary dictionaryWithObject:@"PAYLOAD" forKey:@"custom_payload"];
     [notification setObject:customPayload forKey:@"custom_payload"];
     [apsDict removeAllObjects];
+    // Setup a block to pull out the arg sent to the handleNotification:withCustomPayload method
     __block NSDictionary *customPayloadArg = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation) 
     {
@@ -460,7 +467,7 @@ static BOOL messageReceived = NO;
     [[[mockDelegate stub] andDo:getSingleArg]handleNotification:notification withCustomPayload:OCMOCK_ANY];
     [push handleNotification:notification applicationState:UIApplicationStateActive];
     STAssertTrue([[customPayloadArg objectForKey:@"custom_payload"] isEqualToDictionary:customPayload],nil);    
-    // UIApplication state testing
+    // Make sure the app passes a background notification message properly
     [[mockDelegate expect] handleBackgroundNotification:notification];
     [push handleNotification:notification applicationState:UIApplicationStateBackground];
     [mockDelegate verify];
