@@ -125,31 +125,9 @@ static Class _uiClass;
 }
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags {
-    // TODO: Is there a need to verify that all objects are NSStrings?
-    NSMutableArray *mutableIncomingTags = [tags mutableCopy];
-    // Check incoming array for duplicates with existing tags
-    __block NSArray *currentTags = [self tags];
-    // If there are no  existing tags, take these and return
-    if (!currentTags) {
-        [standardUserDefaults_ setObject:mutableIncomingTags forKey:UAPushTagsSettingsKey];
-        return;
-    }
-    void (^checkForDuplicates)(NSString* tag, NSUInteger index, BOOL *stop);
-    checkForDuplicates = ^(NSString *tag, NSUInteger index, BOOL *stop){
-        // No non NSStrings allowed
-        if ([mutableIncomingTags containsObject:tag]){
-            [mutableIncomingTags removeObject:tag]; 
-        }
-    };
-    [currentTags enumerateObjectsUsingBlock:checkForDuplicates];
-    if ([mutableIncomingTags count] == 0 ) {
-        return;
-    }
-    else {
-        [mutableIncomingTags addObjectsFromArray:currentTags];
-        [standardUserDefaults_ setObject:mutableIncomingTags forKey:UAPushTagsSettingsKey];
-    }
-    
+    NSMutableSet *updatedTags = [NSMutableSet setWithArray:[self tags]];
+    [updatedTags addObjectsFromArray:tags];
+    [self setTags:[updatedTags allObjects]];
 }
 
 - (void)setTags:(NSArray *)tags {
@@ -389,7 +367,7 @@ static Class _uiClass;
 
 - (UA_ASIHTTPRequest*)requestToManipulateTag:(NSString*)tag withHTTPMethod:(NSString*)method {
     NSURL* tagURL = [self URLForTagManipulationWithTag:tag];
-    UA_ASIHTTPRequest *request = [[UA_ASIHTTPRequest alloc] initWithURL:tagURL];
+    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:tagURL] autorelease];
     request.requestMethod = method;
     SEL succeed = nil;
     SEL fail = nil;
@@ -406,7 +384,7 @@ static Class _uiClass;
     request.userInfo = userInfo;
     request.didFailSelector = fail;
     request.didFinishSelector = succeed;
-    return [request autorelease];
+    return request;
 }
 
 - (NSURL*)URLForTagManipulationWithTag:(NSString*)tag {
