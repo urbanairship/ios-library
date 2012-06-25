@@ -43,6 +43,12 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize delegate;
 @synthesize notificationTypes = notificationTypes_;
 @synthesize standardUserDefaults = standardUserDefaults_;
+@dynamic pushEnabled;
+@dynamic deviceToken;
+@dynamic alias;
+@dynamic tags;
+@dynamic quietTime;
+
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
