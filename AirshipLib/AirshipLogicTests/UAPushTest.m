@@ -74,8 +74,6 @@ static BOOL messageReceived = NO;
 }
 
 
-// There is an algorithm here to prevent duplicate and non object tags
-// from ending up in the tag array or going to the server
 - (void)testSetTags {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];
     NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
@@ -92,6 +90,7 @@ static BOOL messageReceived = NO;
     STAssertTrue([[push alias] isEqualToString:@"cats"], @"Alias set/get methods are broken");
 }
 
+// TODO: keep an eye on the performance of this test, it may be too heavy. 
 - (void)testAddTagsToCurrentDevice {
     //There should be no cats in defaults, and addTagToCurrentDevice: becomes addTagsToCurrentDevice
     [[NSUserDefaults standardUserDefaults] setObject:[NSMutableArray array] forKey:UAPushTagsSettingsKey];
@@ -104,14 +103,22 @@ static BOOL messageReceived = NO;
     tagsWithCats = [push tags];
     STAssertTrue([tagsWithCats containsObject:@"CATS"], @"There should be CATS in the tags");
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];
+    // Add a bunch of tags
     NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
     [push setTags:testTags];
+    // Create a sub array of the tags just added, then re add the sub array (lots of duplicates)
     NSArray *subArray = [testTags subarrayWithRange:NSMakeRange(0, 750)];
-    id mockDefaults = [OCMockObject partialMockForObject:push.standardUserDefaults]  ;
-    // There should be no call to update user defaults, all the tags are duplicates
-    [[mockDefaults reject] setObject:OCMOCK_ANY forKey:UAPushTagsSettingsKey];
-    [push addTagsToCurrentDevice:subArray];
-    
+    [push setTags:subArray];
+    NSArray *existingTags = [push tags];
+    // Test for duplicates
+    __block NSString *firstValue = [testTags objectAtIndex:0];
+    NSIndexSet *passingTest = [existingTags indexesOfObjectsPassingTest:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([(NSString*)obj isEqualToString:firstValue]) {
+            return YES;
+        }
+        return NO;
+    }];
+    STAssertTrue([passingTest count] == 1, @"There should be exactly one copy of this tag, tag error in UAPush");
 }
 
 - (void)testRemoveTags {
