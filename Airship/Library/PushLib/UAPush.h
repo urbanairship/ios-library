@@ -209,7 +209,7 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)resetBadge;
 
-/** Enable the Urban Airship autobadge feature
+/** Enable the Urban Airship autobadge feature 
  
  @param enabled New value
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
