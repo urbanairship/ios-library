@@ -343,44 +343,6 @@ static BOOL messageReceived = NO;
     [mockPush verify];
 }
 
-// Brittle test, not designed for doing much except verfying that the tag URL is correct, will
-// need to be kept updated, and will fail if a 64 character string is not present (device token)
-- (void)testURLForTagManipulationWithTag {
-    NSString *tag = @"TEST_TAG";
-    NSURL* URL = [push URLForTagManipulationWithTag:tag];
-    NSString* stringURL = [URL absoluteString];
-    // https://device-api.urbanairship.com/api/device_tokens/5824c969fb8498b3ba0f588fb29e9925c867a9b1d0accff5e44537f3f65290e2/tags/TEST_TAG
-    NSError *regexError = nil;
-    NSString* regexString = @"https://device-api.urbanairship.com/api/device_tokens/(\\w){64}/tags/TEST_TAG";
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexString options:0 error:&regexError];
-    NSArray *match = [regex matchesInString:stringURL options:0 range:NSMakeRange(0, [stringURL length])];
-    STAssertTrue([match count] == 1, @"URL for tag manipulations in UAPush is incorrect");
-}
-
-
-- (void)testRequestToManipulateTag {
-    id mockPush = [OCMockObject partialMockForObject:push];
-    NSURL* testURL = [NSURL URLWithString:@"test"];
-    [[[mockPush stub] andReturn:testURL] URLForTagManipulationWithTag:OCMOCK_ANY];
-    UA_ASIHTTPRequest *request = [push requestToManipulateTag:@"TAG" withHTTPMethod:@"PUT"];
-    NSURL *URL = request.url;
-    STAssertTrue([URL.absoluteString isEqualToString:testURL.absoluteString], nil);
-    SEL succeedSelector = @selector(addTagToDeviceSucceeded:);
-    SEL failSelector = @selector(addTagToDeviceFailed:);
-    SEL requestSucceedSelector = request.didFinishSelector;
-    SEL requestFailSelector = request.didFailSelector;
-    STAssertTrue(sel_isEqual(succeedSelector, requestSucceedSelector) ,nil);
-    STAssertTrue(sel_isEqual(failSelector, requestFailSelector) ,nil);
-    STAssertTrue([(NSString*)[request.userInfo valueForKey:UAPushSingleTagJSONKey] isEqualToString:@"TAG"], nil);
-    // Just check the selectors for the @"DELETE" request, the rest is the same
-    request = [push requestToManipulateTag:@"TAG" withHTTPMethod:@"DELETE"];
-    succeedSelector = @selector(removeTagFromDeviceSucceed:);
-    failSelector = @selector(removeTagFromDeviceFailed:);
-    STAssertTrue(sel_isEqual(succeedSelector, request.didFinishSelector) ,nil);
-    STAssertTrue(sel_isEqual(failSelector, request.didFailSelector) ,nil);
-}
-
-
 - (void)testSetBadgeNumber {
     [push setAutobadgeEnabled:NO];
     [push setBadgeNumber:42];
@@ -547,10 +509,6 @@ static BOOL messageReceived = NO;
     [mockObserver verify];
     
 }
-
-
-
-
 
 
 @end

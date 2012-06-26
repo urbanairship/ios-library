@@ -367,39 +367,6 @@ static Class _uiClass;
     [self addTagsToCurrentDevice:[NSArray arrayWithObject:tag]];
 }
 
-
-- (UA_ASIHTTPRequest*)requestToManipulateTag:(NSString*)tag withHTTPMethod:(NSString*)method {
-    NSURL* tagURL = [self URLForTagManipulationWithTag:tag];
-    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:tagURL] autorelease];
-    request.requestMethod = method;
-    SEL succeed = nil;
-    SEL fail = nil;
-    if ([request.requestMethod isEqualToString:@"PUT"]) {
-        succeed = @selector(addTagToDeviceSucceeded:);
-        fail = @selector(addTagToDeviceFailed:);
-    }
-    if ([request.requestMethod isEqualToString:@"DELETE"]) {
-        succeed = @selector(removeTagFromDeviceSucceed:);
-        fail = @selector(removeTagFromDeviceFailed:);
-    }
-    // This is not a JSON object, but the key is used for convenience
-    NSDictionary* userInfo = [NSDictionary dictionaryWithObject:tag forKey:UAPushSingleTagJSONKey];
-    request.userInfo = userInfo;
-    request.didFailSelector = fail;
-    request.didFinishSelector = succeed;
-    return request;
-}
-
-- (NSURL*)URLForTagManipulationWithTag:(NSString*)tag {
-    NSString *encodedTag = [UAUtils urlEncodedStringWithString:tag encoding:NSUTF8StringEncoding];
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/tags/%@",
-                           [[UAirship shared] server],
-                           [[UAirship shared] deviceToken],
-                           encodedTag];
-    
-    return [NSURL URLWithString:urlString];
-}
-
 - (void)removeTagFromCurrentDevice:(NSString *)tag {
     [self removeTagsFromCurrentDevice:[NSArray arrayWithObject:tag]];
 }
