@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -105,45 +105,9 @@ UA_VERSION_INTERFACE(UAPushVersion)
 - (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
 @end
 
+/** This singleton is represents the functionality provided by the Urban Airship client Push API*/
 
-
-@interface UAPush : UAObservable {
-    @private
-        /* Push notification delegate. Handles incoming notifications */
-        id<UAPushNotificationDelegate> delegate_; 
-         /* A default implementation of the push notification delegate */
-        NSObject<UAPushNotificationDelegate> *defaultPushHandler;
-        UIRemoteNotificationType notificationTypes_;
-        NSString *deviceToken_;
-        BOOL deviceTokenHasChanged_;
-        NSUserDefaults *standardUserDefaults_;
-}
-
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
-
-/** Notification types this device is registered for */
-@property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
-
-/** Enables/disables push notifications on this device through Urban Airship */
-@property (nonatomic, getter = pushEnabled,
-           setter = setPushEnabled:) BOOL pushEnabled;
-
-/** The device token for this device, as a string */
-@property (nonatomic, copy, getter = deviceToken,
-           setter = setDeviceToken:) NSString *deviceToken;
-
-/** Alias for this device */
-@property (nonatomic, copy, getter = alias,
-           setter = setAlias:) NSString *alias;
-
-/** Tags for this device */
-@property (nonatomic, copy, getter = tags,
-           setter = setTags:) NSArray *tags;
-
-/** Quiet time settings for this device */
-@property (nonatomic, copy, readonly, getter = quietTime) NSDictionary *quietTime;
-
-
+@interface UAPush : UAObservable 
 
 
 SINGLETON_INTERFACE(UAPush);
@@ -175,26 +139,40 @@ SINGLETON_INTERFACE(UAPush);
 /// @name UAPush
 ///---------------------------------------------------------------------------------------
 
+/** Set a delegate that implements the UAPushNotifcationDelegate protocol. If not
+ set, a default is provided */
+@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
+
+/** Notification types this device is registered for */
+@property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
+
 /** Clean up when app is terminated, you should not need to call this unless you are working
  outside of UAirship. The UAirship land method calls this method. */
 
 + (void)land;
 
 ///---------------------------------------------------------------------------------------
+/// @name Push Notifications
+///---------------------------------------------------------------------------------------
+
+
+/** Enables/disables push notifications on this device through Urban Airship */
+@property (nonatomic, getter = pushEnabled,
+           setter = setPushEnabled:) BOOL pushEnabled;
+
+
+/** The device token for this device, as a string */
+@property (nonatomic, copy, getter = deviceToken,
+           setter = setDeviceToken:) NSString *deviceToken;
+
+
+///---------------------------------------------------------------------------------------
 /// @name Autobadge
 ///---------------------------------------------------------------------------------------
 
 
-/** Current state of the autobadge. Autobadge allows the use of server side incrementing/decrementing
- of the badge value 
- */
-- (BOOL)autobadgeEnabled;
-
-/** Enables or disables the autobadge feature. Autobadge allows the use of server side incrementing/decrementing
- of the badge value 
- @param autobadgeEnabled The new badge value 
- */
-- (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled;
+@property (nonatomic, assign, getter = autobadgeEnabled,
+           setter = setAutobadgeEnabled:) BOOL autobadgeEnabled;
 
 /** Sets the badge number on the device and 
  on the Urban Airship server 
@@ -214,90 +192,31 @@ SINGLETON_INTERFACE(UAPush);
  @param enabled New value
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
  */
-//- (void)enableAutobadge:(BOOL)enabled __OSX_AVAILABLE_BUT_DEPRECATED(__MAC_NA, __MAC_NA, __IPHONE_3_0, __IPHONE_4_0);
 
 - (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__LIB_1_2_2__);
-///---------------------------------------------------------------------------------------
-/// @name Device Token
-///---------------------------------------------------------------------------------------
 
-/** Most recent device token, or nil if the device has not registered for push 
- 
- @return The current, or most recent device token */
-- (NSString *)deviceToken;
-
-/** Sets the device token. Refer to the parseDeviceToken: method in UAPush for the proper procedure 
- for parsing a device token. You should not need to call this method directly, instead, use one of the 
- registerDeviceToken: methods and the NSData object returned from Apple in the
- application:didRegisterForRemoteNotificationsWithDeviceToken: delegate callback. 
- This method has the side effect of modifying the deviceTokenHasChanged BOOL if the token
- has changed.
- 
- @param deviceToken The device token parsed into a string
- */
-- (void)setDeviceToken:(NSString *)deviceToken;
-
-/** Whether there has been a change from the previous device token 
- 
- @return YES if the device token has changed, NO otherwise */
-- (BOOL)deviceTokenHasChanged UA_DEPRECATED(__LIB_1_2_2__); 
-
-///---------------------------------------------------------------------------------------
-/// @name Push Settings
-///---------------------------------------------------------------------------------------
-
-
-/** Current setting for Push notifications 
- 
- @return BOOL representing wether push is enabled
-*/
-- (BOOL)pushEnabled;
-
-/** Enables/Disables Push Notifications
- 
- @param pushEnabled New value for enabling/disabling push
- */
-- (void)setPushEnabled:(BOOL)pushEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
 ///---------------------------------------------------------------------------------------
-
-
-/** Device Alias 
  
- @return The current device alias */
-- (NSString*)alias;
-
-/** Set the device alias 
- 
- @param alias NSString representing the new alias 
-    @warning *Warning* When updating several 
-    server side values (tags, alias, time zone, quiettime) set the values first, then
-    call the updateUA method. Batching these calls improves API and client perfomance.
- */
-- (void)setAlias:(NSString*)alias;
+ /** Alias for this device */
+@property (nonatomic, copy, getter = alias,
+           setter = setAlias:) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tags
 ///---------------------------------------------------------------------------------------
 
-/** Tags associated with this device 
- 
- @return The current tags associated with this device or nil
- */
-- (NSArray *)tags;
+/** Tags for this device */
+@property (nonatomic, copy, getter = tags,
+           setter = setTags:) NSArray *tags;
 
-/** Set the tags for this device. This replaces all the current tags with
- the new tags. Make sure to call updateRegistration after modifying the
- tags
- 
- @param tags New tags for the device
- @warning *Warning* When updating several 
- server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+/** Allows tag editing from device. Set this to NO to prevent the device
+ from sending any tag information to the server when using server side tagging
  */
-- (void)setTags:(NSArray *)tags;
+@property (nonatomic, assign, getter = canEditTagsFromDevice,
+           setter = setCanEditTagsFromDevice:) BOOL canEditTagsFromDevice; 
 
 /** Adds a tag to the list of tags for the device
  To update the server, make all of you changes, then call
@@ -306,42 +225,41 @@ SINGLETON_INTERFACE(UAPush);
  @param tag Tag to be added
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call the updateRegistration method. Batching these calls improves API and client performance.
  */
 - (void)addTagToCurrentDevice:(NSString *)tag;
 
 /** Adds a group of tags to the current list of 
  device tags.  To update the server, make all of you changes, then call
- [[UAPush shared] updateRegisration]
+ updateRegistration
  
  @param tags Array of new tags
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call the updateRegistration method. Batching these calls improves API and client performance.
  */
 
 - (void)addTagsToCurrentDevice:(NSArray*)tags;
 
 /** Removes a tag from the current tag list. To update the server, make all of you changes, then call
- [[UAPush shared] updateRegisration]
+ updateRegistration
  
  @param tag Tag to be removed
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call the updateRegistration method. Batching these calls improves API and client performance.
  */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 /** Removes a group of tags from a device.  To update the server, make all of you changes, then call
- [[UAPush shared] updateRegisration]
+ updateRegisration
  
  @param tags Array of tags to be removed
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call updateRegistration. Batching these calls improves API and client performance.
  */
 - (void)removeTagsFromCurrentDevice:(NSArray*)tags;
-
 
 /** Updates the tag list on the device and on Urban Airship. Use setTags:
  instead. This method updates the server after setting the tags. Use
@@ -351,28 +269,17 @@ SINGLETON_INTERFACE(UAPush);
  @param values The new tag values
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)updateTags:(NSMutableArray *)value UA_DEPRECATED(__LIB_1_2_2__);
+- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__LIB_1_2_2__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Time Zone
 ///---------------------------------------------------------------------------------------
 
-/** Current time zone used for notification purposes
- @return The current time zone
- */
-- (NSTimeZone *)timeZone;
-
-/** Sets the time zone for notification purposes. To update the server, make all of you changes, then call
- [[UAPush shared] updateRegisration]
- 
- @param timeZone The new time zone.
- @warning *Warning* When updating several 
- server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
- */
-- (void)setTimeZone:(NSTimeZone *)timeZone;
+/** Time Zone for the device */
+@property (nonatomic, retain, getter = timeZone,
+           setter = setTimeZone:) NSTimeZone *timeZone;
 
 /** The current time zone setting
  @return The time zone name
@@ -396,7 +303,7 @@ SINGLETON_INTERFACE(UAPush);
  @param value Updated alias
  @warning *Warning* When updating several 
  server side values (tags, alias, time zone, quiettime) set the values first, then
- call the updateUA method. Batching these calls improves API and client perfomance.
+ call updateRegistration. Batching these calls improves API and client performance.
  */
 - (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_2_2__);
 
@@ -404,11 +311,8 @@ SINGLETON_INTERFACE(UAPush);
 /// @name Quiet Time
 ///---------------------------------------------------------------------------------------
 
-
-/** The current quiet time settings for this device
- @return NSMutableDictionary with the current quiet time settings
- */
-- (NSDictionary*)quietTime;
+/** Quiet time settings for this device */
+@property (nonatomic, copy, readonly, getter = quietTime) NSDictionary *quietTime;
 
 /** Change quiet time for current device token, only take hh:mm into account
  @param from Date for start of quiet time
@@ -443,7 +347,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
   Register the current device token with UA.
  
-  @param info An NSDictionary containing registraton keys and values. See
+  @param info An NSDictionary containing registration keys and values. See
   http://urbanairship.com/docs/push.html#registration for details.
  
   Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
@@ -468,7 +372,7 @@ SINGLETON_INTERFACE(UAPush);
  Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
 
  @param token The device token to register.
- @param info An NSDictionary containing registraton keys and values. See
+ @param info An NSDictionary containing registration keys and values. See
  https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
 */
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;

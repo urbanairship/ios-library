@@ -145,10 +145,10 @@ enum {
 	NSString *result = [newAlias stringByReplacingCharactersInRange:range withString:@""];
 	
     if ([result length] != 0) {
-        [[UAPush shared] updateAlias:result];
+        [[UAPush shared] setAlias:result];
     } else {
 		textField.text = nil;
-		[[UAPush shared] updateAlias:nil];
+		[[UAPush shared] setAlias:nil];
 	}
 }
 

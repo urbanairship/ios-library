@@ -34,20 +34,29 @@
 #import "UAPush+Internal.h"
 #import "UA_SBJsonWriter.h"
 #import "UAEvent.h"
+#import "UAPushNotificationHandler.h"
 
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush
 
+//Internal
+@synthesize standardUserDefaults;
+@synthesize deviceTokenHasChanged;
+@synthesize defaultPushHandler;
+
+//Public
 @synthesize delegate;
-@synthesize notificationTypes = notificationTypes_;
-@synthesize standardUserDefaults = standardUserDefaults_;
+@synthesize notificationTypes;
+@synthesize autobadgeEnabled = autobadgeEnabled_;
+// Public - UserDefaults
 @dynamic pushEnabled;
 @dynamic deviceToken;
 @dynamic alias;
 @dynamic tags;
 @dynamic quietTime;
+@dynamic timeZone;
 
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -56,7 +65,6 @@ static Class _uiClass;
 
 -(void)dealloc {
     RELEASE_SAFELY(defaultPushHandler);
-    RELEASE_SAFELY(deviceToken_);
     [super dealloc];
 }
 
@@ -66,8 +74,10 @@ static Class _uiClass;
         //init with default delegate implementation
         // released when replaced
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
-        self.delegate = defaultPushHandler;
-        standardUserDefaults_ = [NSUserDefaults standardUserDefaults];
+        delegate = defaultPushHandler;
+        standardUserDefaults = [NSUserDefaults standardUserDefaults];
+        [standardUserDefaults setObject:@"KEYKEYKEYEKEY" forKey:@"key"];
+        [standardUserDefaults setObject:nil forKey:@"key"];
     }
     return self;
 }
@@ -76,21 +86,12 @@ static Class _uiClass;
 #pragma mark Device Token Get/Set Methods
 
 - (NSString *)deviceToken {
-    return deviceToken_;
+    return [standardUserDefaults valueForKey:UAPushDeviceTokenSettingsKey];
 }
 
 - (void)setDeviceToken:(NSString*)deviceToken{
-    [deviceToken_ autorelease];
-    deviceToken_ = [deviceToken copy];
-    UALOG(@"Device token: %@", deviceToken_);    
-    NSString* oldValue = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenSettingsKey];
-    if([oldValue isEqualToString:deviceToken_]) {
-        deviceTokenHasChanged_ = NO;
-    }
-    else {
-        deviceTokenHasChanged_ = YES;
-        [[NSUserDefaults standardUserDefaults] setObject:deviceToken_ forKey:UAPushDeviceTokenSettingsKey];
-    }
+    UALOG(@"Device token: %@", deviceToken);    
+    [standardUserDefaults setObject:deviceToken forKey:UAPushDeviceTokenSettingsKey];
 }
 
 - (NSString*)parseDeviceToken:(NSString*)tokenStr {
@@ -103,28 +104,36 @@ static Class _uiClass;
 #pragma mark Get/Set Methods
 
 - (BOOL)autobadgeEnabled {
-    return [standardUserDefaults_ boolForKey:UAPushBadgeSettingsKey];
+    return [standardUserDefaults boolForKey:UAPushBadgeSettingsKey];
 }
 
 - (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled {
-    [standardUserDefaults_ setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
+    [standardUserDefaults setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
 }
 
-
-- (BOOL)deviceTokenHasChanged {
-    return deviceTokenHasChanged_;
-}
 
 - (NSString *)alias {
-    return [standardUserDefaults_ stringForKey:UAPushAliasJSONKey];
+    return [standardUserDefaults stringForKey:UAPushAliasJSONKey];
 }
 
 - (void)setAlias:(NSString *)alias {
-    [standardUserDefaults_ setObject:alias forKey:UAPushAliasJSONKey];
+    [standardUserDefaults setObject:alias forKey:UAPushAliasJSONKey];
+}
+
+- (BOOL)canEditTagsFromDevice {
+   return [standardUserDefaults boolForKey:UAPushDeviceCanEditTagsKey];
+}
+
+- (void)setCanEditTagsFromDevice:(BOOL)canEditTagsFromDevice {
+    [standardUserDefaults setBool:canEditTagsFromDevice forKey:UAPushDeviceCanEditTagsKey];
 }
 
 - (NSArray *)tags {
-    return [standardUserDefaults_ objectForKey:UAPushTagsSettingsKey];
+    return [standardUserDefaults objectForKey:UAPushTagsSettingsKey];
+}
+
+- (void)setTags:(NSArray *)tags {
+    [standardUserDefaults setObject:tags forKey:UAPushTagsSettingsKey];
 }
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags {
@@ -133,33 +142,23 @@ static Class _uiClass;
     [self setTags:[updatedTags allObjects]];
 }
 
-- (void)setTags:(NSArray *)tags {
-    if (tags) {
-        // FIXME: Figure out a legit way to do this
-        [standardUserDefaults_ setObject:tags forKey:UAPushTagsSettingsKey];
-    }
-    else {
-        [standardUserDefaults_ removeObjectForKey:UAPushTagsSettingsKey];
-    }
-}
-
 - (BOOL)pushEnabled {
-    return [standardUserDefaults_ boolForKey:UAPushEnabledSettingsKey];
+    return [standardUserDefaults boolForKey:UAPushEnabledSettingsKey];
 }
 
 - (void)setPushEnabled:(BOOL)pushEnabled {
-    [standardUserDefaults_ setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
+    [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
 }
 
 - (NSDictionary *)quietTime {
-    return [standardUserDefaults_ dictionaryForKey:UAPushQuietTimeSettingsKey];
+    return [standardUserDefaults dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
 
 - (void)setQuietTime:(NSMutableDictionary *)quietTime {
     if (!quietTime) {
-        [standardUserDefaults_ removeObjectForKey:UAPushQuietTimeSettingsKey];
+        [standardUserDefaults removeObjectForKey:UAPushQuietTimeSettingsKey];
     }
-    [standardUserDefaults_ setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
+    [standardUserDefaults setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
 - (NSString *)tz {
@@ -172,12 +171,12 @@ static Class _uiClass;
 }
 
 - (NSTimeZone *)timeZone {
-    NSString* timeZoneName = [standardUserDefaults_ stringForKey:UAPushTimeZoneSettingsKey];
+    NSString* timeZoneName = [standardUserDefaults stringForKey:UAPushTimeZoneSettingsKey];
     return [NSTimeZone timeZoneWithName:timeZoneName];
 }
 
 - (void)setTimeZone:(NSTimeZone *)timeZone {
-    [standardUserDefaults_ setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
+    [standardUserDefaults setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
 }
 
 - (NSTimeZone *)defaultTimeZoneForPush {
@@ -210,7 +209,7 @@ static Class _uiClass;
     self.notificationTypes = types;
     
     if (self.pushEnabled) {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes_];
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
     }
 }
 
@@ -223,9 +222,14 @@ static Class _uiClass;
     NSString* alias =  self.alias;
 
     [body setValue:alias forKey:UAPushAliasJSONKey];
-
-    NSArray *tags = [self tags];
-    if ( tags.count != 0) {
+    
+    if (self.canEditTagsFromDevice) {
+        NSArray *tags = [self tags];
+        // If there are no tags, and tags are editable, send an 
+        // empty array
+        if (!tags) {
+            tags = [NSArray array];
+        }
         [body setValue:tags forKey:UAPushMultipleTagsJSONKey];
     }
     
@@ -236,46 +240,10 @@ static Class _uiClass;
         [body setValue:quietTime forKey:UAPushQuietTimeJSONKey];
     }
     if ([self autobadgeEnabled]) {
-        [body setValue:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] forKey:UAPushBadgeJSONKey];
+        [body setValue:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] 
+                forKey:UAPushBadgeJSONKey];
     }
     return body;
-}
-#pragma mark -
-#pragma mark UA API Tag callbacks
-
-- (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request {
-    UALOG(@"Using U/P: %@ / %@", request.username, request.password);
-    [UAUtils requestWentWrong:request keyword:@"add tag to current device"];
-    [self notifyObservers:@selector(addTagToDeviceFailed:) withObject:[request error]];
-}
-
-- (void)addTagToDeviceSucceeded:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 200 && request.responseStatusCode != 201){
-        [self addTagToDeviceFailed:request];
-    } else {
-        UALOG(@"Tag added successfully: %d - %@", request.responseStatusCode, request.url);
-        [self notifyObservers:@selector(addTagToDeviceSucceeded)];
-    }
-}
-
-- (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request {
-    UALOG(@"Using U/P: %@ / %@", request.username, request.password);
-    [UAUtils requestWentWrong:request keyword:@"remove tag from current device"];
-    [self notifyObservers:@selector(removeTagFromDeviceFailed:) withObject:[request error]];
-}
-
-- (void)removeTagFromDeviceSucceed:(UA_ASIHTTPRequest *)request {
-
-    switch (request.responseStatusCode) {
-        case 204://just removed
-        case 404://already removed
-            UALOG(@"Tag removed from server successfully: %d - %@", request.responseStatusCode, request.url);
-            [self notifyObservers:@selector(removeTagFromDeviceSucceeded)];
-            break;
-        default:
-            [self removeTagFromDeviceFailed:request];
-            break;
-    }
 }
 
 #pragma mark -
@@ -288,7 +256,6 @@ static Class _uiClass;
 
 - (void)updateTags:(NSMutableArray *)value {
     self.tags = value;
-    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
@@ -372,9 +339,9 @@ static Class _uiClass;
 }
 
 - (void)removeTagsFromCurrentDevice:(NSArray *)tags {
-    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[standardUserDefaults_ objectForKey:UAPushTagsSettingsKey]];
+    NSMutableArray *mutableTags = [NSMutableArray arrayWithArray:[standardUserDefaults objectForKey:UAPushTagsSettingsKey]];
     [mutableTags removeObjectsInArray:tags];
-    [standardUserDefaults_ setObject:mutableTags forKey:UAPushTagsSettingsKey];
+    [standardUserDefaults setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
 - (void)enableAutobadge:(BOOL)autobadge {
@@ -511,11 +478,12 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 - (void)updateRegistration {
-    [standardUserDefaults_ synchronize];
+    [standardUserDefaults synchronize];
     //if on, but not yet registered, re-register -- was likely just enabled
     BOOL pushEnabled = self.pushEnabled;
-    if (pushEnabled && !deviceToken_) {
-        [self registerForRemoteNotificationTypes:notificationTypes_];
+    NSString* deviceToken = self.deviceToken;
+    if (pushEnabled && !deviceToken) {
+        [self registerForRemoteNotificationTypes:notificationTypes];
         
         //if enabled, simply update existing device token
     } else if (pushEnabled) {
@@ -555,7 +523,7 @@ static Class _uiClass;
 - (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            [UAirship shared].server, @"/api/device_tokens/",
-                           deviceToken_];
+                           self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
                                                   method:@"PUT"
@@ -590,7 +558,7 @@ static Class _uiClass;
 
 - (void)unRegisterDeviceToken {
     
-    if (deviceToken_ == nil) {
+    if (self.deviceToken == nil) {
         UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
         return;
     }
@@ -601,7 +569,7 @@ static Class _uiClass;
 - (UA_ASIHTTPRequest*)requestToDeleteDeviceToken {
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
                            [UAirship shared].server,
-                           deviceToken_];
+                           self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UALOG(@"Request to unregister device token.");
     UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
@@ -650,9 +618,10 @@ static Class _uiClass;
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
-    [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
-                                                     forKey:UAPushEnabledSettingsKey]];
-    
+    NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
+    [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
+    [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushDeviceCanEditTagsKey];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
 

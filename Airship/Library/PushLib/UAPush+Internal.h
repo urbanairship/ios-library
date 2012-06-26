@@ -22,6 +22,7 @@ UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
+UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
 
 typedef NSString UAPushJSONKey;
 UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
@@ -35,8 +36,15 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 @interface UAPush ()
 
+/* Convenience pointer for getting to user defaults */
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
+
+/* Changed to YES if the token changes */
+@property (nonatomic, assign) BOOL deviceTokenHasChanged;
+
+/* Default push handler */
+@property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
 /* Set quite time */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;

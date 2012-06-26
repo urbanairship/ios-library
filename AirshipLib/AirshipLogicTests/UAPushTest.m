@@ -143,14 +143,6 @@ static BOOL messageReceived = NO;
     [push setDeviceToken:actualToken];
     NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
     STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
-    // This method uses a known deprecated method, should be removed in the future. 
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed");
-    NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
-    [push setDeviceToken:newToken];
-    STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
-    STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed");
-    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
 
 - (void)testTimeZoneSettings {
@@ -161,37 +153,47 @@ static BOOL messageReceived = NO;
     STAssertTrue([[[NSTimeZone localTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
 }
 
-//- (void)testRegistrationPayload {
-//    NSString *testAlias = @"test_alias";
-//    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"tag_one", @"tag_two", nil];
-//    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"America/Dawson_Creek"]; // Ah, Dawson's creek.....
-//    NSDate *now = [NSDate date];
-//    NSDate *oneHour = [NSDate dateWithTimeIntervalSinceNow:360];
-//    [push setAlias:testAlias];
-//    [push setTags:tags];
-//    [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
-//    [push setAutobadgeEnabled:YES];
-//    NSDictionary *payload = [push registrationPayload];
-//    NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
-//    STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
-//    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-//    NSDateComponents *fromComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:now];
-//    NSDateComponents *toComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:oneHour];
-//    NSArray *fromHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeStartJSONKey] componentsSeparatedByString:@":"];
-//    NSArray *toHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeEndJSONKey] componentsSeparatedByString:@":"];
-//    // Quiet times
-//    STAssertTrue([[timeZone name] isEqualToString:[payload valueForKey:UAPushTimeZoneJSONKey]], nil);
-//    STAssertTrue(fromComponents.hour == [[fromHourMinute objectAtIndex:0] doubleValue], nil);
-//    STAssertTrue(fromComponents.minute == [[fromHourMinute objectAtIndex:1] doubleValue], nil);
-//    STAssertTrue(toComponents.hour == [[toHourMinute objectAtIndex:0] doubleValue], nil);
-//    STAssertTrue(toComponents.minute == [[toHourMinute objectAtIndex:1] doubleValue], nil);
-//    // Alias
-//    STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
-//    // Tags
-//    STAssertTrue([tags isEqualToArray:[payload valueForKey:UAPushMultipleTagsJSONKey]], nil);
-//    STAssertTrue([[payload valueForKey:UAPushBadgeJSONKey] intValue] == 
-//                 [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
-//}
+- (void)testRegistrationPayload {
+    // Setup some payload variables using the methods in UAPush
+    NSString *testAlias = @"test_alias";
+    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"tag_one", @"tag_two", nil];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"America/Dawson_Creek"]; // Ah, Dawson's creek.....
+    NSDate *now = [NSDate date];
+    NSDate *oneHour = [NSDate dateWithTimeIntervalSinceNow:360];
+    push.canEditTagsFromDevice = NO;
+    push.alias = testAlias;
+    push.tags = tags;
+    [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
+    push.autobadgeEnabled = YES;
+    // Get a payload, should be NO tag info, the BOOL is set to no
+    NSDictionary *payload = [push registrationPayload];
+    NSDictionary *quietTimePayload = [payload valueForKey:UAPushQuietTimeJSONKey];
+    STAssertNotNil(quietTimePayload, @"UAPushJSON payload is missing quiet time payload");
+    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSDateComponents *fromComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:now];
+    NSDateComponents *toComponents = [calendar components:NSHourCalendarUnit | NSMinuteCalendarUnit fromDate:oneHour];
+    NSArray *fromHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeStartJSONKey] componentsSeparatedByString:@":"];
+    NSArray *toHourMinute = [[quietTimePayload valueForKey:UAPushQuietTimeEndJSONKey] componentsSeparatedByString:@":"];
+    // Quiet times
+    STAssertTrue([[timeZone name] isEqualToString:[payload valueForKey:UAPushTimeZoneJSONKey]], nil);
+    STAssertTrue(fromComponents.hour == [[fromHourMinute objectAtIndex:0] doubleValue], nil);
+    STAssertTrue(fromComponents.minute == [[fromHourMinute objectAtIndex:1] doubleValue], nil);
+    STAssertTrue(toComponents.hour == [[toHourMinute objectAtIndex:0] doubleValue], nil);
+    STAssertTrue(toComponents.minute == [[toHourMinute objectAtIndex:1] doubleValue], nil);
+    // Alias
+    STAssertTrue([[payload valueForKey:UAPushAliasJSONKey] isEqualToString:testAlias], nil);
+    // Badge number
+    STAssertTrue([[payload valueForKey:UAPushBadgeJSONKey] intValue] == 
+                 [[UIApplication sharedApplication] applicationIconBadgeNumber], nil);
+    // Tags when canEdit is NO
+    STAssertNil([payload valueForKey:UAPushMultipleTagsJSONKey], nil);
+    // Setup tag editing from the device
+    push.canEditTagsFromDevice = YES;
+    push.tags = tags;
+    payload = [push registrationPayload];
+    STAssertTrue([(NSArray*)[payload valueForKey:UAPushMultipleTagsJSONKey] isEqualToArray:tags], nil);
+
+}
 
 //Quiet time was tested above, set test with a nil timezone 
 - (void)testQuietTimeWithNilTimeZone {
