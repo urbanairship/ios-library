@@ -1,7 +1,0 @@
- 
-
-//Build Settings for Debug Builds
-
-GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO
-GCC_GENERATE_TEST_COVERAGE_FILES = NO
-

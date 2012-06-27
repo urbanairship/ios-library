@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1813EDE412796188009DEB29 /* libStoreFront-2.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813EDE312796185009DEB29 /* libStoreFront-2.3.0.a */; };
 		1854B6CC12C1B5F30048CD83 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
-		1890B8A712519FCD00E6EBF1 /* libPush-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */; };
+		1890B8A712519FCD00E6EBF1 /* libPush-1.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.3.1.a */; };
 		1F23001412B2B7BA001DB898 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
 		1F23001512B2B7BA001DB898 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
 		1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -208,9 +208,8 @@
 		BB886122159A7E9600584445 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
 		BB886124159A7E9600584445 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
-		BB886125159A7E9600584445 /* libPush-1.2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */; };
+		BB886125159A7E9600584445 /* libPush-1.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush-1.3.1.a */; };
 		BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		BB886157159A830E00584445 /* libUAirshipMini-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirshipMini-1.2.1.a */; };
 		BB926B3D1540D1D000003975 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D60150574DE00971CEC /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
@@ -231,6 +230,7 @@
 		BBB87E3915057CF200971CEC /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
+		BBC83C3F159BBD550083A4C2 /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.2.1.a */; };
 		D5A1928712C15A4E006AF4AE /* libInbox-2.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */; };
 		D5BED7C312FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5BED7C412FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
@@ -319,12 +319,12 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = InboxLib;
 		};
-		BB886141159A7FE400584445 /* PBXContainerItemProxy */ = {
+		BBC83C3A159BB84A0083A4C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BB8860A7159A7E9600584445;
-			remoteInfo = AirshipMIni;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = AirshipLib;
 		};
 		D5A1927712C158A8006AF4AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -434,7 +434,6 @@
 		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
-		BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = AirshipLibDebug.xcconfig; sourceTree = "<group>"; };
 		BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAContentURLCache+Internal.h"; sourceTree = "<group>"; };
 		BB88612C159A7E9600584445 /* libUAirshipMini-1.2.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirshipMini-1.2.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
@@ -506,7 +505,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB886157159A830E00584445 /* libUAirshipMini-1.2.1.a in Frameworks */,
+				BBC83C3F159BBD550083A4C2 /* libUAirship-1.2.1.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -529,7 +528,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB88611E159A7E9600584445 /* libInbox-2.1.0.a in Frameworks */,
-				BB886125159A7E9600584445 /* libPush-1.2.6.a in Frameworks */,
+				BB886125159A7E9600584445 /* libPush-1.3.1.a in Frameworks */,
 				BB88611D159A7E9600584445 /* CoreLocation.framework in Frameworks */,
 				BB886120159A7E9600584445 /* Foundation.framework in Frameworks */,
 				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
@@ -552,7 +551,7 @@
 				633147E9122FBE60008F2D48 /* UIKit.framework in Frameworks */,
 				B63B5ED01246380200145424 /* libsqlite3.dylib in Frameworks */,
 				63CB55381247148400DF2EBC /* StoreKit.framework in Frameworks */,
-				1890B8A712519FCD00E6EBF1 /* libPush-1.2.6.a in Frameworks */,
+				1890B8A712519FCD00E6EBF1 /* libPush-1.3.1.a in Frameworks */,
 				1813EDE412796188009DEB29 /* libStoreFront-2.3.0.a in Frameworks */,
 				1F23FFEA12B1B09C001DB898 /* CoreTelephony.framework in Frameworks */,
 			);
@@ -618,7 +617,7 @@
 		1890B89F12519FC400E6EBF1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */,
+				1890B8A612519FC400E6EBF1 /* libPush-1.3.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -626,7 +625,6 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */,
 				D5A4B9431300A8F200002F71 /* AirshipTest-Info.plist */,
 				1857645912AE0A2F001D7DCC /* update_library_reference.sh */,
 				00781A4A12AC9FE700165A66 /* package_airshiplib.sh */,
@@ -1033,16 +1031,16 @@
 			buildRules = (
 			);
 			dependencies = (
-				BB886142159A7FE400584445 /* PBXTargetDependency */,
+				BBC83C3B159BB84A0083A4C2 /* PBXTargetDependency */,
 			);
 			name = AirshipLogicTests;
 			productName = AirshipLogicTests;
 			productReference = 7BB679061429288D00B877DB /* AirshipLogicTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		BB8860A7159A7E9600584445 /* AirshipMIni */ = {
+		BB8860A7159A7E9600584445 /* AirshipMini */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMIni" */;
+			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMini" */;
 			buildPhases = (
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
@@ -1055,7 +1053,7 @@
 				BB8860AA159A7E9600584445 /* PBXTargetDependency */,
 				BB8860AE159A7E9600584445 /* PBXTargetDependency */,
 			);
-			name = AirshipMIni;
+			name = AirshipMini;
 			productName = AirshipLib;
 			productReference = BB88612C159A7E9600584445 /* libUAirshipMini-1.2.1.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1126,7 +1124,7 @@
 			projectRoot = "";
 			targets = (
 				D2AAC07D0554694100DB518D /* AirshipLib */,
-				BB8860A7159A7E9600584445 /* AirshipMIni */,
+				BB8860A7159A7E9600584445 /* AirshipMini */,
 				7BB679051429288D00B877DB /* AirshipLogicTests */,
 			);
 		};
@@ -1141,10 +1139,9 @@
 			remoteRef = 1813EDE212796185009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1890B8A612519FC400E6EBF1 /* libPush-1.2.6.a */ = {
+		1890B8A612519FC400E6EBF1 /* libPush-1.3.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libPush-1.2.6.a";
 			path = "libPush-1.3.1.a";
 			remoteRef = 1890B8A512519FC400E6EBF1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1371,10 +1368,10 @@
 			name = InboxLib;
 			targetProxy = BB8860AF159A7E9600584445 /* PBXContainerItemProxy */;
 		};
-		BB886142159A7FE400584445 /* PBXTargetDependency */ = {
+		BBC83C3B159BB84A0083A4C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BB8860A7159A7E9600584445 /* AirshipMIni */;
-			targetProxy = BB886141159A7FE400584445 /* PBXContainerItemProxy */;
+			target = D2AAC07D0554694100DB518D /* AirshipLib */;
+			targetProxy = BBC83C3A159BB84A0083A4C2 /* PBXContainerItemProxy */;
 		};
 		D5A1927A12C158BE006AF4AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1412,8 +1409,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1476,6 +1473,8 @@
 				);
 				CURRENT_PROJECT_VERSION = 1.2.1;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1573,8 +1572,8 @@
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1600,7 +1599,6 @@
 		};
 		BB88612A159A7E9600584445 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
@@ -1616,8 +1614,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1701,7 +1699,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMIni" */ = {
+		BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMini" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB88612A159A7E9600584445 /* Debug */,
