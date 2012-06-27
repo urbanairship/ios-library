@@ -91,7 +91,6 @@
 		B6EFE236124F3FBB00A46CB1 /* UA_ASINetworkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */; };
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
-		BB1188CD15225E1E00E3D3F0 /* UAContentURLCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1188CC15225E1E00E3D3F0 /* UAContentURLCacheTests.m */; };
 		BB13C4251575706100541EF3 /* UABase64Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB13C4241575706100541EF3 /* UABase64Test.m */; };
 		BB38DEB1157D36BF003D0D4A /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 		BB42FB751509553F00FC4B1B /* UALocationCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */; };
@@ -185,7 +184,6 @@
 		BB886103159A7E9600584445 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		BB886104159A7E9600584445 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
-		BB886106159A7E9600584445 /* UADownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F06DD3128CFE8800C30453 /* UADownloadManager.m */; };
 		BB886107159A7E9600584445 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
 		BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73F8B12ADE86D003CF572 /* UA_ASIDataCompressor.m */; };
 		BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
@@ -197,7 +195,6 @@
 		BB886110159A7E9600584445 /* UAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B712FC787900057449 /* UAEvent.m */; };
 		BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B912FC787900057449 /* UAAnalyticsDBManager.m */; };
 		BB886114159A7E9600584445 /* UALocalStorageDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */; };
-		BB886115159A7E9600584445 /* UAContentURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 497D13F31488282F00FB0A8A /* UAContentURLCache.m */; };
 		BB886116159A7E9600584445 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0C15057C7F00971CEC /* UALocationEvent.m */; };
 		BB886117159A7E9600584445 /* UALocationService.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0F15057C7F00971CEC /* UALocationService.m */; };
 		BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */; };
@@ -436,7 +433,8 @@
 		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
 		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
-		BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UA_ASIAuthenticationDialog.m; path = "../Airship/External/UA_asi-http-request/UA_ASIAuthenticationDialog.m"; sourceTree = "<group>"; };
+		BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
+		BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = AirshipLibDebug.xcconfig; sourceTree = "<group>"; };
 		BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAContentURLCache+Internal.h"; sourceTree = "<group>"; };
 		BB88612C159A7E9600584445 /* libUAirshipMini-1.2.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirshipMini-1.2.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
@@ -576,7 +574,6 @@
 		0867D691FE84028FC02AAC07 /* AirshipLib */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */,
 				D5A1927312C158A8006AF4AE /* InboxLib.xcodeproj */,
 				1813EDDB12796185009DEB29 /* StoreFrontLib.xcodeproj */,
 				1890B89E12519FC400E6EBF1 /* PushLib.xcodeproj */,
@@ -629,6 +626,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */,
 				D5A4B9431300A8F200002F71 /* AirshipTest-Info.plist */,
 				1857645912AE0A2F001D7DCC /* update_library_reference.sh */,
 				00781A4A12AC9FE700165A66 /* package_airshiplib.sh */,
@@ -750,6 +748,7 @@
 		B6EFE21D124F3FBB00A46CB1 /* UA_asi-http-request */ = {
 			isa = PBXGroup;
 			children = (
+				BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */,
 				7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */,
 				7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */,
 				7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */,
@@ -1233,7 +1232,6 @@
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
-				BB1188CD15225E1E00E3D3F0 /* UAContentURLCacheTests.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 			);
@@ -1270,7 +1268,6 @@
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
-				BB886106159A7E9600584445 /* UADownloadManager.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
 				BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */,
 				BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */,
@@ -1282,7 +1279,6 @@
 				BB886110159A7E9600584445 /* UAEvent.m in Sources */,
 				BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */,
 				BB886114159A7E9600584445 /* UALocalStorageDirectory.m in Sources */,
-				BB886115159A7E9600584445 /* UAContentURLCache.m in Sources */,
 				BB886116159A7E9600584445 /* UALocationEvent.m in Sources */,
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,
@@ -1416,8 +1412,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1454,8 +1450,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
@@ -1604,6 +1600,7 @@
 		};
 		BB88612A159A7E9600584445 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BB5EBCB9159B7BEE00F2A716 /* AirshipLibDebug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
@@ -1619,8 +1616,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1657,8 +1654,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
