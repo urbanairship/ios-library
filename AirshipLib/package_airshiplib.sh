@@ -73,7 +73,7 @@ rm AppledocSettings.plist
 
 
 #Remove gcov library
-rm libAirshipLibGcov.a
+# rm libAirshipLibGcov.a
 
 find . -name "*.orig" -delete
 
