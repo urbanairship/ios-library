@@ -125,7 +125,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * UAUser and should not be used by implementing applications. To receive updates when the
  * device token changes, applications should implement a UARegistrationObserver.
  */
-@property (nonatomic, assign) BOOL deviceTokenHasChanged UA_DEPRECATED(__LIB_1_3_0__);
+@property (nonatomic, assign) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * This flag is set to YES if the shared instance of

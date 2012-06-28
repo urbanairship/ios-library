@@ -167,7 +167,7 @@ SINGLETON_INTERFACE(UAPush);
 
 /** Returns YES if the device token has changed. This method is scheduled for removal 
  in the short term, it is recommended that you do not use it. */
-@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged UA_DEPRECATED(__LIB_1_3_0__);
+@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 
 ///---------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ SINGLETON_INTERFACE(UAPush);
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
  */
 
-- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__LIB_1_3_0__);
+- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 
 ///---------------------------------------------------------------------------------------
@@ -275,7 +275,7 @@ SINGLETON_INTERFACE(UAPush);
  server side values (tags, alias, time zone, quiettime) set the values first, then
  call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__LIB_1_3_0__);
+- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Time Zone
@@ -288,13 +288,13 @@ SINGLETON_INTERFACE(UAPush);
 /** The current time zone setting
  @return The time zone name
  */
-- (NSString *)tz UA_DEPRECATED(__LIB_1_3_0__);
+- (NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /** Set a new time zone for the device
  @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
  the default time zone [NSTimeZone localTimeZone] is used
  */
-- (void)setTz:(NSString *)tz UA_DEPRECATED(__LIB_1_3_0__);
+- (void)setTz:(NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -309,7 +309,7 @@ SINGLETON_INTERFACE(UAPush);
  server side values (tags, alias, time zone, quiettime) set the values first, then
  call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_3_0__);
+- (void)updateAlias:(NSString *)value UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
