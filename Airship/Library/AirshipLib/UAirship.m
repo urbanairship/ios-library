@@ -40,9 +40,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UAPush.h"
 
-#define kUALocationServiceDefaultPurpose @"Push to Location"
-#define kUALocationServiceSingleLocationDefaultTimeout 30.0
-
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
 NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
@@ -308,20 +305,11 @@ BOOL logging = false;
 #pragma mark NSUserDefaults Setup
 
 + (void)registerNSUserDefaults {
-    // Urban Airship defaults
-    NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
+    // Call the registerNSUserDefaults methods in the classes that need to
+    // setup defaults
     // UAPush default values
     [UAPush registerNSUserDefaults];
-     // UALocationService default values
-    [defaultPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [defaultPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
-    //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
-    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
-    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
-    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
-    [defaultPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
-    
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
+    [UALocationService registerNSUserDefaults];
 }
 
 #pragma mark -

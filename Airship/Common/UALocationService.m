@@ -33,6 +33,9 @@
 #import "UALocationEvent.h"
 #import "UAAnalytics.h"
 
+#define kUALocationServiceDefaultPurpose @"Push to Location"
+#define kUALocationServiceSingleLocationDefaultTimeout 30.0
+
 NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvailableLocation";
 
 @implementation UALocationService
@@ -702,6 +705,20 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     }
     NSError *error = [NSError errorWithDomain:UALocationServiceTimeoutError code:UALocationServiceTimedOut userInfo:userInfo];
     return error;
+}
+
+// Register the NSUserDefaults for the UALocationService
++ (void)registerNSUserDefaults {
+    NSMutableDictionary *defaultPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
+    // UALocationService default values
+    [defaultPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
+    [defaultPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
+    //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UASingleLocationDesiredAccuracyKey];
+    [defaultPreferences setValue:[NSNumber numberWithDouble:kUALocationServiceSingleLocationDefaultTimeout] forKey:UASingleLocationTimeoutKey];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultPreferences];
 }
 
 

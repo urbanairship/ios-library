@@ -377,5 +377,8 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil;
 
-
+/* This method registers the user defaults necessary for the UALocation Service. You should
+ * not need to call this method directly, it is called in UAirship.
+ */
++ (void)registerNSUserDefaults;
 @end
