@@ -25,6 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <CoreLocation/CoreLocation.h>
 #import "UAirship.h"
+#import "UAirship+Internal.h"
 
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
@@ -52,13 +53,6 @@ NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOpt
 
 static UAirship *_sharedAirship;
 BOOL logging = false;
-
-@interface UAirship() {
-    UALocationService* locationService_;
-}
-- (void)configureUserAgent;
-
-@end
 
 @implementation UAirship
 
@@ -104,7 +98,6 @@ BOOL logging = false;
     if (self = [super init]) {
         self.appId = appkey;
         self.appSecret = secret;
-        deviceTokenHasChanged = NO;
     }
     return self;
 }
@@ -337,10 +330,10 @@ BOOL logging = false;
 - (NSString*)deviceToken {
     return [[UAPush shared] deviceToken];
 }
-//
-//- (void)setDeviceToken:(NSString *)deviceToken {
-//    [[UAPush shared] setDeviceToken:deviceToken];
-//}
+
+- (BOOL)deviceTokenHasChanged {
+    return [[UAPush shared] deviceTokenHasChanged];
+}
 
 - (void)configureUserAgent
 {
@@ -377,6 +370,7 @@ BOOL logging = false;
 
 - (void)registerDeviceToken:(NSData *)token {
     [[UAPush shared] registerDeviceToken:token withExtraInfo:nil];
+    
 }
 
 - (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {

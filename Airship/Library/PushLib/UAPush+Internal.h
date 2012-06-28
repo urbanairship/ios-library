@@ -40,9 +40,6 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
-/* Changed to YES if the token changes */
-@property (nonatomic, assign) BOOL deviceTokenHasChanged;
-
 /* Default push handler */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
@@ -50,7 +47,7 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
 
 /* Get the local time zone, considered the default */
-- (NSTimeZone *)defaultTimeZoneForPush;
+- (NSTimeZone *)defaultTimeZoneForQuietTime;
 
 /* Get a dictionary with the necessary info for tags, alias, autobadge, and
  timezone */

@@ -181,21 +181,7 @@ __VA_ARGS__ \
 #define IF_IOS4_OR_GREATER(...)
 #endif
 
-// This functionality is limited to certain compilers
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-    #define __LIB_1_2_2__ "Deprecated in libUAirship-1.2.2"
-    #define UA_DEPRECATED(deprecatedMessage) __attribute__((deprecated(deprecatedMessage)))
-#else
-    #define __LIB_1_2_2__ 
-    #define DEPRECATED_ATTRIBUTE
-#endif
-
-/*
- * only certain compilers support __attribute__((deprecated))
- */
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#define DEPRECATED_ATTRIBUTE __attribute__((deprecated))
-#else
-#define DEPRECATED_ATTRIBUTE
-#endif
+// Add new __LIB__ macros as necessary
+#define __LIB_1_3_0__ "Deprecated in libUAirship-1.3.0"
+#define UA_DEPRECATED(deprecatedMessage) __attribute__((deprecated(deprecatedMessage)))
 

@@ -165,6 +165,10 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, copy, getter = deviceToken,
            setter = setDeviceToken:) NSString *deviceToken;
 
+/** Returns YES if the device token has changed. This method is scheduled for removal 
+ in the short term, it is recommended that you do not use it. */
+@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged UA_DEPRECATED(__LIB_1_3_0__);
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
@@ -193,7 +197,7 @@ SINGLETON_INTERFACE(UAPush);
  @warning *Deprecated* Use the setAutobadgeEnabled: method instead
  */
 
-- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__LIB_1_2_2__);
+- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__LIB_1_3_0__);
 
 
 ///---------------------------------------------------------------------------------------
@@ -208,7 +212,7 @@ SINGLETON_INTERFACE(UAPush);
 /// @name Tags
 ///---------------------------------------------------------------------------------------
 
-/** Tags for this device */
+/** Tags for this device. */
 @property (nonatomic, copy, getter = tags,
            setter = setTags:) NSArray *tags;
 
@@ -271,7 +275,7 @@ SINGLETON_INTERFACE(UAPush);
  server side values (tags, alias, time zone, quiettime) set the values first, then
  call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__LIB_1_2_2__);
+- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Time Zone
@@ -284,13 +288,13 @@ SINGLETON_INTERFACE(UAPush);
 /** The current time zone setting
  @return The time zone name
  */
-- (NSString *)tz UA_DEPRECATED(__LIB_1_2_2__);
+- (NSString *)tz UA_DEPRECATED(__LIB_1_3_0__);
 
 /** Set a new time zone for the device
  @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
  the default time zone [NSTimeZone localTimeZone] is used
  */
-- (void)setTz:(NSString *)tz UA_DEPRECATED(__LIB_1_2_2__);
+- (void)setTz:(NSString *)tz UA_DEPRECATED(__LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -305,7 +309,7 @@ SINGLETON_INTERFACE(UAPush);
  server side values (tags, alias, time zone, quiettime) set the values first, then
  call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_2_2__);
+- (void)updateAlias:(NSString *)value UA_DEPRECATED(__LIB_1_3_0__);
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time

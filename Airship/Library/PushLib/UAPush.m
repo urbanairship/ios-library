@@ -43,7 +43,6 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 //Internal
 @synthesize standardUserDefaults;
-@synthesize deviceTokenHasChanged;
 @synthesize defaultPushHandler;
 
 //Public
@@ -53,6 +52,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 // Public - UserDefaults
 @dynamic pushEnabled;
 @dynamic deviceToken;
+@synthesize deviceTokenHasChanged;
 @dynamic alias;
 @dynamic tags;
 @dynamic quietTime;
@@ -76,8 +76,6 @@ static Class _uiClass;
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         delegate = defaultPushHandler;
         standardUserDefaults = [NSUserDefaults standardUserDefaults];
-        [standardUserDefaults setObject:@"KEYKEYKEYEKEY" forKey:@"key"];
-        [standardUserDefaults setObject:nil forKey:@"key"];
     }
     return self;
 }
@@ -89,7 +87,17 @@ static Class _uiClass;
     return [standardUserDefaults valueForKey:UAPushDeviceTokenSettingsKey];
 }
 
+// TODO: Remove deviceTokenHasChanged calls when LIB-353 has been completed
 - (void)setDeviceToken:(NSString*)deviceToken{
+    // Remove this code start
+    NSString* oldToken = [standardUserDefaults stringForKey:UAPushDeviceTokenSettingsKey];
+    if ([deviceToken isEqualToString:oldToken]) {
+        deviceTokenHasChanged = NO;
+    }
+    else {
+        deviceTokenHasChanged = YES;
+    }
+    // Remove this code end
     UALOG(@"Device token: %@", deviceToken);    
     [standardUserDefaults setObject:deviceToken forKey:UAPushDeviceTokenSettingsKey];
 }
@@ -179,7 +187,7 @@ static Class _uiClass;
     [standardUserDefaults setObject:[timeZone name] forKey:UAPushTimeZoneSettingsKey];
 }
 
-- (NSTimeZone *)defaultTimeZoneForPush {
+- (NSTimeZone *)defaultTimeZoneForQuietTime {
     return [NSTimeZone localTimeZone];
 }
 
@@ -264,7 +272,7 @@ static Class _uiClass;
         return;
     }
     if(!timezone){
-        timezone = [self defaultTimeZoneForPush];
+        timezone = [self defaultTimeZoneForQuietTime];
     }
     NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
@@ -284,7 +292,7 @@ static Class _uiClass;
 }
 
 - (void)disableQuietTime {
-    [self setQuietTime:nil];
+    self.quietTime = nil;
     [self updateRegistration];
 }
 
@@ -345,7 +353,7 @@ static Class _uiClass;
 }
 
 - (void)enableAutobadge:(BOOL)autobadge {
-    [self setAutobadgeEnabled:autobadge];
+    self.autobadgeEnabled = autobadge;
 }
 
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
@@ -361,7 +369,7 @@ static Class _uiClass;
     // if the device token has already been set then
     // we are post-registration and will need to make
     // and update call
-    if ([self autobadgeEnabled] && [UAirship shared].deviceToken) {
+    if (self.autobadgeEnabled && self.deviceToken) {
         UALOG(@"Sending autobadge update to UA server");
         [self updateRegistration];
     }
@@ -410,7 +418,7 @@ static Class _uiClass;
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
             
-			if([self autobadgeEnabled]) {
+			if(self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
 				[delegate handleBadgeUpdate:[badgeNumber intValue]];
@@ -532,9 +540,8 @@ static Class _uiClass;
                                                     fail:@selector(registerDeviceTokenFailed:)];
     if (info != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
+        UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
         [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
-        [writer release];
     }   
     return request;
 }

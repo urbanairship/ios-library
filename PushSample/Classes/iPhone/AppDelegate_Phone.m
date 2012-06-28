@@ -72,10 +72,6 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *path = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"deviceToken.data"];
-    NSError *error = nil;
-    [deviceToken writeToFile:path options:NSDataWritingAtomic error:&error];
     [[UAPush shared] registerDeviceToken:deviceToken];
     
     

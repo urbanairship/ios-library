@@ -104,10 +104,13 @@ static BOOL messageReceived = NO;
     STAssertTrue([tagsWithCats containsObject:@"CATS"], @"There should be CATS in the tags");
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];
     // Add a bunch of tags
-    NSArray *testTags = [NSArray arrayWithContentsOfFile:path];
+    NSMutableArray *testTags = [NSMutableArray arrayWithContentsOfFile:path];
+    // Add some funky unicode tags
+    NSString* funkyString = [NSString stringWithUTF8String:"⇑⇑⇓⇓⇐⇒⇐⇒BABASelectStart==😄❤👍"];
+    [testTags addObject:funkyString];
     [push setTags:testTags];
     // Create a sub array of the tags just added, then re add the sub array (lots of duplicates)
-    NSArray *subArray = [testTags subarrayWithRange:NSMakeRange(0, 750)];
+    NSArray *subArray = [testTags subarrayWithRange:NSMakeRange(0, 5)];
     [push setTags:subArray];
     NSArray *existingTags = [push tags];
     // Test for duplicates
@@ -143,6 +146,17 @@ static BOOL messageReceived = NO;
     [push setDeviceToken:actualToken];
     NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
     STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
+    // This method uses a known deprecated method, should be removed in the future. 
+    // This should be changed with the completion of LIB-353
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed in UAPush");
+    STAssertFalse([[UAirship shared] deviceTokenHasChanged], @"Device token should not report changed in UAirhsip");
+    NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
+    [push setDeviceToken:newToken];
+    STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
+    STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed in UAPush");
+    STAssertTrue([[UAirship shared] deviceTokenHasChanged], @"Device token should report changed in UAirship");
+    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
 
 - (void)testTimeZoneSettings {
