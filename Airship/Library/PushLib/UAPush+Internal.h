@@ -79,4 +79,9 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
 
+/* Register the user defaults for this class. You should not need to call this method
+ unless you are bypassing UAirship
+ */
++ (void)registerNSUserDefaults;
+
 @end

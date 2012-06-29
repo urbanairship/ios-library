@@ -308,8 +308,8 @@ BOOL logging = false;
     // Call the registerNSUserDefaults methods in the classes that need to
     // setup defaults
     // UAPush default values
-    [UAPush registerNSUserDefaults];
-    [UALocationService registerNSUserDefaults];
+    [UAPush performSelector:@selector(registerNSUserDefaults)];
+    [UALocationService  performSelector:@selector(registerNSUserDefaults)];
 }
 
 #pragma mark -

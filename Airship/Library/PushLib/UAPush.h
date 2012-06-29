@@ -499,14 +499,4 @@ SINGLETON_INTERFACE(UAPush);
  */
 + (NSString *)pushTypeString:(UIRemoteNotificationType)types;
 
-///---------------------------------------------------------------------------------------
-/// @name NSUserDefaults
-///---------------------------------------------------------------------------------------
-
-/*
- * Register the user defaults for this class. You should not need to call this method
- * unless you are bypassing UAirship.
- */
-+ (void)registerNSUserDefaults;
-
 @end

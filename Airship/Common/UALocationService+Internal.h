@@ -148,4 +148,8 @@
 // Add Analytics to the UAAnalytics object and ensure it's done
 // on the main thread
 - (void)sendEventToAnalytics:(UALocationEvent*)locationEvent;
+
+// This method registers the user defaults necessary for the UALocation Service. You should
+// not need to call this method directly, it is called in UAirship.
++ (void)registerNSUserDefaults;
 @end
