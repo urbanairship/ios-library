@@ -26,15 +26,18 @@
 #import <UIKit/UIKit.h>
 
 #import "UAPush.h"
-#import "UA_ASIHTTPRequest.h"
+#import "UAPush+Internal.h"
+
+
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
 #import "UAAnalytics.h"
-#import "UAPush+Internal.h"
-#import "UA_SBJsonWriter.h"
 #import "UAEvent.h"
 #import "UAPushNotificationHandler.h"
+
+#import "UA_SBJsonWriter.h"
+#import "UA_ASIHTTPRequest.h"
 
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
@@ -49,6 +52,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize delegate;
 @synthesize notificationTypes;
 @synthesize autobadgeEnabled = autobadgeEnabled_;
+
 // Public - UserDefaults
 @dynamic pushEnabled;
 @dynamic deviceToken;
@@ -264,6 +268,7 @@ static Class _uiClass;
 
 - (void)updateTags:(NSMutableArray *)value {
     self.tags = value;
+    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
