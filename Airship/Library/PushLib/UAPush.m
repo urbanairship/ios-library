@@ -263,12 +263,10 @@ static Class _uiClass;
 
 - (void)updateAlias:(NSString *)value {
     self.alias = value;
-    [self updateRegistration];
 }
 
 - (void)updateTags:(NSMutableArray *)value {
     self.tags = value;
-    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
@@ -293,12 +291,10 @@ static Class _uiClass;
                       toStr, UAPushQuietTimeEndJSONKey, nil];
     
     self.timeZone = timezone;
-    [self updateRegistration];
 }
 
 - (void)disableQuietTime {
     self.quietTime = nil;
-    [self updateRegistration];
 }
 
 #pragma mark -

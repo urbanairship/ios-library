@@ -30,6 +30,7 @@
 #import "UAUtils.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UA_ASIHTTPRequestDelegate.h"
+#import "UAirship.h"
 #import "JRSwizzle.h"
 #import <objc/runtime.h>
 #import <SenTestingKit/SenTestingKit.h>
@@ -209,12 +210,36 @@ static BOOL messageReceived = NO;
 
 }
 
-//Quiet time was tested above, set test with a nil timezone 
-- (void)testQuietTimeWithNilTimeZone {
-    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:35] withTimeZone:nil];
-    STAssertTrue([[[NSTimeZone defaultTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
+// This isn't the most robust test, since there is some copy paste from
+// the method itself, but it should suffice to warn of unintended changes
+- (void)testQuietTime {
+    NSDate *now = [NSDate date];
+    NSDate *future = [now dateByAddingTimeInterval:60.0];
+    [push setQuietTimeFrom:now to:future withTimeZone:nil];
+    NSDictionary* timeZoneDictionary = [push quietTime];
+    STAssertNotNil(timeZoneDictionary, nil);
+    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSString *testFrom = [NSString stringWithFormat:@"%d:%02d",
+                         [cal components:NSHourCalendarUnit fromDate:now].hour,
+                         [cal components:NSMinuteCalendarUnit fromDate:now].minute];
+    
+    NSString *testTo = [NSString stringWithFormat:@"%d:%02d",
+                       [cal components:NSHourCalendarUnit fromDate:future].hour,
+                       [cal components:NSMinuteCalendarUnit fromDate:future].minute];
+    NSString *quietTimeFrom = [timeZoneDictionary valueForKey:UAPushQuietTimeStartJSONKey];
+    NSString *quietTimeTo = [timeZoneDictionary valueForKey:UAPushQuietTimeEndJSONKey];
+    STAssertTrue([quietTimeTo isEqualToString:testTo], @"Quiet time to value incorrect");
+    STAssertTrue([quietTimeFrom isEqualToString:testFrom], @"Quiet time from value incorrect");
+    STAssertTrue([[NSTimeZone defaultTimeZone] isEqualToTimeZone:[push timeZone]], @"Default time zone incorrect in quiet time");
 }
- 
+
+- (void)testDisableQuietTime {
+    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:60.0] withTimeZone:[NSTimeZone defaultTimeZone]];
+    STAssertNotNil(push.quietTime, nil);
+    [push disableQuietTime];
+    STAssertNil(push.quietTime, nil);
+
+}
 
 - (void)testUpdateRegistrationLogic {
     [push setPushEnabled:YES];
@@ -347,16 +372,6 @@ static BOOL messageReceived = NO;
     BOOL failSelector = sel_isEqual(@selector(unRegisterDeviceTokenFailed:), request.didFailSelector);
     STAssertTrue(successSelector, nil);
     STAssertTrue(failSelector, nil);
-}
-
-- (void)testQuietTimeDisable {
-    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:60] withTimeZone:[NSTimeZone defaultTimeZone]];
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] updateRegistration];
-    [push disableQuietTime];
-    NSDictionary* quietTime = [push quietTime];
-    STAssertNil(quietTime, nil);
-    [mockPush verify];
 }
 
 - (void)testSetBadgeNumber {
