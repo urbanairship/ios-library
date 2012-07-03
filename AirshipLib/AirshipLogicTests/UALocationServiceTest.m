@@ -78,7 +78,6 @@
 - (void)setUp {
     // Only works on the first pass, values will change when accessed. When fresh values are needed in 
     // user defaults call the setTestValuesInNSUserDefaults method
-    [UAirship registerNSUserDefaults];
     yes = YES;
     no = NO;
     locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];

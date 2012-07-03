@@ -33,7 +33,4 @@
  */
 - (void)configureUserAgent;
 
-/* Sets up the user defaults UAClasses by calling their respective registerNSUserDefaults
- * methods. These methods are not all set up, however, the ticket for the work is LIB-352 */
-+ (void)registerNSUserDefaults;
 @end

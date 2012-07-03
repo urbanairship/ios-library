@@ -25,6 +25,7 @@
 
 #import "UAPush.h"
 #import "UAPush+Internal.h"
+#import "UAirship.h"
 #import "UAEvent.h"
 #import "UAAnalytics.h"
 #import "UAUtils.h"

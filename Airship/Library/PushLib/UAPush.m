@@ -67,6 +67,10 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
 static Class _uiClass;
 
++ (void)initialize {
+    [self registerNSUserDefaults];
+}
+
 -(void)dealloc {
     RELEASE_SAFELY(defaultPushHandler);
     [super dealloc];

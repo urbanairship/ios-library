@@ -30,7 +30,7 @@
     UALocationService *locationService;
     NSDate *timeout;
 }
-//- (BOOL)serviceAcquiredLocation;
+
 - (void)peformInvocationInBackground:(NSInvocation*)invocation;
 @end
 

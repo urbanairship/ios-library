@@ -58,6 +58,10 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
 #pragma mark -
 #pragma mark Object Lifecycle
 
++(void)initialize {
+    [self registerNSUserDefaults];
+}
+
 - (void)dealloc {
     self.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];

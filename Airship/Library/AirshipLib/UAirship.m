@@ -104,7 +104,6 @@ BOOL logging = false;
     if (_sharedAirship) {
         return;
     }
-    [UAirship registerNSUserDefaults];
     //Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
@@ -299,17 +298,6 @@ BOOL logging = false;
                     format:@"Attempted to access instance before initializaion. Please call takeOff: first."];
     }
     return _sharedAirship;
-}
-
-#pragma mark -
-#pragma mark NSUserDefaults Setup
-
-+ (void)registerNSUserDefaults {
-    // Call the registerNSUserDefaults methods in the classes that need to
-    // setup defaults
-    // UAPush default values
-    [UAPush performSelector:@selector(registerNSUserDefaults)];
-    [UALocationService  performSelector:@selector(registerNSUserDefaults)];
 }
 
 #pragma mark -
