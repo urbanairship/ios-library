@@ -61,6 +61,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @dynamic tags;
 @dynamic quietTime;
 @dynamic timeZone;
+@dynamic enableQuietTime;
 
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -170,6 +171,14 @@ static Class _uiClass;
     [standardUserDefaults setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
+- (BOOL)enableQuietTime {
+    return [standardUserDefaults boolForKey:UAPushQuietTimeEnabledSettingsKey];
+}
+
+- (void)setEnableQuietTime:(BOOL)enableQuietTime {
+    [standardUserDefaults setBool:enableQuietTime forKey:UAPushQuietTimeEnabledSettingsKey];
+}
+
 - (NSString *)tz {
     return [[self timeZone] name];
 }
@@ -244,7 +253,7 @@ static Class _uiClass;
     
     NSString* tz = self.timeZone.name;
     NSDictionary *quietTime = self.quietTime;
-    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
+    if (tz != nil && self.enableQuietTime) {
         [body setValue:tz forKey:UAPushTimeZoneJSONKey];
         [body setValue:quietTime forKey:UAPushQuietTimeJSONKey];
     }
@@ -260,10 +269,12 @@ static Class _uiClass;
 
 - (void)updateAlias:(NSString *)value {
     self.alias = value;
+    [self updateRegistration];
 }
 
 - (void)updateTags:(NSMutableArray *)value {
     self.tags = value;
+    [self updateRegistration];
 }
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
@@ -291,7 +302,8 @@ static Class _uiClass;
 }
 
 - (void)disableQuietTime {
-    self.quietTime = nil;
+    self.enableQuietTime = NO;
+    [self updateRegistration];
 }
 
 #pragma mark -

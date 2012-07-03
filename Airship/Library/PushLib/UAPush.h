@@ -359,8 +359,19 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, retain) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
 
 /**
- * Change quiet time for current device token, only take hh:mm into account. This call updates
- * the server with an API call.
+ * Enables/Disables quiet time
+ */
+@property (nonatomic, assign) BOOL enableQuietTime;
+
+/**
+ * Change quiet time for current device token, only take hh:mm into account. Update the server
+ * after making changes to the quiet time with the updateRegistration call. 
+ * Batching these calls improves API and client performance.
+ * 
+ * @warning *Important* The behavior of this method has changed in as of 1.3.0
+ * This method no longer automatically enables quiet time, and does not automatically update
+ * the server. Please refer to enableQuietTime and updateRegistration methods for 
+ * more information
  * 
  * @param from Date for start of quiet time
  * @param to Date for end of quiet time
@@ -370,8 +381,9 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Disables quiet time settings. This call updates the server with an API call.
+ * This call is deprecated. Set enableQuietTime to NO instead;  
  */
-- (void)disableQuietTime;
+- (void)disableQuietTime UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * The current time zone setting for quiet time.

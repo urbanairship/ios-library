@@ -178,6 +178,7 @@ static BOOL messageReceived = NO;
     push.canEditTagsFromDevice = NO;
     push.alias = testAlias;
     push.tags = tags;
+    push.enableQuietTime = YES;
     [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
     push.autobadgeEnabled = YES;
     // Get a payload, should be NO tag info, the BOOL is set to no
@@ -207,6 +208,9 @@ static BOOL messageReceived = NO;
     push.tags = tags;
     payload = [push registrationPayload];
     STAssertTrue([(NSArray*)[payload valueForKey:UAPushMultipleTagsJSONKey] isEqualToArray:tags], nil);
+    push.enableQuietTime = NO;
+    payload = [push registrationPayload];
+    STAssertNil([payload valueForKey:UAPushQuietTimeJSONKey], @"There should be no quiet time payload");
 
 }
 
@@ -236,9 +240,11 @@ static BOOL messageReceived = NO;
 - (void)testDisableQuietTime {
     [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:60.0] withTimeZone:[NSTimeZone defaultTimeZone]];
     STAssertNotNil(push.quietTime, nil);
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [push disableQuietTime];
-    STAssertNil(push.quietTime, nil);
-
+    STAssertNotNil(push.quietTime, nil);
+    STAssertFalse(push.enableQuietTime, @"Enable quiet tiem should be nil");
+    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
 
 - (void)testUpdateRegistrationLogic {
@@ -344,8 +350,14 @@ static BOOL messageReceived = NO;
     NSError *errorJSON = nil;
     NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:request.postBody options:NSJSONReadingAllowFragments error:&errorJSON];
     STAssertNil(errorJSON, nil);
-    STAssertTrue([[payload allKeys] isEqualToArray:[JSON allKeys]], nil);
-    STAssertTrue([[payload allValues] isEqualToArray:[JSON allValues]], nil);
+    NSArray* payloadKeys = [payload allKeys];
+    NSArray* payloadValues = [payload allValues];
+    for (NSString* key in payloadKeys) {
+        STAssertTrue([[JSON allKeys] containsObject:key], @"Missing key in payload keys or JSON keys");
+    }
+    for (NSString* value in payloadValues) {
+        STAssertTrue([[JSON allValues] containsObject:value],@"Missing value in payload values or JSON values");
+    }    
 }
 
 - (void)testUnregisterDeviceToken {
