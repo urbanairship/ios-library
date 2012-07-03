@@ -167,9 +167,6 @@ static Class _uiClass;
 }
 
 - (void)setQuietTime:(NSMutableDictionary *)quietTime {
-    if (!quietTime) {
-        [standardUserDefaults removeObjectForKey:UAPushQuietTimeSettingsKey];
-    }
     [standardUserDefaults setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
