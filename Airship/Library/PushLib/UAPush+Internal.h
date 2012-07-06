@@ -47,7 +47,9 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-@interface UAPush ()
+@interface UAPush () {
+    dispatch_queue_t registrationQueue;
+}
 
 /* Convenience pointer for getting to user defaults. */
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
@@ -56,7 +58,8 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Set quite time. */
+
+/* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
 
 /* Get the local time zone, considered the default. */

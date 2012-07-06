@@ -48,6 +48,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize standardUserDefaults;
 @synthesize defaultPushHandler;
 
+
 //Public
 @synthesize delegate;
 @synthesize notificationTypes;
@@ -74,6 +75,8 @@ static Class _uiClass;
 -(void)dealloc {
     RELEASE_SAFELY(defaultPushHandler);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    dispatch_release(registrationQueue);
+    registrationQueue = nil;
     [super dealloc];
 }
 
@@ -89,6 +92,8 @@ static Class _uiClass;
                                                  selector:@selector(applicationWillEnterForegroundNotification) 
                                                      name:UIApplicationWillEnterForegroundNotification 
                                                    object:[UIApplication sharedApplication]];
+        registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
+        dispatch_retain(registrationQueue);
     }
     return self;
 }
@@ -500,6 +505,10 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 - (void)applicationWillEnterForegroundNotification {
+    [self registerIfStale];
+}
+
+- (void)registerIfStale {
     UALOG(@"Checking registration status");
     if ([self registrationIsStale]) {
         UALOG(@"Registration is stale, scheduling update");
@@ -507,7 +516,7 @@ static Class _uiClass;
     }
     else {
         UALOG(@"Registration is current, no update needed");
-    }
+    }  
 }
 
 - (BOOL)registrationIsStale {
@@ -525,7 +534,8 @@ static Class _uiClass;
 }
 
 - (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request {
-    NSString *registrationPayloadJson = [[[NSString alloc] initWithData:request.postBody encoding:NSUTF8StringEncoding] autorelease];
+    NSString *registrationPayloadJson = [[[NSString alloc] initWithData:request.postBody 
+                                                               encoding:NSUTF8StringEncoding] autorelease];
     [standardUserDefaults setValue:registrationPayloadJson forKey:UAPushSettingsCachedRegistrationPayload];
     // This will require refacotring if this method is expanded to handle URL's without a device token
     // as the last element.
@@ -574,7 +584,6 @@ static Class _uiClass;
     }
     UA_ASIHTTPRequest *request = [self requestToRegisterDeviceTokenWithInfo:info];
     [request startAsynchronous];
-    
 }
 
 - (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
@@ -641,6 +650,13 @@ static Class _uiClass;
 
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
+    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599){
+        double delayInSeconds = arc4random() % 3;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, registrationQueue, ^(void){
+            [self registerIfStale];
+        });
+    }
     [self notifyObservers:@selector(registerDeviceTokenFailed:)
                withObject:request];
 }
