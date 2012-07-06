@@ -57,6 +57,7 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
+@property (nonatomic, assign) int connectionAttempts; 
 
 
 /* Set quiet time. */

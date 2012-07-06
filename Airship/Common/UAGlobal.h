@@ -30,7 +30,14 @@
 #define UA_BLog(fmt, ...) \
     do { \
         if (logging) { \
-            NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+            NSString *thread = nil; \
+            if ([[NSThread currentThread] isMainThread]) { \
+                thread = @"M"; \
+            } \
+            else { \
+                thread = @"B"; \
+            }  \
+            NSLog((@"[%@] => %s [Line %d] " fmt), thread, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
         } \
     } while(0)
 

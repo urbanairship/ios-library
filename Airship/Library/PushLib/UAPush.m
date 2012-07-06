@@ -47,6 +47,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 //Internal
 @synthesize standardUserDefaults;
 @synthesize defaultPushHandler;
+@synthesize connectionAttempts;
 
 
 //Public
@@ -94,6 +95,7 @@ static Class _uiClass;
                                                    object:[UIApplication sharedApplication]];
         registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
         dispatch_retain(registrationQueue);
+        connectionAttempts = 0;
     }
     return self;
 }
@@ -505,7 +507,15 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 - (void)applicationWillEnterForegroundNotification {
-    [self registerIfStale];
+    // One second delay allows the application state to tranistion completely out of the
+    // background
+    connectionAttempts = 0;
+    double delayInSeconds = 1.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, registrationQueue, ^(void){
+        [self registerIfStale];
+    });
+
 }
 
 - (void)registerIfStale {
@@ -548,7 +558,7 @@ static Class _uiClass;
     [standardUserDefaults synchronize];
     //if on, but not yet registered, re-register -- was likely just enabled
     BOOL pushEnabled = self.pushEnabled;
-    NSString* deviceToken = self.deviceToken;
+    NSString *deviceToken = self.deviceToken;
     if (pushEnabled && !deviceToken) {
         [self registerForRemoteNotificationTypes:notificationTypes];
         
@@ -650,12 +660,17 @@ static Class _uiClass;
 
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
-    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599){
-        double delayInSeconds = arc4random() % 3;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    int delayInSeconds = arc4random() % 3;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    delayInSeconds += pow(2 , connectionAttempts);
+    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && delayInSeconds < 60){
+        UALOG(@"Will attempt to reconnect in %i seconds", delayInSeconds);
+        UALOG(@"Connection Attempt %i", connectionAttempts);
+        connectionAttempts++;
         dispatch_after(popTime, registrationQueue, ^(void){
             [self registerIfStale];
         });
+        return;
     }
     [self notifyObservers:@selector(registerDeviceTokenFailed:)
                withObject:request];
