@@ -34,6 +34,8 @@ UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
+UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
+UAPushSettingsKey *const UAPushSettingsCachedDeviceToken = @"UAPushCachedDeviceToken";
 
 typedef NSString UAPushJSONKey;
 UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";

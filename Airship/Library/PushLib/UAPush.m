@@ -73,6 +73,7 @@ static Class _uiClass;
 
 -(void)dealloc {
     RELEASE_SAFELY(defaultPushHandler);
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 
@@ -84,6 +85,10 @@ static Class _uiClass;
         defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         delegate = defaultPushHandler;
         standardUserDefaults = [NSUserDefaults standardUserDefaults];
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(applicationWillEnterForegroundNotification) 
+                                                     name:UIApplicationWillEnterForegroundNotification 
+                                                   object:[UIApplication sharedApplication]];
     }
     return self;
 }
@@ -494,6 +499,41 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark UA Registration Methods
 
+- (void)applicationWillEnterForegroundNotification {
+    UALOG(@"Checking registration status");
+    if ([self registrationIsStale]) {
+        UALOG(@"Registration is stale, scheduling update");
+        [self updateRegistration];
+    }
+    else {
+        UALOG(@"Registration is current, no update needed");
+    }
+}
+
+- (BOOL)registrationIsStale {
+    NSString *currentJsonPayload = [self jsonForCurrentRegistrationPayload];
+    NSString *cachedJsonPayload = [standardUserDefaults valueForKey:UAPushSettingsCachedRegistrationPayload];
+    BOOL payloadIsStale = ![currentJsonPayload isEqualToString:cachedJsonPayload];
+    BOOL deviceTokenIsStale = ![self.deviceToken isEqualToString:[standardUserDefaults stringForKey:UAPushSettingsCachedDeviceToken]];
+    return payloadIsStale || deviceTokenIsStale;
+}
+
+- (NSString*)jsonForCurrentRegistrationPayload {
+    NSDictionary *registrationPayload = [self registrationPayload];
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    return [writer stringWithObject:registrationPayload];
+}
+
+- (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request {
+    NSString *registrationPayloadJson = [[[NSString alloc] initWithData:request.postBody encoding:NSUTF8StringEncoding] autorelease];
+    [standardUserDefaults setValue:registrationPayloadJson forKey:UAPushSettingsCachedRegistrationPayload];
+    // This will require refacotring if this method is expanded to handle URL's without a device token
+    // as the last element.
+    NSArray* pathComponents = [request.url pathComponents];
+    [standardUserDefaults setValue:[pathComponents lastObject] forKey:UAPushSettingsCachedDeviceToken];
+}
+
+
 - (void)updateRegistration {
     [standardUserDefaults synchronize];
     //if on, but not yet registered, re-register -- was likely just enabled
@@ -610,6 +650,7 @@ static Class _uiClass;
         [self registerDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
+        [self cacheRegistrationInfo:request];
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
