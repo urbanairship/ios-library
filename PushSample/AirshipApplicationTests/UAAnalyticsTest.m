@@ -226,7 +226,12 @@
 }
 
 - (void)testInvalidateBackgroundTask {
-    analytics.sendBackgroundTask = 5.0;
+    __block UIBackgroundTaskIdentifier identifier;
+    identifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [[UIApplication sharedApplication] endBackgroundTask:identifier];
+        identifier = UIBackgroundTaskInvalid;
+    }];
+    analytics.sendBackgroundTask = identifier;
     [analytics invalidateBackgroundTask];
     STAssertTrue(analytics.sendBackgroundTask == UIBackgroundTaskInvalid, nil);
 }
