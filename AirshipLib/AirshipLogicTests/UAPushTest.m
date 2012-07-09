@@ -58,8 +58,9 @@ static BOOL messageReceived = NO;
 
 @interface UAPushTest : SenTestCase{
     UAPush *push;
-    NSString *token;    
+    NSString *token;
 }
+
 @end
 
 
@@ -455,6 +456,7 @@ static BOOL messageReceived = NO;
 #pragma mark -
 #pragma mark UA API Registration callbacks
 
+// This test covers the basic error case, the workflow where the response from the server is NOT a 500
 - (void)testRegisterDeviceTokenFailed {
     NSError *swizzleError = nil;
     [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
@@ -470,7 +472,31 @@ static BOOL messageReceived = NO;
     STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
 }
 
+- (void)testDeviceTokenFailed500 {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int responseCode = 501;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    void (^theBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
+        messageReceived = YES;
+    };
+    [[[mockPush stub] andDo:theBlock] updateRegistration];
+    push.connectionAttempts = 0;
+    push.retryOnServerError = YES;
+    [push registerDeviceTokenFailed:mockRequest];
+    NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:5.0];
+    while (!messageReceived) {
+        // Just keep moving the run loop date forward slightly, so the exit is quick
+        [[NSRunLoop currentRunLoop] runMode:[[NSRunLoop currentRunLoop] currentMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+        if([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    STAssertTrue(messageReceived, @"The dispatch_after did not call updateRegistration before timeout");
+}
+
 - (void)testRegisterDeviceTokenSucceeded {
+    // Test that a non 200 or 201 gets forwarded as a failure
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     int code = 42;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
@@ -478,14 +504,28 @@ static BOOL messageReceived = NO;
     [[mockPush expect] registerDeviceTokenFailed:mockRequest];
     [push registerDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
+    ////
+    // Check the 200 case, and that the correct values are cached, and observers are notified
     id mockObserver = [OCMockObject niceMockForProtocol:@protocol(UARegistrationObserver)];
     [[mockObserver expect] registerDeviceTokenSucceeded];
     [push addObserver:mockObserver];
+    // Clear out cached NSUserDefaults value for deviceToken
+    [[NSUserDefaults standardUserDefaults] setValue:@"NO" forKey:UAPushSettingsCachedDeviceToken];
+    // Setup a NSURL
+    NSURL *url = [NSURL URLWithString:@"https://device-api.urbanairship.com/api/device_tokens/06e3d145a2e0089f5c9e86f6c8da4b447f2d6b78ac8fd4496f733cf7be562754/"];
+    NSString *testToken = @"06e3d145a2e0089f5c9e86f6c8da4b447f2d6b78ac8fd4496f733cf7be562754";
     code = 200;
     mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    NSDictionary *payload = [NSDictionary dictionaryWithObject:@"payload" forKey:@"p"];
+    [[[mockRequest stub] andReturn:payload] userInfo];
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    [[[mockRequest stub] andReturn:url] url];
     [push registerDeviceTokenSucceeded:mockRequest];
     [mockObserver verify];
+    STAssertTrue([payload isEqualToDictionary:push.registrationCache], @"Successful registration should cache a payload");
+    NSString *cachedDeviceToken = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushSettingsCachedDeviceToken];
+    STAssertTrue([cachedDeviceToken isEqualToString:testToken], @"Token should be cached in user defaults after successful registration");
+    
                        
 }
 
@@ -525,6 +565,20 @@ static BOOL messageReceived = NO;
     [mockPush verify];
     [mockObserver verify];
     
+}
+
+- (void)testStaleRegistration {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    push.registrationCache = [NSDictionary dictionaryWithObject:@"1" forKey:@"one"];
+    NSString *testToken = @"token";
+    push.deviceToken = testToken;
+    [defaults setValue:testToken forKey:UAPushSettingsCachedDeviceToken];
+    STAssertTrue([push registrationIsStale], @"registrationIsStale should return YES");
+    push.registrationCache = [push registrationPayload];
+    STAssertFalse([push registrationIsStale], @"registrationIsStale should return NO");
+    push.deviceToken = @"not test";
+    STAssertTrue([push registrationIsStale], @"registrationIsStale should return YES");
+
 }
 
 

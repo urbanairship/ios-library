@@ -472,6 +472,12 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)updateRegistration;
 
+/** 
+ * Automatically retry on server errors. If the UA reports an error in the 500 range, automatically
+ * retry an increasing time intervals until 60 seconds is reached, then repeat every 60 seconds.
+ */
+@property (nonatomic, assign) BOOL retryOnServerError;
+
 ///---------------------------------------------------------------------------------------
 /// @name Receiving Notifications
 ///---------------------------------------------------------------------------------------

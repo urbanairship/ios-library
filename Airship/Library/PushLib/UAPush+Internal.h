@@ -57,7 +57,13 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
+
+/* Number of connection attempts for registration. Used for automatic retry */
 @property (nonatomic, assign) int connectionAttempts; 
+
+/* The cache of the most recent registration payload that successfully 
+ uploaded to the server */
+@property (nonatomic, retain) NSDictionary *registrationCache;
 
 
 /* Set quiet time. */
@@ -84,6 +90,16 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
+
+/* Compares the current registration payload with the most recent successfuly uploaded
+ payload. Also compares the most recent device token with the previous device token.
+ @return YES if stale, NO otherwise
+ */
+- (BOOL)registrationIsStale;
+
+/* Cache the userInfo object from the request (registration payload)
+ and the device token */
+- (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request;
 
 /* Register the user defaults for this class. You should not need to call this method
  unless you are bypassing UAirship

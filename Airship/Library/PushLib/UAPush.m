@@ -42,12 +42,12 @@
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
-@implementation UAPush
-
+@implementation UAPush 
 //Internal
 @synthesize standardUserDefaults;
 @synthesize defaultPushHandler;
 @synthesize connectionAttempts;
+@synthesize registrationCache;
 
 
 //Public
@@ -63,6 +63,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @dynamic tags;
 @dynamic quietTime;
 @dynamic timeZone;
+@synthesize retryOnServerError;
 
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -78,6 +79,7 @@ static Class _uiClass;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     dispatch_release(registrationQueue);
     registrationQueue = nil;
+    RELEASE_SAFELY(registrationCache);
     [super dealloc];
 }
 
@@ -90,8 +92,8 @@ static Class _uiClass;
         delegate = defaultPushHandler;
         standardUserDefaults = [NSUserDefaults standardUserDefaults];
         [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(applicationWillEnterForegroundNotification) 
-                                                     name:UIApplicationWillEnterForegroundNotification 
+                                                 selector:@selector(applicationDidBecomeActiveNotification) 
+                                                     name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];
         registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
         dispatch_retain(registrationQueue);
@@ -506,56 +508,30 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark UA Registration Methods
 
-- (void)applicationWillEnterForegroundNotification {
+- (void)applicationDidBecomeActiveNotification {
     // One second delay allows the application state to tranistion completely out of the
     // background
     connectionAttempts = 0;
     double delayInSeconds = 1.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, registrationQueue, ^(void){
-        [self registerIfStale];
+        [self updateRegistration];
     });
 
 }
 
-- (void)registerIfStale {
-    UALOG(@"Checking registration status");
-    if ([self registrationIsStale]) {
-        UALOG(@"Registration is stale, scheduling update");
-        [self updateRegistration];
-    }
-    else {
-        UALOG(@"Registration is current, no update needed");
-    }  
-}
-
 - (BOOL)registrationIsStale {
-    NSString *currentJsonPayload = [self jsonForCurrentRegistrationPayload];
-    NSString *cachedJsonPayload = [standardUserDefaults valueForKey:UAPushSettingsCachedRegistrationPayload];
-    BOOL payloadIsStale = ![currentJsonPayload isEqualToString:cachedJsonPayload];
+    BOOL payloadIsStale = ![self.registrationCache isEqualToDictionary:[self registrationPayload]];
     BOOL deviceTokenIsStale = ![self.deviceToken isEqualToString:[standardUserDefaults stringForKey:UAPushSettingsCachedDeviceToken]];
     return payloadIsStale || deviceTokenIsStale;
 }
 
-- (NSString*)jsonForCurrentRegistrationPayload {
-    NSDictionary *registrationPayload = [self registrationPayload];
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-    return [writer stringWithObject:registrationPayload];
-}
-
-- (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request {
-    NSString *registrationPayloadJson = [[[NSString alloc] initWithData:request.postBody 
-                                                               encoding:NSUTF8StringEncoding] autorelease];
-    [standardUserDefaults setValue:registrationPayloadJson forKey:UAPushSettingsCachedRegistrationPayload];
-    // This will require refacotring if this method is expanded to handle URL's without a device token
-    // as the last element.
-    NSArray* pathComponents = [request.url pathComponents];
-    [standardUserDefaults setValue:[pathComponents lastObject] forKey:UAPushSettingsCachedDeviceToken];
-}
-
-
 - (void)updateRegistration {
     [standardUserDefaults synchronize];
+    if (![self registrationIsStale]) {
+        UALOG(@"Registration is current, no update scheduled");
+        return;
+    }
     //if on, but not yet registered, re-register -- was likely just enabled
     BOOL pushEnabled = self.pushEnabled;
     NSString *deviceToken = self.deviceToken;
@@ -610,6 +586,9 @@ static Class _uiClass;
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
         UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
         [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
+        // add the registration payload as the userInfo object to cache on upload success
+        NSDictionary* userInfo = [[info copy] autorelease];
+        [request setUserInfo:userInfo];
     }   
     return request;
 }
@@ -660,15 +639,17 @@ static Class _uiClass;
 
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
-    int delayInSeconds = arc4random() % 3;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    delayInSeconds += pow(2 , connectionAttempts);
-    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && delayInSeconds < 60){
+    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && retryOnServerError) {
+        int delayInSeconds = 5 * connectionAttempts;
+        if (delayInSeconds > 60) {
+            delayInSeconds = 60;
+        }
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
         UALOG(@"Will attempt to reconnect in %i seconds", delayInSeconds);
         UALOG(@"Connection Attempt %i", connectionAttempts);
         connectionAttempts++;
         dispatch_after(popTime, registrationQueue, ^(void){
-            [self registerIfStale];
+            [self updateRegistration];
         });
         return;
     }
@@ -684,6 +665,13 @@ static Class _uiClass;
         [self cacheRegistrationInfo:request];
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
+}
+
+- (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request {
+    // This will not work if there are requests that no longer require the device token
+    NSArray* pathComponents = [request.url pathComponents];
+    [standardUserDefaults setValue:[pathComponents lastObject] forKey:UAPushSettingsCachedDeviceToken];
+    self.registrationCache = request.userInfo;
 }
 
 - (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
