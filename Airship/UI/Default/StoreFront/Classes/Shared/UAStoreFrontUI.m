@@ -47,6 +47,7 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize isVisible;
 @synthesize localizationBundle;
 
+@synthesize title;
 @synthesize cellPriceFont;
 @synthesize cellTitleFont;
 @synthesize cellDescriptionFont;
@@ -94,6 +95,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(alertHandler);
     RELEASE_SAFELY(localizationBundle);
     
+    RELEASE_SAFELY(title);
     RELEASE_SAFELY(cellPriceFont);
     RELEASE_SAFELY(cellTitleFont);
     RELEASE_SAFELY(cellDescriptionFont);
@@ -135,7 +137,6 @@ static BOOL runiPhoneTargetOniPad = NO;
             UAStoreFrontSplitViewController *svc = [[UAStoreFrontSplitViewController alloc] init];
             productListViewController = [[svc productListViewController] retain];
             rootViewController = (UIViewController *)svc;
-        
         } else {
             productListViewController = [[UAStoreFrontViewController alloc]
                                          initWithNibName:@"UAStoreFront" bundle:nil];
@@ -190,6 +191,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     // reset the view navigation to the product list
     [ui.productListViewController.navigationController popToRootViewControllerAnimated:NO];
 
+    ui.productListViewController.title = ui.title;
+    
     // if iPhone/iPod
     if (!ui.isiPad) {
         [viewController presentModalViewController:ui.rootViewController animated:animated];

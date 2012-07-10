@@ -106,7 +106,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         }
                        );
 
-    self.title = UA_SF_TR(@"UA_Content");
+    if (self.title == nil)
+    {
+        self.title = UA_SF_TR(@"UA_Content");
+    }
 
     [filterSegmentedControl setTitle:UA_SF_TR(@"UA_filter_all") forSegmentAtIndex:ProductTypeAll];
     [filterSegmentedControl setTitle:UA_SF_TR(@"UA_filter_installed") forSegmentAtIndex:ProductTypeInstalled];

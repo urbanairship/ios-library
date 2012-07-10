@@ -67,6 +67,7 @@
 @property (nonatomic, retain) NSBundle *localizationBundle;
 
 // Customization properties
+@property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) UIFont *cellPriceFont;
 @property (nonatomic, retain) UIFont *cellTitleFont;
 @property (nonatomic, retain) UIFont *cellDescriptionFont;
