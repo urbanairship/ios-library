@@ -56,7 +56,7 @@ static BOOL messageReceived = NO;
 - (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request;
 @end
 
-@interface UAPushTest : SenTestCase{
+@interface UAPushApplicationTests : SenTestCase{
     UAPush *push;
     NSString *token;    
 }
@@ -64,7 +64,7 @@ static BOOL messageReceived = NO;
 
 
 
-@implementation UAPushTest
+@implementation UAPushApplicationTests
 
 - (void)setUp {
     push = [UAPush shared];

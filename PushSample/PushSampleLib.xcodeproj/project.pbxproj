@@ -69,9 +69,9 @@
 		BB935D9E152B5E9C006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
 		BB935D9F152B5E9C006E6A92 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
 		BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
-		BBCD16B3157827BF008FA05B /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCD16B2157827BF008FA05B /* UAPushTest.m */; };
+		BBCD16B3157827BF008FA05B /* UAPushApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCD16B2157827BF008FA05B /* UAPushApplicationTests.m */; };
 		BBD52B831587E4CC00AE32FD /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD52B821587E4CC00AE32FD /* JRSwizzle.m */; };
-		BBDAEF1E1525264C007F7D92 /* UAirshipTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */; };
+		BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */; };
 		BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
 		BBEFB01A1507F3A400976645 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -108,13 +108,6 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
-		49A7077314AE7DA600A262DD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FBF50D014646AC500554710;
-			remoteInfo = AirshipMiniPushLib;
-		};
 		7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
@@ -122,12 +115,12 @@
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
 		};
-		BBEFB00D1507F33400976645 /* PBXContainerItemProxy */ = {
+		BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = BBB87DED150575D200971CEC;
-			remoteInfo = AirshipLibGcov;
+			remoteGlobalIDString = BB88612C159A7E9600584445;
+			remoteInfo = AirshipMini;
 		};
 		BBEFB0291507F4AC00976645 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -217,9 +210,9 @@
 		BB935D9B152B5E9C006E6A92 /* UAMapPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMapPresentationController.h; sourceTree = "<group>"; };
 		BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMapPresentationController.m; sourceTree = "<group>"; };
 		BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
-		BBCD16B2157827BF008FA05B /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPushTest.m; path = ../../AirshipLib/AirshipLogicTests/UAPushTest.m; sourceTree = "<group>"; };
+		BBCD16B2157827BF008FA05B /* UAPushApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPushApplicationTests.m; path = ../../AirshipLib/AirshipLogicTests/UAPushApplicationTests.m; sourceTree = "<group>"; };
 		BBD52B821587E4CC00AE32FD /* JRSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../../AirshipLib/AirshipLogicTests/JRSwizzle.m; sourceTree = "<group>"; };
-		BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipTests.m; sourceTree = "<group>"; };
+		BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB0101507F37200976645 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBEFB0181507F3A400976645 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -477,9 +470,8 @@
 			isa = PBXGroup;
 			children = (
 				18C02973124F21B800D49CD5 /* libUAirship-1.2.1.a */,
-				49A7077414AE7DA600A262DD /* libUAirshipPush-1.1.4.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirshipMini-1.2.1.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */,
-				BBEFB00E1507F33400976645 /* libAirshipLibGcov.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -550,12 +542,12 @@
 				BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */,
 				BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */,
 				BBD52B821587E4CC00AE32FD /* JRSwizzle.m */,
-				BBCD16B2157827BF008FA05B /* UAPushTest.m */,
+				BBCD16B2157827BF008FA05B /* UAPushApplicationTests.m */,
 				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,
 				BBEFB02B1507F65700976645 /* Gcov_Fix.c */,
 				BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */,
 				BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */,
-				BBDAEF1D1525264C007F7D92 /* UAirshipTests.m */,
+				BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */,
 				BBEFB01D1507F3A400976645 /* Supporting Files */,
 			);
 			path = AirshipApplicationTests;
@@ -658,14 +650,6 @@
 			remoteRef = 18C02972124F21B800D49CD5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		49A7077414AE7DA600A262DD /* libUAirshipPush-1.1.4.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.1.a";
-			remoteRef = 49A7077314AE7DA600A262DD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -673,11 +657,11 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBEFB00E1507F33400976645 /* libAirshipLibGcov.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirshipMini-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libAirshipLibGcov.a;
-			remoteRef = BBEFB00D1507F33400976645 /* PBXContainerItemProxy */;
+			path = "libUAirshipMini-1.2.1.a";
+			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -813,8 +797,8 @@
 				BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */,
 				BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */,
 				BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */,
-				BBDAEF1E1525264C007F7D92 /* UAirshipTests.m in Sources */,
-				BBCD16B3157827BF008FA05B /* UAPushTest.m in Sources */,
+				BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */,
+				BBCD16B3157827BF008FA05B /* UAPushApplicationTests.m in Sources */,
 				BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
