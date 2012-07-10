@@ -185,6 +185,7 @@
     STAssertFalse(UIBackgroundTaskInvalid == locationService.singleLocationBackgroundIdentifier, nil);
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
     NSString *runMode = [runLoop currentMode];
+    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:5.0];
     while (locationService.singleLocationBackgroundIdentifier != UIBackgroundTaskInvalid) {
         // Just keep moving the run loop date forward slightly, so the exit is quick
         [[NSRunLoop currentRunLoop] runMode:runMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
