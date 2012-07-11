@@ -51,6 +51,7 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
     dispatch_queue_t registrationQueue;
 }
 
+/* Serial queue for registration requests */
 @property (nonatomic, assign) dispatch_queue_t registrationQueue;
 
 /* Convenience pointer for getting to user defaults. */
@@ -63,9 +64,15 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Number of connection attempts for registration. Used for automatic retry */
 @property (nonatomic, assign) int connectionAttempts; 
 
-/* The cache of the most recent registration payload that successfully 
- uploaded to the server */
+/* The cache of the most recent registration payload that successfully
+ * uploaded to the server 
+ */
 @property (nonatomic, retain) NSDictionary *registrationCache;
+
+/* Indicator that a registration attempt is under way, and
+ * that another should not begin. BOOL is reset on a completed connection
+ */
+@property (nonatomic, assign) BOOL isRegistering;
 
 
 /* Set quiet time. */
@@ -73,11 +80,6 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Get the local time zone, considered the default. */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
-
-/* 
- * Build a dictionary with the necessary info for tags, alias, autobadge and quiet time.
- */
-- (NSMutableDictionary *)registrationPayload; 
 
 /*
  * Parse a device token string out of the NSData string representation.
@@ -93,11 +95,13 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
 
-/* Compares the current registration payload with the most recent successfuly uploaded
- payload. Also compares the most recent device token with the previous device token.
- @return YES if stale, NO otherwise
+/* Creates a registration payload (dictionary of tags, alias, etc) and returns
+ * it. The method compares the newly created dictionary with the cached payload
+ * values and writes the result to the isStale pointer.
+ @param isStale Pointer to a bool that denotes whether the cache is stale
+ @return NSMutableDictionary that represents the registration payload
  */
-- (BOOL)registrationIsStale;
+- (NSDictionary*)registrationPayload:(BOOL*)isStale;
 
 /* Cache the userInfo object from the request (registration payload)
  and the device token */

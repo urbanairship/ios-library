@@ -49,6 +49,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize defaultPushHandler;
 @synthesize connectionAttempts;
 @synthesize registrationCache;
+@synthesize isRegistering;
 
 
 //Public
@@ -510,74 +511,89 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 - (void)applicationDidBecomeActiveNotification {
-    connectionAttempts = 0;
-    double delayInSeconds = 3.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    dispatch_after(popTime, registrationQueue, ^(void){
-        [self updateRegistration];
-    });
-
-    
+    connectionAttempts = 0;    
 }
 
-- (BOOL)registrationIsStale {
-    BOOL payloadIsStale = ![self.registrationCache isEqualToDictionary:[self registrationPayload]];
+- (NSDictionary*)registrationPayload:(BOOL*)isStale {
+    NSDictionary *payload = [self registrationPayload];
+    BOOL cacheIsStale = ![self.registrationCache isEqualToDictionary:payload];
     BOOL deviceTokenIsStale = ![self.deviceToken isEqualToString:[standardUserDefaults stringForKey:UAPushSettingsCachedDeviceToken]];
-    return payloadIsStale || deviceTokenIsStale;
+    *isStale = cacheIsStale || deviceTokenIsStale;
+    return payload;
 }
+
+//NSMutableDictionary *body = [self registrationPayload];
+//if (token != nil) {
+//    UALOG("Updating device token (%@) with: %@", token, body);
+//    [self registerDeviceToken:token withExtraInfo:body];
+//} else {
+//    UALOG("Updating device existing token with: %@", body);
+//    [self registerDeviceTokenWithExtraInfo:body];
+//}
 
 - (void)updateRegistration {
     [standardUserDefaults synchronize];
-    if (![self registrationIsStale]) {
+    BOOL isStale = YES;
+    NSDictionary *registrationPayload = [self registrationPayload:&isStale];
+    if (isStale) {
         UALOG(@"Registration is current, no update scheduled");
+        return;
+    }
+    // if the application is backgrounded, do not send a registration
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UALOG(@"Skipping DT registration. The app is currently backgrounded.");
         return;
     }
     //if on, but not yet registered, re-register -- was likely just enabled
     BOOL pushEnabled = self.pushEnabled;
     NSString *deviceToken = self.deviceToken;
     if (pushEnabled && !deviceToken) {
+        // This bubbles down to calling [UIApplication sharedApplication] registerForRemoteNotificationTypes:
+        // and will return here if the app delegate is setup property.
         [self registerForRemoteNotificationTypes:notificationTypes];
         
         //if enabled, simply update existing device token
     } else if (pushEnabled) {
-        [self registerDeviceToken:nil];
-        
-        // unregister token w/ UA
-    } else {
-        [self unRegisterDeviceToken];
+        if (!isRegistering) {
+            isRegistering = YES;
+            dispatch_async(registrationQueue, ^{
+                UA_ASIHTTPRequest* request = [self requestToRegisterDeviceTokenWithInfo:registrationPayload];
+                [request startAsynchronous];
+            });
+        }
     }
 }
 
 //The new token to register, or nil if updating the existing token
 - (void)registerDeviceToken:(NSData *)token {
-    NSMutableDictionary *body = [self registrationPayload];
-    if (token != nil) {
-		UALOG("Updating device token (%@) with: %@", token, body);
-        [self registerDeviceToken:token withExtraInfo:body];
-    } else {
-		UALOG("Updating device existing token with: %@", body);
-        [self registerDeviceTokenWithExtraInfo:body];
-    }
-    
+    self.deviceToken = [self parseDeviceToken:[token description]];
+    [self updateRegistration];
 }
 
+// All valid keys
+// UAPushMultipleTagsJSONKey = @"tags";
+// UAPushSingleTagJSONKey = @"tag";
+// UAPushAliasJSONKey = @"alias";
+// UAPushQuietTimeJSONKey = @"quiettime";
+// UAPushQuietTimeStartJSONKey = @"start";
+// UAPushQuietTimeEndJSONKey = @"end";
+// UAPushTimeZoneJSONKey = @"tz";
+
+// This will take the first matching key in info, and write it 
+// to user defaults, then call updateRegistration. If there are duplicate
+// valid keys, behavior is undefined.
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-    
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UALOG(@"Skipping DT registration. The app is currently backgrounded.");
-        return;
-    }
-    dispatch_async(registrationQueue, ^{
-        dispatch_suspend(registrationQueue);
-        if ([self registrationIsStale]) {
-            UA_ASIHTTPRequest *request = [self requestToRegisterDeviceTokenWithInfo:info];
-            [request startAsynchronous];
-        }
-        else {
-            dispatch_resume(registrationQueue);
-        }
-    });
+    NSArray* allValidKeys = [NSArray arrayWithObjects:UAPushMultipleTagsJSONKey, UAPushSingleTagJSONKey,
+                             UAPushAliasJSONKey, UAPushQuietTimeJSONKey, UAPushTimeZoneJSONKey, nil];
+    [info enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [allValidKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            if ([(NSString*)key isEqualToString:(NSString *)obj]) {
+                [standardUserDefaults setValue:obj forKey:key];
+                *stop = YES;
+            }
+        }];
+    }];
+    [self updateRegistration];
 }
 
 - (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
@@ -619,11 +635,11 @@ static Class _uiClass;
 }
 
 - (void)unRegisterDeviceToken {
-    
     if (self.deviceToken == nil) {
         UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
         return;
     }
+    self.deviceToken = nil;
     UA_ASIHTTPRequest* request = [self requestToDeleteDeviceToken];
     [request startAsynchronous];
 }
@@ -659,9 +675,10 @@ static Class _uiClass;
         dispatch_after(popTime, registrationQueue, ^(void){
             [self updateRegistration];
         });
-        dispatch_resume(registrationQueue);
+        self.isRegistering = NO;
         return;
     }
+    self.isRegistering = NO;
     [self notifyObservers:@selector(registerDeviceTokenFailed:)
                withObject:request];
 }
@@ -672,7 +689,7 @@ static Class _uiClass;
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
         [self cacheRegistrationInfo:request];
-        dispatch_resume(registrationQueue);
+        self.isRegistering = NO;
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
@@ -696,7 +713,6 @@ static Class _uiClass;
         [self unRegisterDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token unregistered on Urban Airship successfully.");
-        [self setDeviceToken:nil];
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
 }
