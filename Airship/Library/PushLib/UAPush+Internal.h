@@ -51,6 +51,8 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
     dispatch_queue_t registrationQueue;
 }
 
+@property (nonatomic, assign) dispatch_queue_t registrationQueue;
+
 /* Convenience pointer for getting to user defaults. */
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;

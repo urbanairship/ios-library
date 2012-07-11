@@ -44,6 +44,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush 
 //Internal
+@synthesize registrationQueue;
 @synthesize standardUserDefaults;
 @synthesize defaultPushHandler;
 @synthesize connectionAttempts;
@@ -509,15 +510,14 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 - (void)applicationDidBecomeActiveNotification {
-    // One second delay allows the application state to tranistion completely out of the
-    // background
     connectionAttempts = 0;
-    double delayInSeconds = 1.0;
+    double delayInSeconds = 3.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, registrationQueue, ^(void){
         [self updateRegistration];
     });
 
+    
 }
 
 - (BOOL)registrationIsStale {
@@ -568,8 +568,16 @@ static Class _uiClass;
         UALOG(@"Skipping DT registration. The app is currently backgrounded.");
         return;
     }
-    UA_ASIHTTPRequest *request = [self requestToRegisterDeviceTokenWithInfo:info];
-    [request startAsynchronous];
+    dispatch_async(registrationQueue, ^{
+        dispatch_suspend(registrationQueue);
+        if ([self registrationIsStale]) {
+            UA_ASIHTTPRequest *request = [self requestToRegisterDeviceTokenWithInfo:info];
+            [request startAsynchronous];
+        }
+        else {
+            dispatch_resume(registrationQueue);
+        }
+    });
 }
 
 - (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
@@ -651,6 +659,7 @@ static Class _uiClass;
         dispatch_after(popTime, registrationQueue, ^(void){
             [self updateRegistration];
         });
+        dispatch_resume(registrationQueue);
         return;
     }
     [self notifyObservers:@selector(registerDeviceTokenFailed:)
@@ -663,12 +672,14 @@ static Class _uiClass;
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
         [self cacheRegistrationInfo:request];
+        dispatch_resume(registrationQueue);
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
 
 - (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request {
     // This will not work if there are requests that no longer require the device token
+    // as the last component of the URL
     NSArray* pathComponents = [request.url pathComponents];
     [standardUserDefaults setValue:[pathComponents lastObject] forKey:UAPushSettingsCachedDeviceToken];
     self.registrationCache = request.userInfo;

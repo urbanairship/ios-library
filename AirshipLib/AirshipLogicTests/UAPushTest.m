@@ -293,9 +293,24 @@ static BOOL messageReceived = NO;
 - (void)testRegisterDeviceTokenWithExtraInfo {
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     id mockPush = [OCMockObject partialMockForObject:push];
+    BOOL yes = YES;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(yes)] registrationIsStale];
     [[[mockPush stub] andReturn:mockRequest] requestToRegisterDeviceTokenWithInfo:OCMOCK_ANY];
-    [[mockRequest expect] startAsynchronous];
+    messageReceived = NO;
+    void (^setMessageRecieved)(NSInvocation*) = ^(NSInvocation *invocation){
+        messageReceived = YES;
+    };
+    [[[mockRequest stub] andDo:setMessageRecieved] startAsynchronous];
     [push registerDeviceTokenWithExtraInfo:nil];
+    NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:5.0];
+    while (!messageReceived) {
+        // Just keep moving the run loop date forward slightly, so the exit is quick
+        [[NSRunLoop currentRunLoop] runMode:[[NSRunLoop currentRunLoop] currentMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+        if([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    STAssertTrue(messageReceived, @"startAsynchronous was not called for registration request");
     [mockRequest verify];
 }
 
@@ -483,6 +498,9 @@ static BOOL messageReceived = NO;
     [[[mockPush stub] andDo:theBlock] updateRegistration];
     push.connectionAttempts = 0;
     push.retryOnServerError = YES;
+    // The registration queue needs to be suspended, it will be unsuspended in the 500 callback
+    // Resuming a queue that has not been suspended will crash
+    dispatch_suspend(push.registrationQueue);
     [push registerDeviceTokenFailed:mockRequest];
     NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:5.0];
     while (!messageReceived) {
@@ -520,6 +538,9 @@ static BOOL messageReceived = NO;
     [[[mockRequest stub] andReturn:payload] userInfo];
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
     [[[mockRequest stub] andReturn:url] url];
+    // Suspend the queue. It is unsuspended in the 
+    // registerDeviceTokenSucceeded method call
+    dispatch_suspend(push.registrationQueue);
     [push registerDeviceTokenSucceeded:mockRequest];
     [mockObserver verify];
     STAssertTrue([payload isEqualToDictionary:push.registrationCache], @"Successful registration should cache a payload");
