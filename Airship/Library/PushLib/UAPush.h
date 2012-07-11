@@ -361,7 +361,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Enables/Disables quiet time
  */
-@property (nonatomic, assign) BOOL enableQuietTime;
+@property (nonatomic, assign) BOOL quietTimeEnabled;
 
 /**
  * Change quiet time for current device token, only take hh:mm into account. Update the server

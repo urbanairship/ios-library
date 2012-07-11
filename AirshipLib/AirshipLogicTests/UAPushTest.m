@@ -178,7 +178,7 @@ static BOOL messageReceived = NO;
     push.canEditTagsFromDevice = NO;
     push.alias = testAlias;
     push.tags = tags;
-    push.enableQuietTime = YES;
+    push.quietTimeEnabled = YES;
     [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
     push.autobadgeEnabled = YES;
     // Get a payload, should be NO tag info, the BOOL is set to no
@@ -208,7 +208,7 @@ static BOOL messageReceived = NO;
     push.tags = tags;
     payload = [push registrationPayload];
     STAssertTrue([(NSArray*)[payload valueForKey:UAPushMultipleTagsJSONKey] isEqualToArray:tags], nil);
-    push.enableQuietTime = NO;
+    push.quietTimeEnabled = NO;
     payload = [push registrationPayload];
     STAssertNil([payload valueForKey:UAPushQuietTimeJSONKey], @"There should be no quiet time payload");
 
@@ -243,7 +243,7 @@ static BOOL messageReceived = NO;
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     [push disableQuietTime];
     STAssertNotNil(push.quietTime, nil);
-    STAssertFalse(push.enableQuietTime, @"Enable quiet tiem should be nil");
+    STAssertFalse(push.quietTimeEnabled, @"Enable quiet tiem should be nil");
     #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
 
@@ -550,7 +550,19 @@ static BOOL messageReceived = NO;
     [push unRegisterDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
     [mockObserver verify];
-    
+}
+
+- (void)testMigrationInRegisterUserDefaults {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setValue:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"] forKey:UAPushQuietTimeSettingsKey];
+    [defaults setValue:nil forKey:UAPushQuietTimeEnabledSettingsKey];
+    [defaults synchronize];
+    [UAPush registerNSUserDefaults];
+    STAssertTrue(push.quietTimeEnabled, @"Quiet time should be enabled");
+    [defaults setValue:nil forKey:UAPushQuietTimeEnabledSettingsKey];
+    [defaults setValue:nil forKey:UAPushQuietTimeSettingsKey];
+    [UAPush registerNSUserDefaults];
+    STAssertFalse(push.quietTimeEnabled, @"Quiet time should not be enabled");
 }
 
 
