@@ -32,7 +32,7 @@ UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
 UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
+UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceTokenDeprecated";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
 UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
 UAPushSettingsKey *const UAPushSettingsCachedDeviceToken = @"UAPushCachedDeviceToken";
@@ -46,6 +46,11 @@ UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
 UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+
+// Not meant for use outside of this class
+typedef NSString RegistrationCacheKey;
+RegistrationCacheKey *const cacheKeyRegstrationPayload = @"registrationPayload";
+RegistrationCacheKey *const cacheKeyPushEnabled = @"pushEnabled";
 
 @interface UAPush () {
     dispatch_queue_t registrationQueue;
@@ -65,7 +70,7 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 @property (nonatomic, assign) int connectionAttempts; 
 
 /* The cache of the most recent registration payload that successfully
- * uploaded to the server 
+ * uploaded to the server. Contains one NSDictionary and one NSNumber.
  */
 @property (nonatomic, retain) NSDictionary *registrationCache;
 
@@ -95,17 +100,20 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
 
+/* Return a dictionary representing the JSON payload of Push settings. */
+- (NSMutableDictionary*)registrationPayload;
+
 /* Creates a registration payload (dictionary of tags, alias, etc) and returns
  * it. The method compares the newly created dictionary with the cached payload
  * values and writes the result to the isStale pointer.
  @param isStale Pointer to a bool that denotes whether the cache is stale
  @return NSMutableDictionary that represents the registration payload
  */
-- (NSDictionary*)registrationPayload:(BOOL*)isStale;
+- (NSDictionary*)registrationState:(BOOL*)isStale;
 
 /* Cache the userInfo object from the request (registration payload)
  and the device token */
-- (void)cacheRegistrationInfo:(UA_ASIHTTPRequest*)request;
+- (void)cacheRegisrationState:(UA_ASIHTTPRequest*)request;
 
 /* Register the user defaults for this class. You should not need to call this method
  unless you are bypassing UAirship
