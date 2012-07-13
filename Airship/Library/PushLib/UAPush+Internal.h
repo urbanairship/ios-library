@@ -35,7 +35,7 @@ UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceTokenDeprecated";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
 UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
-UAPushSettingsKey *const UAPushSettingsCachedDeviceToken = @"UAPushCachedDeviceToken";
+UAPushSettingsKey *const UAPushSettingsCachedPushEnabledSetting = @"UAPushCachedPushEnabled";
 
 typedef NSString UAPushJSONKey;
 UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
@@ -47,7 +47,6 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-@class UARegistrationState;
 @interface UAPush () {
     dispatch_queue_t registrationQueue;
 }
@@ -65,21 +64,17 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Number of connection attempts for registration. Used for automatic retry */
 @property (nonatomic, assign) int connectionAttempts; 
 
-/* The cache of the most recent registration payload that successfully
- * uploaded to the server. Contains one NSDictionary and one NSNumber.
- */
-@property (nonatomic, retain) UARegistrationState *registrationStateCache;
+@property (nonatomic, retain) NSDictionary *registrationPayloadCache;
 
 /* Indicator that a registration attempt is under way, and
  * that another should not begin. BOOL is reset on a completed connection
  */
 @property (nonatomic, assign) BOOL isRegistering;
 
-/* Indicator that the app has entered the background a least once,
- * indicating that it is now appropriate to check for updates on
- * app foreground events
+/* Indicates that the app has entered the background once
+ * Controls the appDidBecomeActive updateRegistration call
  */
-@property (nonatomic, assign) BOOL appHasBackgrounded;
+@property (nonatomic, assign) BOOL hasEnteredBackground;
 
 /* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
@@ -104,13 +99,17 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;
 
-/* Called on foreground notifications, triggers an update if the app has
- * already entered the background once
+/* Takes a user info dictionary (expected to be a registrationPayload) adds 
+ * the current state of pushEnabled as a NSNumber
  */
-- (void)applicationWillEnterForeground;
+- (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info;
 
-/* Called on the first app background, sets a flag, 
- * then unregisters from appDidEnterBackground notifications
+/* Called on foreground notifications, triggers an updateRegistration
+ */
+- (void)applicationDidBecomeActive;
+
+/* Called to set a flag on foreground to prevent double registration on 
+ * app init
  */
 - (void)applicationDidEnterBackground;
 
