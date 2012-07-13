@@ -101,8 +101,25 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Takes a user info dictionary (expected to be a registrationPayload) adds 
  * the current state of pushEnabled as a NSNumber
+ * @param info The info object passed in to the method, it is expected
+ * that this will be a registration payload, and that it will used to
+ * store and compare registration state (alias, tags, pushEnabled, etc)
+ * @return A mutable dictionary with all of the info values, as well as 
+ * an NSNumber indicating pushEnabled state. 
  */
 - (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info;
+
+/* Caches relevant values after a successful registration reqeust
+ * @param userInfo The userInfo dictionary of the successful request
+ */
+- (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo;
+
+/* Compares the userInfo cached values against the current state of 
+ * UAPush values. Intended to be called after a request succeeds
+ * @param userInfo The userInfo NSDictionary attached to the request
+ * @return YES if the cache is stale compared to the uploaded data, NO if it is current
+ */
+- (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo;
 
 /* Called on foreground notifications, triggers an updateRegistration
  */

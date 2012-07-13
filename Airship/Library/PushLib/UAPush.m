@@ -631,6 +631,16 @@ static Class _uiClass;
     return request;
 }
 
+// Mean to be called right after successful registration to make
+// sure state has not been changed
+- (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo {
+    NSDictionary *cachedPayload = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
+    NSNumber *pushEnabled = [userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting];
+    BOOL equalRegistration = [cachedPayload isEqualToDictionary:[self registrationPayload]];
+    BOOL equalPushEnabled = [pushEnabled boolValue] && self.pushEnabled;
+    return equalRegistration && equalPushEnabled;
+}
+
 // Meant to be called from any request, returns an NSDictionary with 
 // the passed in info and an NSNumber for pushEnabled state
 - (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info {
@@ -640,6 +650,13 @@ static Class _uiClass;
     return userInfo;
 }
 
+// Called after a successful request, after the cache has been checked for 
+// stale data, caches data
+- (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo {
+    self.registrationPayloadCache = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
+    [standardUserDefaults setObject:[userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting] 
+                             forKey:UAPushSettingsCachedPushEnabledSetting];
+}
 
 // Deprecated method call. Device token is saved to local ivar, info
 // is passed to another deprecated method, no error checking, request
@@ -715,10 +732,11 @@ static Class _uiClass;
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
         // cache before setting isRegistering to NO
-        self.registrationPayloadCache = [request.userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
-        [standardUserDefaults setObject:[request.userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting] 
-                                 forKey:UAPushSettingsCachedPushEnabledSetting];
+        [self cacheSuccessfulUserInfo:request.userInfo];
         self.isRegistering = NO;
+        if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
+            [self updateRegistration];
+        }
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
@@ -735,10 +753,11 @@ static Class _uiClass;
         [self unRegisterDeviceTokenFailed:request];
     } else {
         // cache before setting isRegistering to NO
-        self.registrationPayloadCache = [request.userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
-        [standardUserDefaults setObject:[request.userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting] 
-                                 forKey:UAPushSettingsCachedPushEnabledSetting];
+        [self cacheSuccessfulUserInfo:request.userInfo];
         self.isRegistering = NO;
+        if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
+            [self updateRegistration];
+        }
         UALOG(@"Device token unregistered on Urban Airship successfully.");
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
