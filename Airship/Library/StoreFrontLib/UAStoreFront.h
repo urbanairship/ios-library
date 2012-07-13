@@ -288,6 +288,10 @@ SINGLETON_INTERFACE(UAStoreFront)
 + (void)unregisterObserver:(id)observer;
 
 /**
+ * Saves receipts for all purchased prodcts.
+ */
+- (void)saveReceipts;
+/**
  * Adds a receipt for a product instance
  * @param product The product whose receipt should be added.
  */
