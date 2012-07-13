@@ -281,7 +281,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productIdentifier];
     
     if ((int)transaction.error.code != SKErrorPaymentCancelled) {
-        UALOG(@"Transaction Failed (%@), product: %@", (int)transaction.error, productIdentifier);
+        UALOG(@"Transaction Failed (%@), product: %@", transaction.error, productIdentifier);
         if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
             [self.alertDelegate showAlert:UASubscriptionAlertFailedTransaction for:nil];
         }
