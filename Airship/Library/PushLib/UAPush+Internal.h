@@ -47,11 +47,7 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-// Not meant for use outside of this class
-typedef NSString RegistrationCacheKey;
-RegistrationCacheKey *const cacheKeyRegstrationPayload = @"registrationPayload";
-RegistrationCacheKey *const cacheKeyPushEnabled = @"pushEnabled";
-
+@class UARegistrationState;
 @interface UAPush () {
     dispatch_queue_t registrationQueue;
 }
@@ -72,13 +68,18 @@ RegistrationCacheKey *const cacheKeyPushEnabled = @"pushEnabled";
 /* The cache of the most recent registration payload that successfully
  * uploaded to the server. Contains one NSDictionary and one NSNumber.
  */
-@property (nonatomic, retain) NSDictionary *registrationCache;
+@property (nonatomic, retain) UARegistrationState *registrationStateCache;
 
 /* Indicator that a registration attempt is under way, and
  * that another should not begin. BOOL is reset on a completed connection
  */
 @property (nonatomic, assign) BOOL isRegistering;
 
+/* Indicator that the app has entered the background a least once,
+ * indicating that it is now appropriate to check for updates on
+ * app foreground events
+ */
+@property (nonatomic, assign) BOOL appHasBackgrounded;
 
 /* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
@@ -103,17 +104,15 @@ RegistrationCacheKey *const cacheKeyPushEnabled = @"pushEnabled";
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;
 
-/* Creates a registration payload (dictionary of tags, alias, etc) and returns
- * it. The method compares the newly created dictionary with the cached payload
- * values and writes the result to the isStale pointer.
- @param isStale Pointer to a bool that denotes whether the cache is stale
- @return NSMutableDictionary that represents the registration payload
+/* Called on foreground notifications, triggers an update if the app has
+ * already entered the background once
  */
-- (NSDictionary*)registrationState:(BOOL*)isStale;
+- (void)applicationWillEnterForeground;
 
-/* Cache the userInfo object from the request (registration payload)
- and the device token */
-- (void)cacheRegisrationState:(UA_ASIHTTPRequest*)request;
+/* Called on the first app background, sets a flag, 
+ * then unregisters from appDidEnterBackground notifications
+ */
+- (void)applicationDidEnterBackground;
 
 /* Register the user defaults for this class. You should not need to call this method
  unless you are bypassing UAirship

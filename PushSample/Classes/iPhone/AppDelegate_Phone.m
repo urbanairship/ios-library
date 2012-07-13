@@ -72,7 +72,8 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    [[UAPush shared] registerDeviceToken:deviceToken];
+    [[UAPush shared] setDeviceTokenData:deviceToken];
+    [[UAPush shared] updateRegistration];
     
     
     /*

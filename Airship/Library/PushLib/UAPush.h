@@ -213,7 +213,7 @@ SINGLETON_INTERFACE(UAPush);
 
 
 /** The device token for this device, as a string. */
-@property (nonatomic, copy) NSString *deviceToken; /* getter = deviceToken, setter = setDeviceToken: */
+@property (nonatomic, copy, readonly) NSString *deviceToken; 
 
 /*
  * Returns `YES` if the device token has changed. This method is scheduled for removal 
@@ -392,6 +392,12 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 /// @name Registration
 ///---------------------------------------------------------------------------------------
+
+/*
+ * Sets the device token for the device. As a side effect, the device token
+ * is parsed into an NSString and available throught the deviceToken property.
+ */
+- (void)setDeviceTokenData:(NSData*)data;
 
 /*
  * This registers the device token and all current associated Urban Airship custom
