@@ -91,6 +91,7 @@
         UIView *aBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
         aBackgroundView.opaque = NO;
         self.backgroundView = aBackgroundView;
+        [aBackgroundView release];
     }
 
     [self.backgroundView.layer insertSublayer:aGradientLayer atIndex:0];
