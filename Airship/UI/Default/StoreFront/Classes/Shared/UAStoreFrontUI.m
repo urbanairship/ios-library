@@ -263,6 +263,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     if (presentingViewController != nil) {
         // for iPhone/iPod displayStoreFront:animated:
         [ui.rootViewController dismissModalViewControllerAnimated:ui->animated];
+        [ui.rootViewController.view removeFromSuperview];
+        ui.rootViewController.view = nil;
 
     } else if (ui.rootViewController.view.superview == ui.uaWindow) {
 
@@ -273,6 +275,7 @@ static BOOL runiPhoneTargetOniPad = NO;
             ui.originalWindow = nil;
             [ui.rootViewController viewDidDisappear:ui->animated];
             [ui.rootViewController.view removeFromSuperview];
+            ui.rootViewController.view = nil;
             ui.uaWindow = nil;
             ui.rootViewController.view.transform = CGAffineTransformIdentity;
         };
