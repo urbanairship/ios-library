@@ -53,6 +53,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark UIViewController
 
 - (void)dealloc {
+    [UAStoreFront unregisterObserver:self];
+    
     RELEASE_SAFELY(productID);
     RELEASE_SAFELY(productTable);
     RELEASE_SAFELY(filterSegmentedControl);
@@ -158,6 +160,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     [UAStoreFront reloadInventoryIfFailed];
     if(![UAStoreFrontUI shared].isiPad) {
         [self.productTable deselectRowAtIndexPath:[self.productTable indexPathForSelectedRow] animated:YES];
@@ -167,8 +171,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)viewDidUnload {
     [super viewDidUnload];
     
-    [UAStoreFront unregisterObserver:self];
-
     self.productTable = nil;
     self.filterSegmentedControl = nil;
     self.activityView = nil;

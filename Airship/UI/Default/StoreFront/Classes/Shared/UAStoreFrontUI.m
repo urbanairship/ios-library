@@ -263,9 +263,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     if (presentingViewController != nil) {
         // for iPhone/iPod displayStoreFront:animated:
         [ui.rootViewController dismissModalViewControllerAnimated:ui->animated];
-        [ui.rootViewController.view removeFromSuperview];
-        ui.rootViewController.view = nil;
-
     } else if (ui.rootViewController.view.superview == ui.uaWindow) {
 
         // For iPad displayStoreFront:animated:
