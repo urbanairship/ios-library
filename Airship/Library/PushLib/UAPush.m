@@ -638,7 +638,7 @@ static Class _uiClass;
     NSNumber *pushEnabled = [userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting];
     BOOL equalRegistration = [cachedPayload isEqualToDictionary:[self registrationPayload]];
     BOOL equalPushEnabled = [pushEnabled boolValue] && self.pushEnabled;
-    return equalRegistration && equalPushEnabled;
+    return !(equalRegistration && equalPushEnabled);
 }
 
 // Meant to be called from any request, returns an NSDictionary with 
