@@ -34,7 +34,6 @@ UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushHasUnregisteredKey = @"UAPushHasUnregistered";
 UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
 UAPushSettingsKey *const UAPushSettingsCachedPushEnabledSetting = @"UAPushCachedPushEnabled";
 UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";

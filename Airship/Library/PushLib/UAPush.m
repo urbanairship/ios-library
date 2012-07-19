@@ -189,11 +189,13 @@ static Class _uiClass;
 
 - (void)setPushEnabled:(BOOL)pushEnabled {
     [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
-    // Set the flag to indicate that an unRegistration call is needed. This
+    // Set the flag to indicate that an unRegistration (DELETE)call is needed. This
     // flag is checked on updateRegistration calls, and is used to prevent
     // API calls on every app init when the device is already unregistered.
     // It is cleared on successful unregistration
-    [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+    if (!pushEnabled) {
+        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+    }
 }
 
 - (NSDictionary *)quietTime {
@@ -589,10 +591,14 @@ static Class _uiClass;
         [putRequest startAsynchronous];
     }
     else {
-        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
-        UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
-        UALOG(@"Starting registration DELETE request (unregistering)");
-        [deleteRequest startAsynchronous];
+        // Flag is set when pushEnabled is changed to NO
+        if ([standardUserDefaults valueForKey:UAPushNeedsUnregistering]){
+            // Disable notifications at device level in case unregistration fails
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+            UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
+            UALOG(@"Starting registration DELETE request (unregistering)");
+            [deleteRequest startAsynchronous];
+        }
     }
 }
 
@@ -758,6 +764,8 @@ static Class _uiClass;
     } else {
         // cache before setting isRegistering to NO
         [self cacheSuccessfulUserInfo:request.userInfo];
+        // Set needsUnregistering to NO to prevent unregistration on app init
+        [standardUserDefaults setBool:notificationTypes forKey:UAPushNeedsUnregistering];
         self.isRegistering = NO;
         if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
             [self updateRegistration];
