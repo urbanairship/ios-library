@@ -189,6 +189,11 @@ static Class _uiClass;
 
 - (void)setPushEnabled:(BOOL)pushEnabled {
     [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
+    // Set the flag to indicate that an unRegistration call is needed. This
+    // flag is checked on updateRegistration calls, and is used to prevent
+    // API calls on every app init when the device is already unregistered.
+    // It is cleared on successful unregistration
+    [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
 }
 
 - (NSDictionary *)quietTime {
@@ -536,7 +541,7 @@ static Class _uiClass;
 }
 
 #pragma mark -
-#pragma mark UA Regsitration Methods
+#pragma mark UA Registration    Methods
 
 /* 
  * Checks the current state of the cache.
@@ -584,6 +589,7 @@ static Class _uiClass;
         [putRequest startAsynchronous];
     }
     else {
+        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
         UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
         UALOG(@"Starting registration DELETE request (unregistering)");
         [deleteRequest startAsynchronous];
@@ -592,8 +598,6 @@ static Class _uiClass;
 
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
-    self.retryOnServerError = NO;
-    UALOG(@"registerDeviceToken called");
     self.deviceToken = [self parseDeviceToken:[token description]];
     [self updateRegistration];
 }
