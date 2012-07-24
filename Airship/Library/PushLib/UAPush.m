@@ -28,7 +28,6 @@
 #import "UAPush.h"
 #import "UAPush+Internal.h"
 
-
 #import "UAirship.h"
 #import "UAViewUtils.h"
 #import "UAUtils.h"
@@ -38,6 +37,10 @@
 
 #import "UA_SBJsonWriter.h"
 #import "UA_ASIHTTPRequest.h"
+
+
+#define kUAPushRetryTimeBase 2
+#define kUAPushRetryTimeMaxDelay 180
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
@@ -111,7 +114,7 @@ static Class _uiClass;
 #pragma mark Device Token Get/Set Methods
 
 // TODO: Remove deviceTokenHasChanged calls when LIB-353 has been completed
-- (void)setDeviceToken:(NSString*)deviceToken{
+- (void)setDeviceToken:(NSString*)deviceToken {
     [_deviceToken autorelease];
     _deviceToken = [deviceToken copy];
     UALOG(@"Device token: %@", deviceToken);    
@@ -138,11 +141,6 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Get/Set Methods
-
-- (void)setDeviceTokenData:(NSData *)data {
-    NSString *deviceTokenString = [self parseDeviceToken:[data description]];
-    [self setDeviceToken:deviceTokenString];
-}
 
 - (BOOL)autobadgeEnabled {
     return [standardUserDefaults boolForKey:UAPushBadgeSettingsKey];
@@ -189,11 +187,9 @@ static Class _uiClass;
 
 - (void)setPushEnabled:(BOOL)pushEnabled {
     [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
-    // Set the flag to indicate that an unRegistration call is needed. This
-    // flag is checked on updateRegistration calls, and is used to prevent
-    // API calls on every app init when the device is already unregistered.
-    // It is cleared on successful unregistration
-    [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+    if (!pushEnabled) {
+        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+    }
 }
 
 - (NSDictionary *)quietTime {
@@ -530,7 +526,9 @@ static Class _uiClass;
     if (hasEnteredBackground) {
         [self updateRegistration];
     }
-
+    if (!hasEnteredBackground) {
+        UALOG(@"Checking registration on app foreground disabled on app initialization");
+    }
 }
 
 - (void)applicationDidEnterBackground {
@@ -551,6 +549,7 @@ static Class _uiClass;
  * the registration queue. PushEnabled -> PUT, !PushEnabled -> DELETE.
  */
 - (void)updateRegistration {
+    NSLog(@"Stop");
     if (isRegistering) {
         UALOG(@"Currently registering, will check cache state when current registration is complete");
         return;
@@ -589,10 +588,16 @@ static Class _uiClass;
         [putRequest startAsynchronous];
     }
     else {
-        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
-        UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
-        UALOG(@"Starting registration DELETE request (unregistering)");
-        [deleteRequest startAsynchronous];
+        // Don't unregister more than once
+        if ([standardUserDefaults boolForKey:UAPushNeedsUnregistering]) {
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+            UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
+            UALOG(@"Starting registration DELETE request (unregistering)");
+            [deleteRequest startAsynchronous];
+        }
+        else {
+            UALOG(@"Device has already been unregistered, no update scheduled");
+        }
     }
 }
 
@@ -638,10 +643,10 @@ static Class _uiClass;
 // Mean to be called right after successful registration to make
 // sure state has not been changed
 - (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo {
-    NSDictionary *cachedPayload = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
-    NSNumber *pushEnabled = [userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting];
-    BOOL equalRegistration = [cachedPayload isEqualToDictionary:[self registrationPayload]];
-    BOOL equalPushEnabled = [pushEnabled boolValue] && self.pushEnabled;
+    NSDictionary *justRegisteredPayload = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
+    NSNumber *justRegisteredPushEnabled = [userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting];
+    BOOL equalRegistration = [justRegisteredPayload isEqualToDictionary:[self registrationPayload]];
+    BOOL equalPushEnabled = [justRegisteredPushEnabled boolValue] == self.pushEnabled;
     return !(equalRegistration && equalPushEnabled);
 }
 
@@ -711,18 +716,7 @@ static Class _uiClass;
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
     if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && retryOnServerError) {
-        int delayInSeconds = 5 * connectionAttempts;
-        if (delayInSeconds > 60) {
-            delayInSeconds = 60;
-        }
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-        UALOG(@"Will attempt to reconnect in %i seconds", delayInSeconds);
-        UALOG(@"Connection Attempt %i", connectionAttempts);
-        connectionAttempts++;
-        self.isRegistering = NO;
-        dispatch_after(popTime, registrationQueue, ^(void){
-            [self updateRegistration];
-        });
+        [self scheduleRetryForRequest:request];
         return;
     }
     self.isRegistering = NO;
@@ -740,14 +734,20 @@ static Class _uiClass;
         self.isRegistering = NO;
         if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
             [self updateRegistration];
+            return;
         }
+        [standardUserDefaults setBool:NO forKey:UAPushNeedsUnregistering];
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
 
 - (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
-    self.isRegistering = NO;
     [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
+    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && retryOnServerError) {
+        [self scheduleRetryForRequest:request];
+        return;
+    }
+    self.isRegistering = NO;
     [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
                withObject:request];
 }
@@ -758,6 +758,8 @@ static Class _uiClass;
     } else {
         // cache before setting isRegistering to NO
         [self cacheSuccessfulUserInfo:request.userInfo];
+        // note that unregistration is no longer needed
+        [standardUserDefaults setBool:NO forKey:UAPushNeedsUnregistering];
         self.isRegistering = NO;
         if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
             [self updateRegistration];
@@ -765,6 +767,23 @@ static Class _uiClass;
         UALOG(@"Device token unregistered on Urban Airship successfully.");
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
     }
+}
+
+- (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request {
+    int delayInSeconds = pow(kUAPushRetryTimeBase , connectionAttempts);
+    if (delayInSeconds > kUAPushRetryTimeMaxDelay) {
+        delayInSeconds = kUAPushRetryTimeMaxDelay;
+        // This will no hold an accurate count of attempts if the max time is reached
+        connectionAttempts--;
+    }
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    UALOG(@"Will attempt to reconnect in %i seconds", delayInSeconds);
+    UALOG(@"Connection Attempt %i", connectionAttempts);
+    connectionAttempts++;
+    self.isRegistering = NO;
+    dispatch_after(popTime, registrationQueue, ^(void){
+        [self updateRegistration];
+    });
 }
 
 #pragma mark -

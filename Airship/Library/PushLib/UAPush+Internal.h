@@ -25,6 +25,7 @@
 
 #import "UAPush.h"
 
+
 typedef NSString UAPushSettingsKey;
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -34,7 +35,6 @@ UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushHasUnregisteredKey = @"UAPushHasUnregistered";
 UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
 UAPushSettingsKey *const UAPushSettingsCachedPushEnabledSetting = @"UAPushCachedPushEnabled";
 UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
@@ -63,9 +63,15 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Number of connection attempts for registration. Used for automatic retry */
+/* Number of connection attempts for registration. Used for automatic retry. 
+ After max delay time is reached, the connection attempt count is not longer
+ accurate */
 @property (nonatomic, assign) int connectionAttempts; 
 
+/* Sets the device token string */
+- (void)setDeviceToken:(NSString*)deviceToken;
+
+/* Cache of the last successful registration */
 @property (nonatomic, retain) NSDictionary *registrationPayloadCache;
 
 /* Indicator that a registration attempt is under way, and

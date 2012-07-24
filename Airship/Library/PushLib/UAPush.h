@@ -393,11 +393,6 @@ SINGLETON_INTERFACE(UAPush);
 /// @name Registration
 ///---------------------------------------------------------------------------------------
 
-/*
- * Sets the device token for the device. As a side effect, the device token
- * is parsed into an NSString and available throught the deviceToken property.
- */
-- (void)setDeviceTokenData:(NSData*)data;
 
 /*
  * This registers the device token and all current associated Urban Airship custom
@@ -425,7 +420,7 @@ SINGLETON_INTERFACE(UAPush);
  * 
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Register a device token and alias with UA. You should not ordinarily call this method. Use
@@ -440,7 +435,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param token The device token to register.
  * @param alias The alias to register for this device token.
  */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias;
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Register a device token with a custom API payload. You should not ordinarily call this method.
@@ -451,7 +446,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param info An NSDictionary containing registration keys and values. See
  * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
  */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Remove this device token's registration from the server. You should not ordinarily call this method.

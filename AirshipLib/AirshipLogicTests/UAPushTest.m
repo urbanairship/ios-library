@@ -471,6 +471,25 @@ static BOOL messageReceived = NO;
 #pragma mark -
 #pragma mark UA API Registration callbacks
 
+- (void)testCacheHasChangedComparedToUserInfo {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    // Get the existing info on UAPush
+    NSDictionary *testCache = [push registrationPayload];
+    push.pushEnabled = NO;
+    // Rig the cached value with current settings
+    [defaults setObject:testCache forKey:UAPushSettingsCachedRegistrationPayload];
+    [defaults setBool:NO forKey:UAPushSettingsCachedPushEnabledSetting];
+    // Get a user info object that would be attached to a UA_HTTPRequest 
+    NSDictionary *userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[push registrationPayload]];
+    STAssertFalse([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"chacheHasChanged should be NO");
+    push.pushEnabled = YES;
+    STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
+    push.pushEnabled = NO;
+    userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[NSDictionary dictionaryWithObject:@"cat" forKey:@"key"]];
+    STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
+    
+}
+
 // This test covers the basic error case, the workflow where the response from the server is NOT a 500
 - (void)testRegisterDeviceTokenFailed {
     NSError *swizzleError = nil;
@@ -586,19 +605,35 @@ static BOOL messageReceived = NO;
 //    
 //}
 
-- (void)testStaleRegistration {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    push.registrationCache = [NSDictionary dictionaryWithObject:@"1" forKey:@"one"];
-    NSString *testToken = @"token";
-    push.deviceToken = testToken;
-    [defaults setValue:testToken forKey:UAPushSettingsCachedDeviceToken];
-    STAssertTrue([push registrationIsStale], @"registrationIsStale should return YES");
-    push.registrationCache = [push registrationPayload];
-    STAssertFalse([push registrationIsStale], @"registrationIsStale should return NO");
-    push.deviceToken = @"not test";
-    STAssertTrue([push registrationIsStale], @"registrationIsStale should return YES");
 
+#pragma mark -
+#pragma mark Deprecated Method tests
+// Who knows when they'll actually go away?
+
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+- (void)testUpdateAliasUpdateTags {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] updateRegistration];
+    [push updateAlias:@"cat"];
+    STAssertTrue([@"cat" isEqualToString:push.alias],nil);
+    [mockPush verify];
+    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"one cat", @"two cat", nil];
+    [[mockPush expect] updateRegistration];
+    [push updateTags:tags];
+    STAssertTrue([tags isEqualToArray:push.tags], nil);
+    [mockPush verify];
 }
+
+- (void)testEnableAutobadge {
+    [push enableAutobadge:NO];
+    STAssertFalse(push.autobadgeEnabled, nil);
+    [push enableAutobadge:YES];
+    STAssertTrue(push.autobadgeEnabled, nil);
+}
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+
+
 
 
 @end
