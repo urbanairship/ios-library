@@ -187,6 +187,10 @@ static Class _uiClass;
 
 - (void)setPushEnabled:(BOOL)pushEnabled {
     [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
+    // Set the flag to indicate that an unRegistration (DELETE)call is needed. This
+    // flag is checked on updateRegistration calls, and is used to prevent
+    // API calls on every app init when the device is already unregistered.
+    // It is cleared on successful unregistration
     if (!pushEnabled) {
         [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
     }
@@ -590,6 +594,7 @@ static Class _uiClass;
     else {
         // Don't unregister more than once
         if ([standardUserDefaults boolForKey:UAPushNeedsUnregistering]) {
+            // Disable notifications at device level in case unregistration fails
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
             UALOG(@"Starting registration DELETE request (unregistering)");
