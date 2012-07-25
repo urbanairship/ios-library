@@ -52,6 +52,8 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
+
+
 @interface UAPush () {
     dispatch_queue_t registrationQueue;
 }
@@ -109,6 +111,13 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
+
+/* Retry connection on any network layer error, or any 
+ * server 500 if retryOnConnectionError is YES
+ @param reqeust The request that has failed
+ @return YES if the request will be scheduled for retry, NO otherwise
+ */
+- (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request;
 
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;

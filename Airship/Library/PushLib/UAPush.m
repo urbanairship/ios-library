@@ -68,7 +68,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @dynamic tags;
 @dynamic quietTime;
 @dynamic timeZone;
-@synthesize retryOnServerError;
+@synthesize retryOnConnectionError;
 
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -615,7 +615,7 @@ static Class _uiClass;
 // dev is responsible for everything. Still uses registrationQueue to prevent
 // multiple requests running simultaneously.
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-    self.retryOnServerError = NO;
+    self.retryOnConnectionError = NO;
     self.isRegistering = YES;
     UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
     UALOG(@"Starting deprecated registration request");
@@ -674,7 +674,7 @@ static Class _uiClass;
 // is passed to another deprecated method, no error checking, request
 // is enqueued on registration queue.
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
-    self.retryOnServerError = NO;
+    self.retryOnConnectionError = NO;
     self.deviceToken = [self parseDeviceToken:[token description]];
     [self registerDeviceTokenWithExtraInfo:info];
     
@@ -683,7 +683,7 @@ static Class _uiClass;
 // Deprecated method call. Works out fine, but complicates support
 // Disables server error
 - (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
-    self.retryOnServerError = NO;
+    self.retryOnConnectionError = NO;
     self.deviceToken = [self parseDeviceToken:[token description]];
     self.alias = alias;
     [self updateRegistration];
@@ -718,7 +718,7 @@ static Class _uiClass;
 
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
-    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && retryOnServerError) {
+    if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
         return;
     }
@@ -746,9 +746,8 @@ static Class _uiClass;
 
 - (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
-    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599 && retryOnServerError) {
+    if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
-        return;
     }
     self.isRegistering = NO;
     [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
@@ -772,11 +771,24 @@ static Class _uiClass;
     }
 }
 
+- (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request {
+    if (!self.retryOnConnectionError) {
+        return NO;
+    }
+    if (request.error) {
+        return YES;
+    }
+    if (request.responseStatusCode >= 500 || request.responseStatusCode <= 599) {
+        return YES;
+    }
+    return NO;
+}
+
 - (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request {
     int delayInSeconds = pow(kUAPushRetryTimeBase , connectionAttempts);
     if (delayInSeconds > kUAPushRetryTimeMaxDelay) {
         delayInSeconds = kUAPushRetryTimeMaxDelay;
-        // This will no hold an accurate count of attempts if the max time is reached
+        // This will not hold an accurate count of attempts if the max time is reached
         connectionAttempts--;
     }
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
