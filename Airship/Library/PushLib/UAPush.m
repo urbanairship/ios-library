@@ -526,12 +526,12 @@ static Class _uiClass;
 #pragma mark UIApplication State Observation
 
 - (void)applicationDidBecomeActive {
-    connectionAttempts = 0;
     UALOG(@"Checking registration status after foreground notification");
     if (hasEnteredBackground) {
+        connectionAttempts = 0;
         [self updateRegistration];
     }
-    if (!hasEnteredBackground) {
+    else {
         UALOG(@"Checking registration on app foreground disabled on app initialization");
     }
 }
@@ -554,7 +554,6 @@ static Class _uiClass;
  * the registration queue. PushEnabled -> PUT, !PushEnabled -> DELETE.
  */
 - (void)updateRegistration {
-    NSLog(@"Stop");
     if (isRegistering) {
         UALOG(@"Currently registering, will check cache state when current registration is complete");
         return;
