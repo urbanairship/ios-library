@@ -472,14 +472,11 @@ static BOOL messageReceived = NO;
 #pragma mark UA API Registration callbacks
 
 - (void)testCacheHasChangedComparedToUserInfo {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    // Get the existing info on UAPush
-    NSDictionary *testCache = [push registrationPayload];
+    // Rig the cached value with matched settings
+    push.registrationPayloadCache = [push registrationPayload];
     push.pushEnabled = NO;
-    // Rig the cached value with current settings
-    [defaults setObject:testCache forKey:UAPushSettingsCachedRegistrationPayload];
-    [defaults setBool:NO forKey:UAPushSettingsCachedPushEnabledSetting];
-    // Get a user info object that would be attached to a UA_HTTPRequest 
+    push.pushEnabledPayloadCache = NO;
+    // Get a user info object that would be attached to a UA_HTTPRequest, use the registrationPayload again
     NSDictionary *userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[push registrationPayload]];
     STAssertFalse([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"chacheHasChanged should be NO");
     push.pushEnabled = YES;

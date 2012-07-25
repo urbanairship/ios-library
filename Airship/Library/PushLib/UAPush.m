@@ -51,6 +51,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize defaultPushHandler;
 @synthesize connectionAttempts;
 @synthesize registrationPayloadCache;
+@synthesize pushEnabledPayloadCache;
 @synthesize isRegistering;
 @synthesize hasEnteredBackground;
 
@@ -569,10 +570,9 @@ static Class _uiClass;
     }
     
     [standardUserDefaults synchronize];
-    NSDictionary *currentRegistrationPayload = [self registrationPayload];
-    NSNumber *cachedPushEnabled = [standardUserDefaults objectForKey:UAPushSettingsCachedPushEnabledSetting];
+    NSDictionary *currentRegistrationPayload = [self registrationPayload];;
     if ([registrationPayloadCache isEqualToDictionary:currentRegistrationPayload] 
-        && self.pushEnabled == [cachedPushEnabled boolValue]) {
+        && self.pushEnabled == self.pushEnabledPayloadCache) {
         UALOG(@"Registration is current, no update scheduled");
         self.isRegistering = NO;
         return;
@@ -648,8 +648,8 @@ static Class _uiClass;
 // Mean to be called right after successful registration to make
 // sure state has not been changed
 - (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo {
-    NSDictionary *justRegisteredPayload = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
-    NSNumber *justRegisteredPushEnabled = [userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting];
+    NSDictionary *justRegisteredPayload = [userInfo valueForKey:UAPushUserInfoRegistration];
+    NSNumber *justRegisteredPushEnabled = [userInfo valueForKey:UAPushUserInfoPushEnabled];
     BOOL equalRegistration = [justRegisteredPayload isEqualToDictionary:[self registrationPayload]];
     BOOL equalPushEnabled = [justRegisteredPushEnabled boolValue] == self.pushEnabled;
     return !(equalRegistration && equalPushEnabled);
@@ -659,17 +659,16 @@ static Class _uiClass;
 // the passed in info and an NSNumber for pushEnabled state
 - (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-    [userInfo setValue:[NSNumber numberWithBool:self.pushEnabled] forKey:UAPushSettingsCachedPushEnabledSetting];
-    [userInfo setValue:info forKey:UAPushSettingsCachedRegistrationPayload];
+    [userInfo setValue:[NSNumber numberWithBool:self.pushEnabled] forKey:UAPushUserInfoPushEnabled];
+    [userInfo setValue:info forKey:UAPushUserInfoRegistration];
     return userInfo;
 }
 
 // Called after a successful request, after the cache has been checked for 
 // stale data, caches data
 - (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo {
-    self.registrationPayloadCache = [userInfo valueForKey:UAPushSettingsCachedRegistrationPayload];
-    [standardUserDefaults setObject:[userInfo valueForKey:UAPushSettingsCachedPushEnabledSetting] 
-                             forKey:UAPushSettingsCachedPushEnabledSetting];
+    self.registrationPayloadCache = [userInfo valueForKey:UAPushUserInfoRegistration];
+    self.pushEnabledPayloadCache = [[userInfo valueForKey:UAPushUserInfoPushEnabled] boolValue];
 }
 
 // Deprecated method call. Device token is saved to local ivar, info

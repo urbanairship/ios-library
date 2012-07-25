@@ -35,9 +35,12 @@ UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushSettingsCachedRegistrationPayload = @"UAPushCachedPayload";
-UAPushSettingsKey *const UAPushSettingsCachedPushEnabledSetting = @"UAPushCachedPushEnabled";
 UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
+
+// Keys for the userInfo object on UA_ASIHTTPRequest objects
+typedef NSString UAPushUserInfoKey;
+UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
+UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
 typedef NSString UAPushJSONKey;
 UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
@@ -73,6 +76,9 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Cache of the last successful registration */
 @property (nonatomic, retain) NSDictionary *registrationPayloadCache;
+
+/* Last push enabled value sent to the server */
+@property (nonatomic, assign) BOOL pushEnabledPayloadCache;
 
 /* Indicator that a registration attempt is under way, and
  * that another should not begin. BOOL is reset on a completed connection
@@ -123,7 +129,8 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 - (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo;
 
 /* Compares the userInfo cached values against the current state of 
- * UAPush values. Intended to be called after a request succeeds
+ * UAPush values. Intended to be called after a request succeeds. Compares registrationPayloadCache and 
+ * pushEnabledPayloadCache against the current registrationPayload and pushEnabled values.
  * @param userInfo The userInfo NSDictionary attached to the request
  * @return YES if the cache is stale compared to the uploaded data, NO if it is current
  */
