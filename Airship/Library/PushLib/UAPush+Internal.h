@@ -61,17 +61,17 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Serial queue for registration requests */
 @property (nonatomic, assign) dispatch_queue_t registrationQueue;
 
+/* Delay in seconds between retry attempts. Initial value is
+ * kUAPushRetryTimeInitialDelay, max value is kUAPushRetryTimeMaxDelay
+ */
+@property (nonatomic, assign) int registrationRetryDelay;
+
 /* Convenience pointer for getting to user defaults. */
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
-
-/* Number of connection attempts for registration. Used for automatic retry. 
- After max delay time is reached, the connection attempt count is not longer
- accurate */
-@property (nonatomic, assign) int connectionAttempts; 
 
 /* Sets the device token string */
 - (void)setDeviceToken:(NSString*)deviceToken;

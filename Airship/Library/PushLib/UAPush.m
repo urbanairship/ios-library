@@ -39,7 +39,7 @@
 #import "UA_ASIHTTPRequest.h"
 
 
-#define kUAPushRetryTimeBase 2
+#define kUAPushRetryTimeInitialDelay 2
 #define kUAPushRetryTimeMaxDelay 180
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
@@ -49,7 +49,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @synthesize registrationQueue;
 @synthesize standardUserDefaults;
 @synthesize defaultPushHandler;
-@synthesize connectionAttempts;
+@synthesize registrationRetryDelay;
 @synthesize registrationPayloadCache;
 @synthesize pushEnabledPayloadCache;
 @synthesize isRegistering;
@@ -106,7 +106,7 @@ static Class _uiClass;
                                                 object:[UIApplication sharedApplication]];
         registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
         dispatch_retain(registrationQueue);
-        connectionAttempts = 0;
+        registrationRetryDelay = kUAPushRetryTimeInitialDelay;
     }
     return self;
 }
@@ -528,7 +528,7 @@ static Class _uiClass;
 - (void)applicationDidBecomeActive {
     UALOG(@"Checking registration status after foreground notification");
     if (hasEnteredBackground) {
-        connectionAttempts = 0;
+        registrationRetryDelay = 0;
         [self updateRegistration];
     }
     else {
@@ -778,23 +778,16 @@ static Class _uiClass;
     if (request.error) {
         return YES;
     }
-    if (request.responseStatusCode >= 500 || request.responseStatusCode <= 599) {
+    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599) {
         return YES;
     }
     return NO;
 }
 
 - (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request {
-    int delayInSeconds = pow(kUAPushRetryTimeBase , connectionAttempts);
-    if (delayInSeconds > kUAPushRetryTimeMaxDelay) {
-        delayInSeconds = kUAPushRetryTimeMaxDelay;
-        // This will not hold an accurate count of attempts if the max time is reached
-        connectionAttempts--;
-    }
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    UALOG(@"Will attempt to reconnect in %i seconds", delayInSeconds);
-    UALOG(@"Connection Attempt %i", connectionAttempts);
-    connectionAttempts++;
+    registrationRetryDelay = MIN(floor(1.5 * registrationRetryDelay), kUAPushRetryTimeMaxDelay);
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, registrationRetryDelay * NSEC_PER_SEC);
+    UALOG(@"Will attempt to reconnect in %i seconds", registrationRetryDelay);
     self.isRegistering = NO;
     dispatch_after(popTime, registrationQueue, ^(void){
         [self updateRegistration];
