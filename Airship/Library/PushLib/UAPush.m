@@ -608,7 +608,7 @@ static Class _uiClass;
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
     self.deviceToken = [self parseDeviceToken:[token description]];
-    UAEventDeviceRegistration *regEvent = [[[UAEventDeviceRegistration alloc] init] autorelease];
+    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
 }
@@ -618,7 +618,7 @@ static Class _uiClass;
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
     self.retryOnConnectionError = NO;
     self.isRegistering = YES;
-    UAEventDeviceRegistration *regEvent = [[[UAEventDeviceRegistration alloc] init] autorelease];
+    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
     UALOG(@"Starting deprecated registration request");
