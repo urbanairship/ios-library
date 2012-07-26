@@ -674,11 +674,11 @@ static Class _uiClass;
 }
 
 // Deprecated method call. Device token is saved to local ivar, info
-// is passed to another deprecated method, no error checking, request
-// is enqueued on registration queue.
+// is passed to another deprecated method.
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
     self.retryOnConnectionError = NO;
     self.deviceToken = [self parseDeviceToken:[token description]];
+    // Device token event trigger in registerDeviceTokenWithExtraInfo:
     [self registerDeviceTokenWithExtraInfo:info];
     
 }
@@ -689,6 +689,8 @@ static Class _uiClass;
     self.retryOnConnectionError = NO;
     self.deviceToken = [self parseDeviceToken:[token description]];
     self.alias = alias;
+    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
+    [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
 }
 
