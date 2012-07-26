@@ -39,8 +39,9 @@
 #import "UA_ASIHTTPRequest.h"
 
 
-#define kUAPushRetryTimeInitialDelay 2
-#define kUAPushRetryTimeMaxDelay 180
+#define kUAPushRetryTimeInitialDelay 60
+#define kUAPushRetryTimeMultiplier 2
+#define kUAPushRetryTimeMaxDelay 300
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
@@ -106,7 +107,6 @@ static Class _uiClass;
                                                 object:[UIApplication sharedApplication]];
         registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
         dispatch_retain(registrationQueue);
-        registrationRetryDelay = kUAPushRetryTimeInitialDelay;
     }
     return self;
 }
@@ -748,6 +748,7 @@ static Class _uiClass;
     [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
     if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
+        return;
     }
     self.isRegistering = NO;
     [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
@@ -785,8 +786,13 @@ static Class _uiClass;
 }
 
 - (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request {
-    registrationRetryDelay = MIN(floor(1.5 * registrationRetryDelay), kUAPushRetryTimeMaxDelay);
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, registrationRetryDelay * NSEC_PER_SEC);
+    if (registrationRetryDelay == 0) {
+        registrationRetryDelay = kUAPushRetryTimeInitialDelay;
+    }
+    else {
+        registrationRetryDelay = MIN(registrationRetryDelay * kUAPushRetryTimeMultiplier, kUAPushRetryTimeMaxDelay);
+    }
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, self.registrationRetryDelay * NSEC_PER_SEC);
     UALOG(@"Will attempt to reconnect in %i seconds", registrationRetryDelay);
     self.isRegistering = NO;
     dispatch_after(popTime, registrationQueue, ^(void){

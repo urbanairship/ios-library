@@ -119,6 +119,13 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
  */
 - (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request;
 
+/* Schedules the request again after a delay of n seconds,
+ * configurable with kUAPushRetryTimeInitialDelay, kUAPushRetryTimeMultiplier, and
+ * kUAPushRetryTimeMaxDelay
+ * @param reqeust The request to reschedule
+ */
+- (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request;
+
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;
 

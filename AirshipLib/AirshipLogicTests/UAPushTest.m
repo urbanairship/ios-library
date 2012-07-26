@@ -564,44 +564,80 @@ static BOOL messageReceived = NO;
 //    STAssertTrue([cachedDeviceToken isEqualToString:testToken], @"Token should be cached in user defaults after successful registration");
 //}
 
-//- (void)testUnregisterDeviceTokenFailed {
-//    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-//    int code = 200;
-//    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
-//    NSError *swizzleError = nil;
-//    [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
-//    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
-//    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
-//    [[mockObserver expect] unRegisterDeviceTokenFailed:mockRequest];
-//    [push addObserver:mockObserver];
-//    [push unRegisterDeviceTokenFailed:mockRequest];
-//    [mockObserver verify];
-//    STAssertTrue(messageReceived, nil);
-//    [UAUtils jr_swizzleClassMethod:@selector(setMessageReceivedYES) withClassMethod:@selector(requestWentWrong:keyword:) error:&swizzleError];
-//    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
-//}
+- (void)testUnregisterDeviceTokenFailed {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    BOOL yes = YES;
+    [[[mockPush expect] andReturnValue:OCMOCK_VALUE(yes)] shouldRetryRequest:mockRequest];
+    [[mockPush expect] scheduleRetryForRequest:mockRequest];
+    [push unRegisterDeviceTokenFailed:mockRequest];
+    [mockPush verify];
+}
 
-//- (void)testUnregisterDeviceTokenSucceeded {
-//    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-//    int code = 200;
-//    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
-//    id mockPush = [OCMockObject partialMockForObject:push];
-//    [[mockPush expect] unRegisterDeviceTokenFailed:mockRequest];
-//    [push unRegisterDeviceTokenSucceeded:mockRequest];
-//    [mockPush verify];
-//    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-//    code = 204;
-//    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
-//    [[mockPush expect] setDeviceToken:nil];
-//    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
-//    [[mockObserver expect] unRegisterDeviceTokenSucceeded];
-//    [push addObserver:mockObserver];
-//    [push unRegisterDeviceTokenSucceeded:mockRequest];
-//    [mockPush verify];
-//    [mockObserver verify];
-//    
-//}
+- (void)testUnregisterDeviceTokenSucceeded {
+    // API returns 200 (failure)
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int statusCode = 200;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] unRegisterDeviceTokenFailed:mockRequest];
+    [push unRegisterDeviceTokenSucceeded:mockRequest];
+    [mockPush verify];
+    //
+    // API returns 204, successful unregistration
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    statusCode = 204;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
+    [[mockPush expect] cacheSuccessfulUserInfo:OCMOCK_ANY];
+    BOOL no = NO;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(no)] cacheHasChangedComparedToUserInfo:OCMOCK_ANY];
+    [push unRegisterDeviceTokenSucceeded:mockRequest];
+    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering], @"UAPushNeedsUnregistering should be NO on successful unregistration");
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+    [mockPush verify];
+}
 
+- (void)testShouldRetryReqeust {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    push.retryOnConnectionError = NO;
+    STAssertFalse([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return NO");
+    push.retryOnConnectionError = YES;
+    NSError *error = [NSError errorWithDomain:@"test" code:42 userInfo:nil];
+    [[[mockRequest stub] andReturn:error] error];
+    STAssertTrue([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return YES when an error exists");
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int responseCode = 501;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    STAssertTrue([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return YES whith statusCode 500 <= statusCode <= 599");
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    responseCode = 499;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    STAssertFalse([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return NO whith statusCode not in 500 range");
+}
+
+- (void)testScheduleRetryForRequest {
+    push.isRegistering = YES;
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    int one = 1;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(one)] registrationRetryDelay];
+    void (^markCalled)(NSInvocation *) = ^(NSInvocation *invocation) {
+        messageReceived = YES;
+    };
+    [[[mockPush expect] andDo:markCalled] updateRegistration];
+    NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:5];
+    [push scheduleRetryForRequest:mockRequest];
+    while (!messageReceived) {
+        // Just keep moving the run loop date forward slightly, so the exit is quick
+        [[NSRunLoop currentRunLoop] runMode:[[NSRunLoop currentRunLoop] currentMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+        if([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+    STAssertTrue(messageReceived, @"push should have received updateRegistration call");
+    [mockPush verify];
+}
 
 #pragma mark -
 #pragma mark Deprecated Method tests
