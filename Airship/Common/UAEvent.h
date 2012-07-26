@@ -79,11 +79,6 @@
 
 @interface UAEventPushReceived : UAEvent
 @end
-/**
- * This event is recoreded when one of the UALocationServices objects
- * acquires a new location
- */
-
 
 /**
  * This event is recorded when the app becomes active: on foreground

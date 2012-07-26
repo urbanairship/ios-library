@@ -608,15 +608,18 @@ static Class _uiClass;
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
     self.deviceToken = [self parseDeviceToken:[token description]];
+    UAEventDeviceRegistration *regEvent = [[[UAEventDeviceRegistration alloc] init] autorelease];
+    [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
 }
 
 // Deprecated method, disables auto retry, sends JSON with no error checking
-// dev is responsible for everything. Still uses registrationQueue to prevent
-// multiple requests running simultaneously.
+// dev is responsible for everything. 
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
     self.retryOnConnectionError = NO;
     self.isRegistering = YES;
+    UAEventDeviceRegistration *regEvent = [[[UAEventDeviceRegistration alloc] init] autorelease];
+    [[UAirship shared].analytics addEvent:regEvent];
     UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
     UALOG(@"Starting deprecated registration request");
     [putRequest startAsynchronous];
@@ -739,7 +742,6 @@ static Class _uiClass;
             [self updateRegistration];
             return;
         }
-        [standardUserDefaults setBool:NO forKey:UAPushNeedsUnregistering];
         [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
     }
 }
@@ -766,6 +768,7 @@ static Class _uiClass;
         self.isRegistering = NO;
         if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
             [self updateRegistration];
+            return;
         }
         UALOG(@"Device token unregistered on Urban Airship successfully.");
         [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
