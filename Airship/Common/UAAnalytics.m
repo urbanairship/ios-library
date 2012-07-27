@@ -465,7 +465,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
              responseData:(NSData *)responseData {
 
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
-    UALOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
+    UA_ANALYTICS_LOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
     // Update analytics settings with new header values
     [self updateAnalyticsParametersWithHeaderValues:response];
     [self setupSendTimer:x_ua_min_batch_interval];
@@ -475,7 +475,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
         }
         else {
-            UALOG(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
+            UA_ANALYTICS_LOG(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
         }
         [self resetEventsDatabaseStatus];
         self.lastSendTime = [NSDate date];
