@@ -370,7 +370,7 @@ SINGLETON_INTERFACE(UAPush);
  * 
  * @warning *Important* The behavior of this method has changed in as of 1.3.0
  * This method no longer automatically enables quiet time, and does not automatically update
- * the server. Please refer to enableQuietTime and updateRegistration methods for 
+ * the server. Please refer to quietTimeEnabled and updateRegistration methods for
  * more information
  * 
  * @param from Date for start of quiet time
@@ -381,7 +381,7 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Disables quiet time settings. This call updates the server with an API call.
- * This call is deprecated. Set enableQuietTime to NO instead;  
+ * This call is deprecated. Set quietTimeEnabled to NO instead;
  */
 - (void)disableQuietTime UA_DEPRECATED(__UA_LIB_1_3_0__);
 

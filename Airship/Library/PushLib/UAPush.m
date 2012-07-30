@@ -637,9 +637,9 @@ static Class _uiClass;
 + (void)registerNSUserDefaults {
     // Migration for pre 1.3.0 library quiet time settings
     // This pulls an object, instead of a BOOL
-    id quietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
+    id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
     NSDictionary* currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
-    if (!quietTime && currentQuietTime) {
+    if (!quietTimeEnabled && currentQuietTime) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
     }
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
