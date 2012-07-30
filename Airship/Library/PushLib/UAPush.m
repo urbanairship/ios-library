@@ -61,6 +61,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 @dynamic tags;
 @dynamic quietTime;
 @dynamic timeZone;
+@dynamic quietTimeEnabled;
 
 
 SINGLETON_IMPLEMENTATION(UAPush)
@@ -171,10 +172,15 @@ static Class _uiClass;
 }
 
 - (void)setQuietTime:(NSMutableDictionary *)quietTime {
-    if (!quietTime) {
-        [standardUserDefaults removeObjectForKey:UAPushQuietTimeSettingsKey];
-    }
     [standardUserDefaults setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
+}
+
+- (BOOL)quietTimeEnabled {
+    return [standardUserDefaults boolForKey:UAPushQuietTimeEnabledSettingsKey];
+}
+
+- (void)setQuietTimeEnabled:(BOOL)quietTimeEnabled {
+    [standardUserDefaults setBool:quietTimeEnabled forKey:UAPushQuietTimeEnabledSettingsKey];
 }
 
 - (NSString *)tz {
@@ -251,7 +257,7 @@ static Class _uiClass;
     
     NSString* tz = self.timeZone.name;
     NSDictionary *quietTime = self.quietTime;
-    if (tz != nil && quietTime != nil && [quietTime count] > 0) {
+    if (tz != nil && self.quietTimeEnabled) {
         [body setValue:tz forKey:UAPushTimeZoneJSONKey];
         [body setValue:quietTime forKey:UAPushQuietTimeJSONKey];
     }
@@ -297,11 +303,10 @@ static Class _uiClass;
                       toStr, UAPushQuietTimeEndJSONKey, nil];
     
     self.timeZone = timezone;
-    [self updateRegistration];
 }
 
 - (void)disableQuietTime {
-    self.quietTime = nil;
+    self.quietTimeEnabled = NO;
     [self updateRegistration];
 }
 
@@ -634,6 +639,13 @@ static Class _uiClass;
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
+    // Migration for pre 1.3.0 library quiet time settings
+    // This pulls an object, instead of a BOOL
+    id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
+    NSDictionary* currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
+    if (!quietTimeEnabled && currentQuietTime) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
+    }
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushDeviceCanEditTagsKey];

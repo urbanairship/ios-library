@@ -31,6 +31,7 @@
 #import "UAUtils.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UA_ASIHTTPRequestDelegate.h"
+#import "UAirship.h"
 #import "JRSwizzle.h"
 #import <objc/runtime.h>
 #import <SenTestingKit/SenTestingKit.h>
@@ -178,6 +179,7 @@ static BOOL messageReceived = NO;
     push.canEditTagsFromDevice = NO;
     push.alias = testAlias;
     push.tags = tags;
+    push.quietTimeEnabled = YES;
     [push setQuietTimeFrom:now to:oneHour withTimeZone:timeZone];
     push.autobadgeEnabled = YES;
     // Get a payload, should be NO tag info, the BOOL is set to no
@@ -207,15 +209,44 @@ static BOOL messageReceived = NO;
     push.tags = tags;
     payload = [push registrationPayload];
     STAssertTrue([(NSArray*)[payload valueForKey:UAPushMultipleTagsJSONKey] isEqualToArray:tags], nil);
+    push.quietTimeEnabled = NO;
+    payload = [push registrationPayload];
+    STAssertNil([payload valueForKey:UAPushQuietTimeJSONKey], @"There should be no quiet time payload");
 
 }
 
-//Quiet time was tested above, set test with a nil timezone 
-- (void)testQuietTimeWithNilTimeZone {
-    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:35] withTimeZone:nil];
-    STAssertTrue([[[NSTimeZone defaultTimeZone] name] isEqualToString:[[push timeZone] name]], nil);
+// This isn't the most robust test, since there is some copy paste from
+// the method itself, but it should suffice to warn of unintended changes
+- (void)testQuietTime {
+    NSDate *now = [NSDate date];
+    NSDate *future = [now dateByAddingTimeInterval:60.0];
+    [push setQuietTimeFrom:now to:future withTimeZone:nil];
+    NSDictionary* timeZoneDictionary = [push quietTime];
+    STAssertNotNil(timeZoneDictionary, nil);
+    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSString *testFrom = [NSString stringWithFormat:@"%d:%02d",
+                         [cal components:NSHourCalendarUnit fromDate:now].hour,
+                         [cal components:NSMinuteCalendarUnit fromDate:now].minute];
+    
+    NSString *testTo = [NSString stringWithFormat:@"%d:%02d",
+                       [cal components:NSHourCalendarUnit fromDate:future].hour,
+                       [cal components:NSMinuteCalendarUnit fromDate:future].minute];
+    NSString *quietTimeFrom = [timeZoneDictionary valueForKey:UAPushQuietTimeStartJSONKey];
+    NSString *quietTimeTo = [timeZoneDictionary valueForKey:UAPushQuietTimeEndJSONKey];
+    STAssertTrue([quietTimeTo isEqualToString:testTo], @"Quiet time to value incorrect");
+    STAssertTrue([quietTimeFrom isEqualToString:testFrom], @"Quiet time from value incorrect");
+    STAssertTrue([[NSTimeZone defaultTimeZone] isEqualToTimeZone:[push timeZone]], @"Default time zone incorrect in quiet time");
 }
- 
+
+- (void)testDisableQuietTime {
+    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:60.0] withTimeZone:[NSTimeZone defaultTimeZone]];
+    STAssertNotNil(push.quietTime, nil);
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    [push disableQuietTime];
+    STAssertNotNil(push.quietTime, nil);
+    STAssertFalse(push.quietTimeEnabled, @"Enable quiet tiem should be nil");
+    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
+}
 
 - (void)testUpdateRegistrationLogic {
     [push setPushEnabled:YES];
@@ -320,8 +351,14 @@ static BOOL messageReceived = NO;
     NSError *errorJSON = nil;
     NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:request.postBody options:NSJSONReadingAllowFragments error:&errorJSON];
     STAssertNil(errorJSON, nil);
-    STAssertTrue([[payload allKeys] isEqualToArray:[JSON allKeys]], nil);
-    STAssertTrue([[payload allValues] isEqualToArray:[JSON allValues]], nil);
+    NSArray* payloadKeys = [payload allKeys];
+    NSArray* payloadValues = [payload allValues];
+    for (NSString* key in payloadKeys) {
+        STAssertTrue([[JSON allKeys] containsObject:key], @"Missing key in payload keys or JSON keys");
+    }
+    for (NSString* value in payloadValues) {
+        STAssertTrue([[JSON allValues] containsObject:value],@"Missing value in payload values or JSON values");
+    }    
 }
 
 - (void)testUnregisterDeviceToken {
@@ -348,16 +385,6 @@ static BOOL messageReceived = NO;
     BOOL failSelector = sel_isEqual(@selector(unRegisterDeviceTokenFailed:), request.didFailSelector);
     STAssertTrue(successSelector, nil);
     STAssertTrue(failSelector, nil);
-}
-
-- (void)testQuietTimeDisable {
-    [push setQuietTimeFrom:[NSDate date] to:[NSDate dateWithTimeIntervalSinceNow:60] withTimeZone:[NSTimeZone defaultTimeZone]];
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] updateRegistration];
-    [push disableQuietTime];
-    NSDictionary* quietTime = [push quietTime];
-    STAssertNil(quietTime, nil);
-    [mockPush verify];
 }
 
 - (void)testSetBadgeNumber {
@@ -524,7 +551,19 @@ static BOOL messageReceived = NO;
     [push unRegisterDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
     [mockObserver verify];
-    
+}
+
+- (void)testMigrationInRegisterUserDefaults {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setValue:[NSDictionary dictionaryWithObject:@"obj" forKey:@"key"] forKey:UAPushQuietTimeSettingsKey];
+    [defaults setValue:nil forKey:UAPushQuietTimeEnabledSettingsKey];
+    [defaults synchronize];
+    [UAPush registerNSUserDefaults];
+    STAssertTrue(push.quietTimeEnabled, @"Quiet time should be enabled");
+    [defaults setValue:nil forKey:UAPushQuietTimeEnabledSettingsKey];
+    [defaults setValue:nil forKey:UAPushQuietTimeSettingsKey];
+    [UAPush registerNSUserDefaults];
+    STAssertFalse(push.quietTimeEnabled, @"Quiet time should not be enabled");
 }
 
 
