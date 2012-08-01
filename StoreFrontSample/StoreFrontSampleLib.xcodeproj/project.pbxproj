@@ -185,13 +185,6 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
-		1F954311146894E8009DDB0C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1813F04A1279623C009DEB29 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FBF50D014646AC500554710;
-			remoteInfo = AirshipMiniPushLib;
-		};
 		497159671430FC8200079B37 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1813F04A1279623C009DEB29 /* AirshipLib.xcodeproj */;
@@ -206,12 +199,12 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
-		BB4135F31524D011008EE873 /* PBXContainerItemProxy */ = {
+		BBBA1A3C15C9C4F7000E9A00 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1813F04A1279623C009DEB29 /* AirshipLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = BBB87DED150575D200971CEC;
-			remoteInfo = AirshipLibGcov;
+			remoteGlobalIDString = BB88612C159A7E9600584445;
+			remoteInfo = AirshipMini;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -538,10 +531,9 @@
 		1813F04B1279623C009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813F04F1279623C009DEB29 /* libUAirship-1.2.0.a */,
-				1F954312146894E8009DDB0C /* libUAirshipPush-1.1.4.a */,
+				1813F04F1279623C009DEB29 /* libUAirship-1.2.1.a */,
+				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipMini-1.2.1.a */,
 				497159681430FC8200079B37 /* AirshipLogicTests.octest */,
-				BB4135F41524D011008EE873 /* libAirshipLibGcov.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -869,19 +861,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813F04F1279623C009DEB29 /* libUAirship-1.2.0.a */ = {
+		1813F04F1279623C009DEB29 /* libUAirship-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirship-1.2.1.a";
 			remoteRef = 1813F04E1279623C009DEB29 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F954312146894E8009DDB0C /* libUAirshipPush-1.1.4.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			name = "libUAirshipPush-1.1.4.a";
-			path = "libUAirshipPush-1.2.1.a";
-			remoteRef = 1F954311146894E8009DDB0C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		497159681430FC8200079B37 /* AirshipLogicTests.octest */ = {
@@ -891,11 +875,11 @@
 			remoteRef = 497159671430FC8200079B37 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB4135F41524D011008EE873 /* libAirshipLibGcov.a */ = {
+		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipMini-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libAirshipLibGcov.a;
-			remoteRef = BB4135F31524D011008EE873 /* PBXContainerItemProxy */;
+			path = "libUAirshipMini-1.2.1.a";
+			remoteRef = BBBA1A3C15C9C4F7000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1197,6 +1181,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = StoreFrontSample_Prefix.pch;
