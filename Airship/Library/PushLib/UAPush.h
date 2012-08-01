@@ -213,7 +213,7 @@ SINGLETON_INTERFACE(UAPush);
 
 
 /** The device token for this device, as a string. */
-@property (nonatomic, copy) NSString *deviceToken; /* getter = deviceToken, setter = setDeviceToken: */
+@property (nonatomic, copy, readonly) NSString *deviceToken; 
 
 /*
  * Returns `YES` if the device token has changed. This method is scheduled for removal 
@@ -405,6 +405,7 @@ SINGLETON_INTERFACE(UAPush);
 /// @name Registration
 ///---------------------------------------------------------------------------------------
 
+
 /*
  * This registers the device token and all current associated Urban Airship custom
  * features that are currently set. You should not ordinarily call this method.
@@ -431,7 +432,7 @@ SINGLETON_INTERFACE(UAPush);
  * 
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Register a device token and alias with UA. You should not ordinarily call this method. Use
@@ -446,7 +447,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param token The device token to register.
  * @param alias The alias to register for this device token.
  */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias;
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Register a device token with a custom API payload. You should not ordinarily call this method.
@@ -457,7 +458,7 @@ SINGLETON_INTERFACE(UAPush);
  * @param info An NSDictionary containing registration keys and values. See
  * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
  */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /*
  * Remove this device token's registration from the server. You should not ordinarily call this method.
@@ -483,6 +484,12 @@ SINGLETON_INTERFACE(UAPush);
  * Register an implementation of UARegistrationObserver to UAPush to receive success and failure callbacks.
  */
 - (void)updateRegistration;
+
+/** 
+ * Automatically retry on errors. If the UA reports an error in the 500 range, or there is a 
+ * 
+ */
+@property (nonatomic, assign) BOOL retryOnConnectionError;
 
 ///---------------------------------------------------------------------------------------
 /// @name Receiving Notifications

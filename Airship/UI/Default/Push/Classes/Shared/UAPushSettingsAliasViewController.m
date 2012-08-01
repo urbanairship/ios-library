@@ -146,9 +146,11 @@ enum {
 	
     if ([result length] != 0) {
         [[UAPush shared] setAlias:result];
+        [[UAPush shared] updateRegistration];
     } else {
 		textField.text = nil;
 		[[UAPush shared] setAlias:nil];
+        [[UAPush shared] updateRegistration];
 	}
 }
 

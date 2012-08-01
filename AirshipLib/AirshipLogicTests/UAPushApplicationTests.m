@@ -59,8 +59,9 @@ static BOOL messageReceived = NO;
 
 @interface UAPushApplicationTests : SenTestCase{
     UAPush *push;
-    NSString *token;    
+    NSString *token;
 }
+
 @end
 
 
@@ -144,7 +145,7 @@ static BOOL messageReceived = NO;
     NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
     STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
     NSString* actualToken = token;
-    [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenSettingsKey];
+    [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenDeprecatedSettingsKey];
     [push setDeviceToken:actualToken];
     NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
     STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
@@ -247,31 +248,66 @@ static BOOL messageReceived = NO;
     STAssertFalse(push.quietTimeEnabled, @"Enable quiet tiem should be nil");
     #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 }
-
-- (void)testUpdateRegistrationLogic {
-    [push setPushEnabled:YES];
-    // update with just push enabled
-    push.deviceToken = nil;
-    push.notificationTypes = UIRemoteNotificationTypeSound | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert;
+ 
+////////////////////////// Block of updateRegistration tests
+- (void)testUpdateRegistrationWhenIsRegisteringIsYes {
+    push.isRegistering = YES;
     id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] registerForRemoteNotificationTypes:push.notificationTypes];
-    [push updateRegistration];
-    [mockPush verify];
-    // update with push enabled and device token
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
-    NSError *dataError = nil;
-    NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
-    STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
-    push.deviceToken = [push parseDeviceToken:[deviceTokenData description]];
-    [[mockPush expect] registerDeviceToken:nil];
-    [push updateRegistration];
-    [mockPush verify];
-    push.pushEnabled = NO;
-    [[mockPush expect] unRegisterDeviceToken];
-    [push updateRegistration];
-    [mockPush verify];
+    [[mockPush reject] setIsRegistering:YES];
 }
+
+- (void)testUpdateRegisterationWhenInBackground {
+    push.isRegistering = NO;
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    UIApplicationState bg = UIApplicationStateBackground;
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(bg)] applicationState];
+    [push updateRegistration];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+}
+
+- (void)testUpdateRegistrationWhenPushEnabledAndCacheNotStale {
+    push.isRegistering = NO;
+    push.pushEnabled = YES;
+    NSDictionary *cache = @{ @"key" : @"value" };
+    push.registrationPayloadCache = cache;
+    push.pushEnabledPayloadCache = YES;
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[[mockPush stub] andReturn:cache] registrationPayload];
+    [[mockPush reject] requestToRegisterDeviceTokenWithInfo:OCMOCK_ANY];
+    [push updateRegistration];
+    
+}
+
+- (void)testUpdateRegistrationWhenPushEnabledAndCacheIsStale {
+    push.isRegistering = NO;
+    push.pushEnabled = YES;
+    push.registrationPayloadCache = @{ @"key" : @"StaleValue" };
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    [[mockRequest expect] startAsynchronous];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[[mockPush stub] andReturn:mockRequest] requestToRegisterDeviceTokenWithInfo:OCMOCK_ANY];
+    [push updateRegistration];
+    [mockRequest verify];
+}
+
+- (void)testUpdateRegistrationwhenPushNotEnabledAndCacheIsStale {
+    push.isRegistering = NO;
+    push.pushEnabled = NO;
+    push.registrationPayloadCache = @{ @"key" : @"ADifferentStaleValue" };
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    [[mockRequest expect] startAsynchronous];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[[mockPush stub] andReturn:mockRequest] requestToDeleteDeviceToken];
+    [push updateRegistration];
+    [mockRequest verify];
+    // Throw in extra check for needs unregistering flag
+    mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush reject] requestToDeleteDeviceToken];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+    [push updateRegistration];
+}
+/////////////////////////
 
 - (void)testRegisterForRemoteNotificationTypes {
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
@@ -282,17 +318,15 @@ static BOOL messageReceived = NO;
     [mockApplication verify];
 }
 
-// Test device token registration, with the proper analytics event
-- (void)testRegisterDeviceTokenWithToken {
+- (void)testRegisterDeviceToken {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
     NSError *dataError = nil;
     NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
+    STAssertNil(dataError, @"Data error in testRegisterDeviceToken %@", dataError.description);
     id mockPush = [OCMockObject partialMockForObject:push];
     id mockAnalytics = [OCMockObject partialMockForObject:[[UAirship shared] analytics]];
-    [[[mockPush expect] andForwardToRealObject] registerDeviceToken:deviceTokenData withExtraInfo:OCMOCK_ANY];
-    [[[mockPush expect] andForwardToRealObject] setDeviceToken:OCMOCK_ANY];
-    [[mockPush expect] registerDeviceTokenWithExtraInfo:OCMOCK_ANY];
+    [[mockPush expect] updateRegistration];
     __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
@@ -300,15 +334,9 @@ static BOOL messageReceived = NO;
     [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [push registerDeviceToken:deviceTokenData];
     STAssertTrue([arg isKindOfClass:[UAEventDeviceRegistration class]], @"UAEventDeviceRegistration not sent during registration");
-}
-
-// Test registering an nil device token
-- (void)testRegisterDeviceTokenWithNil {
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] registerDeviceTokenWithExtraInfo:OCMOCK_ANY];
-    [push registerDeviceToken:nil];
     [mockPush verify];
 }
+
 
 // Test no registration in background
 - (void)testRegisterDeviceTokenInBackground {
@@ -320,14 +348,7 @@ static BOOL messageReceived = NO;
     [push registerDeviceToken:nil];
 }
 
-- (void)testRegisterDeviceTokenWithExtraInfo {
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[[mockPush stub] andReturn:mockRequest] requestToRegisterDeviceTokenWithInfo:OCMOCK_ANY];
-    [[mockRequest expect] startAsynchronous];
-    [push registerDeviceTokenWithExtraInfo:nil];
-    [mockRequest verify];
-}
+
 
 - (void)testRequestToRegisterDeviceTokenWithInfo {
     UA_ASIHTTPRequest *request = [push requestToRegisterDeviceTokenWithInfo:nil];
@@ -363,15 +384,10 @@ static BOOL messageReceived = NO;
 
 - (void)testUnregisterDeviceToken {
     id mockPush = [OCMockObject partialMockForObject:push];
-    id mockRequest = [OCMockObject mockForClass:[UA_ASIHTTPRequest class]];
-    [[[mockPush stub] andReturn:mockRequest] requestToDeleteDeviceToken];
-    [[mockRequest expect] startAsynchronous];
-    [push unRegisterDeviceToken];
-    [mockRequest verify];
-    push.deviceToken = nil;
-    [[mockPush reject] requestToDeleteDeviceToken];
-    [push unRegisterDeviceToken];
-    [push registerDeviceTokenWithExtraInfo:nil];
+    [[mockPush expect] updateRegistration];
+    [mockPush unRegisterDeviceToken];
+    [mockPush verify];
+    STAssertFalse(push.pushEnabled, @"pushEnabled should be NO");
 }
 
 - (void)testUnregisterDeviceTokenRequest {
@@ -409,17 +425,7 @@ static BOOL messageReceived = NO;
     STAssertTrue([array containsObject:@" Sounds"], nil);
 }
 
-- (void)testRegisterDeviceTokenWithAlias {
-    id mockPush = [OCMockObject partialMockForObject:push];
-    __block NSMutableDictionary *body = nil;
-    void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation) 
-    {
-        [invocation getArgument:&body atIndex:3];
-    };
-    [[[mockPush stub] andDo:getSingleArg] registerDeviceToken:OCMOCK_ANY withExtraInfo:OCMOCK_ANY];
-    [push registerDeviceToken:nil withAlias:@"CATS"];
-    STAssertTrue([(NSString*)[body valueForKey:@"alias"] isEqualToString:@"CATS"], nil);
-}
+
 
 - (void)testHandleNotificationApplicationState {
     // Setup a notification payload
@@ -482,75 +488,88 @@ static BOOL messageReceived = NO;
 #pragma mark -
 #pragma mark UA API Registration callbacks
 
+- (void)testCacheHasChangedComparedToUserInfo {
+    // Rig the cached value with matched settings
+    push.registrationPayloadCache = [push registrationPayload];
+    push.pushEnabled = NO;
+    push.pushEnabledPayloadCache = NO;
+    // Get a user info object that would be attached to a UA_HTTPRequest, use the registrationPayload again
+    NSDictionary *userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[push registrationPayload]];
+    STAssertFalse([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"chacheHasChanged should be NO");
+    push.pushEnabled = YES;
+    STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
+    push.pushEnabled = NO;
+    userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[NSDictionary dictionaryWithObject:@"cat" forKey:@"key"]];
+    STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
+    
+}
+
+// This test covers the basic error case, the workflow where the response from the server is NOT a 500
 - (void)testRegisterDeviceTokenFailed {
-    NSError *swizzleError = nil;
-    [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
-    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
-    UA_ASIHTTPRequest *request = [[[UA_ASIHTTPRequest alloc] initWithURL:[NSURL URLWithString:@"cats"]] autorelease];
-    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
-    [push addObserver:mockObserver];
-    [[mockObserver expect] registerDeviceTokenFailed:request];
-    [push registerDeviceTokenFailed:request];
-    [mockObserver verify];
-    STAssertTrue(messageReceived, nil);
-    [UAUtils jr_swizzleClassMethod:@selector(setMessageReceivedYES) withClassMethod:@selector(requestWentWrong:keyword:) error:&swizzleError];
-    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+    id mockPush = [OCMockObject partialMockForObject:push];
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    BOOL yes = YES;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(yes)] shouldRetryRequest:mockRequest];
+    [[mockPush expect] shouldRetryRequest:mockRequest];
+    [push registerDeviceTokenFailed:mockRequest];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+    
 }
 
 - (void)testRegisterDeviceTokenSucceeded {
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    int code = 42;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    // Non 200,201 response
     id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] registerDeviceTokenFailed:mockRequest];
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int responseCode = 399;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
     [push registerDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
-    id mockObserver = [OCMockObject niceMockForProtocol:@protocol(UARegistrationObserver)];
-    [[mockObserver expect] registerDeviceTokenSucceeded];
-    [push addObserver:mockObserver];
-    code = 200;
+    //
+    // 200 response
     mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    responseCode = 200;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    [[mockPush expect] cacheSuccessfulUserInfo:OCMOCK_ANY];
+    BOOL yes = YES;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(yes)] cacheHasChangedComparedToUserInfo:OCMOCK_ANY];
+    [[mockPush expect] updateRegistration];
     [push registerDeviceTokenSucceeded:mockRequest];
-    [mockObserver verify];
-                       
+    [mockPush verify];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+    
 }
 
 - (void)testUnregisterDeviceTokenFailed {
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    int code = 200;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
-    NSError *swizzleError = nil;
-    [UAUtils jr_swizzleClassMethod:@selector(requestWentWrong:keyword:) withClassMethod:@selector(setMessageReceivedYES) error:&swizzleError];
-    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
-    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
-    [[mockObserver expect] unRegisterDeviceTokenFailed:mockRequest];
-    [push addObserver:mockObserver];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    BOOL yes = YES;
+    [[[mockPush expect] andReturnValue:OCMOCK_VALUE(yes)] shouldRetryRequest:mockRequest];
+    [[mockPush expect] scheduleRetryForRequest:mockRequest];
     [push unRegisterDeviceTokenFailed:mockRequest];
-    [mockObserver verify];
-    STAssertTrue(messageReceived, nil);
-    [UAUtils jr_swizzleClassMethod:@selector(setMessageReceivedYES) withClassMethod:@selector(requestWentWrong:keyword:) error:&swizzleError];
-    STAssertNil(swizzleError, @"UAUtils method swizzling failed in testRegisterDeviceTokenFailed");
+    [mockPush verify];
 }
 
 - (void)testUnregisterDeviceTokenSucceeded {
+    // API returns 200 (failure)
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    int code = 200;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
+    int statusCode = 200;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
     id mockPush = [OCMockObject partialMockForObject:push];
     [[mockPush expect] unRegisterDeviceTokenFailed:mockRequest];
     [push unRegisterDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
+    //
+    // API returns 204, successful unregistration
     mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
-    code = 204;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(code)] responseStatusCode];
-    [[mockPush expect] setDeviceToken:nil];
-    id mockObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
-    [[mockObserver expect] unRegisterDeviceTokenSucceeded];
-    [push addObserver:mockObserver];
+    statusCode = 204;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
+    [[mockPush expect] cacheSuccessfulUserInfo:OCMOCK_ANY];
+    BOOL no = NO;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(no)] cacheHasChangedComparedToUserInfo:OCMOCK_ANY];
     [push unRegisterDeviceTokenSucceeded:mockRequest];
+    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering], @"UAPushNeedsUnregistering should be NO on successful unregistration");
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
     [mockPush verify];
-    [mockObserver verify];
 }
 
 - (void)testMigrationInRegisterUserDefaults {
@@ -565,6 +584,101 @@ static BOOL messageReceived = NO;
     [UAPush registerNSUserDefaults];
     STAssertFalse(push.quietTimeEnabled, @"Quiet time should not be enabled");
 }
+
+- (void)testShouldRetryReqeust {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    push.retryOnConnectionError = NO;
+    STAssertFalse([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return NO");
+    push.retryOnConnectionError = YES;
+    NSError *error = [NSError errorWithDomain:@"test" code:42 userInfo:nil];
+    [[[mockRequest stub] andReturn:error] error];
+    STAssertTrue([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return YES when an error exists");
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    int responseCode = 501;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    STAssertTrue([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return YES whith statusCode 500 <= statusCode <= 599");
+    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    responseCode = 499;
+    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    STAssertFalse([push shouldRetryRequest:mockRequest], @"shouldRetryRequest should return NO whith statusCode not in 500 range");
+}
+
+- (void)testScheduleRetryForRequest {
+    push.isRegistering = YES;
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    int one = 1;
+    [[[mockPush stub] andReturnValue:OCMOCK_VALUE(one)] registrationRetryDelay];
+    void (^markCalled)(NSInvocation *) = ^(NSInvocation *invocation) {
+        messageReceived = YES;
+    };
+    [[[mockPush expect] andDo:markCalled] updateRegistration];
+    NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:5];
+    [push scheduleRetryForRequest:mockRequest];
+    while (!messageReceived) {
+        // Just keep moving the run loop date forward slightly, so the exit is quick
+        [[NSRunLoop currentRunLoop] runMode:[[NSRunLoop currentRunLoop] currentMode] beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+        if([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+    STAssertTrue(messageReceived, @"push should have received updateRegistration call");
+    [mockPush verify];
+}
+
+#pragma mark -
+#pragma mark Deprecated Method tests
+// Who knows when they'll actually go away?
+
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+- (void)testUpdateAliasUpdateTags {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] updateRegistration];
+    [push updateAlias:@"cat"];
+    STAssertTrue([@"cat" isEqualToString:push.alias],nil);
+    [mockPush verify];
+    NSMutableArray *tags = [NSMutableArray arrayWithObjects:@"one cat", @"two cat", nil];
+    [[mockPush expect] updateRegistration];
+    [push updateTags:tags];
+    STAssertTrue([tags isEqualToArray:push.tags], nil);
+    [mockPush verify];
+}
+
+- (void)testEnableAutobadge {
+    [push enableAutobadge:NO];
+    STAssertFalse(push.autobadgeEnabled, nil);
+    [push enableAutobadge:YES];
+    STAssertTrue(push.autobadgeEnabled, nil);
+}
+
+- (void)testRegisterDeviceTokenWithExtraInfo {
+    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockPush = [OCMockObject partialMockForObject:push];
+    id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
+    [[[mockPush stub] andReturn:mockRequest] requestToRegisterDeviceTokenWithInfo:OCMOCK_ANY];
+    [[mockRequest expect] startAsynchronous];
+    [[mockAnalytics expect] addEvent:OCMOCK_ANY];
+    [push registerDeviceTokenWithExtraInfo:nil];
+    [mockRequest verify];
+    [mockAnalytics verify];
+    mockAnalytics = nil;
+}
+
+- (void)testRegisterDeviceTokenWithAlias {
+    id mockPush = [OCMockObject partialMockForObject:push];
+    [[mockPush expect] setRetryOnConnectionError:NO];
+    [[mockPush expect] setDeviceToken:OCMOCK_ANY];
+    [[mockPush expect] setAlias:OCMOCK_ANY];
+    [[mockPush expect] updateRegistration];
+    [push registerDeviceToken:[NSData data] withAlias:@"alias"];
+    [mockPush verify];
+}
+
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+
+
 
 
 @end

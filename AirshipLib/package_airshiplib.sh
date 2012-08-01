@@ -71,10 +71,6 @@ rm -rf Test
 #Remove the Appledoc documenation settings from the distribution
 rm AppledocSettings.plist
 
-
-#Remove gcov library
-# rm libAirshipLibGcov.a
-
 find . -name "*.orig" -delete
 
 #copy LICENSE, README and CHANGELOG

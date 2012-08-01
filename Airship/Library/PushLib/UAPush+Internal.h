@@ -25,6 +25,7 @@
 
 #import "UAPush.h"
 
+
 typedef NSString UAPushSettingsKey;
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -33,8 +34,14 @@ UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-UAPushSettingsKey *const UAPushDeviceTokenSettingsKey = @"UAPushDeviceToken";
+UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
+UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
+
+// Keys for the userInfo object on UA_ASIHTTPRequest objects
+typedef NSString UAPushUserInfoKey;
+UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
+UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
 typedef NSString UAPushJSONKey;
 UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
@@ -46,7 +53,19 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-@interface UAPush ()
+
+
+@interface UAPush () {
+    dispatch_queue_t registrationQueue;
+}
+
+/* Serial queue for registration requests */
+@property (nonatomic, assign) dispatch_queue_t registrationQueue;
+
+/* Delay in seconds between retry attempts. Initial value is
+ * kUAPushRetryTimeInitialDelay, max value is kUAPushRetryTimeMaxDelay
+ */
+@property (nonatomic, assign) int registrationRetryDelay;
 
 /* Convenience pointer for getting to user defaults. */
 @property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
@@ -55,16 +74,30 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Set quite time. */
+/* Sets the device token string */
+- (void)setDeviceToken:(NSString*)deviceToken;
+
+/* Cache of the last successful registration */
+@property (nonatomic, retain) NSDictionary *registrationPayloadCache;
+
+/* Last push enabled value sent to the server */
+@property (nonatomic, assign) BOOL pushEnabledPayloadCache;
+
+/* Indicator that a registration attempt is under way, and
+ * that another should not begin. BOOL is reset on a completed connection
+ */
+@property (nonatomic, assign) BOOL isRegistering;
+
+/* Indicates that the app has entered the background once
+ * Controls the appDidBecomeActive updateRegistration call
+ */
+@property (nonatomic, assign) BOOL hasEnteredBackground;
+
+/* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
 
 /* Get the local time zone, considered the default. */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
-
-/* 
- * Build a dictionary with the necessary info for tags, alias, autobadge and quiet time.
- */
-- (NSMutableDictionary *)registrationPayload; 
 
 /*
  * Parse a device token string out of the NSData string representation.
@@ -79,6 +112,55 @@ UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
 /* Build a http reqeust to delete the device token from the UA API. */
 - (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
+
+/* Retry connection on any network layer error, or any 
+ * server 500 if retryOnConnectionError is YES
+ @param reqeust The request that has failed
+ @return YES if the request will be scheduled for retry, NO otherwise
+ */
+- (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request;
+
+/* Schedules the request again after a delay of n seconds,
+ * configurable with kUAPushRetryTimeInitialDelay, kUAPushRetryTimeMultiplier, and
+ * kUAPushRetryTimeMaxDelay
+ * @param reqeust The request to reschedule
+ */
+- (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request;
+
+/* Return a dictionary representing the JSON payload of Push settings. */
+- (NSMutableDictionary*)registrationPayload;
+
+/* Takes a user info dictionary (expected to be a registrationPayload) adds 
+ * the current state of pushEnabled as a NSNumber
+ * @param info The info object passed in to the method, it is expected
+ * that this will be a registration payload, and that it will used to
+ * store and compare registration state (alias, tags, pushEnabled, etc)
+ * @return A mutable dictionary with all of the info values, as well as 
+ * an NSNumber indicating pushEnabled state. 
+ */
+- (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info;
+
+/* Caches relevant values after a successful registration reqeust
+ * @param userInfo The userInfo dictionary of the successful request
+ */
+- (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo;
+
+/* Compares the userInfo cached values against the current state of 
+ * UAPush values. Intended to be called after a request succeeds. Compares registrationPayloadCache and 
+ * pushEnabledPayloadCache against the current registrationPayload and pushEnabled values.
+ * @param userInfo The userInfo NSDictionary attached to the request
+ * @return YES if the cache is stale compared to the uploaded data, NO if it is current
+ */
+- (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo;
+
+/* Called on foreground notifications, triggers an updateRegistration
+ */
+- (void)applicationDidBecomeActive;
+
+/* Called to set a flag on foreground to prevent double registration on 
+ * app init
+ */
+- (void)applicationDidEnterBackground;
 
 /* Register the user defaults for this class. You should not need to call this method
  unless you are bypassing UAirship
