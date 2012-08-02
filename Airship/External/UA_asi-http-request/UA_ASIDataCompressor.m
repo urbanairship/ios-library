@@ -212,7 +212,7 @@
 
 + (NSError *)deflateErrorWithCode:(int)code
 {
-	return [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Compression of data failed with code %hi",code],NSLocalizedDescriptionKey,nil]];
+	return [NSError errorWithDomain:UA_NetworkRequestErrorDomain code:UA_ASICompressionError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Compression of data failed with code %i",code],NSLocalizedDescriptionKey,nil]];
 }
 
 @synthesize streamReady;

@@ -344,7 +344,7 @@
         //nothing to do here
         return;
     } else {
-        int delta = currentSize - actualDiskCapacity;
+        int delta = 0;
         NSArray *sortedHashes = [[self.metadata objectForKey:ACCESS_KEY] keysSortedByValueUsingSelector:@selector(compare:)];
         
         for (NSString *hash in sortedHashes) {
