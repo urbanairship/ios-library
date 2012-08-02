@@ -543,6 +543,10 @@ static NSOperationQueue *sharedQueue = nil;
 		}
 		[self addRequestHeader:@"Content-Length" value:[NSString stringWithFormat:@"%llu",[self postLength]]];
 	}
+    // Fixes issue where an empty PUT/POST has no Content-Length value
+    if (([requestMethod isEqualToString:@"PUT"] || [requestMethod isEqualToString:@"POST"]) && [self postLength] == 0) {
+        [self addRequestHeader:@"Content-Length" value:[NSString stringWithFormat:@"%llu",[self postLength]]];
+    }
 	[self setHaveBuiltPostBody:YES];
 
 }

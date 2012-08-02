@@ -231,6 +231,7 @@
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
 		BBC83C3F159BBD550083A4C2 /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.2.1.a */; };
 		BBC923D915AC8EB000EE7C2A /* UAContentURLCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1188CC15225E1E00E3D3F0 /* UAContentURLCacheTests.m */; };
+		BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDC656615C897F1005ECC54 /* UA_ASIHTTPRequestTests.m */; };
 		D5A1928712C15A4E006AF4AE /* libInbox-2.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox-2.1.0.a */; };
 		D5BED7C312FC787900057449 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		D5BED7C412FC787900057449 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
@@ -319,7 +320,7 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = InboxLib;
 		};
-		BBC83C3A159BB84A0083A4C2 /* PBXContainerItemProxy */ = {
+		BB8D5C7715C89C28004080BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -457,6 +458,7 @@
 		BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseLocationProvider.h; sourceTree = "<group>"; };
 		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
+		BBDC656615C897F1005ECC54 /* UA_ASIHTTPRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIHTTPRequestTests.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libUAirship-1.2.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.2.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -659,6 +661,7 @@
 				7BB679661429357100B877DB /* Frameworks */,
 				7BB6790D1429288D00B877DB /* Supporting Files */,
 				BB13C4241575706100541EF3 /* UABase64Test.m */,
+				BBDC656615C897F1005ECC54 /* UA_ASIHTTPRequestTests.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -1031,7 +1034,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				BBC83C3B159BB84A0083A4C2 /* PBXTargetDependency */,
+				BB8D5C7815C89C28004080BF /* PBXTargetDependency */,
 			);
 			name = AirshipLogicTests;
 			productName = AirshipLogicTests;
@@ -1231,6 +1234,7 @@
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
+				BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1368,10 +1372,10 @@
 			name = InboxLib;
 			targetProxy = BB8860AF159A7E9600584445 /* PBXContainerItemProxy */;
 		};
-		BBC83C3B159BB84A0083A4C2 /* PBXTargetDependency */ = {
+		BB8D5C7815C89C28004080BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D2AAC07D0554694100DB518D /* AirshipLib */;
-			targetProxy = BBC83C3A159BB84A0083A4C2 /* PBXContainerItemProxy */;
+			targetProxy = BB8D5C7715C89C28004080BF /* PBXContainerItemProxy */;
 		};
 		D5A1927A12C158BE006AF4AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
