@@ -584,13 +584,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)sendEventToAnalytics:(UALocationEvent *)locationEvent {
     UAAnalytics *analytics = [[UAirship shared] analytics];
-    // Adding analytics off the main thead corrupts the analytics database
-    if ([[NSThread currentThread] isMainThread ]){
-        [analytics addEvent:locationEvent];
-    }
-    else {
-        [analytics performSelectorOnMainThread:@selector(addEvent:) withObject:locationEvent waitUntilDone:NO];
-    } 
+    [analytics addEvent:locationEvent];
 }
 
 #pragma mark -
