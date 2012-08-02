@@ -76,6 +76,12 @@ static BOOL messageReceived = NO;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushTagsSettingsKey];
 }
 
+- (void)testTagsReturnsEmptyNSArrayWhenNoValueInUserDefaults {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushTagsSettingsKey];
+    NSArray *tags = [push tags];
+    STAssertTrue([tags isKindOfClass:[NSArray class]], @"Should produce an array");
+    STAssertTrue([tags count] == 0, @"Should produce an empty array");
+}
 
 - (void)testSetTags {
     NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"TagTest" ofType:@"plist"];

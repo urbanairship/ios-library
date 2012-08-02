@@ -170,7 +170,12 @@ static Class _uiClass;
 }
 
 - (NSArray *)tags {
-    return [standardUserDefaults objectForKey:UAPushTagsSettingsKey];
+    NSArray *currentTags = [standardUserDefaults objectForKey:UAPushTagsSettingsKey];
+    if (!currentTags) {
+        currentTags = [NSArray array];
+        [self setTags:currentTags];
+    }
+    return currentTags;
 }
 
 - (void)setTags:(NSArray *)tags {
