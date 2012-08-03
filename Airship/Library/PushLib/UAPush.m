@@ -173,7 +173,6 @@ static Class _uiClass;
     NSArray *currentTags = [standardUserDefaults objectForKey:UAPushTagsSettingsKey];
     if (!currentTags) {
         currentTags = [NSArray array];
-        [self setTags:currentTags];
     }
     return currentTags;
 }
