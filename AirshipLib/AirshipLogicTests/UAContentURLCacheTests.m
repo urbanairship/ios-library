@@ -45,9 +45,6 @@
     if (fileError) {
         STAssertTrue(fileError.code == 4, @"File error occured in setup");
     }
-    else {
-        NSLog(@"FILE ERROR IN UA_CONTENT_URLCACHE_TESTS SETUP");
-    }
     cache = [[UAContentURLCache alloc] initWithExpirationInterval:1800 withPath:testCachePath];
 }
 
