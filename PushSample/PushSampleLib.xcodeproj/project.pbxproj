@@ -914,7 +914,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../TestCommon/OCMockLibrary/Headers/\"",
+					"../TestCommon/**",
 					"../Airship/**",
 				);
 				INFOPLIST_FILE = "AirshipApplicationTests/AirshipApplicationTests-Info.plist";
@@ -944,6 +944,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirshipApplicationTests/AirshipApplicationTests-Prefix.pch";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				HEADER_SEARCH_PATHS = (
+					"../TestCommon/**",
+					"../Airship/**",
+				);
 				INFOPLIST_FILE = "AirshipApplicationTests/AirshipApplicationTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
