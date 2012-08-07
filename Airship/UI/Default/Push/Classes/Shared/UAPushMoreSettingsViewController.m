@@ -64,7 +64,7 @@ static NSUInteger locationRowCount = 1;
 @synthesize locationCell = locationCell_;
 
 - (void)dealloc {
-    [[UAirship shared] removeObserver:self];
+    [[UAPush shared] removeObserver:self];
 
     RELEASE_SAFELY(deviceTokenCell);
     RELEASE_SAFELY(deviceTokenTypesCell);
@@ -106,7 +106,7 @@ static NSUInteger locationRowCount = 1;
 
     [UAViewUtils roundView:footerImageView borderRadius:10
                borderWidth:1 color:[UIColor lightGrayColor]];
-    [[UAirship shared] addObserver:self];
+    [[UAPush shared] addObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -311,7 +311,7 @@ static NSUInteger locationRowCount = 1;
 #pragma mark -
 #pragma mark UA Registration Observer methods
 
-- (void)registerDeviceTokenSucceed {
+- (void)registerDeviceTokenSucceeded {
     
     [self updateCellValues];
     
