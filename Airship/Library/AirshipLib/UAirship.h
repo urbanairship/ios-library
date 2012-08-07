@@ -209,6 +209,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  *
  * @param token The device token to register.
+ * @warning Deprecated: Use the method on UAPush instead
  */
 - (void)registerDeviceToken:(NSData *)token UA_DEPRECATED(__UA_LIB_1_3_0__);
 
@@ -219,6 +220,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * http://urbanairship.com/docs/push.html#registration for details.
  *
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+ * @warning Deprecated: Use the method on UAPush instead
  */
 - (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
@@ -231,6 +233,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  *
  * @param token The device token to register.
  * @param alias The alias to register for this device token.
+ * @warning Deprecated: Use the method on UAPush instead
  */
 - (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
 
@@ -242,6 +245,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * @param token The device token to register.
  * @param info An NSDictionary containing registraton keys and values. See
  * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
+ * @warning Deprecated: Use the method on UAPush instead
  */
 - (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
@@ -251,6 +255,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * http://urbanairship.com/docs/push.html#registration
  *
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+  * @warning Deprecated: Use the method on UAPush instead
  */
 - (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_0__);
 

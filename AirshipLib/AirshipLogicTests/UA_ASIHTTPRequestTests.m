@@ -43,7 +43,6 @@
     NSString *contentLength = @"Content-Length";
     // Heroku doesn't handle PUT requests, so just buiild the body.
     [request buildPostBody];
-    NSLog(@"status code %i", request.responseStatusCode);
     STAssertNotNil(request.requestHeaders, @"Request headers need to exist for the purpose of this test");
     STAssertNil(request.postBody, @"Post body should be nil");
     STAssertTrue([[request.requestHeaders valueForKey:contentLength] intValue] == 0, @"Content-Length should be 0");

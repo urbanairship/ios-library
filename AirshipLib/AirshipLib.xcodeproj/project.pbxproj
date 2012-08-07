@@ -1038,9 +1038,9 @@
 			productReference = 7BB679061429288D00B877DB /* AirshipLogicTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		BB8860A7159A7E9600584445 /* AirshipMini */ = {
+		BB8860A7159A7E9600584445 /* AirshipPushLib */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMini" */;
+			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipPushLib" */;
 			buildPhases = (
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
@@ -1052,7 +1052,7 @@
 				BB8860AA159A7E9600584445 /* PBXTargetDependency */,
 				BB8860AE159A7E9600584445 /* PBXTargetDependency */,
 			);
-			name = AirshipMini;
+			name = AirshipPushLib;
 			productName = AirshipLib;
 			productReference = BB88612C159A7E9600584445 /* libUAirshipMini-1.2.1.a */;
 			productType = "com.apple.product-type.library.static";
@@ -1123,7 +1123,7 @@
 			projectRoot = "";
 			targets = (
 				D2AAC07D0554694100DB518D /* AirshipLib */,
-				BB8860A7159A7E9600584445 /* AirshipMini */,
+				BB8860A7159A7E9600584445 /* AirshipPushLib */,
 				7BB679051429288D00B877DB /* AirshipLogicTests */,
 			);
 		};
@@ -1687,7 +1687,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipMini" */ = {
+		BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipPushLib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BB88612A159A7E9600584445 /* Debug */,
