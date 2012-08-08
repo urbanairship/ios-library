@@ -603,7 +603,9 @@ static Class _uiClass;
         // Don't unregister more than once
         if ([standardUserDefaults boolForKey:UAPushNeedsUnregistering]) {
             // Disable notifications at device level in case unregistration fails
-            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+            // TODO: This is a fix for the unregistration re registration issue in the case where the device token is a
+            // non nil value. In that case, the device does not re register for notifications. This will be addressed in 1.3.2
+            // [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
             UALOG(@"Starting registration DELETE request (unregistering)");
             [deleteRequest startAsynchronous];
