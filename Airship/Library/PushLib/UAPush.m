@@ -154,11 +154,11 @@ static Class _uiClass;
 
 
 - (NSString *)alias {
-    return [standardUserDefaults stringForKey:UAPushAliasJSONKey];
+    return [standardUserDefaults stringForKey:UAPushAliasSettingsKey];
 }
 
 - (void)setAlias:(NSString *)alias {
-    [standardUserDefaults setObject:alias forKey:UAPushAliasJSONKey];
+    [standardUserDefaults setObject:alias forKey:UAPushAliasSettingsKey];
 }
 
 - (BOOL)canEditTagsFromDevice {
