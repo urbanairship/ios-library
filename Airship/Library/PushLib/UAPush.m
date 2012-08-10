@@ -107,7 +107,6 @@ static Class _uiClass;
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
         registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
-        dispatch_retain(registrationQueue);
     }
     return self;
 }
