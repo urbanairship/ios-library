@@ -154,11 +154,11 @@ static Class _uiClass;
 
 
 - (NSString *)alias {
-    return [standardUserDefaults stringForKey:UAPushAliasJSONKey];
+    return [standardUserDefaults stringForKey:UAPushAliasSettingsKey];
 }
 
 - (void)setAlias:(NSString *)alias {
-    [standardUserDefaults setObject:alias forKey:UAPushAliasJSONKey];
+    [standardUserDefaults setObject:alias forKey:UAPushAliasSettingsKey];
 }
 
 - (BOOL)canEditTagsFromDevice {
@@ -191,14 +191,24 @@ static Class _uiClass;
     return [standardUserDefaults boolForKey:UAPushEnabledSettingsKey];
 }
 
-- (void)setPushEnabled:(BOOL)pushEnabled {
-    [standardUserDefaults setBool:pushEnabled forKey:UAPushEnabledSettingsKey];
-    // Set the flag to indicate that an unRegistration (DELETE)call is needed. This
-    // flag is checked on updateRegistration calls, and is used to prevent
-    // API calls on every app init when the device is already unregistered.
-    // It is cleared on successful unregistration
-    if (!pushEnabled) {
-        [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+- (void)setPushEnabled:(BOOL)enabled {
+    //if the value has actually changed
+    if (enabled != self.pushEnabled) {
+        [standardUserDefaults setBool:enabled forKey:UAPushEnabledSettingsKey];
+        // Set the flag to indicate that an unRegistration (DELETE)call is needed. This
+        // flag is checked on updateRegistration calls, and is used to prevent
+        // API calls on every app init when the device is already unregistered.
+        // It is cleared on successful unregistration
+
+        if (enabled) {
+            UALOG(@"registering for remote notifcations");
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+        } else {
+            [standardUserDefaults setBool:YES forKey:UAPushNeedsUnregistering];
+            //note: we don't want to use the wrapper method here, because otherwise it will blow away the existing notificationTypes
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+            [self updateRegistration];
+        }
     }
 }
 
@@ -410,15 +420,17 @@ static Class _uiClass;
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
         return;
     }
-    
+
     UALOG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
-    
+
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
-    
+
     // if the device token has already been set then
     // we are post-registration and will need to make
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
+        //clear the registration payload cache so we can synchronize with the server
+        self.registrationPayloadCache = nil;
         UALOG(@"Sending autobadge update to UA server");
         [self updateRegistration];
     }
@@ -587,12 +599,9 @@ static Class _uiClass;
     }
     
     if (self.pushEnabled) {
-        // If there is no device token, register for one, and wait for the application delegate
-        // to update with a device token.
+        // If there is no device token, wait for the application delegate to update with one.
         if (!self.deviceToken) {
             self.isRegistering = NO;
-            UALOG(@"Cancelling update, registering for remote notifcations");
-            [self registerForRemoteNotificationTypes:notificationTypes];
             return;
         }
         UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:currentRegistrationPayload];
@@ -602,10 +611,6 @@ static Class _uiClass;
     else {
         // Don't unregister more than once
         if ([standardUserDefaults boolForKey:UAPushNeedsUnregistering]) {
-            // Disable notifications at device level in case unregistration fails
-            // TODO: This is a fix for the unregistration re registration issue in the case where the device token is a
-            // non nil value. In that case, the device does not re register for notifications. This will be addressed in 1.3.2
-            // [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
             UALOG(@"Starting registration DELETE request (unregistering)");
             [deleteRequest startAsynchronous];
