@@ -240,18 +240,16 @@ enum {
     [formatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease]];
     
     
-    //NSDictionary *quietTime = [[NSUserDefaults standardUserDefaults] objectForKey:kQuietTime];
     NSDictionary *quietTime = [[UAPush shared] quietTime];
     [formatter setDateFormat:@"HH:mm"];
+    quietTimeSwitch.on = [UAPush shared].quietTimeEnabled;
     if (quietTime != nil) {
         UALOG(@"Quiet time dict found: %@ to %@", [quietTime objectForKey:@"start"], [quietTime objectForKey:@"end"]);
-        quietTimeSwitch.on = YES;
         date1 = [formatter dateFromString:[quietTime objectForKey:@"start"]];
         date2 = [formatter dateFromString:[quietTime objectForKey:@"end"]];
     }
     
     if (date1 == nil || date2 == nil) {
-        quietTimeSwitch.on = NO;
         date1 = [formatter dateFromString:@"22:00"];//default start
         date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
     }
@@ -435,7 +433,9 @@ IF_IOS4_OR_GREATER (
         UALOG(@"Start String: %@", fromString);
         UALOG(@"End String: %@", toString);
         
+        [UAPush shared].quietTimeEnabled = YES;
         [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
+        [[UAPush shared] updateRegistration];
     } else {
         [UAPush shared].quietTimeEnabled = NO;
         [[UAPush shared] updateRegistration];
