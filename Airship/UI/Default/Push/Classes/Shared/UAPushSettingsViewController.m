@@ -435,7 +435,9 @@ IF_IOS4_OR_GREATER (
         UALOG(@"Start String: %@", fromString);
         UALOG(@"End String: %@", toString);
         
+        [UAPush shared].quietTimeEnabled = YES;
         [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
+        [[UAPush shared] updateRegistration];
     } else {
         [UAPush shared].quietTimeEnabled = NO;
         [[UAPush shared] updateRegistration];
