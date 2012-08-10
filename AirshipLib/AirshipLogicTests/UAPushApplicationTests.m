@@ -346,13 +346,6 @@ static BOOL messageReceived = NO;
     }    
 }
 
-//- (void)testUnregisterDeviceToken {
-//    id mockPush = [OCMockObject partialMockForObject:push];
-//    [[mockPush expect] updateRegistration];
-//    [mockPush unRegisterDeviceToken];
-//    [mockPush verify];
-//    STAssertFalse(push.pushEnabled, @"pushEnabled should be NO");
-//}
 
 - (void)testUnregisterDeviceTokenRequest {
     UA_ASIHTTPRequest *request = [push requestToDeleteDeviceToken];
