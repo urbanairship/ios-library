@@ -92,7 +92,6 @@
 		B6EFE237124F3FBB00A46CB1 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		B6EFE238124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */; };
 		BB13C4251575706100541EF3 /* UABase64Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB13C4241575706100541EF3 /* UABase64Test.m */; };
-		BB38DEB1157D36BF003D0D4A /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 		BB42FB751509553F00FC4B1B /* UALocationCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */; };
 		BB42FB78150961F800FC4B1B /* UALocationProviderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */; };
 		BB42FB7B1509622700FC4B1B /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; };
@@ -259,6 +258,7 @@
 		E9F73FB412ADE93A003CF572 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		E9FFDD8D129BAADB0012EF40 /* UADownloadContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */; };
 		E9FFDD8E129BAADB0012EF40 /* UADownloadContent.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */; };
+		F296861315D7FD350002AEA7 /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1218,6 +1218,7 @@
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */,
+				F296861315D7FD350002AEA7 /* Gcov_Fix.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1275,7 +1276,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB38DEB1157D36BF003D0D4A /* Gcov_Fix.c in Sources */,
 				633FD57D123496FE002E0F85 /* UAirship.m in Sources */,
 				D9983E971238462100B7E69F /* UAUtils.m in Sources */,
 				D9983E991238462100B7E69F /* UADateUtils.m in Sources */,
