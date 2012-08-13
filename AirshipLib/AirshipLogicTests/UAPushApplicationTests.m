@@ -273,8 +273,8 @@ static BOOL messageReceived = NO;
 
 - (void)testUpdateRegistrationWhenPushEnabledAndCacheNotStale {
     push.isRegistering = NO;
-    push.pushEnabled = YES;
-    NSDictionary *cache = @{ @"key" : @"value" };
+    [[NSUserDefaults standardUserDefaults]setBool:YES forKey:UAPushEnabledSettingsKey];
+    NSDictionary *cache = [NSDictionary dictionaryWithObject:@"value" forKey:@"key"];
     push.registrationPayloadCache = cache;
     push.pushEnabledPayloadCache = YES;
     id mockPush = [OCMockObject partialMockForObject:push];
@@ -286,8 +286,8 @@ static BOOL messageReceived = NO;
 
 - (void)testUpdateRegistrationWhenPushEnabledAndCacheIsStale {
     push.isRegistering = NO;
-    push.pushEnabled = YES;
-    push.registrationPayloadCache = @{ @"key" : @"StaleValue" };
+    [[NSUserDefaults standardUserDefaults]setBool:YES forKey:UAPushEnabledSettingsKey];
+    push.registrationPayloadCache = [NSDictionary dictionaryWithObject:@"StaleValue" forKey:@"key"];
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     [[mockRequest expect] startAsynchronous];
     id mockPush = [OCMockObject partialMockForObject:push];
@@ -298,8 +298,8 @@ static BOOL messageReceived = NO;
 
 - (void)testUpdateRegistrationwhenPushNotEnabledAndCacheIsStale {
     push.isRegistering = NO;
-    push.pushEnabled = NO;
-    push.registrationPayloadCache = @{ @"key" : @"ADifferentStaleValue" };
+    [[NSUserDefaults standardUserDefaults]setBool:NO forKey:UAPushEnabledSettingsKey];
+    push.registrationPayloadCache = [NSDictionary dictionaryWithObject:@"ADifferentStaleValue" forKey:@"key"];
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     [[mockRequest expect] startAsynchronous];
@@ -386,14 +386,6 @@ static BOOL messageReceived = NO;
     for (NSString* value in payloadValues) {
         STAssertTrue([[JSON allValues] containsObject:value],@"Missing value in payload values or JSON values");
     }    
-}
-
-- (void)testUnregisterDeviceToken {
-    id mockPush = [OCMockObject partialMockForObject:push];
-    [[mockPush expect] updateRegistration];
-    [mockPush unRegisterDeviceToken];
-    [mockPush verify];
-    STAssertFalse(push.pushEnabled, @"pushEnabled should be NO");
 }
 
 - (void)testUnregisterDeviceTokenRequest {
@@ -497,14 +489,14 @@ static BOOL messageReceived = NO;
 - (void)testCacheHasChangedComparedToUserInfo {
     // Rig the cached value with matched settings
     push.registrationPayloadCache = [push registrationPayload];
-    push.pushEnabled = NO;
+    [[NSUserDefaults standardUserDefaults]setBool:NO forKey:UAPushEnabledSettingsKey];
     push.pushEnabledPayloadCache = NO;
     // Get a user info object that would be attached to a UA_HTTPRequest, use the registrationPayload again
     NSDictionary *userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[push registrationPayload]];
     STAssertFalse([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"chacheHasChanged should be NO");
-    push.pushEnabled = YES;
+    [[NSUserDefaults standardUserDefaults]setBool:YES forKey:UAPushEnabledSettingsKey];
     STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
-    push.pushEnabled = NO;
+    [[NSUserDefaults standardUserDefaults]setBool:NO forKey:UAPushEnabledSettingsKey];
     userInfoDictionary = [push cacheForRequestUserInfoDictionaryUsing:[NSDictionary dictionaryWithObject:@"cat" forKey:@"key"]];
     STAssertTrue([push cacheHasChangedComparedToUserInfo:userInfoDictionary], @"cacheHasChanged should be YES");
     

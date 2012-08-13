@@ -140,6 +140,17 @@
     STAssertTrue(type == typeInDate, nil);
 }
 
+- (BOOL)serviceAcquiredLocation {
+    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
+    while (!locationRecieved) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+        if ([timeout timeIntervalSinceNow] < 0.0) {
+            break;
+        }
+    }
+    return locationRecieved;
+}
+
 // This test will not run automatically on a clean install
 // as selecting OK for the location permission alert view
 // tanks the run loop update
@@ -153,16 +164,6 @@
     STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
 }
 
-- (BOOL)serviceAcquiredLocation {
-    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
-    while (!locationRecieved) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-        if ([timeout timeIntervalSinceNow] < 0.0) {
-            break;
-        }
-    }
-    return locationRecieved;
-}
 
 #pragma mark -
 #pragma mark Single Location Service Report Current location background
