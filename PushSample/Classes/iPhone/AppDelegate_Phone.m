@@ -24,9 +24,9 @@
  */
 
 #import "AppDelegate_Phone.h"
+
 #import "UAirship.h"
 #import "UAPush.h"
-#import "UALocationCommonValues.h"
 #import "UAAnalytics.h"
 
 @implementation AppDelegate_Phone
@@ -49,7 +49,6 @@
     
     //Init Airship launch options
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
-    [takeOffOptions setValue:[NSNumber numberWithBool:YES] forKey:UAAnalyticsOptionsLoggingKey];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
     // Create Airship singleton that's used to talk to Urban Airhship servers.
@@ -66,16 +65,12 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     UALOG(@"Application did become active.");
-    [[UAPush shared] resetBadge]; //zero badge when resuming from background (iOS 4+)
+    [[UAPush shared] resetBadge]; //zero badge when resuming from background
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *path = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"deviceToken.data"];
-    NSError *error = nil;
-    [deviceToken writeToFile:path options:NSDataWritingAtomic error:&error];
     [[UAPush shared] registerDeviceToken:deviceToken];
     
     
@@ -148,14 +143,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"Received remote notification: %@", userInfo);
-    
-    // Get application state for iOS4.x+ devices, otherwise assume active
-    UIApplicationState appState = UIApplicationStateActive;
-    if ([application respondsToSelector:@selector(applicationState)]) {
-        appState = application.applicationState;
-    }
-
-    [[UAPush shared] handleNotification:userInfo applicationState:appState];
+    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
     [[UAPush shared] resetBadge]; // zero badge after push received
 }
 
