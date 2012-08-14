@@ -622,6 +622,11 @@ static Class _uiClass;
 
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
+    if (!notificationTypes) {
+        UALOG(@"***WARNING***: attempted to register device token with no notificationTypes set!  \
+              Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication");
+        return;
+    }
     self.deviceToken = [self parseDeviceToken:[token description]];
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
