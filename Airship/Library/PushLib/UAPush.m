@@ -711,8 +711,8 @@ static Class _uiClass;
 
 
 - (void)unRegisterDeviceToken {
+    //the setter will implicitly update registration on its own
     self.pushEnabled = NO;
-    [self updateRegistration];
 }
 
 - (UA_ASIHTTPRequest*)requestToDeleteDeviceToken {

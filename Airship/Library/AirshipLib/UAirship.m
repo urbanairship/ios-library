@@ -346,7 +346,6 @@ BOOL logging = false;
 
 - (void)registerDeviceToken:(NSData *)token {
     [[UAPush shared] registerDeviceToken:token withExtraInfo:nil];
-    
 }
 
 - (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {

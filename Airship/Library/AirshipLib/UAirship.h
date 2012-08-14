@@ -255,7 +255,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * http://urbanairship.com/docs/push.html#registration
  *
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
-  * @warning Deprecated: Use the method on UAPush instead
+  * @warning Deprecated: Use the pushEnabled property on UAPush instead
  */
 - (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_0__);
 

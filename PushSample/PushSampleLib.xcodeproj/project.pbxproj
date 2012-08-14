@@ -660,7 +660,7 @@
 		BBC923F515AC8F6000EE7C2A /* libUAirshipMini-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipMini-1.2.1.a";
+			path = "libUAirshipPush-1.3.1.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

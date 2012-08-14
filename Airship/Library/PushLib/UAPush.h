@@ -466,8 +466,10 @@ SINGLETON_INTERFACE(UAPush);
  * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
  *  
  * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+ *
+ * @warning Deprecated: Use the pushEnabled property on UAPush instead
  */
-- (void)unRegisterDeviceToken;
+- (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_2__);
 
 /**
  * Register the device for remote notifications (see Apple documentation for more
