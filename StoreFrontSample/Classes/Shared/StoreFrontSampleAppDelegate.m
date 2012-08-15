@@ -25,6 +25,7 @@
 #import "StoreFrontSampleAppDelegate.h"
 
 #import "UAirship.h"
+#import "UAPush.h"
 #import "UAAnalytics.h"
 #import "UAStoreFront.h"
 #import "UAProduct.h"
@@ -65,7 +66,7 @@
     [[UAStoreFront shared] setDelegate:self];
     
     // Register for notifications
-    [[UIApplication sharedApplication]
+    [[UAPush shared]
      registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                          UIRemoteNotificationTypeSound |
                                          UIRemoteNotificationTypeAlert)];
@@ -101,7 +102,7 @@
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UALOG(@"APN device token: %@", deviceToken);
     // Updates the device token and registers the token with UA
-    [[UAirship shared] registerDeviceToken:deviceToken];
+    [[UAPush shared] registerDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
