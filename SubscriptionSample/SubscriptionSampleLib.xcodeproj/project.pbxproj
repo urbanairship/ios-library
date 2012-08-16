@@ -42,7 +42,6 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
-		1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
 		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FB9B89D13C3BBDF002BB424 /* libz.dylib */; };
 		1FC77F4513D78ECE00E37B0E /* UASubscriptionUIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC77F4413D78ECE00E37B0E /* UASubscriptionUIUtil.m */; };
@@ -56,35 +55,17 @@
 		6331473C122FAB2D008F2D48 /* AppDelegate_Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 63314736122FAB2D008F2D48 /* AppDelegate_Phone.m */; };
 		6331473D122FAB2D008F2D48 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63314738122FAB2D008F2D48 /* main.m */; };
 		6331473E122FAB2D008F2D48 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6331473A122FAB2D008F2D48 /* SampleViewController.m */; };
-		636CB54E128D0DFD00481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
-		63B2D89912A3746C007A0AA2 /* GHUnitIOSTestMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B2D89612A3746C007A0AA2 /* GHUnitIOSTestMain.m */; };
-		63B2D89A12A3746C007A0AA2 /* SubscriptionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 63B2D89812A3746C007A0AA2 /* SubscriptionTests.m */; };
 		B63B5EDA1246383700145424 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ED91246383700145424 /* libsqlite3.dylib */; };
-		B6BC28B1127950B5005CBE16 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DE288F311CF310D0013D2F1 /* StoreKit.framework */; };
-		B6BC28B2127950B5005CBE16 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */; };
-		B6BC28B4127950B5005CBE16 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */; };
-		B6BC28B5127950B5005CBE16 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5A7DD411CA03A100BE4A57 /* CFNetwork.framework */; };
-		B6BC28B6127950B5005CBE16 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		B6BC28B7127950B5005CBE16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		B6BC28B8127950B5005CBE16 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
-		B6BC28B9127950B5005CBE16 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ED91246383700145424 /* libsqlite3.dylib */; };
-		B6BC28DE12795459005CBE16 /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */; };
-		B6BC28FA1279557A005CBE16 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */; };
-		B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */; };
-		B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */; };
 		B6EF6B26127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */; };
 		B6EF6B27127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */; };
-		B6EF6B29127A7563007E0DE5 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B28127A7563007E0DE5 /* Icon.png */; };
 		B6EF6B2A127A7563007E0DE5 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B28127A7563007E0DE5 /* Icon.png */; };
-		B6EF6C54127A9FD4007E0DE5 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314725122FAB0E008F2D48 /* Default.png */; };
-		B6EF6C55127A9FD4007E0DE5 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 63314726122FAB0E008F2D48 /* Icon-Small.png */; };
 		BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB4136151524D985008EE873 /* CoreLocation.framework */; };
 		D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60612C154C0009731BE /* Icon@2x.png */; };
 		D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F60812C154CA009731BE /* iTunesArtwork */; };
 		D5C759AC12BAE0EF0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759AB12BAE0EF0041239E /* Default@2x.png */; };
 		D5C75AFD12BBEF9B0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFC12BBEF9B0041239E /* Icon-Small@2x.png */; };
 		D5C75AFF12BBEFA80041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFE12BBEFA80041239E /* Icon-72.png */; };
-		D9983CAB123829DB00B7E69F /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */; };
+		D9983CAB123829DB00B7E69F /* libUAirship-1.3.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.3.2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,13 +81,6 @@
 			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = AirshipLib;
-		};
-		B6BC28A01279503F005CBE16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
 		B6EFE258124F428A00A46CB1 /* PBXContainerItemProxy */ = {
@@ -191,15 +165,10 @@
 		63314739122FAB2D008F2D48 /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		6331473A122FAB2D008F2D48 /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
 		6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipLib.xcodeproj; path = ../AirshipLib/AirshipLib.xcodeproj; sourceTree = SOURCE_ROOT; };
-		63B2D89612A3746C007A0AA2 /* GHUnitIOSTestMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHUnitIOSTestMain.m; sourceTree = "<group>"; };
-		63B2D89712A3746C007A0AA2 /* SubscriptionTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionTests.h; sourceTree = "<group>"; };
-		63B2D89812A3746C007A0AA2 /* SubscriptionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubscriptionTests.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* SubscriptionSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SubscriptionSample-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		B63B5ED91246383700145424 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		B6BC289A1279501D005CBE16 /* SubscriptionTests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubscriptionTests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6BC289C1279501D005CBE16 /* SubscriptionTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SubscriptionTests-Info.plist"; sourceTree = "<group>"; };
 		B6BC28F01279550F005CBE16 /* SubscriptionTests_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscriptionTests_Prefix.pch; sourceTree = "<group>"; };
-		B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GHUnitIOS.framework; path = ../Airship/External/GHUnitIOS.framework; sourceTree = SOURCE_ROOT; };
 		B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Landscape.png"; sourceTree = "<group>"; };
 		B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPadDefault-Portrait.png"; sourceTree = "<group>"; };
 		B6EF6B28127A7563007E0DE5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -218,7 +187,7 @@
 			files = (
 				BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */,
 				1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */,
-				D9983CAB123829DB00B7E69F /* libUAirship-1.2.1.a in Frameworks */,
+				D9983CAB123829DB00B7E69F /* libUAirship-1.3.2.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -229,24 +198,6 @@
 				B63B5EDA1246383700145424 /* libsqlite3.dylib in Frameworks */,
 				18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */,
 				1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B6BC28981279501D005CBE16 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B6BC28DE12795459005CBE16 /* libUAirship-1.2.1.a in Frameworks */,
-				B6BC28B1127950B5005CBE16 /* StoreKit.framework in Frameworks */,
-				B6BC28B2127950B5005CBE16 /* SystemConfiguration.framework in Frameworks */,
-				B6BC28B4127950B5005CBE16 /* MobileCoreServices.framework in Frameworks */,
-				B6BC28B5127950B5005CBE16 /* CFNetwork.framework in Frameworks */,
-				B6BC28B6127950B5005CBE16 /* UIKit.framework in Frameworks */,
-				B6BC28B7127950B5005CBE16 /* Foundation.framework in Frameworks */,
-				B6BC28B8127950B5005CBE16 /* CoreGraphics.framework in Frameworks */,
-				B6BC28B9127950B5005CBE16 /* libsqlite3.dylib in Frameworks */,
-				B6BC28FA1279557A005CBE16 /* GHUnitIOS.framework in Frameworks */,
-				636CB54E128D0DFD00481EFC /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,7 +260,6 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */,
-				B6BC289A1279501D005CBE16 /* SubscriptionTests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -345,7 +295,6 @@
 			isa = PBXGroup;
 			children = (
 				BB4136151524D985008EE873 /* CoreLocation.framework */,
-				B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */,
 				0DE288F311CF310D0013D2F1 /* StoreKit.framework */,
 				0D5A7E2711CA043000BE4A57 /* SystemConfiguration.framework */,
 				0D5A7E0911CA03FE00BE4A57 /* MobileCoreServices.framework */,
@@ -411,7 +360,6 @@
 				63314731122FAB2D008F2D48 /* iPad */,
 				63314734122FAB2D008F2D48 /* iPhone */,
 				63314737122FAB2D008F2D48 /* Shared */,
-				63B2D89512A3746C007A0AA2 /* Tests */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -447,21 +395,11 @@
 		6331475C122FAC96008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */,
-				BBBA19E715C9BE0D000E9A00 /* libUAirshipMini-1.2.1.a */,
+				63314760122FAC96008F2D48 /* libUAirship-1.3.2.a */,
+				BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.1.a */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		63B2D89512A3746C007A0AA2 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				63B2D89612A3746C007A0AA2 /* GHUnitIOSTestMain.m */,
-				63B2D89712A3746C007A0AA2 /* SubscriptionTests.h */,
-				63B2D89812A3746C007A0AA2 /* SubscriptionTests.m */,
-			);
-			path = Tests;
 			sourceTree = "<group>";
 		};
 		63EFBBA41230E7B900A3B55D /* Airship */ = {
@@ -537,24 +475,6 @@
 			productReference = 1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B6BC28991279501D005CBE16 /* SubscriptionTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B6BC289F1279501E005CBE16 /* Build configuration list for PBXNativeTarget "SubscriptionTests" */;
-			buildPhases = (
-				B6BC28961279501D005CBE16 /* Resources */,
-				B6BC28971279501D005CBE16 /* Sources */,
-				B6BC28981279501D005CBE16 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B6BC28A11279503F005CBE16 /* PBXTargetDependency */,
-			);
-			name = SubscriptionTests;
-			productName = SubscriptionTests;
-			productReference = B6BC289A1279501D005CBE16 /* SubscriptionTests.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -584,7 +504,6 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* SubscriptionSample */,
-				B6BC28991279501D005CBE16 /* SubscriptionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -597,17 +516,18 @@
 			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */ = {
+		63314760122FAC96008F2D48 /* libUAirship-1.3.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.2.1.a";
+			path = "libUAirship-1.3.2.a";
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBBA19E715C9BE0D000E9A00 /* libUAirshipMini-1.2.1.a */ = {
+		BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipMini-1.2.1.a";
+			name = "libUAirshipPush-1.3.1.a";
+			path = "libUAirshipPush-1.3.2.a";
 			remoteRef = BBBA19E615C9BE0D000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -649,19 +569,6 @@
 				D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */,
 				D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */,
 				1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B6BC28961279501D005CBE16 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B6EF6B29127A7563007E0DE5 /* Icon.png in Resources */,
-				B6EF6C54127A9FD4007E0DE5 /* Default.png in Resources */,
-				B6EF6C55127A9FD4007E0DE5 /* Icon-Small.png in Resources */,
-				B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */,
-				B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */,
-				1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -719,23 +626,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B6BC28971279501D005CBE16 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				63B2D89912A3746C007A0AA2 /* GHUnitIOSTestMain.m in Sources */,
-				63B2D89A12A3746C007A0AA2 /* SubscriptionTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B6BC28A11279503F005CBE16 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AirshipLib;
-			targetProxy = B6BC28A01279503F005CBE16 /* PBXContainerItemProxy */;
-		};
 		B6EFE259124F428A00A46CB1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipLib;
@@ -783,63 +676,6 @@
 				PRODUCT_NAME = SubscriptionSample;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		B6BC289D1279501E005CBE16 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"../Airship/External/**",
-					"\"$(SRCROOT)/../Airship/External\"",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = SubscriptionTests_Prefix.pch;
-				INFOPLIST_FILE = "SubscriptionTests-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-					"-all_load",
-					"-ObjC",
-				);
-				PRODUCT_NAME = SubscriptionTests;
-				PROVISIONING_PROFILE = "";
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
-		B6BC289E1279501E005CBE16 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../Airship/External\"",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/UIKit.framework/Headers/UIKit.h";
-				INFOPLIST_FILE = "SubscriptionTests-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					UIKit,
-				);
-				PRODUCT_NAME = SubscriptionTests;
-				SDKROOT = iphoneos;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -900,15 +736,6 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B6BC289F1279501E005CBE16 /* Build configuration list for PBXNativeTarget "SubscriptionTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B6BC289D1279501E005CBE16 /* Debug */,
-				B6BC289E1279501E005CBE16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
