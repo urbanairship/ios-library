@@ -30,7 +30,7 @@ Required Libraries
 The core library requires your application to link against the following Frameworks (sample UIs
 have additional linking requirements)::
 
-    libUAirship-1.1.2.a
+    libUAirship-<current_version>.a
     CFNetwork.framework
     CoreGraphics.framework
     Foundation.framework
@@ -42,13 +42,14 @@ have additional linking requirements)::
     libsqlite3.dylib
     CoreTelephony.framework (Exists in iOS 4+ only, so make it a weak link for 3.x compatibility)
     StoreKit.framework
+    CoreLocation.framework
 
 Build Settings
 ##############
 
 **Compiler**
     
-LLVM 2.1 is the default compiler for all projects and the static library.
+LLVM 4.0 is the default compiler for all projects and the static library.
      
 **Header search path**
                                          

@@ -31,7 +31,7 @@
  the standard location service. 
  */
 
-@interface UAStandardLocationProvider : UABaseLocationProvider
+@interface UAStandardLocationProvider : UABaseLocationProvider 
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping the location service

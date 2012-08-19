@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+# Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -45,4 +45,7 @@ rm -rf `find . -name "*Tests"`
 rm -rf `find . -name "*Test*.plist"`
 rm -rf `find . -name "*Test*.pch"`
 rm -rf `find . -name "*.orig" `
+rm -rf `find . -name "AirshipDevelopment.plist" `
+
+
 mv -f AirshipConfig.plist.sample AirshipConfig.plist

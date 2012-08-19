@@ -1,12 +1,25 @@
 //
-//  Created by Matt Gallagher on 2009/06/03.
-//  Copyright 2009-2010Matt Gallagher. All rights reserved.
+//  UA_Base64.h
 //
-//  Permission is given to use this source code file, free of charge, in any
-//  project, commercial or otherwise, entirely at your risk, with the condition
-//  that any redistribution (in part or whole) of source code must retain
-//  this copyright and permission notice. Attribution in compiled projects is
-//  appreciated but not required.
+//  Created by Matt Gallagher on 2009/06/03.
+//  Copyright 2009 Matt Gallagher. All rights reserved.
+//  Modified by Urban Airship to be used as a stand alone class instead of a 
+//  category.
+//
+//  This software is provided 'as-is', without any express or implied
+//  warranty. In no event will the authors be held liable for any damages
+//  arising from the use of this software. Permission is granted to anyone to
+//  use this software for any purpose, including commercial applications, and to
+//  alter it and redistribute it freely, subject to the following restrictions:
+//
+//  1. The origin of this software must not be misrepresented; you must not
+//     claim that you wrote the original software. If you use this software
+//     in a product, an acknowledgment in the product documentation would be
+//     appreciated but is not required.
+//  2. Altered source versions must be plainly marked as such, and must not be
+//     misrepresented as being the original software.
+//  3. This notice may not be removed or altered from any source
+//     distribution.
 //
 
 #import "UA_Base64.h"
@@ -74,7 +87,7 @@ void *UA_NewBase64Decode(
         length = strlen(inputBuffer);
     }
 
-    size_t outputBufferSize = (length / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
+    size_t outputBufferSize = ((length+BASE64_UNIT_SIZE-1) / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE;
     unsigned char *outputBuffer = (unsigned char *)malloc(outputBufferSize);
 
     size_t i = 0;
@@ -106,14 +119,19 @@ void *UA_NewBase64Decode(
             }
         }
 
-        //
-        // Store the 6 bits from each of the 4 characters as 3 bytes
-        //
-        outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);
-        outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);
+    //
+    // Store the 6 bits from each of the 4 characters as 3 bytes
+    //
+    // (Uses improved bounds checking suggested by Alexandre Colucci)
+    //
+    if(accumulateIndex >= 2)  
+        outputBuffer[j] = (accumulated[0] << 2) | (accumulated[1] >> 4);  
+    if(accumulateIndex >= 3)  
+        outputBuffer[j + 1] = (accumulated[1] << 4) | (accumulated[2] >> 2);  
+    if(accumulateIndex >= 4)  
         outputBuffer[j + 2] = (accumulated[2] << 6) | accumulated[3];
-        j += accumulateIndex - 1;
-    }
+    j += accumulateIndex - 1;
+      }
 
     if (outputLength)
     {
@@ -146,29 +164,26 @@ char *UA_NewBase64Encode(
 {
     const unsigned char *inputBuffer = (const unsigned char *)buffer;
 
-    #define MAX_NUM_PADDING_CHARS 2
-    #define OUTPUT_LINE_LENGTH 64
-    #define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
-    #define CR_LF_SIZE 2
-
+#define MAX_NUM_PADDING_CHARS 2
+#define OUTPUT_LINE_LENGTH 64
+#define INPUT_LINE_LENGTH ((OUTPUT_LINE_LENGTH / BASE64_UNIT_SIZE) * BINARY_UNIT_SIZE)
+#define CR_LF_SIZE 2
+    
     //
     // Byte accurate calculation of final buffer size
     //
-    size_t outputBufferSize =
-            ((length / BINARY_UNIT_SIZE)
-                + ((length % BINARY_UNIT_SIZE) ? 1 : 0))
-                    * BASE64_UNIT_SIZE;
+    size_t outputBufferSize = ((length / BINARY_UNIT_SIZE) + ((length % BINARY_UNIT_SIZE) ? 1 : 0)) * BASE64_UNIT_SIZE;
     if (separateLines)
     {
         outputBufferSize +=
-            (outputBufferSize / OUTPUT_LINE_LENGTH) * CR_LF_SIZE;
+        (outputBufferSize / OUTPUT_LINE_LENGTH) * CR_LF_SIZE;
     }
-
+    
     //
     // Include space for a terminating zero
     //
     outputBufferSize += 1;
-
+    
     //
     // Allocate the output buffer
     //
@@ -177,12 +192,12 @@ char *UA_NewBase64Encode(
     {
         return NULL;
     }
-
+    
     size_t i = 0;
     size_t j = 0;
     const size_t lineLength = separateLines ? INPUT_LINE_LENGTH : length;
     size_t lineEnd = lineLength;
-
+    
     while (true)
     {
         if (lineEnd > length)
@@ -282,16 +297,11 @@ NSData* UA_dataFromBase64String(NSString* aString)
 //
 NSString* UA_base64EncodedStringFromData(NSData* data)
 {
-    size_t outputLength;
-    char *outputBuffer =
-        UA_NewBase64Encode([data bytes], [data length], true, &outputLength);
-
-    NSString *result =
-        [[[NSString alloc]
-            initWithBytes:outputBuffer
-            length:outputLength
-            encoding:NSASCIIStringEncoding]
-        autorelease];
+    size_t outputLength = 0;
+    char *outputBuffer = UA_NewBase64Encode([data bytes], [data length], true, &outputLength);
+    NSString *result = [[[NSString alloc] initWithBytes:outputBuffer 
+                                                 length:outputLength 
+                                               encoding:NSASCIIStringEncoding] autorelease];
     free(outputBuffer);
     return result;
 }

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -29,6 +29,7 @@
 #import "UALocationCommonValues.h"
 #import "UAMapPresentationController.h"
 #import "UAirship.h"
+#import "UALocationService.h"
 
 @interface UALocationSettingsViewController ()
 
@@ -69,7 +70,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.locationService = [[UAirship shared] locationService];
-    locationService_.delegate = self;
+    self.locationService.singleLocationDesiredAccuracy = kCLLocationAccuracyHundredMeters;
+    self.locationService.timeoutForSingleLocationService = 10.0;
+    self.locationService.delegate = self;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -120,7 +123,7 @@
 - (IBAction)getLocationPressed:(id)sender {
     UALOG(@"Get Location pressed");
     [self checkAndAlertForLocationAuthorization];
-    [locationService_ reportCurrentLocation];
+    [self.locationService reportCurrentLocation];
 }
 
 - (void)checkAndAlertForLocationAuthorization {
@@ -192,6 +195,11 @@
 
 - (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error {
     UALOG(@"LOCATION_ERROR, %@", error.description);
+    CLLocation *bestAvailableLocation = [[error userInfo] valueForKey:UALocationServiceBestAvailableSingleLocationKey];
+    // Desired accuracy couldn't be met, the service timed out to save battery, this is the best location obtained
+    if (bestAvailableLocation) {
+        [self addLocationToData:bestAvailableLocation];
+    }
 }
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"LOCATION_AUTHORIZATION_STATUS %u", status);

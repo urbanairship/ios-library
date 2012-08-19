@@ -1,3 +1,9 @@
+1.2.1 - April 26 2010
+- modified UALocationServiceNSDefaultsKey values to contain the
+ "UALocationService" prefix
+  example: "singleLocationTimeout" changed to
+  "UALocationServiceSingleLocationTimeout"
+
 1.0.5 - April 26, 2011
 - Fixed enum collisions with external libraries.
 - Fixed bug that would append trailing slashes to tags.

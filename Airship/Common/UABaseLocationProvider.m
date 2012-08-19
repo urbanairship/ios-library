@@ -29,6 +29,8 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
+NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
+
 @interface UABaseLocationProvider ()
 // Stop reporting any location service
 - (void)stopAllReporting;
@@ -37,6 +39,7 @@
 @implementation UABaseLocationProvider
 
 @synthesize locationManager = locationManager_;
+@synthesize maximumElapsedTimeForCachedLocation = maximumElapsedTimeForCachedLocation_;
 @synthesize serviceStatus = serviceStatus_;
 @synthesize delegate = delegate_;
 @synthesize provider = provider_;
@@ -58,6 +61,7 @@
         locationManager_.delegate = self;
         provider_ = UALocationServiceProviderUnknown;
         serviceStatus_ = UALocationProviderNotUpdating;
+        maximumElapsedTimeForCachedLocation_ = defaultMaximumElapsedTimeForCachedLocation;
     }
     return self;
 }
@@ -71,7 +75,8 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d", provider_, self.purpose, serviceStatus_];
+    return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %f", 
+            provider_, self.purpose, serviceStatus_, locationManager_.desiredAccuracy, locationManager_.distanceFilter];
 }
 
 #pragma mark -
@@ -115,20 +120,6 @@
 }
 
 #pragma mark -
-#pragma mark Location Accuracy calculations
-
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
-    // accuracy values less than zero represent invalid lat/long values
-    // If altitude becomes important in the future, add the check here for verticalAccuracy
-    if (newLocation.horizontalAccuracy < 0) {
-        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
-        return NO;
-    }
-    UALOG(@"Location %@ met accuracy requirements", newLocation);
-    return YES;
-}
-
-#pragma mark -
 #pragma mark UALocationProviderProtocol empty methods
 
 // Methods only update the location status
@@ -145,7 +136,7 @@
 #pragma mark -
 #pragma mark CLLocationManger Delegate
     
-/** iOS 4.2 or better */
+/* iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
 // TODO: Send analytics event if location service is denied?
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -163,7 +154,9 @@
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    if([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
+        [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    }
 }
 
 - (void)stopAllReporting {
@@ -175,15 +168,48 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    UALOG(@"Base location mananger did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
+    // Catch kCLErrorDenied for iOS < 4.2. Also, catch the errors that would stop the service, vs. other
+    // errors which would just indicate that the service is in a transient error state that might clear
+    // up given time. 
+    switch (error.code) {
+        case kCLErrorDenied:
+            [self stopReportingLocation];
+            break;
+        case kCLErrorNetwork:
+            [self stopReportingLocation];
+            break;
+        default:
+            break;
+    }
+    UALOG(@"UA Location Manager %@ did fail with error %@", [self class], error);
+    if ([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
+        [delegate_ locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
-    
-    @end
+
+#pragma mark -
+#pragma mark Location Accuracy calculations
+
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
+    // Throw out old values
+    NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
+    if (old > maximumElapsedTimeForCachedLocation_) return NO;
+    // accuracy values less than zero represent invalid lat/long values
+    // If altitude becomes important in the future, add the check here for verticalAccuracy
+    if (newLocation.horizontalAccuracy < 0) {
+        UALOG(@"Location %@ did not met accuracy requirements", newLocation);
+        return NO;
+    }
+    UALOG(@"Location %@ met accuracy requirements", newLocation);
+    return YES;
+}
+
+@end

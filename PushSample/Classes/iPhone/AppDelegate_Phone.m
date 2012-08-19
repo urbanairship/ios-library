@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,8 +24,10 @@
  */
 
 #import "AppDelegate_Phone.h"
+
 #import "UAirship.h"
 #import "UAPush.h"
+#import "UAAnalytics.h"
 
 @implementation AppDelegate_Phone
 
@@ -58,13 +60,12 @@
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
-    
     return YES;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     UALOG(@"Application did become active.");
-    [[UAPush shared] resetBadge]; //zero badge when resuming from background (iOS 4+)
+    [[UAPush shared] resetBadge]; //zero badge when resuming from background
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -142,14 +143,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"Received remote notification: %@", userInfo);
-    
-    // Get application state for iOS4.x+ devices, otherwise assume active
-    UIApplicationState appState = UIApplicationStateActive;
-    if ([application respondsToSelector:@selector(applicationState)]) {
-        appState = application.applicationState;
-    }
-
-    [[UAPush shared] handleNotification:userInfo applicationState:appState];
+    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
     [[UAPush shared] resetBadge]; // zero badge after push received
 }
 

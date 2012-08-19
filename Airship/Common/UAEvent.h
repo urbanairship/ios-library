@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -79,11 +79,6 @@
 
 @interface UAEventPushReceived : UAEvent
 @end
-/**
- * This event is recored when one of the UALocationServices objects
- * acquires a new location
- */
-
 
 /**
  * This event is recorded when the app becomes active: on foreground

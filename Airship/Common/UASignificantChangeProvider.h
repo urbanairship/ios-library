@@ -45,15 +45,6 @@
 /// Stops the significant change location service
 - (void)stopReportingLocation;
 
-/** The significant change location service does not get multiple calls, therefore any valid location is returned.
- 
-    @param newLocation The new location received.
-    @param oldLocation The location to compare to.
-    @return YES if location is valid
-    @return NO if location reports invalid (horizontal or vertical accuracy less than zero)
- */
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation;
-
 /** Returns a UASignificantChange provider with the given delegate 
     @param delegateOrNil A UALocationProviderDelegate or nil
     @return Provider with the parameter as the assiged delegate

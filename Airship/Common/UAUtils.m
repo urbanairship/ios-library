@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -157,12 +157,17 @@
     
     UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
     [request setRequestMethod:method];
+    
     request.username = [UAirship shared].appId;
     request.password = [UAirship shared].appSecret;
+    request.shouldPresentCredentialsBeforeChallenge = YES;
+    [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+    
     request.delegate = delegate;
-    request.timeOutSeconds = 60;
     [request setDidFinishSelector:finishSelector];
     [request setDidFailSelector:failSelector];
+    
+    request.timeOutSeconds = 60;
     
     return request;
 }
@@ -182,12 +187,17 @@
     
     UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
     [request setRequestMethod:method];
+    
     request.username = [UAUser defaultUser].username;
     request.password = [UAUser defaultUser].password;
+    request.shouldPresentCredentialsBeforeChallenge = YES;
+    [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
+    
     request.delegate = delegate;
-    request.timeOutSeconds = 60;
     [request setDidFinishSelector:finishSelector];
     [request setDidFailSelector:failSelector];
+    
+    request.timeOutSeconds = 60;
     
     return request;
 }

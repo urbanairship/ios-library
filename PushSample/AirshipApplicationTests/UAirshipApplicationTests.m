@@ -9,15 +9,15 @@
 #import "UAirship.h"
 #import "UALocationService.h"
 
-@interface UAirshipTests : SenTestCase
+@interface UAirshipApplicationTests : SenTestCase
 @end
 
-@implementation UAirshipTests
+@implementation UAirshipApplicationTests
 
 // Testing because of lazy instantiation
 - (void)testLocationGetSet {
     UAirship *airship = [UAirship shared];
-    UALocationService *location = [airship.locationService retain];
+    UALocationService *location = airship.locationService ;
     STAssertTrue([location isKindOfClass:[UALocationService class]],nil);
 }
 @end

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -44,9 +44,6 @@
     [[NSFileManager defaultManager] removeItemAtPath:testCachePath error:&fileError];
     if (fileError) {
         STAssertTrue(fileError.code == 4, @"File error occured in setup");
-    }
-    else {
-        NSLog(@"FILE ERROR IN UA_CONTENT_URLCACHE_TESTS SETUP");
     }
     cache = [[UAContentURLCache alloc] initWithExpirationInterval:1800 withPath:testCachePath];
 }
@@ -127,8 +124,9 @@
     STAssertTrue(contentWasSaved, @"Content should exist in dictionary");
     NSTimeInterval timestamp = [[timestampDictionary valueForKey:cacheKey] doubleValue];
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-    // Check for within a tenth of a second difference
-    STAssertEqualsWithAccuracy(timestamp, now, 0.1, nil);
+    // Check for within a .5 of a second difference, strech this out as tests take longer
+    // to run
+    STAssertEqualsWithAccuracy(timestamp, now, 0.5, nil);
 }
 
 //2012-03-28 14:30:26.523 otest[14390:7b03] onDisk {

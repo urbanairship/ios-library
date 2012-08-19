@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
 
 @class UAEvent;
 
-// Used for init local size if server didn't response, or server sends bad data
+// Used for init local size if server didn't respond, or server sends bad data
 
 //total size in kilobytes that the event queue is allowed to grow to.
 #define X_UA_MAX_TOTAL 5*1024*1024	// local max of 5MB
@@ -38,8 +38,17 @@
 // maximum amount of time in seconds that events should queue for
 #define X_UA_MAX_WAIT 7*24*3600		// local max of 7 days
 
-// minimum amount of time in seconds that should elapse between event-server posts
+// The actual amount of time in seconds that elapse between event-server posts
+// TODO: Get with the analytics team and rename this header field
 #define X_UA_MIN_BATCH_INTERVAL 60	// local min of 60s
+
+// minimum amount of time between background location events
+#define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900 // 900 seconds = 15 minutes
+
+// Offset time for use when the app init. This is the time between object
+// creation and first upload. Subsequent uploads are defined by 
+// X_UA_MIN_BATCH_INTERVAL
+#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
@@ -49,56 +58,32 @@ typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
 extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
-@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> {
-  @private
-    NSString *server;
-    NSMutableDictionary *session;
+@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> 
 
-    NSDictionary *notificationUserInfo;
-
-    BOOL wasBackgrounded;
-    UAHTTPConnection *connection;
-
-    int x_ua_max_total;
-    int x_ua_max_batch;
-    int x_ua_max_wait;
-    int x_ua_min_batch_interval;
-	
-	int sendInterval;
-
-    int databaseSize;
-    NSTimeInterval oldestEventTime;
-    
-    NSDate *lastSendTime;
-    NSDate *lastLocationSendTime;
-    
-    NSTimer *reSendTimer;
-    
-    BOOL analyticsLoggingEnabled;
-    
-    NSString *packageVersion;
-}
-
-@property (retain) NSString *server;
-@property (retain, readonly) NSMutableDictionary *session;
-@property (assign, readonly) int databaseSize;
-@property (assign, readonly) int x_ua_max_total;
-@property (assign, readonly) int x_ua_max_batch;
-@property (assign, readonly) int x_ua_max_wait;
-@property (assign, readonly) int x_ua_min_batch_interval;
-@property (assign, nonatomic) int sendInterval;
-@property (assign, readonly) NSTimeInterval oldestEventTime;
-@property (retain, readonly) NSDate *lastSendTime;
+@property (nonatomic, copy, readonly) NSString *server;
+@property (nonatomic, retain, readonly) NSMutableDictionary *session;
+@property (nonatomic, assign, readonly) int databaseSize;
+@property (nonatomic, assign, readonly) int x_ua_max_total;
+@property (nonatomic, assign, readonly) int x_ua_max_batch;
+@property (nonatomic, assign, readonly) int x_ua_max_wait;
+@property (nonatomic, assign, readonly) int x_ua_min_batch_interval;
+@property (nonatomic, assign, readonly) int sendInterval;
+@property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
+@property (nonatomic, retain, readonly) NSTimer *sendTimer;
+@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
+@property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
 - (id)initWithOptions:(NSDictionary *)options;
-- (void)restoreFromDefault;
-- (void)saveDefault;
-
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
 
-- (void)resetEventsDatabaseStatus;
-- (void)sendIfNeeded;
+/** This class contains an NSTimer. This timer must be invalidated before
+ this class is released, or there will be a memory leak. Call invalidate
+ before deallocating this class */
+- (void)invalidate;
+
+/** Date representing the last attempt to send analytics */
+- (NSDate*)lastSendTime;
 
 @end

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+# Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -53,6 +53,10 @@ cd "${destPath}"
 
 find Library \! -name "*.h" -type f -delete
 find Common \! -name "*.h" -type f -delete
+
+#delete internal test headers
+rm -rf `find . -name "*+Internal.h" `
+
 find External \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
 find External -type d -empty -delete
 rm -rf External/GHUnitIOS.framework
@@ -68,5 +72,11 @@ rm -rf Test
 rm AppledocSettings.plist
 
 find . -name "*.orig" -delete
+
+#copy LICENSE, README and CHANGELOG
+cp "${srcPath}/../CHANGELOG" "${destPath}"
+cp "${srcPath}/../README.rst" "${destPath}"
+cp "${srcPath}/../LICENSE" "${destPath}"
+
 
 fi

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -30,6 +30,10 @@
 @required
 /// Required location manager for any location services
 @property (nonatomic, retain) CLLocationManager *locationManager;
+/// Distance Filter
+@property (nonatomic, assign) CLLocationDistance distanceFilter;
+/// Desired Accuracy
+@property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
 /// Current status of the location provider
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;
 /// This is a required parameter on the CLLocationManager and is presented to the user for authentication

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -291,7 +291,7 @@
         default:
         {
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-            [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+            [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
             [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
             
             NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain
@@ -309,7 +309,7 @@
     UALOG(@"Purchase info request failed.");
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
     [userInfo setObject:UASubscriptionPurchaseInventoryFailure forKey:NSLocalizedDescriptionKey];
     
     NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain

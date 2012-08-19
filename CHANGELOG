@@ -1,3 +1,50 @@
+
+-------------------------
+1.3.2 Aug 15, 2012
+-------------------------
+- updated sample projects and UI to reflect new registration workflow
+- quiet time fixes in sample app
+- fixed alias migration bug
+- pushEnabled property implicitly registers and unregisters device tokens
+- deprecated unRegisterDeviceToken
+- fixed unit tests
+
+-------------------------
+1.3.1 Aug 7, 2012
+-------------------------
+- fixed issue with unregistration that prevented
+  subsequent registration
+
+--------------------------
+1.3.0 - Aug 7, 2012
+--------------------------
+- Deprecated registration related methods in UAirship and moved them to UAPush
+- changed behavior for alias,tags, and quiet time, property setters no longer
+  automatically trigger a registration API call, refer to UAPush.h for details
+- device metadata (tags,alias,quiet time) is now persisted before a successful
+  registration update
+- added auto retry for certain server responses in UAPush during registration
+--------------------------
+1.2.2 - June 18, 2012
+--------------------------
+- Fixed problem reporting hard push conversions in some situations
+- Updated UALocationService to shut down single location tasks in a timely
+  manner when unrecoverable CLLocationManager errors occured
+- Modfied UALocationService single location settings to prevent high accuracy
+  location calls from constantly timing out in poor GPS conditions
+- Changed UALocationService delgate callbacks when the location service cannot
+  retrieve a location that meets accuracy requirements
+
+	
+--------------------------
+1.2.1 - April 26, 2012
+--------------------------
+- Dropped support for iOS versions prior to 4.0
+- Location service improvements
+- Fixed crash when reporting location to UALocationService from background thread
+- Modified UALocationServiceNSDefaultsKey values to contain the "UALocationService" prefix
+- CoreTelephony is now required
+
 --------------------------
 1.2.0 - April 3, 2012
 --------------------------

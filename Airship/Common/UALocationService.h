@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
  
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
  
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -28,10 +28,16 @@
 #import "UALocationProviderDelegate.h"
 #import "UALocationEvent.h"
 
+
 @class UALocationService;
 /** The UALocationServiceDelegate receives 
  location updates from any of the UALocationServices
  */
+
+/** The best location received by the loction service if the desiredAccuracy
+ is not available */
+extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
+
 @protocol UALocationServiceDelegate <NSObject>
 
 ///---------------------------------------------------------------------------------------
@@ -40,6 +46,15 @@
 
 @optional
 /** Updates the delegate when the location service generates an error
+ 
+ @warning *Note:* Two error conditions will stop the location service before
+ this method is called on the delegate. kCLErrorDenied && kCLErrorNetwork. All other
+ CoreLocation errors are passed directly to the delegate without any side effects. For the case
+ when the location service times out, an NSError* UALocationServiceError will be returned with
+ the best available location in the userInfo dictionary with UALocationServiceBestAvailableSingleLocationKey
+ as the key if a location was returned. In the case of a timeout, the locationService:didUpdateToLocation:fromLocation will also
+ be called with the best available location if it is available. There is no guarantee as to the accuracy of this location.
+ 
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
  */
@@ -52,14 +67,16 @@
  */
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
-/** Delegate callbacks for updated locations only occur while the app is in the foreground. If you need background location updates
- create a separate CLLocationManager
+/** Updates the delegate when a new location is received
  @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
  necessary to update UrbanAirship. Extensive work done by the method while backgrounded could result in location data not being
- recorded or sent
+ recorded or sent. In the case of a timeout error, this delegate is called with the best location acquired by the location 
+ service. The locationService:didFailWithError will also be called in this case, with the best available location in the
+ userInfo dictionary if available.
+ 
  @param service The service reporting the location update
  @param newLocation The updated location reported by the service
- @param oldLocation The previously reported location
+ @param oldLocation The previously reported location. This value may be nil, if there is no previous location.
  */
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
@@ -73,6 +90,7 @@
 @interface UALocationService : NSObject <UALocationProviderDelegate> {
     
     NSTimeInterval minimumTimeBetweenForegroundUpdates_;
+    NSTimeInterval timeoutForSingleLocationService_;
     CLLocation *lastReportedLocation_;
     NSDate *dateOfLastLocation_;
     id <UALocationServiceDelegate> delegate_;
@@ -117,7 +135,7 @@
  @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  if the system reports that location services are available and authorized. This setting will not
  override the users choice to disable location services and is safe to enable when user preferences
- have not been establishd. If NO, UA Location Services are disabled. This setting is persited in 
+ have not been established. If NO, UA Location Services are disabled. This setting is persisted in 
  NSUserDefaults
  */
 + (void)setAirshipLocationServiceEnabled:(BOOL)airshipLocationServiceEnabled;
@@ -136,22 +154,22 @@
  services, and is persisted from that point on. Prompting the user is the only way to set this value.
  
  @return YES if the user has authorized location services, or has yet to be asked about location services.
- @return NO if the user has explictly disabled location services
+ @return NO if the user has explicitly disabled location services
  */
 + (BOOL)locationServiceAuthorized;
 
 /** This method checks the underlying Core Location service for to see if a user
- will receive a prompt requesting permissino for Core Location services to run.
+ will receive a prompt requesting permission for Core Location services to run.
  
- @warning On iOS < 4.2 This method's default value is YES until after an intial attempt to start location services 
- has been made by UALocationService. If the user declines location services, that value will be persited, and future attempts
+ @warning On iOS < 4.2 This method's default value is YES until after an initial attempt to start location services 
+ has been made by UALocationService. If the user declines location services, that value will be persisted, and future attempts
  to start location services will require that promptUserForLocationServices be set to YES
  
- @return NO If Core Location services are enabled and the user has explicity authorized location services
+ @return NO If Core Location services are enabled and the user has explicitly authorized location services
  @return YES If ANY of the following are true
-    - Location services are not enabled (The global locaiton service setting in Settings is disabled)
+    - Location services are not enabled (The global location service setting in Settings is disabled)
     - Location services are explicitly not authorized (The per app location service setting in Settings is disabled)
-    - The user has not been asked yet to allow location services. (Location servies are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
+    - The user has not been asked yet to allow location services. (Location services are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
  */
 + (BOOL)coreLocationWillPromptUserForPermissionToRun;
 
@@ -178,8 +196,8 @@
  */
 - (CLLocation*)location;
 
-/// Last location reported to Urban Airship 
-@property (nonatomic, retain,readonly) CLLocation *lastReportedLocation;
+/// Last location reported to Urban Airship
+@property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
 
 /// Date of last location event reported 
 @property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
@@ -191,8 +209,10 @@
 /// @name Automatic Location Services 
 ///---------------------------------------------------------------------------------------
 
-/// Starts the GPS (Standard Location) and acquires a single location on every launch
-@property (nonatomic, assign) BOOL automaticLocationOnForegroundEnabled;
+/** Starts the GPS (Standard Location) and acquires a single location on every launch.
+ Setting this property to YES has the side effect of calling reportCurrentLocation.
+ */
+@property (nonatomic, assign, setter=setAutomaticLocationOnForegroundEnabled:) BOOL automaticLocationOnForegroundEnabled;
 
 /// Allows location services to continue in the background 
 @property (nonatomic, assign) BOOL backgroundLocationServiceEnabled;
@@ -223,11 +243,16 @@
  when prompted to allow location services to begin. The default value
  is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
  all new location services.
+ @returns An NSString with the current purpose
  */
 - (NSString*)purpose;
 
-/** The current purpose 
- @returns An NSString with the current purpose*/
+/** Purpose for location services shown to user
+ when prompted to allow location services to begin. The default value
+ is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
+ all new location services.
+ @param purpose The new purpose of the service
+ */
 - (void)setPurpose:(NSString*)purpose;
 
 ///---------------------------------------------------------------------------------------
@@ -252,7 +277,11 @@
  This will prompt the user for permission if location services have not been started previously,
  or if the user has purposely disabled location services. Given that location services were probably 
  disabled for a reason, this prompt might not be welcomed. 
- */
+ 
+ @warning *Important:* If the kCLErrorDenied or kCLErrorNetwork errors are returned from the Core Location
+ service, this service will be automatically shut down before the locationService:didFailWithError: delegate call
+ to conserve battery. Be aware of this, and take appropriate action to restart the service if necessary. 
+ **/
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services
@@ -273,6 +302,10 @@
  This will prompt the user for permission if location services have not been started previously,
  or if the user has purposely disabled location services. Given that location services were probably 
  disabled for a reason, this prompt might not be welcomed.
+ 
+ @warning *Important:* If the kCLErrorDenied or kCLErrorNetwork errors are returned from the Core Location
+ service, this service will be automatically shut down before the locationService:didFailWithError: delegate call
+ to conserve battery. Be aware of this, and take appropriate action to restart the service if necessary. 
  **/
 - (void)startReportingSignificantLocationChanges;
 
@@ -283,14 +316,48 @@
 /// @name Analytics
 ///---------------------------------------------------------------------------------------
 
-/** Creates a UALocationEvent and enques it with the Analytics service
+/** Creates a UALocationEvent and enqueues it with the Analytics service
  @param location The location to be sent to the Urban Airship analytics service
  @param provider The provider that generated the location. Data is pulled from the provider for analytics
+ @warning This must be called on the main thread. Not doing so will result in a crash
 */ 
  - (void)reportLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
-/** Starts the standard location service long enough to obtain a location an then uploads
- it to Urban Airship.
+///---------------------------------------------------------------------------------------
+/// @name Single Location Service
+///---------------------------------------------------------------------------------------
+
+/** Time interval representing the amount of time that the single location service will
+ run while waiting for a location value that meets the desired accuracy
+ @return NSTimeInterval representing the current timeout value
+ */
+- (NSTimeInterval)timeoutForSingleLocationService;
+
+/** Time interval representing the length of time the single location service will
+ attempt to acquire a location that meets accuracy requirements. At the end of the time
+ interval, the most accurate location received will be sent. If no location has
+ been received, the service is shut down.
+ @param timeoutForSingleLocationService NSTimeInterval for the new timeout value
+ */
+- (void)setTimeoutForSingleLocationService:(NSTimeInterval)timeoutForSingleLocationService;
+
+/** Desired accuracy for single location service. Used by the reportCurrentLocation: method
+ and the automatic foreground location */
+- (CLLocationAccuracy)singleLocationDesiredAccuracy;
+
+/** Sets the desiredAccuracy for the single location service. Used by the reportCurrentLocation: method
+ and the automatic foreground location 
+ @param desiredAccuracy CLLocationAccuracy The new desiredAccuracy
+ @warning *Important* Setting this value to high (such as kCLLocationAccuracyBest) will result in timeouts
+ on every location service call in areas with poor GPS. This will result in degraded device battery life.
+ */
+- (void)setSingleLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
+
+/** Starts the single location service (standard location) long enough to obtain a location an then uploads
+ it to Urban Airship. This method will send the first location that meets the accuracy set in 
+ the singleLocationDesiredAccuracy property. If a location is not found before the timeout, the most
+ accurate location returned by CoreLocation is returned. If no location is found, the service is
+ simply terminated. 
 */
 - (void)reportCurrentLocation;
 
@@ -298,16 +365,16 @@
  the CLLocationManager. The UALocationEventUpdateType is helpful in providing the end developer with information
  regarding the use of location in app. The possible values are:
  
- - UALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
- - UALocationEventUpdateTypeContinuous This is meant for the standard location service.
- - UALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
+ - UAUALocationEventUpdateTypeChange This is one of the periodic services, intended for the significant change or region monitoring service
+ - UAUALocationEventUpdateTypeContinuous This is meant for the standard location service.
+ - UAUALocationEventUpdateTypeSingle This is meant for a one time service, like the reportCurrentLocation method on this class
  @param location A CLLocation 
  @param locationManager The location manager that provided the location
  @param updateTypeOrNil The update type as described above or nil. 
+ @warning This must be called from the main thread. Not doing so will result in a crash. 
  */
 - (void)reportLocation:(CLLocation*)location 
  fromLocationManager:(CLLocationManager*)locationManager 
       withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil;
-
 
 @end

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -37,7 +37,7 @@
 /** Deconstructs a compound key for the product
  @param compoundKey NSString in the form versionNumber<delimiter>productURL
  @return NSDictionary with the values for the version number and the productURL
- @return nil If the product is not found, or the key is not parsible
+ @return nil If the product is not found, or the key cannot be parsed
  */
 - (NSDictionary*)productURLAndVersionFromCompoundKey:(NSString*)compoundKey;
 

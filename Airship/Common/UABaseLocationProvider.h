@@ -27,6 +27,7 @@
 #import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
+extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
 /**
  This is the base class for location providers. You should not
  implement this class directly. See the documentation for CLLocationManager for
@@ -35,6 +36,7 @@
 
 @interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol> {
     CLLocationManager *locationManager_;
+    NSTimeInterval maximumElapsedTimeForCachedLocation_;
     id <UALocationProviderDelegate> delegate_;
     UALocationProviderStatus serviceStatus_;
     UALocationServiceProviderType *provider_;
@@ -45,6 +47,7 @@
 ///---------------------------------------------------------------------------------------
 
 -(NSString*)description;
+
 ///---------------------------------------------------------------------------------------
 /// @name CLLocationManager related methods
 ///---------------------------------------------------------------------------------------
@@ -56,11 +59,16 @@
  */
 @property (nonatomic, retain) CLLocationManager *locationManager;
 
+/** In certain cases, cached values are immediately returned when starting a location service.
+ Any location with a time interval older than this value will be considered invalid. 
+*/
+@property (nonatomic, assign) NSTimeInterval maximumElapsedTimeForCachedLocation;
+
 /// The distance filter one the locationManager
 - (CLLocationDistance)distanceFilter;
 
 /** Changes the distanceFilter on the locationManager
- @param The new distance filter
+ @param distanceFilter The new distance filter
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
@@ -80,14 +88,14 @@
 
 /**
  Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- when the UIAlertView is displayed asking the user for locaiton permission.
+ when the UIAlertView is displayed asking the user for location permission.
  @warning This value cannot be nil.
  @param newPurpose String to be set on the locationManager
  */
 - (void)setPurpose:(NSString*)newPurpose;
 
-/** The most recently received location available from the CLLocationManager objec. This may be more accurate than
- the last reported location, and it may also be nil. See CLLocationManager documetation for more details. 
+/** The most recently received location available from the CLLocationManager object. This may be more accurate than
+ the last reported location, and it may also be nil. See CLLocationManager documentation for more details. 
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */

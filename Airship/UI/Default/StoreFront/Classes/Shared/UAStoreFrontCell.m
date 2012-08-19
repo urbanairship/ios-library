@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -38,6 +38,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
 @synthesize activityView;
 @synthesize product;
 @synthesize cellView;
+
 
 
 - (void)dealloc {
@@ -92,14 +93,6 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
     cellView.product = nil;
     product = nil;
 }
-
-- (void)prepareForReuse { 
-    product = nil; 
-    cellView.product = nil;
-    
-    [super prepareForReuse]; 
-}
-
 
 - (void)setFrame:(CGRect)frame {
     if (self.frame.size.width != frame.size.width) {

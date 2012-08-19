@@ -67,14 +67,10 @@
     [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    UALOG(@"Significant change did fail with error %@", error.description);
-    [delegate_ locationProvider:self withLocationManager:manager didFailWithError:error];
-}
-
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Significant change did update to location %@ from location %@", newLocation, oldLocation);
-    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation]) {
+    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
         [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
@@ -82,11 +78,6 @@
 #pragma mark -
 #pragma mark Location Accuracy
 
-// Take any location when recieving a significant change
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
-    // return any valid location since we will not get multiple calls
-    return [super locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation];
-}
 
 - (void)startReportingLocation {
     UALOG(@"Start significant change service");

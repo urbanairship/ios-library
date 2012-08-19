@@ -11,6 +11,7 @@
 		1890B81812519CBC00E6EBF1 /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890B6FE12519CBC00E6EBF1 /* UAPush.m */; };
 		AA747D9F0F9514B9006C5449 /* PushLib_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		BBC0AFEC1577D38F00B3B385 /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBC0AFEB1577D38F00B3B385 /* UAPush+Internal.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -18,7 +19,9 @@
 		1890B6FE12519CBC00E6EBF1 /* UAPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPush.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libPush-1.2.6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPush-1.2.6.a"; path = "libPush-1.2.9.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB38DEB3157D3779003D0D4A /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Gcov_Fix.c; path = ../AirshipLib/AirshipLogicTests/Gcov_Fix.c; sourceTree = "<group>"; };
+		BBC0AFEB1577D38F00B3B385 /* UAPush+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPush+Internal.h"; sourceTree = "<group>"; };
+		D2AAC07E0554694100DB518D /* libPush-1.3.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPush-1.3.1.a"; path = "libPush-1.3.2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,7 +39,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libPush-1.2.6.a */,
+				D2AAC07E0554694100DB518D /* libPush-1.3.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -80,6 +83,7 @@
 		1890B6FC12519CBC00E6EBF1 /* PushLib */ = {
 			isa = PBXGroup;
 			children = (
+				BBC0AFEB1577D38F00B3B385 /* UAPush+Internal.h */,
 				1890B6FD12519CBC00E6EBF1 /* UAPush.h */,
 				1890B6FE12519CBC00E6EBF1 /* UAPush.m */,
 			);
@@ -89,6 +93,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				BB38DEB3157D3779003D0D4A /* Gcov_Fix.c */,
 				AA747D9E0F9514B9006C5449 /* PushLib_Prefix.pch */,
 			);
 			name = "Other Sources";
@@ -103,6 +108,7 @@
 			files = (
 				AA747D9F0F9514B9006C5449 /* PushLib_Prefix.pch in Headers */,
 				1890B81712519CBC00E6EBF1 /* UAPush.h in Headers */,
+				BBC0AFEC1577D38F00B3B385 /* UAPush+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +129,7 @@
 			);
 			name = PushLib;
 			productName = PushLib;
-			productReference = D2AAC07E0554694100DB518D /* libPush-1.2.6.a */;
+			productReference = D2AAC07E0554694100DB518D /* libPush-1.3.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -132,7 +138,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "PushLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -174,11 +180,12 @@
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/PushLib.dst;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushLib_Prefix.pch;
-				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_CFLAGS = (
 					"-DUADEBUG",
@@ -196,10 +203,11 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/PushLib.dst;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushLib_Prefix.pch;
-				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Push-$(CURRENT_PROJECT_VERSION)";
@@ -214,15 +222,16 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 1.3.0;
+				CURRENT_PROJECT_VERSION = 1.3.5;
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = (
 					"-DDEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
@@ -241,14 +250,15 @@
 					armv7,
 					armv6,
 				);
-				CURRENT_PROJECT_VERSION = 1.3.0;
+				CURRENT_PROJECT_VERSION = 1.3.5;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_THUMB_SUPPORT = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"";
 				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;

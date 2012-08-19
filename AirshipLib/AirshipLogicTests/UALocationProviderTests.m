@@ -79,6 +79,8 @@
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:mockLocationService];
     STAssertEquals(base.provider, UALocationServiceProviderUnknown, @"base.provider should be UNKNOWN");
     STAssertEqualObjects(mockLocationService, base.delegate, nil);
+    NSTimeInterval time = 300.0;
+    STAssertEquals(base.maximumElapsedTimeForCachedLocation, time, nil);
 }
 
 - (void)testNilDelegateOnRelease {
@@ -97,6 +99,8 @@
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:nil] autorelease];
     base.serviceStatus = UALocationProviderNotUpdating;
     base.purpose = @"CATS";
+    base.distanceFilter = 21;
+    base.desiredAccuracy = 21;
     NSString *description = base.description;
     // check for Provider Purpose Updating
     STAssertTrue([self regexString:description forRegexPattern:@"Provider"], nil);
@@ -105,6 +109,12 @@
     STAssertTrue([self regexString:description forRegexPattern:@"\\w:0"], nil);
     STAssertTrue([self regexString:description forRegexPattern:@"CATS"], nil);
     STAssertTrue([self regexString:description forRegexPattern:@"UNKNOWN"], nil);
+    STAssertTrue([self regexString:description forRegexPattern:@"desiredAccuracy"], nil);
+    STAssertTrue([self regexString:description forRegexPattern:@"distanceFilter"], nil);
+    NSString *distanceFilterRegex = [NSString stringWithFormat:@"%f", base.distanceFilter];
+    NSString *desiredAccueracyRegex = [NSString stringWithFormat:@"%f", base.desiredAccuracy];
+    STAssertTrue([self regexString:description forRegexPattern:distanceFilterRegex], nil);
+    STAssertTrue([self regexString:description forRegexPattern:desiredAccueracyRegex    ], nil);
 }
 
 - (void)testRegexSupport {
@@ -112,12 +122,13 @@
     STAssertFalse([self regexString:@"CATS" forRegexPattern:@"BORK"] ,nil);
 }
 
+// Returns yes if one or more matches exist in the string
 - (BOOL)regexString:(NSString*)target forRegexPattern:(NSString*)regexPattern {
     NSError *regexError = nil;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:NSRegularExpressionCaseInsensitive error:&regexError];
     STAssertNil(regexError,nil);
     NSUInteger match = [regex numberOfMatchesInString:target options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, target.length)];
-    return match == 1 ? YES:NO;
+    return match >= 1 ? YES:NO;
 }
 
 - (void)testStandardInitWithDelegate {
@@ -160,22 +171,6 @@
 #pragma mark -
 #pragma mark Location Provider Accuracy calculations
 
-- (void)testCLLocationWithLessThanZeroAccuracyFail {
-    id mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
-    CLLocationAccuracy accuracy = -5.0;
-    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
-    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
-    UAStandardLocationProvider *stand = [[[UAStandardLocationProvider alloc] init] autorelease];
-    UASignificantChangeProvider *sig = [[[UASignificantChangeProvider alloc] init] autorelease];
-    STAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
-    STAssertFalse([stand locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
-    STAssertFalse([sig locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail"); 
-    accuracy = 5;
-    STAssertTrue([base locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-    STAssertTrue([stand locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-    STAssertTrue([sig locationChangeMeetsAccuracyRequirements:testLocationPDX_ from:testLocationSFO_], nil);
-}
-
 - (void)testCachedLocation {
     id mockLocation = [OCMockObject niceMockForClass:[CLLocationManager class]];
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
@@ -183,6 +178,31 @@
     [[mockLocation expect] location];
     [base location];
     [mockLocation verify];
+}
+
+- (void)testBaseProviderAccuracyFailsOnInvalidLocation {
+    id mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
+    CLLocationAccuracy accuracy = -5.0;
+    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
+    STAssertFalse([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], @"Accuracy less than zero should fail");
+    accuracy = 5.0;
+    mockLocation = [OCMockObject niceMockForClass:[CLLocation class]];
+    [[[mockLocation stub] andReturnValue:OCMOCK_VALUE(accuracy)] horizontalAccuracy];
+    STAssertTrue([base locationChangeMeetsAccuracyRequirements:mockLocation from:testLocationSFO_], nil);
+}
+
+- (void)testBaseProviderAccuracyTimestampCalculation {
+    NSDate *date = [NSDate date];
+    id location = [OCMockObject niceMockForClass:[CLLocation class]];
+    [(CLLocation*)[[location stub] andReturn:date] timestamp];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
+    STAssertTrue([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
+    base.maximumElapsedTimeForCachedLocation = 20.0;
+    date = [NSDate dateWithTimeIntervalSinceNow:-50];
+    location = [OCMockObject niceMockForClass:[CLLocation class]];
+    [(CLLocation*)[[location stub] andReturn:date] timestamp];
+    STAssertFalse([base locationChangeMeetsAccuracyRequirements:location from:testLocationSFO_], nil);
 }
 
 #pragma mark -
@@ -285,7 +305,7 @@
 #pragma mark -
 #pragma mark CLLocationManager didFailWithError
 
-- (void)testDidFailWithErrorBase {
+- (void)testDidFailWithErrorNonShutdown {
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
     id mockBase = [OCMockObject partialMockForObject:base];
     NSError* test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
@@ -296,6 +316,21 @@
     [mockBase verify];
 }
 
+// Test the two cases where UABaseLocationProvider needs to shutdown
+- (void)testDidFailWithErrorShutdown {
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
+    id mockBase = [OCMockObject partialMockForObject:base];
+    [[mockBase expect] stopReportingLocation];
+    NSError *error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorNetwork userInfo:nil];
+    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:error];
+    [mockBase verify];
+    error = [NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil];
+    [[mockBase expect] stopReportingLocation];
+    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:error];
+    [mockBase verify];
+    
+}
+
 - (void)testDidFailWithErrorStandard {
     UABaseLocationProvider *standard = [[[UAStandardLocationProvider alloc] initWithDelegate:mockUALocationService_] autorelease];
     id mockStandard = [OCMockObject partialMockForObject:standard];
@@ -304,7 +339,7 @@
     [[(OCMockObject*) mockUALocationService_ expect] locationProvider:standard withLocationManager:standard.locationManager didFailWithError:test];
     [standard.locationManager.delegate locationManager:standard.locationManager didFailWithError:test];
     [(OCMockObject*)mockUALocationService_ verify];
-    [mockStandard verify];
+    [mockStandard verify];    
 }
 
 - (void)testDidFailWithErrorSignificant {
@@ -345,7 +380,6 @@
     STAssertEquals(significantChange.serviceStatus, UALocationProviderUpdating, nil);
     [significantChange stopReportingLocation];
     STAssertEquals(significantChange.serviceStatus, UALocationProviderNotUpdating, nil);
-
     [mockLocationManager verify];
 }
 

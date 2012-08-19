@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -101,7 +101,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
         }
     } else {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
         [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
         
         NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];
@@ -112,7 +112,7 @@ static int compareProduct(id productID, id otherProductID, void *context);
 - (void)inventoryRequestFailed:(UA_ASIHTTPRequest *)request {
     UALOG(@"Product inventory request failed.");
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
     [userInfo setObject:UASubscriptionProductInventoryFailure forKey:NSLocalizedDescriptionKey];
     
     NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];

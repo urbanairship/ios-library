@@ -25,6 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <CoreLocation/CoreLocation.h>
 #import "UAirship.h"
+#import "UAirship+Internal.h"
 
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
@@ -37,9 +38,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UALocationCommonValues.h"
 #import "UALocationService.h"
 #import "UAGlobal.h"
-
-#define kLastDeviceTokenKey @"UADeviceTokenChanged" 
-#define kUALocationServiceDefaultPurpose @"Push to Location"
+#import "UAPush.h"
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
@@ -51,16 +50,6 @@ NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOpt
 
 static UAirship *_sharedAirship;
 BOOL logging = false;
-
-@interface UAirship() {
-    UALocationService* locationService_;
-}
-// Update device token without remote registration
-// Private
-- (void)updateDeviceToken:(NSData *)token;
-- (void)configureUserAgent;
-
-@end
 
 @implementation UAirship
 
@@ -82,13 +71,10 @@ BOOL logging = false;
 #pragma mark Location Get/Set Methods
 
 - (UALocationService*)locationService {
-    IF_IOS4_OR_GREATER(
-       if (!locationService_) {
-           locationService_ = [[UALocationService alloc] init];
-       }
-       return locationService_;
-    )
-    return nil;
+   if (!locationService_) {
+       locationService_ = [[UALocationService alloc] init];
+   }
+   return locationService_;
 }
 
 #pragma mark -
@@ -97,7 +83,9 @@ BOOL logging = false;
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
-    RELEASE_SAFELY(deviceToken);
+    // Analytics contains an NSTimer, and the invalidate method is required
+    // before dealloc
+    [analytics invalidate];
     RELEASE_SAFELY(analytics);
     RELEASE_SAFELY(locationService_);
     [super dealloc];
@@ -107,8 +95,6 @@ BOOL logging = false;
     if (self = [super init]) {
         self.appId = appkey;
         self.appSecret = secret;
-        deviceTokenHasChanged = NO;
-        deviceToken = nil;
     }
     return self;
 }
@@ -118,7 +104,6 @@ BOOL logging = false;
     if (_sharedAirship) {
         return;
     }
-    [UAirship registerNSUserDefaults];
     //Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
@@ -316,160 +301,14 @@ BOOL logging = false;
 }
 
 #pragma mark -
-#pragma mark NSUserDefaults Setup
-
-+ (void)registerNSUserDefaults {
-    // UALocationService defaults
-    NSMutableDictionary *defaultLocationPreferences = [NSMutableDictionary dictionaryWithCapacity:3];
-    [defaultLocationPreferences setValue:[NSNumber numberWithBool:NO] forKey:UALocationServiceEnabledKey];
-    [defaultLocationPreferences setValue:kUALocationServiceDefaultPurpose forKey:UALocationServicePurposeKey];
-    //kCLLocationAccuracyThreeKilometers works, since it is also a double, this may change in future
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDistanceFilterKey];
-    [defaultLocationPreferences setValue:[NSNumber numberWithDouble:kCLLocationAccuracyThreeKilometers] forKey:UAStandardLocationDesiredAccuracyKey];
-    NSDictionary* locationPreferences = [NSDictionary dictionaryWithObject:defaultLocationPreferences forKey:UALocationServicePreferences];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:locationPreferences];
-}
-
-#pragma mark -
 #pragma mark DeviceToken get/set/utils
 
 - (NSString*)deviceToken {
-    return deviceToken;
+    return [[UAPush shared] deviceToken];
 }
 
-- (NSString*)parseDeviceToken:(NSString*)tokenStr {
-    return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
-                       stringByReplacingOccurrencesOfString:@">" withString:@""]
-                       stringByReplacingOccurrencesOfString:@" " withString:@""];
-}
-
-- (void)setDeviceToken:(NSString*)tokenStr {
-    [deviceToken release];
-    deviceToken = [[self parseDeviceToken:tokenStr] retain];
-    UALOG(@"Device token: %@", deviceToken);
-
-    // Check to see if the device token has changed
-    NSString* oldValue = [[NSUserDefaults standardUserDefaults] objectForKey:kLastDeviceTokenKey];
-    if(![oldValue isEqualToString: deviceToken]) {
-        deviceTokenHasChanged = YES;
-        [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:kLastDeviceTokenKey];
-    }
-}
-
-- (void)updateDeviceToken:(NSData*)tokenData {
-    self.deviceToken = [self parseDeviceToken:[tokenData description]];
-}
-
-
-#pragma mark -
-#pragma mark UA Registration callbacks
-
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
-    [UAUtils requestWentWrong:request keyword:@"registering device token"];
-    [self notifyObservers:@selector(registerDeviceTokenFailed:)
-               withObject:request];
-}
-
-- (void)registerDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
-    if(request.responseStatusCode != 200 && request.responseStatusCode != 201) {
-        [self registerDeviceTokenFailed:request];
-    } else {
-        UALOG(@"Device token registered on Urban Airship successfully.");
-        [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
-    }
-}
-
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
-    [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
-    [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
-               withObject:request];
-}
-
-- (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 204){
-        [self unRegisterDeviceTokenFailed:request];
-    } else {
-        UALOG(@"Device token unregistered on Urban Airship successfully.");
-        self.deviceToken = nil;
-        [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
-    }
-}
-
-#pragma mark -
-#pragma mark UA Registration request methods
-
-- (void)registerDeviceToken:(NSData *)token {
-	
-    //register on UA server
-    [self registerDeviceToken:token withExtraInfo:nil];
-	
-}
-
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-
-    IF_IOS4_OR_GREATER(
-                       // if the application is backgrounded, do not send a registration
-                       if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-                           UALOG(@"Skipping DT registration. The app is currently backgrounded.");
-                           return;
-                       }
-    )
-    
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
-                           server, @"/api/device_tokens/",
-                           deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                       method:@"PUT"
-                                     delegate:self
-                                       finish:@selector(registerDeviceTokenSucceeded:)
-                                         fail:@selector(registerDeviceTokenFailed:)];
-    if (info != nil) {
-        [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
-        [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
-        [writer release];
-    }
-
-    [request startAsynchronous];
-    
-}
-
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
-    
-    [self updateDeviceToken:token];
-    [self registerDeviceTokenWithExtraInfo:info];
-    
-    // add device_registration event
-    [self.analytics addEvent:[UAEventDeviceRegistration eventWithContext:nil]];
-}
-
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
-    NSMutableDictionary *body = [NSMutableDictionary dictionary];
-    if (alias != nil) {
-        [body setObject:alias forKey:@"alias"];
-    }
-    [self registerDeviceToken:token withExtraInfo:body];
-}
-
-- (void)unRegisterDeviceToken {
-    
-    if (deviceToken == nil) {
-        UALOG(@"Skipping unRegisterDeviceToken: no device token found.");
-        return;
-    }
-    
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
-                           server,
-                           deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
-    UALOG(@"Request to unregister device token.");
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                       method:@"DELETE"
-                                     delegate:self
-                                       finish:@selector(unRegisterDeviceTokenSucceeded:)
-                                         fail:@selector(unRegisterDeviceTokenFailed:)];
-    [request startAsynchronous];
+- (BOOL)deviceTokenHasChanged {
+    return [[UAPush shared] deviceTokenHasChanged];
 }
 
 - (void)configureUserAgent
@@ -499,6 +338,30 @@ BOOL logging = false;
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UA_ASIHTTPRequest setDefaultUserAgentString:userAgent];
+}
+
+#pragma mark -
+#pragma mark UAPush Methods
+
+
+- (void)registerDeviceToken:(NSData *)token {
+    [[UAPush shared] registerDeviceToken:token withExtraInfo:nil];
+}
+
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
+    [[UAPush shared] registerDeviceToken:token withAlias:alias];
+}
+
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
+    [[UAPush shared] registerDeviceToken:token withExtraInfo:info];
+}
+
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
+    [[UAPush shared] registerDeviceTokenWithExtraInfo:info];
+}
+
+- (void)unRegisterDeviceToken {
+    [[UAPush shared] unRegisterDeviceToken];
 }
 
 @end

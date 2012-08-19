@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -362,7 +362,7 @@
     } else {
         [deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
         NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInSetOfIndexPaths:selectedIndexPathsForEditing];
-        markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, ureadCountInSelection];
+        markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)ureadCountInSelection];
         if ([UAInbox shared].messageList.isBatchUpdating) {
             deleteItem.enabled = NO;
             markAsReadButtonItem.enabled = NO;

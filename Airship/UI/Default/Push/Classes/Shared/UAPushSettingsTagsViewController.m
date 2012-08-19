@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -162,8 +162,8 @@ enum {
         // Commit to server
         [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
 
-        // Delete the row from the data source.
-        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
+//        // Delete the row from the data source.
+//        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
         
         // Delete the row from the view
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
@@ -233,8 +233,11 @@ enum {
      }
      
      NSInteger index = [[UAPush shared].tags count];
-     [[UAPush shared].tags insertObject:tag atIndex:index];
-     
+     // TODO: setup new tag update functionality here
+//     [[UAPush shared].tags insertObject:tag atIndex:index];
+     NSMutableArray* tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
+     [tagUpdate addObject:tag];
+     [[UAPush shared] setTags:tagUpdate];
      NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
      

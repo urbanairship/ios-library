@@ -203,8 +203,8 @@ local int unzlocal_getShort (pzlib_filefunc_def,filestream,pX)
     voidpf filestream;
     uLong *pX;
 {
-    uLong x ;
-    int i;
+    uLong x = 0;
+    int i = 0;
     int err;
 
     err = unzlocal_getByte(pzlib_filefunc_def,filestream,&i);
@@ -231,8 +231,8 @@ local int unzlocal_getLong (pzlib_filefunc_def,filestream,pX)
     voidpf filestream;
     uLong *pX;
 {
-    uLong x ;
-    int i;
+    uLong x = 0 ;
+    int i = 0;
     int err;
 
     err = unzlocal_getByte(pzlib_filefunc_def,filestream,&i);
@@ -607,14 +607,10 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
 
 
     /* we check the magic */
-    if (err==UNZ_OK)
-    {
+    if (err==UNZ_OK) {
         if (unzlocal_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
-        {
             err=UNZ_ERRNO;
-        }
-        else if (uMagic!=0x02014b50)
-        {
+        else if (uMagic!=0x02014b50) {
             err=UNZ_BADZIPFILE;
         }
     }
@@ -693,14 +689,11 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
         else
             uSizeRead = extraFieldBufferSize;
 
-        if (lSeek!=0)
-        {
-            if (ZSEEK(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0)
-            {
+        if (lSeek!=0) {
+            if (ZSEEK(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0) {
                 lSeek=0;
             }
-            else
-            {
+            else {
                 err=UNZ_ERRNO;
             }
         }
@@ -724,8 +717,7 @@ local int unzlocal_GetCurrentFileInfoInternal (file,
         else
             uSizeRead = commentBufferSize;
 
-        if (lSeek!=0)
-        {
+        if (lSeek!=0) {
             if (ZSEEK(s->z_filefunc, s->filestream,lSeek,ZLIB_FILEFUNC_SEEK_CUR)==0) {
 //                lSeek=0;
 			} else {
@@ -991,18 +983,14 @@ local int unzlocal_CheckCurrentFileCoherencyHeader (s,piSizeVar,
         return UNZ_ERRNO;
 
 
-    if (err==UNZ_OK)
-    {
-        if (unzlocal_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK)
-        {
+    if (err==UNZ_OK) {
+        if (unzlocal_getLong(&s->z_filefunc, s->filestream,&uMagic) != UNZ_OK) {
             err=UNZ_ERRNO;
         }
-        else if (uMagic!=0x04034b50)
-        {
+        else if (uMagic!=0x04034b50) {
             err=UNZ_BADZIPFILE;
         }
     }
-
     if (unzlocal_getShort(&s->z_filefunc, s->filestream,&uData) != UNZ_OK)
         err=UNZ_ERRNO;
 /*

@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -281,7 +281,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UASubscriptionProduct *product = [[UASubscriptionManager shared].inventory productForKey:productIdentifier];
     
     if ((int)transaction.error.code != SKErrorPaymentCancelled) {
-        UALOG(@"Transaction Failed (%@), product: %@", transaction.error, productIdentifier);
+        UALOG(@"Transaction Failed (%@), product: %@", transaction.error.localizedDescription, productIdentifier);
         if (self.alertDelegate && [self.alertDelegate respondsToSelector:@selector(showAlert:for:)]) {
             [self.alertDelegate showAlert:UASubscriptionAlertFailedTransaction for:nil];
         }

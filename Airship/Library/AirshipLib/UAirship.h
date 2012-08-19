@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -70,34 +70,17 @@ extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
- * Implement this protocol and register with the UAirship shared instance to receive
- * device token registration success and failure callbacks.
- */
-@protocol UARegistrationObserver
-@optional
-- (void)registerDeviceTokenSucceeded;
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
-- (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
-- (void)addTagToDeviceSucceeded;
-- (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request;
-- (void)removeTagFromDeviceSucceeded;
-- (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
-@end
-
-/**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
  * called from [UIApplication application:didFinishLaunchingWithOptions] to initialize the shared
  * instance.
  */
-@interface UAirship : UAObservable {
+@interface UAirship : NSObject {
     
   @private
     NSString *server;
     NSString *appId;
     NSString *appSecret;
 
-    NSString *deviceToken;
     BOOL deviceTokenHasChanged;
     BOOL ready;
     
@@ -106,7 +89,7 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 /**
  * The current APNS/remote notification device token.
  */
-@property (nonatomic, copy) NSString *deviceToken;
+@property (nonatomic, readonly) NSString *deviceToken;
 
 /**
  * The shared analytics manager. There are not currently any user-defined events,
@@ -140,9 +123,10 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 /**
  * This flag is set to YES if the device token has been updated. It is intended for use by
  * UAUser and should not be used by implementing applications. To receive updates when the
- * device token changes, applications should implement a UARegistrationObserver.
+ * device token changes, applications should implement a UARegistrationObserver and observe
+ * UAPush.
  */
-@property (nonatomic, assign) BOOL deviceTokenHasChanged;
+@property (nonatomic, assign) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * This flag is set to YES if the shared instance of
@@ -222,11 +206,12 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * Register a device token with UA. This will register a device token without an alias or tags.
  * If an alias is set on the device token, it will be removed. Tags will not be changed.
  *
- * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  *
  * @param token The device token to register.
+ * @warning Deprecated: Use the method on UAPush instead
  */
-- (void)registerDeviceToken:(NSData *)token;
+- (void)registerDeviceToken:(NSData *)token UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * Register the current device token with UA.
@@ -234,45 +219,44 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * @param info An NSDictionary containing registraton keys and values. See
  * http://urbanairship.com/docs/push.html#registration for details.
  *
- * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+ * @warning Deprecated: Use the method on UAPush instead
  */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * Register a device token and alias with UA.  An alias should only have a small
  * number (< 10) of device tokens associated with it. Use the tags API for arbitrary
  * groupings.
  *
- * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  *
  * @param token The device token to register.
  * @param alias The alias to register for this device token.
+ * @warning Deprecated: Use the method on UAPush instead
  */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias;
+- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * Register a device token with a custom API payload.
  *
- * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
  *
  * @param token The device token to register.
  * @param info An NSDictionary containing registraton keys and values. See
- * http://urbanairship.com/docs/push.html#registration for details.
+ * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
+ * @warning Deprecated: Use the method on UAPush instead
  */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info;
+- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * Remove this device token's registration from the server.
  * This call is equivalent to an API DELETE call, as described here:
  * http://urbanairship.com/docs/push.html#registration
  *
- * Add a UARegistrationObserver to UAirship to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+  * @warning Deprecated: Use the pushEnabled property on UAPush instead
  */
-- (void)unRegisterDeviceToken;
-
-/** 
- * Creates persistent default storage if necessary
- */
-+ (void)registerNSUserDefaults;
+- (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 @end

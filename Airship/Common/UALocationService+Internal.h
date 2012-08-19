@@ -27,6 +27,7 @@
 #import "UALocationService.h"
 #import "UABaseLocationProvider.h"
 
+
 @class UALocationEvent;
 @interface UALocationService () {
     UAStandardLocationProvider *standardLocationProvider_;
@@ -34,6 +35,8 @@
     UASignificantChangeProvider *significantChangeProvider_;
     BOOL shouldStartReportingStandardLocation_;
     BOOL shouldStartReportingSignificantChange_;
+    CLLocation *bestAvailableSingleLocation_;
+    UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier_;
 }
 // Override property declarations for implementation and testing
 //
@@ -41,7 +44,13 @@
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
-//
+/* Keep a record of the location with the highest horizontalAccuracy in case
+ the single location service times out before acquiring a location that meets
+ accuracy requirements setup in desiredAccuracy
+ */
+@property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
+/* Background identifier for the singleLocationService */
+@property (nonatomic, assign) UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier;
 
 // Sets appropriate value in NSUserDefaults
 + (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
@@ -65,7 +74,7 @@
 // CLLocationManager values in NSUserDefaults
 // Basically wrapped double values
 - (CLLocationAccuracy)desiredAccuracyForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key; 
-- (CLLocationDistance)distanceFilterForLocationSerivceKey:(UALocationServiceNSDefaultsKey*)key;
+- (CLLocationDistance)distanceFilterForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 
 // Private setters for location providers
 // Custom get/set methods that have the side effect of setting the provider delegate
@@ -92,7 +101,7 @@
 // UIApplicationState observation
 - (void)beginObservingUIApplicationState;
 
-// Restart locaiton services if necessary, call single location if necessary
+// Restart location services if necessary, call single location if necessary
 - (void)appWillEnterForeground; 
 
 // Shutdown location services if not enabled. 
@@ -106,11 +115,41 @@
 // delegate is nil
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
 
-// Send the error to the delegate if it responds
-- (void)sendErrorToLocationServiceDelegate:(NSError*)error;
-
 // deprecated LOCATION SUPPORT
 // Use deprecated location calls
 + (BOOL)useDeprecatedMethods;
 
+// Standard location location update 
+- (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
+// Sig change update method
+- (void)significantChangeDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
+// Single Location update logic
+- (void)singleLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+
+// Single Location when a good location is received
+- (void)stopSingleLocationWithLocation:(CLLocation*)location;
+
+// Stop single location when an error is returned, or the service timed out
+- (void)stopSingleLocationWithError:(NSError*)locationError;
+
+// Stop the single location service and cleanup the background task
+// Do not call this directly, instead, use stopSingleLocationWithLocation
+// or stopSingleLocationWithError
+- (void)stopSingleLocation;
+
+// Error indicating a location service timed out before getting a location that meets accuracy requirements
+- (NSError*)locationTimeoutError;
+
+// Shuts down the single location service with a timeout error
+- (void)shutdownSingleLocationWithTimeoutError;
+
+// Add Analytics to the UAAnalytics object and ensure it's done
+// on the main thread
+- (void)sendEventToAnalytics:(UALocationEvent*)locationEvent;
+
+// This method registers the user defaults necessary for the UALocation Service. You should
+// not need to call this method directly, it is called in UAirship.
++ (void)registerNSUserDefaults;
 @end

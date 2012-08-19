@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -88,7 +88,7 @@
               request.responseStatusCode, request.responseString);
         
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-        [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+        [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
         [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
         
         NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];
@@ -115,7 +115,7 @@
     UALOG(@"Content inventory request failed.");
     
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-    [userInfo setObject:[request.url absoluteString] forKey:NSErrorFailingURLStringKey];
+    [userInfo setObject:[request.url absoluteString] forKey:NSURLErrorFailingURLStringErrorKey];
     [userInfo setObject:UASubscriptionContentInventoryFailure forKey:NSLocalizedDescriptionKey];
     
     NSError *error = [NSError errorWithDomain:UASubscriptionRequestErrorDomain code:request.responseStatusCode userInfo:userInfo];

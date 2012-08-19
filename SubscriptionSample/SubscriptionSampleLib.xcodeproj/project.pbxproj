@@ -43,7 +43,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
 		1F79715312DE3DFA00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
-		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FB9B89D13C3BBDF002BB424 /* libz.dylib */; };
 		1FC77F4513D78ECE00E37B0E /* UASubscriptionUIUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC77F4413D78ECE00E37B0E /* UASubscriptionUIUtil.m */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -68,7 +68,7 @@
 		B6BC28B7127950B5005CBE16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		B6BC28B8127950B5005CBE16 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		B6BC28B9127950B5005CBE16 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ED91246383700145424 /* libsqlite3.dylib */; };
-		B6BC28DE12795459005CBE16 /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */; };
+		B6BC28DE12795459005CBE16 /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */; };
 		B6BC28FA1279557A005CBE16 /* GHUnitIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6BC28F91279557A005CBE16 /* GHUnitIOS.framework */; };
 		B6EF6B24127A7553007E0DE5 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B22127A7553007E0DE5 /* iPadDefault-Landscape.png */; };
 		B6EF6B25127A7553007E0DE5 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EF6B23127A7553007E0DE5 /* iPadDefault-Portrait.png */; };
@@ -84,7 +84,7 @@
 		D5C759AC12BAE0EF0041239E /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C759AB12BAE0EF0041239E /* Default@2x.png */; };
 		D5C75AFD12BBEF9B0041239E /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFC12BBEF9B0041239E /* Icon-Small@2x.png */; };
 		D5C75AFF12BBEFA80041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75AFE12BBEFA80041239E /* Icon-72.png */; };
-		D9983CAB123829DB00B7E69F /* libUAirship-1.1.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */; };
+		D9983CAB123829DB00B7E69F /* libUAirship-1.2.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,13 +94,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
-		};
-		1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FBF50D014646AC500554710;
-			remoteInfo = AirshipMiniPushLib;
 		};
 		6331475F122FAC96008F2D48 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -123,12 +116,12 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = AirshipLib;
 		};
-		BBCE96C1151D13D700371B10 /* PBXContainerItemProxy */ = {
+		BBBA19E615C9BE0D000E9A00 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6331475B122FAC96008F2D48 /* AirshipLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = BBB87DED150575D200971CEC;
-			remoteInfo = AirshipLibGcov;
+			remoteGlobalIDString = BB88612C159A7E9600584445;
+			remoteInfo = AirshipMini;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -225,7 +218,7 @@
 			files = (
 				BB4136161524D985008EE873 /* CoreLocation.framework in Frameworks */,
 				1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */,
-				D9983CAB123829DB00B7E69F /* libUAirship-1.1.4.a in Frameworks */,
+				D9983CAB123829DB00B7E69F /* libUAirship-1.2.1.a in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -243,7 +236,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6BC28DE12795459005CBE16 /* libUAirship-1.1.4.a in Frameworks */,
+				B6BC28DE12795459005CBE16 /* libUAirship-1.2.1.a in Frameworks */,
 				B6BC28B1127950B5005CBE16 /* StoreKit.framework in Frameworks */,
 				B6BC28B2127950B5005CBE16 /* SystemConfiguration.framework in Frameworks */,
 				B6BC28B4127950B5005CBE16 /* MobileCoreServices.framework in Frameworks */,
@@ -454,10 +447,9 @@
 		6331475C122FAC96008F2D48 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */,
-				1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */,
+				63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */,
+				BBBA19E715C9BE0D000E9A00 /* libUAirshipMini-1.2.1.a */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
-				BBCE96C2151D13D700371B10 /* libAirshipLibGcov.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -605,25 +597,18 @@
 			remoteRef = 1F14C9C8142C123C005FA372 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1F9542EF146882CE009DDB0C /* libUAirshipPush-1.1.4.a */ = {
+		63314760122FAC96008F2D48 /* libUAirship-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipPush-1.1.4.a";
-			remoteRef = 1F9542EE146882CE009DDB0C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		63314760122FAC96008F2D48 /* libUAirship-1.1.4.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libUAirship-1.1.4.a";
+			path = "libUAirship-1.2.1.a";
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBCE96C2151D13D700371B10 /* libAirshipLibGcov.a */ = {
+		BBBA19E715C9BE0D000E9A00 /* libUAirshipMini-1.2.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libAirshipLibGcov.a;
-			remoteRef = BBCE96C1151D13D700371B10 /* PBXContainerItemProxy */;
+			path = "libUAirshipMini-1.2.1.a";
+			remoteRef = BBBA19E615C9BE0D000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -767,6 +752,8 @@
 				BUILD_STYLE = Debug;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SubscriptionSample_Prefix.pch;
@@ -868,7 +855,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
@@ -892,7 +879,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";

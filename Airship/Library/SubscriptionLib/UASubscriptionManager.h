@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2011 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -116,7 +116,7 @@ extern NSString * const UASubscriptionProductInventoryFailure;
  * be passed as the parameter. If the error occurs when contacting UA,
  * the error code will be an HTTP response code (or 0 if no response),
  * the failure URL will be available in the userInfo dictionary
- * using NSErrorFailingURLStringKey or NSURLErrorFailingURLStringErrorKey (4.0+)
+ * using NSURLErrorFailingURLStringErrorKey (4.0+)
  * and the localizedDescription will be one of:
  *       
  *       - UASubscriptionPurchaseInventoryFailure
