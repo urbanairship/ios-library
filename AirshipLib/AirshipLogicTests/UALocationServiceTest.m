@@ -119,14 +119,6 @@
     [userDefaults setValue:[NSNumber numberWithDouble:kCLLocationAccuracyHundredMeters] forKey:UAStandardLocationDesiredAccuracyKey];
 }
 
-//void (^theBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
-//{
-//    NSString *value;
-//    [invocation getArgument:&value atIndex:2];
-//    value = [NSString stringWithFormat:@"MOCK %@", value];
-//    [invocation setReturnValue:&value];
-//};
-
 #pragma mark -
 #pragma mark Getters and Setters
 

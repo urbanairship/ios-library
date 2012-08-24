@@ -67,12 +67,11 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  */
 - (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
-/** Updates the delegate when a new location is received
+/** Updates the delegate when a new location is received. In case of a timeout, where locations have been acquired,
+ but they do not meet the accuracy requirements, the most accurate location available will be returned.
  @warning *Important:* In the background, this method is called and given a limited amount of time to operate, including the time
  necessary to update UrbanAirship. Extensive work done by the method while backgrounded could result in location data not being
- recorded or sent. In the case of a timeout error, this delegate is called with the best location acquired by the location 
- service. The locationService:didFailWithError will also be called in this case, with the best available location in the
- userInfo dictionary if available.
+ recorded or sent.
  
  @param service The service reporting the location update
  @param newLocation The updated location reported by the service

@@ -281,5 +281,17 @@
     [pool drain];
 }
 
+- (void)testSignificantChangeNotifiesDelegate {
+    locationService = [[UALocationService alloc] initWithPurpose:@"Test"];
+    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
+    CLLocation *sfo = [UALocationTestUtils testLocationSFO];
+    id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
+    [[mockDelegate expect] locationService:locationService didUpdateToLocation:pdx fromLocation:sfo];
+    UASignificantChangeProvider *sigChange = [UASignificantChangeProvider providerWithDelegate:locationService];
+    locationService.significantChangeProvider = sigChange;
+    locationService.delegate = mockDelegate;
+    [sigChange.delegate locationProvider:sigChange withLocationManager:sigChange.locationManager didUpdateLocation:pdx fromLocation:sfo];
+    [mockDelegate verify];
+}
 
 @end
