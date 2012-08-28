@@ -166,9 +166,9 @@
                                                 expectedContentLength:[content length]
                                                      textEncodingName:charset]
                                    autorelease];
-        // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
-        cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
-                                                                  data:content];
+
+        cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:response
+                                                                  data:content] autorelease];
         
         UALOG(@"Uncaching request %@", request);
         

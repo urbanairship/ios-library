@@ -70,10 +70,12 @@
 
 @synthesize webView, message;
 
-
+// While this breaks from convention, it does not actually leak. Turning off analyzer warnings
+#ifndef __clang_analyzer__
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
     [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
 }
+#endif
 
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
@@ -359,7 +361,7 @@
     if ([self shouldTransition]) {
         
         //faux view
-        __block UIView* fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
+        __block UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
         [bgView addSubview: fauxView];
         
         //run the animation
