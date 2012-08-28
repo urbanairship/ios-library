@@ -71,7 +71,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         self.useOverlay = NO;
         self.isVisible = NO;
         
-        self.messageListController = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
+        self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
         messageListController.title = @"Inbox";
         messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         
