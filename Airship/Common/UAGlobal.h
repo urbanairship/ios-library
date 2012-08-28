@@ -188,6 +188,17 @@ __VA_ARGS__ \
 #define IF_IOS4_OR_GREATER(...)
 #endif
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_1
+#define IF_IOS4_1_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_4_1) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS4_1_OR_GREATER(...)
+#endif
+
+
 // Add new __LIB__ macros as necessary
 #define __UA_LIB_1_3_0__ "Deprecated in libUAirship-1.3.0"
 #define __UA_LIB_1_3_2__ "Deprecated in libUAirship-1.3.2"
