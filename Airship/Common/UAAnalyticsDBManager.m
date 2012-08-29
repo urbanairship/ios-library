@@ -135,12 +135,12 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (void)deleteEvents:(NSArray *)events {
     dispatch_async(dbQueue, ^{
-        NSDictionary *event;
+        NSDictionary *event = nil;
+        [db beginTransaction];
         for (event in events) {
             [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
         }
         [db commit];
-        [db beginTransaction];
     });
 
 }
