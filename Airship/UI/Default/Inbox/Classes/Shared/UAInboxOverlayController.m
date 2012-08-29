@@ -361,7 +361,7 @@
     if ([self shouldTransition]) {
         
         //faux view
-        __block UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
+        UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
         [bgView addSubview: fauxView];
         
         //run the animation
