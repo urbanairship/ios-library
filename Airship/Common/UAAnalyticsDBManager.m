@@ -50,8 +50,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (id)init {
     if (self = [super init]) {
-        // When used ONLY with dispatch_sync, this becomes essentially a serial blocking queue that only
-        // serves as a way to enforce thread containment. dispatch_queue_create returns a queue with
+        // Make sure and dispatch all of the database activity to the dbQueue. Failure to do so will result
+        // in database corruption. 
+        // dispatch_queue_create returns a queue with
         // a retain count of one, it only needs to be released.
         dbQueue =  dispatch_queue_create("com.urbanairship.analyticsdb", DISPATCH_QUEUE_SERIAL);
         [self createDatabaseIfNeeded];
@@ -96,7 +97,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
     }
     
-    dispatch_sync(dbQueue, ^{
+    dispatch_async(dbQueue, ^{
         [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          [event getType],
          event.event_id,
@@ -127,13 +128,13 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)deleteEvent:(NSNumber *)eventId {
-    dispatch_sync(dbQueue, ^{
+    dispatch_async(dbQueue, ^{
         [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
     });
 }
 
 - (void)deleteEvents:(NSArray *)events {
-    dispatch_sync(dbQueue, ^{
+    dispatch_async(dbQueue, ^{
         NSDictionary *event;
         for (event in events) {
             [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
@@ -152,7 +153,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         UALOG(@"Warn: sessionId is nil.");
         return;
     }
-    dispatch_sync(dbQueue, ^{
+    dispatch_async(dbQueue, ^{
         [db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
     });
 }
