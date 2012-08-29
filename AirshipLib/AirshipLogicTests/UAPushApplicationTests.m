@@ -401,6 +401,14 @@ static BOOL messageReceived = NO;
     STAssertTrue(failSelector, nil);
 }
 
+// Fix for issue where changing metadata while unregistered caused further registration attempts to fail
+- (void)testMetadataEditingWhileUnregisteredLeavesIsRegisteringNo {
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+    [push updateRegistration];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
+}
+
 - (void)testSetBadgeNumber {
     [push setAutobadgeEnabled:NO];
     [push setBadgeNumber:42];
