@@ -25,31 +25,49 @@
 
 #import <UIKit/UIKit.h>
 
-// ALog always displays output regardless of the UADEBUG setting
-//#define UA_ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-#define UA_BLog(fmt, ...) \
+typedef enum _UALogLevel {
+    UALogLevelUndefined = -1,
+    UALogLevelNone = 0,
+    UALogLevelError = 1,
+    UALogLevelWarn = 2,
+    UALogLevelInfo = 3,
+    UALogLevelDebug = 4,
+    UALogLevelTrace = 5
+} UALogLevel;
+
+
+#define UA_LEVEL_LOG_THREAD(level, levelString, fmt, ...) \
     do { \
-        if (logging) { \
-            NSString *thread = nil; \
-            if ([[NSThread currentThread] isMainThread]) { \
-                thread = @"M"; \
-            } \
-            else { \
-                thread = @"B"; \
-            }  \
-            NSLog((@"[%@] => %s [Line %d] " fmt), thread, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        if (uaLoggingEnabled && uaLogLevel >= level) { \
+            NSString *thread = ([[NSThread currentThread] isMainThread]) ? @"M" : @"B"; \
+            NSLog((@"[%@] [%@] => %s [Line %d] " fmt), levelString, thread, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
         } \
     } while(0)
 
-// UADEBUG set in debug build setting's "Other C flags", as -DUADEBUG
-//#ifdef UADEBUG
-//#define UA_DLog UA_ALog
-//#else
-#define UA_DLog UA_BLog
-extern BOOL logging; // Default is false
-//#endif
+#define UA_LEVEL_LOG_NO_THREAD(level, levelString, fmt, ...) \
+    do { \
+        if (uaLoggingEnabled && uaLogLevel >= level) { \
+            NSLog((@"[%@] %s [Line %d] " fmt), levelString, __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
+        } \
+    } while(0)
 
-#define UALOG UA_DLog
+//only log thread if #UA_LOG_THREAD is defined
+#ifdef UA_LOG_THREAD
+#define UA_LEVEL_LOG UA_LEVEL_LOG_THREAD
+#else
+#define UA_LEVEL_LOG UA_LEVEL_LOG_NO_THREAD
+#endif
+
+extern BOOL uaLoggingEnabled; // Default is true
+extern UALogLevel uaLogLevel; // Default is UALogLevelDebug
+
+#define UA_LTRACE(fmt, ...) UA_LEVEL_LOG(UALogLevelTrace, @"T", fmt, ##__VA_ARGS__)
+#define UA_LDEBUG(fmt, ...) UA_LEVEL_LOG(UALogLevelDebug, @"D", fmt, ##__VA_ARGS__)
+#define UA_LINFO(fmt, ...) UA_LEVEL_LOG(UALogLevelInfo, @"I", fmt, ##__VA_ARGS__)
+#define UA_LWARN(fmt, ...) UA_LEVEL_LOG(UALogLevelWarn, @"W", fmt, ##__VA_ARGS__)
+#define UA_LERR(fmt, ...) UA_LEVEL_LOG(UALogLevelError, @"E", fmt, ##__VA_ARGS__)
+
+#define UALOG UA_LDEBUG
 
 // constants
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"

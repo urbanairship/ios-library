@@ -52,7 +52,6 @@
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 extern NSString * const UAAnalyticsOptionsServerKey;
-extern NSString * const UAAnalyticsOptionsLoggingKey;
 
 typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;

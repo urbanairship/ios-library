@@ -49,7 +49,11 @@ NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOpt
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
 
 static UAirship *_sharedAirship;
-BOOL logging = false;
+
+// Logging info
+// Default to ON and DEBUG - options/plist will override
+BOOL uaLoggingEnabled = YES;
+UALogLevel uaLogLevel = UALogLevelUndefined;
 
 @implementation UAirship
 
@@ -64,7 +68,11 @@ BOOL logging = false;
 #pragma mark -
 #pragma mark Logging
 + (void)setLogging:(BOOL)value {
-    logging = value;
+    uaLoggingEnabled = value;
+}
+
++ (void)setLogLevel:(UALogLevel)level {
+    uaLogLevel = level;
 }
 
 #pragma mark -
@@ -100,6 +108,7 @@ BOOL logging = false;
 }
 
 + (void)takeOff:(NSDictionary *)options {
+    
     //Airships only take off once!
     if (_sharedAirship) {
         return;
@@ -134,19 +143,26 @@ BOOL logging = false;
         
         BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
         
-        NSString *loggingOptions = [config objectForKey:@"LOGGING_ENABLED"];
-        
-        if (loggingOptions != nil) {
-            // If it is present, use it
-            [UAirship setLogging:[[config objectForKey:@"LOGGING_ENABLED"] boolValue]];
-        } else {
-            // If it is missing
-            if (inProduction) {
-                [UAirship setLogging:NO];
-            } else {
-                [UAirship setLogging:YES];
-            }
+        // Set up logging - enabled flag and loglevels
+        NSString *configLogLevel = [config objectForKey:@"LOG_LEVEL"];
+        NSString *configLoggingEnabled = [config objectForKey:@"LOGGING_ENABLED"];
+
+        // Logging defaults to ON, but use config value if available
+        if (configLoggingEnabled) {
+            [UAirship setLogging:[configLoggingEnabled boolValue]];
         }
+
+        // Set the default to ERROR for production apps, DEBUG for dev apps
+        UALogLevel defaultLogLevel = inProduction ? UALogLevelError : UALogLevelDebug;
+        
+        // Respect the config value if set
+        UALogLevel newLogLevel = configLogLevel ? [configLogLevel intValue] : defaultLogLevel;
+        
+        //only update the log level if it wasn't already defined in code
+        if (UALogLevelUndefined == uaLogLevel) {
+            [UAirship setLogLevel:newLogLevel];
+        }
+
         
         NSString *configAppKey;
         NSString *configAppSecret;
@@ -157,9 +173,6 @@ BOOL logging = false;
         } else {
             configAppKey = [config objectForKey:@"DEVELOPMENT_APP_KEY"];
             configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
-            
-            //set release logging to yes because static lib is built in release mode
-            //[UAirship setLogging:YES];
         }
         
         // strip leading and trailing whitespace
@@ -216,9 +229,9 @@ BOOL logging = false;
 
     }
     
-    UALOG(@"App Key: %@", _sharedAirship.appId);
-    UALOG(@"App Secret: %@", _sharedAirship.appSecret);
-    UALOG(@"Server: %@", _sharedAirship.server);
+    UA_LINFO(@"App Key: %@", _sharedAirship.appId);
+    UA_LINFO(@"App Secret: %@", _sharedAirship.appSecret);
+    UA_LINFO(@"Server: %@", _sharedAirship.server);
     
     
     //Check the format of the app key and password.
