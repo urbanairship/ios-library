@@ -1,0 +1,8 @@
+//
+//  Config.xcconfig
+//  AirshipLib
+//
+//  Created by Jeff Towle on 8/31/12.
+//
+//
+CURRENT_PROJECT_VERSION = 1.3.2

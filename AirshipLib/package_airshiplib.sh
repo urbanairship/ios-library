@@ -23,23 +23,12 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [ "true" == "${ALREADYINVOKED:-false}" ]
-then
-echo "RECURSION: Not the root invocation, don't recurse"
-else
-# Prevent recursion
-export ALREADYINVOKED="true"
-
-buildConfig="$CONFIGURATION"
-srcRoot="$SRCROOT"
+#TODO: rename this
+buildConfig="distribution_package"
+srcRoot="."
 
 srcPath="${srcRoot}/../Airship"
 destPath="${srcRoot}/../${buildConfig}/Airship"
-
-if [ -z "$buildConfig" ]; then
-	echo "Error: This script is only meant to be run within AirshipLib build phase."
-	exit -1
-fi
 
 rm -rf "${destPath}"
 mkdir -p "${destPath}"
