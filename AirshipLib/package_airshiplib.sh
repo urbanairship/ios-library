@@ -25,7 +25,7 @@
 
 #TODO: rename this
 buildConfig="distribution_package"
-srcRoot="."
+srcRoot=$(pwd)
 
 srcPath="${srcRoot}/../Airship"
 destPath="${srcRoot}/../${buildConfig}/Airship"
@@ -60,6 +60,8 @@ rm -rf Test
 #Remove the Appledoc documenation settings from the distribution
 rm AppledocSettings.plist
 
+rm *LibGcov.a
+
 find . -name "*.orig" -delete
 
 #copy LICENSE, README and CHANGELOG
@@ -67,5 +69,8 @@ cp "${srcPath}/../CHANGELOG" "${destPath}"
 cp "${srcPath}/../README.rst" "${destPath}"
 cp "${srcPath}/../LICENSE" "${destPath}"
 
-
-fi
+#TODO: use actual paths instead of moving everywhere
+cd ..
+rm *.zip
+#TODO: pull out version number from xcodeproject and create both files. Also bundle samples.
+zip -r libUAirship-latest.zip Airship
