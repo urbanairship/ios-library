@@ -24,58 +24,24 @@
  */
 
 #import "UAUser.h"
+#import "UAUser+Internal.h"
 #import "UAirship.h"
+#import "UAPush.h"
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
 
-//Legacy keys for migration from pre-keychain user store
-#define kLegacyInboxUserKey @"UAAirMailDefaultInboxUser"
-#define kLegacyInboxPassKey @"UAAirMailDefaultInboxPass"
-#define kLegacySubscriptionsUserKey @"UASubscriptionUserKey"
-#define kLegacySubscriptionsPassKey @"UASubscriptionPassKey"
-#define kLegacySubscriptionsEmailKey @"UASubscriptionEmail"
-
-//Legacy keys from Inbox
-#define kLegacyInboxAliasKey @"UAAirMailDefaultInboxAlias"
-#define kLegacyInboxTagsKey @"UAAirMailDefaultInboxTags"
-
-//Current dictionary keys
-
-#define kUserRecoveryKey @"UAUserRecoveryKey"
-#define kUserRecoveryStatusURL @"UAUserRecoveryStatusURL"
-#define kAlreadySentUserRecoveryEmail @"UAUserRecoveryKeySent"
-#define kRecoveryEmail @"UAUserRecoveryEmail"
-#define kTagsKey @"UAUserTagsKey"
-#define kAliasKey @"UAUserAliasKey"
-#define kUserUrlKey @"UAUserUrlKey"
-
 static UAUser *_defaultUser;
-
-
-@interface UAUser()
-// Migrate user from user defaults to keychain
-- (void)migrateUser;
-
-//Device Token Change Listener
-- (void)listenForDeviceTokenReg;
-- (void)cancelListeningForDeviceToken;
-- (void)updateDefaultDeviceToken;
-
-//User retrieval
-- (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request;
-- (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request;
-
-//User creation
-- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request;
-
-@end
-
 
 @implementation UAUser
 
+// UAUser()
+@synthesize deviceTokenHasChanged = _deviceTokenHasChanged;
+@synthesize deviceToken = _deviceToken;
+
+// UAUser
 @synthesize username;
 @synthesize password;
 @synthesize email;
@@ -142,6 +108,19 @@ static UAUser *_defaultUser;
     }
     
     return self;
+}
+
+#pragma mark -
+#pragma mark Device Token Set
+
+- (void)setDeviceToken:(NSString *)deviceToken {
+    [_deviceToken release];
+    _deviceToken = deviceToken;
+    NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastDeviceTokenKey];
+    if (![_deviceToken isEqualToString:lastDeviceToken]) {
+        _deviceTokenHasChanged = YES;
+        [[NSUserDefaults standardUserDefaults] setValue:_deviceToken forKey:kLastDeviceTokenKey];
+    }
 }
 
 - (void)initializeUser {
@@ -502,7 +481,7 @@ static UAUser *_defaultUser;
             [self saveUserData];
             
             // Make sure we do a full user update with any device tokens, we'll unset this if it is not needed
-            [UAirship shared].deviceTokenHasChanged = YES;
+            self.deviceTokenHasChanged = YES;
             
             // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
             if (request.postBody != nil) {
@@ -522,10 +501,10 @@ static UAUser *_defaultUser;
                     // get the first item from the request - we will only ever send 1 at most
                     NSString *deviceToken = [deviceTokens objectAtIndex:0];
                     
-                    if ([[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
+                    if ([[[[UAPush shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
                         UALOG(@"Device token is unchanged");
                         
-                        [UAirship shared].deviceTokenHasChanged = NO;
+                        self.deviceTokenHasChanged = NO;
                     }
                 }
             }
@@ -831,21 +810,21 @@ static UAUser *_defaultUser;
 					// If there are device tokens in the array, check them against the local one, if no match then need to update
 					for (NSString *deviceToken in deviceTokens) {
 
-						if ([[UAirship shared] deviceToken] != nil && [[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
+						if ([[UAPush shared] deviceToken] != nil && [[[[UAPush shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
 							contains = YES;
 						}
 					}
 					
 					if(!contains) {
 						UALOG(@"Device token(s) has changed");
-						[UAirship shared].deviceTokenHasChanged = YES;
+						self.deviceTokenHasChanged = YES;
 					}
 					
 				} else {
 					// If there are no device tokens in the array, but we have one locally, need to update
-					if([[UAirship shared] deviceToken] != nil) {
+					if([[UAPush shared] deviceToken] != nil) {
 						UALOG(@"Device token has changed");
-						[UAirship shared].deviceTokenHasChanged = YES;
+						self.deviceTokenHasChanged = YES;
 					}
 				}
 				
@@ -973,7 +952,7 @@ static UAUser *_defaultUser;
     }
     
     // If the device token is already available just update it
-    if([UAirship shared].deviceToken != nil) {
+    if([UAPush shared].deviceToken != nil) {
         [self cancelListeningForDeviceToken];
         [self updateDefaultDeviceToken];
         return;
@@ -981,11 +960,11 @@ static UAUser *_defaultUser;
     
     // Listen for changes to the device token
     isObservingDeviceToken = YES;
-    [[UAirship shared] addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
+    [[UAPush shared] addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
     
     // Double check here incase we managed to recieve the token the same
     // moment we registered the KVO
-    if([UAirship shared].deviceToken != nil) {
+    if([UAPush shared].deviceToken != nil) {
         [self cancelListeningForDeviceToken];
         [self updateDefaultDeviceToken];
         return;
@@ -1006,7 +985,7 @@ static UAUser *_defaultUser;
 
 -(void)cancelListeningForDeviceToken {
     if (isObservingDeviceToken) {
-        [[UAirship shared] removeObserver:self forKeyPath:@"deviceToken"];
+        [[UAPush shared] removeObserver:self forKeyPath:@"deviceToken"];
         isObservingDeviceToken = NO;
     }
 }
@@ -1015,16 +994,16 @@ static UAUser *_defaultUser;
     
     UALOG(@"Updating device token");
     
-    NSString *token = [[UAirship shared]deviceToken];
+    self.deviceToken = [[UAPush shared] deviceToken];
     
-    if (!token || [UAirship shared].deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {		
+    if (!_deviceToken || self.deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {
 		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
     
     //I sure wish there were an easier way to construct dictionaries
     NSDictionary *dict = [NSDictionary dictionaryWithObject:
-                          [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:token] forKey:@"add"] 
+                          [NSDictionary dictionaryWithObject:[NSArray arrayWithObject:_deviceToken] forKey:@"add"]
                                                      forKey:@"device_tokens"];
     
     [self updateUserInfo:dict withDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
@@ -1032,7 +1011,7 @@ static UAUser *_defaultUser;
 }
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
-    [UAirship shared].deviceTokenHasChanged = NO;
+    self.deviceTokenHasChanged = NO;
     UALOG(@"Updated Device Token response: %d", request.responseStatusCode);
 }
 
@@ -1050,7 +1029,7 @@ static UAUser *_defaultUser;
     [data setValue:@"true" forKey:@"airmail"];
     
     //if APN hasn't finished yet or is not enabled, don't include the deviceToken
-    NSString* deviceToken = [UAirship shared].deviceToken;
+    NSString* deviceToken = [UAPush shared].deviceToken;
 	
     if (deviceToken != nil && [deviceToken length] > 0) {
         NSArray *deviceTokens = [NSArray arrayWithObjects:deviceToken, nil];
@@ -1160,14 +1139,14 @@ static UAUser *_defaultUser;
 		// If there are device tokens in the array, check them against the local one, if no match then need to update
 		for (NSString *deviceToken in deviceTokens) {
 			
-			if ([[UAirship shared] deviceToken] != nil && [[[[UAirship shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
+			if ([[UAPush shared] deviceToken] != nil && [[[[UAPush shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
 				contains = YES;
 			}
 		}
 		
-		if((!contains) && ([[UAirship shared] deviceToken] != nil)) {
+		if((!contains) && ([[UAPush shared] deviceToken] != nil)) {
 			UALOG(@"Add device token");
-			[deviceTokens addObject:[[UAirship shared] deviceToken]];
+			[deviceTokens addObject:[[UAPush shared] deviceToken]];
 		}
 		
 	} else {

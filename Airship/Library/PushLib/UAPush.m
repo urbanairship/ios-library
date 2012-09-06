@@ -43,6 +43,29 @@
 #define kUAPushRetryTimeMultiplier 2
 #define kUAPushRetryTimeMaxDelay 300
 
+UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
+UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
+UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
+UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
+UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
+UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
+UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
+UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
+UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
+UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
+
+UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
+UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
+
+UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
+UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
+UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
+UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
+UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
+UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
+UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
+UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush 

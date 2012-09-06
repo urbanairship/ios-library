@@ -27,31 +27,31 @@
 
 
 typedef NSString UAPushSettingsKey;
-UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
-UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
-UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
-UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
-UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
-UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
-UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
-UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
-UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
+extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
+extern UAPushSettingsKey *const UAPushAliasSettingsKey;
+extern UAPushSettingsKey *const UAPushTagsSettingsKey;
+extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
+extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
+extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
+extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
+extern UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey;
+extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
+extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 
 // Keys for the userInfo object on UA_ASIHTTPRequest objects
 typedef NSString UAPushUserInfoKey;
-UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
-UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
+extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
+extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 typedef NSString UAPushJSONKey;
-UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
-UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
-UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
-UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
-UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
-UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
-UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
-UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+extern UAPushJSONKey *const UAPushMultipleTagsJSONKey;
+extern UAPushJSONKey *const UAPushSingleTagJSONKey;
+extern UAPushJSONKey *const UAPushAliasJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeStartJSONKey;
+extern UAPushJSONKey *const UAPushQuietTimeEndJSONKey;
+extern UAPushJSONKey *const UAPushTimeZoneJSONKey;
+extern UAPushJSONKey *const UAPushBadgeJSONKey;
 
 
 
