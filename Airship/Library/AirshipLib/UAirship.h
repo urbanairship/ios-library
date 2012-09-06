@@ -187,6 +187,8 @@ extern NSString * const UAirshipTakeOffMainThreadException;
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary must contain the launch options.
  *
+ * @warning takeOff: must be called on the main thread. Not doing so results in an UAirshipTakeOffMainThreadException
+ *
  */
 + (void)takeOff:(NSDictionary *)options;
 
