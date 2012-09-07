@@ -47,6 +47,9 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
+extern NSString * const UADistanceFilterValueNone;
+extern NSString * const UADesiredAccuracyValueNone;
+
 
 /** A UALocationEvent captures all the necessary information for 
  UAAnalytics
@@ -58,6 +61,8 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 ///---------------------------------------------------------------------------------------
 /// @name Object Creation
 ///---------------------------------------------------------------------------------------
+
+@property (nonatomic, retain) NSMutableDictionary *locationContext;
 
 /** Create a UALocationEvent
  @param context A dictionary populated with all required data
@@ -100,22 +105,23 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 ///---------------------------------------------------------------------------------------
 
 /** Creates a dictionary with the appropriate data gathered from the CLLocation
- @param dictionary The dictionary to populate with values
  @param location Location to parse values from
  */
-- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location;
+- (void)populateLocationContextWithLocationValues:(CLLocation*)location;
 
-/** Creates a dictionary with the appropriate data gathered from the CLLocationManager
- @param dictionary The dictionary to populate with values
+/** Creates a dictionary with the appropriate data gathered from the CLLocationManager.
  @param locationManager The location manager to parse values from
+ @warning *Note:* If the location type is UALocationEventUpdateTypeChange (Significant Change Service, UASignificantChangeProvider)
+ the desiredAccuracy and distanceFilter values of the CLLocationMananger are ignored. For analytics events of
+ this type, the two values are replaced with UALocationEventUpdateTypeNone.
  */
-- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager*)locationManager;
+- (void)populateLocationContextWithLocationManagerValues:(CLLocationManager*)locationManager;
 
 /** Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
  @param dictionary The dictionary to populate with values
  @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */
-- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
+- (void)populateLocationContextWithLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
 
 
 
