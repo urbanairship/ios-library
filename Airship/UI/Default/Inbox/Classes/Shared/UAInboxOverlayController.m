@@ -56,6 +56,8 @@
 
 #define kShadeViewTag 1000
 
+static UAInboxOverlayController *overlayController = nil;
+
 @interface UAInboxOverlayController(Private)
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
@@ -71,11 +73,9 @@
 @synthesize webView, message;
 
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
-#ifndef __clang_analyzer__
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
-    [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
+    overlayController = [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
 }
-#endif
 
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
@@ -377,14 +377,14 @@
             [self removeChildViews];
             [bigPanelView release];
             [bgView removeFromSuperview];
-            [self release];
+            [overlayController release];
         }];
     }
     
     else {
         [self removeChildViews];
         [bgView removeFromSuperview];
-        [self release];
+        [overlayController release];
     }
 }
 
