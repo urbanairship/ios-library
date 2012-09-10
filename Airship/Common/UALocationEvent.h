@@ -118,12 +118,9 @@ extern NSString * const UADesiredAccuracyValueNone;
 - (void)populateLocationContextWithLocationManagerValues:(CLLocationManager*)locationManager;
 
 /** Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
- @param dictionary The dictionary to populate with values
  @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */
 - (void)populateLocationContextWithLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
-
-
 
 /** Converts a double to a string keeping seven digit of precision 
  Seven digits produces sub meter accuracy at the equator.
