@@ -56,7 +56,7 @@
 
 #define kShadeViewTag 1000
 
-static UAInboxOverlayController *overlayController = nil;
+static NSMutableSet *overlayControllers = nil;
 
 @interface UAInboxOverlayController(Private)
 
@@ -72,9 +72,17 @@ static UAInboxOverlayController *overlayController = nil;
 
 @synthesize webView, message;
 
+// Setup a container for the newly allocated controllers, will be released by OS. 
++ (void)initialize {
+    if (self == [UAInboxOverlayController class]){
+        overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
+    }
+}
+
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
-    overlayController = [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
+    UAInboxOverlayController *overlayController = [[[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID] autorelease];
+    [overlayControllers addObject:overlayController];
 }
 
 
@@ -377,14 +385,14 @@ static UAInboxOverlayController *overlayController = nil;
             [self removeChildViews];
             [bigPanelView release];
             [bgView removeFromSuperview];
-            [overlayController release];
+            [overlayControllers removeObject:self];
         }];
     }
     
     else {
         [self removeChildViews];
         [bgView removeFromSuperview];
-        [overlayController release];
+        [overlayControllers removeObject:self];
     }
 }
 
