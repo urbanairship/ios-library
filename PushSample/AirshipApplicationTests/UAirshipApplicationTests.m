@@ -34,7 +34,7 @@
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSLog(@"Testing [UAirship takeOff:nil] in background thread %@", [NSThread currentThread]); 
     STAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
-    STAssertThrowsSpecificNamed([UAirship takeOff:nil], NSException, UAirshipTakeOffMainThreadException, @"Calling takeOff on a background thread should throw an UAirshipTakeOffMainThreadException");
+    STAssertThrowsSpecificNamed([UAirship takeOff:nil], NSException, UAirshipTakeOffBackgroundThreadException, @"Calling takeOff on a background thread should throw an UAirshipTakeOffBackgroundThreadException");
     [pool drain];
 }
 @end

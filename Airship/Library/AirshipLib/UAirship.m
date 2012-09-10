@@ -49,7 +49,7 @@ NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOpt
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
 
 //Exceptions
-NSString * const UAirshipTakeOffMainThreadException = @"UAirshipTakeOffMainThreadException";
+NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
 
 static UAirship *_sharedAirship;
 BOOL logging = false;
@@ -105,8 +105,8 @@ BOOL logging = false;
 + (void)takeOff:(NSDictionary *)options {
     // UAirship needs to be run on the main thread
     if(![[NSThread currentThread] isMainThread]){
-        NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffMainThreadException
-                                                                   reason:@"UAirship takeOff cannot be called off of the main thread"
+        NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
+                                                                   reason:@"UAirship takeOff cannot be called off the main thread."
                                                                  userInfo:nil];
         [mainThreadException raise];
     }
