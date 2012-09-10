@@ -70,6 +70,12 @@ extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
+ * The takeOff method must be called on the main thread. Not doing so results in 
+ * this exception being thrown.
+ */
+extern NSString * const UAirshipTakeOffBackgroundThreadException;
+
+/**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
  * called from [UIApplication application:didFinishLaunchingWithOptions] to initialize the shared
  * instance.
@@ -180,6 +186,8 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary must contain the launch options.
+ *
+ * @warning takeOff: must be called on the main thread. Not doing so results in an UAirshipTakeOffMainThreadException
  *
  */
 + (void)takeOff:(NSDictionary *)options;
