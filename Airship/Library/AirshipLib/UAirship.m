@@ -106,7 +106,7 @@ BOOL logging = false;
     // UAirship needs to be run on the main thread
     if(![[NSThread currentThread] isMainThread]){
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
-                                                                   reason:@"UAirship takeOff cannot be called off the main thread."
+                                                                   reason:@"UAirship takeOff must be called on the main thread."
                                                                  userInfo:nil];
         [mainThreadException raise];
     }
