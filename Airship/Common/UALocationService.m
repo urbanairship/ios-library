@@ -390,10 +390,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Same task as performSelector:withObject:afterDelay, so if that works, this works
         [self shutdownSingleLocationWithTimeoutError];
     }];
-    // Setup error timeout
-    [self performSelector:@selector(shutdownSingleLocationWithTimeoutError) 
-               withObject:nil
-               afterDelay:self.timeoutForSingleLocationService];
     singleLocationProvider_.delegate = self;
     [singleLocationProvider_ startReportingLocation];
 }
@@ -406,6 +402,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    // Setup error timeout
+    [self performSelector:@selector(shutdownSingleLocationWithTimeoutError)
+               withObject:nil
+               afterDelay:self.timeoutForSingleLocationService];
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
     if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
