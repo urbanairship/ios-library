@@ -86,7 +86,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 // Public - UserDefaults
 @dynamic pushEnabled;
-@synthesize deviceToken = _deviceToken;
+@synthesize deviceToken;
 @synthesize deviceTokenHasChanged;
 @dynamic alias;
 @dynamic tags;
@@ -136,26 +136,6 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
-
-// TODO: Remove deviceTokenHasChanged calls when LIB-353 has been completed
-- (void)setDeviceToken:(NSString*)deviceToken {
-    [_deviceToken autorelease];
-    _deviceToken = [deviceToken copy];
-    UALOG(@"Device token: %@", deviceToken);    
-    //---------------------------------------------------------------------------------------------//
-    // *DEPRECATED *The following workflow is deprecated, it is only used to identify if the token //
-    // has changed                                                                                 //
-    //---------------------------------------------------------------------------------------------//
-    NSString *oldToken = [standardUserDefaults stringForKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    if ([_deviceToken isEqualToString:oldToken]) {
-        deviceTokenHasChanged = NO;
-    }
-    else {
-        deviceTokenHasChanged = YES;
-    }
-    [standardUserDefaults setObject:deviceToken forKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    // *DEPRECATED CODE END* // 
-}
 
 - (NSString*)parseDeviceToken:(NSString*)tokenStr {
     return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]

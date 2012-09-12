@@ -74,8 +74,8 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Sets the device token string */
-- (void)setDeviceToken:(NSString*)deviceToken;
+/* Device token as a string */
+@property (nonatomic, copy) NSString *deviceToken;
 
 /* Cache of the last successful registration */
 @property (nonatomic, retain) NSDictionary *registrationPayloadCache;

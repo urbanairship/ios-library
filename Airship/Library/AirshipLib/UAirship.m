@@ -56,7 +56,6 @@ BOOL logging = false;
 @synthesize server;
 @synthesize appId;
 @synthesize appSecret;
-@synthesize deviceTokenHasChanged;
 @synthesize ready;
 @synthesize analytics;
 @synthesize locationService = locationService_;
@@ -305,10 +304,6 @@ BOOL logging = false;
 
 - (NSString*)deviceToken {
     return [[UAPush shared] deviceToken];
-}
-
-- (BOOL)deviceTokenHasChanged {
-    return [[UAPush shared] deviceTokenHasChanged];
 }
 
 - (void)configureUserAgent
