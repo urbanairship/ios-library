@@ -49,6 +49,7 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
 @synthesize shouldStartReportingSignificantChange = shouldStartReportingSignificantChange_;
 @synthesize bestAvailableSingleLocation = bestAvailableSingleLocation_;
 @synthesize singleLocationBackgroundIdentifier = singleLocationBackgroundIdentifier_;
+@synthesize singleLocationShutdownScheduled = singleLocationShutdownScheduled_;
 @synthesize delegate = delegate_;
 @synthesize promptUserForLocationServices = promptUserForLocationServices_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
@@ -403,9 +404,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     // Setup error timeout
-    [self performSelector:@selector(shutdownSingleLocationWithTimeoutError)
-               withObject:nil
-               afterDelay:self.timeoutForSingleLocationService];
+    if (!singleLocationShutdownScheduled_) {
+        [self performSelector:@selector(shutdownSingleLocationWithTimeoutError)
+                   withObject:nil
+                   afterDelay:self.timeoutForSingleLocationService];
+        singleLocationShutdownScheduled_ = YES;
+    }
+
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
     if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
@@ -451,7 +456,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)stopSingleLocation {
     // If there are ever more performRequests, use the other cancel method call
     // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    if (singleLocationShutdownScheduled_) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        singleLocationShutdownScheduled_ = NO;
+    }
     [singleLocationProvider_ stopReportingLocation];
     singleLocationProvider_.delegate = nil;
     UALOG(@"Shutdown single location background task");

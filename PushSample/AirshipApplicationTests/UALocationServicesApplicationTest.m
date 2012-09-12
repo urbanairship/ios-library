@@ -174,7 +174,9 @@
     locationService.timeoutForSingleLocationService = 1;
     id mockLocationService = [OCMockObject partialMockForObject:locationService];
     [[[mockLocationService stub] andDo:^(NSInvocation *invoc) { shutdownCalled = YES;}] stopSingleLocationWithError:OCMOCK_ANY];
+    STAssertFalse(locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
     [locationService singleLocationDidUpdateToLocation:[UALocationTestUtils testLocationPDX] fromLocation:[UALocationTestUtils testLocationSFO]];
+    STAssertTrue(locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
     timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
     while (!shutdownCalled) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
@@ -183,6 +185,12 @@
         }
     }
     STAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
+}
+
+- (void)testStopSingleLocationSetsShutdownScheduledFlag {
+    locationService.singleLocationShutdownScheduled = YES;
+    [locationService stopSingleLocation];
+    STAssertFalse(locationService.singleLocationShutdownScheduled, @"singleLocationServiceShutdownScheduled should be NO after stopSingleLocation");
 }
 
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
