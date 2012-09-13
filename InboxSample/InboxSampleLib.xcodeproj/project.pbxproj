@@ -42,7 +42,7 @@
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
 		9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAF50FCA81BD0007E1BE /* UIKit.framework */; };
-		B676C1D7123A1CA100AF6A81 /* libUAirship-1.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.3.1.a */; };
+		B676C1D7123A1CA100AF6A81 /* libUAirship-1.3.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E7F8441239FFD5009BC92D /* libUAirship-1.3.2.a */; };
 		C14786001164675600F17AB8 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = C14785FF1164675600F17AB8 /* checkConfig.sh */; };
 		D5A3F5D412C15333009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D312C15333009731BE /* iTunesArtwork */; };
 		D5A3F5D612C1533D009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F5D512C1533D009731BE /* Icon@2x.png */; };
@@ -190,7 +190,7 @@
 				9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */,
 				9A50FAF60FCA81BD0007E1BE /* UIKit.framework in Frameworks */,
 				9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */,
-				B676C1D7123A1CA100AF6A81 /* libUAirship-1.3.1.a in Frameworks */,
+				B676C1D7123A1CA100AF6A81 /* libUAirship-1.3.2.a in Frameworks */,
 				63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */,
 				63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */,
 				63CB563A1247164900DF2EBC /* StoreKit.framework in Frameworks */,
@@ -344,8 +344,8 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B6E7F8441239FFD5009BC92D /* libUAirship-1.3.1.a */,
-				BB5EBCB6159B7AF600F2A716 /* libUAirshipMini-1.2.1.a */,
+				B6E7F8441239FFD5009BC92D /* libUAirship-1.3.2.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.2.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -519,17 +519,17 @@
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B6E7F8441239FFD5009BC92D /* libUAirship-1.3.1.a */ = {
+		B6E7F8441239FFD5009BC92D /* libUAirship-1.3.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.3.1.a";
+			path = "libUAirship-1.3.2.a";
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirshipMini-1.2.1.a */ = {
+		BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipMini-1.2.1.a";
+			path = "libUAirshipPush-1.3.2.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
