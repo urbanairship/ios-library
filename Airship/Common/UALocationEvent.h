@@ -47,9 +47,6 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
-extern NSString * const UADistanceFilterValueNone;
-extern NSString * const UADesiredAccuracyValueNone;
-
 
 /** A UALocationEvent captures all the necessary information for 
  UAAnalytics
@@ -61,8 +58,6 @@ extern NSString * const UADesiredAccuracyValueNone;
 ///---------------------------------------------------------------------------------------
 /// @name Object Creation
 ///---------------------------------------------------------------------------------------
-
-@property (nonatomic, retain) NSMutableDictionary *locationContext;
 
 /** Create a UALocationEvent
  @param context A dictionary populated with all required data
@@ -105,22 +100,21 @@ extern NSString * const UADesiredAccuracyValueNone;
 ///---------------------------------------------------------------------------------------
 
 /** Creates a dictionary with the appropriate data gathered from the CLLocation
+ @param dictionary The dictionary to populate with values
  @param location Location to parse values from
  */
-- (void)populateLocationContextWithLocationValues:(CLLocation*)location;
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationValues:(CLLocation*)location;
 
-/** Creates a dictionary with the appropriate data gathered from the CLLocationManager.
+/** Creates a dictionary with the appropriate data gathered from the CLLocationManager
+ @param dictionary The dictionary to populate with values
  @param locationManager The location manager to parse values from
- @warning *Note:* If the location type is UALocationEventUpdateTypeChange (Significant Change Service, UASignificantChangeProvider)
- the desiredAccuracy and distanceFilter values of the CLLocationMananger are ignored. For analytics events of
- this type, the two values are replaced with UALocationEventUpdateTypeNone.
  */
-- (void)populateLocationContextWithLocationManagerValues:(CLLocationManager*)locationManager;
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager*)locationManager;
 
 /** Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
  @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */
-- (void)populateLocationContextWithLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
+- (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
 
 /** Converts a double to a string keeping seven digit of precision 
  Seven digits produces sub meter accuracy at the equator.
