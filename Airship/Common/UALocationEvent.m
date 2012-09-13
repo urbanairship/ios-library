@@ -72,7 +72,12 @@ NSString * const UADesiredAccuracyValueNone = @"NONE";
     [context setValue:provider.provider forKey:UALocationEventProviderKey];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [self populateDictionary:context withLocationValues:location];
-    [self populateDictionary:context withLocationProviderValues:provider];
+    if (updateType == UALocationEventUpdateTypeChange) {
+        [self setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:context];
+    }
+    else {
+        [self populateDictionary:context withLocationProviderValues:provider];
+    }
     return [self initWithLocationContext:context];
 }
 
@@ -83,7 +88,12 @@ NSString * const UADesiredAccuracyValueNone = @"NONE";
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [context setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     [self populateDictionary:context withLocationValues:location];
-    [self populateDictionary:context withLocationManagerValues:locationManager];
+    if (updateType == UALocationEventUpdateTypeChange) {
+        [self setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:context];
+    }
+    else {
+        [self populateDictionary:context withLocationManagerValues:locationManager];
+    }
     return [self initWithLocationContext:context];
 }
 
@@ -102,6 +112,11 @@ NSString * const UADesiredAccuracyValueNone = @"NONE";
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider {
     [self populateDictionary:dictionary withLocationManagerValues:locationProvider.locationManager];
+}
+
+- (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary*)dictionary {
+    [dictionary setValue:UADistanceFilterValueNone forKey:UALocationEventDistanceFilterKey];
+    [dictionary setValue:UADesiredAccuracyValueNone forKey:UALocationEventDesiredAccuracyKey];
 }
 
 
