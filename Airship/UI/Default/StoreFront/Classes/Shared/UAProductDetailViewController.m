@@ -28,6 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAStoreFrontUI.h"
 #import "UAProductDetailViewController.h"
 #import "UAAsycImageView.h"
+#import "UAGradientButton.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -38,24 +39,24 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize product;
 @synthesize productTitle;
 @synthesize iconContainer;
-@synthesize price;
 @synthesize fileSize;
 @synthesize revision;
 @synthesize detailTable;
-@synthesize previewImage;
-@synthesize previewImageCell;
+@synthesize revisionHeading;
+@synthesize fileSizeHeading;
+@synthesize priceButton;
 
 - (void)dealloc {
     self.product = nil;
     RELEASE_SAFELY(fileSize);
     RELEASE_SAFELY(productTitle);
     RELEASE_SAFELY(iconContainer);
-    RELEASE_SAFELY(price);
     RELEASE_SAFELY(revision);
     RELEASE_SAFELY(detailTable);
-    RELEASE_SAFELY(previewImage);
-    RELEASE_SAFELY(previewImageCell);
     RELEASE_SAFELY(buyButton);
+    RELEASE_SAFELY(revisionHeading);
+    RELEASE_SAFELY(fileSizeHeading);
+    RELEASE_SAFELY(priceButton);
     [super dealloc];
 }
 
@@ -87,6 +88,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
                                                      style:UIBarButtonItemStyleDone
                                                     target:self
                                                     action:@selector(purchase:)];
+        
+        webViewHeight = 0;
     }
     return self;
 }
@@ -94,26 +97,66 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [UAViewUtils roundView:iconContainer borderRadius:10.0 borderWidth:1.0 color:[UIColor darkGrayColor]];
-    price.textColor = kPriceFGColor;
-    [UAViewUtils roundView:price borderRadius:5.0 borderWidth:1.0 color:kPriceBorderColor];
-    price.backgroundColor = kPriceBGColor;
+    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
 
+    [UAViewUtils roundView:iconContainer borderRadius:10.0 borderWidth:1.0 color:[UIColor darkGrayColor]];
+    
+    // Price button colors
+    [priceButton setTitleColor:ui.priceFGColor forState:UIControlStateNormal];
+    [priceButton setTitleColor:ui.priceFGColor forState:UIControlStateHighlighted];
+    
+    priceButton.normalStrokeColor = ui.priceBorderColor;
+    priceButton.highlightStrokeColor = ui.priceBorderHighlightColor;
+    [priceButton useStyleFromColor:ui.priceBGColor highlightColor:ui.priceBGHighlightColor];
+    [priceButton setNeedsDisplay];
+    
+    // Font customization
+    if (ui.detailTitleFont != nil)
+    {
+        self.productTitle.font = ui.detailTitleFont;
+    }
+    
+    if (ui.detailPriceFont != nil)
+    {
+        self.priceButton.titleLabel.font = ui.detailPriceFont;
+    }
+    
+    if (ui.detailMetadataFont != nil)
+    {
+        self.revision.font = ui.detailMetadataFont;
+        self.fileSize.font = ui.detailMetadataFont;
+        self.revisionHeading.font = ui.detailMetadataFont;
+        self.fileSizeHeading.font = ui.detailMetadataFont;
+    }
+    
+    if (ui.detailMetadataFontColor != nil)
+    {
+        self.revision.textColor = ui.detailMetadataFontColor;
+        self.fileSize.textColor = ui.detailMetadataFontColor;
+        self.revisionHeading.textColor = ui.detailMetadataFontColor;
+        self.fileSizeHeading.textColor = ui.detailMetadataFontColor;        
+    }
+
+    if (ui.detailBackgroundColor != nil) {
+        self.detailTable.backgroundColor = ui.detailBackgroundColor;
+        self.view.backgroundColor = ui.detailBackgroundColor;
+    }
+    
     [self refreshUI];
 }
 
 - (void)viewDidUnload {
     self.productTitle = nil;
     self.iconContainer = nil;
-    self.price = nil;
+    self.priceButton = nil;
     self.revision = nil;
     self.fileSize = nil;
     self.detailTable = nil;
-    self.previewImage = nil;
-    self.previewImageCell = nil;
+    self.revisionHeading = nil;
+    self.fileSizeHeading = nil;
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated {
     self.product = nil;
 }
 
@@ -186,17 +229,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     [iconContainer loadImageFromURL:product.iconURL];
     revision.text = [NSString stringWithFormat: @"%d", product.revision];
     fileSize.text = [UAUtils getReadableFileSizeFromBytes:product.fileSize];
-    price.text = product.price;
+    [priceButton setTitle:product.price forState:UIControlStateNormal];
 
-    // resize price frame
-    CGRect frame = price.frame;
+    // resize priceButton frame
+    CGRect frame = priceButton.frame;
     CGFloat frameRightBound = CGRectGetMaxX(frame);
-    [price sizeToFit];
-    CGRect trimmedFrame = price.frame;
+    [priceButton sizeToFit];
+    CGRect trimmedFrame = priceButton.frame;
     frame.size.width = trimmedFrame.size.width + 15;
     frame.origin.x = frameRightBound - frame.size.width;
-    price.frame = frame;
-
+    priceButton.frame = frame;
+    
     [detailTable reloadData];
 }
 
@@ -244,74 +287,85 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 #pragma mark UITableViewDelegate
 
 - (CGFloat) tableView: (UITableView *) tableView heightForRowAtIndexPath: (NSIndexPath *) indexPath {
-    if([indexPath row] == 0) {
-        UIFont *font = [UIFont systemFontOfSize: 16];
-        
-        // calculate the size of the text
-        // note: text cannot be nil as sizeWithFont
-        // returns a struct init'd w/ garbage
-        NSString* text = product.productDescription;
-        if (text == nil) {
-            text = @"";
-        }
-        
-        CGFloat height = [text sizeWithFont: font
-                          constrainedToSize: CGSizeMake(280.0, 1500.0)
-                              lineBreakMode: UILineBreakModeWordWrap].height;
+    if (product.previewURL == nil || webViewHeight == 0) {
+        return tableView.rowHeight;
+    } else {
+        CGFloat height = webViewHeight;
         return height + kCellPaddingHeight;
-    } else if ([indexPath row] == 1) {
-        //return 240 + kCellPaddingHeight;
-        return 320;
     }
-    return 0;
 }
 
 #pragma mark -
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (product.previewURL == nil) {
-        return 1;
-    } else {
-        return 2;
-    }
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell* cell = nil;
     UIImage *bgImage = [UIImage imageNamed:@"middle-detail.png"];
     UIImage *stretchableBgImage = [bgImage stretchableImageWithLeftCapWidth:20 topCapHeight:0];
-    UIImageView *bgImageView = [[UIImageView alloc] initWithImage: stretchableBgImage];
-    if (indexPath.row == 0) {
-        NSString* text = product.productDescription;
-        UIFont *font = [UIFont systemFontOfSize: 16];
-
-        UILabel* description = [[UILabel alloc] init];
-        description.text = text;
-        description.lineBreakMode = UILineBreakModeWordWrap;
-        description.numberOfLines = 0;
-        description.backgroundColor = [UIColor clearColor];
-        [description setFont: font];
-
-        CGFloat height = [text sizeWithFont: font
-                          constrainedToSize: CGSizeMake(280.0, 800.0)
-                              lineBreakMode: UILineBreakModeWordWrap].height;
-        [description setFrame: CGRectMake(0.0f, 10.0f, 320.0f, height)];
-        [description setBounds: CGRectMake(0.20f, 0.0f, 290.0f, height)];
-        [description setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-
-        cell = [[[UITableViewCell alloc] initWithStyle: UITableViewCellStyleDefault reuseIdentifier: @"description-cell"] autorelease];
-        [cell addSubview: description];
-        [description release];
-        [cell setSelectionStyle: UITableViewCellSelectionStyleNone];
-        [cell setBackgroundView: bgImageView];
-    } else if (indexPath.row == 1) {
-        [previewImageCell setBackgroundView: bgImageView];
-        [previewImage loadImageFromURL:product.previewURL];
-        cell = previewImageCell;
+    UIImageView *bgImageView = [[[UIImageView alloc] initWithImage:stretchableBgImage] autorelease];
+    
+    NSString* text = product.productDescription;
+    
+    if (text == nil)
+    {
+        text = @"";
     }
-    [bgImageView release];
+    
+    if ([UAStoreFrontUI shared].detailDescriptionTextFormat != nil)
+    {
+        text = [NSString stringWithFormat:[UAStoreFrontUI shared].detailDescriptionTextFormat, text];
+    }
+        
+    UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
+    UIWebView *webView = [[[UIWebView alloc] init] autorelease];
+    NSString *htmlString = [self constructHtmlForWebViewWithDescription:text AndImageURL:product.previewURL];
+    [webView loadHTMLString:htmlString baseURL:nil];
+    [webView setBackgroundColor:[UIColor clearColor]];
+    [webView setOpaque:0];
+    [webView setDelegate:self];
+    
+    CGFloat height = [text sizeWithFont: font
+                      constrainedToSize: CGSizeMake(280.0, 800.0)
+                          lineBreakMode: UILineBreakModeWordWrap].height;
+    [webView setFrame:CGRectMake(0.0f, 10.0f, 320.0f, height)];
+    [webView setBounds:CGRectMake(0.20f, 0.0f, 290.0f, height)];
+    [webView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+    
+    UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                                    reuseIdentifier: @"description-cell"]
+                             autorelease];
+    [cell addSubview:webView];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    [cell setBackgroundView:bgImageView];
     return cell;
+}
+
+#pragma mark -
+#pragma mark WebView
+
+- (NSString *)constructHtmlForWebViewWithDescription:(NSString *)description AndImageURL:(NSURL *)imageURL {
+    
+    UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
+
+    // Replace \n with <br/> in the text
+    NSString *text = [description stringByReplacingOccurrencesOfString:@"\n" withString:@"<br/>"];
+    
+    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> %@ <div style='text-align: center; margin-top: 10px'><img width=\"%d\" src=\"%@\" /></div> </body> </html>",
+            font.familyName, font.pointSize, text, [UAStoreFrontUI shared].previewImageWidth, [imageURL description]];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)view {
+    [view sizeToFit];
+    NSString *output = [view stringByEvaluatingJavaScriptFromString:@"document.height;"];
+    int currentHeight = [output intValue];
+    if (currentHeight == webViewHeight) {
+        return;
+    }
+    webViewHeight = currentHeight;
+    [detailTable reloadData];
 }
 
 @end

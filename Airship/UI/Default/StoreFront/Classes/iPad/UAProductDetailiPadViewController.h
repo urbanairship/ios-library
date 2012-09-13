@@ -27,9 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 @interface UAProductDetailiPadViewController : UAProductDetailViewController <UIWebViewDelegate> {
-    int webViewHeight;
 }
 
-- (NSString *)constructHtmlForWebViewWithDescription:(NSString *)description AndImageURL:(NSURL *)imageURL;
 
 @end

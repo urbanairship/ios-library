@@ -47,13 +47,14 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 @synthesize toolBar;
 @dynamic products;
 @synthesize productID;
+@synthesize cellSelectionStyle;
 
 #pragma mark -
 #pragma mark UIViewController
 
 - (void)dealloc {
     [UAStoreFront unregisterObserver:self];
-
+    
     RELEASE_SAFELY(productID);
     RELEASE_SAFELY(productTable);
     RELEASE_SAFELY(filterSegmentedControl);
@@ -74,6 +75,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
                                 initWithNibName:productDetailViewNibName
                                 bundle:nil];
         productID = nil;
+        cellSelectionStyle = UITableViewCellSelectionStyleBlue;
     }
     return self;
 }
@@ -104,7 +106,10 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         }
                        );
 
-    self.title = UA_SF_TR(@"UA_Content");
+    if (self.title == nil)
+    {
+        self.title = UA_SF_TR(@"UA_Content");
+    }
 
     [filterSegmentedControl setTitle:UA_SF_TR(@"UA_filter_all") forSegmentAtIndex:ProductTypeAll];
     [filterSegmentedControl setTitle:UA_SF_TR(@"UA_filter_installed") forSegmentAtIndex:ProductTypeInstalled];
@@ -155,6 +160,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     [UAStoreFront reloadInventoryIfFailed];
     if(![UAStoreFrontUI shared].isiPad) {
         [self.productTable deselectRowAtIndexPath:[self.productTable indexPathForSelectedRow] animated:YES];
@@ -162,6 +169,8 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (void)viewDidUnload {
+    [super viewDidUnload];
+    
     self.productTable = nil;
     self.filterSegmentedControl = nil;
     self.activityView = nil;
@@ -169,7 +178,23 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return YES;
+    BOOL result = YES;
+    
+    if ([UAStoreFrontUI shared].allowedUserInterfaceOrientations != nil)
+    {
+        result = NO;
+        
+        for (NSNumber *orientation in [UAStoreFrontUI shared].allowedUserInterfaceOrientations)
+        {
+            if ([orientation intValue] == interfaceOrientation)
+            {
+                result = YES;
+                break;
+            }
+        }
+    }
+    
+    return result;
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
@@ -191,7 +216,7 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     NSArray *dataSource = [self productsForTableView:productTable];
     UAProduct *aProduct;
 
-    for (int i=0; i<dataSource.count; i++) {
+    for (NSUInteger i=0; i<dataSource.count; i++) {
         aProduct = [dataSource objectAtIndex:i];
         if ([aProduct.productIdentifier isEqualToString:productID]) {
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
@@ -237,10 +262,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
         cell = [[[UAStoreFrontCell alloc] initWithStyle:UITableViewCellStyleDefault
                                         reuseIdentifier:@"store-front-cell"] autorelease];
         [UAViewUtils roundView:cell.iconContainer borderRadius:10 borderWidth:1 color:[UIColor darkGrayColor]];
+        cell.selectionStyle = self.cellSelectionStyle;
     }
     
     NSArray *tableProducts = [self productsForTableView:tableView];
-    if (indexPath.row < [tableProducts count]) {
+    if (indexPath.row < (int)[tableProducts count]) {
         cell.product = [tableProducts objectAtIndex:indexPath.row];
     }
     [self customizeAccessoryViewForCell:cell];
@@ -284,13 +310,17 @@ UIKIT_EXTERN NSString* const UIApplicationDidBecomeActiveNotification __attribut
     // self.navigationItem.leftBarButtonItem.enabled = YES
 
     self.navigationItem.leftBarButtonItem.enabled = YES;
-    for (UAProduct *product in [UAStoreFront productsForType:ProductTypeAll]) {
-        if (product.status == UAProductStatusDownloading
-            || product.status == UAProductStatusPurchasing
-            || product.status == UAProductStatusDecompressing
-            || product.status == UAProductStatusVerifyingReceipt) {
-            self.navigationItem.leftBarButtonItem.enabled = NO;
-            break;
+    
+    if ([UAStoreFrontUI shared].downloadsPreventStoreFrontExit)
+    {
+        for (UAProduct *product in [UAStoreFront productsForType:ProductTypeAll]) {
+            if (product.status == UAProductStatusDownloading
+                || product.status == UAProductStatusPurchasing
+                || product.status == UAProductStatusDecompressing
+                || product.status == UAProductStatusVerifyingReceipt) {
+                self.navigationItem.leftBarButtonItem.enabled = NO;
+                break;
+            }
         }
     }
 }

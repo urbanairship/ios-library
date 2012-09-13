@@ -66,6 +66,40 @@
 @property (nonatomic, assign, readonly) BOOL isiPad;
 @property (nonatomic, retain) NSBundle *localizationBundle;
 
+// Customization properties
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) UIFont *cellPriceFont;
+@property (nonatomic, retain) UIFont *cellTitleFont;
+@property (nonatomic, retain) UIFont *cellDescriptionFont;
+@property (nonatomic, retain) UIFont *cellProgressFont;
+@property (nonatomic, retain) UIFont *detailDescriptionFont;
+@property (nonatomic, retain) UIFont *detailTitleFont;
+@property (nonatomic, retain) UIFont *detailMetadataFont;
+@property (nonatomic, retain) UIFont *detailPriceFont;
+@property (nonatomic, retain) UIColor *detailBackgroundColor;
+@property (nonatomic, retain) UIColor *cellEvenBackgroundColor;
+@property (nonatomic, retain) UIColor *cellOddBackgroundColor;
+@property (nonatomic, retain) UIColor *cellOddGradientTopColor;
+@property (nonatomic, retain) UIColor *cellOddGradientBottomColor;
+@property (nonatomic, retain) UIColor *cellEvenGradientTopColor;
+@property (nonatomic, retain) UIColor *cellEvenGradientBottomColor;
+@property (nonatomic, retain) NSArray *allowedUserInterfaceOrientations;
+@property (nonatomic, assign) BOOL downloadsPreventStoreFrontExit;
+@property (nonatomic, retain) NSString* detailDescriptionTextFormat; ///< This will be used in stringWithFormat with the description text as the only parameter.
+@property (nonatomic, assign) int previewImageWidth;
+@property (nonatomic, retain) UIColor *updateFGColor;
+@property (nonatomic, retain) UIColor *updateBGColor;
+@property (nonatomic, retain) UIColor *installedFGColor;
+@property (nonatomic, retain) UIColor *installedBGColor;
+@property (nonatomic, retain) UIColor *downloadingFGColor;
+@property (nonatomic, retain) UIColor *downloadingBGColor;
+@property (nonatomic, retain) UIColor *priceFGColor;
+@property (nonatomic, retain) UIColor *priceBGColor;
+@property (nonatomic, retain) UIColor *priceBorderColor;
+@property (nonatomic, retain) UIColor *priceBGHighlightColor;
+@property (nonatomic, retain) UIColor *priceBorderHighlightColor;
+@property (nonatomic, retain) UIColor *detailMetadataFontColor;
+
 SINGLETON_INTERFACE(UAStoreFrontUI)
 
 + (void)setRuniPhoneTargetOniPad:(BOOL)value;

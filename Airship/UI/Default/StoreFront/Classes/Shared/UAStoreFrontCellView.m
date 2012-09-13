@@ -88,7 +88,7 @@
 - (void)refreshCellView {
     self.title = product.title;
     self.description = product.productDescription;
-
+    
     [self setNeedsDisplay];
 }
 
@@ -129,32 +129,33 @@
 
 - (void)refreshPriceLabelView:(UAProductStatus)status {
     //update color
+    UAStoreFrontUI *ui = [UAStoreFrontUI shared];
     NSString *text;
     UIColor *textColor, *bgColor, *borderColor;
     if (status == UAProductStatusHasUpdate) {
         text = UA_SF_TR(@"UA_update_available");
-        borderColor = textColor = kUpdateFGColor;
-        bgColor = kUpdateBGColor;
+        borderColor = textColor = ui.updateFGColor;
+        bgColor = ui.updateBGColor;
     } else if (status == UAProductStatusPurchased) {
         text = UA_SF_TR(@"UA_not_downloaded");
-        borderColor = textColor = kUpdateFGColor;
-        bgColor = kUpdateBGColor;
+        borderColor = textColor = ui.updateFGColor;
+        bgColor = ui.updateBGColor;
     } else if (status == UAProductStatusInstalled) {
         text = UA_SF_TR(@"UA_installed");
-        borderColor = textColor = kInstalledFGColor;
-        bgColor = kInstalledBGColor;
+        borderColor = textColor = ui.installedFGColor;
+        bgColor = ui.installedBGColor;
     } else if (status == UAProductStatusDownloading 
                || status == UAProductStatusPurchasing 
                || status == UAProductStatusVerifyingReceipt
                || status == UAProductStatusDecompressing) {
         text = UA_SF_TR(@"UA_downloading");
-        textColor = borderColor = kDownloadingFGColor;
-        bgColor = kDownloadingBGColor;
+        textColor = borderColor = ui.downloadingFGColor;
+        bgColor = ui.downloadingBGColor;
     } else {
         text = self.product.price;
-        textColor = kPriceFGColor;
-        borderColor = kPriceBorderColor;
-        bgColor = kPriceBGColor;
+        textColor = ui.priceFGColor;
+        borderColor = ui.priceBorderColor;
+        bgColor = ui.priceBGColor;
     }
 
     self.price = text;
@@ -190,7 +191,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
 
 - (float)getWidth:(NSString *)string {
     CGSize size;
-    size = [string sizeWithFont:[UIFont fontWithName:@"Helvetica" size:14]];
+    size = [string sizeWithFont:[UAStoreFrontUI shared].cellPriceFont];
     return size.width;
 }
 
@@ -209,7 +210,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
     [fontColor set];
     rect = CGRectMake(76, 11, width-RIGHT_BOUNDARY-76, 20);
     [title drawInRect:rect
-             withFont:[UIFont fontWithName:@"Helvetica-Bold" size:18]
+             withFont:[UAStoreFrontUI shared].cellTitleFont
         lineBreakMode:UILineBreakModeTailTruncation
             alignment:UITextAlignmentLeft];
 
@@ -227,7 +228,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
     [priceColor set];
     rect = CGRectMake(width-RIGHT_BOUNDARY-w, 8, w, 20);
     [price drawInRect:rect
-             withFont:[UIFont fontWithName:@"Helvetica" size:14]
+             withFont:[UAStoreFrontUI shared].cellPriceFont
         lineBreakMode:UILineBreakModeTailTruncation
             alignment:UITextAlignmentCenter];
 
@@ -235,7 +236,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
         [fontColor set];
         rect = CGRectMake(77, 31, width-RIGHT_BOUNDARY-77, 33);
         [description drawInRect:rect
-                       withFont:[UIFont fontWithName:@"Helvetica" size:13]
+                       withFont:[UAStoreFrontUI shared].cellDescriptionFont
                   lineBreakMode:UILineBreakModeTailTruncation
                       alignment:UITextAlignmentLeft];
     }
@@ -244,7 +245,7 @@ static void addRoundedRectToPath(CGContextRef context, CGRect rect,
         [fontColor set];
         rect = CGRectMake(77, 37, width-RIGHT_BOUNDARY-77, 20);
         [progress drawInRect:rect
-                    withFont:[UIFont fontWithName:@"Helvetica" size:13]
+                    withFont:[UAStoreFrontUI shared].cellProgressFont
                lineBreakMode:UILineBreakModeTailTruncation
                    alignment:UITextAlignmentLeft];
     }

@@ -51,4 +51,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshProgress:(float)progress;
 - (void)refreshPriceLabel:(UAProductStatus)status;
 
+- (void)enterBackground;
+
 @end

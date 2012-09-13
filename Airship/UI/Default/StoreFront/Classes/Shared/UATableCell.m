@@ -25,10 +25,17 @@
 
 #import "UATableCell.h"
 #import "UAirship.h"
+#import "UAStoreFrontUI.h"
+
+@interface UATableCell ()
+- (void)addGradientWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor;
+@property (nonatomic, retain) CAGradientLayer *gradientLayer;
+@end
 
 @implementation UATableCell
 
 @synthesize isOdd;
+@synthesize gradientLayer;
 
 -(void)dealloc {
     [super dealloc];
@@ -46,10 +53,55 @@
     isOdd = odd;
 
     if (isOdd) {
-        self.backgroundColor = RGBA(255, 255, 255, 1);
+        self.backgroundColor = [UAStoreFrontUI shared].cellOddBackgroundColor;
+        [self addGradientWithTopColor:[UAStoreFrontUI shared].cellOddGradientTopColor 
+                          bottomColor:[UAStoreFrontUI shared].cellOddGradientBottomColor];
     } else {
-        self.backgroundColor = RGBA(240, 242, 243, 1);
+        self.backgroundColor = [UAStoreFrontUI shared].cellEvenBackgroundColor;
+        [self addGradientWithTopColor:[UAStoreFrontUI shared].cellEvenGradientTopColor 
+                          bottomColor:[UAStoreFrontUI shared].cellEvenGradientBottomColor];
     }
+
+}
+
+- (void)addGradientWithTopColor:(UIColor *)topColor bottomColor:(UIColor *)bottomColor {
+    // Do nothing if both colors are nil
+    if (topColor == nil && bottomColor == nil) return;
+
+    // If just one color is nil, use clear color for that color
+    if (topColor == nil) topColor = [UIColor clearColor];
+    if (bottomColor == nil) bottomColor = [UIColor clearColor];
+    
+    CAGradientLayer *gradient   = [CAGradientLayer layer];    
+    gradient.colors = [NSArray arrayWithObjects:(id)[topColor CGColor], (id)[bottomColor CGColor], nil];
+    self.gradientLayer = gradient;
+}
+
+- (void)setGradientLayer:(CAGradientLayer *)aGradientLayer {
+    if (gradientLayer != nil) {
+        [gradientLayer removeFromSuperlayer];
+    }
+    
+    aGradientLayer.frame = self.bounds;
+
+    if (self.backgroundView == nil) {
+        // If we don't already have a backgroundView, add a clear one to put our gradient on.
+        // Putting the gradient on the backgroundView assures that the selection state for the cell will
+        // display over the gradient.
+        UIView *aBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        aBackgroundView.opaque = NO;
+        self.backgroundView = aBackgroundView;
+        [aBackgroundView release];
+    }
+
+    [self.backgroundView.layer insertSublayer:aGradientLayer atIndex:0];
+    gradientLayer = aGradientLayer;
+}
+
+- (void)prepareForReuse {
+    self.gradientLayer = nil;
+    self.backgroundView = nil;
+    [super prepareForReuse];
 }
 
 /*

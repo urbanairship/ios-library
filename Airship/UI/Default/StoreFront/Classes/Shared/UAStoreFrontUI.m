@@ -27,6 +27,13 @@
 #import "UAStoreFrontViewController.h"
 #import "UAStoreFrontSplitViewController.h"
 
+static CGFloat const UAStoreFrontAnimationDuration = 0.5f;
+
+@interface UAStoreFrontUI ()
+
+- (CGPoint) offsetRect:(CGRect)rect forInterfaceOrientation:(UIInterfaceOrientation)orientation onScreen:(BOOL)onScreen;
+
+@end
 
 @implementation UAStoreFrontUI
 
@@ -39,6 +46,40 @@ SINGLETON_IMPLEMENTATION(UAStoreFrontUI)
 @synthesize originalWindow;
 @synthesize isVisible;
 @synthesize localizationBundle;
+
+@synthesize title;
+@synthesize cellPriceFont;
+@synthesize cellTitleFont;
+@synthesize cellDescriptionFont;
+@synthesize detailDescriptionFont;
+@synthesize cellProgressFont;
+@synthesize detailTitleFont;
+@synthesize detailPriceFont;
+@synthesize detailMetadataFont;
+@synthesize detailBackgroundColor;
+@synthesize cellEvenBackgroundColor;
+@synthesize cellOddBackgroundColor;
+@synthesize cellOddGradientTopColor;
+@synthesize cellOddGradientBottomColor;
+@synthesize cellEvenGradientTopColor;
+@synthesize cellEvenGradientBottomColor;
+
+@synthesize allowedUserInterfaceOrientations;
+@synthesize downloadsPreventStoreFrontExit;
+@synthesize detailDescriptionTextFormat;
+@synthesize previewImageWidth;
+@synthesize updateFGColor;
+@synthesize updateBGColor;
+@synthesize downloadingBGColor;
+@synthesize downloadingFGColor;
+@synthesize installedBGColor;
+@synthesize installedFGColor;
+@synthesize priceBGColor;
+@synthesize priceFGColor;
+@synthesize priceBorderColor;
+@synthesize priceBGHighlightColor;
+@synthesize priceBorderHighlightColor;
+@synthesize detailMetadataFontColor;
 
 static BOOL runiPhoneTargetOniPad = NO;
 
@@ -53,7 +94,32 @@ static BOOL runiPhoneTargetOniPad = NO;
     RELEASE_SAFELY(originalWindow);
     RELEASE_SAFELY(alertHandler);
     RELEASE_SAFELY(localizationBundle);
-
+    
+    RELEASE_SAFELY(title);
+    RELEASE_SAFELY(cellPriceFont);
+    RELEASE_SAFELY(cellTitleFont);
+    RELEASE_SAFELY(cellDescriptionFont);
+    RELEASE_SAFELY(cellProgressFont);
+    RELEASE_SAFELY(detailDescriptionFont);
+    RELEASE_SAFELY(detailPriceFont);
+    RELEASE_SAFELY(detailMetadataFont);
+    RELEASE_SAFELY(detailTitleFont);
+    RELEASE_SAFELY(cellEvenBackgroundColor);
+    RELEASE_SAFELY(cellOddBackgroundColor);
+    RELEASE_SAFELY(allowedUserInterfaceOrientations);
+    RELEASE_SAFELY(detailDescriptionTextFormat);
+    RELEASE_SAFELY(updateBGColor);
+    RELEASE_SAFELY(updateFGColor);
+    RELEASE_SAFELY(downloadingFGColor);
+    RELEASE_SAFELY(downloadingBGColor);
+    RELEASE_SAFELY(installedFGColor);
+    RELEASE_SAFELY(installedBGColor);
+    RELEASE_SAFELY(priceBorderColor);
+    RELEASE_SAFELY(priceBGColor);
+    RELEASE_SAFELY(priceFGColor);
+    RELEASE_SAFELY(priceBGHighlightColor);
+    RELEASE_SAFELY(priceBorderHighlightColor);
+    
     [super dealloc];
 }
 
@@ -71,7 +137,6 @@ static BOOL runiPhoneTargetOniPad = NO;
             UAStoreFrontSplitViewController *svc = [[UAStoreFrontSplitViewController alloc] init];
             productListViewController = [[svc productListViewController] retain];
             rootViewController = (UIViewController *)svc;
-        
         } else {
             productListViewController = [[UAStoreFrontViewController alloc]
                                          initWithNibName:@"UAStoreFront" bundle:nil];
@@ -81,6 +146,39 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         alertHandler = [[UAStoreFrontAlertHandler alloc] init];
         isVisible = NO;
+        
+        // Default fonts
+        cellDescriptionFont = [[UIFont fontWithName:@"Helvetica" size:13] retain];
+        cellTitleFont = [[UIFont fontWithName:@"Helvetica-Bold" size:18] retain];
+        cellPriceFont = [[UIFont fontWithName:@"Helvetica" size:14] retain];
+        cellProgressFont = [[UIFont fontWithName:@"Helvetica" size:13] retain];
+        detailDescriptionFont = [[UIFont systemFontOfSize:16] retain];
+        detailTitleFont = nil;
+        detailPriceFont = nil;
+        detailMetadataFont = nil;
+        detailBackgroundColor = nil;
+        cellOddBackgroundColor = [RGBA(255, 255, 255, 1) retain];
+        cellEvenBackgroundColor = [RGBA(240, 242, 243, 1) retain];
+        cellOddGradientTopColor = nil;
+        cellOddGradientBottomColor = nil;
+        cellEvenGradientTopColor = nil;
+        cellEvenGradientBottomColor = nil;
+        allowedUserInterfaceOrientations = nil;
+        downloadsPreventStoreFrontExit = YES;
+        detailDescriptionTextFormat = nil;
+        previewImageWidth = 280;
+        self.updateFGColor = kUpdateFGColor;
+        self.updateBGColor = kUpdateBGColor;
+        self.downloadingBGColor = kDownloadingBGColor;
+        self.downloadingFGColor = kDownloadingFGColor;
+        self.installedBGColor = kInstalledBGColor;
+        self.installedFGColor = kInstalledFGColor;
+        self.priceBGColor = kPriceBGColor;
+        self.priceBorderColor = kPriceBorderColor;
+        self.priceFGColor = kPriceFGColor;
+        self.priceBGHighlightColor = kPriceBGColor;
+        self.priceBorderHighlightColor = kPriceBorderColor;
+        self.detailMetadataFontColor = nil;
     }
     
     return self;
@@ -93,6 +191,8 @@ static BOOL runiPhoneTargetOniPad = NO;
     // reset the view navigation to the product list
     [ui.productListViewController.navigationController popToRootViewControllerAnimated:NO];
 
+    ui.productListViewController.title = ui.title;
+    
     // if iPhone/iPod
     if (!ui.isiPad) {
         [viewController presentModalViewController:ui.rootViewController animated:animated];
@@ -106,8 +206,34 @@ static BOOL runiPhoneTargetOniPad = NO;
         ui.originalWindow = viewController.view.window;
 
         [ui.rootViewController viewWillAppear:animated];
-        [ui.uaWindow makeKeyAndVisible];
-        ui.originalWindow.hidden = YES;
+        if (animated)
+        {
+            __block CGPoint offset = [ui offsetRect:ui.uaWindow.frame
+                              forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                             onScreen:NO];
+            ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+            [ui.uaWindow makeKeyAndVisible];
+            
+            [UIView animateWithDuration:UAStoreFrontAnimationDuration
+                             animations:^{
+                                 offset = [ui offsetRect:ui.uaWindow.frame
+                                   forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                                  onScreen:YES];
+                                 ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+                             }
+                             completion:^(BOOL finished) {
+                                 // Note that we do not set original window hidden
+                                 // here so that it is visible when we animate off-screen
+                                 // later in quitStoreFront.
+                                 [ui.rootViewController viewDidAppear:animated];
+                             }];
+        }
+        else
+        {
+            [ui.uaWindow makeKeyAndVisible];
+            ui.originalWindow.hidden = YES;
+            [ui.rootViewController viewDidAppear:animated];
+        }
     }
     
     ui->isVisible = YES;
@@ -137,16 +263,34 @@ static BOOL runiPhoneTargetOniPad = NO;
     if (presentingViewController != nil) {
         // for iPhone/iPod displayStoreFront:animated:
         [ui.rootViewController dismissModalViewControllerAnimated:ui->animated];
-
     } else if (ui.rootViewController.view.superview == ui.uaWindow) {
 
         // For iPad displayStoreFront:animated:
         // Return control to original window
-        [ui.originalWindow makeKeyAndVisible];
-        ui.originalWindow = nil;
-
-        [ui.rootViewController.view removeFromSuperview];
-        ui.uaWindow = nil;
+        void(^quitCompletion)(BOOL) = ^(BOOL finished) {
+            [ui.originalWindow makeKeyAndVisible];
+            ui.originalWindow = nil;
+            [ui.rootViewController viewDidDisappear:ui->animated];
+            [ui.rootViewController.view removeFromSuperview];
+            ui.rootViewController.view = nil;
+            ui.uaWindow = nil;
+            ui.rootViewController.view.transform = CGAffineTransformIdentity;
+        };
+        if (ui->animated)
+        {
+            [UIView animateWithDuration:UAStoreFrontAnimationDuration
+                             animations:^{
+                                 CGPoint offset = [ui offsetRect:ui.uaWindow.frame
+                                           forInterfaceOrientation:ui.originalWindow.rootViewController.interfaceOrientation
+                                                          onScreen:NO];
+                                 ui.uaWindow.frame = CGRectOffset(ui.uaWindow.frame, offset.x, offset.y);
+                             }
+                             completion:quitCompletion];
+        }
+        else
+        {
+            quitCompletion(YES);
+        }
 
     } else {
         // For other circumstances. e.g custom showing rootViewController or changed the showing code of StoreFront
@@ -161,5 +305,41 @@ static BOOL runiPhoneTargetOniPad = NO;
     
     return ui->alertHandler;
 }
+
+- (CGPoint) offsetRect:(CGRect)rect forInterfaceOrientation:(UIInterfaceOrientation)orientation onScreen:(BOOL)onScreen
+{
+    CGPoint offset = CGPointMake(0.0f, 0.0f);
+
+    switch (orientation)
+    {
+        case UIInterfaceOrientationPortrait:
+            offset.y = CGRectGetHeight(rect);
+            break;
+            
+        case UIInterfaceOrientationPortraitUpsideDown:
+            offset.y = -CGRectGetHeight(rect);
+            break;
+            
+        case UIInterfaceOrientationLandscapeLeft:
+            offset.x = CGRectGetWidth(rect);
+            break;
+            
+        case UIInterfaceOrientationLandscapeRight:
+            offset.x = -CGRectGetWidth(rect);
+            break;
+            
+        default:
+            break;
+    }
+    
+    if (onScreen)
+    {
+        offset.x *= -1.0f;
+        offset.y *= -1.0f;
+    }
+
+    return offset;
+}
+
 
 @end

@@ -16,6 +16,8 @@ xcuserdata/
 AirshipConfig.plist
 AirshipDevelopment.plist
 fabfile.py*
+Cupcakes/
+TestFlight/
 *.build_output
 # Undo files for MacVim 
 *.un~
@@ -23,4 +25,3 @@ fabfile.py*
 cover.py
 OCMockLibrary
 *.swp
-

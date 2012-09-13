@@ -24,14 +24,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAProductDetailiPadViewController.h"
-
+#import "UAStoreFrontUI.h"
 
 @implementation UAProductDetailiPadViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
-        webViewHeight = 0;
     }
     return self;
 }
@@ -40,73 +39,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [detailTable reloadData];
 }
 
-#pragma mark -
-#pragma mark TableView
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)view cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (product.previewURL == nil) {
-        return [super tableView:view cellForRowAtIndexPath:indexPath];
-    }
-
-    UIImage *bgImage = [UIImage imageNamed:@"middle-detail.png"];
-    UIImage *stretchableBgImage = [bgImage stretchableImageWithLeftCapWidth:20 topCapHeight:0];
-    UIImageView *bgImageView = [[[UIImageView alloc] initWithImage:stretchableBgImage] autorelease];
-
-    NSString* text = product.productDescription;
-    UIFont *font = [UIFont systemFontOfSize: 16];
-    UIWebView *webView = [[[UIWebView alloc] init] autorelease];
-    NSString *htmlString = [self constructHtmlForWebViewWithDescription:text AndImageURL:product.previewURL];
-    [webView loadHTMLString:htmlString baseURL:nil];
-    [webView setBackgroundColor:[UIColor clearColor]];
-    [webView setOpaque:0];
-    [webView setDelegate:self];
-
-    CGFloat height = [text sizeWithFont: font
-                      constrainedToSize: CGSizeMake(280.0, 800.0)
-                          lineBreakMode: UILineBreakModeWordWrap].height;
-    [webView setFrame:CGRectMake(0.0f, 10.0f, 320.0f, height)];
-    [webView setBounds:CGRectMake(0.20f, 0.0f, 290.0f, height)];
-    [webView setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-
-    UITableViewCell *cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                                    reuseIdentifier: @"description-cell"]
-                             autorelease];
-    [cell addSubview:webView];
-    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    [cell setBackgroundView:bgImageView];
-    return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)view heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (product.previewURL == nil || webViewHeight == 0) {
-        return [super tableView:view heightForRowAtIndexPath:indexPath];
-    } else {
-        CGFloat height = webViewHeight;
-        return height + kCellPaddingHeight;
-    }
+- (void)viewDidDisappear:(BOOL)animated {
+    // Override view will dissappear so that closing the store doesn't cause the currently selected product to be lost
+    // the parent classes viewWillDisappear just contains the following:
+    // self.product = nil;
 }
 
 #pragma mark -
 #pragma mark WebView
 
 - (NSString *)constructHtmlForWebViewWithDescription:(NSString *)description AndImageURL:(NSURL *)imageURL {
-    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: helvetica; font-size: 16px;\"> <img width=\"160\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
-            [imageURL description], description];
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)view {
-    [view sizeToFit];
-    NSString *output = [view stringByEvaluatingJavaScriptFromString:@"document.height;"];
-    int currentHeight = [output intValue];
-    if (currentHeight == webViewHeight) {
-        return;
-    }
-    webViewHeight = currentHeight;
-    [detailTable reloadData];
+    
+    UIFont *font = [UAStoreFrontUI shared].detailDescriptionFont;
+    
+    // Replace \n with <br/> in the text
+    NSString *text = [description stringByReplacingOccurrencesOfString:@"\n" withString:@"<br/>"];
+    
+    return [NSString stringWithFormat:@"<html> <body style=\"background-color: transparent; font-family: %@; font-size: %f pt;\"> <img style='margin:10px' width=\"%d\" src=\"%@\" align=\"right\" /> %@ </body> </html>",
+            font.familyName, font.pointSize, [UAStoreFrontUI shared].previewImageWidth, [imageURL description], text];
 }
 
 @end

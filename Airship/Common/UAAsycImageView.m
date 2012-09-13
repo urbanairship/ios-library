@@ -26,6 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAAsycImageView.h"
 #import "UA_ASIHTTPRequest.h"
 #import "UA_ASIDownloadCache.h"
+#import "UAAnimatedGif.h"
 
 // Adapted from Mark J. AsyncImageView
 // http://www.markj.net/iphone-asynchronous-table-image/
@@ -62,8 +63,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [request startAsynchronous];
 }
 
-- (void)imageReady:(UA_ASIHTTPRequest *)request {
-    self.image = [UIImage imageWithData:request.responseData];
+- (void)imageReady:(UA_ASIHTTPRequest *)request 
+{
+    NSString *extension = [imageURL pathExtension];
+    if ([extension isEqualToString:@"gif"])
+    {
+        self.image = [UAAnimatedGif getAnimatedImageFromData:request.responseData];
+    }
+    else
+    {
+        self.image = [UIImage imageWithData:request.responseData];
+    }
     [self setNeedsLayout];
 
     if(target != nil && onReady != nil) {

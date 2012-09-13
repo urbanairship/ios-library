@@ -50,7 +50,12 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
-    UAProduct* product = [[self productsForTableView:tableView] objectAtIndex:indexPath.row];
+    NSArray *products = [self productsForTableView:tableView];
+    UAProduct* product = nil;
+    if (products != nil && (NSUInteger)indexPath.row < products.count)
+    {
+        product = [products objectAtIndex:indexPath.row];
+    }
     if (product == selectedProduct) {
         [tableView selectRowAtIndexPath:indexPath
                                animated:NO
