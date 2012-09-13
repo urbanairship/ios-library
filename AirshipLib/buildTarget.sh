@@ -5,7 +5,9 @@
 #
 # More info: see this Stack Overflow question: http://stackoverflow.com/questions/3520977/build-fat-static-library-device-simulator-using-xcode-and-sdk-4
 
-[ "$#" -eq 1 ] || { echo "1 argument (Build Target) required, $# provided" >&2; exit 1; }
+# TODO: use options for passing in the Xcode 4.4 path rather than an argument
+
+[ "$#" -ge 1 ] || { echo "1 argument (Build Target) required, $# provided" >&2; exit 1; }
 
 #################[ Tests: helps workaround any future bugs in Xcode ]########
 #
@@ -52,8 +54,11 @@ SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 ACTION="clean build"
 
 ARM_SDK_TO_BUILD=iphoneos${SDK_VERSION}
-ARM_ARCH_TO_BUILD="armv6 armv7"
+ARM_ARCH_TO_BUILD="armv7 armv7s"
 ARM_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_arm"
+
+ARMV6_SDK_TO_BUILD=iphoneos
+ARMV6_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_armv6"
 
 SIMULATOR_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
 SIMULATOR_ARCH_TO_BUILD="i386"
@@ -61,6 +66,7 @@ SIMULATOR_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_i386"
 
 # Calculate where the (multiple) built files are coming from:
 CURRENTCONFIG_DEVICE_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphoneos
+CURRENTCONFIG_ARMV6_DEVICE_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphoneos-armv6
 CURRENTCONFIG_SIMULATOR_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphonesimulator
 
 if [ $DEBUG_THIS_SCRIPT = "true" ]
@@ -78,20 +84,47 @@ fi
 echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" -arch \"${ARM_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${ARM_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" > ${ARM_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
 
 echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" > ${SIMULATOR_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
+
+#
+# Build an ARMV6 if an older version of Xcode is provided via an environment variable or $2 argument
+#
+if [ -n "$XCODE_4_4_APP" ]
+then
+    export DEVELOPER_DIR=$XCODE_4_4_APP/Contents/Developer
+    echo "Set DEVELOPER_DIR based on XCODE_4_4_APP"
+fi
+
+if [ -n "$2" ]
+then
+    export DEVELOPER_DIR=$2/Contents/Developer
+    echo "Set DEVELOPER_DIR based on PARAM"
+fi
+
+if [ -n "$DEVELOPER_DIR" ]
+then
+  echo "Building ARMv6 Legacy Library"
+  # Switch to Xcode 4.4
+  xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${ARMV6_SDK_TO_BUILD}" -arch "armv6" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_ARMV6_DEVICE_DIR" | tee ${ARMV6_LOG_FILE}
+
+  # Unset DEVELOPER_DIR for the rest of the script
+  export -n DEVELOPER_DIR
+
+  ARMV6_EXECUTABLE=${CURRENTCONFIG_ARMV6_DEVICE_DIR}/${EXECUTABLE_NAME}
+fi
 
 # Merge all platform binaries as a fat binary for each configurations.
 
 echo "Taking device build from: ${CURRENTCONFIG_DEVICE_DIR}"
 echo "Taking simulator build from: ${CURRENTCONFIG_SIMULATOR_DIR}"
+echo "Including legacy armv6 binary: $ARMV6_EXECUTABLE"
 
 CREATING_UNIVERSAL_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-universal
-echo "...outputing a universal armv6/armv7/i386 build to: ${CREATING_UNIVERSAL_DIR}"
 
 # ... remove the products of previous runs of this script
 #      NB: this directory is only created by this script - it should be safe to delete
@@ -100,7 +133,14 @@ rm -rf "${CREATING_UNIVERSAL_DIR}"
 mkdir -p "${CREATING_UNIVERSAL_DIR}"
 
 echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
-lipo -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
+if [ -z "$ARMV6_EXECUTABLE" ]
+then
+  echo "...outputing a universal armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
+  lipo -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
+else
+  echo "...outputing a universal armv6/armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
+  lipo -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${ARMV6_EXECUTABLE}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
+fi
 
 echo "Copying ${EXECUTABLE_NAME} to ${DEPLOY_DIR}"
 cp ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME} ${DEPLOY_DIR}

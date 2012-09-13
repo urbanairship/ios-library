@@ -28,7 +28,7 @@
 
 /* Begin PBXFileReference section */
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		D2AAC07E0554694100DB518D /* libInbox-2.1.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libInbox-2.1.0.a"; path = "libInbox-2.1.2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libInbox-2.1.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libInbox-2.1.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9AED95912B7931500441700 /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInbox.h; sourceTree = "<group>"; };
 		E9AED95A12B7931500441700 /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInbox.m; sourceTree = "<group>"; };
 		E9AED95B12B7931500441700 /* UAInboxDBManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxDBManager.h; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libInbox-2.1.0.a */,
+				D2AAC07E0554694100DB518D /* libInbox-2.1.5.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -153,7 +153,7 @@
 			);
 			name = InboxLib;
 			productName = InboxLib;
-			productReference = D2AAC07E0554694100DB518D /* libInbox-2.1.0.a */;
+			productReference = D2AAC07E0554694100DB518D /* libInbox-2.1.5.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -266,7 +266,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 armv7s i386";
 				VERSION_INFO_BUILDER = "";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
@@ -293,7 +293,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 armv7s i386";
 				VERSION_INFO_BUILDER = "";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
