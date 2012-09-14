@@ -114,8 +114,8 @@
 - (void)testInitWithSigChangeProviderSetsDistanceFilterDesiredAccuracyNone {
     UASignificantChangeProvider *sigChange = [UASignificantChangeProvider providerWithDelegate:nil];
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:location provider:sigChange andUpdateType:UALocationEventUpdateTypeChange];
-    STAssertTrue(UADesiredAccuracyValueNone == [event.data valueForKey:UALocationEventDesiredAccuracyKey], @"desiredAccuracy should be UADesiredAccuracyValueNone");
-    STAssertTrue(UADistanceFilterValueNone == [event.data valueForKey:UALocationEventDistanceFilterKey], @"distanceFilter should be UADistanceFilterValueNone");
+    STAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDesiredAccuracyKey], @"desiredAccuracy should be UADesiredAccuracyValueNone");
+    STAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDistanceFilterKey], @"distanceFilter should be UADistanceFilterValueNone");
 }
 
 
