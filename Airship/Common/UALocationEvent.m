@@ -54,8 +54,8 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 #pragma mark -
 #pragma mark DesiredAccuracy/DistanceFilter Value
 
-NSString * const UADistanceFilterValueNone = @"NONE";
-NSString * const UADesiredAccuracyValueNone = @"NONE";
+NSString * const UAAnalyticsValueNone = @"NONE";
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -115,8 +115,8 @@ NSString * const UADesiredAccuracyValueNone = @"NONE";
 }
 
 - (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary*)dictionary {
-    [dictionary setValue:UADistanceFilterValueNone forKey:UALocationEventDistanceFilterKey];
-    [dictionary setValue:UADesiredAccuracyValueNone forKey:UALocationEventDesiredAccuracyKey];
+    [dictionary setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
+    [dictionary setValue:UAAnalyticsValueNone forKey:UALocationEventDesiredAccuracyKey];
 }
 
 

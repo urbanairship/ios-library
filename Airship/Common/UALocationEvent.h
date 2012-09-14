@@ -47,8 +47,7 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
-extern NSString * const UADistanceFilterValueNone;
-extern NSString * const UADesiredAccuracyValueNone;
+extern NSString * const UAAnalyticsValueNone;
 
 /** A UALocationEvent captures all the necessary information for 
  UAAnalytics
