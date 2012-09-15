@@ -38,6 +38,7 @@ have additional linking requirements)::
     Security.framework
     SystemConfiguration.framework
     UIKit.framework
+    MessageUI.framework
     libz.dylib
     libsqlite3.dylib
     CoreTelephony.framework (Exists in iOS 4+ only, so make it a weak link for 3.x compatibility)
