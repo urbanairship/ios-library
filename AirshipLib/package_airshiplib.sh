@@ -23,8 +23,8 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#TODO: rename this
-buildConfig="distribution_package"
+# TODO: make this configurable?
+buildConfig="Release"
 srcRoot=$(pwd)
 
 srcPath="${srcRoot}/../Airship"
