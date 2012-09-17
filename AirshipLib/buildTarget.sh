@@ -25,10 +25,11 @@ xcode_setting() {
     echo $(cat ${XCODE_SETTINGS} | awk "\$1 == \"${1}\" { print \$3 }")
 }
 
+SRCROOT=$(xcode_setting "SRCROOT")
 SDK_NAME=$(xcode_setting "SDK_NAME")
 EXECUTABLE_NAME=$(xcode_setting "EXECUTABLE_NAME")
 BUILT_PRODUCTS_DIR=$(xcode_setting "BUILT_PRODUCTS_DIR")
-DEPLOY_DIR="${BUILT_PRODUCTS_DIR}/distribution_binaries/"
+DEPLOY_DIR="${SRCROOT}/distribution_binaries/"
 
 echo $DEPLOY_DIR
 

@@ -53,8 +53,8 @@ dest_package_root="${SRCROOT}/../${CONFIGURATION}/Airship"
 #find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec rm {} \;
 
 # Copies the lib to the Airship folder for sample projects to use (not for packaging)
-echo "copy $lib_name from ${BINARY_DIR} to $dest_lib_root"
-cp "${BINARY_DIR}/$lib_name" "$dest_lib_root"
+echo "copy *.$EXECUTABLE_EXTENSION from ${BINARY_DIR} to $dest_lib_root"
+cp "${BINARY_DIR}"/*.$EXECUTABLE_EXTENSION "$dest_lib_root"
 
 # Copies the lib to the package root
 #TODO: don't do this - the package script will do this for us
