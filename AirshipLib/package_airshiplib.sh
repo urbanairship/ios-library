@@ -60,8 +60,6 @@ rm -rf Test
 #Remove the Appledoc documenation settings from the distribution
 rm AppledocSettings.plist
 
-rm *LibGcov.a
-
 find . -name "*.orig" -delete
 
 #copy LICENSE, README and CHANGELOG
