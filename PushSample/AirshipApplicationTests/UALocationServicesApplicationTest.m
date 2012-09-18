@@ -49,8 +49,8 @@
     RELEASE(timeout);
 }
 
-//#pragma mark -
-//#pragma mark Support Methods
+#pragma mark -
+#pragma mark Support Methods
 
 
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
@@ -156,13 +156,13 @@
 // tanks the run loop update
 // TODO: figure out a way around this
 
-//- (void)testUALocationServiceDoesGetLocation {
-//    locationService = [[UALocationService alloc] initWithPurpose:@"testing"];
-//    [UALocationService setAirshipLocationServiceEnabled:YES];
-//    locationService.delegate = self;
-//    [locationService startReportingStandardLocation];    
-//    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
-//}
+- (void)testUALocationServiceDoesGetLocation {
+    locationService = [[UALocationService alloc] initWithPurpose:@"testing"];
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    locationService.delegate = self;
+    [locationService startReportingStandardLocation];    
+    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
+}
 
 
 #pragma mark -
