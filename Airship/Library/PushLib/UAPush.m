@@ -619,6 +619,7 @@ static Class _uiClass;
         }
         else {
             UALOG(@"Device has already been unregistered, no update scheduled");
+            self.isRegistering = NO;
         }
     }
 }
