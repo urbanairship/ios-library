@@ -454,10 +454,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Every stopLocation method turtles down here
 // this cancels the background task
 - (void)stopSingleLocation {
-    // If there are ever more performRequests, use the other cancel method call
-    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
     if (singleLocationShutdownScheduled_) {
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(shutdownSingleLocationWithTimeoutError) object:nil];
         singleLocationShutdownScheduled_ = NO;
     }
     [singleLocationProvider_ stopReportingLocation];
