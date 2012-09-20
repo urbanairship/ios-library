@@ -56,6 +56,8 @@
 
 #define kShadeViewTag 1000
 
+static NSMutableSet *overlayControllers = nil;
+
 @interface UAInboxOverlayController(Private)
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
@@ -70,9 +72,17 @@
 
 @synthesize webView, message;
 
+// Setup a container for the newly allocated controllers, will be released by OS. 
++ (void)initialize {
+    if (self == [UAInboxOverlayController class]){
+        overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
+    }
+}
 
+// While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
-    [[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID];
+    UAInboxOverlayController *overlayController = [[[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID] autorelease];
+    [overlayControllers addObject:overlayController];
 }
 
 
@@ -359,7 +369,7 @@
     if ([self shouldTransition]) {
         
         //faux view
-        __block UIView* fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
+        UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
         [bgView addSubview: fauxView];
         
         //run the animation
@@ -375,14 +385,14 @@
             [self removeChildViews];
             [bigPanelView release];
             [bgView removeFromSuperview];
-            [self release];
+            [overlayControllers removeObject:self];
         }];
     }
     
     else {
         [self removeChildViews];
         [bgView removeFromSuperview];
-        [self release];
+        [overlayControllers removeObject:self];
     }
 }
 

@@ -23,19 +23,39 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "GTMSenTestCase.h"
-#import "UAStoreFrontCell.h"
+#import <SenTestingKit/SenTestingKit.h>
+#import <OCMock/OCMock.h>
+#import <OCMock/OCMConstraint.h>
 
-@class UAProduct;
+#import "UAUser.h"
+#import "UAUser+Internal.h"
+#import "UAPush.h"
+#import "UAPush+Internal.h"
 
-@interface MockedUAProduct : UAProduct
+
+@interface UAUserTests : SenTestCase
+
 @end
 
-@interface UAStoreFrontCellTest : GTMTestCase {
-    UAStoreFrontCell *cell;
-    MockedUAProduct *product;
+
+@implementation UAUserTests
+
+- (void)testSetDeviceTokenUpdatedTokenDidChange {
+    NSString *deviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastDeviceTokenKey];
+    [[UAUser defaultUser] setDeviceToken:@"cats"];
+    STAssertTrue([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should equal YES");
+    [[NSUserDefaults standardUserDefaults] setValue:deviceToken forKey:kLastDeviceTokenKey];
 }
 
-@end
+- (void)testKVONotificationsForUAPushDeviceToken {
+    [UAPush shared].deviceToken = nil;
+    [[UAUser defaultUser] listenForDeviceTokenReg];
+    id mockUser = [OCMockObject partialMockForObject:[UAUser defaultUser]];
+    [[mockUser expect] cancelListeningForDeviceToken];
+    [[mockUser expect] updateDefaultDeviceToken];
+    [UAPush shared].deviceToken = @"cats";
+    [mockUser verify];
+}
 
+
+@end

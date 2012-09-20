@@ -38,19 +38,27 @@
     CLLocation *bestAvailableSingleLocation_;
     UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier_;
 }
+
 // Override property declarations for implementation and testing
 //
 @property (nonatomic, retain) CLLocation *lastReportedLocation;
 @property (nonatomic, retain) NSDate *dateOfLastLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
+
 /* Keep a record of the location with the highest horizontalAccuracy in case
- the single location service times out before acquiring a location that meets
- accuracy requirements setup in desiredAccuracy
+ * the single location service times out before acquiring a location that meets
+ * accuracy requirements setup in desiredAccuracy
  */
 @property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
+
 /* Background identifier for the singleLocationService */
 @property (nonatomic, assign) UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier;
+
+/* Value indicating that the single location service shutdown call has been scheduled for this
+ * object with performSelector:withObject:afterDelay 
+ */
+@property (nonatomic, assign) BOOL singleLocationShutdownScheduled;
 
 // Sets appropriate value in NSUserDefaults
 + (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;

@@ -161,9 +161,7 @@ enum {
         
         // Commit to server
         [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
-
-//        // Delete the row from the data source.
-//        [[UAPush shared].tags removeObjectAtIndex:indexPath.row];
+        [[UAPush shared] updateRegistration];
         
         // Delete the row from the view
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];

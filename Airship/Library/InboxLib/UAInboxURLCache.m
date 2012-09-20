@@ -137,6 +137,15 @@
     }
 }
 
+/* The static analyzer warns about the cachedResponse not being released. In previous versions of 
+ * In previous versions of NSURLCache, autoreleasing lead to a crash. That has been fixed, but since
+ * there is no definitive documentation from Apple as to when it was fixed, testing verfies that
+ * it at least works on 4.1,4.3, and 5.1 as of 28AUG12. The conditional macro adds the appropriate
+ * autorelease for >= iOS 4.1. The static analyzer had to be turned off for the entire method, since
+ * wrapping only sections of code in the ifdef only results in more warnings. This can be removed
+ * when the library no longer supports < iOS 4.1
+ */
+#ifndef __clang_analyzer__
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
     NSCachedURLResponse* cachedResponse = nil;
@@ -161,15 +170,13 @@
         if(subTypes.count > 1) {
             charset = [subTypes objectAtIndex:1];
         }
-        
         NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
                                                 expectedContentLength:[content length]
                                                      textEncodingName:charset]
                                    autorelease];
-        // TODO: BUG in URLCache framework, so can't autorelease cachedResponse here.
         cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
                                                                   data:content];
-        
+        IF_IOS4_1_OR_GREATER([cachedResponse autorelease];)
         UALOG(@"Uncaching request %@", request);
         
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
@@ -179,9 +186,10 @@
             [queue addOperation:io];
         }
     }
-    
     return cachedResponse;
 }
+#endif
+
 
 #pragma mark -
 #pragma mark Private, Custom Cache Methods
