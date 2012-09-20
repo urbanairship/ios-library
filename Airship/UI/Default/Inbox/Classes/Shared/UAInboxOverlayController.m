@@ -79,7 +79,6 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-// While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
     UAInboxOverlayController *overlayController = [[[UAInboxOverlayController alloc] initWithParentViewController:viewController andMessageID:messageID] autorelease];
     [overlayControllers addObject:overlayController];
