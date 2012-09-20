@@ -4,6 +4,8 @@
 *.mode1v3
 *.pbxuser
 *.perspective*
+distribution_binaries/
+distribution_package/
 docs/html/
 docs/docset/
 Debug/

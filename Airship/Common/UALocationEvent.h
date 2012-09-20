@@ -47,6 +47,7 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeSingle;
 extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 
+extern NSString * const UAAnalyticsValueNone;
 
 /** A UALocationEvent captures all the necessary information for 
  UAAnalytics
@@ -112,12 +113,15 @@ extern UALocationEventUpdateType * const UALocationEventUpdateTypeNone;
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationManagerValues:(CLLocationManager*)locationManager;
 
 /** Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
- @param dictionary The dictionary to populate with values
  @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
 
-
+/** Populates a dictionary with the defaulf values for reporting a significant change event. The values currently default
+ to NONE, and are defined in the implementation file
+ @param dictionary The dictionary to populate with values
+*/
+- (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary*)context;
 
 /** Converts a double to a string keeping seven digit of precision 
  Seven digits produces sub meter accuracy at the equator.

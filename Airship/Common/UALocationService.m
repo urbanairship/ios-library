@@ -347,6 +347,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // maximum, which is set on the provider as well
 - (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     [self reportLocationToAnalytics:newLocation fromProvider:significantChangeProvider_];
+    if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+        [delegate_ locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+    }
 }
 
 #pragma mark -

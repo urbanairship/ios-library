@@ -70,6 +70,12 @@ extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
 extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
+ * The takeOff method must be called on the main thread. Not doing so results in 
+ * this exception being thrown.
+ */
+extern NSString * const UAirshipTakeOffBackgroundThreadException;
+
+/**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
  * called from [UIApplication application:didFinishLaunchingWithOptions] to initialize the shared
  * instance.
@@ -81,7 +87,6 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
     NSString *appId;
     NSString *appSecret;
 
-    BOOL deviceTokenHasChanged;
     BOOL ready;
     
 }
@@ -119,14 +124,6 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  * DEVELOPMENT_APP_SECRET will be used.
  */
 @property (nonatomic, copy) NSString *appSecret;
-
-/**
- * This flag is set to YES if the device token has been updated. It is intended for use by
- * UAUser and should not be used by implementing applications. To receive updates when the
- * device token changes, applications should implement a UARegistrationObserver and observe
- * UAPush.
- */
-@property (nonatomic, assign) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * This flag is set to YES if the shared instance of
@@ -180,6 +177,8 @@ extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary must contain the launch options.
+ *
+ * @warning takeOff: must be called on the main thread. Not doing so results in an UAirshipTakeOffMainThreadException
  *
  */
 + (void)takeOff:(NSDictionary *)options;
