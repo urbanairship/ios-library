@@ -43,6 +43,29 @@
 #define kUAPushRetryTimeMultiplier 2
 #define kUAPushRetryTimeMaxDelay 300
 
+UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
+UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
+UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
+UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
+UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
+UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
+UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
+UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey = @"UAPushDeviceToken";
+UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
+UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
+
+UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
+UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
+
+UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
+UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
+UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
+UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
+UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
+UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
+UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
+UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush 
@@ -63,7 +86,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 // Public - UserDefaults
 @dynamic pushEnabled;
-@synthesize deviceToken = _deviceToken;
+@synthesize deviceToken;
 @synthesize deviceTokenHasChanged;
 @dynamic alias;
 @dynamic tags;
@@ -113,26 +136,6 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
-
-// TODO: Remove deviceTokenHasChanged calls when LIB-353 has been completed
-- (void)setDeviceToken:(NSString*)deviceToken {
-    [_deviceToken autorelease];
-    _deviceToken = [deviceToken copy];
-    UALOG(@"Device token: %@", deviceToken);    
-    //---------------------------------------------------------------------------------------------//
-    // *DEPRECATED *The following workflow is deprecated, it is only used to identify if the token //
-    // has changed                                                                                 //
-    //---------------------------------------------------------------------------------------------//
-    NSString *oldToken = [standardUserDefaults stringForKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    if ([_deviceToken isEqualToString:oldToken]) {
-        deviceTokenHasChanged = NO;
-    }
-    else {
-        deviceTokenHasChanged = YES;
-    }
-    [standardUserDefaults setObject:deviceToken forKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    // *DEPRECATED CODE END* // 
-}
 
 - (NSString*)parseDeviceToken:(NSString*)tokenStr {
     return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]

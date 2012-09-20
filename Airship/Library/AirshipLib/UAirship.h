@@ -87,7 +87,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
     NSString *appId;
     NSString *appSecret;
 
-    BOOL deviceTokenHasChanged;
     BOOL ready;
     
 }
@@ -125,14 +124,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * DEVELOPMENT_APP_SECRET will be used.
  */
 @property (nonatomic, copy) NSString *appSecret;
-
-/**
- * This flag is set to YES if the device token has been updated. It is intended for use by
- * UAUser and should not be used by implementing applications. To receive updates when the
- * device token changes, applications should implement a UARegistrationObserver and observe
- * UAPush.
- */
-@property (nonatomic, assign) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 /**
  * This flag is set to YES if the shared instance of
