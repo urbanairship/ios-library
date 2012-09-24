@@ -88,6 +88,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     RELEASE_SAFELY(messageID);
     RELEASE_SAFELY(messageBodyURL);
     RELEASE_SAFELY(messageURL);
+    RELEASE_SAFELY(contentType);
     RELEASE_SAFELY(messageSent);
     RELEASE_SAFELY(title);
     RELEASE_SAFELY(extra);

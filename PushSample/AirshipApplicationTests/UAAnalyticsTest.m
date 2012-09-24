@@ -32,6 +32,7 @@
 #import "UALocationEvent.h"
 #import "UAAnalytics+Internal.h"
 #import "UAirship.h"
+#import "UALocationTestUtils.h"
 
 /* This class involves lots of async calls to the web
  Care should be taken to mock out responses and calls, race conditions
@@ -482,6 +483,53 @@
     STAssertTrue([analytics.sendTimer isValid], nil);
     STAssertEquals(42, (int)analytics.sendTimer.timeInterval, nil);
     STAssertEquals(42, analytics.sendInterval, nil);
+}
+
+- (void)testAnalyticsIsThreadSafe {
+    UAAnalytics *airshipAnalytics = [[UAirship shared] analytics];
+    dispatch_queue_t testQueue = dispatch_queue_create("com.urbanairship.analyticsThreadsafeTest", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_group_t testGroup = dispatch_group_create();
+    dispatch_group_async(testGroup, testQueue, ^{
+        UALocationEvent *event = [UALocationEvent locationEventWithLocation:[UALocationTestUtils testLocationPDX] locationManager:nil andUpdateType:@"testUpdate"];
+        int random = 0;
+        for (int i = 0; i < 10; i++) {
+            random = arc4random() % 2;
+            if (random == 0) {
+                dispatch_group_async(testGroup, dispatch_get_main_queue(), ^{
+                    UALOG(@"Added test event on main thread");
+                    [airshipAnalytics addEvent:event];
+                });
+                continue;
+            }
+            UALOG(@"Added test event on a background thread");
+            [airshipAnalytics addEvent:event];
+        }
+    });
+    dispatch_group_wait(testGroup, 5 * NSEC_PER_SEC);
+    dispatch_release(testGroup);
+    dispatch_release(testQueue);
+    UAAnalyticsDBManager *analyticsDb = [UAAnalyticsDBManager shared];
+    NSArray *bunchOevents = [analyticsDb getEvents:100];
+    __block BOOL testFail = YES;
+    [bunchOevents enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        __block BOOL isNull = NO;
+        if ([obj isKindOfClass:[NSDictionary class]]) {
+            [(NSDictionary*)obj enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                if (key == NULL || obj == NULL) {
+                    isNull = YES;
+                    *stop = YES;
+                }
+            }];
+        }
+        if (isNull == YES) {
+            testFail = YES;
+            *stop = YES;
+        }
+        else {
+            testFail = NO;
+        }
+    }];
+    STAssertFalse(testFail, @"NULL value in UAAnalyticsDB, check threading issues");
 }
 
 

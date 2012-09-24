@@ -396,7 +396,7 @@
 			isa = PBXGroup;
 			children = (
 				63314760122FAC96008F2D48 /* libUAirship-1.3.2.a */,
-				BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.1.a */,
+				BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.2.a */,
 				1F14C9C9142C123C005FA372 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -523,10 +523,9 @@
 			remoteRef = 6331475F122FAC96008F2D48 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.1.a */ = {
+		BBBA19E715C9BE0D000E9A00 /* libUAirshipPush-1.3.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libUAirshipPush-1.3.1.a";
 			path = "libUAirshipPush-1.3.2.a";
 			remoteRef = BBBA19E615C9BE0D000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -652,6 +651,7 @@
 				GCC_PREFIX_HEADER = SubscriptionSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "SubscriptionSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
@@ -671,6 +671,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SubscriptionSample_Prefix.pch;
 				INFOPLIST_FILE = "SubscriptionSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = SubscriptionSample;
@@ -697,7 +698,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 i386 armv7s";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
@@ -722,7 +723,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 i386 armv7s";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};

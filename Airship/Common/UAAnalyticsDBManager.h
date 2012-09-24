@@ -31,6 +31,7 @@
 
 @interface UAAnalyticsDBManager : NSObject {
     UASQLite *db;
+    dispatch_queue_t dbQueue;
 }
 
 SINGLETON_INTERFACE(UAAnalyticsDBManager);

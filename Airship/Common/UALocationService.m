@@ -49,6 +49,7 @@ NSString *const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvaila
 @synthesize shouldStartReportingSignificantChange = shouldStartReportingSignificantChange_;
 @synthesize bestAvailableSingleLocation = bestAvailableSingleLocation_;
 @synthesize singleLocationBackgroundIdentifier = singleLocationBackgroundIdentifier_;
+@synthesize singleLocationShutdownScheduled = singleLocationShutdownScheduled_;
 @synthesize delegate = delegate_;
 @synthesize promptUserForLocationServices = promptUserForLocationServices_;
 @synthesize automaticLocationOnForegroundEnabled = automaticLocationOnForegroundEnabled_;
@@ -390,10 +391,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         // Same task as performSelector:withObject:afterDelay, so if that works, this works
         [self shutdownSingleLocationWithTimeoutError];
     }];
-    // Setup error timeout
-    [self performSelector:@selector(shutdownSingleLocationWithTimeoutError) 
-               withObject:nil
-               afterDelay:self.timeoutForSingleLocationService];
     singleLocationProvider_.delegate = self;
     [singleLocationProvider_ startReportingLocation];
 }
@@ -406,6 +403,14 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
+    // Setup error timeout
+    if (!singleLocationShutdownScheduled_) {
+        [self performSelector:@selector(shutdownSingleLocationWithTimeoutError)
+                   withObject:nil
+                   afterDelay:self.timeoutForSingleLocationService];
+        singleLocationShutdownScheduled_ = YES;
+    }
+
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
     if (newLocation.horizontalAccuracy < singleLocationProvider_.desiredAccuracy){
         if ([delegate_ respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
@@ -449,9 +454,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // Every stopLocation method turtles down here
 // this cancels the background task
 - (void)stopSingleLocation {
-    // If there are ever more performRequests, use the other cancel method call
-    // (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget selector:(SEL)aSelector object:(id)anArgument
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    if (singleLocationShutdownScheduled_) {
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(shutdownSingleLocationWithTimeoutError) object:nil];
+        singleLocationShutdownScheduled_ = NO;
+    }
     [singleLocationProvider_ stopReportingLocation];
     singleLocationProvider_.delegate = nil;
     UALOG(@"Shutdown single location background task");
@@ -584,13 +590,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)sendEventToAnalytics:(UALocationEvent *)locationEvent {
     UAAnalytics *analytics = [[UAirship shared] analytics];
-    // Adding analytics off the main thead corrupts the analytics database
-    if ([[NSThread currentThread] isMainThread ]){
-        [analytics addEvent:locationEvent];
-    }
-    else {
-        [analytics performSelectorOnMainThread:@selector(addEvent:) withObject:locationEvent waitUntilDone:NO];
-    } 
+    [analytics addEvent:locationEvent];
 }
 
 #pragma mark -

@@ -48,6 +48,9 @@ NSString * const UAirshipTakeOffOptionsAnalyticsKey = @"UAirshipTakeOffOptionsAn
 NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
 NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
 
+//Exceptions
+NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
+
 static UAirship *_sharedAirship;
 
 // Logging info
@@ -60,7 +63,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 @synthesize server;
 @synthesize appId;
 @synthesize appSecret;
-@synthesize deviceTokenHasChanged;
 @synthesize ready;
 @synthesize analytics;
 @synthesize locationService = locationService_;
@@ -108,7 +110,14 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 }
 
 + (void)takeOff:(NSDictionary *)options {
-    
+    // UAirship needs to be run on the main thread
+    if(![[NSThread currentThread] isMainThread]){
+        NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
+                                                                   reason:@"UAirship takeOff must be called on the main thread."
+                                                                 userInfo:nil];
+        [mainThreadException raise];
+    }
+
     //Airships only take off once!
     if (_sharedAirship) {
         return;
@@ -123,7 +132,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     }
     [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
-    
     
     
     // Load configuration
@@ -318,10 +326,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 - (NSString*)deviceToken {
     return [[UAPush shared] deviceToken];
-}
-
-- (BOOL)deviceTokenHasChanged {
-    return [[UAPush shared] deviceTokenHasChanged];
 }
 
 - (void)configureUserAgent

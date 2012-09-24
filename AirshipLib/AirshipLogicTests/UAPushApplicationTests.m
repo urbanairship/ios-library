@@ -33,6 +33,7 @@
 #import "UA_ASIHTTPRequestDelegate.h"
 #import "UAirship.h"
 #import "JRSwizzle.h"
+
 #import <objc/runtime.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import <OCMock/OCMock.h>
@@ -143,30 +144,7 @@ static BOOL messageReceived = NO;
     STAssertTrue([[push tags] count] == 0, @"Tag array should be empty");
 }
 
-// Token and data were pulled from a funcitoning test app.
-- (void)testDeviceTokenParsing{
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
-    NSError *dataError = nil;
-    NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
-    STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
-    NSString* actualToken = token;
-    [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    [push setDeviceToken:actualToken];
-    NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
-    STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
-    // This method uses a known deprecated method, should be removed in the future. 
-    // This should be changed with the completion of LIB-353
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed in UAPush");
-    STAssertFalse([[UAirship shared] deviceTokenHasChanged], @"Device token should not report changed in UAirhsip");
-    NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
-    [push setDeviceToken:newToken];
-    STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
-    STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed in UAPush");
-    STAssertTrue([[UAirship shared] deviceTokenHasChanged], @"Device token should report changed in UAirship");
-    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
-}
+
 
 - (void)testTimeZoneSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -399,6 +377,14 @@ static BOOL messageReceived = NO;
     BOOL failSelector = sel_isEqual(@selector(unRegisterDeviceTokenFailed:), request.didFailSelector);
     STAssertTrue(successSelector, nil);
     STAssertTrue(failSelector, nil);
+}
+
+// Fix for issue where changing metadata while unregistered caused further registration attempts to fail
+- (void)testMetadataEditingWhileUnregisteredLeavesIsRegisteringNo {
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+    [push updateRegistration];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
 }
 
 - (void)testSetBadgeNumber {

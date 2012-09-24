@@ -51,6 +51,11 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeContinuous = @"CONTIN
 UALocationEventUpdateType * const UALocationEventUpdateTypeSingle = @"SINGLE";
 UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 
+#pragma mark -
+#pragma mark DesiredAccuracy/DistanceFilter Value
+
+NSString * const UAAnalyticsValueNone = @"NONE";
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -67,7 +72,12 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
     [context setValue:provider.provider forKey:UALocationEventProviderKey];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [self populateDictionary:context withLocationValues:location];
-    [self populateDictionary:context withLocationProviderValues:provider];
+    if (updateType == UALocationEventUpdateTypeChange) {
+        [self setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:context];
+    }
+    else {
+        [self populateDictionary:context withLocationProviderValues:provider];
+    }
     return [self initWithLocationContext:context];
 }
 
@@ -78,7 +88,12 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [context setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     [self populateDictionary:context withLocationValues:location];
-    [self populateDictionary:context withLocationManagerValues:locationManager];
+    if (updateType == UALocationEventUpdateTypeChange) {
+        [self setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:context];
+    }
+    else {
+        [self populateDictionary:context withLocationManagerValues:locationManager];
+    }
     return [self initWithLocationContext:context];
 }
 
@@ -97,6 +112,11 @@ UALocationEventUpdateType * const UALocationEventUpdateTypeNone = @"NONE";
 
 - (void)populateDictionary:(NSMutableDictionary*)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider {
     [self populateDictionary:dictionary withLocationManagerValues:locationProvider.locationManager];
+}
+
+- (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary*)dictionary {
+    [dictionary setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
+    [dictionary setValue:UAAnalyticsValueNone forKey:UALocationEventDesiredAccuracyKey];
 }
 
 
