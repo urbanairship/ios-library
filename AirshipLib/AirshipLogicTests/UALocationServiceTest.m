@@ -243,11 +243,11 @@
     locationService.delegate = mockDelegate;
     locationService.standardLocationDesiredAccuracy = 5.0;
     [[mockDelegate reject] locationService:OCMOCK_ANY didUpdateToLocation:OCMOCK_ANY fromLocation:OCMOCK_ANY];
-    CLLocation *location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(54, 34) 
+    CLLocation *location = [[[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(54, 34)
                                                          altitude:54 
                                                horizontalAccuracy:20 
                                                  verticalAccuracy:20 
-                                                        timestamp:[NSDate date]];
+                                                        timestamp:[NSDate date]] autorelease];
     [locationService standardLocationDidUpdateToLocation:location fromLocation:[UALocationTestUtils testLocationPDX]];
     mockDelegate =  [OCMockObject niceMockForProtocol:@protocol(UALocationServiceDelegate)];
     locationService.delegate = mockDelegate;
