@@ -37,17 +37,24 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 
 - (void)createDatabaseIfNeeded {
-    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
-    NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:DB_NAME];
-
-    db = [[UASQLite alloc] initWithDBPath:writableDBPath];
-    if (![db tableExists:@"analytics"]) {
-        [db executeUpdate:CREATE_TABLE_CMD];
-    }
+    dispatch_sync(dbQueue, ^{
+        NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:DB_NAME];
+        
+        db = [[UASQLite alloc] initWithDBPath:writableDBPath];
+        if (![db tableExists:@"analytics"]) {
+            [db executeUpdate:CREATE_TABLE_CMD];
+        }
+    });
 }
 
 - (id)init {
     if (self = [super init]) {
+        // Make sure and dispatch all of the database activity to the dbQueue. Failure to do so will result
+        // in database corruption. 
+        // dispatch_queue_create returns a queue with
+        // a retain count of one, it only needs to be released.
+        dbQueue =  dispatch_queue_create("com.urbanairship.analyticsdb", DISPATCH_QUEUE_SERIAL);
         [self createDatabaseIfNeeded];
     }
 
@@ -55,16 +62,20 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)dealloc {
-    [db close];
+    dispatch_sync(dbQueue, ^{
+        [db close];
+    });
     RELEASE_SAFELY(db);
-
+    dispatch_release(dbQueue);
     [super dealloc];
 }
 
 // Used for development
 - (void)resetDB {
-    [db executeUpdate:@"DROP TABLE analytics"];
-    [db executeUpdate:CREATE_TABLE_CMD];
+    dispatch_sync(dbQueue, ^{
+        [db executeUpdate:@"DROP TABLE analytics"];
+        [db executeUpdate:CREATE_TABLE_CMD];
+    });
 }
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
@@ -86,44 +97,52 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
     }
     
-    
-    [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
-     [event getType],
-     event.event_id,
-     event.time,
-     serializedData,
-     [session objectForKey:@"session_id"],
-     [NSString stringWithFormat:@"%d", estimateSize]];
-    
-    
+    dispatch_async(dbQueue, ^{
+        [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
+         [event getType],
+         event.event_id,
+         event.time,
+         serializedData,
+         [session objectForKey:@"session_id"],
+         [NSString stringWithFormat:@"%d", estimateSize]];
+    });
     //UALOG(@"DB Count %d", [self eventCount]);
     //UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.
 - (NSArray *)getEvents:(int)max {
-    NSArray *result = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?",
-                       [NSNumber numberWithInt:max]];
+    __block NSArray *result = nil;
+    dispatch_sync(dbQueue, ^{
+        result = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInt:max]];
+    });
     return result;
 }
 
 - (NSArray *)getEventByEventId:(NSString *)event_id {
-    NSArray *result = [db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
+    __block NSArray *result;
+    dispatch_sync(dbQueue, ^{
+        result = [db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
+    });
     return result;
 }
 
 - (void)deleteEvent:(NSNumber *)eventId {
-    [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
+    dispatch_async(dbQueue, ^{
+        [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
+    });
 }
 
 - (void)deleteEvents:(NSArray *)events {
-    NSDictionary *event;
+    dispatch_async(dbQueue, ^{
+        NSDictionary *event = nil;
+        [db beginTransaction];
+        for (event in events) {
+            [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
+        }
+        [db commit];
+    });
 
-    [db beginTransaction];
-    for (event in events) {
-        [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
-    }
-    [db commit];
 }
 
 - (void)deleteBySessionId:(NSString *)sessionId {
@@ -134,8 +153,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         UALOG(@"Warn: sessionId is nil.");
         return;
     }
-
-    [db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
+    dispatch_async(dbQueue, ^{
+        [db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
+    });
 }
 
 - (void)deleteOldestSession {
@@ -154,7 +174,10 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (NSInteger)eventCount {
     
-    NSArray *results = [db executeQuery:@"SELECT COUNT(_id) count FROM analytics"];
+    __block NSArray *results = nil;
+    dispatch_sync(dbQueue, ^{
+        results = [db executeQuery:@"SELECT COUNT(_id) count FROM analytics"];
+    });
 
     if ([results count] <= 0) {
         return 0;
@@ -168,8 +191,10 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (NSInteger)sizeInBytes {
-    NSArray *results = [db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
-    
+    __block NSArray *results = nil;
+    dispatch_sync(dbQueue, ^{
+       results = [db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
+    });
     if ([results count] <= 0) {
         return 0;
     } else {
