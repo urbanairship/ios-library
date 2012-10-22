@@ -111,8 +111,7 @@
         
         UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
         UALOG(@"storeCachedResponse: %@", cachedResponse);
-        UALOG(@"mime type: %@", cachedResponse.response.MIMEType);
-        UALOG(@"encoding: %@", cachedResponse.response.textEncodingName);
+        UALOG(@"MIME type: %@ Encoding: %@", cachedResponse.response.MIMEType, cachedResponse.response.textEncodingName);
         
         NSData *content = cachedResponse.data;
         
@@ -159,7 +158,6 @@
                                                           encoding:NSUTF8StringEncoding 
                                                              error:NULL];
         
-        UALOG(@"Original content type: %@", contentType);
         NSString *textEncoding = nil;
         
         //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
@@ -186,8 +184,7 @@
                                                                   data:content];
         
         UALOG(@"Uncaching request %@", request);
-        UALOG(@"Mime Type: %@", contentType);
-        UALOG(@"Text encoding: %@", textEncoding);
+        UALOG(@"MIME Type: %@ Encoding: %@", contentType, textEncoding);
         
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
         @synchronized(metadata) {
