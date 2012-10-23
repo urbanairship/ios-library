@@ -111,6 +111,7 @@
         
         UALOG(@"storeCachedResponse for URL: %@", [request.URL absoluteString]);
         UALOG(@"storeCachedResponse: %@", cachedResponse);
+        UALOG(@"MIME type: %@ Encoding: %@", cachedResponse.response.MIMEType, cachedResponse.response.textEncodingName);
         
         NSData *content = cachedResponse.data;
         
@@ -118,6 +119,10 @@
         
         //default to "text/html" if the server doesn't provide a content type
         NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
+        NSString *textEncoding = cachedResponse.response.textEncodingName;
+        if (textEncoding) {
+            contentType = [NSString stringWithFormat:@"%@; charset=%@", contentType, textEncoding];
+        }
         
         NSMethodSignature *signature = [UAInboxURLCache instanceMethodSignatureForSelector:@selector(storeContent:withURL:contentType:)];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -161,23 +166,36 @@
         NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath 
                                                           encoding:NSUTF8StringEncoding 
                                                              error:NULL];
-        NSString *charset = nil;
+        
+        NSString *textEncoding = nil;
         
         //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
         //into separate arguments so UIWebView doesn't get confused
         NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
         contentType = [subTypes objectAtIndex:0];
         if(subTypes.count > 1) {
-            charset = [subTypes objectAtIndex:1];
+            textEncoding = [subTypes objectAtIndex:1];
         }
-        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL MIMEType:contentType
+        
+        //default to utf-8 when there isn't a content type for html
+        if (!textEncoding && [@"text/html" isEqualToString:contentType]) {
+            textEncoding = @"utf-8";
+        }
+        
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL
+                                                             MIMEType:contentType
                                                 expectedContentLength:[content length]
-                                                     textEncodingName:charset]
+                                                     textEncodingName:textEncoding]
                                    autorelease];
+        
+
         cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
                                                                   data:content];
+
+        // Conditional fix for bug that crashes devices running 4.1 or lower.
         IF_IOS4_1_OR_GREATER([cachedResponse autorelease];)
         UALOG(@"Uncaching request %@", request);
+        UALOG(@"MIME Type: %@ Encoding: %@", contentType, textEncoding);
         
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
         @synchronized(metadata) {

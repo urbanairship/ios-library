@@ -442,18 +442,20 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)addEvent:(UAEvent *)event {
-    UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
-    [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
-    self.databaseSize += [event getEstimatedSize];
-    if (oldestEventTime == 0) {
-        oldestEventTime = [event.time doubleValue];
-    }
-    // If the app is in the background without a background task id, then this is a location
-    // event, and we should attempt to send. 
-    UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
-    BOOL isLocation = [event isKindOfClass:[UALocationEvent class]];
-    if (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation) {
-        [self send];
+    if (self.server.length > 0) {
+        UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
+        [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
+        self.databaseSize += [event getEstimatedSize];
+        if (oldestEventTime == 0) {
+            oldestEventTime = [event.time doubleValue];
+        }
+        // If the app is in the background without a background task id, then this is a location
+        // event, and we should attempt to send. 
+        UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
+        BOOL isLocation = [event isKindOfClass:[UALocationEvent class]];
+        if (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation) {
+            [self send];
+        }
     }
 }
 
