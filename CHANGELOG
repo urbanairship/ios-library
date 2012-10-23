@@ -7,6 +7,7 @@
 - fixed analyzer issues in UAInboxURLCache, UAInboxOverlayController
 - library now disables analytics if no server is specified
 - moved deviceTokenHasChanged observation to UAUser
+- added queuing for analytics read/write access 
 
 -------------------------
 1.3.3 Sep 17, 2012
@@ -43,15 +44,16 @@
 - Device metadata (tags,alias,quiet time) is now persisted before a successful
   registration update
 - Added auto retry for certain server responses in UAPush during registration
+
 --------------------------
 1.2.2 - June 18, 2012
 --------------------------
 - Fixed problem reporting hard push conversions in some situations
 - Updated UALocationService to shut down single location tasks in a timely
   manner when unrecoverable CLLocationManager errors occurred
-- Modfied UALocationService single location settings to prevent high accuracy
+- Modified UALocationService single location settings to prevent high accuracy
   location calls from constantly timing out in poor GPS conditions
-- Changed UALocationService delgate callbacks when the location service cannot
+- Changed UALocationService delegate callbacks when the location service cannot
   retrieve a location that meets accuracy requirements
 
 	
