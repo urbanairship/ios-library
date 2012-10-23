@@ -1,4 +1,13 @@
 -------------------------
+1.3.4 Oct 23, 2012
+-------------------------
+- fixed issue when displaying cached Rich Push messages with UTF8
+- fixed edge case where a location event could be discarded while waiting
+  for user to allow location based services
+- fixed analyzer issues in UAInboxURLCache, UAInboxOverlayController
+- library now disables analytics if no server is specified
+
+-------------------------
 1.3.3 Sep 17, 2012
 -------------------------
 - Updated projects for iOS 6 and Xcode 4.5
@@ -7,6 +16,7 @@
 - Fixed registration error that occurred when a device unregistered,
   then re registered
 - Added delegate callback for the significant change location service
+
 -------------------------
 1.3.2 Aug 15, 2012
 -------------------------
