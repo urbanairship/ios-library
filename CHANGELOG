@@ -6,6 +6,7 @@
   for user to allow location based services
 - fixed analyzer issues in UAInboxURLCache, UAInboxOverlayController
 - library now disables analytics if no server is specified
+- moved deviceTokenHasChanged observation to UAUser
 
 -------------------------
 1.3.3 Sep 17, 2012
