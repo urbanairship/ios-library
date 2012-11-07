@@ -212,6 +212,15 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic) BOOL pushEnabled; /* getter = pushEnabled, setter = setPushEnabled: */
 
 
+/** 
+ * Sets the default value for pushEnabled. The factory default is YES. You should set this to
+ * NO before calling [[UAPush shared] registerForRemoteNotificationTypes:<types>] if you 
+ * want to record push notfication types with UAPush but defer registration to a later time.
+ * Push can be enabled at a later time by simply setting the pushEnabled property to YES.
+ * @param enabled The default value for push enabled
+ */
++(void)setDefaultPushEnabledValue:(BOOL)enabled;
+
 /** The device token for this device, as a string. */
 @property (nonatomic, copy, readonly) NSString *deviceToken; 
 

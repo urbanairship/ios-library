@@ -569,6 +569,12 @@ static BOOL messageReceived = NO;
     STAssertFalse(push.quietTimeEnabled, @"Quiet time should not be enabled");
 }
 
+// Test the default push enabled setting is configurable by the developer on start
+- (void)testDefaultPushEnabled {
+    [UAPush setDefaultPushEnabledValue:NO];
+    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"UAPushEnabledSettingKey should return NO");
+}
+
 - (void)testShouldRetryReqeust {
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     push.retryOnConnectionError = NO;

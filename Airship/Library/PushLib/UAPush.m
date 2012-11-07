@@ -830,6 +830,15 @@ static Class _uiClass;
 }
 
 #pragma mark -
+#pragma mark Default Values
+
+// Circumvent the side effects of setting the pushEnabled property by setting the defaults directly. This allows
+// devs to record notification types, without actually registering.
++ (void)setDefaultPushEnabledValue:(BOOL)enabled {
+    [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:UAPushEnabledSettingsKey];
+}
+
+#pragma mark -
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
