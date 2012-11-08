@@ -570,9 +570,19 @@ static BOOL messageReceived = NO;
 }
 
 // Test the default push enabled setting is configurable by the developer on start
-- (void)testDefaultPushEnabled {
+- (void)testDefaultPushEnabledSetting {
+    // Delete the existing setting
+    NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];
+    [standardDefaults removeObjectForKey:UAPushEnabledSettingsKey];
+    // Manually register defaults for a clean slate, default value is YES
+    [UAPush registerNSUserDefaults];
+    STAssertTrue([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"Defaults pushEnabled setting should be YES");
+    // Change value
     [UAPush setDefaultPushEnabledValue:NO];
-    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"UAPushEnabledSettingKey should return NO");
+    // Delete the existing setting, which will cause a fallback to the currently registered defaults, which were
+    // just updated
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
+    STAssertFalse([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"Defaults pushEnabled setting should be NO");
 }
 
 - (void)testShouldRetryReqeust {
