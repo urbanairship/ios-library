@@ -577,6 +577,9 @@ static BOOL messageReceived = NO;
     // Manually register defaults for a clean slate, default value is YES
     [UAPush registerNSUserDefaults];
     STAssertTrue([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"Defaults pushEnabled setting should be YES");
+    // Set an actual value in the user defaults, this should override the default value
+    [[UAPush shared] setPushEnabled:NO];
+    STAssertFalse([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"A value in userDefaults should be set, the default value should be ignored");
     // Change value
     [UAPush setDefaultPushEnabledValue:NO];
     // Delete the existing setting, which will cause a fallback to the currently registered defaults, which were
