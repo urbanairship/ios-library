@@ -212,6 +212,13 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic) BOOL pushEnabled; /* getter = pushEnabled, setter = setPushEnabled: */
 
 
+/** 
+ * Sets the default value for pushEnabled. The factory default is YES. After the pushEnabled
+ * value has been directly set, this value has no effect.
+ * @param enabled The default value for push enabled
+ */
++(void)setDefaultPushEnabledValue:(BOOL)enabled;
+
 /** The device token for this device, as a string. */
 @property (nonatomic, copy, readonly) NSString *deviceToken; 
 

@@ -830,6 +830,17 @@ static Class _uiClass;
 }
 
 #pragma mark -
+#pragma mark Default Values
+
+// Change the default push enabled value in the registered user defaults
++ (void)setDefaultPushEnabledValue:(BOOL)enabled {
+    NSMutableDictionary *registrationDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSRegistrationDomain] mutableCopy];
+    [registrationDomain autorelease];
+    [registrationDomain setValue:[NSNumber numberWithBool:enabled] forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDomain];
+}
+
+#pragma mark -
 #pragma mark NSUserDefaults
 
 + (void)registerNSUserDefaults {
