@@ -100,8 +100,13 @@ SINGLETON_IMPLEMENTATION(UAPush)
 
 static Class _uiClass;
 
+// Self refers to the class at this point in execution
+// The self == check is because that a sublcass that does not implement this method
+// forwards it up the chain. It will only be called once by this class
 + (void)initialize {
-    [self registerNSUserDefaults];
+    if (self == [UAPush class]) {
+        [self registerNSUserDefaults];
+    }
 }
 
 -(void)dealloc {
@@ -834,10 +839,8 @@ static Class _uiClass;
 
 // Change the default push enabled value in the registered user defaults
 + (void)setDefaultPushEnabledValue:(BOOL)enabled {
-    NSMutableDictionary *registrationDomain = [[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSRegistrationDomain] mutableCopy];
-    [registrationDomain autorelease];
-    [registrationDomain setValue:[NSNumber numberWithBool:enabled] forKey:UAPushEnabledSettingsKey];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDomain];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:enabled] forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:dictionary];
 }
 
 #pragma mark -
