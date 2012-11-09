@@ -104,10 +104,12 @@ To enable push notifications, you will need to make several additions to your ap
         NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
         [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
         
-        // This prevents the UA Library from registering with UIApplcation by default when registerForRemoteNotifications
-        // is called. This will allow you to prompt your users at a later time. This gives your app the opportunity
-        // to explain the benefits of push or allows users to turn it on explicitly in a settings screen.
-        // If you just want everyone to immediately be prompted for push, you can leave this line out.
+        // This prevents the UA Library from registering with UIApplcation by default when
+        // registerForRemoteNotifications is called. This will allow you to prompt your
+        // users at a later time. This gives your app the opportunity to explain the benefits
+        // of push or allows users to turn it on explicitly in a settings screen.
+        // If you just want everyone to immediately be prompted for push, you can
+        // leave this line out.
         [UAPush setDefaultPushEnabledValue:NO];
         
         // Create Airship singleton that's used to talk to Urban Airhship servers.
@@ -116,8 +118,9 @@ To enable push notifications, you will need to make several additions to your ap
     
         [[UAPush shared] resetBadge];//zero badge on startup
         
-        // Register for remote notfications. With the default value of push set to no, UAPush will
-        // record the desired remote notifcation types, but not register for push notfications as mentioned above.
+        // Register for remote notfications. With the default value of push set to no,
+        // UAPush will record the desired remote notifcation types, but not register for
+        // push notfications as mentioned above.
         // When push is enabled at a later time, the registration will occur as normal.
         [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                              UIRemoteNotificationTypeSound |
@@ -130,19 +133,22 @@ To enable push notifications, you will need to make several additions to your ap
             didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
         UALOG(@"APN device token: %@", deviceToken);
 
-        // Updates the device token and registers the token with UA. This won't occur until push is enabled if
-        // the outlined process is followed
+        // Updates the device token and registers the token with UA. This won't occur until
+        // push is enabled if the outlined process is followed.
         [[UAPush shared] registerDeviceToken:deviceToken];
     }
     
     // Implement the iOS callback for incoming notifications
     //
-    // Incoming Push notifications can be handled by the UAPush default alert handler, which displays a
-    // simple UIAlertView, or you can provide you own delegate which conforms to the UAPushNotificationDelegate protocol
-    // Just add the call to the didRecieveRemoteNotifications delegate method in UIApplication delegate
-    - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    // Incoming Push notifications can be handled by the UAPush default alert handler,
+    // which displays a simple UIAlertView, or you can provide you own delegate which
+    // conforms to the UAPushNotificationDelegate protocol.
+    - (void)application:(UIApplication *)application
+            didReceiveRemoteNotification:(NSDictionary *)userInfo {
+
         // Send the alert to UA
-        [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+        [[UAPush shared] handleNotification:userInfo
+                           applicationState:application.applicationState];
         
         // Reset the badge if you are using that functionality
         [[UAPush shared] resetBadge]; // zero badge after push received
