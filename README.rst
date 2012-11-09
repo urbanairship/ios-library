@@ -40,7 +40,7 @@ have additional linking requirements)::
     UIKit.framework
     libz.dylib
     libsqlite3.dylib
-    CoreTelephony.framework (Exists in iOS 4+ only, so make it a weak link for 3.x compatibility)
+    CoreTelephony.framework
     StoreKit.framework
     CoreLocation.framework
 
@@ -48,11 +48,9 @@ Build Settings
 ##############
 
 **Compiler**
-    
-LLVM 4.0 is the default compiler for all projects and the static library.
+The latest version of LLVM is the default compiler for all projects and the static library.
      
-**Header search path**
-                                         
+**Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
              
 Quickstart
@@ -92,61 +90,70 @@ development to production keys based on the build type.
 Push Integration
 ################
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Other code.....
-
-    // Call takeOff, passing in the launch options so the library can properly record when
-    // the app is launched from a push notification
-    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
-    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+To enable push notifications, you will need to make several additions to your application delegate.
     
-    // This prevents the UA Library from registering with UIApplcation by default when registerForRemoteNotifications
-    // is called. This will allow you to prompt your users at a later time. This gives your app the opportunity to explain
-    // the benefits of push or allows users to turn it on explicitly in a settings screen.
-    [UAPush setDefaultPushEnabledValue:NO];
+.. code:: obj-c
+
+    - (BOOL)application:(UIApplication *)application 
+            didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    // Create Airship singleton that's used to talk to Urban Airhship servers.
-    // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
-    [UAirship takeOff:takeOffOptions];
-
-    [[UAPush shared] resetBadge];//zero badge on startup
+        // Your other application code.....
     
-    // Register for remote notfications. With the default value of push set to no, UAPush will
-    // record the desired remote notifcation types, but not register for push notfications as mentioned above.
-    // When push is enabled at a later time, the registration will occur as normal
-    [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                                         UIRemoteNotificationTypeSound |
-                                                         UIRemoteNotificationTypeAlert)];
-    return YES;
-}
-
-// Later in code.....
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UALOG(@"APN device token: %@", deviceToken);
-    // Updates the device token and registers the token with UA. This won't occur until push is enabled if the outlined process
-    // is followed
-    [[UAPush shared] registerDeviceToken:deviceToken];
-}
-
-// Somewhere in the app, this will enable push, setting it to NO will disable push
-[[UAPush shared] setPushEnabled:YES];
-
-// In the app delegate
-// Incoming Push notifications can be handled by the UAPush default alert handler, which displays a
-// simple UIAlertView, or you can provide you own delegate which conforms to the UAPushNotificationDelegate protocol
-// Just add the call to the didRecieveRemoteNotifications delegate method in UIApplication delegate
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    // Send the alert to UA
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+        // Call takeOff, passing in the launch options so the library can properly record when
+        // the app is launched from a push notification
+        NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+        [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+        
+        // This prevents the UA Library from registering with UIApplcation by default when registerForRemoteNotifications
+        // is called. This will allow you to prompt your users at a later time. This gives your app the opportunity
+        // to explain the benefits of push or allows users to turn it on explicitly in a settings screen.
+        // If you just want everyone to immediately be prompted for push, you can leave this line out.
+        [UAPush setDefaultPushEnabledValue:NO];
+        
+        // Create Airship singleton that's used to talk to Urban Airhship servers.
+        // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+        [UAirship takeOff:takeOffOptions];
     
-    // Reset the badge if you are using that functionality
-    [[UAPush shared] resetBadge]; // zero badge after push received
-}
+        [[UAPush shared] resetBadge];//zero badge on startup
+        
+        // Register for remote notfications. With the default value of push set to no, UAPush will
+        // record the desired remote notifcation types, but not register for push notfications as mentioned above.
+        // When push is enabled at a later time, the registration will occur as normal.
+        [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                                             UIRemoteNotificationTypeSound |
+                                                             UIRemoteNotificationTypeAlert)];
+        return YES;
+    }
+    
+    // Implement the iOS device token registration callback
+    - (void)application:(UIApplication *)application
+            didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
 
+        // Updates the device token and registers the token with UA. This won't occur until push is enabled if
+        // the outlined process is followed
+        [[UAPush shared] registerDeviceToken:deviceToken];
+    }
+    
+    // Implement the iOS callback for incoming notifications
+    //
+    // Incoming Push notifications can be handled by the UAPush default alert handler, which displays a
+    // simple UIAlertView, or you can provide you own delegate which conforms to the UAPushNotificationDelegate protocol
+    // Just add the call to the didRecieveRemoteNotifications delegate method in UIApplication delegate
+    - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+        // Send the alert to UA
+        [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+        
+        // Reset the badge if you are using that functionality
+        [[UAPush shared] resetBadge]; // zero badge after push received
+    }
+    
+To enable push:
+.. code:: obj-c
 
-
-
+    // Somewhere in the app, this will enable push, setting it to NO will disable push
+    // This will trigger the proper registration or de-registration code in the library.
+    [[UAPush shared] setPushEnabled:YES];
 
 
 Third party Package - License - Copyright / Creator 
