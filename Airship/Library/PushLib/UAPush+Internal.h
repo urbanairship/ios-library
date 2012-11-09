@@ -68,7 +68,7 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 @property (nonatomic, assign) int registrationRetryDelay;
 
 /* Convenience pointer for getting to user defaults. */
-@property (nonatomic, assign) NSUserDefaults *standardUserDefaults;
+@property (nonatomic, readonly) NSUserDefaults *standardUserDefaults;
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /* Default push handler. */
