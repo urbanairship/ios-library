@@ -291,6 +291,25 @@ static BOOL messageReceived = NO;
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
     [push updateRegistration];
 }
+
+/** 
+ * Fix for edge case where a dev registeres for UIRemoteNotifcationTypeNone and enables/disables push
+ * on a first install, and other edge cases where this can occur
+ */
+- (void)testUregistrationQuitsWithNilDeviceToken {
+    // Rig UAPush to get through the updateRegistration method. This setup is a bit involved, it
+    // will change when registration changes in the near term
+    [[UAPush shared] setDeviceToken:nil];
+    [[UAPush shared] setPushEnabled:NO];
+    [[UAPush shared] setRegistrationPayloadCache:@{@"cat" : @"catCache"}];
+    [[UAPush shared] setIsRegistering:NO];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
+    //
+    // Reject DELETE request creation we should have returned by now. 
+    id mockPush = [OCMockObject partialMockForObject:[UAPush shared]];
+    [[mockPush reject] requestToDeleteDeviceToken];
+    [[UAPush shared] updateRegistration];
+}
 /////////////////////////
 
 - (void)testRegisterForRemoteNotificationTypes {
@@ -381,6 +400,7 @@ static BOOL messageReceived = NO;
 
 // Fix for issue where changing metadata while unregistered caused further registration attempts to fail
 - (void)testMetadataEditingWhileUnregisteredLeavesIsRegisteringNo {
+    [[UAPush shared] setDeviceToken:@"deviceToken"];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
     [push updateRegistration];

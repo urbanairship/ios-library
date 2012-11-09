@@ -608,6 +608,7 @@ static Class _uiClass;
     if (self.pushEnabled) {
         // If there is no device token, wait for the application delegate to update with one.
         if (!self.deviceToken) {
+            UALOG(@"Device token is nil. Registration will be attempted at a later time");
             self.isRegistering = NO;
             return;
         }
@@ -616,6 +617,13 @@ static Class _uiClass;
         [putRequest startAsynchronous];
     }
     else {
+        // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
+        // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
+        // that uses push, the DELETE will fail with a 404.
+        if (!self.deviceToken) {
+            UALOG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
+            return;
+        }
         // Don't unregister more than once
         if ([standardUserDefaults boolForKey:UAPushNeedsUnregistering]) {
             UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
