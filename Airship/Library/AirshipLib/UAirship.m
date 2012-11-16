@@ -287,14 +287,14 @@ BOOL logging = false;
 	// add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
 	
+    //Land common classes
+    [UAUser land];
+    
     //Land the modular libaries first
     [NSClassFromString(@"UAPush") land];
     [NSClassFromString(@"UAInbox") land];
     [NSClassFromString(@"UAStoreFront") land];
     [NSClassFromString(@"UASubscriptionManager") land];
-    
-    //Land common classes
-    [UAUser land];
     
     //Finally, release the airship!
     [_sharedAirship release];
