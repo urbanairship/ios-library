@@ -30,6 +30,7 @@
 #import "UA_ASIHTTPRequest.h"
 #import "UAUser.h"
 #import "UAUser+Internal.h"
+#import "UAPush.h"
 
 
 @interface UAUserApplicationTest : SenTestCase
@@ -38,23 +39,50 @@
 
 @implementation UAUserApplicationTest
 
+/** Test that the device token is only cached on a 200 response from the UAUser updatedDefaultDeviceToken */
 - (void)testUpdateDefaultDeviceToken {
+    // Set a device token and a mock request to return a 200. The cached token
+    // should reflect the current value in [UAPush defaultPush].deviceToken
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     int responseCode = 200;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
     NSString *testString = @"cats";
-    [[NSUserDefaults standardUserDefaults] setValue:testString forKey:kLastUpdatedDeviceTokenKey];
     [UAUser defaultUser].deviceToken = testString;
+    // This should update NSUserDefaults with the test string
     [[UAUser defaultUser] performSelector:@selector(updatedDefaultDeviceToken:) withObject:mockRequest];
-    STAssertFalse([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should be NO");
-    // Check negative
+    NSString *persistedDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
+    STAssertTrue([testString isEqualToString:persistedDeviceToken], @"%@ should be %@", kLastUpdatedDeviceTokenKey, testString);
+    ////
+    // Check that the cached device token is not changed when the request returns an  non 200 value
     mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     responseCode = 500;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
-    [UAUser defaultUser].deviceToken = @"notCat";
-    // Setup deviceTokenHasChanged to YES, with a 500, the hasChagned value should not update
-    [UAUser defaultUser].deviceTokenHasChanged = YES;
     [[UAUser defaultUser] performSelector:@selector(updatedDefaultDeviceToken:) withObject:mockRequest];
+    testString = @"notCats";
+    [UAUser defaultUser].deviceToken = testString;
+    persistedDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
+    STAssertFalse([testString isEqualToString:persistedDeviceToken], @"%@ should not be %@",persistedDeviceToken , testString);
+}
+
+/** Test that a change  in device token is properly captured */
+- (void)testDeviceTokenChangeRecording {
+    // Setup scenario where token doesn't change
+    NSString *token = @"cats";
+    // Stub a response from UAPush
+    id mockPush = [OCMockObject partialMockForObject:[UAPush shared]];
+    [[[mockPush stub] andReturn:token] deviceToken];
+    // Set matching default
+    [[NSUserDefaults standardUserDefaults] setValue:token forKey:kLastUpdatedDeviceTokenKey];
+    // Stub out the network call in UAUser so it doesn't slow down the test
+    id mockUser = [OCMockObject partialMockForObject:[UAUser defaultUser]];
+    [[mockUser stub] updateUserInfo:OCMOCK_ANY withDelegate:OCMOCK_ANY finish:@selector(updatedDefaultDeviceToken:)fail:@selector(requestWentWrong:)];
+    // Check for match
+    [[UAUser defaultUser] updateDefaultDeviceToken];
+    STAssertFalse([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should be NO");
+    // Check for different token
+    [[NSUserDefaults standardUserDefaults] setValue:@"notCats" forKey:kLastUpdatedDeviceTokenKey];
+    [[UAUser defaultUser] updateDefaultDeviceToken];
     STAssertTrue([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should be YES");
+    
 }
 @end

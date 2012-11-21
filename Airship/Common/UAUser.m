@@ -983,6 +983,14 @@ static UAUser *_defaultUser;
     UALOG(@"Updating device token.");
     
     self.deviceToken = [[UAPush shared] deviceToken];
+
+    NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
+    if (![self.deviceToken isEqualToString:lastDeviceToken]) {
+        self.deviceTokenHasChanged = YES;
+    }
+    else {
+        self.deviceTokenHasChanged = NO;
+    }
     
     if (!_deviceToken || self.deviceTokenHasChanged == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser) {
 		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
@@ -1000,15 +1008,9 @@ static UAUser *_defaultUser;
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
     if (request.responseStatusCode == 200 || request.responseStatusCode == 201){
-        NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
-        if (![self.deviceToken isEqualToString:lastDeviceToken]) {
-            self.deviceTokenHasChanged = YES;
-            [[NSUserDefaults standardUserDefaults] setValue:self.deviceToken forKey:kLastUpdatedDeviceTokenKey];
-        }
-        else {
-            self.deviceTokenHasChanged = NO;
-        }
+        [[NSUserDefaults standardUserDefaults] setValue:self.deviceToken forKey:kLastUpdatedDeviceTokenKey];
         UALOG(@"Updated Device Token succeeded with response: %d", request.responseStatusCode);
+        UALOG(@"Logged last updated key %@", self.deviceToken);
     }
     else {
         UALOG(@"Update request failed with response: %d", request.responseStatusCode);
