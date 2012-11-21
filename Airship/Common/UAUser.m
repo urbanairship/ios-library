@@ -79,6 +79,7 @@ static UAUser *_defaultUser;
 }
 
 - (void)dealloc {
+    RELEASE_SAFELY(_deviceToken);
     RELEASE_SAFELY(recoveryStatusUrl);
     RELEASE_SAFELY(username);
     RELEASE_SAFELY(password);
@@ -108,19 +109,6 @@ static UAUser *_defaultUser;
     }
     
     return self;
-}
-
-#pragma mark -
-#pragma mark Device Token Set
-
-- (void)setDeviceToken:(NSString *)deviceToken {
-    [_deviceToken autorelease];
-    _deviceToken = [deviceToken retain];
-    NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastDeviceTokenKey];
-    if (![_deviceToken isEqualToString:lastDeviceToken]) {
-        _deviceTokenHasChanged = YES;
-        [[NSUserDefaults standardUserDefaults] setValue:_deviceToken forKey:kLastDeviceTokenKey];
-    }
 }
 
 - (void)initializeUser {
@@ -992,7 +980,7 @@ static UAUser *_defaultUser;
 
 -(void)updateDefaultDeviceToken {
     
-    UALOG(@"Updating device token");
+    UALOG(@"Updating device token.");
     
     self.deviceToken = [[UAPush shared] deviceToken];
     
@@ -1011,8 +999,20 @@ static UAUser *_defaultUser;
 }
 
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
-    self.deviceTokenHasChanged = NO;
-    UALOG(@"Updated Device Token response: %d", request.responseStatusCode);
+    if (request.responseStatusCode == 200 || request.responseStatusCode == 201){
+        NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
+        if (![self.deviceToken isEqualToString:lastDeviceToken]) {
+            self.deviceTokenHasChanged = YES;
+            [[NSUserDefaults standardUserDefaults] setValue:self.deviceToken forKey:kLastUpdatedDeviceTokenKey];
+        }
+        else {
+            self.deviceTokenHasChanged = NO;
+        }
+        UALOG(@"Updated Device Token succeeded with response: %d", request.responseStatusCode);
+    }
+    else {
+        UALOG(@"Update request failed with response: %d", request.responseStatusCode);
+    }
 }
 
 #pragma mark -

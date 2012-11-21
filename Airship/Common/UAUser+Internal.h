@@ -23,7 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//NSUserDefaultsKey
+// NSUserDefaultsKey for libUAirship verision >= v1.3.6
+// Changing the key forces devices to update with UA at least once
+// with new workflow. 
+#define kLastUpdatedDeviceTokenKey @"UAUserLastUpdatedDeviceTokenKey"
+
+// NSUserDefaultsKey for libUAirship version <= v1.3.5
+// Replacing this key to ensure migration to new defaults setup post v1.3.5
 #define kLastDeviceTokenKey @"UAUserLastDeviceTokenKey"
 
 //Legacy keys for migration from pre-keychain user store
