@@ -33,6 +33,7 @@
 #import "UA_ASIHTTPRequestDelegate.h"
 #import "UAirship.h"
 #import "JRSwizzle.h"
+
 #import <objc/runtime.h>
 #import <SenTestingKit/SenTestingKit.h>
 #import <OCMock/OCMock.h>
@@ -143,30 +144,7 @@ static BOOL messageReceived = NO;
     STAssertTrue([[push tags] count] == 0, @"Tag array should be empty");
 }
 
-// Token and data were pulled from a funcitoning test app.
-- (void)testDeviceTokenParsing{
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString* path = [bundle pathForResource:@"deviceToken" ofType:@"data"];
-    NSError *dataError = nil;
-    NSData *deviceTokenData = [NSData dataWithContentsOfFile:path options:NSDataReadingUncached error:&dataError];
-    STAssertNil(dataError, @"Error reading device token data %@", dataError.description);
-    NSString* actualToken = token;
-    [[NSUserDefaults standardUserDefaults] setObject:actualToken forKey:UAPushDeviceTokenDeprecatedSettingsKey];
-    [push setDeviceToken:actualToken];
-    NSString* parsedToken = [push parseDeviceToken:[deviceTokenData description]];
-    STAssertTrue([parsedToken isEqualToString:actualToken], @"ERROR: Device token parsing has failed in UAPush");
-    // This method uses a known deprecated method, should be removed in the future. 
-    // This should be changed with the completion of LIB-353
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    STAssertFalse(push.deviceTokenHasChanged, @"Device token should not report changed in UAPush");
-    STAssertFalse([[UAirship shared] deviceTokenHasChanged], @"Device token should not report changed in UAirhsip");
-    NSString* newToken = [actualToken stringByReplacingOccurrencesOfString:@"2" withString:@"4"];
-    [push setDeviceToken:newToken];
-    STAssertTrue([push.deviceToken isEqualToString:newToken], @"Device token setter has broken");
-    STAssertTrue(push.deviceTokenHasChanged, @"Device token should report changed in UAPush");
-    STAssertTrue([[UAirship shared] deviceTokenHasChanged], @"Device token should report changed in UAirship");
-    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
-}
+
 
 - (void)testTimeZoneSettings {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -313,6 +291,25 @@ static BOOL messageReceived = NO;
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
     [push updateRegistration];
 }
+
+/** 
+ * Fix for edge case where a dev registeres for UIRemoteNotifcationTypeNone and enables/disables push
+ * on a first install, and other edge cases where this can occur
+ */
+- (void)testUregistrationQuitsWithNilDeviceToken {
+    // Rig UAPush to get through the updateRegistration method. This setup is a bit involved, it
+    // will change when registration changes in the near term
+    [[UAPush shared] setDeviceToken:nil];
+    [[UAPush shared] setPushEnabled:NO];
+    [[UAPush shared] setRegistrationPayloadCache:@{@"cat" : @"catCache"}];
+    [[UAPush shared] setIsRegistering:NO];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
+    //
+    // Reject DELETE request creation we should have returned by now. 
+    id mockPush = [OCMockObject partialMockForObject:[UAPush shared]];
+    [[mockPush reject] requestToDeleteDeviceToken];
+    [[UAPush shared] updateRegistration];
+}
 /////////////////////////
 
 - (void)testRegisterForRemoteNotificationTypes {
@@ -399,6 +396,15 @@ static BOOL messageReceived = NO;
     BOOL failSelector = sel_isEqual(@selector(unRegisterDeviceTokenFailed:), request.didFailSelector);
     STAssertTrue(successSelector, nil);
     STAssertTrue(failSelector, nil);
+}
+
+// Fix for issue where changing metadata while unregistered caused further registration attempts to fail
+- (void)testMetadataEditingWhileUnregisteredLeavesIsRegisteringNo {
+    [[UAPush shared] setDeviceToken:@"deviceToken"];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+    [push updateRegistration];
+    STAssertFalse(push.isRegistering, @"isRegistering should be NO");
 }
 
 - (void)testSetBadgeNumber {
@@ -581,6 +587,25 @@ static BOOL messageReceived = NO;
     [defaults setValue:nil forKey:UAPushQuietTimeSettingsKey];
     [UAPush registerNSUserDefaults];
     STAssertFalse(push.quietTimeEnabled, @"Quiet time should not be enabled");
+}
+
+// Test the default push enabled setting is configurable by the developer on start
+- (void)testDefaultPushEnabledSetting {
+    // Delete the existing setting
+    NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];
+    [standardDefaults removeObjectForKey:UAPushEnabledSettingsKey];
+    // Manually register defaults for a clean slate, default value is YES
+    [UAPush registerNSUserDefaults];
+    STAssertTrue([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"Defaults pushEnabled setting should be YES");
+    // Set an actual value in the user defaults, this should override the default value
+    [[UAPush shared] setPushEnabled:NO];
+    STAssertFalse([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"A value in userDefaults should be set, the default value should be ignored");
+    // Change value
+    [UAPush setDefaultPushEnabledValue:NO];
+    // Delete the existing setting, which will cause a fallback to the currently registered defaults, which were
+    // just updated
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
+    STAssertFalse([standardDefaults boolForKey:UAPushEnabledSettingsKey], @"Defaults pushEnabled setting should be NO");
 }
 
 - (void)testShouldRetryReqeust {

@@ -33,7 +33,7 @@
 		1813F0241279620E009DEB29 /* UAProductDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6A1279620E009DEB29 /* UAProductDetail.xib */; };
 		1813F0251279620E009DEB29 /* UAStoreFront.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6B1279620E009DEB29 /* UAStoreFront.xib */; };
 		1813F0261279620E009DEB29 /* UAStoreFrontLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6C1279620E009DEB29 /* UAStoreFrontLocalization.bundle */; };
-		1813F05812796312009DEB29 /* libUAirship-1.3.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.3.2.a */; };
+		1813F05812796312009DEB29 /* libUAirship-1.3.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.3.5.a */; };
 		1827ED3912364571004001E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2412364571004001E2 /* main.m */; };
 		1827ED3A12364571004001E2 /* StoreFrontSampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2612364571004001E2 /* StoreFrontSampleAppDelegate.m */; };
 		1827ED3B12364571004001E2 /* StoreFrontSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2812364571004001E2 /* StoreFrontSampleViewController.m */; };
@@ -208,7 +208,7 @@
 				63F3544D11B50A7C00A02182 /* MobileCoreServices.framework in Frameworks */,
 				638EA09711C4D50B009F6B9C /* UIKit.framework in Frameworks */,
 				638EA09A11C4D515009F6B9C /* StoreKit.framework in Frameworks */,
-				1813F05812796312009DEB29 /* libUAirship-1.3.2.a in Frameworks */,
+				1813F05812796312009DEB29 /* libUAirship-1.3.5.a in Frameworks */,
 				636CB320128D0CB300481EFC /* Security.framework in Frameworks */,
 				636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */,
 				1872B72512BA14E1003CC5AC /* CoreTelephony.framework in Frameworks */,
@@ -335,8 +335,8 @@
 		1813F04B1279623C009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813F04F1279623C009DEB29 /* libUAirship-1.3.2.a */,
-				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.1.a */,
+				1813F04F1279623C009DEB29 /* libUAirship-1.3.5.a */,
+				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.2.a */,
 				497159681430FC8200079B37 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -576,10 +576,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813F04F1279623C009DEB29 /* libUAirship-1.3.2.a */ = {
+		1813F04F1279623C009DEB29 /* libUAirship-1.3.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.3.2.a";
+			path = "libUAirship-1.3.5.a";
 			remoteRef = 1813F04E1279623C009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -590,11 +590,10 @@
 			remoteRef = 497159671430FC8200079B37 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.1.a */ = {
+		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = "libUAirshipPush-1.3.1.a";
-			path = "libUAirshipPush-1.3.2.a";
+			path = "libUAirshipPush-1.3.5.a";
 			remoteRef = BBBA1A3C15C9C4F7000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -775,7 +774,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 i386 armv7s";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
@@ -801,7 +800,7 @@
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "armv6 armv7 i386";
+				VALID_ARCHS = "armv6 armv7 i386 armv7s";
 				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
 				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};

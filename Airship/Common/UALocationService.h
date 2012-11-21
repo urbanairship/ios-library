@@ -189,7 +189,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 ///---------------------------------------------------------------------------------------
 
 /** The most recently received location available from the CLLocationManager objec. This may be more accurate than
- the last reported location, and it may also be nil. See CLLocationManager documetation for more details. 
+ the last reported location, and it may also be nil. See CLLocationManager documentation for more details.
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */
@@ -201,7 +201,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 /// Date of last location event reported 
 @property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
 
-/// UALocationServiceDelage for location service callbacks
+/// UALocationServiceDelegate for location service callbacks
 @property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------

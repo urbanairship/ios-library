@@ -51,7 +51,11 @@
     NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
-    [UAirship setLogLevel:UALogLevelTrace];
+    // By setting the default push enabled value to no, you can avoid presenting the user with push notifications
+    // right at the first installation of the app. By navigating to the Settings screen in app and setting the toggle
+    // to on, you'll trigger the actual registration with UIApplication and the UIAlertView asking for permission
+    // for Push notifications.
+    [UAPush setDefaultPushEnabledValue:NO];
     
     // Create Airship singleton that's used to talk to Urban Airhship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
@@ -59,6 +63,9 @@
 
     [[UAPush shared] resetBadge];//zero badge on startup
     
+    // Register for remote notfications as normal. With the default value of push set to no, UAPush will
+    // record the desired remote notifcation types, but not register for push notfications with UIApplication until
+    // push is enabled.
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];

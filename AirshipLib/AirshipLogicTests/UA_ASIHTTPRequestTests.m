@@ -52,8 +52,6 @@
     STAssertNotNil(request.requestHeaders, @"Request headers need to exist for the purpose of this test");
     STAssertNil(request.postBody, @"Post body should be nil");
     STAssertTrue([[request.requestHeaders valueForKey:contentLength] intValue] == 0, @"Content-Length should be 0");
-    // This should return an 200
-    STAssertTrue(request.responseStatusCode == 200, @"Response from Heroku should be 200");
 }
 
 @end

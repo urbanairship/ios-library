@@ -8,7 +8,7 @@ Urban Airship's libUArship is a drop-in static library that provides a simple wa
 integrate Urban Airship services into your iOS applications. This entire project will
 allow you to build the library files and all sample projects. If you just want to
 include the library in your app, you can simply download the latest ``libUAirship.zip``
-and a sample project. These zips contain a pre-compiled universal arm6/arm7/i386 library.
+and a sample project. These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library.
 
 Working with the Library
 ------------------------
@@ -40,7 +40,7 @@ have additional linking requirements)::
     UIKit.framework
     libz.dylib
     libsqlite3.dylib
-    CoreTelephony.framework (Exists in iOS 4+ only, so make it a weak link for 3.x compatibility)
+    CoreTelephony.framework
     StoreKit.framework
     CoreLocation.framework
 
@@ -48,11 +48,9 @@ Build Settings
 ##############
 
 **Compiler**
-    
-LLVM 4.0 is the default compiler for all projects and the static library.
+The latest version of LLVM is the default compiler for all projects and the static library.
      
-**Header search path**
-                                         
+**Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
              
 Quickstart
@@ -89,25 +87,92 @@ App Store and Ad-Hoc builds, set it to YES.
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
 
-Third party Package - License - Copyright / Creator 
-###################################################
+Push Integration
+################
 
-asi-http-request	BSD		Copyright (c) 2007-2010, All-Seeing Interactive.
+To enable push notifications, you will need to make several additions to your application delegate.
+    
+.. code:: obj-c
 
-fmdb	MIT		Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
+    - (BOOL)application:(UIApplication *)application 
+            didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+        // Your other application code.....
+    
+        // Call takeOff, passing in the launch options so the library can properly record when
+        // the app is launched from a push notification
+        NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+        [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+        
+        // This prevents the UA Library from registering with UIApplcation by default when
+        // registerForRemoteNotifications is called. This will allow you to prompt your
+        // users at a later time. This gives your app the opportunity to explain the benefits
+        // of push or allows users to turn it on explicitly in a settings screen.
+        // If you just want everyone to immediately be prompted for push, you can
+        // leave this line out.
+        [UAPush setDefaultPushEnabledValue:NO];
+        
+        // Create Airship singleton that's used to talk to Urban Airhship servers.
+        // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+        [UAirship takeOff:takeOffOptions];
+    
+        [[UAPush shared] resetBadge];//zero badge on startup
+        
+        // Register for remote notfications. With the default value of push set to no,
+        // UAPush will record the desired remote notifcation types, but not register for
+        // push notfications as mentioned above.
+        // When push is enabled at a later time, the registration will occur as normal.
+        [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                                             UIRemoteNotificationTypeSound |
+                                                             UIRemoteNotificationTypeAlert)];
+        return YES;
+    }
+    
+    // Implement the iOS device token registration callback
+    - (void)application:(UIApplication *)application
+            didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+        UALOG(@"APN device token: %@", deviceToken);
 
-SBJSON	MIT		Copyright (C) 2007-2010 Stig Brautaset.
+        // Updates the device token and registers the token with UA. This won't occur until
+        // push is enabled if the outlined process is followed.
+        [[UAPush shared] registerDeviceToken:deviceToken];
+    }
+    
+    // Implement the iOS callback for incoming notifications
+    //
+    // Incoming Push notifications can be handled by the UAPush default alert handler,
+    // which displays a simple UIAlertView, or you can provide you own delegate which
+    // conforms to the UAPushNotificationDelegate protocol.
+    - (void)application:(UIApplication *)application
+            didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
-Base64	BSD		Copyright 2009-2010 Matt Gallagher.
+        // Send the alert to UA
+        [[UAPush shared] handleNotification:userInfo
+                           applicationState:application.applicationState];
+        
+        // Reset the badge if you are using that functionality
+        [[UAPush shared] resetBadge]; // zero badge after push received
+    }
+    
+To enable push:
 
-ZipFile-OC	BSD		Copyright (C) 1998-2005 Gilles Vollant.
+.. code:: obj-c
 
-GHUnit	Apache 2	Copyright 2007 Google Inc.
+    // Somewhere in the app, this will enable push, setting it to NO will disable push
+    // This will trigger the proper registration or de-registration code in the library.
+    [[UAPush shared] setPushEnabled:YES];
 
-Google Toolkit	Apache 2	Copyright 2007 Google Inc.
-
-Reachability	BSD		Copyright (C) 2010 Apple Inc.
-
-MTPopupWindow	MIT		Copyright 2011 Marin Todorov
-
-JRSwizzle MIT Copyright 2012 Jonathan Rentzsch
+===================  ========  ======================================================
+Third party Package  License   Copyright / Creator 
+===================  ========  ======================================================
+asi-http-request     BSD       Copyright (c) 2007-2010, All-Seeing Interactive.
+fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
+SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
+Base64               BSD       Copyright 2009-2010 Matt Gallagher.
+ZipFile-OC           BSD       Copyright (C) 1998-2005 Gilles Vollant.
+GHUnit               Apache 2  Copyright 2007 Google Inc.
+Google Toolkit	     Apache 2  Copyright 2007 Google Inc.
+Reachability         BSD       Copyright (C) 2010 Apple Inc.
+MTPopupWindow        MIT       Copyright 2011 Marin Todorov
+JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
+===================  ========  ======================================================

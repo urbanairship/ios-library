@@ -49,8 +49,8 @@
     RELEASE(timeout);
 }
 
-//#pragma mark -
-//#pragma mark Support Methods
+#pragma mark -
+#pragma mark Support Methods
 
 
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
@@ -169,35 +169,28 @@
 #pragma mark Single Location Service Report Current location background
 
 - (void)testReportCurrentLocationTimesOutWithError {
-    BOOL yes = YES;
+    __block BOOL shutdownCalled = NO;
     locationService = [[UALocationService alloc] initWithPurpose:@"current location test"];
     locationService.timeoutForSingleLocationService = 1;
-    // Setup a best available location, since we are using a mock location service.
-    locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
-    locationService.delegate = self;
     id mockLocationService = [OCMockObject partialMockForObject:locationService];
-    [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
-    id mockSingleProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-    locationService.singleLocationProvider = mockSingleProvider;
-    [[mockSingleProvider expect] startReportingLocation];
-    [[[mockLocationService expect] andForwardToRealObject] stopSingleLocation];
-    [[mockLocationService expect] reportLocationToAnalytics:locationService.bestAvailableSingleLocation fromProvider:mockSingleProvider];
-    [locationService reportCurrentLocation];
-    STAssertFalse(UIBackgroundTaskInvalid == locationService.singleLocationBackgroundIdentifier, nil);
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    NSString *runMode = [runLoop currentMode];
-    timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:5.0];
-    while (locationService.singleLocationBackgroundIdentifier != UIBackgroundTaskInvalid) {
-        // Just keep moving the run loop date forward slightly, so the exit is quick
-        [[NSRunLoop currentRunLoop] runMode:runMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-        if([timeout timeIntervalSinceNow] < 0.0) {
+    [[[mockLocationService stub] andDo:^(NSInvocation *invoc) { shutdownCalled = YES;}] stopSingleLocationWithError:OCMOCK_ANY];
+    STAssertFalse(locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
+    [locationService singleLocationDidUpdateToLocation:[UALocationTestUtils testLocationPDX] fromLocation:[UALocationTestUtils testLocationSFO]];
+    STAssertTrue(locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
+    timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
+    while (!shutdownCalled) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
+        if ([timeout timeIntervalSinceNow] < 0.0) {
             break;
         }
     }
-    [mockSingleProvider verify];
-    [mockLocationService verify];
-    STAssertTrue(locationRecieved, @"Location service should have reported a location");
+    STAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
+}
 
+- (void)testStopSingleLocationSetsShutdownScheduledFlag {
+    locationService.singleLocationShutdownScheduled = YES;
+    [locationService stopSingleLocation];
+    STAssertFalse(locationService.singleLocationShutdownScheduled, @"singleLocationServiceShutdownScheduled should be NO after stopSingleLocation");
 }
 
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
@@ -243,36 +236,6 @@
 - (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation{
     NSLog(@"Location received");
     locationRecieved = YES;
-}
-
-- (void)testSendEventOnlyCallsOnMainThread {
-    UALocationService *service = [[UALocationService alloc] initWithPurpose:@"Test"];
-    __block BOOL onMainThread = NO;
-    void (^argBlock)(NSInvocation*) = ^(NSInvocation* invocation) {
-        onMainThread = [[NSThread currentThread] isMainThread];
-    };
-    CLLocation *location = [UALocationTestUtils testLocationPDX];
-    UAAnalytics *analytics = [[UAirship shared] analytics];
-    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[[mockAnalytics stub] andDo:argBlock] addEvent:OCMOCK_ANY];
-    NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:[service methodSignatureForSelector:@selector(reportLocationToAnalytics:fromProvider:)]];
-    [invocation setTarget:service];
-    [invocation setSelector:@selector(reportLocationToAnalytics:fromProvider:)];
-    [invocation setArgument:&location atIndex:2];
-    UAStandardLocationProvider *provider = locationService.standardLocationProvider;
-    [invocation setArgument:&provider atIndex:3];
-    [invocation retainArguments];
-    [invocation invoke];
-    STAssertTrue(onMainThread, nil);
-    onMainThread = NO;
-    NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(peformInvocationInBackground:) object:invocation];
-    [thread start];
-    do {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
-    } while(![thread isFinished]);
-    STAssertTrue(onMainThread, nil);
-    [thread release];
-    [service autorelease];
 }
                                                                             
 - (void)peformInvocationInBackground:(NSInvocation*)invocation {
