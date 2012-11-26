@@ -25,12 +25,9 @@
 
 // NSUserDefaultsKey for libUAirship verision >= v1.3.6
 // Changing the key forces devices to update with UA at least once
-// with new workflow. 
+// with new workflow. Previous key was "UAUserLastDeviceTokenKey", and
+// is no longer used. 
 #define kLastUpdatedDeviceTokenKey @"UAUserLastUpdatedDeviceTokenKey"
-
-// NSUserDefaultsKey for libUAirship version <= v1.3.5
-// Replacing this key to ensure migration to new defaults setup post v1.3.5
-#define kLastDeviceTokenKey @"UAUserLastDeviceTokenKey"
 
 //Legacy keys for migration from pre-keychain user store
 #define kLegacyInboxUserKey @"UAAirMailDefaultInboxUser"
