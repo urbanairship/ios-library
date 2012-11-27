@@ -19,6 +19,7 @@
 		18A27CB7125EDD6E0045D75B /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA2125EDD6E0045D75B /* Default.png */; };
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
+		1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
 		1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1F5781FE14182166003FA039 /* UAInboxMessageListController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FC14182166003FA039 /* UAInboxMessageListController.xib */; };
 		1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FD14182166003FA039 /* UAInboxMessageViewController.xib */; };
@@ -124,6 +125,7 @@
 		18A27CBB125EDDB60045D75B /* InboxSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "InboxSample-Info.plist"; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F531D5114201ABC009ABE85 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		1F5781FC14182166003FA039 /* UAInboxMessageListController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListController.xib; sourceTree = "<group>"; };
 		1F5781FD14182166003FA039 /* UAInboxMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageViewController.xib; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 		18A27C9D125EDD6E0045D75B /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
+				1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */,
 				D5A3F5D512C1533D009731BE /* Icon@2x.png */,
 				D5C75B5F12BC20250041239E /* Icon-Small@2x.png */,
 				18A27C9E125EDD6E0045D75B /* InboxSampleViewController.xib */,
@@ -345,7 +348,7 @@
 			isa = PBXGroup;
 			children = (
 				B6E7F8441239FFD5009BC92D /* libUAirship-1.3.5.a */,
-				BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.2.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.5.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -526,7 +529,7 @@
 			remoteRef = B6E7F8431239FFD5009BC92D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.2.a */ = {
+		BB5EBCB6159B7AF600F2A716 /* libUAirshipPush-1.3.5.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirshipPush-1.3.5.a";
@@ -571,6 +574,7 @@
 				1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */,
 				1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */,
 				1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */,
+				1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

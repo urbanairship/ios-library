@@ -115,7 +115,7 @@ static UAUser *_defaultUser;
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     [_deviceToken autorelease];
-    _deviceToken = deviceToken;
+    _deviceToken = [deviceToken retain];
     NSString *lastDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastDeviceTokenKey];
     if (![_deviceToken isEqualToString:lastDeviceToken]) {
         _deviceTokenHasChanged = YES;
