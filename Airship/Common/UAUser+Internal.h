@@ -53,16 +53,17 @@
 @interface UAUser()
 
 
-// This this device token represents the device token that is assigned to
+// This device token represents the device token that is assigned to
 // a user and is represented on the UA Servers. It may or may not be in sync
 // with the device token on the UAPush object, which represents the token currently
 // on the device.
 
 // The current device token, stored in NSUserDefaults
-- (NSString*)deviceToken;
+- (NSString*)serverDeviceToken;
 
-// Sets a new device token in NSUserDefaults
-- (void)setDeviceToken:(NSString*)token;
+// Sets a new device token in NSUserDefaults. This has the side effect of lowercasing the string
+// since strings returned from the server are upper case. 
+- (void)setServerDeviceToken:(NSString*)token;
 
 // Compares the currently persisted device token, which representes what is
 // on the UA servers to the token associated with UAPush, which represents

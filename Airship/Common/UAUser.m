@@ -109,18 +109,21 @@ static UAUser *_defaultUser;
 #pragma mark -
 #pragma mark Device Token
 
-- (NSString*)deviceToken {
+- (NSString*)serverDeviceToken {
     return [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
 }
 
-- (void)setDeviceToken:(NSString *)token {
-    [[NSUserDefaults standardUserDefaults] setValue:token forKey:kLastUpdatedDeviceTokenKey];
+- (void)setServerDeviceToken:(NSString *)token {
+    // Lowercase the string here because the server will send an upper case string, and we are parsing tokens
+    // out of responses
+    [[NSUserDefaults standardUserDefaults] setValue:[token lowercaseString] forKey:kLastUpdatedDeviceTokenKey];
 }
 
 - (BOOL)deviceTokenHasChanged {
-    NSString *lastUpdatedToken = [self deviceToken];
+    NSString *lastUpdatedToken = [self serverDeviceToken];
     NSString *currentDeviceToken = [[UAPush shared] deviceToken];
-    return [lastUpdatedToken isEqualToString:currentDeviceToken];
+    // Can't use caseInsensitiveCompare, these values can be nil, which is an undefined result
+    return ![[lastUpdatedToken lowercaseString] isEqualToString:[currentDeviceToken lowercaseString]];
 }
 - (void)initializeUser {
     
@@ -479,9 +482,6 @@ static UAUser *_defaultUser;
             
             [self saveUserData];
             
-            // Make sure we do a full user update with any device tokens, we'll unset this if it is not needed
-//            self.deviceTokenHasChanged = YES;
-            
             // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
             if (request.postBody != nil) {
                 
@@ -502,7 +502,7 @@ static UAUser *_defaultUser;
                     
                     // If we did send a token, then it needs to be updated in the store
                     if (deviceToken) {
-                        [self setDeviceToken:deviceToken];
+                        [self setServerDeviceToken:deviceToken];
                     }
                 }
             }
@@ -804,9 +804,9 @@ static UAUser *_defaultUser;
                 NSArray *deviceTokens = [getResult objectForKey:@"device_tokens"];
 				if([deviceTokens count] > 0) {
 					NSString *deviceToken = [deviceTokens objectAtIndex:0];
-                    if ([deviceToken caseInsensitiveCompare:[self deviceToken]] != NSOrderedSame) {
-                        UALOG(@"Existing token %@ does not match server side token %@", [self deviceToken], deviceToken);
-                        [self setDeviceToken:nil];
+                    if ([deviceToken caseInsensitiveCompare:[self serverDeviceToken]] != NSOrderedSame) {
+                        UALOG(@"Existing token %@ does not match server side token %@", [self serverDeviceToken], deviceToken);
+                        [self setServerDeviceToken:nil];
                     }
 				} 
 				
@@ -977,7 +977,7 @@ static UAUser *_defaultUser;
     
     UALOG(@"Updating device token.");
 
-    if ([self deviceTokenHasChanged] == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser){
+    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser){
 		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
@@ -991,6 +991,7 @@ static UAUser *_defaultUser;
 - (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
 
     if (request.responseStatusCode == 200 || request.responseStatusCode == 201){
+        
         // The dictionary for the post body is built as follows in updateDeviceToken
         //    "device_tokens" =     {
         //        add =         (
@@ -998,14 +999,17 @@ static UAUser *_defaultUser;
         //                       );
         //    };
         // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
+        
         NSString *rawJson = [[[NSString alloc] initWithData:request.postBody  encoding:NSASCIIStringEncoding] autorelease];
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
         NSDictionary *postBody = [parser objectWithString:rawJson];
         NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
         NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
+        
         // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
-        [self setDeviceToken:[successfullyUploadedDeviceToken lowercaseString]];
+        [self setServerDeviceToken:successfullyUploadedDeviceToken];
+        
         UALOG(@"Updated Device Token succeeded with response: %d", request.responseStatusCode);
         UALOG(@"Logged last updated key %@", successfullyUploadedDeviceToken);
     }

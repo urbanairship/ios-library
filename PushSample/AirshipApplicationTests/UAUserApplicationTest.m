@@ -31,7 +31,7 @@
 #import "UAUser.h"
 #import "UAUser+Internal.h"
 #import "UAPush.h"
-
+#import "UAPush+Internal.h"
 
 @interface UAUserApplicationTest : SenTestCase
 
@@ -40,49 +40,70 @@
 @implementation UAUserApplicationTest
 
 /** Test that the device token is only cached on a 200 response from the UAUser updatedDefaultDeviceToken */
-- (void)testUpdateDefaultDeviceToken {
+- (void)testUpdatedDefaultDeviceToken {
     // Set a device token and a mock request to return a 200. The cached token
     // should reflect the current value in [UAPush defaultPush].deviceToken
     id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     int responseCode = 200;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    [[[mockRequest expect] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    // Build a JSON payload for UAUser to parse a token out of.
     NSString *testString = @"cats";
-    [UAUser defaultUser].deviceToken = testString;
-    // This should update NSUserDefaults with the test string
+    NSData *payloadJson = [self payloadWithTokenValue:testString];
+    [[[mockRequest expect] andReturn:payloadJson] postBody];
+    
+    // This should update NSUserDefaults with the token out of the above payload
     [[UAUser defaultUser] performSelector:@selector(updatedDefaultDeviceToken:) withObject:mockRequest];
     NSString *persistedDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
     STAssertTrue([testString isEqualToString:persistedDeviceToken], @"%@ should be %@", kLastUpdatedDeviceTokenKey, testString);
+    [mockRequest verify];
     ////
     // Check that the cached device token is not changed when the request returns an  non 200 value
+    // Prep defaults
+    [[NSUserDefaults standardUserDefaults] setValue:testString forKey:kLastUpdatedDeviceTokenKey];
+    // Prep mock response
     mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
     responseCode = 500;
-    [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    // Setup a payload with a value that is different than the cached value, then assert that the value is unchanged
+    // with a 500 response
+    [[[mockRequest expect] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
+    // Shouldn't be reading the payload
+    [[[mockRequest reject] andReturn:payloadJson] postBody];
+    // Call method
     [[UAUser defaultUser] performSelector:@selector(updatedDefaultDeviceToken:) withObject:mockRequest];
-    testString = @"notCats";
-    [UAUser defaultUser].deviceToken = testString;
+    // Check results
+    [mockRequest verify];
     persistedDeviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
-    STAssertFalse([testString isEqualToString:persistedDeviceToken], @"%@ should not be %@",persistedDeviceToken , testString);
+    // Check that token remains unchanged
+    STAssertTrue([testString isEqualToString:persistedDeviceToken], @"%@ should not be %@",persistedDeviceToken , testString);
 }
 
-/** Test that a change  in device token is properly captured */
-- (void)testDeviceTokenChangeRecording {
-    // Setup scenario where token doesn't change
-    NSString *token = @"cats";
-    // Stub a response from UAPush
-    id mockPush = [OCMockObject partialMockForObject:[UAPush shared]];
-    [[[mockPush stub] andReturn:token] deviceToken];
-    // Set matching default
-    [[NSUserDefaults standardUserDefaults] setValue:token forKey:kLastUpdatedDeviceTokenKey];
-    // Stub out the network call in UAUser so it doesn't slow down the test
-    id mockUser = [OCMockObject partialMockForObject:[UAUser defaultUser]];
-    [[mockUser stub] updateUserInfo:OCMOCK_ANY withDelegate:OCMOCK_ANY finish:@selector(updatedDefaultDeviceToken:)fail:@selector(requestWentWrong:)];
-    // Check for match
-    [[UAUser defaultUser] updateDefaultDeviceToken];
-    STAssertFalse([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should be NO");
-    // Check for different token
-    [[NSUserDefaults standardUserDefaults] setValue:@"notCats" forKey:kLastUpdatedDeviceTokenKey];
-    [[UAUser defaultUser] updateDefaultDeviceToken];
-    STAssertTrue([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should be YES");
-    
+- (NSData*)payloadWithTokenValue:(NSString*)token {
+    NSDictionary *payload = @{@"device_tokens" :@{@"add" : @[token]}};
+    NSError *jsonError = nil;
+    NSData *payloadJson = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&jsonError];
+    STAssertNil(jsonError, @"Error generating test JSON");
+    return payloadJson;
+}
+
+/** Test that a change  in device token is properly calculated */
+- (void)testDeviceTokenChange {
+    [[UAPush shared] setDeviceToken:@"cats"];
+    [[UAUser defaultUser] setServerDeviceToken:@"notCats"];
+    STAssertTrue([[UAUser defaultUser]deviceTokenHasChanged], @"deviceTokenHasChanged should be YES");
+    [[UAUser defaultUser] setServerDeviceToken:@"cats"];
+    STAssertFalse([[UAUser defaultUser] deviceTokenHasChanged], @"deviceTokenHasChanged should be NO");
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kLastUpdatedDeviceTokenKey];
+    STAssertTrue([[UAUser defaultUser] deviceTokenHasChanged], nil);
+}
+
+/** Test that the device token actually sets a lowercase string in NSUserDefaults for the appropriate key */
+- (void)testGetSetDeviceToken {
+    NSString *testString = @"cAts In a hat";
+    NSString *sameTestLowercase = [testString lowercaseString];
+    [[UAUser defaultUser] setServerDeviceToken:testString];
+    STAssertTrue([[[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey] isEqualToString:sameTestLowercase], @"Value for kLastUpdatedDeviceTokenKey in UAUser not set properly, or not lowercased");
+    NSString *targetString = @"cat";
+    [[NSUserDefaults standardUserDefaults] setValue:targetString forKey:kLastUpdatedDeviceTokenKey];
+    STAssertTrue([[[UAUser defaultUser] serverDeviceToken] isEqualToString:targetString], @"UAUser defaultUser device token get not returning proper value" );
 }
 @end
