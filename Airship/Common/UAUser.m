@@ -804,7 +804,7 @@ static UAUser *_defaultUser;
                 NSArray *deviceTokens = [getResult objectForKey:@"device_tokens"];
 				if([deviceTokens count] > 0) {
 					NSString *deviceToken = [deviceTokens objectAtIndex:0];
-                    if ([[deviceToken lowercaseString] isEqualToString:[[self serverDeviceToken] lowercaseString]]) {
+                    if (![[deviceToken lowercaseString] isEqualToString:[[self serverDeviceToken] lowercaseString]]) {
                         UALOG(@"Existing token %@ does not match server side token %@", [self serverDeviceToken], deviceToken);
                         [self setServerDeviceToken:nil];
                     }
