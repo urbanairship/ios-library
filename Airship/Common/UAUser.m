@@ -1177,7 +1177,7 @@ static UAUser *_defaultUser;
     
     [writer release];
 	
-	[pool release];  // Release the objects in the pool.
+	[pool drain];  // Release the objects in the pool.
 }
 
 @end
