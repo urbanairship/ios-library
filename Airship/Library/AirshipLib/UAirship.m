@@ -136,7 +136,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
     
     
-    
     // Load configuration
     // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
     // override any options defined in AirshipConfig.plist
