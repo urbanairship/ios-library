@@ -30,6 +30,8 @@
 
 #import <Security/Security.h>
 
+static NSString* _cachedDeviceID = nil;
+
 @interface UAKeychainUtils()
 + (NSMutableDictionary *)newSearchDictionary:(NSString *)identifier;
 
@@ -218,7 +220,7 @@
 
 + (NSString *)createDeviceID {
     //UALOG(@"Storing Username: %@ and Password: %@", username, password);
-	
+
     NSString *deviceID = [UAUtils UUID];
 
     NSMutableDictionary *keychainValues = [UAKeychainUtils newSearchDictionary:kUAKeychainDeviceIDKey];
@@ -239,7 +241,7 @@
 	
     OSStatus status = SecItemAdd((CFDictionaryRef)keychainValues, NULL);
     [keychainValues release];
-	
+
     if (status == errSecSuccess) {
         return deviceID;
     } else {
@@ -248,6 +250,10 @@
 }
 
 + (NSString *)getDeviceID {
+
+    if (_cachedDeviceID) {
+        return _cachedDeviceID;
+    }
 
     //Get password next
     NSMutableDictionary *deviceIDQuery = [[UAKeychainUtils newSearchDictionary:kUAKeychainDeviceIDKey] autorelease];
@@ -296,6 +302,9 @@
         deviceID = [UAKeychainUtils createDeviceID];
         UALOG(@"New device ID: %@", deviceID);
     }
+
+    [_cachedDeviceID release];
+    _cachedDeviceID = [deviceID copy];
 
     return deviceID;
 }
