@@ -143,13 +143,22 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Enables or disables logging. Logging is enabled by default, but it will be disabled when the 
- * APP_STORE_OR_AD_HOC_BUILD AirshipConfig flag is set to YES. This flag overrides the
- * AirshipConfig settings.
+ * Enables or disables logging. Logging is enabled by default, though the log level must still be set
+ * to an appropriate value. This flag overrides the AirshipConfig settings if called after takeOff.
  *
  * @param enabled If YES, console logging is enabled.
  */
 + (void)setLogging:(BOOL)enabled;
+
+/**
+ * Sets the log level for the Urban Airship library. The log level defaults to UALogLevelDebug
+ * for development apps, and UALogLevelError for production apps (when the APP_STORE_OR_AD_HOC_BUILD
+ * AirshipConfig flag is set to YES). Setting LOG_LEVEL in the AirshipConfig settings will override
+ * these defaults, but will not override a value set with this method.
+ * 
+ * @param level The desired UALogLevel value.
+ */
++ (void)setLogLevel:(UALogLevel)level;
 
 ///---------------------------------------------------------------------------------------
 /// @name Lifecycle

@@ -30,7 +30,7 @@
     NSString *cacheDirectory;
     NSArray *resourceTypes;
     NSMutableDictionary *metadata;
-    NSUInteger actualDiskCapactiy;
+    NSUInteger actualDiskCapacity;
     NSOperationQueue *queue;
 }
 

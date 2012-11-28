@@ -44,16 +44,10 @@
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
 // analytics-specific logging method
-#define UA_ANALYTICS_LOG(fmt, ...) \
-do { \
-if (logging && analyticsLoggingEnabled) { \
-NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__); \
-} \
-} while(0)
+#define UA_ANALYTICS_LOG UA_LTRACE
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
-NSString * const UAAnalyticsOptionsLoggingKey = @"UAAnalyticsOptionsLoggingKey";
 
 UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
 UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
@@ -101,9 +95,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     if (self = [super init]) {
         //set server to default if not specified in options
         self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
-        analyticsLoggingEnabled = [[options objectForKey:UAAnalyticsOptionsLoggingKey] boolValue];
-        UALOG(@"Analytics logging %@enabled", (analyticsLoggingEnabled ? @"" : @"not "));
-        
+
         if (self.server == nil) {
             self.server = kAnalyticsProductionServer;
         }

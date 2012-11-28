@@ -42,8 +42,7 @@
     int databaseSize_;
     NSTimeInterval oldestEventTime;    
     NSDate *lastLocationSendTime;    
-    NSTimer *sendTimer_;    
-    BOOL analyticsLoggingEnabled;    
+    NSTimer *sendTimer_;
     NSString *packageVersion;
     UIBackgroundTaskIdentifier sendBackgroundTask_;
     
