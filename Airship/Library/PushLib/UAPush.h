@@ -110,7 +110,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @end
 
 /**
- * Implement this protocol and register with the UAirship shared instance to receive
+ * Implement this protocol and register with the UAPush shared instance to receive
  * device token registration success and failure callbacks.
  */
 @protocol UARegistrationObserver
@@ -119,14 +119,10 @@ UA_VERSION_INTERFACE(UAPushVersion)
 - (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
 - (void)unRegisterDeviceTokenSucceeded;
 - (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
-- (void)addTagToDeviceSucceeded;
-- (void)addTagToDeviceFailed:(UA_ASIHTTPRequest *)request;
-- (void)removeTagFromDeviceSucceeded;
-- (void)removeTagFromDeviceFailed:(UA_ASIHTTPRequest *)request;
 @end
 
 /**
- * This singleton provides an interface to the functionality provided by the Urban Airship client Push API.
+ * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 @interface UAPush : UAObservable 
 
@@ -208,18 +204,20 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 
-/** Enables/disables push notifications on this device through Urban Airship. */
+/**
+ * Enables/disables push notifications on this device through Urban Airship. Defaults to `YES`.
+ */
 @property (nonatomic) BOOL pushEnabled; /* getter = pushEnabled, setter = setPushEnabled: */
 
 
 /** 
- * Sets the default value for pushEnabled. The factory default is YES. After the pushEnabled
+ * Sets the default value for pushEnabled. The default is `YES`. After the pushEnabled
  * value has been directly set, this value has no effect.
  * @param enabled The default value for push enabled
  */
-+(void)setDefaultPushEnabledValue:(BOOL)enabled;
++ (void)setDefaultPushEnabledValue:(BOOL)enabled;
 
-/** The device token for this device, as a string. */
+/** The device token for this device, as a hex string. */
 @property (nonatomic, copy, readonly) NSString *deviceToken; 
 
 /*
@@ -234,8 +232,8 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 /**
- * Toggle the Urban Airship auto-badge feature. If enabled, this will update the badge number
- * stored by UA every time the app is started or foregrounded.
+ * Toggle the Urban Airship auto-badge feature. Defaults to `NO` If enabled, this will update the
+ * badge number stored by UA every time the app is started or foregrounded.
  */
 @property (nonatomic, assign) BOOL autobadgeEnabled; /* getter = autobadgeEnabled, setter = setAutobadgeEnabled: */
 
@@ -284,11 +282,11 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Adds a tag to the list of tags for the device.
- * To update the server, make all of you changes, then call
- * [[UAPush shared] updateRegisration] to update the UA server.
+ * To update the server, make all of your changes, then call
+ * `updateRegistration` to update the UA server.
  * 
  * @param tag Tag to be added
- * @warning *Warning* When updating multiple 
+ * @warning When updating multiple 
  * server side values (tags, alias, time zone, quiet time) set the values first, then
  * call the updateRegistration method. Batching these calls improves API and client performance.
  */
@@ -299,37 +297,37 @@ SINGLETON_INTERFACE(UAPush);
  * changes, then call `updateRegistration`.
  * 
  * @param tags Array of new tags
- * @warning *Warning* When updating multiple 
+ * @warning When updating multiple 
  * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call the updateRegistration method. Batching these calls improves API and client performance.
+ * call the `updateRegistration` method. Batching these calls improves API and client performance.
  */
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags;
 
 /**
- * Removes a tag from the current tag list. To update the server, make all of you changes, then call
- * updateRegistration.
+ * Removes a tag from the current tag list. To update the server, make all of your changes, then call
+ * `updateRegistration`.
  * 
  * @param tag Tag to be removed
- * @warning *Warning* When updating multiple 
+ * @warning When updating multiple 
  * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call the updateRegistration method. Batching these calls improves API and client performance.
+ * call the `updateRegistration` method. Batching these calls improves API and client performance.
  */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 /**
- * Removes a group of tags from a device. To update the server, make all of you changes, then call
- * updateRegisration.
+ * Removes a group of tags from a device. To update the server, make all of your changes, then call
+ * `updateRegisration`.
  * 
  * @param tags Array of tags to be removed
- * @warning *Warning* When updating multiple 
+ * @warning When updating multiple 
  * server side values (tags, alias, time zone, quiet time) set the values first, then
  * call updateRegistration. Batching these calls improves API and client performance.
  */
 - (void)removeTagsFromCurrentDevice:(NSArray*)tags;
 
 /*
- * Updates the tag list on the device and on Urban Airship. Use setTags:
+ * Updates the tag list on the device and on Urban Airship. Use `setTags`
  * instead. This method updates the server after setting the tags. Use
  * the other tag manipulation methods instead, and update the server
  * when appropriate.
@@ -372,17 +370,17 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Change quiet time for current device token, only take hh:mm into account. Update the server
- * after making changes to the quiet time with the updateRegistration call. 
+ * after making changes to the quiet time with the `updateRegistration` call. 
  * Batching these calls improves API and client performance.
  * 
  * @warning *Important* The behavior of this method has changed in as of 1.3.0
  * This method no longer automatically enables quiet time, and does not automatically update
- * the server. Please refer to quietTimeEnabled and updateRegistration methods for
+ * the server. Please refer to `quietTimeEnabled` and `updateRegistration` methods for
  * more information
  * 
- * @param from Date for start of quiet time
- * @param to Date for end of quiet time
- * @param tz Time zone the dates are in reference to
+ * @param from Date for start of quiet time (HH:MM are used)
+ * @param to Date for end of quiet time (HH:MM are used)
+ * @param tz The time zone for the from and to dates
  */
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 
@@ -413,18 +411,18 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
 
 
-/*
+/**
  * This registers the device token and all current associated Urban Airship custom
- * features that are currently set. You should not ordinarily call this method.
+ * features that are currently set.
  * 
  * Features set with this call if available:
  *  
  * - tags
  * - alias
- * - time zone
+ * - quiet time
  * - autobadge
  * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
+ * Add a UARegistrationObserver to UAPush to receive success and failure callbacks.
  *
  * @param token The device token to register.
  */
@@ -482,7 +480,7 @@ SINGLETON_INTERFACE(UAPush);
  * Register the device for remote notifications (see Apple documentation for more
  * detail).
  *
- * @param types Bitmask of notification types
+ * @param types Bitmask of UIRemoteNotificationType types
  */
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
 
@@ -490,13 +488,13 @@ SINGLETON_INTERFACE(UAPush);
  * Registers or updates the current registration with an API call. If push notifications are
  * not enabled, this unregisters the device token.
  *
- * Register an implementation of UARegistrationObserver to UAPush to receive success and failure callbacks.
+ * Register an implementation of UARegistrationObserver with UAPush to receive success and failure callbacks.
  */
 - (void)updateRegistration;
 
 /** 
- * Automatically retry on errors. If the UA reports an error in the 500 range, or there is a 
- * 
+ * Automatically retry on errors. Defaults to `YES`. If set to `YES` and there is a recoverable
+ * error when connecting to the Urban Airship servers, the library will retry until successful. 
  */
 @property (nonatomic, assign) BOOL retryOnConnectionError;
 
