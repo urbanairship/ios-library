@@ -258,6 +258,7 @@
 		E9F73FB412ADE93A003CF572 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		E9FFDD8D129BAADB0012EF40 /* UADownloadContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FFDD8B129BAADB0012EF40 /* UADownloadContent.h */; };
 		E9FFDD8E129BAADB0012EF40 /* UADownloadContent.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */; };
+		F296861315D7FD350002AEA7 /* Gcov_Fix.c in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D58150574DE00971CEC /* Gcov_Fix.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1202,6 +1203,7 @@
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */,
+				F296861315D7FD350002AEA7 /* Gcov_Fix.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
