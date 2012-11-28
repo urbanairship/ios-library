@@ -226,7 +226,7 @@
 		BBB87E3915057CF200971CEC /* UABaseLocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
-		BBC83C3F159BBD550083A4C2 /* libUAirship-1.3.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.3.5.a */; };
+		BBC83C3F159BBD550083A4C2 /* libUAirship-1.3.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libUAirship-1.3.6.a */; };
 		BBC923D915AC8EB000EE7C2A /* UAContentURLCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1188CC15225E1E00E3D3F0 /* UAContentURLCacheTests.m */; };
 		BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDC656615C897F1005ECC54 /* UA_ASIHTTPRequestTests.m */; };
 		D5A1928712C15A4E006AF4AE /* libInbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5A1927812C158A8006AF4AE /* libInbox.a */; };
@@ -434,7 +434,7 @@
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAContentURLCache+Internal.h"; sourceTree = "<group>"; };
-		BB88612C159A7E9600584445 /* libUAirshipPush-1.3.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirshipPush-1.3.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB88612C159A7E9600584445 /* libUAirshipPush-1.3.6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirshipPush-1.3.6.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
@@ -457,7 +457,7 @@
 		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		BBDC656615C897F1005ECC54 /* UA_ASIHTTPRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIHTTPRequestTests.m; sourceTree = "<group>"; };
-		D2AAC07E0554694100DB518D /* libUAirship-1.3.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.3.5.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC07E0554694100DB518D /* libUAirship-1.3.6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.3.6.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -505,7 +505,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BBC83C3F159BBD550083A4C2 /* libUAirship-1.3.5.a in Frameworks */,
+				BBC83C3F159BBD550083A4C2 /* libUAirship-1.3.6.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -563,9 +563,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC07E0554694100DB518D /* libUAirship-1.3.5.a */,
+				D2AAC07E0554694100DB518D /* libUAirship-1.3.6.a */,
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
-				BB88612C159A7E9600584445 /* libUAirshipPush-1.3.5.a */,
+				BB88612C159A7E9600584445 /* libUAirshipPush-1.3.6.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1055,7 +1055,7 @@
 			);
 			name = AirshipPushLib;
 			productName = AirshipLib;
-			productReference = BB88612C159A7E9600584445 /* libUAirshipPush-1.3.5.a */;
+			productReference = BB88612C159A7E9600584445 /* libUAirshipPush-1.3.6.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		D2AAC07D0554694100DB518D /* AirshipLib */ = {
@@ -1076,7 +1076,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.3.5.a */;
+			productReference = D2AAC07E0554694100DB518D /* libUAirship-1.3.6.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
