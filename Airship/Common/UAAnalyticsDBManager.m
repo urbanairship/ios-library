@@ -97,13 +97,16 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         serializedData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
     }
     
+    // potential race condition with passed session
+    NSDictionary* sessionCopy = [[session copy] autorelease];
+    
     dispatch_async(dbQueue, ^{
         [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          [event getType],
          event.event_id,
          event.time,
          serializedData,
-         [session objectForKey:@"session_id"],
+         [sessionCopy objectForKey:@"session_id"],
          [NSString stringWithFormat:@"%d", estimateSize]];
     });
     //UALOG(@"DB Count %d", [self eventCount]);
