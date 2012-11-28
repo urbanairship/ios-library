@@ -69,6 +69,7 @@
 		BB935D9E152B5E9C006E6A92 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
 		BB935D9F152B5E9C006E6A92 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
 		BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
+		BBB879AF165D53AB00678A9A /* UAUserApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB879AE165D53AB00678A9A /* UAUserApplicationTest.m */; };
 		BBCD16B3157827BF008FA05B /* UAPushApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBCD16B2157827BF008FA05B /* UAPushApplicationTests.m */; };
 		BBD52B831587E4CC00AE32FD /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD52B821587E4CC00AE32FD /* JRSwizzle.m */; };
 		BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */; };
@@ -211,6 +212,7 @@
 		BB935D9B152B5E9C006E6A92 /* UAMapPresentationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMapPresentationController.h; sourceTree = "<group>"; };
 		BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMapPresentationController.m; sourceTree = "<group>"; };
 		BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
+		BBB879AE165D53AB00678A9A /* UAUserApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserApplicationTest.m; sourceTree = "<group>"; };
 		BBCD16B2157827BF008FA05B /* UAPushApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAPushApplicationTests.m; path = ../../AirshipLib/AirshipLogicTests/UAPushApplicationTests.m; sourceTree = "<group>"; };
 		BBD52B821587E4CC00AE32FD /* JRSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../../AirshipLib/AirshipLogicTests/JRSwizzle.m; sourceTree = "<group>"; };
 		BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipApplicationTests.m; sourceTree = "<group>"; };
@@ -551,6 +553,7 @@
 				BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */,
 				BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */,
 				BBEFB01D1507F3A400976645 /* Supporting Files */,
+				BBB879AE165D53AB00678A9A /* UAUserApplicationTest.m */,
 			);
 			path = AirshipApplicationTests;
 			sourceTree = "<group>";
@@ -802,6 +805,7 @@
 				BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */,
 				BBCD16B3157827BF008FA05B /* UAPushApplicationTests.m in Sources */,
 				BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */,
+				BBB879AF165D53AB00678A9A /* UAUserApplicationTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

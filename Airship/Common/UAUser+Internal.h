@@ -23,8 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//NSUserDefaultsKey
-#define kLastDeviceTokenKey @"UAUserLastDeviceTokenKey"
+// NSUserDefaultsKey for libUAirship verision >= v1.3.6
+// Changing the key forces devices to update with UA at least once
+// with new workflow. Previous key was "UAUserLastDeviceTokenKey", and
+// is no longer used. 
+#define kLastUpdatedDeviceTokenKey @"UAUserLastUpdatedDeviceTokenKey"
 
 //Legacy keys for migration from pre-keychain user store
 #define kLegacyInboxUserKey @"UAAirMailDefaultInboxUser"
@@ -48,8 +51,24 @@
 #define kUserUrlKey @"UAUserUrlKey"
 
 @interface UAUser()
-@property (nonatomic, assign) BOOL deviceTokenHasChanged;
-@property (nonatomic, copy) NSString *deviceToken;
+
+
+// This device token represents the device token that is assigned to
+// a user and is represented on the UA Servers. It may or may not be in sync
+// with the device token on the UAPush object, which represents the token currently
+// on the device.
+
+// The current device token, stored in NSUserDefaults
+- (NSString*)serverDeviceToken;
+
+// Sets a new device token in NSUserDefaults. This has the side effect of lowercasing the string
+// since strings returned from the server are upper case. 
+- (void)setServerDeviceToken:(NSString*)token;
+
+// Compares the currently persisted device token, which representes what is
+// on the UA servers to the token associated with UAPush, which represents
+// the token on device
+- (BOOL)deviceTokenHasChanged;
 
 // Migrate user from user defaults to keychain
 - (void)migrateUser;
