@@ -1,4 +1,10 @@
 -------------------------
+1.3.7 Nov 28, 2012
+-------------------------
+- fixed possible crash in UAAnalyticsDBManager that occured when adding events
+in a background task
+
+-------------------------
 1.3.6 Nov 28, 2012
 -------------------------
 - fixed crash on [UAirship land] associated with releasing key/value observers
