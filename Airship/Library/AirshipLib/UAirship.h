@@ -118,7 +118,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * The current Urban Airship app secret. This value is loaded from the AirshipConfig.plist file or
- * an NSDictionary passed in to [UAAirship takeOff:] with the
+ * an NSDictionary passed in to `[UAirship takeOff:]` with the
  * `UAirshipTakeOffOptionsAirshipConfigKey`. If `APP_STORE_OR_AD_HOC_BUILD` is set to `YES`, the value set
  * in `PRODUCTION_APP_SECRET` will be used. If `APP_STORE_OR_AD_HOC_BUILD` is set to `NO`, the value set in
  * `DEVELOPMENT_APP_SECRET` will be used.
