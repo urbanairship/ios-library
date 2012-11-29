@@ -507,7 +507,7 @@ SINGLETON_INTERFACE(UAPush);
  * and call the appropriate methods on your delegate.
  *
  * @param notification The notification payload, as passed to your application delegate.
- * @param applicationState The application state at the time the notification was received.
+ * @param state The application state at the time the notification was received.
  */
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
