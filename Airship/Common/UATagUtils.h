@@ -44,7 +44,6 @@ typedef enum {
 /**
  * Creates an autoreleased NSArray containing tags specified in the
  * tags parameter, a bit field accepting UATagType flags.
- * @param tags to create
  */
 + (NSArray *)createTags:(UATagType) tags;
 

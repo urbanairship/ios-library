@@ -67,7 +67,7 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
  */
 @property (nonatomic, assign) int registrationRetryDelay;
 
-/* Remote notification types that are used for registering/unregistering for notfications */
+/** Remote notification types that are used for registering/unregistering for notfications */
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /* Default push handler. */
