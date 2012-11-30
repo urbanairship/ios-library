@@ -1,7 +1,7 @@
 -------------------------
 1.3.7 Nov 28, 2012
 -------------------------
-- fixed possible crash in UAAnalyticsDBManager that occured when adding events
+- fixed crash in UAAnalyticsDBManager that occured when adding events
 in a background task
 
 -------------------------
