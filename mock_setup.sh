@@ -33,19 +33,19 @@ mkdir -pv $temp_dir
 git clone $url $temp_dir
 
 current_dir=`pwd`
-cd $library_source_dir
+cd "$library_source_dir"
 /usr/bin/xcodebuild clean -target OCMockLib 
 /usr/bin/xcodebuild -target OCMockLib -sdk iphoneos -arch armv7
 /usr/bin/xcodebuild -target OCMockLib -sdk iphonesimulator -arch i386 
 lipo -create -output $library_name $armv7_build $i386_build
-cd $current_dir
+cd "$current_dir"
 
 if [ ! -d "$test_dir/$mock_library_dir" ]
   then
   mkdir -v "$test_dir/$mock_library_dir"
 fi
  
-mkdir -v $test_dir/$mock_library_dir/$headers_dir
-cp -rv $mock_headers $test_dir/$mock_library_dir/$headers_dir
-cp -v $library_source_dir/$library_name ./$test_dir/$mock_library_dir 
+mkdir -v "$test_dir/$mock_library_dir/$headers_dir"
+cp -rv "$mock_headers" "$test_dir/$mock_library_dir/$headers_dir"
+cp -v "$library_source_dir/$library_name" "./$test_dir/$mock_library_dir"
 
