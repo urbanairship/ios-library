@@ -111,30 +111,18 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 + (void)takeOff:(NSDictionary *)options {
     
-    // UAirship needs to be run on the main thread
-    if(![[NSThread currentThread] isMainThread]){
+    // Airships only take off once!
+    if (_sharedAirship) {
+        return;
+    }
+    
+    // takeOff needs to be run on the main thread
+    if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
                                                                    reason:@"UAirship takeOff must be called on the main thread."
                                                                  userInfo:nil];
         [mainThreadException raise];
     }
-    
-    //Airships only take off once!
-    if (_sharedAirship) {
-        return;
-    }
-    
-    //Application launch options
-    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-    
-    //Set up analytics - record when app is opened from a push
-    NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
-    if (analyticsOptions == nil) {
-        analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
-    }
-    [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] 
-                        forKey:UAAnalyticsOptionsRemoteNotificationKey];
-    
     
     // Load configuration
     // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
@@ -148,101 +136,86 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     } else {
         config = [NSMutableDictionary dictionaryWithDictionary:[options objectForKey:UAirshipTakeOffOptionsAirshipConfigKey]];
     }
+  
+    BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
+    
+    /*
+     * Set up log levels
+     */
+    
+    // Set up logging - enabled flag and loglevels
+    NSString *configLogLevel = [config objectForKey:@"LOG_LEVEL"];
+    NSString *configLoggingEnabled = [config objectForKey:@"LOGGING_ENABLED"];
 
-    if ([config count] > 0) {
-        
-        BOOL inProduction = [[config objectForKey:@"APP_STORE_OR_AD_HOC_BUILD"] boolValue];
-        
-        // Set up logging - enabled flag and loglevels
-        NSString *configLogLevel = [config objectForKey:@"LOG_LEVEL"];
-        NSString *configLoggingEnabled = [config objectForKey:@"LOGGING_ENABLED"];
+    // Logging defaults to ON, but use config value if available
+    if (configLoggingEnabled) {
+        [UAirship setLogging:[configLoggingEnabled boolValue]];
+    }
 
-        // Logging defaults to ON, but use config value if available
-        if (configLoggingEnabled) {
-            [UAirship setLogging:[configLoggingEnabled boolValue]];
-        }
-
-        // Set the default to ERROR for production apps, DEBUG for dev apps
-        UALogLevel defaultLogLevel = inProduction ? UALogLevelError : UALogLevelDebug;
+    // Set the default to ERROR for production apps, DEBUG for dev apps
+    UALogLevel defaultLogLevel = inProduction ? UALogLevelError : UALogLevelDebug;
+    
+    // Respect the config value if set
+    UALogLevel newLogLevel = configLogLevel ? [configLogLevel intValue] : defaultLogLevel;
+    
+    //only update the log level if it wasn't already defined in code
+    if (UALogLevelUndefined == uaLogLevel) {
+        [UAirship setLogLevel:newLogLevel];
+    }
+    
+    /*
+     * Validate options - Now that logging is set up, peform some additional validation
+     */
+    
+    // Application launch options
+    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    if (!launchOptions) {
+        UA_LERR(@"[UAirship takeOff] was called without the UIApplication launch options.");
+    }
+    
+    // Ensure that app credentials have been passed in
+    if ([config count] <= 0) {
         
-        // Respect the config value if set
-        UALogLevel newLogLevel = configLogLevel ? [configLogLevel intValue] : defaultLogLevel;
-        
-        //only update the log level if it wasn't already defined in code
-        if (UALogLevelUndefined == uaLogLevel) {
-            [UAirship setLogLevel:newLogLevel];
-        }
-
-        
-        NSString *configAppKey;
-        NSString *configAppSecret;
-        
-        if (inProduction) {
-            configAppKey = [config objectForKey:@"PRODUCTION_APP_KEY"];
-            configAppSecret = [config objectForKey:@"PRODUCTION_APP_SECRET"];
-        } else {
-            configAppKey = [config objectForKey:@"DEVELOPMENT_APP_KEY"];
-            configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
-        }
-        
-        // strip leading and trailing whitespace
-        configAppKey = [configAppKey stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        configAppSecret = [configAppSecret stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        
-        //Check for a custom UA server value
-        NSString *airshipServer = [config objectForKey:@"AIRSHIP_SERVER"];
-        if (airshipServer == nil) {
-            airshipServer = kAirshipProductionServer;
-        }
-        
-        _sharedAirship = [[UAirship alloc] initWithId:configAppKey identifiedBy:configAppSecret];
-        _sharedAirship.server = airshipServer;
-        
-        //Add the server to the analytics options, but do not delete if not set as
-        //it may also be set in the options parameters
-        NSString *analyticsServer = [config objectForKey:@"ANALYTICS_SERVER"];
-        if (analyticsServer != nil) {
-            [analyticsOptions setObject:analyticsServer forKey:UAAnalyticsOptionsServerKey];
-        }
-        
-        
-        //For testing, set this value in AirshipConfig to clear out
-        //the keychain credentials, as they will otherwise be persisted
-        //even when the application is uninstalled.
-        if ([[config objectForKey:@"DELETE_KEYCHAIN_CREDENTIALS"] boolValue]) {
-            
-            UALOG(@"Deleting the keychain credentials");
-            [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
-            
-            UALOG(@"Deleting the UA device ID");
-            [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
-        }
-        
-    } else {
-        NSString* okStr = @"OK";
-        NSString* errorMessage = @"The AirshipConfig.plist file is missing.";
-        NSString *errorTitle = @"Error";
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                            message:errorMessage
-                                                           delegate:nil
-                                                  cancelButtonTitle:okStr
-                                                  otherButtonTitles:nil];
-        
-        [someError show];
-        [someError release];
+        UA_LERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
         
         //Use blank credentials to prevent app from crashing while error msg
         //is displayed
         _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
         
         return;
-
     }
+    
+    /*
+     * Read and validate App Key, Secret and REST API server
+     */
+    
+    NSString *configAppKey;
+    NSString *configAppSecret;
+    
+    if (inProduction) {
+        configAppKey = [config objectForKey:@"PRODUCTION_APP_KEY"];
+        configAppSecret = [config objectForKey:@"PRODUCTION_APP_SECRET"];
+    } else {
+        configAppKey = [config objectForKey:@"DEVELOPMENT_APP_KEY"];
+        configAppSecret = [config objectForKey:@"DEVELOPMENT_APP_SECRET"];
+    }
+    
+    // strip leading and trailing whitespace
+    configAppKey = [configAppKey stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    configAppSecret = [configAppSecret stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    //Check for a custom UA server value
+    NSString *airshipServer = [config objectForKey:@"AIRSHIP_SERVER"];
+    if (!airshipServer) {
+        airshipServer = kAirshipProductionServer;
+    }
+    
+    _sharedAirship = [[UAirship alloc] initWithId:configAppKey identifiedBy:configAppSecret];
+    _sharedAirship.server = airshipServer;
     
     UA_LINFO(@"App Key: %@", _sharedAirship.appId);
     UA_LINFO(@"App Secret: %@", _sharedAirship.appSecret);
     UA_LINFO(@"Server: %@", _sharedAirship.server);
-    
     
     //Check the format of the app key and password.
     //If they're missing or malformed, stop takeoff
@@ -252,42 +225,71 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
                     && [matchPred evaluateWithObject:_sharedAirship.appSecret];  
     
     if (!match) {
-        NSString* okStr = @"OK";
-        NSString* errorMessage =
+        UA_LERR(
             @"Application KEY and/or SECRET not set properly, please"
             " insert your application key from http://go.urbanairship.com into"
-            " your AirshipConfig.plist file";
-        NSString *errorTitle = @"Error";
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                            message:errorMessage
-                                                           delegate:nil
-                                                  cancelButtonTitle:okStr
-                                                  otherButtonTitles:nil];
+                " your AirshipConfig.plist file");
         
-        [someError show];
-        [someError release];
+        //Use blank credentials to prevent app from crashing
+        _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
         return;
-        
     }
     
+    // Build a custom user agent with the app key and name
     [_sharedAirship configureUserAgent];
+
+    /*
+     * Handle Debug Options
+     */
     
+    //For testing, set this value in AirshipConfig to clear out
+    //the keychain credentials, as they will otherwise be persisted
+    //even when the application is uninstalled.
+    if ([[config objectForKey:@"DELETE_KEYCHAIN_CREDENTIALS"] boolValue]) {
+        
+        UA_LDEBUG(@"Deleting the keychain credentials");
+        [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
+        
+        UA_LDEBUG(@"Deleting the UA device ID");
+        [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
+    }
+    
+    // The singleton is now ready for use!
     _sharedAirship.ready = true;
+    
+    /*
+     * Set up Analytics Manager
+     */
+    
+    // Set up analytics - record when app is opened from a push
+    NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
+    if (analyticsOptions == nil) {
+        analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    }
+    [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
+                        forKey:UAAnalyticsOptionsRemoteNotificationKey];
+    
+    // Add the server to the analytics options, but do not delete if not set as
+    // it may also be set in the options parameters
+    NSString *analyticsServer = [config objectForKey:@"ANALYTICS_SERVER"];
+    if (analyticsServer) {
+        [analyticsOptions setObject:analyticsServer forKey:UAAnalyticsOptionsServerKey];
+    }
     _sharedAirship.analytics = [[[UAAnalytics alloc] initWithOptions:analyticsOptions] autorelease];
     
     //Send Startup Analytics Info
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
     
+    /*
+     * Set up UAUser
+     */
+    
     //Handle custom options
-    if (options != nil) {
-        
-        NSString *defaultUsername = [options valueForKey:UAirshipTakeOffOptionsDefaultUsernameKey];
-        NSString *defaultPassword = [options valueForKey:UAirshipTakeOffOptionsDefaultPasswordKey];
-        if (defaultUsername != nil && defaultPassword != nil) {
-            [UAUser setDefaultUsername:defaultUsername withPassword:defaultPassword];
-        }
-        
+    NSString *defaultUsername = [options valueForKey:UAirshipTakeOffOptionsDefaultUsernameKey];
+    NSString *defaultPassword = [options valueForKey:UAirshipTakeOffOptionsDefaultPasswordKey];
+    if (defaultUsername && defaultPassword) {
+        [UAUser setDefaultUsername:defaultUsername withPassword:defaultPassword];
     }
     
     //create/setup user (begin listening for device token changes)
