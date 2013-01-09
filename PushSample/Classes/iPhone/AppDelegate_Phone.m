@@ -45,27 +45,36 @@
     // Override point for customization after application launch
     [window addSubview:controller.view];
     [window makeKeyAndVisible];
+    
+    // Display a UIAlertView warning developers that push notifications do not work in the simulator
+    // You should remove this in your app.
     [self failIfSimulator];
     
-    //Init Airship launch options
-    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
-    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-    
-    // By setting the default push enabled value to no, you can avoid presenting the user with push notifications
-    // right at the first installation of the app. By navigating to the Settings screen in app and setting the toggle
-    // to on, you'll trigger the actual registration with UIApplication and the UIAlertView asking for permission
-    // for Push notifications.
+    // This prevents the UA Library from registering with UIApplcation by default when
+    // registerForRemoteNotifications is called. This will allow you to prompt your
+    // users at a later time. This gives your app the opportunity to explain the benefits
+    // of push or allows users to turn it on explicitly in a settings screen.
+    // If you just want everyone to immediately be prompted for push, you can
+    // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
     
-    // Create Airship singleton that's used to talk to Urban Airhship servers.
-    // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+    //Init Airship launch options
+    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionaryWithObject:launchOptions
+                                                                             forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+
+    // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
+    // library can properly record when the app is launched from a push notification
+    //
+    // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
 
-    [[UAPush shared] resetBadge];//zero badge on startup
+    // Set the icon badge to zero on startup (optional)
+    [[UAPush shared] resetBadge];
     
-    // Register for remote notfications as normal. With the default value of push set to no, UAPush will
-    // record the desired remote notifcation types, but not register for push notfications with UIApplication until
-    // push is enabled.
+    // Register for remote notfications. With the default value of push set to no,
+    // UAPush will record the desired remote notifcation types, but not register for
+    // push notfications as mentioned above.
+    // When push is enabled at a later time, the registration will occur as normal.
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
@@ -73,90 +82,43 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    UALOG(@"Application did become active.");
-    [[UAPush shared] resetBadge]; //zero badge when resuming from background
+    UA_LDEBUG(@"Application did become active.");
+    
+    // Set the icon badge to zero on resume (optional)
+    [[UAPush shared] resetBadge];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UALOG(@"APN device token: %@", deviceToken);
-    // Updates the device token and registers the token with UA
+    UA_LINFO(@"APNS device token: %@", deviceToken);
+    
+    // Updates the device token and registers the token with UA. This won't occur until
+    // push is enabled if the outlined process is followed.
+    // This call is required.
     [[UAPush shared] registerDeviceToken:deviceToken];
-    
-    
-    /*
-     * Some example cases where user notification may be warranted
-     *
-     * This code will alert users who try to enable notifications
-     * from the settings screen, but cannot do so because
-     * notications are disabled in some capacity through the settings
-     * app.
-     * 
-     */
-    
-    /*
-    
-    //Do something when notifications are disabled altogther
-    if ([application enabledRemoteNotificationTypes] == UIRemoteNotificationTypeNone) {
-        UALOG(@"iOS Registered a device token, but nothing is enabled!");
-        
-        //only alert if this is the first registration, or if push has just been
-        //re-enabled
-        if ([UAirship shared].deviceToken != nil) { //already been set this session
-            NSString* okStr = @"OK";
-            NSString* errorMessage =
-            @"Unable to turn on notifications. Use the \"Settings\" app to enable notifications.";
-            NSString *errorTitle = @"Error";
-            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                                message:errorMessage
-                                                               delegate:nil
-                                                      cancelButtonTitle:okStr
-                                                      otherButtonTitles:nil];
-            
-            [someError show];
-            [someError release];
-        }
-        
-    //Do something when some notification types are disabled
-    } else if ([application enabledRemoteNotificationTypes] != [UAPush shared].notificationTypes) {
-        
-        UALOG(@"Failed to register a device token with the requested services. Your notifications may be turned off.");
-        
-        //only alert if this is the first registration, or if push has just been
-        //re-enabled
-        if ([UAirship shared].deviceToken != nil) { //already been set this session
-            
-            UIRemoteNotificationType disabledTypes = [application enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
-            
-            
-            
-            NSString* okStr = @"OK";
-            NSString* errorMessage = [NSString stringWithFormat:@"Unable to turn on %@. Use the \"Settings\" app to enable these notifications.", [UAPush pushTypeString:disabledTypes]];
-            NSString *errorTitle = @"Error";
-            UIAlertView *someError = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                                message:errorMessage
-                                                               delegate:nil
-                                                      cancelButtonTitle:okStr
-                                                      otherButtonTitles:nil];
-            
-            [someError show];
-            [someError release];
-        }
-    }
-     
-     */
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UALOG(@"Failed To Register For Remote Notifications With Error: %@", error);
+    UA_LERR(@"Failed To Register For Remote Notifications With Error: %@", error);
 }
 
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    UALOG(@"Received remote notification: %@", userInfo);
+    
+    UA_LINFO(@"Received remote notification: %@", userInfo);
+    
+    // Send the alert to UA so that it can be handled and tracked as a direct response (required).
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-    [[UAPush shared] resetBadge]; // zero badge after push received
+    
+    // Optionally provide a delegate that will be used to handle notifications received while the app is running
+    // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+    
+    // Reset the badge after a push received (optional)
+    [[UAPush shared] resetBadge];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+    
+    // Tear down UA services
     [UAirship land];
 }
 
