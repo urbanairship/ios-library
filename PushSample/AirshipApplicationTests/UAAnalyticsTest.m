@@ -50,9 +50,7 @@
 
 
 - (void)setUp {
-    NSMutableDictionary *options = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] 
-                                                                      forKey:UAAnalyticsOptionsLoggingKey];
-    analytics = [[UAAnalytics alloc] initWithOptions:options];
+    analytics = [[UAAnalytics alloc] initWithOptions:nil];
 }
 
 - (void)tearDown {
