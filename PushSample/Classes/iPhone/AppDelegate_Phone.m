@@ -58,12 +58,13 @@
     // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
     
-    //Init Airship launch options
+    //Create Airship options dictionary and add the required UIApplication launchOptions
     NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionaryWithObject:launchOptions
                                                                              forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
 
     // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
-    // library can properly record when the app is launched from a push notification
+    // library can properly record when the app is launched from a push notification. This call is
+    // required.
     //
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
@@ -71,10 +72,10 @@
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
     
-    // Register for remote notfications. With the default value of push set to no,
+    // Register for remote notfications with the UA Library. With the default value of push set to no,
     // UAPush will record the desired remote notifcation types, but not register for
-    // push notfications as mentioned above.
-    // When push is enabled at a later time, the registration will occur as normal.
+    // push notfications as mentioned above. When push is enabled at a later time, the registration
+    // will occur normally. This call is required.
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
@@ -92,8 +93,7 @@
     UA_LINFO(@"APNS device token: %@", deviceToken);
     
     // Updates the device token and registers the token with UA. This won't occur until
-    // push is enabled if the outlined process is followed.
-    // This call is required.
+    // push is enabled if the outlined process is followed. This call is required.
     [[UAPush shared] registerDeviceToken:deviceToken];
 }
 
@@ -101,12 +101,12 @@
     UA_LERR(@"Failed To Register For Remote Notifications With Error: %@", error);
 }
 
-
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
     UA_LINFO(@"Received remote notification: %@", userInfo);
     
-    // Send the alert to UA so that it can be handled and tracked as a direct response (required).
+    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
+    // is required.
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
     
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
