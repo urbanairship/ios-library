@@ -49,34 +49,35 @@
     [window addSubview:navigationController.view];
     [window makeKeyAndVisible];
 
+    // Display a UIAlertView warning developers that push notifications do not work in the simulator
+    // You should remove this in your app.
     [self failIfSimulator];
     
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
     
-    //Init Airship launch options
-    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    //Create Airship options dictionary and add the required UIApplication launchOptions
+    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionary];
     [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     
-    NSMutableDictionary *analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
-    [takeOffOptions setValue:analyticsOptions forKey:UAirshipTakeOffOptionsAnalyticsKey];
-    
     // To use your own pre-existing inbox credentials, uncomment and modify these lines:
-    //[takeOffOptions setValue:@"4cf54407a9ee256d9400000c" forKey:UAAirshipTakeOffOptionsDefaultUsername];
-    //[takeOffOptions setValue:@"GUvTvih4RcaqZZOAsLvKXQ" forKey:UAAirshipTakeOffOptionsDefaultPassword];
+    // [takeOffOptions setValue:@"TheExistingUsername" forKey:UAAirshipTakeOffOptionsDefaultUsername];
+    // [takeOffOptions setValue:@"TheExistingPassword" forKey:UAAirshipTakeOffOptionsDefaultPassword];
     
-    // Create Airship singleton that's used to talk to Urban Airship servers.
-    // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
+    // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
+    // library can properly record when the app is launched from a push notification. This call is
+    // required.
+    //
+    // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     [UAirship takeOff:takeOffOptions];
     
-    // Register for notifications
-    [[UAPush shared]
-     registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                         UIRemoteNotificationTypeSound |
-                                         UIRemoteNotificationTypeAlert)];
+    // Register for remote notfications with the UA Library. The library will register with
+    // iOS if push is enabled on UAPush.
+    [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
+                                                         UIRemoteNotificationTypeSound |
+                                                         UIRemoteNotificationTypeAlert)];
 
-    // Config Inbox behaviour before UAInboxPushHandler since it may need it
+    // Configure Inbox behaviour before UAInboxPushHandler since it may need it
     // when launching from notification
-    
     [UAInbox useCustomUI:[UAInboxUI class]];
     [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
@@ -98,7 +99,8 @@
     
     [UAInboxPushHandler handleLaunchOptions:launchOptions];
 	
-	if([[UAInbox shared].pushHandler hasLaunchMessage]) {
+    // Handle an incoming Rich Push message
+	if ([[UAInbox shared].pushHandler hasLaunchMessage]) {
 		[[[UAInbox shared] uiClass] loadLaunchMessage];
 	}
 
@@ -108,31 +110,34 @@
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UALOG(@"APN device token: %@", deviceToken);
-    // Updates the device token and registers the token with UA
+    UA_LINFO(@"APNS device token: %@", deviceToken);
+    
+    // Updates the device token and registers the token with UA. This call is required.
     [[UAPush shared] registerDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UALOG(@"did Fail To Register For Remote Notifications With Error: %@", error);
+    UA_LERR(@"did Fail To Register For Remote Notifications With Error: %@", error);
 }
 
-// Copy and paste this method into your AppDelegate to recieve push
-// notifications for your application while the app is running.
+
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    
+    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
+    // is required.
     [UAInboxPushHandler handleNotification:userInfo];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    
-    //TODO: clean up all UI classes
-    
+    // Tear down UA services
     [UAirship land];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
+    
+    // Set the application's badge to the number of unread messages
     UAInbox *inbox = [UAInbox shared];
-    if (inbox != nil && inbox.messageList != nil && inbox.messageList.unreadCount >= 0) {
+    if (inbox && inbox.messageList && inbox.messageList.unreadCount >= 0) {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.messageList.unreadCount];
     }
 }
