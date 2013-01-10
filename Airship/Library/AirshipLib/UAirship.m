@@ -169,7 +169,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     
     if (!options) {
         UA_LERR(@"[UAirship takeOff] was called without options. The options dictionary must"
-                "include the UIApplication launch options (key: UAirshipTakeOffOptionsLaunchOptionsKey).");
+                " include the UIApplication launch options (key: UAirshipTakeOffOptionsLaunchOptionsKey).");
     }
 
     // Ensure that app credentials have been passed in
