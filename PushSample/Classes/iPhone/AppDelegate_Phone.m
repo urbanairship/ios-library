@@ -59,8 +59,8 @@
     [UAPush setDefaultPushEnabledValue:NO];
     
     //Create Airship options dictionary and add the required UIApplication launchOptions
-    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionaryWithObject:launchOptions
-                                                                             forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionary];
+    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
 
     // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
     // library can properly record when the app is launched from a push notification. This call is

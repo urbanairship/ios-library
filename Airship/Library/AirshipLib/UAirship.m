@@ -167,12 +167,11 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
      * Validate options - Now that logging is set up, peform some additional validation
      */
     
-    // Application launch options
-    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-    if (!launchOptions) {
-        UA_LERR(@"[UAirship takeOff] was called without the UIApplication launch options.");
+    if (!options) {
+        UA_LERR(@"[UAirship takeOff] was called without options. The options dictionary must"
+                "include the UIApplication launch options (key: UAirshipTakeOffOptionsLaunchOptionsKey).");
     }
-    
+
     // Ensure that app credentials have been passed in
     if ([config count] <= 0) {
         
@@ -262,6 +261,9 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
      */
     
     // Set up analytics - record when app is opened from a push
+    
+    // Application launch options
+    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
     if (analyticsOptions == nil) {
         analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
