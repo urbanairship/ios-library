@@ -1,3 +1,5 @@
+#!/bin/bash -ex
+
 # Version 2.0 (updated for Xcode 4, with some fixes)
 
 # Author: Adam Martin - http://twitter.com/redglassesapps

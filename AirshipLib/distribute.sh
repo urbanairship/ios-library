@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -ex
 
 ./buildTarget.sh AirshipLib
 ./buildTarget.sh AirshipPushLib

@@ -67,6 +67,7 @@ enum {
     
     //default to editing, since the view is for adding/removing tags
     [self setEditing:YES];
+    [self.tableView reloadData];
     [super viewWillAppear:animated];
     
 }
