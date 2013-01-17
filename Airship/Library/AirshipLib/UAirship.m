@@ -127,7 +127,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     // Load configuration
     // Primary configuration comes from the UAirshipTakeOffOptionsAirshipConfig dictionary and will
     // override any options defined in AirshipConfig.plist
-    NSMutableDictionary *config;
+    NSMutableDictionary *config = nil;
     NSString *configPath = [[NSBundle mainBundle] pathForResource:@"AirshipConfig" ofType:@"plist"];
     
     if (configPath) {

@@ -22,6 +22,9 @@
 }
 
 - (void)testExceptionForTakeOffOnNotTheMainThread {
+    
+    [UAirship land]; // Reset the shared instance
+    
     NSThread *thread = [[NSThread alloc] initWithTarget:self selector:@selector(takeOffException) object:nil];
     [thread start];
     do {
@@ -32,9 +35,14 @@
 
 - (void)takeOffException {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
     NSLog(@"Testing [UAirship takeOff:nil] in background thread %@", [NSThread currentThread]); 
     STAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
-    STAssertThrowsSpecificNamed([UAirship takeOff:nil], NSException, UAirshipTakeOffBackgroundThreadException, @"Calling takeOff on a background thread should throw an UAirshipTakeOffBackgroundThreadException");
+    STAssertThrowsSpecificNamed(
+                                [UAirship takeOff:nil],
+                                NSException, UAirshipTakeOffBackgroundThreadException,
+                                @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
+    
     [pool drain];
 }
 @end
