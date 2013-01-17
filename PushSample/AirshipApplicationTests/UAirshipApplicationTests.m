@@ -16,8 +16,11 @@
 
 // Testing because of lazy instantiation
 - (void)testLocationGetSet {
-    UAirship *airship = [UAirship shared];
-    UALocationService *location = airship.locationService ;
+    
+    [UAirship land]; // Reset the shared instance
+    [UAirship takeOff:[NSMutableDictionary dictionary]]; // Recreate the shared instance
+    
+    UALocationService *location = [UAirship shared].locationService;
     STAssertTrue([location isKindOfClass:[UALocationService class]],nil);
 }
 
@@ -33,6 +36,7 @@
     [thread release];
 }
 
+// A helper method that calls takeOff; intended to be called from a background thread.
 - (void)takeOffException {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
