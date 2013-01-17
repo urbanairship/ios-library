@@ -581,7 +581,6 @@
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
 				0D2E053D11AA62C000C4CD8A /* ShellScript */,
-				1FF54B7413BD34B400F8E5A1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -601,6 +600,7 @@
 				BBEFB0131507F3A400976645 /* Frameworks */,
 				BBEFB0141507F3A400976645 /* Resources */,
 				BBEFB0151507F3A400976645 /* ShellScript */,
+				1FA9A6481684EB3D00258A01 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -618,7 +618,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PushSampleLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -742,7 +742,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/checkConfig.sh\"";
 		};
-		1FF54B7413BD34B400F8E5A1 /* ShellScript */ = {
+		1FA9A6481684EB3D00258A01 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -752,8 +752,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../package_sample.sh\"";
+			shellPath = "/bin/bash -ex";
+			shellScript = "\"${SRCROOT}/../run_sim_app_tests.sh\"";
 		};
 		BBEFB0151507F3A400976645 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -922,6 +922,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALID_ARCHS = "armv6 armv7 i386 armv7s";
 				WRAPPER_EXTENSION = octest;
@@ -954,6 +955,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "armv6 armv7 i386 armv7s";

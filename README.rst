@@ -176,3 +176,9 @@ Reachability         BSD       Copyright (C) 2010 Apple Inc.
 MTPopupWindow        MIT       Copyright 2011 Marin Todorov
 JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
 ===================  ========  ======================================================
+
+Running Tests
+#############
+
+The unit tests in this project require OCMock. OCMock can be installed automatically
+with the use of our install script, mock_setup.sh.

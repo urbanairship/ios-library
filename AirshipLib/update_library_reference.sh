@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -ex
 
 # Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 #
