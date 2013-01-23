@@ -164,20 +164,8 @@ To enable push:
     // This will trigger the proper registration or de-registration code in the library.
     [[UAPush shared] setPushEnabled:YES];
 
-===================  ========  ======================================================
-Third party Package  License   Copyright / Creator 
-===================  ========  ======================================================
-asi-http-request     BSD       Copyright (c) 2007-2010, All-Seeing Interactive.
-fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
-SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
-Base64               BSD       Copyright 2009-2010 Matt Gallagher.
-ZipFile-OC           BSD       Copyright (C) 1998-2005 Gilles Vollant.
-GHUnit               Apache 2  Copyright 2007 Google Inc.
-Google Toolkit	     Apache 2  Copyright 2007 Google Inc.
-Reachability         BSD       Copyright (C) 2010 Apple Inc.
-MTPopupWindow        MIT       Copyright 2011 Marin Todorov
-JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
-===================  ========  ======================================================
+Building the Library
+--------------------
 
 Running Tests
 #############
@@ -207,3 +195,21 @@ to an Xcode 4.4 app:
 
     export XCODE_4_4_APP=/Applications/Xcode_4_4_1/Xcode.app
 
+
+Third Party Packages
+--------------------
+
+===================  ========  ======================================================
+Third party Package  License   Copyright / Creator 
+===================  ========  ======================================================
+asi-http-request     BSD       Copyright (c) 2007-2010, All-Seeing Interactive.
+fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
+SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
+Base64               BSD       Copyright 2009-2010 Matt Gallagher.
+ZipFile-OC           BSD       Copyright (C) 1998-2005 Gilles Vollant.
+GHUnit               Apache 2  Copyright 2007 Google Inc.
+Google Toolkit       Apache 2  Copyright 2007 Google Inc.
+Reachability         BSD       Copyright (C) 2010 Apple Inc.
+MTPopupWindow        MIT       Copyright 2011 Marin Todorov
+JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
+===================  ========  ======================================================
