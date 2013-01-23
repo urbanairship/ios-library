@@ -20,17 +20,17 @@ i386_build="./build/Release-iphonesimulator/libOCMock.a"
 if [ -d "$test_dir/$mock_library_dir" ]
  then 
   echo "Erasing directory"
-  rm -r $test_dir/$mock_library_dir 
-  mkdir -v $test_dir/$mock_library_dir
+  rm -r "$test_dir/$mock_library_dir"
+  mkdir -v "$test_dir/$mock_library_dir"
 fi
 
-if [ -d $temp_dir ]
+if [ -d "$temp_dir" ]
  then
-  rm -rf $temp_dir
+  rm -rf "$temp_dir"
 fi
 
-mkdir -pv $temp_dir 
-git clone $url $temp_dir
+mkdir -pv "$temp_dir" 
+git clone $url "$temp_dir"
 
 current_dir=`pwd`
 cd "$library_source_dir"
