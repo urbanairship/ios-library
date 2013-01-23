@@ -171,7 +171,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * 
  * This method must be called from your application delegate's
  * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The options passed in on launch must be included in this method's options
+ * only once. The UIApplication options passed in on launch MUST be included in this method's options
  * parameter with the UAirshipTakeOffOptionsLaunchOptionsKey.
  *
  * Configuration are read from the AirshipConfig.plist file. You may overrride the
@@ -185,7 +185,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @see UAirshipTakeOffOptionsDefaultPasswordKey
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
- * dictionary must contain the launch options.
+ * dictionary MUST contain the UIApplication launch options.
  *
  * @warning takeOff: must be called on the main thread. Not doing so results in an UAirshipTakeOffMainThreadException
  *
