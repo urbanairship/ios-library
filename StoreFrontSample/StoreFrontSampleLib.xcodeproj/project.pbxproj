@@ -336,7 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				1813F04F1279623C009DEB29 /* libUAirship-1.3.7.a */,
-				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.5.a */,
+				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.7.a */,
 				497159681430FC8200079B37 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -590,7 +590,7 @@
 			remoteRef = 497159671430FC8200079B37 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.5.a */ = {
+		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.7.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirshipPush-1.3.7.a";

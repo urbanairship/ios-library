@@ -48,10 +48,11 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Override point for customization after application launch
-
     [window makeKeyAndVisible];
     [window addSubview:controller.view];
 
+    // Display a UIAlertView warning developers that push notifications do not work in the simulator
+    // You should remove this in your app.
     [self failIfSimulator];
     
     [UASubscriptionManager useCustomUI:[UASubscriptionUI class]];
@@ -83,8 +84,6 @@
     UALOG(@"did Fail To Register For Remote Notifications With Error: %@", error);
 }
 
-// Copy and paste this method into your AppDelegate to recieve push
-// notifications for your application while the app is running.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     UALOG(@"did receive remote notification: %@", userInfo);
     [[UAirship shared].analytics handleNotification:userInfo];
