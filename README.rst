@@ -213,8 +213,6 @@ fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmea
 SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
 Base64               BSD       Copyright 2009-2010 Matt Gallagher.
 ZipFile-OC           BSD       Copyright (C) 1998-2005 Gilles Vollant.
-GHUnit               Apache 2  Copyright 2007 Google Inc.
-Google Toolkit       Apache 2  Copyright 2007 Google Inc.
 Reachability         BSD       Copyright (C) 2010 Apple Inc.
 MTPopupWindow        MIT       Copyright 2011 Marin Todorov
 JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch
