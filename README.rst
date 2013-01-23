@@ -195,6 +195,12 @@ to an Xcode 4.4 app:
 
     export XCODE_4_4_APP=/Applications/Xcode_4_4_1/Xcode.app
 
+Contributing Code
+-----------------
+
+We accept pull requests! If you would like to submit a pull request, please fill out and submit a
+Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
+
 
 Third Party Packages
 --------------------
