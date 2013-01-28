@@ -30,6 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInventory.h"
 #import "UAStoreFrontDownloadManager.h"
 #import "UAStoreFrontAlertProtocol.h"
+#import "UAStoreFrontDelegate.h"
 
 // Weak link to this notification since it doesn't exist in iOS 3.x
 UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
@@ -81,6 +82,30 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     return product;
 }
 
+- (UAProduct *)productForDownload:(SKDownload *)download {
+    return [[UAStoreFront shared].inventory productWithIdentifier:download.contentIdentifier];
+}
+
+- (void)productInstallFailed:(UAProduct *)product {
+    id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
+    if ([alertHandler respondsToSelector:@selector(showDownloadContentFailedAlert)]) {
+        [alertHandler showDownloadContentFailedAlert];
+    }
+
+    [product resetStatus];
+}
+
+- (void)productInstallCancelled:(UAProduct *)product {
+    [product resetStatus];
+}
+
+- (void)productInstallSucceeded:(UAProduct *)product {
+    product.status = UAProductStatusInstalled;
+    // Save purchase receipt
+    [[UAStoreFront shared] addReceipt:product];
+    [[UAStoreFront shared].delegate productPurchased:product];
+}
+
 #pragma mark -
 #pragma mark SKPaymentTransaction lifecycle handler
 
@@ -93,7 +118,11 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
     UALOG(@"Purchase Successful, provide content.\n completeTransaction: %@ \t id: %@",
           transaction, transaction.payment.productIdentifier);
-    [[UAStoreFront shared].downloadManager verifyTransactionReceipt:transaction];
+    NSArray *downloads = transaction.downloads;
+    //start the download process
+    UAProduct *product = [self productFromTransaction:transaction];
+    product.status = UAProductStatusDownloading;
+    [[SKPaymentQueue defaultQueue] startDownloads:downloads];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
@@ -164,6 +193,42 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     [self finishTransaction:transaction];
 }
 
+#pragma mark -
+#pragma mark Hosted download lifecycle methods
+
+- (void)updateProgress:(SKDownload *)download {
+    UAProduct *product = [self productForDownload:download];
+    product.progress = download.progress;
+}
+
+- (void)downloadFinished:(SKDownload *)download {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *contentPath = download.contentURL.path;
+    NSString *destination = [[UAStoreFront shared].downloadManager.downloadDirectory stringByAppendingPathComponent:download.contentIdentifier];
+
+    UAProduct *product = [self productForDownload:download];
+
+    //remove destination path if it alredy exists, so we don't annoy NSFileManager
+    if ([fm fileExistsAtPath:destination]) {
+        [[NSFileManager defaultManager] removeItemAtPath:destination error:nil];
+    }
+
+    NSError *directoryError = nil;
+
+    //copy temporary download directory
+    if (![fm copyItemAtPath:contentPath
+                      toPath:destination
+                     error:&directoryError]) {
+        UA_LERR(@"Error copying directory: %@, %d", download.contentURL.path, directoryError.code);
+        [self productInstallFailed:product];
+        return;
+    }
+
+    UA_LINFO(@"Successfully installed %@", download.contentIdentifier);
+
+    [self productInstallSucceeded:product];
+}
+
 
 #pragma mark -
 #pragma mark SKPaymentTransactionObserver
@@ -227,6 +292,41 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     }
     RELEASE_SAFELY(unRestoredTransactions);
 }
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads {
+    for (SKDownload *download in downloads) {
+        switch (download.downloadState) {
+            case SKDownloadStateWaiting:
+                UA_LTRACE(@"%@: downlaod waiting", download.contentIdentifier);
+                break;
+            case SKDownloadStateActive:
+                UA_LTRACE(@"%@: download active", download.contentIdentifier);
+                [self updateProgress:download];
+                break;
+            case SKDownloadStateCancelled:
+                UA_LINFO(@"%@: download cancelled", download.contentIdentifier);
+                [self productInstallCancelled:[self productForDownload:download]];
+                [self finishTransaction:download.transaction];
+                break;
+            case SKDownloadStateFailed:
+                UA_LINFO(@"%@: download failed", download.contentIdentifier);
+                [self productInstallFailed:[self productForDownload:download]];
+                [self finishTransaction:download.transaction];
+                break;
+            case SKDownloadStatePaused:
+                UA_LINFO(@"%@: download paused", download.contentIdentifier);
+                break;
+            case SKDownloadStateFinished:
+                UA_LINFO(@"%@: download finished", download.contentIdentifier);
+                [self downloadFinished:download];
+                [self finishTransaction:download.transaction];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 
 #pragma mark -
 #pragma mark Pay for product
