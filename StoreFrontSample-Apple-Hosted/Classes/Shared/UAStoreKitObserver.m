@@ -122,6 +122,9 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     //start the download process
     UAProduct *product = [self productFromTransaction:transaction];
     product.status = UAProductStatusDownloading;
+
+    //Note: if desired you can verify the purchase receipt here, before initiating a download
+
     [[SKPaymentQueue defaultQueue] startDownloads:downloads];
 }
 
@@ -293,6 +296,9 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
     RELEASE_SAFELY(unRestoredTransactions);
 }
 
+//this is the main entry point for events related to apple-hosted download status.
+//be sure to close the associated transaction once the download has passed into a final
+//(e.g. canceled/failed/finished) state, but never while the download is still being processed.
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedDownloads:(NSArray *)downloads {
     for (SKDownload *download in downloads) {
         switch (download.downloadState) {
@@ -301,6 +307,7 @@ UIKIT_EXTERN NSString * const UIApplicationDidEnterBackgroundNotification __attr
                 break;
             case SKDownloadStateActive:
                 UA_LTRACE(@"%@: download active", download.contentIdentifier);
+                //this state is set periodically, and can be used to update progress in the UI
                 [self updateProgress:download];
                 break;
             case SKDownloadStateCancelled:
