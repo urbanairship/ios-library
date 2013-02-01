@@ -48,12 +48,6 @@ rm -rf `find . -name "*+Internal.h" `
 
 find External \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
 find External -type d -empty -delete
-rm -rf External/GHUnitIOS.framework
-rm -rf External/asi-http-request
-rm -rf External/fmdb
-rm -rf External/json-framework
-rm -rf External/google-toolbox-for-mac
-rm -rf External/ZipFile-OC
 rm -rf TestSamples
 rm -rf Test
 
