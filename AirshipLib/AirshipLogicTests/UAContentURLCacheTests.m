@@ -29,6 +29,14 @@
 #import "UAContentURLCache.h"
 #import "UAContentURLCache+Internal.h"
 
+/*
+ * NOTE: these tests are not currently executed in the logic test suite as it links against
+ * AirshipLib. AirshipLib does not contain IAP or Subscription dependencies - you need AirshipLibFull
+ * for that, so the test is excluded.
+ */
+
+
+
 @interface UAContentURLCacheTests : SenTestCase {
     UAContentURLCache *cache;
     NSString* testCachePath;
