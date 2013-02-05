@@ -43,6 +43,7 @@
 		1827ED4612364571004001E2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3712364571004001E2 /* Icon-Small.png */; };
 		1827ED4712364571004001E2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3812364571004001E2 /* Icon.png */; };
 		1872B72512BA14E1003CC5AC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872B6A512BA133C003CC5AC /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		1F42311B16C19072004B52C1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F42311A16C19072004B52C1 /* Default-568h@2x.png */; };
 		1F79712B12DE3C6500D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79712A12DE3C6500D4937F /* AirshipConfig.plist */; };
 		1FF54BA013BE6DCF00F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B9F13BE6DCF00F8E5A1 /* libz.dylib */; };
 		636CB320128D0CB300481EFC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B638661E128813390020C00F /* Security.framework */; };
@@ -170,6 +171,7 @@
 		1854B68612C1B5550048CD83 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1872B6A512BA133C003CC5AC /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* StoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F42311A16C19072004B52C1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F79712A12DE3C6500D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FF54B9F13BE6DCF00F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* StoreFrontSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreFrontSample_Prefix.pch; sourceTree = "<group>"; usesTabs = 0; };
@@ -387,6 +389,7 @@
 		1827ED3112364571004001E2 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
+				1F42311A16C19072004B52C1 /* Default-568h@2x.png */,
 				D5A3F61712C15564009731BE /* Icon@2x.png */,
 				D5C75B0212BBEFF70041239E /* Icon-Small@2x.png */,
 				1827ED3312364571004001E2 /* MainWindow_Phone.xib */,
@@ -633,6 +636,7 @@
 				D5A3F61812C15564009731BE /* Icon@2x.png in Resources */,
 				D5A3F61A12C1556C009731BE /* iTunesArtwork in Resources */,
 				1F79712B12DE3C6500D4937F /* AirshipConfig.plist in Resources */,
+				1F42311B16C19072004B52C1 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

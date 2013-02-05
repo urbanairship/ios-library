@@ -41,6 +41,7 @@
 		18F4D8D11287DC0100FE3508 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18F4D8D01287DC0100FE3508 /* Security.framework */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		1F42312916C190A5004B52C1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F42312816C190A5004B52C1 /* Default-568h@2x.png */; };
 		1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79714C12DE3DB000D4937F /* AirshipConfig.plist */; };
 		1F7D038012B8362000B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D037F12B8362000B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FB9B89E13C3BBDF002BB424 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FB9B89D13C3BBDF002BB424 /* libz.dylib */; };
@@ -145,6 +146,7 @@
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* SubscriptionSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubscriptionSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1F42312816C190A5004B52C1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F79714C12DE3DB000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F7D037F12B8362000B45C37 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		1FB9B89D13C3BBDF002BB424 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -335,6 +337,7 @@
 		63314721122FAB0E008F2D48 /* iPhone */ = {
 			isa = PBXGroup;
 			children = (
+				1F42312816C190A5004B52C1 /* Default-568h@2x.png */,
 				D5A3F60612C154C0009731BE /* Icon@2x.png */,
 				D5C75AFC12BBEF9B0041239E /* Icon-Small@2x.png */,
 				63314723122FAB0E008F2D48 /* MainWindow_Phone.xib */,
@@ -568,6 +571,7 @@
 				D5A3F60712C154C0009731BE /* Icon@2x.png in Resources */,
 				D5A3F60912C154CA009731BE /* iTunesArtwork in Resources */,
 				1F79714D12DE3DB000D4937F /* AirshipConfig.plist in Resources */,
+				1F42312916C190A5004B52C1 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
