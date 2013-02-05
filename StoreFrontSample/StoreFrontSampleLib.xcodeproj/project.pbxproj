@@ -33,7 +33,7 @@
 		1813F0241279620E009DEB29 /* UAProductDetail.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6A1279620E009DEB29 /* UAProductDetail.xib */; };
 		1813F0251279620E009DEB29 /* UAStoreFront.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6B1279620E009DEB29 /* UAStoreFront.xib */; };
 		1813F0261279620E009DEB29 /* UAStoreFrontLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1813EF6C1279620E009DEB29 /* UAStoreFrontLocalization.bundle */; };
-		1813F05812796312009DEB29 /* libUAirship-1.3.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirship-1.3.7.a */; };
+		1813F05812796312009DEB29 /* libUAirshipFull-1.3.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1813F04F1279623C009DEB29 /* libUAirshipFull-1.3.7.a */; };
 		1827ED3912364571004001E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2412364571004001E2 /* main.m */; };
 		1827ED3A12364571004001E2 /* StoreFrontSampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2612364571004001E2 /* StoreFrontSampleAppDelegate.m */; };
 		1827ED3B12364571004001E2 /* StoreFrontSampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827ED2812364571004001E2 /* StoreFrontSampleViewController.m */; };
@@ -208,7 +208,7 @@
 				63F3544D11B50A7C00A02182 /* MobileCoreServices.framework in Frameworks */,
 				638EA09711C4D50B009F6B9C /* UIKit.framework in Frameworks */,
 				638EA09A11C4D515009F6B9C /* StoreKit.framework in Frameworks */,
-				1813F05812796312009DEB29 /* libUAirship-1.3.7.a in Frameworks */,
+				1813F05812796312009DEB29 /* libUAirshipFull-1.3.7.a in Frameworks */,
 				636CB320128D0CB300481EFC /* Security.framework in Frameworks */,
 				636CB323128D0CB500481EFC /* libsqlite3.dylib in Frameworks */,
 				1872B72512BA14E1003CC5AC /* CoreTelephony.framework in Frameworks */,
@@ -335,8 +335,8 @@
 		1813F04B1279623C009DEB29 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1813F04F1279623C009DEB29 /* libUAirship-1.3.7.a */,
-				BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.7.a */,
+				BBBA1A3D15C9C4F7000E9A00 /* libUAirship-1.3.7.a */,
+				1813F04F1279623C009DEB29 /* libUAirshipFull-1.3.7.a */,
 				497159681430FC8200079B37 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -546,7 +546,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "StoreFrontSampleLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -576,10 +576,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1813F04F1279623C009DEB29 /* libUAirship-1.3.7.a */ = {
+		1813F04F1279623C009DEB29 /* libUAirshipFull-1.3.7.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.3.7.a";
+			path = "libUAirshipFull-1.3.7.a";
 			remoteRef = 1813F04E1279623C009DEB29 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -590,10 +590,10 @@
 			remoteRef = 497159671430FC8200079B37 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBBA1A3D15C9C4F7000E9A00 /* libUAirshipPush-1.3.7.a */ = {
+		BBBA1A3D15C9C4F7000E9A00 /* libUAirship-1.3.7.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirshipPush-1.3.7.a";
+			path = "libUAirship-1.3.7.a";
 			remoteRef = BBBA1A3C15C9C4F7000E9A00 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -758,12 +758,17 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
@@ -785,11 +790,16 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;

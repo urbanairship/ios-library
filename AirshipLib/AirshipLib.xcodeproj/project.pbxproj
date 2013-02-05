@@ -15,6 +15,8 @@
 		1F2B10C512DD01B60020843D /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; };
 		1F2B10C612DD01B60020843D /* UATagUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2B10C412DD01B60020843D /* UATagUtils.m */; };
 		1F4230C016C09876004B52C1 /* libUAirship-1.3.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.3.7.a */; };
+		1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E921238462100B7E69F /* UAViewUtils.m */; };
+		1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
 		1F448FF91602ECB00037AE90 /* libPush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1890B8A612519FC400E6EBF1 /* libPush.a */; };
 		1FC71654129597F9003BDD2B /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
 		1FC71655129597F9003BDD2B /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
@@ -161,9 +163,6 @@
 		BB8860EE159A7E9600584445 /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		BB8860EF159A7E9600584445 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8D1238462100B7E69F /* UADateUtils.m */; };
 		BB8860F0159A7E9600584445 /* UAObservable.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8E1238462100B7E69F /* UAObservable.m */; };
-		BB8860F1159A7E9600584445 /* UAAsycImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E901238462100B7E69F /* UAAsycImageView.m */; };
-		BB8860F2159A7E9600584445 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E921238462100B7E69F /* UAViewUtils.m */; };
-		BB8860F3159A7E9600584445 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
 		BB8860F4159A7E9600584445 /* UA_ASIDownloadCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE222124F3FBB00A46CB1 /* UA_ASIDownloadCache.m */; };
 		BB8860F5159A7E9600584445 /* UA_ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE224124F3FBB00A46CB1 /* UA_ASIHTTPRequest.m */; };
 		BB8860F6159A7E9600584445 /* UA_ASIInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE228124F3FBB00A46CB1 /* UA_ASIInputStream.m */; };
@@ -174,11 +173,6 @@
 		BB8860FB159A7E9600584445 /* UA_SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07E12505131004E6D93 /* UA_SBJsonBase.m */; };
 		BB8860FC159A7E9600584445 /* UA_SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08012505131004E6D93 /* UA_SBJsonParser.m */; };
 		BB8860FD159A7E9600584445 /* UA_SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08212505131004E6D93 /* UA_SBJsonWriter.m */; };
-		BB8860FE159A7E9600584445 /* UA_ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25012507CEA004E6D93 /* UA_ioapi.c */; };
-		BB8860FF159A7E9600584445 /* UA_miniunz.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25212507CEA004E6D93 /* UA_miniunz.c */; };
-		BB886100159A7E9600584445 /* UA_mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25312507CEA004E6D93 /* UA_mztools.c */; };
-		BB886101159A7E9600584445 /* UA_unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25512507CEA004E6D93 /* UA_unzip.c */; };
-		BB886102159A7E9600584445 /* UA_zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC25812507CEA004E6D93 /* UA_zip.c */; };
 		BB886103159A7E9600584445 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		BB886104159A7E9600584445 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
@@ -186,13 +180,11 @@
 		BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73F8B12ADE86D003CF572 /* UA_ASIDataCompressor.m */; };
 		BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
-		BB88610C159A7E9600584445 /* UA_ZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1854B6CB12C1B5F30048CD83 /* UA_ZipArchive.m */; };
 		BB88610D159A7E9600584445 /* UATagUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2B10C412DD01B60020843D /* UATagUtils.m */; };
 		BB88610E159A7E9600584445 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
 		BB88610F159A7E9600584445 /* UAHTTPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B512FC787900057449 /* UAHTTPConnection.m */; };
 		BB886110159A7E9600584445 /* UAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B712FC787900057449 /* UAEvent.m */; };
 		BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B912FC787900057449 /* UAAnalyticsDBManager.m */; };
-		BB886114159A7E9600584445 /* UALocalStorageDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */; };
 		BB886116159A7E9600584445 /* UALocationEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0C15057C7F00971CEC /* UALocationEvent.m */; };
 		BB886117159A7E9600584445 /* UALocationService.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E0F15057C7F00971CEC /* UALocationService.m */; };
 		BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87E1615057C7F00971CEC /* UASignificantChangeProvider.m */; };
@@ -663,8 +655,6 @@
 			children = (
 				D9983E911238462100B7E69F /* UAAsycImageView.h */,
 				D9983E901238462100B7E69F /* UAAsycImageView.m */,
-				D9983E961238462100B7E69F /* UABarButtonSegmentedControl.h */,
-				D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */,
 				BB805C771523ACAD004FA950 /* UAContentURLCache+Internal.h */,
 				497D13F21488282F00FB0A8A /* UAContentURLCache.h */,
 				497D13F31488282F00FB0A8A /* UAContentURLCache.m */,
@@ -672,8 +662,8 @@
 				E9FFDD8C129BAADB0012EF40 /* UADownloadContent.m */,
 				E9F06DD2128CFE8800C30453 /* UADownloadManager.h */,
 				E9F06DD3128CFE8800C30453 /* UADownloadManager.m */,
-				D9983E931238462100B7E69F /* UAViewUtils.h */,
-				D9983E921238462100B7E69F /* UAViewUtils.m */,
+				49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */,
+				49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */,
 			);
 			name = FullLib;
 			sourceTree = "<group>";
@@ -870,6 +860,8 @@
 				1F4230C316C17059004B52C1 /* FullLib */,
 				1F4230C216C16F1B004B52C1 /* Analytics */,
 				1F4230C116C16ED3004B52C1 /* Location */,
+				D9983E961238462100B7E69F /* UABarButtonSegmentedControl.h */,
+				D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */,
 				D9983E941238462100B7E69F /* UADateUtils.h */,
 				D9983E8D1238462100B7E69F /* UADateUtils.m */,
 				D9FD1C43122DBCEA00522B4E /* UAGlobal.h */,
@@ -877,8 +869,6 @@
 				D5BED7B512FC787900057449 /* UAHTTPConnection.m */,
 				1FE43798128B589000D38A14 /* UAKeychainUtils.h */,
 				1FE43799128B589000D38A14 /* UAKeychainUtils.m */,
-				49BD5497148449DB009FD146 /* UALocalStorageDirectory.h */,
-				49BD5498148449DB009FD146 /* UALocalStorageDirectory.m */,
 				D9983E8F1238462100B7E69F /* UAObservable.h */,
 				D9983E8E1238462100B7E69F /* UAObservable.m */,
 				D5BED7B412FC787900057449 /* UASQLite.h */,
@@ -889,6 +879,8 @@
 				1FC71653129597F9003BDD2B /* UAUser.m */,
 				D9983E8C1238462100B7E69F /* UAUtils.h */,
 				D9983E8B1238462100B7E69F /* UAUtils.m */,
+				D9983E931238462100B7E69F /* UAViewUtils.h */,
+				D9983E921238462100B7E69F /* UAViewUtils.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -1109,7 +1101,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 1DEB922208733DC00010E9CD /* Build configuration list for PBXProject "AirshipLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1231,14 +1223,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */,
+				1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */,
 				BB5EBC95159B760400F2A716 /* UA_ASIAuthenticationDialog.m in Sources */,
 				BB8860ED159A7E9600584445 /* UAirship.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				BB8860EF159A7E9600584445 /* UADateUtils.m in Sources */,
 				BB8860F0159A7E9600584445 /* UAObservable.m in Sources */,
-				BB8860F1159A7E9600584445 /* UAAsycImageView.m in Sources */,
-				BB8860F2159A7E9600584445 /* UAViewUtils.m in Sources */,
-				BB8860F3159A7E9600584445 /* UABarButtonSegmentedControl.m in Sources */,
 				BB8860F4159A7E9600584445 /* UA_ASIDownloadCache.m in Sources */,
 				BB8860F5159A7E9600584445 /* UA_ASIHTTPRequest.m in Sources */,
 				BB8860F6159A7E9600584445 /* UA_ASIInputStream.m in Sources */,
@@ -1249,11 +1240,6 @@
 				BB8860FB159A7E9600584445 /* UA_SBJsonBase.m in Sources */,
 				BB8860FC159A7E9600584445 /* UA_SBJsonParser.m in Sources */,
 				BB8860FD159A7E9600584445 /* UA_SBJsonWriter.m in Sources */,
-				BB8860FE159A7E9600584445 /* UA_ioapi.c in Sources */,
-				BB8860FF159A7E9600584445 /* UA_miniunz.c in Sources */,
-				BB886100159A7E9600584445 /* UA_mztools.c in Sources */,
-				BB886101159A7E9600584445 /* UA_unzip.c in Sources */,
-				BB886102159A7E9600584445 /* UA_zip.c in Sources */,
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
@@ -1261,13 +1247,11 @@
 				BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */,
 				BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
-				BB88610C159A7E9600584445 /* UA_ZipArchive.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,
 				BB88610F159A7E9600584445 /* UAHTTPConnection.m in Sources */,
 				BB886110159A7E9600584445 /* UAEvent.m in Sources */,
 				BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */,
-				BB886114159A7E9600584445 /* UALocalStorageDirectory.m in Sources */,
 				BB886116159A7E9600584445 /* UALocationEvent.m in Sources */,
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,
@@ -1452,6 +1436,10 @@
 			baseConfigurationReference = 1F31E8FC15F14C5500DC63BA /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
@@ -1459,6 +1447,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
@@ -1480,10 +1469,15 @@
 			baseConfigurationReference = 1F31E8FC15F14C5500DC63BA /* Config.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
