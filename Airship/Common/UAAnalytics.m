@@ -674,7 +674,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             NSString *errString = nil;
             eventData = (NSMutableDictionary *)[NSPropertyListSerialization
                                                 propertyListFromData:serializedEventData
-                                                mutabilityOption:kCFPropertyListMutableContainersAndLeaves
+                                                mutabilityOption:NSPropertyListMutableContainersAndLeaves
                                                 format:NULL /* an out param */
                                                 errorDescription:&errString];
             if (errString) {
