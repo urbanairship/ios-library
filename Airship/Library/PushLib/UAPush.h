@@ -103,7 +103,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 - (void)handleBadgeUpdate:(int)badgeNumber;
 
 /**
- * Called when the app is resumed because a user opened a notification.
+ * Called when the app is started or resumed because a user opened a notification.
  * @param notification the push notification
  */
 - (void)handleBackgroundNotification:(NSDictionary *)notification;

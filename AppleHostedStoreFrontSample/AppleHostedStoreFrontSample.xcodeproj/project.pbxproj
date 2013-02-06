@@ -43,7 +43,7 @@
 		1827ED4512364571004001E2 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3612364571004001E2 /* Default.png */; };
 		1827ED4612364571004001E2 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3712364571004001E2 /* Icon-Small.png */; };
 		1827ED4712364571004001E2 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1827ED3812364571004001E2 /* Icon.png */; };
-		1F4230CD16C1745F004B52C1 /* libUAirship-1.3.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F4230CC16C1745F004B52C1 /* libUAirship-1.3.7.a */; };
+		1F4230CD16C1745F004B52C1 /* libUAirship-1.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F4230CC16C1745F004B52C1 /* libUAirship-1.4.0.a */; };
 		1F42310416C18ABB004B52C1 /* UA_ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F4230F816C18ABB004B52C1 /* UA_ioapi.c */; };
 		1F42310516C18ABB004B52C1 /* UA_miniunz.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F4230FA16C18ABB004B52C1 /* UA_miniunz.c */; };
 		1F42310616C18ABB004B52C1 /* UA_mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F4230FB16C18ABB004B52C1 /* UA_mztools.c */; };
@@ -131,7 +131,7 @@
 		1827ED3712364571004001E2 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
 		1827ED3812364571004001E2 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* AppleHostedStoreFrontSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppleHostedStoreFrontSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1F4230CC16C1745F004B52C1 /* libUAirship-1.3.7.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.3.7.a"; path = "../Airship/libUAirship-1.3.7.a"; sourceTree = "<group>"; };
+		1F4230CC16C1745F004B52C1 /* libUAirship-1.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.4.0.a"; path = "../Airship/libUAirship-1.4.0.a"; sourceTree = "<group>"; };
 		1F4230F616C18ABB004B52C1 /* UA_crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_crypt.h; sourceTree = "<group>"; };
 		1F4230F816C18ABB004B52C1 /* UA_ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UA_ioapi.c; sourceTree = "<group>"; };
 		1F4230F916C18ABB004B52C1 /* UA_ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ioapi.h; sourceTree = "<group>"; };
@@ -197,7 +197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4230CD16C1745F004B52C1 /* libUAirship-1.3.7.a in Frameworks */,
+				1F4230CD16C1745F004B52C1 /* libUAirship-1.4.0.a in Frameworks */,
 				49E00248154F67CA009305B7 /* CoreLocation.framework in Frameworks */,
 				1FD26EC713FB33BB00DBC45F /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
@@ -400,7 +400,7 @@
 		184E3F75129E4CA9004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				1F4230CC16C1745F004B52C1 /* libUAirship-1.3.7.a */,
+				1F4230CC16C1745F004B52C1 /* libUAirship-1.4.0.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";

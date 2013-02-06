@@ -1,4 +1,19 @@
 -------------------------
+1.4.0 - Feb 7, 2012
+-------------------------
+- Removed all IAP/Subscriptions code from libUAirship-version.a. Applications using subscriptions
+  or in-app purchase must use libUAirshipFull-version.a. libUAirshipPush is no longer distributed
+  as libUAirship is taking its place.
+- Updated projects for Xcode 4.6 compatibility.
+- Added AppleHostedStoreFrontSample - a modified version of our StoreFront sample that uses
+  Apple's StoreKit download feature.
+- Removed original files for external dependencies
+- Updated the README with more documentation and a section on contributing code.
+- Added more explanatory comments to the sample app delegates.
+- The library no longer displays UIAlertViews with error messages - look for errors in the console log.
+- Added hooks for internal CI systems.
+
+-------------------------
 1.3.7 Nov 28, 2012
 -------------------------
 - fixed crash in UAAnalyticsDBManager that occured when adding events
