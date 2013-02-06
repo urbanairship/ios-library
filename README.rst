@@ -171,7 +171,7 @@ Logging can be configured through either the AirshipConfig.plist file or directl
 default log level for production apps is `UALogLevelError` and the default for development apps
 is `UALogLevelDebug`.
 
-In Airshipconfig.plist, set LOG_LEVEL to one of the integer values below:
+In `AirshiCconfig.plist`, set `LOG_LEVEL` to one of the following integer values:
 
 .. code:: obj-c
 
