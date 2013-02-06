@@ -164,6 +164,42 @@ To enable push:
     // This will trigger the proper registration or de-registration code in the library.
     [[UAPush shared] setPushEnabled:YES];
 
+Logging
+-------
+
+Logging can be configured through either the AirshipConfig.plist file or directly in code. The
+default log level for production apps is `UALogLevelError` and the default for development apps
+is `UALogLevelDebug`.
+
+In Airshipconfig.plist, set LOG_LEVEL to one of the integer values below:
+
+.. code:: obj-c
+
+    None = 0
+    Error = 1
+    Warn = 2
+    Info = 3
+    Debug = 4
+    Trace = 5
+
+To set the log level in code, use:
+
+.. code:: obj-c
+
+    [UAirship setLogLevel:UALogLevelWarn];
+
+The available log levels are:
+
+.. code:: obj-c
+
+    UALogLevelNone
+    UALogLevelError
+    UALogLevelWarn
+    UALogLevelInfo
+    UALogLevelDebug
+    UALogLevelTrace
+
+
 Building the Library
 --------------------
 
