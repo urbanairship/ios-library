@@ -52,7 +52,7 @@ rm -rf `find . -name "xcuserdata" `
 rm -rf `find . -name "AirshipDevelopment.plist" `
 
 # copy the sample plist into place
-for sample in InboxSample PushSample StoreFrontSample SubscriptionSample; do
+for sample in InboxSample PushSample StoreFrontSample SubscriptionSample AppleHostedStoreFrontSample; do
     cp ../CHANGELOG $sample
     cp ../LICENSE $sample
     cp ../README.rst $sample
