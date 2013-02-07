@@ -63,6 +63,7 @@ cp "${srcPath}/../LICENSE" "${destPath}"
 
 #TODO: use actual paths instead of moving everywhere
 cd ..
-rm *.zip
+find . -name "*.zip" -delete
+
 #TODO: pull out version number from xcodeproject and create both files. Also bundle samples.
 zip -r libUAirship-latest.zip Airship
