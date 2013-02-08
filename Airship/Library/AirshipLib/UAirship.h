@@ -77,7 +77,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
- * called from [UIApplication application:didFinishLaunchingWithOptions] to initialize the shared
+ * called from `[UIApplication application:didFinishLaunchingWithOptions]` to initialize the shared
  * instance.
  */
 @interface UAirship : NSObject {
@@ -146,17 +146,17 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * Enables or disables logging. Logging is enabled by default, though the log level must still be set
  * to an appropriate value. This flag overrides the AirshipConfig settings if called after takeOff.
  *
- * @param enabled If YES, console logging is enabled.
+ * @param enabled If `YES`, console logging is enabled.
  */
 + (void)setLogging:(BOOL)enabled;
 
 /**
- * Sets the log level for the Urban Airship library. The log level defaults to UALogLevelDebug
- * for development apps, and UALogLevelError for production apps (when the APP_STORE_OR_AD_HOC_BUILD
- * AirshipConfig flag is set to YES). Setting LOG_LEVEL in the AirshipConfig settings will override
+ * Sets the log level for the Urban Airship library. The log level defaults to `UALogLevelDebug`
+ * for development apps, and `UALogLevelError` for production apps (when the APP_STORE_OR_AD_HOC_BUILD
+ * AirshipConfig flag is set to `YES`). Setting `LOG_LEVEL` in the AirshipConfig settings will override
  * these defaults, but will not override a value set with this method.
  * 
- * @param level The desired UALogLevel value.
+ * @param level The desired `UALogLevel` value.
  */
 + (void)setLogLevel:(UALogLevel)level;
 
@@ -171,13 +171,16 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * 
  * This method must be called from your application delegate's
  * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The UIApplication options passed in on launch MUST be included in this method's options
- * parameter with the UAirshipTakeOffOptionsLaunchOptionsKey.
+ * only once. The `UIApplication` options passed in on launch MUST be included in this method's options
+ * parameter with the `UAirshipTakeOffOptionsLaunchOptionsKey`.
  *
- * Configuration are read from the AirshipConfig.plist file. You may overrride the
- * AirshipConfig.plist values at runtime by including an NSDictionary containing the override
- * values with the UAirshipTakeOffOptionsAirshipConfigKey.
+ * Configuration are read from the `AirshipConfig.plist` file. You may overrride the
+ * `AirshipConfig.plist` values at runtime by including an NSDictionary containing the override
+ * values with the `UAirshipTakeOffOptionsAirshipConfigKey`.
  *
+ * @warning *Important:* takeOff: must be called on the main thread. This method will throw
+ * an UAirshipTakeOffMainThreadException if it is run on a background thread.
+ * 
  * @see UAirshipTakeOffOptionsAirshipConfigKey
  * @see UAirshipTakeOffOptionsLaunchOptionsKey
  * @see UAirshipTakeOffOptionsAnalyticsKey
@@ -186,8 +189,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary MUST contain the UIApplication launch options.
- *
- * @warning takeOff: must be called on the main thread. Not doing so results in an UAirshipTakeOffMainThreadException
+ * @exception UAirshipTakeOffMainThreadException This exception is thrown if takeOff is called from
+ * a background thread.
  *
  */
 + (void)takeOff:(NSDictionary *)options;
@@ -199,7 +202,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 + (void)land;
 
 /**
- * Returns the shared UAirship instance. This will raise an exception
+ * Returns the shared `UAirship` instance. This will raise an exception
  * if [UAirship takeOff:] has not been called.
  *
  * @return The shared UAirship instance.

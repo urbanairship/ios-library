@@ -384,7 +384,7 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
 
-/**
+/*
  * Disables quiet time settings. This call updates the server with an API call.
  * This call is deprecated. Set quietTimeEnabled to NO instead;
  */
