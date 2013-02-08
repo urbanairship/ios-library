@@ -51,14 +51,19 @@ rm -rf `find . -name "xcuserdata" `
 #delete the testing config plist
 rm -rf `find . -name "AirshipDevelopment.plist" `
 
-# copy the sample plist into place
-for sample in InboxSample PushSample StoreFrontSample SubscriptionSample AppleHostedStoreFrontSample; do
-    cp ../CHANGELOG $sample
-    cp ../LICENSE $sample
-    cp ../README.rst $sample
-    mv -f $sample/AirshipConfig.plist.sample $sample/AirshipConfig.plist
-done
 
 #rename packages for distribution
 mv StoreFrontSample IAPSample
 mv InboxSample RichPushSample
+
+# copy the sample plist into place
+for sample in RichPushSample PushSample IAPSample SubscriptionSample AppleHostedStoreFrontSample; do
+    cp ../CHANGELOG $sample
+    cp ../LICENSE $sample
+    cp ../README.rst $sample
+    mv -f $sample/AirshipConfig.plist.sample $sample/AirshipConfig.plist
+    zip -r $sample-latest.zip $sample
+done
+
+
+
