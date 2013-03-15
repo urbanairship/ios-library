@@ -646,6 +646,24 @@
 			path = PushLib;
 			sourceTree = "<group>";
 		};
+		1F16423C16F383E700C87CAB /* UA_Base64 */ = {
+			isa = PBXGroup;
+			children = (
+				B69DB4C812533B280037AF7F /* UA_Base64.h */,
+				B69DB4C912533B280037AF7F /* UA_Base64.m */,
+			);
+			name = UA_Base64;
+			sourceTree = "<group>";
+		};
+		1F16423D16F383F400C87CAB /* UA_Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				B631183B1250925A0014F697 /* UA_Reachability.h */,
+				B631183C1250925A0014F697 /* UA_Reachability.m */,
+			);
+			name = UA_Reachability;
+			sourceTree = "<group>";
+		};
 		1F4230C116C16ED3004B52C1 /* Location */ = {
 			isa = PBXGroup;
 			children = (
@@ -914,14 +932,12 @@
 		D9FD1C74122DBD4300522B4E /* External */ = {
 			isa = PBXGroup;
 			children = (
-				B69DB4C812533B280037AF7F /* UA_Base64.h */,
-				B69DB4C912533B280037AF7F /* UA_Base64.m */,
-				B631183B1250925A0014F697 /* UA_Reachability.h */,
-				B631183C1250925A0014F697 /* UA_Reachability.m */,
-				B6DFC24D12507CEA004E6D93 /* UA_ZipFile-OC */,
+				B6EFE21D124F3FBB00A46CB1 /* UA_asi-http-request */,
+				1F16423C16F383E700C87CAB /* UA_Base64 */,
 				B6DFC07112505131004E6D93 /* UA_fmdb */,
 				B6DFC07912505131004E6D93 /* UA_json-framework */,
-				B6EFE21D124F3FBB00A46CB1 /* UA_asi-http-request */,
+				1F16423D16F383F400C87CAB /* UA_Reachability */,
+				B6DFC24D12507CEA004E6D93 /* UA_ZipFile-OC */,
 			);
 			path = External;
 			sourceTree = "<group>";
