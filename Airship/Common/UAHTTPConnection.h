@@ -25,30 +25,28 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface UAHTTPRequest : NSObject {
-    
-  @private
-    NSURL *url;
-    NSString *HTTPMethod;
-    NSMutableDictionary *headers;
-    NSString *username;
-    NSString *password;
-    NSMutableData *body;
-    BOOL compressBody;
-    id userInfo;
+
 }
+
 @property (readonly, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSString *HTTPMethod;
 @property (readonly, nonatomic) NSDictionary *headers;
 @property (copy, nonatomic) NSString *username;
 @property (copy, nonatomic) NSString *password;
-@property (retain, nonatomic) NSData *body;
+@property (retain, nonatomic) NSMutableData *body;
 @property (assign, nonatomic) BOOL compressBody;
 @property (retain, nonatomic) id userInfo;
 
+@property (readonly, nonatomic) NSHTTPURLResponse *response;
+@property (readonly, nonatomic) NSError *error;
+
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
++ (UAHTTPRequest *)requestWithURL:(NSURL *)url;
+
 - (id)initWithURLString:(NSString *)urlString;
+- (id)initWithURL:(NSURL *)url;
+
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value;
 - (void)appendBodyData:(NSData *)data;
 
@@ -56,26 +54,26 @@
 
 @protocol UAHTTPConnectionDelegate <NSObject>
 @required
-- (void)requestDidSucceed:(UAHTTPRequest *)request
-               response:(NSHTTPURLResponse *)response
-             responseData:(NSData *)responseData;
-- (void)requestDidFail:(UAHTTPRequest *)request;
+- (void)request:(UAHTTPRequest *)request
+        didSucceedWithResponse:(NSHTTPURLResponse *)response
+                  responseData:(NSData *)responseData;
+- (void)request:(UAHTTPRequest *)request didFailWithError:(NSError *)error;
 @end
 
-
 @interface UAHTTPConnection : NSObject {
-    UAHTTPRequest *request;
+    
+    UAHTTPRequest *_request;
+    NSHTTPURLResponse *_urlResponse;
+	NSMutableData *_responseData;
 
-    NSURLConnection *urlConnection_;
-    NSHTTPURLResponse *urlResponse;
-	NSMutableData *responseData;
-
-    id<UAHTTPConnectionDelegate> delegate;
 }
 @property (assign, nonatomic) id<UAHTTPConnectionDelegate> delegate;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
 
+
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
++ (void)setDefaultUserAgentString:(NSString *)userAgent;
+
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
 - (BOOL)start;
 

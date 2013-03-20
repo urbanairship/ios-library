@@ -92,6 +92,11 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
+/*
+ * The http connection used for registration.
+ */
+@property (nonatomic, retain) UAHTTPConnection *connection;
+
 /* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
 
@@ -107,24 +112,24 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 /* Build a http request with an optional JSON body.
  * @praram info NSDictionary or nil for no body
  */
-- (UA_ASIHTTPRequest *)requestToRegisterDeviceTokenWithInfo:(NSDictionary *)info;
+- (UAHTTPRequest *)requestToRegisterDeviceTokenWithInfo:(NSDictionary *)info;
 
 /* Build a http reqeust to delete the device token from the UA API. */
-- (UA_ASIHTTPRequest *)requestToDeleteDeviceToken;
+- (UAHTTPRequest *)requestToDeleteDeviceToken;
 
 /* Retry connection on any network layer error, or any 
  * server 500 if retryOnConnectionError is YES
  @param reqeust The request that has failed
  @return YES if the request will be scheduled for retry, NO otherwise
  */
-- (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request;
+- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request;
 
 /* Schedules the request again after a delay of n seconds,
  * configurable with kUAPushRetryTimeInitialDelay, kUAPushRetryTimeMultiplier, and
  * kUAPushRetryTimeMaxDelay
  * @param reqeust The request to reschedule
  */
-- (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request;
+- (void)scheduleRetryForRequest:(UAHTTPRequest *)request;
 
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;

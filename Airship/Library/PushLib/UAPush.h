@@ -25,11 +25,10 @@
 
 #import "UAGlobal.h"
 #import "UAObservable.h"
+#import "UAHTTPConnection.h"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
-
-@class UA_ASIHTTPRequest;
 
 UA_VERSION_INTERFACE(UAPushVersion)
 
@@ -116,15 +115,15 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @protocol UARegistrationObserver
 @optional
 - (void)registerDeviceTokenSucceeded;
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
 - (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request;
 @end
 
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-@interface UAPush : UAObservable 
+@interface UAPush : UAObservable <UAHTTPConnectionDelegate>
 
 
 SINGLETON_INTERFACE(UAPush);

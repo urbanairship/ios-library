@@ -32,6 +32,7 @@
 #import "UA_SBJSON.h"
 #import "UA_Base64.h"
 #import "UA_ASIHTTPRequest.h"
+#import "UAHTTPConnection.h"
 
 // UALib
 #import "UAUser.h"
@@ -200,6 +201,38 @@
     request.timeOutSeconds = 60;
     
     return request;
+}
+
++ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url
+                                     method:(NSString *)method {
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
+    
+    request.username = [UAUser defaultUser].username;
+    request.password = [UAUser defaultUser].password;
+    
+    
+    return request;
+}
+
++ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url
+                                 method:(NSString *)method {
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
+    
+    request.username = [UAirship shared].appId;
+    request.password = [UAirship shared].appSecret;
+    
+    return request;
+    
 }
 
 + (id)responseFromRequest:(UA_ASIHTTPRequest *)request {

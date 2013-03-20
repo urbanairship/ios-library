@@ -30,13 +30,12 @@
 
 #import "UAirship.h"
 #import "UAViewUtils.h"
-#import "UAUtils.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UAPushNotificationHandler.h"
+#import "UAUtils.h"
 
 #import "UA_SBJsonWriter.h"
-#import "UA_ASIHTTPRequest.h"
 
 
 #define kUAPushRetryTimeInitialDelay 60
@@ -264,7 +263,7 @@ static Class _uiClass;
         _uiClass = NSClassFromString(PUSH_UI_CLASS);
     }
     
-    if (_uiClass == nil) {
+    if (!_uiClass) {
         UALOG(@"Push UI class not found.");
     }
     
@@ -610,7 +609,7 @@ static Class _uiClass;
             self.isRegistering = NO;
             return;
         }
-        UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:currentRegistrationPayload];
+        UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:currentRegistrationPayload];
         UALOG(@"Starting registration PUT request");
         [putRequest startAsynchronous];
     }
@@ -624,7 +623,7 @@ static Class _uiClass;
         }
         // Don't unregister more than once
         if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering]) {
-            UA_ASIHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
+            UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
             UALOG(@"Starting registration DELETE request (unregistering)");
             [deleteRequest startAsynchronous];
         }
@@ -655,7 +654,7 @@ static Class _uiClass;
     self.isRegistering = YES;
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    UA_ASIHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
+    UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
     UALOG(@"Starting deprecated registration request");
     [putRequest startAsynchronous];
 }
@@ -665,7 +664,7 @@ static Class _uiClass;
                            [UAirship shared].server, @"/api/device_tokens/",
                            self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
+    UAHTTPRequest *request = [UAUtils requestWithURL:url
                                                   method:@"PUT"
                                                 delegate:self
                                                   finish:@selector(registerDeviceTokenSucceeded:)
@@ -673,7 +672,7 @@ static Class _uiClass;
     if (info != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
         UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-        [request appendPostData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
+        [request appendData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
         // add the registration payload as the userInfo object to cache on upload success
         // two values, the registration payload and the pushEnabled value
         NSDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:info];
@@ -735,17 +734,16 @@ static Class _uiClass;
     self.pushEnabled = NO;
 }
 
-- (UA_ASIHTTPRequest*)requestToDeleteDeviceToken {
+- (UAHTTPRequest *)requestToDeleteDeviceToken {
     NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
                            [UAirship shared].server,
                            self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UALOG(@"Request to unregister device token.");
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:url
-                                                  method:@"DELETE"
-                                                delegate:self
-                                                  finish:@selector(unRegisterDeviceTokenSucceeded:)
-                                                    fail:@selector(unRegisterDeviceTokenFailed:)];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url
+                                                    method:@"DELETE"];//]
+                                                  ////finish:@selector(unRegisterDeviceTokenSucceeded:)
+                                                  //  fail:@selector(unRegisterDeviceTokenFailed:)];
     // add the registration payload as the userInfo object to cache on upload success
     // two values, the registration payload and the pushEnabled value
     NSMutableDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:[self registrationPayload]];
@@ -756,7 +754,7 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark UA API Registration callbacks
 
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
+- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"registering device token"];
     if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
@@ -767,8 +765,8 @@ static Class _uiClass;
                withObject:request];
 }
 
-- (void)registerDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
-    if(request.responseStatusCode != 200 && request.responseStatusCode != 201) {
+- (void)registerDeviceTokenSucceeded:(UAHTTPRequest *)request {
+    if(request.response.statusCode != 200 && request.response.statusCode != 201) {
         [self registerDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
@@ -783,7 +781,7 @@ static Class _uiClass;
     }
 }
 
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request {
+- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request {
     [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
     if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
@@ -794,8 +792,8 @@ static Class _uiClass;
                withObject:request];
 }
 
-- (void)unRegisterDeviceTokenSucceeded:(UA_ASIHTTPRequest *)request {
-    if (request.responseStatusCode != 204){
+- (void)unRegisterDeviceTokenSucceeded:(UAHTTPRequest *)request {
+    if (request.response.statusCode != 204){
         [self unRegisterDeviceTokenFailed:request];
     } else {
         // cache before setting isRegistering to NO
@@ -812,20 +810,20 @@ static Class _uiClass;
     }
 }
 
-- (BOOL)shouldRetryRequest:(UA_ASIHTTPRequest*)request {
+- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request withError:(NSError *)error {
     if (!self.retryOnConnectionError) {
         return NO;
     }
-    if (request.error) {
+    if (error) {
         return YES;
     }
-    if (request.responseStatusCode >= 500 && request.responseStatusCode <= 599) {
+    if (request.response.statusCode >= 500 && request.response.statusCode <= 599) {
         return YES;
     }
     return NO;
 }
 
-- (void)scheduleRetryForRequest:(UA_ASIHTTPRequest*)request {
+- (void)scheduleRetryForRequest:(UAHTTPRequest *)request {
     if (registrationRetryDelay == 0) {
         registrationRetryDelay = kUAPushRetryTimeInitialDelay;
     }

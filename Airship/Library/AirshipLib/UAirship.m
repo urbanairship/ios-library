@@ -27,7 +27,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAirship+Internal.h"
 
-#import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
 
 #import "UAUser.h"
@@ -41,6 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAPush.h"
 
 UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
+
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
 NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
 NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
@@ -93,6 +93,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     RELEASE_SAFELY(appId);
     RELEASE_SAFELY(appSecret);
     RELEASE_SAFELY(server);
+    
     // Analytics contains an NSTimer, and the invalidate method is required
     // before dealloc
     [analytics invalidate];
@@ -300,8 +301,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 + (void)land {
 
-    [[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
-    
 	// add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
 	
@@ -360,7 +359,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
                            appName, appVersion, deviceModel, osName, osVersion, libVersion, appId, locale];
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
-    [UA_ASIHTTPRequest setDefaultUserAgentString:userAgent];
+    [UAHTTPConnection setDefaultUserAgentString:userAgent];
 }
 
 #pragma mark -

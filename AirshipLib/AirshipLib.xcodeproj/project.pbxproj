@@ -103,10 +103,6 @@
 		BB8860EE159A7E9600584445 /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		BB8860EF159A7E9600584445 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8D1238462100B7E69F /* UADateUtils.m */; };
 		BB8860F0159A7E9600584445 /* UAObservable.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8E1238462100B7E69F /* UAObservable.m */; };
-		BB8860F4159A7E9600584445 /* UA_ASIDownloadCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE222124F3FBB00A46CB1 /* UA_ASIDownloadCache.m */; };
-		BB8860F5159A7E9600584445 /* UA_ASIHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE224124F3FBB00A46CB1 /* UA_ASIHTTPRequest.m */; };
-		BB8860F6159A7E9600584445 /* UA_ASIInputStream.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE228124F3FBB00A46CB1 /* UA_ASIInputStream.m */; };
-		BB8860F7159A7E9600584445 /* UA_ASINetworkQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */; };
 		BB8860F8159A7E9600584445 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
 		BB8860F9159A7E9600584445 /* UA_FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07812505131004E6D93 /* UA_FMResultSet.m */; };
 		BB8860FA159A7E9600584445 /* UA_SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07B12505131004E6D93 /* UA_SBJSON.m */; };
@@ -117,8 +113,6 @@
 		BB886104159A7E9600584445 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
 		BB886107159A7E9600584445 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
-		BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73F8B12ADE86D003CF572 /* UA_ASIDataCompressor.m */; };
-		BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9F73FB212ADE93A003CF572 /* UA_ASIDataDecompressor.m */; };
 		BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F23001312B2B7BA001DB898 /* UAAnalytics.m */; };
 		BB88610D159A7E9600584445 /* UATagUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F2B10C412DD01B60020843D /* UATagUtils.m */; };
 		BB88610E159A7E9600584445 /* UASQLite.m in Sources */ = {isa = PBXBuildFile; fileRef = D5BED7B312FC787900057449 /* UASQLite.m */; };
@@ -851,15 +845,10 @@
 			files = (
 				1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */,
 				1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */,
-				BB5EBC95159B760400F2A716 /* UA_ASIAuthenticationDialog.m in Sources */,
 				BB8860ED159A7E9600584445 /* UAirship.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				BB8860EF159A7E9600584445 /* UADateUtils.m in Sources */,
 				BB8860F0159A7E9600584445 /* UAObservable.m in Sources */,
-				BB8860F4159A7E9600584445 /* UA_ASIDownloadCache.m in Sources */,
-				BB8860F5159A7E9600584445 /* UA_ASIHTTPRequest.m in Sources */,
-				BB8860F6159A7E9600584445 /* UA_ASIInputStream.m in Sources */,
-				BB8860F7159A7E9600584445 /* UA_ASINetworkQueue.m in Sources */,
 				BB8860F8159A7E9600584445 /* UA_FMDatabase.m in Sources */,
 				BB8860F9159A7E9600584445 /* UA_FMResultSet.m in Sources */,
 				BB8860FA159A7E9600584445 /* UA_SBJSON.m in Sources */,
@@ -870,8 +859,6 @@
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
-				BB886109159A7E9600584445 /* UA_ASIDataCompressor.m in Sources */,
-				BB88610A159A7E9600584445 /* UA_ASIDataDecompressor.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,

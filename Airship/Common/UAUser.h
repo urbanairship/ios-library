@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "UAObservable.h"
 
-@class UA_ASIHTTPRequest;
+@class UAHTTPRequest;
 
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,
@@ -132,8 +132,8 @@ typedef enum _UAUserState {
 - (void)updateUserState;
 - (void)notifyObserversUserUpdated;
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request;
-- (void)userRequestWentWrong:(UA_ASIHTTPRequest*)request;
+- (void)requestWentWrong:(UAHTTPRequest *)request;
+- (void)userRequestWentWrong:(UAHTTPRequest *)request;
 
 //POST
 - (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;

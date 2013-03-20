@@ -345,7 +345,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)willResignActive {
-    UA_ANALYTICS_LOG(@"Application will resign active.");    
+    UA_ANALYTICS_LOG(@"Application will resign active.");
     //add activity_stopped / AppInactive event
     [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
@@ -535,7 +535,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
 }
 
-- (void)requestDidFail:(UAHTTPRequest *)request {
+- (void)request:(UAHTTPRequest *)request didFailWithError:(NSError *)error {
     UA_ANALYTICS_LOG(@"Send analytics data request failed.");
     self.connection = nil;
     [self invalidateBackgroundTask];

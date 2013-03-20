@@ -50,6 +50,8 @@
 #define kAliasKey @"UAUserAliasKey"
 #define kUserUrlKey @"UAUserUrlKey"
 
+@class UAHTTPRequest;
+
 @interface UAUser()
 
 
@@ -79,11 +81,11 @@
 - (void)updateDefaultDeviceToken;
 
 //User retrieval
-- (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request;
-- (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request;
+- (void)retrieveRequestSucceeded:(UAHTTPRequest *)request;
+- (void)retrieveRequestFailed:(UAHTTPRequest *)request;
 
 //User creation
-- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request;
+- (void)userCreationDidFail:(UAHTTPRequest *)request;
 
 @end
 

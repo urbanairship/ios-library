@@ -27,7 +27,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAObservable.h"
 
 @class UAAnalytics;
-@class UA_ASIHTTPRequest;
 @class UALocationService;
 
 UA_VERSION_INTERFACE(AirshipVersion)
