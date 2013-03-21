@@ -27,9 +27,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInbox.h"
 
-#import "UA_ASINetworkQueue.h"
-#import "UA_ASIHTTPRequest.h"
-
 #import "UAirship.h"
 #import "UAInboxDBManager.h"
 #import "UAInboxMessageList.h"
