@@ -473,12 +473,12 @@ static Class _uiClass;
 
 			} else if ([delegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 				// The alert is a a dictionary with more localization details
-				// This should be customized to fit your message details or usage scenario
+				// This should be customized to fit your message details or usage scenario 
                 [delegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
 			}
-			
+
 		}
-        
+
         //badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
@@ -610,8 +610,17 @@ static Class _uiClass;
             return;
         }
         UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:currentRegistrationPayload];
+
+
+        
         UALOG(@"Starting registration PUT request");
-        [putRequest startAsynchronous];
+        [self.connection cancel];
+        self.connection = [UAHTTPConnection connectionWithRequest:putRequest];
+
+        self.connection.delegate = self;
+        self.connection.successSelector = @selector(registerDeviceTokenSucceeded:);
+        self.connection.failureSelector = @selector(registerDeviceTokenFailed:);
+        [self.connection start];
     }
     else {
         // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
@@ -624,8 +633,14 @@ static Class _uiClass;
         // Don't unregister more than once
         if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering]) {
             UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
+
             UALOG(@"Starting registration DELETE request (unregistering)");
-            [deleteRequest startAsynchronous];
+            [self.connection cancel];
+            self.connection = [UAHTTPConnection connectionWithRequest:deleteRequest];
+            self.connection.delegate = self;
+            self.connection.successSelector = @selector(unRegisterDeviceTokenSucceeded:);
+            self.connection.failureSelector = @selector(unRegisterDeviceTokenFailed:);
+            [self.connection start];
         }
         else {
             UALOG(@"Device has already been unregistered, no update scheduled");
@@ -654,25 +669,27 @@ static Class _uiClass;
     self.isRegistering = YES;
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
+
     UALOG(@"Starting deprecated registration request");
-    [putRequest startAsynchronous];
+    UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
+
+    [self.connection cancel];
+    self.connection = [UAHTTPConnection connectionWithRequest:putRequest];
+    [self.connection start];
 }
 
-- (UA_ASIHTTPRequest*)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
+- (UAHTTPRequest *)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
                            [UAirship shared].server, @"/api/device_tokens/",
                            self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils requestWithURL:url
-                                                  method:@"PUT"
-                                                delegate:self
-                                                  finish:@selector(registerDeviceTokenSucceeded:)
-                                                    fail:@selector(registerDeviceTokenFailed:)];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url
+                                                    method:@"PUT"];
+
     if (info != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
         UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-        [request appendData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
+        [request appendBodyData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
         // add the registration payload as the userInfo object to cache on upload success
         // two values, the registration payload and the pushEnabled value
         NSDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:info];
@@ -742,8 +759,7 @@ static Class _uiClass;
     UALOG(@"Request to unregister device token.");
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url
                                                     method:@"DELETE"];//]
-                                                  ////finish:@selector(unRegisterDeviceTokenSucceeded:)
-                                                  //  fail:@selector(unRegisterDeviceTokenFailed:)];
+
     // add the registration payload as the userInfo object to cache on upload success
     // two values, the registration payload and the pushEnabled value
     NSMutableDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:[self registrationPayload]];
@@ -755,7 +771,7 @@ static Class _uiClass;
 #pragma mark UA API Registration callbacks
 
 - (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    [UAUtils requestWentWrong:request keyword:@"registering device token"];
+    [UAUtils logFailedRequest:request withMessage:@"registering device token"];
     if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
         return;
@@ -782,7 +798,7 @@ static Class _uiClass;
 }
 
 - (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request {
-    [UAUtils requestWentWrong:request keyword:@"unRegistering device token"];
+    [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
     if ([self shouldRetryRequest:request]) {
         [self scheduleRetryForRequest:request];
         return;
@@ -810,11 +826,11 @@ static Class _uiClass;
     }
 }
 
-- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request withError:(NSError *)error {
+- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request {
     if (!self.retryOnConnectionError) {
         return NO;
     }
-    if (error) {
+    if (request.error) {
         return YES;
     }
     if (request.response.statusCode >= 500 && request.response.statusCode <= 599) {

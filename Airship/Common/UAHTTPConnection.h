@@ -25,6 +25,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAHTTPRequest;
+typedef void (^UAHTTPRequestSuccessBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
+
 @interface UAHTTPRequest : NSObject {
 
 }
@@ -39,6 +43,8 @@
 @property (retain, nonatomic) id userInfo;
 
 @property (readonly, nonatomic) NSHTTPURLResponse *response;
+@property (readonly, nonatomic) NSString *responseString;
+@property (readonly, nonatomic) NSData *responseData;
 @property (readonly, nonatomic) NSError *error;
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
@@ -52,23 +58,30 @@
 
 @end
 
+
+
 @protocol UAHTTPConnectionDelegate <NSObject>
 @required
-- (void)request:(UAHTTPRequest *)request
-        didSucceedWithResponse:(NSHTTPURLResponse *)response
-                  responseData:(NSData *)responseData;
-- (void)request:(UAHTTPRequest *)request didFailWithError:(NSError *)error;
+- (void)requestDidFinish:(UAHTTPRequest *)request;
+- (void)requestDidFail:(UAHTTPRequest *)request;
 @end
 
-@interface UAHTTPConnection : NSObject {
+@interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
     
     UAHTTPRequest *_request;
     NSHTTPURLResponse *_urlResponse;
 	NSMutableData *_responseData;
 
 }
-@property (assign, nonatomic) id<UAHTTPConnectionDelegate> delegate;
+
 @property (nonatomic, retain) NSURLConnection *urlConnection;
+
+@property (assign, nonatomic) id delegate;
+@property (nonatomic, assign) SEL successSelector;
+@property (nonatomic, assign) SEL failureSelector;
+
+@property (nonatomic, copy) UAHTTPRequestSuccessBlock successBlock;
+@property (nonatomic, copy) UAHTTPRequestFailureBlock failureBlock;
 
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
@@ -76,6 +89,11 @@
 
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
 - (BOOL)start;
+- (BOOL)startSynchronous;
+- (void)cancel;
+
+#pragma mark -
+#pragma mark NSURLConnectionDelegate
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response;
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;

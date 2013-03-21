@@ -444,33 +444,35 @@ static UAUser *_defaultUser;
                            @"/api/user/"];
 	
     NSURL *createUrl = [NSURL URLWithString:urlString];
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:createUrl
-                                               method:@"POST"
-                                             delegate:self
-                                               finish:@selector(userCreated:)
-                                                 fail:@selector(userCreationDidFail:)];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl
+                                                    method:@"POST"];
 
     NSMutableDictionary *data = [self createUserDictionary];
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
-    NSString* body = [writer stringWithObject:data];
-    [writer release];
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    NSString *body = [writer stringWithObject:data];
+
     UALOG(@"Create user with body: %@", body);
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-    [request startAsynchronous];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    self.connection = [UAHTTPConnection connectionWithRequest:request];
+    self.connection.delegate = self;
+    self.connection.successSelector = @selector(userCreated:);
+    self.connection.failureSelector = @selector(userCreationDidFail:);
+    [self.connection start];
 }
 
-- (void)userCreated:(UA_ASIHTTPRequest*)request {
+- (void)userCreated:(UAHTTPRequest *)request {
     
-    UALOG(@"User created: %d:%@", request.responseStatusCode, request.responseString);
+    UALOG(@"User created: %d:%@", request.response.statusCode, request.responseString);
 
     // done creating! or it failed..
     // wait to update the state enum until the next state is determined below
     creatingUser = NO;
 
-    switch (request.responseStatusCode) {
+    switch (request.response.statusCode) {
         case 201://created
         {
             UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
@@ -483,9 +485,9 @@ static UAUser *_defaultUser;
             [self saveUserData];
             
             // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
-            if (request.postBody != nil) {
+            if (request.body) {
                 
-                NSString *requestString = [[NSString alloc] initWithData:request.postBody encoding:NSUTF8StringEncoding];
+                NSString *requestString = [[NSString alloc] initWithData:request.body encoding:NSUTF8StringEncoding];
                 NSDictionary *requestDict = [parser objectWithString:requestString];
                 
                 [requestString release];
@@ -533,7 +535,7 @@ static UAUser *_defaultUser;
     }
 }
 
-- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request {
+- (void)userCreationDidFail:(UAHTTPRequest *)request {
     creatingUser = NO;
     [self updateUserState];
     [self userRequestWentWrong:request];
@@ -581,24 +583,24 @@ static UAUser *_defaultUser;
     [self updateUserInfo:dict withDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];  
 }
 
-- (void)modifyUserWithEmailFailed:(UA_ASIHTTPRequest*)request {
+- (void)modifyUserWithEmailFailed:(UAHTTPRequest *)request {
     
-    [UAUtils requestWentWrong:request keyword:@"Modify user with email failed."];
+    [UAUtils logFailedRequest:request withMessage:@"Modify user with email failed."];
     [self notifyObservers:@selector(userUpdateFailed)];
 
 }
 
-- (void)modifyUserWithEmailUpdated:(UA_ASIHTTPRequest*)request {
+- (void)modifyUserWithEmailUpdated:(UAHTTPRequest *)request {
 
-    UALOG(@"User updated: %d:%@, URL: %@", request.responseStatusCode,
+    UALOG(@"User updated: %d:%@, URL: %@", request.response.statusCode,
           request.responseString, [request.url absoluteString]);
 
-    if(request.responseStatusCode == 409) {
+    if(request.response.statusCode == 409) {
         self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
         // Data for this user exists already, so we need to start the recovery flow
         [self startRecovery];
 
-    } else if (request.responseStatusCode == 200) {
+    } else if (request.response.statusCode == 200) {
         // Need to save user data and also loadSubscriptions
         [self saveUserData];
 	
@@ -626,11 +628,8 @@ static UAUser *_defaultUser;
                            [[UAirship shared] server],
                            @"/api/user/recover/"];
 
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL:[NSURL URLWithString:urlString]
-                                               method:@"POST"
-                                             delegate:self
-                                               finish:@selector(recoveryRequestSucceeded:)
-                                                 fail:@selector(recoveryRequestFailed:)];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString]
+                                                  method:@"POST"];
 
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     NSDictionary* data = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -643,17 +642,23 @@ static UAUser *_defaultUser;
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     NSString* body = [writer stringWithObject:data];
 
-    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-    [request startAsynchronous];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    self.connection = [UAHTTPConnection connectionWithRequest:request];
+    self.connection.delegate = self;
+    self.connection.successSelector = @selector(recoveryRequestSucceeded:);
+    self.connection.failureSelector = @selector(recoveryRequestFailed:);
+    [self.connection start];
+
     [writer release];
     [data release];
     
 }
 
-- (void)recoveryRequestSucceeded:(UA_ASIHTTPRequest*)request {
+- (void)recoveryRequestSucceeded:(UAHTTPRequest *)request {
 
     // Check for an API rejection of the recovery
-    if(request.responseStatusCode != 200) {
+    if(request.response.statusCode != 200) {
         [self cancelRecovery];
 
         [self notifyObservers:@selector(userRecoveryFailed)];
@@ -661,9 +666,9 @@ static UAUser *_defaultUser;
     } else {
         // No API rejection, so we're OK to continue with recovery
 
-        UALOG(@"Recovery Started: %d:%@, URL: %@", request.responseStatusCode,
+        UALOG(@"Recovery Started: %d:%@, URL: %@", request.response.statusCode,
               request.responseString, [request.url absoluteString]);
-        UALOG(@"Request Method: %@", request.requestMethod);
+        UALOG(@"Request Method: %@", request.HTTPMethod);
 
         UA_SBJsonParser *parser = [UA_SBJsonParser new];
         NSDictionary *result = [parser objectWithString: request.responseString];
@@ -678,7 +683,7 @@ static UAUser *_defaultUser;
     }
 }
 
-- (void)recoveryRequestFailed:(UA_ASIHTTPRequest*)request {
+- (void)recoveryRequestFailed:(UAHTTPRequest *)request {
 
     // Send the bad request to error handling
     [self requestWentWrong:request];
@@ -736,26 +741,26 @@ static UAUser *_defaultUser;
     UALOG(@"Checking Recovery Status");
     UALOG(@"recovery status url: %@", self.recoveryStatusUrl);
 
-    UA_ASIHTTPRequest *request = [UAUtils requestWithURL: [NSURL URLWithString: self.recoveryStatusUrl]
-                                               method: @"GET"
-                                             delegate: self
-                                               finish: @selector(recoveryStatusUpdated:)];
-    [request startAsynchronous];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL: [NSURL URLWithString: self.recoveryStatusUrl]
+                                                    method: @"GET"];
+    
+    self.connection = [UAHTTPConnection connectionWithRequest:request];
+    self.connection.delegate = self;
+    self.connection.successSelector = @selector(recoveryStatusUpdated:);
+    [self.connection start];
 }
 
-- (void)recoveryStatusUpdated:(UA_ASIHTTPRequest *)request {
+- (void)recoveryStatusUpdated:(UAHTTPRequest *)request {
 
-    if (request.responseStatusCode == 200) {
+    if (request.response.statusCode == 200) {
 
-        UA_SBJsonParser *parser = [UA_SBJsonParser new];
+        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString: request.responseString];
-
-        [parser release];
 
         NSString *status = [result objectForKey:@"status"];
 
         UALOG(@"Status update received: %@", status);
-        UALOG(@"Response: %d\n%@\n", request.responseStatusCode,
+        UALOG(@"Response: %d\n%@\n", request.response.statusCode,
               request.responseString);
 
         // Only process this update if it is for status "complete" - meaning the server has registered that the user clicked the recovery link
@@ -780,51 +785,52 @@ static UAUser *_defaultUser;
             
             
             //The user's existing tags and alias must now be retrieved
-            UA_ASIHTTPRequest *getRequest = [UAUtils userRequestWithURL:[NSURL URLWithString:self.url]
-                                                              method:@"GET"
-                                                            delegate:nil 
-                                                              finish:nil
-                                                                fail:nil];
-            [getRequest startSynchronous];
-			
-            if (getRequest.responseStatusCode == 200) {
-                
-                parser = [UA_SBJsonParser new];
-                NSDictionary *getResult = [parser objectWithString:getRequest.responseString];
-                [parser release];
-                
-                UALOG(@"Recover User GET result: %@", [getResult descriptionWithLocale: nil indent: 1]);
-                
-                self.tags = [NSMutableSet setWithArray:[getResult objectForKey:@"tags"]];
-                self.alias = [getResult objectForKey:@"alias"];
-                
-                // Ensure that the device token is updated if it's available. If for some reason, the device token on
-                // the UA server does not match our cached device token, we are out of sync and need to discard our
-                // local cache to force an update
-                NSArray *deviceTokens = [getResult objectForKey:@"device_tokens"];
-				if([deviceTokens count] > 0) {
-					NSString *deviceToken = [deviceTokens objectAtIndex:0];
-                    if (![[deviceToken lowercaseString] isEqualToString:[[self serverDeviceToken] lowercaseString]]) {
-                        UALOG(@"Existing token %@ does not match server side token %@", [self serverDeviceToken], deviceToken);
-                        [self setServerDeviceToken:nil];
+
+//TODO: blockify this
+
+            UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:self.url] method:@"GET"];
+
+            UAHTTPConnection *getConnection = [UAHTTPConnection connectionWithRequest:getRequest];
+            self.connection.successBlock = ^(UAHTTPRequest *finishedRequest) {
+                if (finishedRequest.response.statusCode == 200) {
+
+                    NSDictionary *getResult = [parser objectWithString:finishedRequest.responseString];
+
+                    UALOG(@"Recover User GET result: %@", [getResult descriptionWithLocale: nil indent: 1]);
+
+                    self.tags = [NSMutableSet setWithArray:[getResult objectForKey:@"tags"]];
+                    self.alias = [getResult objectForKey:@"alias"];
+
+                    // Ensure that the device token is updated if it's available. If for some reason, the device token on
+                    // the UA server does not match our cached device token, we are out of sync and need to discard our
+                    // local cache to force an update
+                    NSArray *deviceTokens = [getResult objectForKey:@"device_tokens"];
+                    if([deviceTokens count] > 0) {
+                        NSString *deviceToken = [deviceTokens objectAtIndex:0];
+                        if (![[deviceToken lowercaseString] isEqualToString:[[self serverDeviceToken] lowercaseString]]) {
+                            UALOG(@"Existing token %@ does not match server side token %@", [self serverDeviceToken], deviceToken);
+                            [self setServerDeviceToken:nil];
+                        }
                     }
-				} 
-				
-            } else {
-                UALOG(@"Get existing alias and tags failed.");
-            }
-            
-            // Current session is now done recovering.
-            self.inRecovery = NO;
-        
-            [self saveUserData];
-            
-			// Update the default device token - this will do the right thing based whether the device token still exists
-            // in the cache
-            [self updateDefaultDeviceToken];
-			
-            // Tell the world that we're done recovering
-            [self notifyObservers:@selector(userRecoveryFinished)];
+
+                } else {
+                    UALOG(@"Get existing alias and tags failed.");
+                }
+
+                // Current session is now done recovering.
+                self.inRecovery = NO;
+
+                [self saveUserData];
+
+                // Update the default device token - this will do the right thing based whether the device token still exists
+                // in the cache
+                [self updateDefaultDeviceToken];
+                
+                // Tell the world that we're done recovering
+                [self notifyObservers:@selector(userRecoveryFinished)];
+            };
+
+            [getConnection start];
         }
     } else {
         // Send the bad request to error handling
@@ -861,19 +867,21 @@ static UAUser *_defaultUser;
                                  @"/api/user/",
                                  [self username]];
     
-    UA_ASIHTTPRequest *getRequest = [UAUtils userRequestWithURL:[NSURL URLWithString:retrieveUrlString]
-                                                         method:@"GET"
-                                                       delegate:self 
-                                                         finish:@selector(retrieveRequestSucceeded:)
-                                                           fail:@selector(retrieveRequestFailed:)];
-    [getRequest startAsynchronous];
+    UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:retrieveUrlString]
+                                                     method:@"GET"];
+
+    self.connection = [UAHTTPConnection connectionWithRequest:getRequest];
+    _connection.delegate = self;
+    _connection.successSelector = @selector(retrieveRequestSucceeded:);
+    _connection.failureSelector = @selector(retrieveRequestFailed:);
+    [_connection start];
 }
 
-- (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request {
-    UALOG(@"User retrieved: %d:%@", request.responseStatusCode, request.responseString);
+- (void)retrieveRequestSucceeded:(UAHTTPRequest *)request {
+    UALOG(@"User retrieved: %d:%@", request.response.statusCode, request.responseString);
     
-    if (request.responseStatusCode == 200) {
-        UA_SBJsonParser *parser = [UA_SBJsonParser new];
+    if (request.response.statusCode == 200) {
+        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString:request.responseString];
         
         self.url = [result objectForKey:@"user_url"];
@@ -881,8 +889,6 @@ static UAUser *_defaultUser;
         self.alias = [result objectForKey:@"alias"];
         
         [self saveUserData];
-        
-        [parser release];
         
         self.retrievingUser = NO;
         
@@ -898,8 +904,8 @@ static UAUser *_defaultUser;
     }
 }
 
-- (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request {
-    UALOG(@"User retrieval failed: %d:%@", request.responseStatusCode, request.responseString);
+- (void)retrieveRequestFailed:(UAHTTPRequest *)request {
+    UALOG(@"User retrieval failed: %d:%@", request.response.statusCode, request.responseString);
     self.retrievingUser = NO;
     
     [self notifyObservers:@selector(userRetrieveFailed)];
@@ -910,14 +916,14 @@ static UAUser *_defaultUser;
 #pragma mark HTTP Request Failure Handler
 
 // Default failure handler, set in UAUtils helper function
-- (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
+- (void)requestWentWrong:(UAHTTPRequest *)request {
     
-    [UAUtils requestWentWrong:request];
+    [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
 
 }
 
 // For observer interested request
-- (void)userRequestWentWrong:(UA_ASIHTTPRequest*)request {
+- (void)userRequestWentWrong:(UAHTTPRequest *)request {
     [self requestWentWrong:request];
     [self notifyObservers:@selector(userUpdateFailed)];
 }
@@ -1055,8 +1061,8 @@ static UAUser *_defaultUser;
 }
 
 
-- (void)updateUserGetFinished:(UA_ASIHTTPRequest *)request {
-	if(request.responseStatusCode != 200) {
+- (void)updateUserGetFinished:(UAHTTPRequest *)request {
+	if(request.response.statusCode != 200) {
 		[self requestWentWrong:request];
 	}
 }
@@ -1073,12 +1079,9 @@ static UAUser *_defaultUser;
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 	
 	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:updateUrl
-                                                      method:@"POST"
-                                                    delegate:delegate
-                                                      finish:finishSelector
-                                                        fail:failSelector];
-	
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl
+                                                  method:@"POST"];
+    
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter new] autorelease];
@@ -1086,8 +1089,13 @@ static UAUser *_defaultUser;
     
     UALOG(@"Update user with content: %@", body);
     
-    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-    [request startAsynchronous];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    self.connection = [UAHTTPConnection connectionWithRequest:request];
+    _connection.delegate = delegate;
+    _connection.successSelector = finishSelector;
+    _connection.failureSelector = failSelector;
+    [_connection start];
 }
 
 - (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
@@ -1117,19 +1125,18 @@ static UAUser *_defaultUser;
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 	
 	//The user's existing tags and alias must now be retrieved
-	UA_ASIHTTPRequest *getRequest = [UAUtils userRequestWithURL:updateUrl
-														 method:@"GET"
-													   delegate:nil 
-														 finish:nil
-														   fail:nil];
-	[getRequest startSynchronous];
-	
+	UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:updateUrl
+                                                           method:@"GET"];
+
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:getRequest];
+	[connection startSynchronous];
+
 	[self updateUserGetFinished:getRequest];
 	
 	NSMutableArray *deviceTokens = [[[NSMutableArray alloc] init] autorelease];
 	BOOL contains = NO;
 	
-	if (getRequest.responseStatusCode == 200) {
+	if (getRequest.response.statusCode == 200) {
 		
 		UA_SBJsonParser *parser = [UA_SBJsonParser new];
 		NSDictionary *getResult = [parser objectWithString:getRequest.responseString];
@@ -1158,16 +1165,14 @@ static UAUser *_defaultUser;
 	}
 	
 	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:updateUrl
-                                                      method:@"PUT"
-                                                    delegate:(id)[selectors objectForKey:@"delegate"] 
-                                                      finish:NSSelectorFromString([selectors objectForKey:@"finishSelector"])
-                                                        fail:NSSelectorFromString([selectors objectForKey:@"failSelector"])];
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl
+                                                        method:@"PUT"];
+    
 	
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSMutableDictionary *data = [self createUserDictionary];
 	
-	if(getRequest.responseStatusCode == 200) {
+	if([getRequest.response statusCode] == 200) {
 		[data setObject:deviceTokens forKey:@"device_tokens"];		
 	}
 
@@ -1176,11 +1181,15 @@ static UAUser *_defaultUser;
     
     UALOG(@"Update user with content: %@", body);
     
-    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-    [request startAsynchronous];
-    
-    [writer release];
-	
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UAHTTPConnection *updateConnection = [UAHTTPConnection connectionWithRequest:request];
+    updateConnection.delegate = (id)[selectors objectForKey:@"delegate"];
+    updateConnection.successSelector = NSSelectorFromString([selectors objectForKey:@"finishSelector"]);
+    updateConnection.failureSelector = NSSelectorFromString([selectors objectForKey:@"failSelector"]);
+
+    [updateConnection start];
+
 	[pool drain];  // Release the objects in the pool.
 }
 

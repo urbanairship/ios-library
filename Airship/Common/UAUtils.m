@@ -270,6 +270,32 @@
           request.username, request.password);
 }
 
++ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message {
+    UA_LTRACE(@"***** Request ERROR: %@ *****"
+          @"\n\tError: %@"
+          @"\nRequest:"
+          @"\n\tURL: %@"
+          @"\n\tHeaders: %@"
+          @"\n\tMethod: %@"
+          @"\n\tBody: %@"
+          @"\nResponse:"
+          @"\n\tStatus code: %d"
+          @"\n\tHeaders: %@"
+          @"\n\tBody: %@"
+          @"\nUsing U/P: [ %@ / %@ ]",
+          message,
+          request.error,
+          request.url,
+          [request.headers description],
+          request.HTTPMethod,
+          [request.body description],
+          request.response.statusCode,
+          [[request.response allHeaderFields] description],
+          [request.responseData description],
+          request.username,
+          request.password);
+}
+
 + (NSString *)userAuthHeaderString {
     NSString *username = [UAUser defaultUser].username;
     NSString *password = [UAUser defaultUser].password;

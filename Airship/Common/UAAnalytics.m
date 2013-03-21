@@ -454,16 +454,15 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark -
 #pragma mark UAHTTPConnectionDelegate
 
-- (void)requestDidSucceed:(UAHTTPRequest *)request
-                 response:(NSHTTPURLResponse *)response
-             responseData:(NSData *)responseData {
+- (void)requestDidSucceed:(UAHTTPRequest *)request {
 
-    UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
-    UA_ANALYTICS_LOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
+    UALOG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
+    UA_ANALYTICS_LOG(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
+    
     // Update analytics settings with new header values
-    [self updateAnalyticsParametersWithHeaderValues:response];
+    [self updateAnalyticsParametersWithHeaderValues:request.response];
     [self setupSendTimer:x_ua_min_batch_interval];
-    if ([response statusCode] == 200) {
+    if ([request.response statusCode] == 200) {
         id userInfo = request.userInfo;
         if([userInfo isKindOfClass:[NSArray class]]){
             [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
@@ -475,8 +474,14 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         self.lastSendTime = [NSDate date];
     } 
     else{
-        UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [response statusCode]);
+        UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [request.response statusCode]);
     } 
+    self.connection = nil;
+    [self invalidateBackgroundTask];
+}
+
+- (void)requestDidFail:(UAHTTPRequest *)request {
+    UA_ANALYTICS_LOG(@"Send analytics data request failed.");
     self.connection = nil;
     [self invalidateBackgroundTask];
 }
@@ -533,12 +538,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         
         [self saveDefault];
     }
-}
-
-- (void)request:(UAHTTPRequest *)request didFailWithError:(NSError *)error {
-    UA_ANALYTICS_LOG(@"Send analytics data request failed.");
-    self.connection = nil;
-    [self invalidateBackgroundTask];
 }
 
 #pragma mark - 
@@ -726,8 +725,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UA_ANALYTICS_LOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UA_ANALYTICS_LOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];
+
     self.connection = [UAHTTPConnection connectionWithRequest:request];
     connection_.delegate = self;
+    connection_.successSelector = @selector(requestDidSucceed:);
+    connection_.failureSelector = @selector(requestDidFail:);
     [connection_ start];
 }
 

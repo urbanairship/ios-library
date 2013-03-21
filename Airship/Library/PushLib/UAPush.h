@@ -123,7 +123,7 @@ UA_VERSION_INTERFACE(UAPushVersion)
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-@interface UAPush : UAObservable <UAHTTPConnectionDelegate>
+@interface UAPush : UAObservable
 
 
 SINGLETON_INTERFACE(UAPush);

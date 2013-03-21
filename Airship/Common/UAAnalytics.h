@@ -57,7 +57,7 @@ typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
 extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
-@interface UAAnalytics : NSObject<UAHTTPConnectionDelegate> 
+@interface UAAnalytics : NSObject
 
 @property (nonatomic, copy, readonly) NSString *server;
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;

@@ -27,6 +27,7 @@
 #import "UAObservable.h"
 
 @class UAHTTPRequest;
+@class UAHTTPConnection;
 
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,
@@ -94,6 +95,7 @@ typedef enum _UAUserState {
 @property (retain, nonatomic) NSString *url;
 @property (retain, nonatomic) NSString *alias;
 @property (retain, nonatomic) NSMutableSet *tags;
+@property (retain, nonatomic) UAHTTPConnection *connection;
 
 + (UAUser *)defaultUser;
 + (void)land;

@@ -82,6 +82,8 @@
 + (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url
                                  method:(NSString *)method;
 
++ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message;
+
 /**
  * Returns a basic auth header string.
  *
