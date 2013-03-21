@@ -29,16 +29,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxDBManager.h"
-#import "UA_ASIHTTPRequest.h"
+#import "UAHTTPConnection.h"
 #import "UAUtils.h"
 
 /*
  * Private methods
  */
 @interface UAInboxMessage()
-- (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
-- (void)markAsReadFinished:(UA_ASIHTTPRequest *)request;
-- (void)markAsReadFailed:(UA_ASIHTTPRequest *)request;
+- (void)requestWentWrong:(UAHTTPRequest *)request;
+- (void)markAsReadFinished:(UAHTTPRequest *)request;
+- (void)markAsReadFailed:(UAHTTPRequest *)request;
 @end
 
 /*
@@ -126,7 +126,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest *)request {
+- (void)requestWentWrong:(UAHTTPRequest *)request {
     NSError *error = [request error];
     UALOG(@"Connection ERROR: NSError query result: %@ for URL: %@",
           error, [request.url absoluteString]);
@@ -149,28 +149,34 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSURL *url = [NSURL URLWithString: urlString];
     UALOG(@"MARK AS READ %@", urlString);
     
-    UA_ASIHTTPRequest *request = 
-        [UAUtils userRequestWithURL:url 
-                             method:@"POST" 
-                           delegate:self 
-                             finish:@selector(markAsReadFinished:) 
-                               fail:@selector(markAsReadFailed:)];
-    [request startAsynchronous];
+    UAHTTPRequest *request =
+        [UAUtils UAHTTPUserRequestWithURL:url
+                                   method:@"POST"];
+
+
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
+
+    connection.delegate = self;
+    connection.successSelector = @selector(markAsReadFinished:);
+    connection.failureSelector = @selector(markAsReadFailed:);
+
+    [connection start];
+
     return YES;
 }
 
-- (void)markAsReadFinished:(UA_ASIHTTPRequest *)request {
+- (void)markAsReadFinished:(UAHTTPRequest *)request {
     
-    if (request.responseStatusCode != 200) {
+    if ([request.response statusCode] != 200) {
         
         UALOG(@"Server error when setting message as read, response: %d - %@",
-              request.responseStatusCode,
+              [request.response statusCode],
               request.responseString);
         [self markAsReadFailed:request];
         
     } else {
         UALOG(@"Finished: %@ - %d - %@", [[request url] absoluteString],
-              [request responseStatusCode],
+              [request.response statusCode],
               request.responseString);
         
         if (self.unread) {
@@ -186,7 +192,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 }
 
-- (void)markAsReadFailed:(UA_ASIHTTPRequest*)request {
+- (void)markAsReadFailed:(UAHTTPRequest *)request {
     [self requestWentWrong:request];
     [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 }

@@ -30,7 +30,6 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
-#import "UA_ASIHTTPRequest.h"
 #import "UA_SBJSON.h"
 
 static UAUser *_defaultUser;
@@ -994,9 +993,9 @@ static UAUser *_defaultUser;
     
 }
 
-- (void)updatedDefaultDeviceToken:(UA_ASIHTTPRequest*)request {
+- (void)updatedDefaultDeviceToken:(UAHTTPRequest *)request {
 
-    if (request.responseStatusCode == 200 || request.responseStatusCode == 201){
+    if ([request.response statusCode] == 200 || [request.response statusCode] == 201){
         
         // The dictionary for the post body is built as follows in updateDeviceToken
         //    "device_tokens" =     {
@@ -1006,7 +1005,7 @@ static UAUser *_defaultUser;
         //    };
         // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
         
-        NSString *rawJson = [[[NSString alloc] initWithData:request.postBody  encoding:NSASCIIStringEncoding] autorelease];
+        NSString *rawJson = [[[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding] autorelease];
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
         NSDictionary *postBody = [parser objectWithString:rawJson];
@@ -1016,12 +1015,12 @@ static UAUser *_defaultUser;
         // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
         [self setServerDeviceToken:successfullyUploadedDeviceToken];
         
-        UALOG(@"Updated Device Token succeeded with response: %d", request.responseStatusCode);
+        UALOG(@"Updated Device Token succeeded with response: %d", [request.response statusCode]);
         UALOG(@"Logged last updated key %@", successfullyUploadedDeviceToken);
     }
     else {
         // If we got an other than 200/201, that's just odd
-        UALOG(@"Update request did not succeed with expected response: %d", request.responseStatusCode);
+        UALOG(@"Update request did not succeed with expected response: %d", [request.response statusCode]);
     }
 }
 

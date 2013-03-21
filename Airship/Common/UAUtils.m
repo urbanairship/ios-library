@@ -31,8 +31,11 @@
 // UA external libraries
 #import "UA_SBJSON.h"
 #import "UA_Base64.h"
-#import "UA_ASIHTTPRequest.h"
 #import "UAHTTPConnection.h"
+
+#ifdef UA_FULL_LIB
+#import "UA_ASIHTTPRequest.h"
+#endif
 
 // UALib
 #import "UAUser.h"
@@ -139,6 +142,8 @@
     return value;
 }
 
+#ifdef UA_FULL_LIB
+
 #pragma mark -
 #pragma mark ASIHTTPRequest helper methods
 
@@ -203,38 +208,6 @@
     return request;
 }
 
-+ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url
-                                     method:(NSString *)method {
-    if (![UAirship shared].ready) {
-        return nil;
-    }
-    
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
-    request.HTTPMethod = method;
-    
-    request.username = [UAUser defaultUser].username;
-    request.password = [UAUser defaultUser].password;
-    
-    
-    return request;
-}
-
-+ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url
-                                 method:(NSString *)method {
-    if (![UAirship shared].ready) {
-        return nil;
-    }
-    
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
-    request.HTTPMethod = method;
-    
-    request.username = [UAirship shared].appId;
-    request.password = [UAirship shared].appSecret;
-    
-    return request;
-    
-}
-
 + (id)responseFromRequest:(UA_ASIHTTPRequest *)request {
     return [UAUtils parseJSON:request.responseString];
 }
@@ -268,6 +241,40 @@
           request.url, request.requestHeaders, request.requestMethod, request.postBody,
           request.responseStatusCode, request.responseHeaders, request.responseString,
           request.username, request.password);
+}
+
+#endif
+
++ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url
+                                     method:(NSString *)method {
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
+    
+    request.username = [UAUser defaultUser].username;
+    request.password = [UAUser defaultUser].password;
+    
+    
+    return request;
+}
+
++ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url
+                                 method:(NSString *)method {
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
+    
+    request.username = [UAirship shared].appId;
+    request.password = [UAirship shared].appSecret;
+    
+    return request;
+    
 }
 
 + (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message {

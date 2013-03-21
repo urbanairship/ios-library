@@ -86,13 +86,14 @@ static NSString *defaultUserAgentString;
 
 - (void)appendBodyData:(NSData *)data {
     if (!self.body) {
-        self.body = [[NSMutableData alloc] init];
+        self.body = [NSMutableData data];
     }
     [self.body appendData:data];
 }
 
 - (NSString *)responseString {
-    return [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
+    //TODO: cache?
+    return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
 }
 
 @end
@@ -139,7 +140,10 @@ static NSString *defaultUserAgentString;
         UALOG(@"ERROR: UAHTTPConnection already started: %@", self);
         return nil;
     } else {
+        UA_LDEBUG(@"Building an NSURLRequest");
+        UA_LDEBUG(@"Request %@",[_request description]);
         NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:_request.url];
+        UA_LERR(@"%@",[[urlRequest URL] absoluteString]);
         for (NSString *header in [_request.headers allKeys]) {
             [urlRequest setValue:[_request.headers valueForKey:header] forHTTPHeaderField:header];
         }
@@ -190,10 +194,15 @@ static NSString *defaultUserAgentString;
 - (BOOL)start {
     NSURLRequest *urlRequest = [self buildRequest];
 
+    UA_LERR(@"%@",[[urlRequest URL] absoluteString]);
+
     if (!urlRequest) {
         return NO;
     }
-    
+
+    // keep ourselves around for a while so the request can complete
+    [self retain];
+
     _responseData = [[NSMutableData alloc] init];
     self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 
@@ -240,14 +249,15 @@ static NSString *defaultUserAgentString;
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     UALOG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     _request.error = error;
-    if (self.delegate && self.failureSelector && [self.delegate respondsToSelector:self.failureSelector]) {
-        [self.delegate requestDidFail:_request];
+    if (self.delegate && [self.delegate respondsToSelector:self.failureSelector]) {
         [self.delegate performSelector:self.failureSelector withObject:_request];
     }
 
     if (self.failureBlock) {
         self.failureBlock(_request);
     }
+    
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -256,12 +266,14 @@ static NSString *defaultUserAgentString;
     _request.responseData = _responseData;
     
     if (self.delegate && [self.delegate respondsToSelector:self.successSelector]) {
-        [self.delegate performSelector:self.failureSelector withObject:_request];
+        [self.delegate performSelector:self.successSelector withObject:_request];
     }
 
     if (self.successBlock) {
         self.successBlock(_request);
     }
+    
+    [self release];
 }
 
 #pragma mark -
