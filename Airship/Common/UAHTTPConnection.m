@@ -130,6 +130,28 @@ static NSString *defaultUserAgentString;
     return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
 }
 
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                                   delegate:(id)delegate
+                                    success:(SEL)successSelector
+                                    failure:(SEL)failureSelector {
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    connection.delegate = delegate;
+    connection.successSelector = successSelector;
+    connection.failureSelector = failureSelector;
+
+    return connection;
+}
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                               successBlock:(UAHTTPRequestSuccessBlock)successBlock
+                               failureBlock:(UAHTTPRequestFailureBlock)failureBlock {
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    connection.successBlock = successBlock;
+    connection.failureBlock = failureBlock;
+
+    return connection;
+}
+
 - (id)init {
     return [super init];
 }

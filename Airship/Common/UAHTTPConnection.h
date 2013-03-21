@@ -81,6 +81,16 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                                   delegate:(id)delegate
+                                    success:(SEL)successSelector
+                                    failure:(SEL)failureSelector;
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                                   delegate:(id)delegate
+                               successBlock:(UAHTTPRequestSuccessBlock)successBlock
+                               failureBlock:(UAHTTPRequestSuccessBlock)failureBlock;
+
 + (void)setDefaultUserAgentString:(NSString *)userAgent;
 
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
