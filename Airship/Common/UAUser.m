@@ -443,8 +443,7 @@ static UAUser *_defaultUser;
                            @"/api/user/"];
 	
     NSURL *createUrl = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl
-                                                    method:@"POST"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
 
     NSMutableDictionary *data = [self createUserDictionary];
 
@@ -627,8 +626,7 @@ static UAUser *_defaultUser;
                            [[UAirship shared] server],
                            @"/api/user/recover/"];
 
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString]
-                                                  method:@"POST"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     NSDictionary* data = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -740,8 +738,7 @@ static UAUser *_defaultUser;
     UALOG(@"Checking Recovery Status");
     UALOG(@"recovery status url: %@", self.recoveryStatusUrl);
 
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL: [NSURL URLWithString: self.recoveryStatusUrl]
-                                                    method: @"GET"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString: self.recoveryStatusUrl] method: @"GET"];
     
     self.connection = [UAHTTPConnection connectionWithRequest:request];
     self.connection.delegate = self;
@@ -782,11 +779,7 @@ static UAUser *_defaultUser;
             self.recoveryStatusUrl = @"";
             self.sentRecoveryEmail = NO;
             
-            
             //The user's existing tags and alias must now be retrieved
-
-//TODO: blockify this
-
             UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:self.url] method:@"GET"];
 
             UAHTTPConnection *getConnection = [UAHTTPConnection connectionWithRequest:getRequest];
@@ -866,8 +859,7 @@ static UAUser *_defaultUser;
                                  @"/api/user/",
                                  [self username]];
     
-    UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:retrieveUrlString]
-                                                     method:@"GET"];
+    UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:retrieveUrlString] method:@"GET"];
 
     self.connection = [UAHTTPConnection connectionWithRequest:getRequest];
     _connection.delegate = self;
@@ -1078,8 +1070,7 @@ static UAUser *_defaultUser;
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 	
 	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl
-                                                  method:@"POST"];
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
     
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     
@@ -1124,8 +1115,7 @@ static UAUser *_defaultUser;
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 	
 	//The user's existing tags and alias must now be retrieved
-	UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:updateUrl
-                                                           method:@"GET"];
+	UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"GET"];
 
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:getRequest];
 	[connection startSynchronous];
@@ -1164,8 +1154,7 @@ static UAUser *_defaultUser;
 	}
 	
 	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl
-                                                        method:@"PUT"];
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"PUT"];
     
 	
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];

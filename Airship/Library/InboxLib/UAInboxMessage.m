@@ -149,11 +149,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSURL *url = [NSURL URLWithString: urlString];
     UALOG(@"MARK AS READ %@", urlString);
     
-    UAHTTPRequest *request =
-        [UAUtils UAHTTPUserRequestWithURL:url
-                                   method:@"POST"];
-
-
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:url method:@"POST"];
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
 
     connection.delegate = self;

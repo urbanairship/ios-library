@@ -245,8 +245,7 @@
 
 #endif
 
-+ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url
-                                     method:(NSString *)method {
++ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url method:(NSString *)method {
     if (![UAirship shared].ready) {
         return nil;
     }
@@ -261,8 +260,7 @@
     return request;
 }
 
-+ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url
-                                 method:(NSString *)method {
++ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url method:(NSString *)method {
     if (![UAirship shared].ready) {
         return nil;
     }

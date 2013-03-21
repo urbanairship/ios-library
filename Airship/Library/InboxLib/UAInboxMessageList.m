@@ -131,8 +131,6 @@ static UAInboxMessageList *_messageList = nil;
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
-
-
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
 
     connection.delegate = self;

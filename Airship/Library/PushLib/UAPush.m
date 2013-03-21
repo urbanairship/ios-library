@@ -683,8 +683,7 @@ static Class _uiClass;
                            [UAirship shared].server, @"/api/device_tokens/",
                            self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url
-                                                    method:@"PUT"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
 
     if (info != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
@@ -757,8 +756,7 @@ static Class _uiClass;
                            self.deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UALOG(@"Request to unregister device token.");
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url
-                                                    method:@"DELETE"];//]
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
 
     // add the registration payload as the userInfo object to cache on upload success
     // two values, the registration payload and the pushEnabled value

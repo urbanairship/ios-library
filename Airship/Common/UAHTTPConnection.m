@@ -98,11 +98,26 @@ static NSString *defaultUserAgentString;
 
 @end
 
+
+
+
+//----------------------------------------
+// UAHTTPConnection
+//----------------------------------------
+
+
+
+#pragma mark -
+#pragma mark UAHTTPConnection Continuation
+
 @interface UAHTTPConnection()
 
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData;
 @end
+
+#pragma mark -
+#pragma mark UAHTTPConnection
 
 @implementation UAHTTPConnection
 
@@ -127,7 +142,7 @@ static NSString *defaultUserAgentString;
     return self;
 }
 
-- (void) dealloc {
+- (void)dealloc {
     RELEASE_SAFELY(_request);
     RELEASE_SAFELY(_urlConnection);
     RELEASE_SAFELY(_urlResponse);
@@ -140,10 +155,9 @@ static NSString *defaultUserAgentString;
         UALOG(@"ERROR: UAHTTPConnection already started: %@", self);
         return nil;
     } else {
-        UA_LDEBUG(@"Building an NSURLRequest");
-        UA_LDEBUG(@"Request %@",[_request description]);
+
         NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:_request.url];
-        UA_LERR(@"%@",[[urlRequest URL] absoluteString]);
+        
         for (NSString *header in [_request.headers allKeys]) {
             [urlRequest setValue:[_request.headers valueForKey:header] forHTTPHeaderField:header];
         }
@@ -194,8 +208,6 @@ static NSString *defaultUserAgentString;
 - (BOOL)start {
     NSURLRequest *urlRequest = [self buildRequest];
 
-    UA_LERR(@"%@",[[urlRequest URL] absoluteString]);
-
     if (!urlRequest) {
         return NO;
     }
@@ -222,12 +234,14 @@ static NSString *defaultUserAgentString;
 
     _request.response = _urlResponse;
     _request.responseData = _responseData;
+    _request.error = error;
 
     return !error;
 }
 
 - (void)cancel {
-    // TODO:
+    // TODO: moar?
+    [self.urlConnection cancel];
 }
 
 #pragma mark -
@@ -241,15 +255,13 @@ static NSString *defaultUserAgentString;
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    if (_responseData) {
-        [_responseData appendData:data];
-    }
+    [_responseData appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     UALOG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     _request.error = error;
-    if (self.delegate && [self.delegate respondsToSelector:self.failureSelector]) {
+    if ([self.delegate respondsToSelector:self.failureSelector]) {
         [self.delegate performSelector:self.failureSelector withObject:_request];
     }
 
@@ -265,7 +277,7 @@ static NSString *defaultUserAgentString;
     _request.response = _urlResponse;
     _request.responseData = _responseData;
     
-    if (self.delegate && [self.delegate respondsToSelector:self.successSelector]) {
+    if ([self.delegate respondsToSelector:self.successSelector]) {
         [self.delegate performSelector:self.successSelector withObject:_request];
     }
 

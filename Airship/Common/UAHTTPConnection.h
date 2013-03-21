@@ -58,19 +58,14 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
 
 @end
 
-
-
-@protocol UAHTTPConnectionDelegate <NSObject>
-@required
-- (void)requestDidFinish:(UAHTTPRequest *)request;
-- (void)requestDidFail:(UAHTTPRequest *)request;
-@end
-
+/**
+ *
+ */
 @interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
     
     UAHTTPRequest *_request;
     NSHTTPURLResponse *_urlResponse;
-	NSMutableData *_responseData;
+    NSMutableData *_responseData;
 
 }
 
@@ -85,6 +80,7 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
 
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
+
 + (void)setDefaultUserAgentString:(NSString *)userAgent;
 
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
