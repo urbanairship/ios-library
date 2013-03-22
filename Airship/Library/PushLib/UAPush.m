@@ -615,11 +615,11 @@ static Class _uiClass;
         
         UALOG(@"Starting registration PUT request");
         [self.connection cancel];
-        self.connection = [UAHTTPConnection connectionWithRequest:putRequest];
+        self.connection = [UAHTTPConnection connectionWithRequest:putRequest
+                                                          delegate:self
+                                                          success:@selector(registerDeviceTokenSucceeded:)
+                                                          failure:@selector(registerDeviceTokenFailed:)];
 
-        self.connection.delegate = self;
-        self.connection.successSelector = @selector(registerDeviceTokenSucceeded:);
-        self.connection.failureSelector = @selector(registerDeviceTokenFailed:);
         [self.connection start];
     }
     else {
@@ -636,10 +636,10 @@ static Class _uiClass;
 
             UALOG(@"Starting registration DELETE request (unregistering)");
             [self.connection cancel];
-            self.connection = [UAHTTPConnection connectionWithRequest:deleteRequest];
-            self.connection.delegate = self;
-            self.connection.successSelector = @selector(unRegisterDeviceTokenSucceeded:);
-            self.connection.failureSelector = @selector(unRegisterDeviceTokenFailed:);
+            self.connection = [UAHTTPConnection connectionWithRequest:deleteRequest
+                                                             delegate:self
+                                                              success:@selector(unRegisterDeviceTokenSucceeded:)
+                                                              failure:@selector(unRegisterDeviceTokenFailed:)];
             [self.connection start];
         }
         else {

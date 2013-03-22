@@ -131,16 +131,13 @@ static UAInboxMessageList *_messageList = nil;
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
-
-    connection.delegate = self;
-    connection.successSelector = @selector(messageListReady:);
-    connection.failureSelector = @selector(messageListFailed:);
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+                                                                  delegate:self
+                                                                   success:@selector(messageListReady:)
+                                                                   failure:@selector(messageListFailed:)];
 
     self.nRetrieving++;
     [connection start];
-
-
 }
 
 - (void)messageListReady:(UAHTTPRequest *)request {
@@ -248,12 +245,10 @@ static UAInboxMessageList *_messageList = nil;
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
-
-    connection.delegate = self;
-    connection.successSelector = @selector(batchUpdateFinished:);
-    connection.failureSelector = @selector(batchUpdateFailed:);
-    
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+                                                                  delegate:self
+                                                                   success:@selector(batchUpdateFinished:)
+                                                                   failure:@selector(batchUpdateFailed:)];
     [connection start];
 
 }

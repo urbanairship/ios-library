@@ -87,7 +87,6 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
                                     failure:(SEL)failureSelector;
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                                   delegate:(id)delegate
                                successBlock:(UAHTTPRequestSuccessBlock)successBlock
                                failureBlock:(UAHTTPRequestSuccessBlock)failureBlock;
 

@@ -455,10 +455,10 @@ static UAUser *_defaultUser;
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:request];
-    self.connection.delegate = self;
-    self.connection.successSelector = @selector(userCreated:);
-    self.connection.failureSelector = @selector(userCreationDidFail:);
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                     delegate:self
+                                                      success:@selector(userCreated:)
+                                                      failure:@selector(userCreationDidFail:)];
     [self.connection start];
 }
 
@@ -641,10 +641,10 @@ static UAUser *_defaultUser;
 
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:request];
-    self.connection.delegate = self;
-    self.connection.successSelector = @selector(recoveryRequestSucceeded:);
-    self.connection.failureSelector = @selector(recoveryRequestFailed:);
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                     delegate:self
+                                                      success:@selector(recoveryRequestSucceeded:)
+                                                      failure:@selector(recoveryRequestFailed:)];
     [self.connection start];
 
     [writer release];
@@ -708,7 +708,7 @@ static UAUser *_defaultUser;
 #pragma mark Recovery Poller
 
 - (void)startRecoveryPoller {
-    
+
     [self stopRecoveryPoller];
     recoveryPoller = [NSTimer scheduledTimerWithTimeInterval: 5
                                                       target: self
@@ -738,11 +738,12 @@ static UAUser *_defaultUser;
     UALOG(@"Checking Recovery Status");
     UALOG(@"recovery status url: %@", self.recoveryStatusUrl);
 
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString: self.recoveryStatusUrl] method: @"GET"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:self.recoveryStatusUrl] method: @"GET"];
     
-    self.connection = [UAHTTPConnection connectionWithRequest:request];
-    self.connection.delegate = self;
-    self.connection.successSelector = @selector(recoveryStatusUpdated:);
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                     delegate:self
+                                                      success:@selector(recoveryStatusUpdated:)
+                                                      failure:nil];
     [self.connection start];
 }
 
@@ -783,7 +784,7 @@ static UAUser *_defaultUser;
             UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:self.url] method:@"GET"];
 
             UAHTTPConnection *getConnection = [UAHTTPConnection connectionWithRequest:getRequest];
-            self.connection.successBlock = ^(UAHTTPRequest *finishedRequest) {
+            getConnection.successBlock = ^(UAHTTPRequest *finishedRequest) {
                 if (finishedRequest.response.statusCode == 200) {
 
                     NSDictionary *getResult = [parser objectWithString:finishedRequest.responseString];
@@ -861,11 +862,11 @@ static UAUser *_defaultUser;
     
     UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:retrieveUrlString] method:@"GET"];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:getRequest];
-    _connection.delegate = self;
-    _connection.successSelector = @selector(retrieveRequestSucceeded:);
-    _connection.failureSelector = @selector(retrieveRequestFailed:);
-    [_connection start];
+    self.connection = [UAHTTPConnection connectionWithRequest:getRequest
+                                                     delegate:self
+                                                      success:@selector(retrieveRequestSucceeded:)
+                                                      failure:@selector(retrieveRequestFailed:)];
+    [self.connection start];
 }
 
 - (void)retrieveRequestSucceeded:(UAHTTPRequest *)request {
@@ -1081,10 +1082,10 @@ static UAUser *_defaultUser;
     
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:request];
-    _connection.delegate = delegate;
-    _connection.successSelector = finishSelector;
-    _connection.failureSelector = failSelector;
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                     delegate:self
+                                                      success:finishSelector
+                                                      failure:failSelector];
     [_connection start];
 }
 

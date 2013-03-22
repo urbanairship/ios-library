@@ -150,12 +150,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UALOG(@"MARK AS READ %@", urlString);
     
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:url method:@"POST"];
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
-
-    connection.delegate = self;
-    connection.successSelector = @selector(markAsReadFinished:);
-    connection.failureSelector = @selector(markAsReadFailed:);
-
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+                                                                  delegate:self
+                                                                   success:@selector(markAsReadFinished:)
+                                                                   failure:@selector(markAsReadFailed:)];
     [connection start];
 
     return YES;
