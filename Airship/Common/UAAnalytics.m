@@ -730,7 +730,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                      delegate:self
                                                       success:@selector(requestDidSucceed:)
                                                       failure:@selector(requestDidFail:)];
-    [connection_ start];
+    [self.connection start];
 }
 
 #pragma mark -
