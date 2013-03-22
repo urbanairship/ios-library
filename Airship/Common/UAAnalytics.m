@@ -726,10 +726,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UA_ANALYTICS_LOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:request];
-    connection_.delegate = self;
-    connection_.successSelector = @selector(requestDidSucceed:);
-    connection_.failureSelector = @selector(requestDidFail:);
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                     delegate:self
+                                                      success:@selector(requestDidSucceed:)
+                                                      failure:@selector(requestDidFail:)];
     [connection_ start];
 }
 
