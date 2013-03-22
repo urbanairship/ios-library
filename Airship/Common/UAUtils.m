@@ -294,7 +294,7 @@
           [request.headers description],
           request.HTTPMethod,
           [request.body description],
-          request.response.statusCode,
+          [request.response statusCode],
           [[request.response allHeaderFields] description],
           [request.responseData description],
           request.username,

@@ -112,8 +112,12 @@ static NSString *defaultUserAgentString;
 
 @interface UAHTTPConnection()
 
+@property (nonatomic, retain) UAHTTPRequest *request;
+@property (nonatomic, retain) NSHTTPURLResponse *urlResponse;
+@property (nonatomic, retain) NSMutableData *responseData;
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData;
+
 @end
 
 #pragma mark -
@@ -143,8 +147,8 @@ static NSString *defaultUserAgentString;
 }
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPRequestSuccessBlock)successBlock
-                               failureBlock:(UAHTTPRequestFailureBlock)failureBlock {
+                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock {
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
     connection.successBlock = successBlock;
     connection.failureBlock = failureBlock;
@@ -237,7 +241,7 @@ static NSString *defaultUserAgentString;
     // keep ourselves around for a while so the request can complete
     [self retain];
 
-    _responseData = [[NSMutableData alloc] init];
+    self.responseData = [NSMutableData data];
     self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 
     return YES;
@@ -252,11 +256,11 @@ static NSString *defaultUserAgentString;
 
     NSError *error = nil;
 
-    _responseData = [[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&_urlResponse error:&error] mutableCopy];
+    self.responseData = [[[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&_urlResponse error:&error] mutableCopy] autorelease];
 
-    _request.response = _urlResponse;
-    _request.responseData = _responseData;
-    _request.error = error;
+    self.request.response = self.urlResponse;
+    self.request.responseData = self.responseData;
+    self.request.error = error;
 
     return !error;
 }
@@ -270,25 +274,23 @@ static NSString *defaultUserAgentString;
 #pragma mark NSURLConnection delegate
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response {
-    [_urlResponse autorelease];
-    _urlResponse = [response retain];
-    
-    [_responseData setLength:0];
+    self.urlResponse = response;
+    [self.responseData setLength:0];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [_responseData appendData:data];
+    [self.responseData appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     UALOG(@"ERROR: connection %@ didFailWithError: %@", self, error);
-    _request.error = error;
+    self.request.error = error;
     if ([self.delegate respondsToSelector:self.failureSelector]) {
         [self.delegate performSelector:self.failureSelector withObject:_request];
     }
 
     if (self.failureBlock) {
-        self.failureBlock(_request);
+        self.failureBlock(self.request);
     }
     
     [self release];
@@ -296,15 +298,15 @@ static NSString *defaultUserAgentString;
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     
-    _request.response = _urlResponse;
-    _request.responseData = _responseData;
+    self.request.response = self.urlResponse;
+    self.request.responseData = self.responseData;
     
     if ([self.delegate respondsToSelector:self.successSelector]) {
-        [self.delegate performSelector:self.successSelector withObject:_request];
+        [self.delegate performSelector:self.successSelector withObject:self.request];
     }
 
     if (self.successBlock) {
-        self.successBlock(_request);
+        self.successBlock(self.request);
     }
     
     [self release];

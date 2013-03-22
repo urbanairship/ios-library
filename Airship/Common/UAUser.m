@@ -464,13 +464,13 @@ static UAUser *_defaultUser;
 
 - (void)userCreated:(UAHTTPRequest *)request {
     
-    UALOG(@"User created: %d:%@", request.response.statusCode, request.responseString);
+    UALOG(@"User created: %d:%@", [request.response statusCode], [request responseString]);
 
     // done creating! or it failed..
     // wait to update the state enum until the next state is determined below
     creatingUser = NO;
 
-    switch (request.response.statusCode) {
+    switch ([request.response statusCode]) {
         case 201://created
         {
             UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
@@ -590,15 +590,15 @@ static UAUser *_defaultUser;
 
 - (void)modifyUserWithEmailUpdated:(UAHTTPRequest *)request {
 
-    UALOG(@"User updated: %d:%@, URL: %@", request.response.statusCode,
+    UALOG(@"User updated: %d:%@, URL: %@", [request.response statusCode],
           request.responseString, [request.url absoluteString]);
 
-    if(request.response.statusCode == 409) {
+    if ([request.response statusCode] == 409) {
         self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
         // Data for this user exists already, so we need to start the recovery flow
         [self startRecovery];
 
-    } else if (request.response.statusCode == 200) {
+    } else if ([request.response statusCode] == 200) {
         // Need to save user data and also loadSubscriptions
         [self saveUserData];
 	
@@ -655,7 +655,7 @@ static UAUser *_defaultUser;
 - (void)recoveryRequestSucceeded:(UAHTTPRequest *)request {
 
     // Check for an API rejection of the recovery
-    if(request.response.statusCode != 200) {
+    if([request.response statusCode] != 200) {
         [self cancelRecovery];
 
         [self notifyObservers:@selector(userRecoveryFailed)];
@@ -663,7 +663,7 @@ static UAUser *_defaultUser;
     } else {
         // No API rejection, so we're OK to continue with recovery
 
-        UALOG(@"Recovery Started: %d:%@, URL: %@", request.response.statusCode,
+        UALOG(@"Recovery Started: %d:%@, URL: %@", [request.response statusCode],
               request.responseString, [request.url absoluteString]);
         UALOG(@"Request Method: %@", request.HTTPMethod);
 
@@ -749,7 +749,7 @@ static UAUser *_defaultUser;
 
 - (void)recoveryStatusUpdated:(UAHTTPRequest *)request {
 
-    if (request.response.statusCode == 200) {
+    if ([request.response statusCode] == 200) {
 
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString: request.responseString];
@@ -757,7 +757,7 @@ static UAUser *_defaultUser;
         NSString *status = [result objectForKey:@"status"];
 
         UALOG(@"Status update received: %@", status);
-        UALOG(@"Response: %d\n%@\n", request.response.statusCode,
+        UALOG(@"Response: %d\n%@\n", [request.response statusCode],
               request.responseString);
 
         // Only process this update if it is for status "complete" - meaning the server has registered that the user clicked the recovery link
@@ -785,7 +785,7 @@ static UAUser *_defaultUser;
 
             UAHTTPConnection *getConnection = [UAHTTPConnection connectionWithRequest:getRequest];
             getConnection.successBlock = ^(UAHTTPRequest *finishedRequest) {
-                if (finishedRequest.response.statusCode == 200) {
+                if ([finishedRequest.response statusCode] == 200) {
 
                     NSDictionary *getResult = [parser objectWithString:finishedRequest.responseString];
 
@@ -870,9 +870,9 @@ static UAUser *_defaultUser;
 }
 
 - (void)retrieveRequestSucceeded:(UAHTTPRequest *)request {
-    UALOG(@"User retrieved: %d:%@", request.response.statusCode, request.responseString);
+    UALOG(@"User retrieved: %d:%@", [request.response statusCode], request.responseString);
     
-    if (request.response.statusCode == 200) {
+    if ([request.response statusCode] == 200) {
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString:request.responseString];
         
@@ -897,7 +897,7 @@ static UAUser *_defaultUser;
 }
 
 - (void)retrieveRequestFailed:(UAHTTPRequest *)request {
-    UALOG(@"User retrieval failed: %d:%@", request.response.statusCode, request.responseString);
+    UALOG(@"User retrieval failed: %d:%@", [request.response statusCode], request.responseString);
     self.retrievingUser = NO;
     
     [self notifyObservers:@selector(userRetrieveFailed)];
@@ -1054,7 +1054,7 @@ static UAUser *_defaultUser;
 
 
 - (void)updateUserGetFinished:(UAHTTPRequest *)request {
-	if(request.response.statusCode != 200) {
+	if([request.response statusCode] != 200) {
 		[self requestWentWrong:request];
 	}
 }
@@ -1126,7 +1126,7 @@ static UAUser *_defaultUser;
 	NSMutableArray *deviceTokens = [[[NSMutableArray alloc] init] autorelease];
 	BOOL contains = NO;
 	
-	if (getRequest.response.statusCode == 200) {
+	if ([getRequest.response statusCode] == 200) {
 		
 		UA_SBJsonParser *parser = [UA_SBJsonParser new];
 		NSDictionary *getResult = [parser objectWithString:getRequest.responseString];

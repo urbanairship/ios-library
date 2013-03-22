@@ -780,7 +780,7 @@ static Class _uiClass;
 }
 
 - (void)registerDeviceTokenSucceeded:(UAHTTPRequest *)request {
-    if(request.response.statusCode != 200 && request.response.statusCode != 201) {
+    if([request.response statusCode] != 200 && [request.response statusCode] != 201) {
         [self registerDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");
@@ -807,7 +807,7 @@ static Class _uiClass;
 }
 
 - (void)unRegisterDeviceTokenSucceeded:(UAHTTPRequest *)request {
-    if (request.response.statusCode != 204){
+    if ([request.response statusCode] != 204){
         [self unRegisterDeviceTokenFailed:request];
     } else {
         // cache before setting isRegistering to NO
@@ -831,7 +831,7 @@ static Class _uiClass;
     if (request.error) {
         return YES;
     }
-    if (request.response.statusCode >= 500 && request.response.statusCode <= 599) {
+    if ([request.response statusCode] >= 500 && [request.response statusCode] <= 599) {
         return YES;
     }
     return NO;

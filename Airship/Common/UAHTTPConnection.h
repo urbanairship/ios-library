@@ -26,8 +26,8 @@
 #import <Foundation/Foundation.h>
 
 @class UAHTTPRequest;
-typedef void (^UAHTTPRequestSuccessBlock)(UAHTTPRequest *request);
-typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
 @interface UAHTTPRequest : NSObject {
 
@@ -62,10 +62,6 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
  *
  */
 @interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
-    
-    UAHTTPRequest *_request;
-    NSHTTPURLResponse *_urlResponse;
-    NSMutableData *_responseData;
 
 }
 
@@ -75,8 +71,8 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, assign) SEL successSelector;
 @property (nonatomic, assign) SEL failureSelector;
 
-@property (nonatomic, copy) UAHTTPRequestSuccessBlock successBlock;
-@property (nonatomic, copy) UAHTTPRequestFailureBlock failureBlock;
+@property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+@property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
@@ -87,8 +83,8 @@ typedef void (^UAHTTPRequestFailureBlock)(UAHTTPRequest *request);
                                     failure:(SEL)failureSelector;
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPRequestSuccessBlock)successBlock
-                               failureBlock:(UAHTTPRequestSuccessBlock)failureBlock;
+                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                               failureBlock:(UAHTTPConnectionSuccessBlock)failureBlock;
 
 + (void)setDefaultUserAgentString:(NSString *)userAgent;
 
