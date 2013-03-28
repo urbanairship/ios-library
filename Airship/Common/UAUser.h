@@ -101,11 +101,11 @@ typedef enum _UAUserState {
 + (void)land;
 
 - (BOOL)defaultUserCreated;
-- (BOOL)setUserEmail:(NSString *)address;
-- (void)startRecovery;
-- (void)cancelRecovery;
+- (BOOL)setUserEmail:(NSString *)address;//remove
+- (void)startRecovery;//remove
+- (void)cancelRecovery;//remove
 
-// Private interface
+// Private interface - remove all
 @property (assign, nonatomic) BOOL inRecovery;
 @property (assign, nonatomic) BOOL recoveryStarted;
 @property (assign, nonatomic) BOOL sentRecoveryEmail;
@@ -119,16 +119,16 @@ typedef enum _UAUserState {
 - (void)loadUser;
 
 - (void)createUser;
-- (void)createUserWithEmail:(NSString *)value;
-- (void)modifyUserWithEmail:(NSString *)value;
+- (void)createUserWithEmail:(NSString *)value;//remove
+- (void)modifyUserWithEmail:(NSString *)value;//remove
 
-- (void)retrieveUser;
+- (void)retrieveUser;// remove if we get rid of the user-keychain
 
-- (void)startRecoveryPoller;
-- (void)stopRecoveryPoller;
-- (void)checkRecoveryStatus:(NSTimer *)timer;
+- (void)startRecoveryPoller;//remove
+- (void)stopRecoveryPoller;//remove
+- (void)checkRecoveryStatus:(NSTimer *)timer;//remove
 
-- (void)didMergeWithUser:(NSDictionary *)userData;
+- (void)didMergeWithUser:(NSDictionary *)userData;//remove
 
 - (void)saveUserData;
 - (void)updateUserState;
