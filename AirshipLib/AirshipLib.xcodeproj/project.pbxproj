@@ -239,7 +239,6 @@
 		B6EFE229124F3FBB00A46CB1 /* UA_ASINetworkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASINetworkQueue.h; sourceTree = "<group>"; };
 		B6EFE22A124F3FBB00A46CB1 /* UA_ASINetworkQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASINetworkQueue.m; sourceTree = "<group>"; };
 		B6EFE22B124F3FBB00A46CB1 /* UA_ASIProgressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIProgressDelegate.h; sourceTree = "<group>"; };
-		BB1188CC15225E1E00E3D3F0 /* UAContentURLCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAContentURLCacheTests.m; sourceTree = "<group>"; };
 		BB13C4241575706100541EF3 /* UABase64Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABase64Test.m; sourceTree = "<group>"; };
 		BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationCommonValues.h; sourceTree = "<group>"; };
 		BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderProtocol.h; sourceTree = "<group>"; };
@@ -499,7 +498,6 @@
 				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
-				BB1188CC15225E1E00E3D3F0 /* UAContentURLCacheTests.m */,
 				7BB679661429357100B877DB /* Frameworks */,
 				7BB6790D1429288D00B877DB /* Supporting Files */,
 				BB13C4241575706100541EF3 /* UABase64Test.m */,
