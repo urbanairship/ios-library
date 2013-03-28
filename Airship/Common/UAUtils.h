@@ -59,34 +59,6 @@
 
 + (NSString *)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
 
-#ifdef UA_FULL_LIB
-
-///---------------------------------------------------------------------------------------
-/// @name ASI HTTP Authenticated Request Helpers
-///---------------------------------------------------------------------------------------
-
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)selector;
-
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
-
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)selector;
-
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
-
-///---------------------------------------------------------------------------------------
-/// @name HTTP Response Helpers
-///---------------------------------------------------------------------------------------
-+ (id)parseJSON:(NSString *)responseString;
-+ (id)responseFromRequest:(UA_ASIHTTPRequest *)request;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest *)request keyword:(NSString *)keyword;
-
-#endif
-
 ///---------------------------------------------------------------------------------------
 /// @name UAHTTP Authenticated Request Helpers
 ///---------------------------------------------------------------------------------------
