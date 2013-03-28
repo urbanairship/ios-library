@@ -780,7 +780,7 @@ static Class _uiClass;
 }
 
 - (void)registerDeviceTokenSucceeded:(UAHTTPRequest *)request {
-    if([request.response statusCode] != 200 && [request.response statusCode] != 201) {
+    if ([request.response statusCode] != 200 && [request.response statusCode] != 201) {
         [self registerDeviceTokenFailed:request];
     } else {
         UALOG(@"Device token registered on Urban Airship successfully.");

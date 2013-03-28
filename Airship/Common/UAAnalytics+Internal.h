@@ -24,9 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAHTTPConnection.h"
 
 @class UAEvent;
+@class UAHTTPConnection;
+@class UAHTTPRequest;
 
 @interface UAAnalytics () {
   @private
@@ -113,6 +114,10 @@
  format the JSON field as a dictionary
  */
 - (NSArray*)prepareEventsForUpload;
+
+// UAHTTP
+- (void)requestDidSucceed:(UAHTTPRequest *)request;
+- (void)requestDidFail:(UAHTTPRequest *)request;
 
 
 @end

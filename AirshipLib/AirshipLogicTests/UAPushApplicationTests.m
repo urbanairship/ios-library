@@ -354,48 +354,42 @@ static BOOL messageReceived = NO;
 
 
 - (void)testRequestToRegisterDeviceTokenWithInfo {
-    UA_ASIHTTPRequest *request = [push requestToRegisterDeviceTokenWithInfo:nil];
-    STAssertEqualObjects(push, request.delegate, @"Registration equest delegate not set properly");
-    STAssertNil(request.postBody, nil);
-    STAssertTrue([request.requestMethod isEqualToString:@"PUT"], nil);
-    SEL actualSucceeded = request.didFinishSelector;
-    SEL actualFailed = request.didFailSelector;
-    SEL correctSucceeded = @selector(registerDeviceTokenSucceeded:);
-    SEL correctFailed = @selector(registerDeviceTokenFailed:);
-    STAssertTrue(sel_isEqual(actualSucceeded, correctSucceeded), @"Request success selectors incorrect");
-    STAssertTrue(sel_isEqual(correctFailed, actualFailed), @"Request fail selectors incorrect");
+    UAHTTPRequest *request = [push requestToRegisterDeviceTokenWithInfo:nil];
+    STAssertNil(request.body, nil);
+    STAssertTrue([request.HTTPMethod isEqualToString:@"PUT"], @"Incorrect HTTP Method");
+    
     NSString *correctServer = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].server, @"/api/device_tokens/", push.deviceToken];
     NSString *actualServer = request.url.absoluteString;
     STAssertTrue([actualServer isEqualToString:correctServer], @"UA registration API URL incorrect");
-    NSDictionary* payload = [push registrationPayload];
+    
+    NSDictionary *payload = [push registrationPayload];
     request = [push requestToRegisterDeviceTokenWithInfo:payload];
-    NSDictionary* requestHeaders = request.requestHeaders;
+    
+    NSDictionary *requestHeaders = request.headers;
     NSString *acceptJSON = [requestHeaders valueForKey:@"Content-Type"];
     STAssertTrue([acceptJSON isEqualToString:@"application/json"], @"Request Content-type incorrect");
+    
     NSError *errorJSON = nil;
-    NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:request.postBody options:NSJSONReadingAllowFragments error:&errorJSON];
+    NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:request.body options:NSJSONReadingAllowFragments error:&errorJSON];
     STAssertNil(errorJSON, nil);
-    NSArray* payloadKeys = [payload allKeys];
-    NSArray* payloadValues = [payload allValues];
-    for (NSString* key in payloadKeys) {
+    
+    NSArray *payloadKeys = [payload allKeys];
+    NSArray *payloadValues = [payload allValues];
+    for (NSString *key in payloadKeys) {
         STAssertTrue([[JSON allKeys] containsObject:key], @"Missing key in payload keys or JSON keys");
     }
-    for (NSString* value in payloadValues) {
-        STAssertTrue([[JSON allValues] containsObject:value],@"Missing value in payload values or JSON values");
+    for (NSString *value in payloadValues) {
+        STAssertTrue([[JSON allValues] containsObject:value], @"Missing value in payload values or JSON values");
     }    
 }
 
 - (void)testUnregisterDeviceTokenRequest {
-    UA_ASIHTTPRequest *request = [push requestToDeleteDeviceToken];
+    UAHTTPRequest *request = [push requestToDeleteDeviceToken];
     NSString *correctServer = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].server, @"/api/device_tokens/", push.deviceToken];
     NSString *actualServer = request.url.absoluteString;
+    
     STAssertTrue([actualServer isEqualToString:correctServer], @"UA registration API URL incorrect");
-    STAssertTrue([request.requestMethod isEqualToString:@"DELETE"], nil);
-    STAssertEqualObjects(push, request.delegate, nil);
-    BOOL successSelector = sel_isEqual(@selector(unRegisterDeviceTokenSucceeded:), request.didFinishSelector);
-    BOOL failSelector = sel_isEqual(@selector(unRegisterDeviceTokenFailed:), request.didFailSelector);
-    STAssertTrue(successSelector, nil);
-    STAssertTrue(failSelector, nil);
+    STAssertTrue([request.HTTPMethod isEqualToString:@"DELETE"], @"Incorrect HTTP method.");
 }
 
 // Fix for issue where changing metadata while unregistered caused further registration attempts to fail
@@ -511,10 +505,11 @@ static BOOL messageReceived = NO;
 // This test covers the basic error case, the workflow where the response from the server is NOT a 500
 - (void)testRegisterDeviceTokenFailed {
     id mockPush = [OCMockObject partialMockForObject:push];
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
+    
     BOOL yes = YES;
     [[[mockPush stub] andReturnValue:OCMOCK_VALUE(yes)] shouldRetryRequest:mockRequest];
-    [[mockPush expect] shouldRetryRequest:mockRequest];
+    [[mockPush expect] shouldRetryRequest:mockRequest]; 
     [push registerDeviceTokenFailed:mockRequest];
     STAssertFalse(push.isRegistering, @"isRegistering should be NO");
     
@@ -523,7 +518,7 @@ static BOOL messageReceived = NO;
 - (void)testRegisterDeviceTokenSucceeded {
     // Non 200,201 response
     id mockPush = [OCMockObject partialMockForObject:push];
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
     int responseCode = 399;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(responseCode)] responseStatusCode];
     [push registerDeviceTokenSucceeded:mockRequest];
@@ -544,7 +539,7 @@ static BOOL messageReceived = NO;
 }
 
 - (void)testUnregisterDeviceTokenFailed {
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
     id mockPush = [OCMockObject partialMockForObject:push];
     BOOL yes = YES;
     [[[mockPush expect] andReturnValue:OCMOCK_VALUE(yes)] shouldRetryRequest:mockRequest];
@@ -555,19 +550,21 @@ static BOOL messageReceived = NO;
 
 - (void)testUnregisterDeviceTokenSucceeded {
     // API returns 200 (failure)
-    id mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
     int statusCode = 200;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
     id mockPush = [OCMockObject partialMockForObject:push];
     [[mockPush expect] unRegisterDeviceTokenFailed:mockRequest];
     [push unRegisterDeviceTokenSucceeded:mockRequest];
     [mockPush verify];
+    
     //
     // API returns 204, successful unregistration
-    mockRequest = [OCMockObject niceMockForClass:[UA_ASIHTTPRequest class]];
+    mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
     statusCode = 204;
     [[[mockRequest stub] andReturnValue:OCMOCK_VALUE(statusCode)] responseStatusCode];
     [[mockPush expect] cacheSuccessfulUserInfo:OCMOCK_ANY];
+    
     BOOL no = NO;
     [[[mockPush stub] andReturnValue:OCMOCK_VALUE(no)] cacheHasChangedComparedToUserInfo:OCMOCK_ANY];
     [push unRegisterDeviceTokenSucceeded:mockRequest];

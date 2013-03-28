@@ -26,6 +26,7 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
+
 #import "UAAnalytics.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
@@ -333,7 +334,7 @@
     [[mockAnalytics expect] resetEventsDatabaseStatus];
     [[mockAnalytics expect] invalidateBackgroundTask];
     [[mockDBManager expect] deleteEvents:info];
-    [analytics requestDidSucceed:mockRequest response:mockResponse responseData:nil];
+    [analytics requestDidSucceed:mockRequest];
     [mockAnalytics verify];
     [mockDBManager verify];
     [mockResponse verify];
