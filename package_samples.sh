@@ -53,11 +53,10 @@ rm -rf `find . -name "AirshipDevelopment.plist" `
 
 
 #rename packages for distribution
-mv StoreFrontSample IAPSample
 mv InboxSample RichPushSample
 
 # copy the sample plist into place
-for sample in RichPushSample PushSample IAPSample SubscriptionSample AppleHostedStoreFrontSample; do
+for sample in RichPushSample PushSample; do
     cp ../CHANGELOG $sample
     cp ../LICENSE $sample
     cp ../README.rst $sample
