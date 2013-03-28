@@ -90,6 +90,10 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
 - (BOOL)start;
+
+//TODO: ensure that empty PUTs have a content-length header
+
+
 - (BOOL)startSynchronous;
 - (void)cancel;
 

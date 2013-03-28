@@ -27,9 +27,9 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 
-#import "UA_ASIHTTPRequest.h"
 #import "UAUser.h"
 #import "UAUser+Internal.h"
+
 #import "UAPush.h"
 #import "UAPush+Internal.h"
 

@@ -29,9 +29,6 @@
 #import "UAEvent.h"
 #import "UAAnalytics.h"
 #import "UAUtils.h"
-#import "UA_ASIHTTPRequest.h"
-#import "UA_ASIHTTPRequestDelegate.h"
-#import "UAirship.h"
 #import "JRSwizzle.h"
 
 #import <objc/runtime.h>
