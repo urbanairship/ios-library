@@ -128,7 +128,6 @@
 		BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		BB886122159A7E9600584445 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
-		BB886124159A7E9600584445 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
 		BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5A150574DE00971CEC /* JRSwizzle.m */; };
@@ -181,7 +180,6 @@
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIFormDataRequest.h; sourceTree = "<group>"; };
@@ -328,7 +326,6 @@
 				BB886120159A7E9600584445 /* Foundation.framework in Frameworks */,
 				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
 				BB886122159A7E9600584445 /* UIKit.framework in Frameworks */,
-				BB886124159A7E9600584445 /* StoreKit.framework in Frameworks */,
 				BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */,
 				BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */,
 			);
@@ -372,7 +369,6 @@
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */,
 				633146B3122FA474008F2D48 /* UIKit.framework */,
-				63CB55371247148400DF2EBC /* StoreKit.framework */,
 				1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */,
 				7BB679071429288D00B877DB /* SenTestingKit.framework */,
 			);
