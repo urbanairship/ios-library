@@ -36,6 +36,14 @@
 		1F4230C016C09876004B52C1 /* libUAirship-1.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.4.0.a */; };
 		1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E921238462100B7E69F /* UAViewUtils.m */; };
 		1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
+		49D11BF9171C6D660058E7C3 /* UADeviceAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11BF7171C6D660058E7C3 /* UADeviceAPIClient.h */; };
+		49D11BFA171C6D660058E7C3 /* UADeviceAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11BF8171C6D660058E7C3 /* UADeviceAPIClient.m */; };
+		49D11BFE171C976D0058E7C3 /* UADeviceRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11BFC171C976D0058E7C3 /* UADeviceRegistrationData.h */; };
+		49D11BFF171C976D0058E7C3 /* UADeviceRegistrationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11BFD171C976D0058E7C3 /* UADeviceRegistrationData.m */; };
+		49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */; };
+		49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */; };
+		49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */; };
+		49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */; };
 		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
 		7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679071429288D00B877DB /* SenTestingKit.framework */; };
 		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -53,7 +61,6 @@
 		7BB6794B142930CC00B877DB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6794A142930CC00B877DB /* MobileCoreServices.framework */; };
 		BB13C4251575706100541EF3 /* UABase64Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB13C4241575706100541EF3 /* UABase64Test.m */; };
 		BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2A15910C370097B38C /* UALocationTestUtils.m */; };
-		BB5EBC95159B760400F2A716 /* UA_ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */; };
 		BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BB8860B2159A7E9600584445 /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1A4A122DB77000522B4E /* UAirship.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BB8860B3159A7E9600584445 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -182,6 +189,14 @@
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
+		49D11BF7171C6D660058E7C3 /* UADeviceAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceAPIClient.h; sourceTree = "<group>"; };
+		49D11BF8171C6D660058E7C3 /* UADeviceAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceAPIClient.m; sourceTree = "<group>"; };
+		49D11BFC171C976D0058E7C3 /* UADeviceRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrationData.h; sourceTree = "<group>"; };
+		49D11BFD171C976D0058E7C3 /* UADeviceRegistrationData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrationData.m; sourceTree = "<group>"; };
+		49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperation.h; sourceTree = "<group>"; };
+		49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPConnectionOperation.m; sourceTree = "<group>"; };
+		49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequestEngine.h; sourceTree = "<group>"; };
+		49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequestEngine.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIAuthenticationDialog.h; sourceTree = "<group>"; };
@@ -409,6 +424,10 @@
 				1F16420D16F26A8100C87CAB /* UAPush+Internal.h */,
 				1F16420E16F26A8100C87CAB /* UAPush.h */,
 				1F16420F16F26A8100C87CAB /* UAPush.m */,
+				49D11BF7171C6D660058E7C3 /* UADeviceAPIClient.h */,
+				49D11BF8171C6D660058E7C3 /* UADeviceAPIClient.m */,
+				49D11BFC171C976D0058E7C3 /* UADeviceRegistrationData.h */,
+				49D11BFD171C976D0058E7C3 /* UADeviceRegistrationData.m */,
 			);
 			path = PushLib;
 			sourceTree = "<group>";
@@ -476,6 +495,19 @@
 				D905032712398BDC00D60744 /* mergeArmSymbols.sh */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		49995CED172AF52100103932 /* HTTP */ = {
+			isa = PBXGroup;
+			children = (
+				D5BED7B612FC787900057449 /* UAHTTPConnection.h */,
+				D5BED7B512FC787900057449 /* UAHTTPConnection.m */,
+				49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */,
+				49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */,
+				49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */,
+				49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */,
+			);
+			name = HTTP;
 			sourceTree = "<group>";
 		};
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
@@ -614,14 +646,13 @@
 			isa = PBXGroup;
 			children = (
 				1F4230C216C16F1B004B52C1 /* Analytics */,
+				49995CED172AF52100103932 /* HTTP */,
 				1F4230C116C16ED3004B52C1 /* Location */,
 				D9983E961238462100B7E69F /* UABarButtonSegmentedControl.h */,
 				D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */,
 				D9983E941238462100B7E69F /* UADateUtils.h */,
 				D9983E8D1238462100B7E69F /* UADateUtils.m */,
 				D9FD1C43122DBCEA00522B4E /* UAGlobal.h */,
-				D5BED7B612FC787900057449 /* UAHTTPConnection.h */,
-				D5BED7B512FC787900057449 /* UAHTTPConnection.m */,
 				1FE43798128B589000D38A14 /* UAKeychainUtils.h */,
 				1FE43799128B589000D38A14 /* UAKeychainUtils.m */,
 				D9983E8F1238462100B7E69F /* UAObservable.h */,
@@ -714,6 +745,10 @@
 				1F16423016F26A8100C87CAB /* UAInboxURLCache.h in Headers */,
 				1F16423516F26A8100C87CAB /* UAPush+Internal.h in Headers */,
 				1F16423716F26A8100C87CAB /* UAPush.h in Headers */,
+				49D11BF9171C6D660058E7C3 /* UADeviceAPIClient.h in Headers */,
+				49D11BFE171C976D0058E7C3 /* UADeviceRegistrationData.h in Headers */,
+				49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */,
+				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,6 +914,10 @@
 				1F16422D16F26A8100C87CAB /* UAInboxPushHandler.m in Sources */,
 				1F16423216F26A8100C87CAB /* UAInboxURLCache.m in Sources */,
 				1F16423916F26A8100C87CAB /* UAPush.m in Sources */,
+				49D11BFA171C6D660058E7C3 /* UADeviceAPIClient.m in Sources */,
+				49D11BFF171C976D0058E7C3 /* UADeviceRegistrationData.m in Sources */,
+				49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */,
+				49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
