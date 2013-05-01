@@ -427,54 +427,6 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)registerDeviceToken:(NSData *)token;
 
-/*
- * Register the current device token with UA. You should not ordinarily call this method.
- * 
- * @param info An NSDictionary containing registration keys and values. See
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
- * for details.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token and alias with UA. You should not ordinarily call this method. Use
- * the `alias` property instead.
- *
- * An alias should only have a small
- * number (< 10) of device tokens associated with it. Use the tags API for arbitrary
- * groupings.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @param token The device token to register.
- * @param alias The alias to register for this device token.
- */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token with a custom API payload. You should not ordinarily call this method.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- * 
- * @param token The device token to register.
- * @param info An NSDictionary containing registration keys and values. See
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
- */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Remove this device token's registration from the server. You should not ordinarily call this method.
- * This call is equivalent to an API DELETE call, as described here:
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
- *  
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @warning Deprecated: Use the pushEnabled property on UAPush instead
- */
-- (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_2__);
-
 /**
  * Register the device for remote notifications (see Apple documentation for more
  * detail).

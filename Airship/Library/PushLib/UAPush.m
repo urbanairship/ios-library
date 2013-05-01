@@ -32,15 +32,11 @@
 #import "UAViewUtils.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
+#import "UADeviceRegistrationData.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 
 #import "UA_SBJsonWriter.h"
-
-
-#define kUAPushRetryTimeInitialDelay 60
-#define kUAPushRetryTimeMultiplier 2
-#define kUAPushRetryTimeMaxDelay 300
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -69,12 +65,7 @@ UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
 @implementation UAPush 
 //Internal
-@synthesize registrationQueue;
 @synthesize defaultPushHandler;
-@synthesize registrationRetryDelay;
-@synthesize registrationPayloadCache;
-@synthesize pushEnabledPayloadCache;
-@synthesize isRegistering;
 @synthesize hasEnteredBackground;
 
 //Public
@@ -109,9 +100,8 @@ static Class _uiClass;
 
 -(void)dealloc {
     RELEASE_SAFELY(defaultPushHandler);
+    self.deviceAPIClient = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    dispatch_release(registrationQueue);
-    registrationQueue = nil;
     [super dealloc];
 }
 
@@ -131,7 +121,8 @@ static Class _uiClass;
                                               selector:@selector(applicationDidEnterBackground) 
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
-        registrationQueue = dispatch_queue_create("com.urbanairship.registration", DISPATCH_QUEUE_SERIAL);
+        
+        self.deviceAPIClient = [[[UADeviceAPIClient alloc] init] autorelease];
     }
     return self;
 }
@@ -318,6 +309,15 @@ static Class _uiClass;
 }
 
 #pragma mark -
+#pragma Registration Data Model
+
+- (UADeviceRegistrationData *)registrationData {
+    return [[[UADeviceRegistrationData alloc] initWithDeviceToken:self.deviceToken
+                                                     withPayload:[self registrationPayload]
+                                                     pushEnabled:self.pushEnabled] autorelease];
+}
+
+#pragma mark -
 #pragma mark Open APIs - Property Setters
 
 - (void)updateAlias:(NSString *)value {
@@ -433,10 +433,8 @@ static Class _uiClass;
     // we are post-registration and will need to make
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
-        //clear the registration payload cache so we can synchronize with the server
-        self.registrationPayloadCache = nil;
         UALOG(@"Sending autobadge update to UA server");
-        [self updateRegistration];
+        [self updateRegistrationForcefully:YES  ];
     }
 }
 
@@ -553,7 +551,6 @@ static Class _uiClass;
 - (void)applicationDidBecomeActive {
     UALOG(@"Checking registration status after foreground notification");
     if (hasEnteredBackground) {
-        registrationRetryDelay = 0;
         [self updateRegistration];
     }
     else {
@@ -569,58 +566,42 @@ static Class _uiClass;
 }
 
 #pragma mark -
-#pragma mark UA Registration    Methods
+#pragma mark UA Registration Methods
 
 /* 
- * Checks the current state of the cache.
  * Checks the current application state, bails if in the background with the
  * assumption that next app init or isActive notif will call update.
- * Dispatches either a PUT or DELETE request to the server if necessary on
- * the registration queue. PushEnabled -> PUT, !PushEnabled -> DELETE.
+ * Dispatches a registration request to the server if necessary via
+ * the Device API client. PushEnabled -> register, !PushEnabled -> unregister.
  */
-- (void)updateRegistration {
-    if (isRegistering) {
-        UALOG(@"Currently registering, will check cache state when current registration is complete");
-        return;
-    }
-    self.isRegistering = YES;
-    
-    UALOG(@"Checking registration state");
+- (void)updateRegistrationForcefully:(BOOL)forcefully {
+        
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UALOG(@"Skipping DT registration. The app is currently backgrounded.");
-        self.isRegistering = NO;
         return;
     }
     
     [[NSUserDefaults standardUserDefaults] synchronize];
-    NSDictionary *currentRegistrationPayload = [self registrationPayload];;
-    if ([registrationPayloadCache isEqualToDictionary:currentRegistrationPayload] 
-        && self.pushEnabled == self.pushEnabledPayloadCache) {
-        UALOG(@"Registration is current, no update scheduled");
-        self.isRegistering = NO;
-        return;
-    }
     
     if (self.pushEnabled) {
         // If there is no device token, wait for the application delegate to update with one.
         if (!self.deviceToken) {
             UALOG(@"Device token is nil. Registration will be attempted at a later time");
-            self.isRegistering = NO;
             return;
         }
-        UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:currentRegistrationPayload];
 
-
-        
-        UALOG(@"Starting registration PUT request");
-        [self.connection cancel];
-        self.connection = [UAHTTPConnection connectionWithRequest:putRequest
-                                                          delegate:self
-                                                          success:@selector(registerDeviceTokenSucceeded:)
-                                                          failure:@selector(registerDeviceTokenFailed:)];
-
-        [self.connection start];
+        [self.deviceAPIClient
+         registerWithData:[self registrationData]
+         onSuccess:^{
+             UALOG(@"Device token registered on Urban Airship successfully.");
+             [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
+         }
+         onFailure:^(UAHTTPRequest *request) {
+             [self notifyObservers:@selector(registerDeviceTokenFailed:)
+                        withObject:request];
+         }
+         forcefully:forcefully];
     }
     else {
         // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
@@ -632,21 +613,30 @@ static Class _uiClass;
         }
         // Don't unregister more than once
         if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering]) {
-            UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken];
 
-            UALOG(@"Starting registration DELETE request (unregistering)");
-            [self.connection cancel];
-            self.connection = [UAHTTPConnection connectionWithRequest:deleteRequest
-                                                             delegate:self
-                                                              success:@selector(unRegisterDeviceTokenSucceeded:)
-                                                              failure:@selector(unRegisterDeviceTokenFailed:)];
-            [self.connection start];
+            [self.deviceAPIClient
+             unregisterWithData:[self registrationData]
+             onSuccess:^{
+                 // note that unregistration is no longer needed
+                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+                 UALOG(@"Device token unregistered on Urban Airship successfully.");
+                 [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
+             }
+             onFailure:^(UAHTTPRequest *request) {
+                 [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
+                 [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
+                            withObject:request];
+             }
+             forcefully:forcefully];
         }
         else {
             UALOG(@"Device has already been unregistered, no update scheduled");
-            self.isRegistering = NO;
         }
     }
+}
+
+- (void)updateRegistration {
+    [self updateRegistrationForcefully:NO];
 }
 
 //The new token to register, or nil if updating the existing token 
@@ -662,194 +652,9 @@ static Class _uiClass;
     [self updateRegistration];
 }
 
-// Deprecated method, disables auto retry, sends JSON with no error checking
-// dev is responsible for everything. 
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-    self.retryOnConnectionError = NO;
-    self.isRegistering = YES;
-    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
-    [[UAirship shared].analytics addEvent:regEvent];
-
-    UALOG(@"Starting deprecated registration request");
-    UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithInfo:info];
-
-    [self.connection cancel];
-    self.connection = [UAHTTPConnection connectionWithRequest:putRequest];
-    [self.connection start];
-}
-
-- (UAHTTPRequest *)requestToRegisterDeviceTokenWithInfo:(NSDictionary*)info {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
-                           [UAirship shared].server, @"/api/device_tokens/",
-                           self.deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
-
-    if (info != nil) {
-        [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-        [request appendBodyData:[[writer stringWithObject:info] dataUsingEncoding:NSUTF8StringEncoding]];
-        // add the registration payload as the userInfo object to cache on upload success
-        // two values, the registration payload and the pushEnabled value
-        NSDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:info];
-        request.userInfo = userInfo;
-    }   
-    return request;
-}
-
-// Mean to be called right after successful registration to make
-// sure state has not been changed
-- (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo {
-    NSDictionary *justRegisteredPayload = [userInfo valueForKey:UAPushUserInfoRegistration];
-    NSNumber *justRegisteredPushEnabled = [userInfo valueForKey:UAPushUserInfoPushEnabled];
-    BOOL equalRegistration = [justRegisteredPayload isEqualToDictionary:[self registrationPayload]];
-    BOOL equalPushEnabled = [justRegisteredPushEnabled boolValue] == self.pushEnabled;
-    return !(equalRegistration && equalPushEnabled);
-}
-
-// Meant to be called from any request, returns an NSDictionary with 
-// the passed in info and an NSNumber for pushEnabled state
-- (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info {
-    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-    [userInfo setValue:[NSNumber numberWithBool:self.pushEnabled] forKey:UAPushUserInfoPushEnabled];
-    [userInfo setValue:info forKey:UAPushUserInfoRegistration];
-    return userInfo;
-}
-
-// Called after a successful request, after the cache has been checked for 
-// stale data, caches data
-- (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo {
-    self.registrationPayloadCache = [userInfo valueForKey:UAPushUserInfoRegistration];
-    self.pushEnabledPayloadCache = [[userInfo valueForKey:UAPushUserInfoPushEnabled] boolValue];
-}
-
-// Deprecated method call. Device token is saved to local ivar, info
-// is passed to another deprecated method.
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
-    self.retryOnConnectionError = NO;
-    self.deviceToken = [self parseDeviceToken:[token description]];
-    // Device token event trigger in registerDeviceTokenWithExtraInfo:
-    [self registerDeviceTokenWithExtraInfo:info];
-    
-}
-
-// Deprecated method call. Works out fine, but complicates support
-// Disables server error
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
-    self.retryOnConnectionError = NO;
-    self.deviceToken = [self parseDeviceToken:[token description]];
-    self.alias = alias;
-    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
-    [[UAirship shared].analytics addEvent:regEvent];
-    [self updateRegistration];
-}
-
-
 - (void)unRegisterDeviceToken {
     //the setter will implicitly update registration on its own
     self.pushEnabled = NO;
-}
-
-- (UAHTTPRequest *)requestToDeleteDeviceToken {
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
-                           [UAirship shared].server,
-                           self.deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
-    UALOG(@"Request to unregister device token.");
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
-
-    // add the registration payload as the userInfo object to cache on upload success
-    // two values, the registration payload and the pushEnabled value
-    NSMutableDictionary *userInfo = [self cacheForRequestUserInfoDictionaryUsing:[self registrationPayload]];
-    request.userInfo = userInfo;
-    return request;
-}
-
-#pragma mark -
-#pragma mark UA API Registration callbacks
-
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    [UAUtils logFailedRequest:request withMessage:@"registering device token"];
-    if ([self shouldRetryRequest:request]) {
-        [self scheduleRetryForRequest:request];
-        return;
-    }
-    self.isRegistering = NO;
-    [self notifyObservers:@selector(registerDeviceTokenFailed:)
-               withObject:request];
-}
-
-- (void)registerDeviceTokenSucceeded:(UAHTTPRequest *)request {
-    if ([request.response statusCode] != 200 && [request.response statusCode] != 201) {
-        [self registerDeviceTokenFailed:request];
-    } else {
-        UALOG(@"Device token registered on Urban Airship successfully.");
-        // cache before setting isRegistering to NO
-        [self cacheSuccessfulUserInfo:request.userInfo];
-        self.isRegistering = NO;
-        if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
-            [self updateRegistration];
-            return;
-        }
-        [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
-    }
-}
-
-- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request {
-    [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-    if ([self shouldRetryRequest:request]) {
-        [self scheduleRetryForRequest:request];
-        return;
-    }
-    self.isRegistering = NO;
-    [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
-               withObject:request];
-}
-
-- (void)unRegisterDeviceTokenSucceeded:(UAHTTPRequest *)request {
-    if ([request.response statusCode] != 204){
-        [self unRegisterDeviceTokenFailed:request];
-    } else {
-        // cache before setting isRegistering to NO
-        [self cacheSuccessfulUserInfo:request.userInfo];
-        // note that unregistration is no longer needed
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
-        self.isRegistering = NO;
-        if ([self cacheHasChangedComparedToUserInfo:request.userInfo]) {
-            [self updateRegistration];
-            return;
-        }
-        UALOG(@"Device token unregistered on Urban Airship successfully.");
-        [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
-    }
-}
-
-- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request {
-    if (!self.retryOnConnectionError) {
-        return NO;
-    }
-    if (request.error) {
-        return YES;
-    }
-    if ([request.response statusCode] >= 500 && [request.response statusCode] <= 599) {
-        return YES;
-    }
-    return NO;
-}
-
-- (void)scheduleRetryForRequest:(UAHTTPRequest *)request {
-    if (registrationRetryDelay == 0) {
-        registrationRetryDelay = kUAPushRetryTimeInitialDelay;
-    }
-    else {
-        registrationRetryDelay = MIN(registrationRetryDelay * kUAPushRetryTimeMultiplier, kUAPushRetryTimeMaxDelay);
-    }
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, self.registrationRetryDelay * NSEC_PER_SEC);
-    UALOG(@"Will attempt to reconnect in %i seconds", registrationRetryDelay);
-    self.isRegistering = NO;
-    dispatch_after(popTime, registrationQueue, ^(void){
-        [self updateRegistration];
-    });
 }
 
 #pragma mark -

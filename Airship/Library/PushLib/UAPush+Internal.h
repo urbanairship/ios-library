@@ -24,7 +24,7 @@
  */
 
 #import "UAPush.h"
-
+#import "UADeviceAPIClient.h"
 
 typedef NSString UAPushSettingsKey;
 extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
@@ -55,17 +55,8 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 
 
 
-@interface UAPush () {
-    dispatch_queue_t registrationQueue;
-}
+@interface UAPush ()
 
-/* Serial queue for registration requests */
-@property (nonatomic, assign) dispatch_queue_t registrationQueue;
-
-/* Delay in seconds between retry attempts. Initial value is
- * kUAPushRetryTimeInitialDelay, max value is kUAPushRetryTimeMaxDelay
- */
-@property (nonatomic, assign) int registrationRetryDelay;
 
 /* Remote notification types that are used for registering/unregistering for notfications */
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
@@ -76,26 +67,12 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 /* Device token as a string */
 @property (nonatomic, copy) NSString *deviceToken;
 
-/* Cache of the last successful registration */
-@property (nonatomic, retain) NSDictionary *registrationPayloadCache;
-
-/* Last push enabled value sent to the server */
-@property (nonatomic, assign) BOOL pushEnabledPayloadCache;
-
-/* Indicator that a registration attempt is under way, and
- * that another should not begin. BOOL is reset on a completed connection
- */
-@property (nonatomic, assign) BOOL isRegistering;
-
 /* Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
-/*
- * The http connection used for registration.
- */
-@property (nonatomic, retain) UAHTTPConnection *connection;
+@property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
 
 /* Set quiet time. */
 - (void)setQuietTime:(NSMutableDictionary *)quietTime;
@@ -109,53 +86,9 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
  */
 - (NSString *)parseDeviceToken:(NSString *)tokenStr;
 
-/* Build a http request with an optional JSON body.
- * @praram info NSDictionary or nil for no body
- */
-- (UAHTTPRequest *)requestToRegisterDeviceTokenWithInfo:(NSDictionary *)info;
-
-/* Build a http reqeust to delete the device token from the UA API. */
-- (UAHTTPRequest *)requestToDeleteDeviceToken;
-
-/* Retry connection on any network layer error, or any 
- * server 500 if retryOnConnectionError is YES
- @param reqeust The request that has failed
- @return YES if the request will be scheduled for retry, NO otherwise
- */
-- (BOOL)shouldRetryRequest:(UAHTTPRequest *)request;
-
-/* Schedules the request again after a delay of n seconds,
- * configurable with kUAPushRetryTimeInitialDelay, kUAPushRetryTimeMultiplier, and
- * kUAPushRetryTimeMaxDelay
- * @param reqeust The request to reschedule
- */
-- (void)scheduleRetryForRequest:(UAHTTPRequest *)request;
 
 /* Return a dictionary representing the JSON payload of Push settings. */
 - (NSMutableDictionary*)registrationPayload;
-
-/* Takes a user info dictionary (expected to be a registrationPayload) adds 
- * the current state of pushEnabled as a NSNumber
- * @param info The info object passed in to the method, it is expected
- * that this will be a registration payload, and that it will used to
- * store and compare registration state (alias, tags, pushEnabled, etc)
- * @return A mutable dictionary with all of the info values, as well as 
- * an NSNumber indicating pushEnabled state. 
- */
-- (NSMutableDictionary*)cacheForRequestUserInfoDictionaryUsing:(NSDictionary*)info;
-
-/* Caches relevant values after a successful registration reqeust
- * @param userInfo The userInfo dictionary of the successful request
- */
-- (void)cacheSuccessfulUserInfo:(NSDictionary*)userInfo;
-
-/* Compares the userInfo cached values against the current state of 
- * UAPush values. Intended to be called after a request succeeds. Compares registrationPayloadCache and 
- * pushEnabledPayloadCache against the current registrationPayload and pushEnabled values.
- * @param userInfo The userInfo NSDictionary attached to the request
- * @return YES if the cache is stale compared to the uploaded data, NO if it is current
- */
-- (BOOL)cacheHasChangedComparedToUserInfo:(NSDictionary*)userInfo;
 
 /* Called on foreground notifications, triggers an updateRegistration
  */
