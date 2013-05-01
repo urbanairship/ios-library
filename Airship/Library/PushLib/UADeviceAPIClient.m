@@ -81,32 +81,34 @@
          onFailure:(UADeviceAPIClientFailureBlock)failureBlock
         forcefully:(BOOL)forcefully {
 
-    //synchronize here since we'll be messing with the registration data caches
-    @synchronized(self) {
-        //if the forcefully flag is set, we don't care about what we haved cached, otherwise make sure it's not a duplicate
-        if (forcefully || [self shouldSendRegistrationWithData:registrationData]) {
+    //if the forcefully flag is set, we don't care about what we haved cached, otherwise make sure it's not a duplicate
+    if (forcefully || [self shouldSendRegistrationWithData:registrationData]) {
 
-            [self.requestEngine cancelPendingRequests];
+        [self.requestEngine cancelPendingRequests];
+
+        //synchronize here since we're messing with the registration cache
+        //the success/failure blocks below will be triggered on the main thread
+        @synchronized(self) {
             self.pendingRegistration = registrationData;
-
-            [self.requestEngine
-             runRequest:request
-             succeedWhere:succeedWhereBlock
-             retryWhere:retryWhereBlock
-             onSuccess:^(UAHTTPRequest *request) {
-                 //clear the pending cache,  update last successful cache
-                 self.pendingRegistration = nil;
-                 self.lastSuccessfulRegistration = registrationData;
-                 successBlock();
-             }
-             onFailure:^(UAHTTPRequest *request) {
-                 //clear the pending cache
-                 self.pendingRegistration = nil;
-                 failureBlock(request);
-             }];
-        } else {
-            UA_LDEBUG(@"Ignoring duplicate request");
         }
+
+        [self.requestEngine
+         runRequest:request
+         succeedWhere:succeedWhereBlock
+         retryWhere:retryWhereBlock
+         onSuccess:^(UAHTTPRequest *request) {
+             //clear the pending cache,  update last successful cache
+             self.pendingRegistration = nil;
+             self.lastSuccessfulRegistration = registrationData;
+             successBlock();
+         }
+         onFailure:^(UAHTTPRequest *request) {
+             //clear the pending cache
+             self.pendingRegistration = nil;
+             failureBlock(request);
+         }];
+    } else {
+        UA_LDEBUG(@"Ignoring duplicate request");
     }
 }
 
