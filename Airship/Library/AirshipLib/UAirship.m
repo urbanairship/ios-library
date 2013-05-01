@@ -362,28 +362,4 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [UAHTTPConnection setDefaultUserAgentString:userAgent];
 }
 
-#pragma mark -
-#pragma mark UAPush Methods
-
-
-- (void)registerDeviceToken:(NSData *)token {
-    [[UAPush shared] registerDeviceToken:token withExtraInfo:nil];
-}
-
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias {
-    [[UAPush shared] registerDeviceToken:token withAlias:alias];
-}
-
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info {
-    [[UAPush shared] registerDeviceToken:token withExtraInfo:info];
-}
-
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info {
-    [[UAPush shared] registerDeviceTokenWithExtraInfo:info];
-}
-
-- (void)unRegisterDeviceToken {
-    [[UAPush shared] unRegisterDeviceToken];
-}
-
 @end
