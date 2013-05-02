@@ -43,9 +43,6 @@
 
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
-// analytics-specific logging method
-#define UA_ANALYTICS_LOG UA_LTRACE
-
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
@@ -248,20 +245,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"alert"];
     }
-    
-// Allow the lib to be built in Xcode 4.1 w/ the iOS 5 newsstand type
-// The two blocks below are functionally identical, but they're separated
-// for clarity. Once we can build against a stable SDK the second option
-// should be removed.
-#ifdef __IPHONE_5_0
+
     if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
         [notification_types addObject:@"newsstand"];
     }
-#else
-    if (((1 << 3) & enabledRemoteNotificationTypes) > 0) {
-        [notification_types addObject:@"newsstand"];
-    }
-#endif
     
     [session setObject:notification_types forKey:@"notification_types"];
     
@@ -282,7 +269,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark Application State
 
 - (void)enterForeground {
-    UA_ANALYTICS_LOG(@"Enter Foreground.");
+    UA_LTRACE(@"Enter Foreground.");
 
     [self invalidateBackgroundTask];
     [self setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
@@ -294,7 +281,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)enterBackground {
-    UA_ANALYTICS_LOG(@"Enter Background.");
+    UA_LTRACE(@"Enter Background.");
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
     if(session)[session removeAllObjects];
@@ -315,14 +302,14 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)invalidateBackgroundTask {
     if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
-        UA_ANALYTICS_LOG(@"Ending analytics background task %u", sendBackgroundTask_);
+        UA_LTRACE(@"Ending analytics background task %u", sendBackgroundTask_);
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }
 }
 
 - (void)didBecomeActive {
-    UA_ANALYTICS_LOG(@"Application did become active.");
+    UA_LTRACE(@"Application did become active.");
     
     // If this is the first 'inactive->active' transition in this session,
     // send 
@@ -345,7 +332,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)willResignActive {
-    UA_ANALYTICS_LOG(@"Application will resign active.");    
+    UA_LTRACE(@"Application will resign active.");    
     //add activity_stopped / AppInactive event
     [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
@@ -435,7 +422,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)addEvent:(UAEvent *)event {
     if (self.server.length > 0) {
-        UA_ANALYTICS_LOG(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
+        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
         [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
         self.databaseSize += [event getEstimatedSize];
         if (oldestEventTime == 0) {
@@ -459,7 +446,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
              responseData:(NSData *)responseData {
 
     UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
-    UA_ANALYTICS_LOG(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
+    UA_LTRACE(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
     // Update analytics settings with new header values
     [self updateAnalyticsParametersWithHeaderValues:response];
     [self setupSendTimer:x_ua_min_batch_interval];
@@ -469,13 +456,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
         }
         else {
-            UA_ANALYTICS_LOG(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
+            UA_LTRACE(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
         }
         [self resetEventsDatabaseStatus];
         self.lastSendTime = [NSDate date];
     } 
     else{
-        UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [response statusCode]);
+        UA_LTRACE(@"Send analytics data request failed: %d", [response statusCode]);
     } 
     self.connection = nil;
     [self invalidateBackgroundTask];
@@ -536,7 +523,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)requestDidFail:(UAHTTPRequest *)request {
-    UA_ANALYTICS_LOG(@"Send analytics data request failed.");
+    UA_LTRACE(@"Send analytics data request failed.");
     self.connection = nil;
     [self invalidateBackgroundTask];
 }
@@ -567,26 +554,26 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     } else {
         oldestEventTime = 0;
     }    
-    UA_ANALYTICS_LOG(@"Database size: %d", databaseSize_);
-    UA_ANALYTICS_LOG(@"Oldest Event: %f", oldestEventTime);
+    UA_LTRACE(@"Database size: %d", databaseSize_);
+    UA_LTRACE(@"Oldest Event: %f", oldestEventTime);
 }
 
 - (BOOL)shouldSendAnalytics {
     if (self.server == nil || [self.server length] == 0) {
-        UA_ANALYTICS_LOG("Analytics disabled.");
+        UA_LTRACE("Analytics disabled.");
         return NO;
     }
     if (connection_ != nil) {
-        UA_ANALYTICS_LOG(@"Analytics upload in progress");
+        UA_LTRACE(@"Analytics upload in progress");
         return NO;
     }    
     int eventCount = [[UAAnalyticsDBManager shared] eventCount];
     if (eventCount == 0) {
-        UA_ANALYTICS_LOG(@"No analytics events to upload");
+        UA_LTRACE(@"No analytics events to upload");
         return NO;
     }   
     if (databaseSize_ <= 0) {
-        UA_ANALYTICS_LOG(@"Analytics database size is zero, no analytics sent");
+        UA_LTRACE(@"Analytics database size is zero, no analytics sent");
         return NO;
     }
     UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
@@ -641,7 +628,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (NSArray*) prepareEventsForUpload {
     //Delete older events until upload size threshold is met
     while (databaseSize_ > x_ua_max_total) {
-        UA_ANALYTICS_LOG(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
+        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -664,7 +651,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         if (actualSize <= x_ua_max_batch) {
             batchEventCount++; 
         } else {
-            UA_ANALYTICS_LOG(@"Met batch limit.");
+            UA_LTRACE(@"Met batch limit.");
             break;
         }
         // The event data returned by the DB is a binary plist. Deserialize now.
@@ -678,7 +665,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                 format:NULL /* an out param */
                                                 errorDescription:&errString];
             if (errString) {
-                UA_ANALYTICS_LOG("Deserialization Error: %@", errString);
+                UA_LTRACE("Deserialization Error: %@", errString);
                 [errString release];//must be relased by caller per docs
             }
         }
@@ -702,19 +689,19 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)send {
-    UA_ANALYTICS_LOG(@"Attemping to send analytics");
+    UA_LTRACE(@"Attemping to send analytics");
     if (![self shouldSendAnalytics]) {
-        UA_ANALYTICS_LOG(@"ShouldSendAnalytics returned no");
+        UA_LTRACE(@"ShouldSendAnalytics returned no");
         return;
     }
     UAHTTPRequest *request = [self analyticsRequest];
     NSArray* events = [self prepareEventsForUpload];
     if (!events) {
-        UA_ANALYTICS_LOG(@"Error parsing events into array, skipping analytics send");
+        UA_LTRACE(@"Error parsing events into array, skipping analytics send");
         return;
     }
     if ([events count] == 0) {
-        UA_ANALYTICS_LOG(@"No events to upload, skipping analytics send");
+        UA_LTRACE(@"No events to upload, skipping analytics send");
         return;
     }
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
@@ -722,9 +709,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
     writer.humanReadable = YES;//turn on formatting for debugging
-    UA_ANALYTICS_LOG(@"Sending to server: %@", self.server);
-    UA_ANALYTICS_LOG(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
-    UA_ANALYTICS_LOG(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    UA_LTRACE(@"Sending to server: %@", self.server);
+    UA_LTRACE(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
+    UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];
     self.connection = [UAHTTPConnection connectionWithRequest:request];
     connection_.delegate = self;
@@ -745,7 +732,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [sendInvocation setSelector:@selector(send)];
     // In Objective C, you don't retain timer, timer retains you
     self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval invocation:sendInvocation repeats:YES];
-    UA_ANALYTICS_LOG(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
+    UA_LTRACE(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
 }
 
 @end

@@ -162,20 +162,6 @@ return self;                                        \
 }
 
 
-#ifndef kCFCoreFoundationVersionNumber_iPhoneOS_4_0
-#define kCFCoreFoundationVersionNumber_iPhoneOS_4_0 550.32
-#endif
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-#define IF_IOS4_OR_GREATER(...) \
-if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iPhoneOS_4_0) \
-{ \
-__VA_ARGS__ \
-}
-#else
-#define IF_IOS4_OR_GREATER(...)
-#endif
-
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_1
 #define IF_IOS4_1_OR_GREATER(...) \
 if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_4_1) \

@@ -140,14 +140,10 @@
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
     [self addDataFromSessionForKey:@"foreground"];
     
-    // Capture carrier info if available
-    IF_IOS4_OR_GREATER(
-                       CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
-                       CTCarrier *carrier = netInfo.subscriberCellularProvider;
+    CTTelephonyNetworkInfo *netInfo = [[[CTTelephonyNetworkInfo alloc] init] autorelease];
+    CTCarrier *carrier = netInfo.subscriberCellularProvider;
 
-                       [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
-                       [netInfo release];
-                       );
+    [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
 
     [self addDataFromSessionForKey:@"time_zone"];
     [self addDataFromSessionForKey:@"daylight_savings"];
