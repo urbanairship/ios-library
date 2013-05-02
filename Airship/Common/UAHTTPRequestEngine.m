@@ -126,10 +126,10 @@
                withDelay:self.initialDelayIntervalInSeconds];
 }
 
-//Cancels all operations currently in the queue, moving them to the finished state.
+//Cancels all operations currently executing or waiting in the queue, moving them to the finished state.
 //This will result in each operation terminating its work as quickly as possible.
 //If the queue is serial, this will cause subsequent additions to be run immediately.
-- (void)cancelPendingRequests {
+- (void)cancelAllRequests {
     [self.queue cancelAllOperations];
 }
 

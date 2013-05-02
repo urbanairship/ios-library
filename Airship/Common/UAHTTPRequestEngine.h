@@ -60,9 +60,9 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request);
          onFailure:(UAHTTPRequestEngineFailureBlock)failureBlock;
 
 /**
- * Cancels all pending requests.
+ * Cancels all currently enqueued or unfinished requests.
  */
-- (void)cancelPendingRequests;
+- (void)cancelAllRequests;
 
 /**
  * The maximum number of concurrent requests that can be run. Setting this value to 1

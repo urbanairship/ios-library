@@ -84,7 +84,7 @@
     //if the forcefully flag is set, we don't care about what we haved cached, otherwise make sure it's not a duplicate
     if (forcefully || [self shouldSendRegistrationWithData:registrationData]) {
 
-        [self.requestEngine cancelPendingRequests];
+        [self.requestEngine cancelAllRequests];
 
         //synchronize here since we're messing with the registration cache
         //the success/failure blocks below will be triggered on the main thread
