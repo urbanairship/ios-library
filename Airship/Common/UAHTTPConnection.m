@@ -178,7 +178,7 @@ static NSString *defaultUserAgentString;
 
 - (NSURLRequest *)buildRequest {
     if (self.urlConnection) {
-        UALOG(@"ERROR: UAHTTPConnection already started: %@", self);
+        UA_LDEBUG(@"ERROR: UAHTTPConnection already started: %@", self);
         return nil;
     } else {
 
@@ -217,9 +217,9 @@ static NSString *defaultUserAgentString;
                 body = [self gzipCompress:_request.body]; //returns nil if compression fails
                 if (body) {
                     [urlRequest setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-                    //UALOG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
+                    //UA_LDEBUG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
                 } else {
-                    UALOG(@"Body compression failed.");
+                    UA_LDEBUG(@"Body compression failed.");
                 }
 
             }
@@ -283,7 +283,7 @@ static NSString *defaultUserAgentString;
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    UALOG(@"ERROR: connection %@ didFailWithError: %@", self, error);
+    UA_LDEBUG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     self.request.error = error;
     if ([self.delegate respondsToSelector:self.failureSelector]) {
         [self.delegate performSelector:self.failureSelector withObject:_request];

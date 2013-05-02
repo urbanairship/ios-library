@@ -196,7 +196,7 @@ static Class _uiClass;
         // It is cleared on successful unregistration
 
         if (enabled) {
-            UALOG(@"registering for remote notifcations");
+            UA_LDEBUG(@"registering for remote notifcations");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
         } else {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
@@ -255,7 +255,7 @@ static Class _uiClass;
     }
     
     if (!_uiClass) {
-        UALOG(@"Push UI class not found.");
+        UA_LDEBUG(@"Push UI class not found.");
     }
     
     return _uiClass;
@@ -332,7 +332,7 @@ static Class _uiClass;
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to) {
-        UALOG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
+        UA_LDEBUG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
         return;
     }
     if(!timezone){
@@ -425,7 +425,7 @@ static Class _uiClass;
         return;
     }
 
-    UALOG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
+    UA_LDEBUG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
 
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 
@@ -433,7 +433,7 @@ static Class _uiClass;
     // we are post-registration and will need to make
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
-        UALOG(@"Sending autobadge update to UA server");
+        UA_LDEBUG(@"Sending autobadge update to UA server");
         [self updateRegistrationForcefully:YES  ];
     }
 }
@@ -447,7 +447,7 @@ static Class _uiClass;
     [[UAirship shared].analytics handleNotification:notification];
         
     if (state != UIApplicationStateActive) {
-        UALOG(@"Received a notification for an inactive application state.");
+        UA_LDEBUG(@"Received a notification for an inactive application state.");
         
         if ([delegate respondsToSelector:@selector(handleBackgroundNotification:)])
             [delegate handleBackgroundNotification:notification];
@@ -549,12 +549,12 @@ static Class _uiClass;
 #pragma mark UIApplication State Observation
 
 - (void)applicationDidBecomeActive {
-    UALOG(@"Checking registration status after foreground notification");
+    UA_LDEBUG(@"Checking registration status after foreground notification");
     if (hasEnteredBackground) {
         [self updateRegistration];
     }
     else {
-        UALOG(@"Checking registration on app foreground disabled on app initialization");
+        UA_LDEBUG(@"Checking registration on app foreground disabled on app initialization");
     }
 }
 
@@ -578,7 +578,7 @@ static Class _uiClass;
         
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UALOG(@"Skipping DT registration. The app is currently backgrounded.");
+        UA_LDEBUG(@"Skipping DT registration. The app is currently backgrounded.");
         return;
     }
     
@@ -587,14 +587,14 @@ static Class _uiClass;
     if (self.pushEnabled) {
         // If there is no device token, wait for the application delegate to update with one.
         if (!self.deviceToken) {
-            UALOG(@"Device token is nil. Registration will be attempted at a later time");
+            UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
             return;
         }
 
         [self.deviceAPIClient
          registerWithData:[self registrationData]
          onSuccess:^{
-             UALOG(@"Device token registered on Urban Airship successfully.");
+             UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
              [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
          }
          onFailure:^(UAHTTPRequest *request) {
@@ -608,7 +608,7 @@ static Class _uiClass;
         // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
         // that uses push, the DELETE will fail with a 404.
         if (!self.deviceToken) {
-            UALOG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
+            UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
             return;
         }
         // Don't unregister more than once
@@ -619,7 +619,7 @@ static Class _uiClass;
              onSuccess:^{
                  // note that unregistration is no longer needed
                  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
-                 UALOG(@"Device token unregistered on Urban Airship successfully.");
+                 UA_LDEBUG(@"Device token unregistered on Urban Airship successfully.");
                  [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
              }
              onFailure:^(UAHTTPRequest *request) {
@@ -630,7 +630,7 @@ static Class _uiClass;
              forcefully:forcefully];
         }
         else {
-            UALOG(@"Device has already been unregistered, no update scheduled");
+            UA_LDEBUG(@"Device has already been unregistered, no update scheduled");
         }
     }
 }
@@ -642,7 +642,7 @@ static Class _uiClass;
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
     if (!notificationTypes) {
-        UALOG(@"***ERROR***: attempted to register device token with no notificationTypes set!  \
+        UA_LDEBUG(@"***ERROR***: attempted to register device token with no notificationTypes set!  \
               Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication");
         return;
     }
