@@ -9,6 +9,7 @@
 #define kUAPushRetryTimeInitialDelay 60
 #define kUAPushRetryTimeMultiplier 2
 #define kUAPushRetryTimeMaxDelay 300
+#define kUAPushDeviceTokensURLBase @"/api/device_tokens/"
 
 @interface UADeviceAPIClient()
 
@@ -31,10 +32,12 @@
     return self;
 }
 
+- (NSString *)deviceTokenURLStringWithRegistrationData:(UADeviceRegistrationData *)registrationData {
+    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].server, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
+}
+
 - (UAHTTPRequest *)requestToRegisterDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/",
-                           [UAirship shared].server, @"/api/device_tokens/",
-                           registrationData.deviceToken];
+    NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
 
@@ -47,9 +50,7 @@
 }
 
 - (UAHTTPRequest *)requestToDeleteDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {
-    NSString *urlString = [NSString stringWithFormat:@"%@/api/device_tokens/%@/",
-                           [UAirship shared].server,
-                           registrationData.deviceToken];
+    NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
 
