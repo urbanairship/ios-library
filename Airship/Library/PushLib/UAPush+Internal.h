@@ -25,6 +25,7 @@
 
 #import "UAPush.h"
 #import "UADeviceAPIClient.h"
+#import "UADeviceRegistrationPayload.h"
 
 typedef NSString UAPushSettingsKey;
 extern UAPushSettingsKey *const UAPushEnabledSettingsKey;
@@ -42,18 +43,6 @@ extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
-
-typedef NSString UAPushJSONKey;
-extern UAPushJSONKey *const UAPushMultipleTagsJSONKey;
-extern UAPushJSONKey *const UAPushSingleTagJSONKey;
-extern UAPushJSONKey *const UAPushAliasJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeStartJSONKey;
-extern UAPushJSONKey *const UAPushQuietTimeEndJSONKey;
-extern UAPushJSONKey *const UAPushTimeZoneJSONKey;
-extern UAPushJSONKey *const UAPushBadgeJSONKey;
-
-
 
 @interface UAPush ()
 
@@ -88,7 +77,7 @@ extern UAPushJSONKey *const UAPushBadgeJSONKey;
 
 
 /* Return a dictionary representing the JSON payload of Push settings. */
-- (NSMutableDictionary*)registrationPayload;
+- (UADeviceRegistrationPayload *)registrationPayload;
 
 /* Called on foreground notifications, triggers an updateRegistration
  */

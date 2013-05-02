@@ -25,6 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UADeviceRegistrationPayload.h"
 
 /**
  * Model object encapsulating the data relevant to a registration or unregistration processed by UADeviceAPIClient.
@@ -38,7 +39,7 @@
  * @param payload An NSDictionary representing the payload to be sent in the request body.
  * @param pushEnabled A BOOL indicating whether push is currently enabled.
  */
-- (id)initWithDeviceToken:(NSString *)token withPayload:(NSDictionary *)payload pushEnabled:(BOOL)enabled;
+- (id)initWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
 
 /**
  * Autoreleased UADeviceRegistrationData class factory method.
@@ -47,7 +48,7 @@
  * @param payload An NSDictionary representing the payload to be sent in the request body.
  * @param pushEnabled A BOOL indicating whether push is currently enabled.
  */
-+ (id)dataWithDeviceToken:(NSString *)token withPayload:(NSDictionary *)payload pushEnabled:(BOOL)enabled;
++ (id)dataWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
 
 /**
  * The device token.
@@ -56,7 +57,7 @@
 /**
  * The request payload as an NSDictionary.
  */
-@property(nonatomic, retain, readonly) NSDictionary *payload;
+@property(nonatomic, retain, readonly) UADeviceRegistrationPayload *payload;
 /**
  * Indicates whether push was enabled at the time the object was constructed.
  */

@@ -3,7 +3,6 @@
 #import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAUtils.h"
-#import "UA_SBJsonWriter.h"
 #import "UAHTTPConnectionOperation.h"
 
 #define kUAPushRetryTimeInitialDelay 60
@@ -43,8 +42,7 @@
 
     if (registrationData.payload != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-        [request appendBodyData:[[writer stringWithObject:registrationData.payload] dataUsingEncoding:NSUTF8StringEncoding]];
+        [request appendBodyData:[registrationData.payload asJSONData]];
     }
     return request;
 }

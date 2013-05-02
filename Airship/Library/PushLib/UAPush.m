@@ -33,6 +33,7 @@
 #import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UADeviceRegistrationData.h"
+#import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 
@@ -52,14 +53,8 @@ UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
 UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
 UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
-UAPushJSONKey *const UAPushMultipleTagsJSONKey = @"tags";
-UAPushJSONKey *const UAPushSingleTagJSONKey = @"tag";
-UAPushJSONKey *const UAPushAliasJSONKey = @"alias";
-UAPushJSONKey *const UAPushQuietTimeJSONKey = @"quiettime";
-UAPushJSONKey *const UAPushQuietTimeStartJSONKey = @"start";
-UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
-UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
-UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
+NSString *const UAPushQuietTimeStartKey = @"start";
+NSString *const UAPushQuietTimeEndKey = @"end";
 
 UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
 
@@ -276,36 +271,41 @@ static Class _uiClass;
 }
 
 #pragma mark -
-#pragma mark UA API JSON Payload
+#pragma mark UA Device API Payload
 
-- (NSMutableDictionary *)registrationPayload {
+- (UADeviceRegistrationPayload *)registrationPayload {
     
-    NSMutableDictionary *body = [NSMutableDictionary dictionary];
-    NSString* alias =  self.alias;
-
-    [body setValue:alias forKey:UAPushAliasJSONKey];
+    NSString *alias =  self.alias;
+    NSArray *tags = nil;
     
     if (self.canEditTagsFromDevice) {
-        NSArray *tags = [self tags];
+        tags = [self tags];
         // If there are no tags, and tags are editable, send an 
         // empty array
         if (!tags) {
             tags = [NSArray array];
         }
-        [body setValue:tags forKey:UAPushMultipleTagsJSONKey];
     }
     
-    NSString* tz = self.timeZone.name;
-    NSDictionary *quietTime = self.quietTime;
-    if (tz != nil && self.quietTimeEnabled) {
-        [body setValue:tz forKey:UAPushTimeZoneJSONKey];
-        [body setValue:quietTime forKey:UAPushQuietTimeJSONKey];
+    NSString* tz = nil;
+    NSDictionary *quietTime = nil;
+    if (self.timeZone.name != nil && self.quietTimeEnabled) {
+        tz = self.timeZone.name;
+        quietTime = self.quietTime;
     }
+
+    NSNumber *badge = nil;
+    
     if ([self autobadgeEnabled]) {
-        [body setValue:[NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] 
-                forKey:UAPushBadgeJSONKey];
+        badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
-    return body;
+
+    UADeviceRegistrationPayload *payload = [UADeviceRegistrationPayload payloadWithAlias:alias
+                                                                                withTags:tags
+                                                                            withTimeZone:tz
+                                                                           withQuietTime:quietTime
+                                                                               withBadge:badge];
+    return payload;
 }
 
 #pragma mark -
@@ -316,6 +316,7 @@ static Class _uiClass;
                                              withPayload:[self registrationPayload]
                                              pushEnabled:self.pushEnabled];
 }
+
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
@@ -348,8 +349,8 @@ static Class _uiClass;
                        [cal components:NSMinuteCalendarUnit fromDate:to].minute];
     
     self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                      fromStr, UAPushQuietTimeStartJSONKey,
-                      toStr, UAPushQuietTimeEndJSONKey, nil];
+                      fromStr, UAPushQuietTimeStartKey,
+                      toStr, UAPushQuietTimeEndKey, nil];
     
     self.timeZone = timezone;
 }
