@@ -20,6 +20,10 @@
     return self;
 }
 
++ (id)dataWithDeviceToken:(NSString *)token withPayload:(NSDictionary *)payload pushEnabled:(BOOL)enabled {
+    return [[[UADeviceRegistrationData alloc] initWithDeviceToken:token withPayload:payload pushEnabled:enabled] autorelease];
+}
+
 - (void)dealloc {
     self.deviceToken = nil;
     self.payload = nil;

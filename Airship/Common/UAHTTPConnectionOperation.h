@@ -44,4 +44,14 @@
             onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
             onFailure:(UAHTTPConnectionFailureBlock)failureBlock;
 
+/**
+ * Autoreleased UAHTTPConnectionOperation class factory method.
+ * @param request An instance of UAHTTPRequest to be executed in the connection.
+ * @param onSuccess A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
+ * @param onFailure A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
+ */
++ (id)operationWithRequest:(UAHTTPRequest *)request
+                 onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
+                 onFailure:(UAHTTPConnectionFailureBlock)failureBlock;
+
 @end

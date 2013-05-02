@@ -72,6 +72,17 @@
     return self;
 }
 
++ (id)operationWithRequest:(UAHTTPRequest *)request
+                 onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
+                 onFailure:(UAHTTPConnectionFailureBlock)failureBlock {
+
+    return [[[UAHTTPConnectionOperation alloc] initWithRequest:request
+                                                     onSuccess:successBlock
+                                                     onFailure:failureBlock] autorelease];
+}
+
+
+
 - (void)cancelConnectionOnMainThread {    
     [self.connection cancel];
     [self finish];

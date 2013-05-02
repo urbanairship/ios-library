@@ -312,9 +312,9 @@ static Class _uiClass;
 #pragma Registration Data Model
 
 - (UADeviceRegistrationData *)registrationData {
-    return [[[UADeviceRegistrationData alloc] initWithDeviceToken:self.deviceToken
-                                                     withPayload:[self registrationPayload]
-                                                     pushEnabled:self.pushEnabled] autorelease];
+    return [UADeviceRegistrationData dataWithDeviceToken:self.deviceToken
+                                             withPayload:[self registrationPayload]
+                                             pushEnabled:self.pushEnabled];
 }
 
 #pragma mark -

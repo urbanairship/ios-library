@@ -89,9 +89,9 @@
         retryIfNecessary(request);
     };
 
-    UAHTTPConnectionOperation *operation = [[[UAHTTPConnectionOperation alloc] initWithRequest:theRequest
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:theRequest
                                                                                     onSuccess:onConnectionSuccess
-                                                                                    onFailure:onConnectionFailure] autorelease];
+                                                                                    onFailure:onConnectionFailure];
 
     return operation;
 }
