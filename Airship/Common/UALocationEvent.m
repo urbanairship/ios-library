@@ -128,13 +128,15 @@ NSString * const UAAnalyticsValueNone = @"NONE";
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    [data addEntriesFromDictionary:context];
+    [self.data addEntriesFromDictionary:context];
     [self addDataFromSessionForKey:UALocationEventSessionIDKey];
+    
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
     if (state == UIApplicationStateActive){
-        [data setValue:UAAnalyticsTrueValue forKey:UALocationEventForegroundKey];
+        [self.data setValue:UAAnalyticsTrueValue forKey:UALocationEventForegroundKey];
+    } else {
+        [self.data setValue:UAAnalyticsFalseValue forKey:UALocationEventForegroundKey];
     }
-    else [data setValue:UAAnalyticsFalseValue forKey:UALocationEventForegroundKey];
 }
 
 
