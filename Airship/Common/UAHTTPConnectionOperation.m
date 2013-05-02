@@ -104,7 +104,7 @@
 }
 
 - (void)start {
-    //synchronize change to the isExcecuting KVC value
+    //synchronize change to the isExecuting KVC value
     @synchronized(self) {
         //we may have already been cancelled at this point, in which case do nothing
         if (self.isCancelled) {
