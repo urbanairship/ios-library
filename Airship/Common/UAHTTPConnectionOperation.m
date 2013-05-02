@@ -5,12 +5,50 @@
 
 @interface UAHTTPConnectionOperation()
 
+//NSOperation KVC properties
+
+/**
+ * Indicates whether the operation is concurrent.
+ *
+ * Note that in this case, "concurrent" is used in the sense employed by NSOperation and NSOperationQueue,
+ * and is not directly related to whether operations executed in a queue are run on a separate thread.
+ * Rather, "concurrent" here means something more akin to "asynchronous".
+ * See Apple's documentation for more details:
+ * 
+ * http://developer.apple.com/library/ios/#documentation/cocoa/reference/NSOperation_class/Reference/Reference.html
+ */
 @property(nonatomic, assign) BOOL isConcurrent;
+
+/**
+ * Indicates whether the operation is currently executing.
+ */
 @property(nonatomic, assign) BOOL isExecuting;
+
+/**
+ * Indicates whether the operation has finished.
+ */
 @property(nonatomic, assign) BOOL isFinished;
+
+//Additional private state
+
+/**
+ * The request to be executed.
+ */
 @property(nonatomic, retain) UAHTTPRequest *request;
+
+/**
+ * The UAHTTPConnectionSuccessBlock to be executed if the connection is successful.
+ */
 @property(nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+
+/**
+ * The UAHTTPConnectionFailureBlock to be executed if the connection is unsuccessful.
+ */
 @property(nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
+
+/**
+ * The actual HTTP connection, created and run once the operation begins execution.
+ */
 @property(nonatomic, retain) UAHTTPConnection *connection;
 
 @end
@@ -24,7 +62,7 @@
         self.request = request;
         self.successBlock = successBlock;
         self.failureBlock = failureBlock;
-        //setting this property to YES allows us to wrap an otherwise async task and control
+        //setting isConcurrent to YES allows us to wrap an otherwise async task and control
         //the executing/finished/cancelled semantics granularly.
         self.isConcurrent = YES;
         self.isExecuting = NO;
