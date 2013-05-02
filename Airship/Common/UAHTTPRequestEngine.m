@@ -3,6 +3,11 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UAGlobal.h"
 
+#define kUARequestEngineDefaultMaxConcurrentRequests 1
+#define kUARequestEngineDefaultInitialDelayIntervalSeconds 30
+#define kUARequestEngineDefaultMaxDelayIntervalSeconds 300
+#define kUARequestEngineDefaultBackoffFactor 2
+
 @interface UAHTTPRequestEngine()
 @property(nonatomic, retain) NSOperationQueue *queue;
 @end
@@ -12,10 +17,10 @@
 - (id)init {
     if (self = [super init]) {
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        self.maxConcurrentRequests = 1;
-        self.initialDelayIntervalInSeconds = 30;
-        self.maxDelayIntervalInSeconds = 300;
-        self.backoffFactor = 2;
+        self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
+        self.initialDelayIntervalInSeconds = kUARequestEngineDefaultInitialDelayIntervalSeconds;
+        self.maxDelayIntervalInSeconds = kUARequestEngineDefaultMaxDelayIntervalSeconds;
+        self.backoffFactor = kUARequestEngineDefaultBackoffFactor;
     }
     return self;
 }
