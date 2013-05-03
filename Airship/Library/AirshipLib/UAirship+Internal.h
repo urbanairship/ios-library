@@ -24,7 +24,7 @@
  */
 
 @interface UAirship() {
-    UALocationService* locationService_;
+
 }
 /*
  * Should set this user agent up

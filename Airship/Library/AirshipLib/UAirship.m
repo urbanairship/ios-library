@@ -27,14 +27,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAirship+Internal.h"
 
-#import "UA_SBJSON.h"
-
 #import "UAUser.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
-#import "UALocationCommonValues.h"
 #import "UALocationService.h"
 #import "UAGlobal.h"
 #import "UAPush.h"
@@ -60,13 +57,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 @implementation UAirship
 
-@synthesize server;
-@synthesize appId;
-@synthesize appSecret;
-@synthesize ready;
-@synthesize analytics;
-@synthesize locationService = locationService_;
-
 #pragma mark -
 #pragma mark Logging
 + (void)setLogging:(BOOL)value {
@@ -80,25 +70,27 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 #pragma mark -
 #pragma mark Location Get/Set Methods
 
-- (UALocationService*)locationService {
-   if (!locationService_) {
-       locationService_ = [[UALocationService alloc] init];
-   }
-   return locationService_;
+- (UALocationService *)locationService {
+    if (!_locationService) {
+        _locationService = [[UALocationService alloc] init];
+    }
+
+    return _locationService;
 }
 
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
-    RELEASE_SAFELY(appId);
-    RELEASE_SAFELY(appSecret);
-    RELEASE_SAFELY(server);
+    self.appId = nil;
+    self.appSecret = nil;
+    self.server = nil;
     
     // Analytics contains an NSTimer, and the invalidate method is required
     // before dealloc
-    [analytics invalidate];
-    RELEASE_SAFELY(analytics);
-    RELEASE_SAFELY(locationService_);
+    [self.analytics invalidate];
+    self.analytics = nil;
+    self.locationService = nil;
+    
     [super dealloc];
 }
 
@@ -266,8 +258,8 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     // Application launch options
     NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
     NSMutableDictionary *analyticsOptions = [options objectForKey:UAirshipTakeOffOptionsAnalyticsKey];
-    if (analyticsOptions == nil) {
-        analyticsOptions = [[[NSMutableDictionary alloc] init] autorelease];
+    if (!analyticsOptions) {
+        analyticsOptions = [NSMutableDictionary dictionary];
     }
     [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
                         forKey:UAAnalyticsOptionsRemoteNotificationKey];
@@ -310,8 +302,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     //Land the modular libaries first
     [NSClassFromString(@"UAPush") land];
     [NSClassFromString(@"UAInbox") land];
-    [NSClassFromString(@"UAStoreFront") land];
-    [NSClassFromString(@"UASubscriptionManager") land];
     
     //Finally, release the airship!
     [_sharedAirship release];
@@ -321,7 +311,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 + (UAirship *)shared {
     if (_sharedAirship == nil) {
         [NSException raise:@"InstanceNotExists"
-                    format:@"Attempted to access instance before initializaion. Please call takeOff: first."];
+                    format:@"Attempted to access UAirship instance before initializaion. Please call [UAirship takeOff:] first."];
     }
     return _sharedAirship;
 }
@@ -329,7 +319,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 #pragma mark -
 #pragma mark DeviceToken get/set/utils
 
-- (NSString*)deviceToken {
+- (NSString *)deviceToken {
     return [[UAPush shared] deviceToken];
 }
 
@@ -356,7 +346,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     NSString *locale = [[NSLocale currentLocale] localeIdentifier];
     
     NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
-                           appName, appVersion, deviceModel, osName, osVersion, libVersion, appId, locale];
+                           appName, appVersion, deviceModel, osName, osVersion, libVersion, self.appId, locale];
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UAHTTPConnection setDefaultUserAgentString:userAgent];

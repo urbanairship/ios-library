@@ -24,7 +24,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAGlobal.h"
-#import "UAObservable.h"
 
 @class UAAnalytics;
 @class UALocationService;
@@ -79,16 +78,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * called from `[UIApplication application:didFinishLaunchingWithOptions]` to initialize the shared
  * instance.
  */
-@interface UAirship : NSObject {
-    
-  @private
-    NSString *server;
-    NSString *appId;
-    NSString *appSecret;
-
-    BOOL ready;
-    
-}
+@interface UAirship : NSObject
 
 /**
  * The current APNS/remote notification device token.
@@ -135,7 +125,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 ///---------------------------------------------------------------------------------------
 
 @property (nonatomic, retain, getter = locationService) UALocationService *locationService;
-- (UALocationService *)locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
