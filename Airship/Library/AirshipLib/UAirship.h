@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAAnalytics;
 @class UALocationService;
 
-UA_VERSION_INTERFACE(AirshipVersion)
+UA_VERSION_INTERFACE(UAirshipVersion)
 
 /**
  * Key for the default preferences dictionary that 

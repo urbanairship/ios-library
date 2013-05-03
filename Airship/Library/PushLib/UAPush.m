@@ -65,8 +65,6 @@ UAPushJSONKey *const UAPushQuietTimeEndJSONKey = @"end";
 UAPushJSONKey *const UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey *const UAPushBadgeJSONKey = @"badge";
 
-UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
-
 @implementation UAPush 
 //Internal
 @synthesize registrationQueue;

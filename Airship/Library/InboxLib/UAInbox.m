@@ -40,8 +40,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //weak link to this notification since it doesn't exist prior to iOS 4
 UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
 
-UA_VERSION_IMPLEMENTATION(UAInboxVersion, UA_VERSION)
-
 @implementation UAInbox
 
 @synthesize messageList;

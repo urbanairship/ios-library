@@ -36,7 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UAPush.h"
 
-UA_VERSION_IMPLEMENTATION(AirshipVersion, UA_VERSION)
+UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
 NSString * const UALocationServicePreferences = @"UALocationServicePreferences";
 NSString * const UAirshipTakeOffOptionsAirshipConfigKey = @"UAirshipTakeOffOptionsAirshipConfigKey";
@@ -342,7 +342,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     NSString *osName = [device systemName];
     NSString *osVersion = [device systemVersion];
     
-    NSString *libVersion = [AirshipVersion get];
+    NSString *libVersion = [UAirshipVersion get];
     NSString *locale = [[NSLocale currentLocale] localeIdentifier];
     
     NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",

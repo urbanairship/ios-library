@@ -270,7 +270,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
     
     [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [session setObject:[AirshipVersion get] forKey:@"lib_version"];
+    [session setObject:[UAirshipVersion get] forKey:@"lib_version"];
     [session setValue:packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
@@ -626,7 +626,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
     // Optional Items
-    [request addRequestHeader:@"X-UA-Lib-Version" value:[AirshipVersion get]];
+    [request addRequestHeader:@"X-UA-Lib-Version" value:[UAirshipVersion get]];
     [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
     [request addRequestHeader:@"X-UA-OS-Version" value:[[UIDevice currentDevice] systemVersion]];
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
