@@ -32,9 +32,7 @@
 #define kEventAppInactiveSize           120
 
 @interface UAEvent : NSObject {
-    NSString *time;
-    NSString *event_id;
-    NSMutableDictionary *data;
+
 }
 
 @property (nonatomic, readonly) NSString *time;
@@ -50,17 +48,6 @@
 - (void)addDataFromSessionForKey:(NSString*)dataKey;
 - (void)addDataWithValue:(id)value forKey:(NSString*)key;
 @end
-
-@interface UAEventCustom : UAEvent {
-  @private
-    NSString *type;
-}
-- (id)initWithType:(NSString*)aType;
-+ (id)eventWithType:(NSString*)aType;
-- (id)initWithType:(NSString*)aType andContext:(NSDictionary*)context;
-+ (id)eventWithType:(NSString*)aType andContext:(NSDictionary*)context;
-@end
-
 
 @interface UAEventAppInit : UAEvent
 @end

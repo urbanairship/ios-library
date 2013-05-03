@@ -48,11 +48,7 @@
 }
 
 + (BOOL)isApplicationActive {
-    BOOL isActive = YES;
-	IF_IOS4_OR_GREATER(
-					   isActive = [UIApplication sharedApplication].applicationState == UIApplicationStateActive;
-					   )
-    return isActive;
+    return ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
 }
 
 
