@@ -30,8 +30,6 @@
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
 
-UA_VERSION_INTERFACE(UAPushVersion)
-
 /**
  * Implement this protocol to provide a custom UI for use with UAPush. The default
  * implementation, UAPushUI, is provided in the library's sample UI distribution.
