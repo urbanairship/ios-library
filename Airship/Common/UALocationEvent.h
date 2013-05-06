@@ -97,9 +97,9 @@ extern NSString * const UAAnalyticsValueNone;
  * @param updateType One of the UALocationEvent updated types, see header for more details
  * @return UALocationEvent populated with the necessary values
  */
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location 
-                                     provider:(id<UALocationProviderProtocol>)provider 
-                                andUpdateType:(UALocationEventUpdateType *)updateType;
++ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
+                                      provider:(id<UALocationProviderProtocol>)provider 
+                                 andUpdateType:(UALocationEventUpdateType *)updateType;
 
 /**
  * Creates a UALocationEvent parsing the necessary data form the method parameters.
@@ -109,8 +109,8 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                              locationManager:(CLLocationManager *)locationManager 
-                                andUpdateType:(UALocationEventUpdateType *)updateType;
+                               locationManager:(CLLocationManager *)locationManager 
+                                 andUpdateType:(UALocationEventUpdateType *)updateType;
 
 
 ///---------------------------------------------------------------------------------------
