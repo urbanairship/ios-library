@@ -29,23 +29,15 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 
-// Weak link to this notification since it doesn't exist in iOS 3.x
-UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attribute__((weak_import));
-
 @implementation UAInboxAlertHandler
 
 - (id)init {
     if (self = [super init]) {
-        IF_IOS4_OR_GREATER(
-                           
-           if (&UIApplicationDidEnterBackgroundNotification != NULL) {
-               
-               [[NSNotificationCenter defaultCenter] addObserver:self
-                                                        selector:@selector(enterBackground)
-                                                            name:UIApplicationDidEnterBackgroundNotification
-                                                          object:nil];
-           }
-        );
+
+       [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(enterBackground)
+                                                    name:UIApplicationDidEnterBackgroundNotification
+                                                  object:nil];
     }
     
     return self;

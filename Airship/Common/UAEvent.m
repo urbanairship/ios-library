@@ -30,18 +30,24 @@
 #import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
+
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
+@interface UAEvent ()
+
+@property (nonatomic, copy) NSString *time;
+@property (nonatomic, copy) NSString *event_id;
+@property (nonatomic, retain) NSMutableDictionary *data;
+
+@end
 
 @implementation UAEvent
 
-@synthesize time, data, event_id;
-
 - (id)init {
     if (self=[super init]) {
-        event_id = [[UAUtils UUID] retain];
-        data = [NSMutableDictionary new];
+        self.event_id = [UAUtils UUID];
+        self.data = [NSMutableDictionary dictionary];
         return self;
     }
     return nil;
@@ -52,7 +58,7 @@
     return [obj autorelease];
 }
 
-- (id)initWithContext:(NSDictionary*)context {
+- (id)initWithContext:(NSDictionary *)context {
     if (self=[self init]) {
         [self gatherData:context];
         return self;
@@ -60,7 +66,7 @@
     return nil;
 }
 
-+ (id)eventWithContext:(NSDictionary*)context {
++ (id)eventWithContext:(NSDictionary *)context {
     id obj = [[self alloc] initWithContext:context];
     return [obj autorelease];
 }
@@ -75,24 +81,25 @@
     [eventDictionary setObject:self.time forKey:@"time"];
     [eventDictionary setObject:self.event_id forKey:@"event_id"];
     [eventDictionary setObject:self.data forKey:@"data"];
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     writer.humanReadable = NO;//strip whitespace
+    
     NSString *jsonString = [writer stringWithObject:eventDictionary];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    [writer release];
     
-    UALOG(@"Estimated event size: %d", [jsonData length]);
+    UA_LDEBUG(@"Estimated event size: %d", [jsonData length]);
     
     return [jsonData length];
 }
 
 - (void)addDataWithValue:(id)value forKey:(NSString*)key {
     if (value && key) {
-        [data setObject:value forKey:key];
+        [self.data setObject:value forKey:key];
     }
 }
 
-- (void)addDataFromSessionWithKey:(NSString*)sessionKey forKey:(NSString*)dataKey {
+- (void)addDataFromSessionWithKey:(NSString *)sessionKey forKey:(NSString *)dataKey {
     [self addDataWithValue:[[UAirship shared].analytics.session objectForKey:sessionKey] forKey:dataKey];
 }
 
@@ -104,68 +111,21 @@
 
 - (void)gatherData:(NSDictionary*)context {
     // in case we re-use a event object
-    RELEASE_SAFELY(time);
-    time = [[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]] retain];
-    [data removeAllObjects];
-
-    // add shared values
+    self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
+    [self.data removeAllObjects];
 
     // gather individual data
     [self gatherIndividualData:context];
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(event_id);
-    RELEASE_SAFELY(time);
-    RELEASE_SAFELY(data);
+    self.event_id = nil;
+    self.time = nil;
+    self.data = nil;
     [super dealloc];
 }
 
 @end
-
-@implementation UAEventCustom
-
-- (id)initWithType:(NSString*)aType {
-    if (self=[super init]) {
-        type = [aType retain];
-        return self;
-    }
-    return nil;
-}
-
-+ (id)eventWithType:(NSString*)aType {
-    id obj = [[self alloc] initWithType:aType];
-    return [obj autorelease];
-}
-
-- (id)initWithType:(NSString*)aType andContext:(NSDictionary*)context {
-    if (self=[super initWithContext:context]) {
-        type = [aType retain];
-        return self;
-    }
-    return nil;
-}
-
-+ (id)eventWithType:(NSString*)aType andContext:(NSDictionary*)context {
-    id obj = [[self alloc] initWithType:aType andContext:context];
-    return [obj autorelease];
-}
-
-- (NSString*)getType {
-    return type;
-}
-
-- (void)gatherIndividualData:(NSDictionary*)context {
-    [data addEntriesFromDictionary:context];
-}
-
-- (void)dealloc {
-    RELEASE_SAFELY(type);
-    [super dealloc];
-}
-
-@end
-
 
 @implementation UAEventAppInit
 
@@ -180,14 +140,10 @@
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
     [self addDataFromSessionForKey:@"foreground"];
     
-    // Capture carrier info if available
-    IF_IOS4_OR_GREATER(
-                       CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
-                       CTCarrier *carrier = netInfo.subscriberCellularProvider;
+    CTTelephonyNetworkInfo *netInfo = [[[CTTelephonyNetworkInfo alloc] init] autorelease];
+    CTCarrier *carrier = netInfo.subscriberCellularProvider;
 
-                       [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
-                       [netInfo release];
-                       );
+    [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
 
     [self addDataFromSessionForKey:@"time_zone"];
     [self addDataFromSessionForKey:@"daylight_savings"];
@@ -214,19 +170,18 @@
 
 - (void)gatherIndividualData:(NSDictionary*)context {
     [super gatherIndividualData:context];
-    
-    [data removeObjectForKey:@"foreground"];//not necessary - even is an explicit foreground
+    [self.data removeObjectForKey:@"foreground"];//not necessary - even is an explicit foreground
 }
 
 @end
 
 @implementation UAEventAppExit
 
-- (NSString*)getType {
+- (NSString *)getType {
     return @"app_exit";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
+- (void)gatherIndividualData:(NSDictionary *)context {
     [self addDataFromSessionForKey:@"connection_type"];
     [self addDataFromSessionWithKey:@"launched_from_push_id" forKey:@"push_id"];
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
@@ -252,8 +207,8 @@
     return @"activity_started";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
-    [data setValue:@"" forKey:@"class_name"];
+- (void)gatherIndividualData:(NSDictionary *)context {
+    [self.data setValue:@"" forKey:@"class_name"];
 }
 
 - (int)getEstimatedSize {
@@ -268,8 +223,8 @@
     return @"activity_stopped";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
-    [data setValue:@"" forKey:@"class_name"];
+- (void)gatherIndividualData:(NSDictionary *)context {
+    [self.data setValue:@"" forKey:@"class_name"];
 }
 
 - (int)getEstimatedSize {
@@ -280,11 +235,11 @@
 
 @implementation UAEventDeviceRegistration
 
-- (NSString*)getType {
+- (NSString *)getType {
     return @"device_registration";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
+- (void)gatherIndividualData:(NSDictionary *)context {
     [self addDataWithValue:[UAirship shared].deviceToken forKey:@"device_token"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
 }
@@ -297,11 +252,11 @@
 
 @implementation UAEventPushReceived
 
-- (NSString*)getType {
+- (NSString *)getType {
     return @"push_received";
 }
 
-- (void)gatherIndividualData:(NSDictionary*)context {
+- (void)gatherIndividualData:(NSDictionary *)context {
     
     // Get the rich push ID, which can be sent as a one-element array or a string
     NSString *richPushId = nil;

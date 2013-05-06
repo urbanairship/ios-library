@@ -25,9 +25,9 @@
 
 #import <Foundation/Foundation.h>
 #import "UAGlobal.h"
-#import "UASQLite.h"
 
 @class UAEvent;
+@class UASQLite;
 
 @interface UAAnalyticsDBManager : NSObject {
     UASQLite *db;

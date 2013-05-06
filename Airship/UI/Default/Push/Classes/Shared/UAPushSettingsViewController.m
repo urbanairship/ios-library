@@ -275,8 +275,6 @@ enum {
     
     CGRect viewBounds = self.view.bounds;
     
-IF_IOS4_OR_GREATER (
-    
     //Manually set the size of the picker for better landscape experience
     //Older  devies do not like the custom size. It breaks the picker.
                     
@@ -291,7 +289,6 @@ IF_IOS4_OR_GREATER (
     for (UIView* subview in datePicker.subviews) {
         subview.frame = datePicker.bounds;
     }
-                    );
     
     // reset the visible/hidden views
     int viewOffset = self.view.frame.origin.y;

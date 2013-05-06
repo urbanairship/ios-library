@@ -37,9 +37,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInboxMessageListObserver.h"
 
-//weak link to this notification since it doesn't exist prior to iOS 4
-UIKIT_EXTERN NSString* const UIApplicationWillEnterForegroundNotification __attribute__((weak_import));
-
 @implementation UAInbox
 
 @synthesize messageList;
@@ -141,17 +138,12 @@ static Class _uiClass;
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
         
-        IF_IOS4_OR_GREATER(
-                           
-           if (&UIApplicationWillEnterForegroundNotification != NULL) {
-               
-               [[NSNotificationCenter defaultCenter] addObserver:self
-                                                        selector:@selector(enterForeground)
-                                                            name:UIApplicationWillEnterForegroundNotification
-                                                          object:nil];
-           }
-        );
-        
+
+       [[NSNotificationCenter defaultCenter] addObserver:self
+                                                selector:@selector(enterForeground)
+                                                    name:UIApplicationWillEnterForegroundNotification
+                                                  object:nil];
+
     }
 
     return self;

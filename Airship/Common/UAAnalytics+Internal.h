@@ -106,7 +106,7 @@
 - (void)invalidateBackgroundTask;
 
 /* Generate an analytics request with the proper fields */
-- (UAHTTPRequest*)analyticsRequest;
+- (UAHTTPRequest *)analyticsRequest;
 
 /* Clean up event data for sending
  Enforce max batch limits
