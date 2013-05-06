@@ -443,14 +443,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 - (void)requestDidSucceed:(UAHTTPRequest *)request {
 
-<<<<<<< HEAD
     UALOG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
-    UA_ANALYTICS_LOG(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
-    
-=======
-    UALOG(@"Analytics data sent successfully. Status: %d", [response statusCode]);
-    UA_LTRACE(@"responseData=%@, length=%d", [[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding] autorelease], [responseData length]);
->>>>>>> LIB-608
+    UA_LTRACE(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
+
     // Update analytics settings with new header values
     [self updateAnalyticsParametersWithHeaderValues:request.response];
     [self setupSendTimer:x_ua_min_batch_interval];
@@ -465,19 +460,15 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [self resetEventsDatabaseStatus];
         self.lastSendTime = [NSDate date];
     } 
-    else{
-<<<<<<< HEAD
-        UA_ANALYTICS_LOG(@"Send analytics data request failed: %d", [request.response statusCode]);
-=======
-        UA_LTRACE(@"Send analytics data request failed: %d", [response statusCode]);
->>>>>>> LIB-608
+    else {
+        UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
     } 
     self.connection = nil;
     [self invalidateBackgroundTask];
 }
 
 - (void)requestDidFail:(UAHTTPRequest *)request {
-    UA_ANALYTICS_LOG(@"Send analytics data request failed.");
+    UA_LTRACE(@"Send analytics data request failed.");
     self.connection = nil;
     [self invalidateBackgroundTask];
 }
@@ -536,15 +527,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
 }
 
-<<<<<<< HEAD
-=======
-- (void)requestDidFail:(UAHTTPRequest *)request {
-    UA_LTRACE(@"Send analytics data request failed.");
-    self.connection = nil;
-    [self invalidateBackgroundTask];
-}
-
->>>>>>> LIB-608
 #pragma mark - 
 #pragma mark Custom Property Setters
 
