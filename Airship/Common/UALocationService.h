@@ -183,7 +183,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */
-- (CLLocation*)location;
+- (CLLocation *)location;
 
 /// Last location reported to Urban Airship
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
