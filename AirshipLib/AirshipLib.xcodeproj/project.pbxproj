@@ -9,31 +9,23 @@
 /* Begin PBXBuildFile section */
 		1F16421016F26A8100C87CAB /* UAInbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F1641FD16F26A8100C87CAB /* UAInbox.h */; };
 		1F16421216F26A8100C87CAB /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1641FE16F26A8100C87CAB /* UAInbox.m */; };
-		1F16421416F26A8100C87CAB /* UAInbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F1641FE16F26A8100C87CAB /* UAInbox.m */; };
 		1F16421516F26A8100C87CAB /* UAInboxDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F1641FF16F26A8100C87CAB /* UAInboxDBManager.h */; };
 		1F16421716F26A8100C87CAB /* UAInboxDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420016F26A8100C87CAB /* UAInboxDBManager.m */; };
-		1F16421916F26A8100C87CAB /* UAInboxDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420016F26A8100C87CAB /* UAInboxDBManager.m */; };
 		1F16421A16F26A8100C87CAB /* UAInboxDefaultJSDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420116F26A8100C87CAB /* UAInboxDefaultJSDelegate.h */; };
 		1F16421C16F26A8100C87CAB /* UAInboxDefaultJSDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420216F26A8100C87CAB /* UAInboxDefaultJSDelegate.m */; };
-		1F16421E16F26A8100C87CAB /* UAInboxDefaultJSDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420216F26A8100C87CAB /* UAInboxDefaultJSDelegate.m */; };
 		1F16421F16F26A8100C87CAB /* UAInboxMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420316F26A8100C87CAB /* UAInboxMessage.h */; };
 		1F16422116F26A8100C87CAB /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420416F26A8100C87CAB /* UAInboxMessage.m */; };
-		1F16422316F26A8100C87CAB /* UAInboxMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420416F26A8100C87CAB /* UAInboxMessage.m */; };
 		1F16422416F26A8100C87CAB /* UAInboxMessageList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420516F26A8100C87CAB /* UAInboxMessageList.h */; };
 		1F16422616F26A8100C87CAB /* UAInboxMessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420616F26A8100C87CAB /* UAInboxMessageList.m */; };
-		1F16422816F26A8100C87CAB /* UAInboxMessageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420616F26A8100C87CAB /* UAInboxMessageList.m */; };
 		1F16422916F26A8100C87CAB /* UAInboxMessageListObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420716F26A8100C87CAB /* UAInboxMessageListObserver.h */; };
 		1F16422B16F26A8100C87CAB /* UAInboxPushHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420816F26A8100C87CAB /* UAInboxPushHandler.h */; };
 		1F16422D16F26A8100C87CAB /* UAInboxPushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420916F26A8100C87CAB /* UAInboxPushHandler.m */; };
-		1F16422F16F26A8100C87CAB /* UAInboxPushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420916F26A8100C87CAB /* UAInboxPushHandler.m */; };
 		1F16423016F26A8100C87CAB /* UAInboxURLCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420A16F26A8100C87CAB /* UAInboxURLCache.h */; };
 		1F16423216F26A8100C87CAB /* UAInboxURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420B16F26A8100C87CAB /* UAInboxURLCache.m */; };
-		1F16423416F26A8100C87CAB /* UAInboxURLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420B16F26A8100C87CAB /* UAInboxURLCache.m */; };
 		1F16423516F26A8100C87CAB /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420D16F26A8100C87CAB /* UAPush+Internal.h */; };
 		1F16423716F26A8100C87CAB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420E16F26A8100C87CAB /* UAPush.h */; };
 		1F16423916F26A8100C87CAB /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420F16F26A8100C87CAB /* UAPush.m */; };
-		1F16423B16F26A8100C87CAB /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420F16F26A8100C87CAB /* UAPush.m */; };
-		1F4230C016C09876004B52C1 /* libUAirship-1.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.4.0.a */; };
+		1F4230C016C09876004B52C1 /* libUAirship-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */; };
 		1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E921238462100B7E69F /* UAViewUtils.m */; };
 		1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
 		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
@@ -130,7 +122,6 @@
 		BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		BB886122159A7E9600584445 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
-		BB886124159A7E9600584445 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63CB55371247148400DF2EBC /* StoreKit.framework */; };
 		BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5A150574DE00971CEC /* JRSwizzle.m */; };
@@ -183,7 +174,6 @@
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		63CB55371247148400DF2EBC /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		7B72D39A147D7827008853AC /* UA_ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		7B72D39B147D7827008853AC /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
 		7B72D39C147D7827008853AC /* UA_ASIFormDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_ASIFormDataRequest.h; sourceTree = "<group>"; };
@@ -241,7 +231,7 @@
 		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB5EBC94159B760400F2A716 /* UA_ASIAuthenticationDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UA_ASIAuthenticationDialog.m; sourceTree = "<group>"; };
-		BB88612C159A7E9600584445 /* libUAirship-1.4.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.4.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.5.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
@@ -304,7 +294,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4230C016C09876004B52C1 /* libUAirship-1.4.0.a in Frameworks */,
+				1F4230C016C09876004B52C1 /* libUAirship-1.5.0.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -330,7 +320,6 @@
 				BB886120159A7E9600584445 /* Foundation.framework in Frameworks */,
 				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
 				BB886122159A7E9600584445 /* UIKit.framework in Frameworks */,
-				BB886124159A7E9600584445 /* StoreKit.framework in Frameworks */,
 				BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */,
 				BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */,
 			);
@@ -343,7 +332,7 @@
 			isa = PBXGroup;
 			children = (
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
-				BB88612C159A7E9600584445 /* libUAirship-1.4.0.a */,
+				BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -374,7 +363,6 @@
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */,
 				633146B3122FA474008F2D48 /* UIKit.framework */,
-				63CB55371247148400DF2EBC /* StoreKit.framework */,
 				1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */,
 				7BB679071429288D00B877DB /* SenTestingKit.framework */,
 			);
@@ -753,7 +741,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = BB88612C159A7E9600584445 /* libUAirship-1.4.0.a */;
+			productReference = BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -828,14 +816,6 @@
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				BBDC656715C897F1005ECC54 /* UA_ASIHTTPRequestTests.m in Sources */,
-				1F16421416F26A8100C87CAB /* UAInbox.m in Sources */,
-				1F16421916F26A8100C87CAB /* UAInboxDBManager.m in Sources */,
-				1F16421E16F26A8100C87CAB /* UAInboxDefaultJSDelegate.m in Sources */,
-				1F16422316F26A8100C87CAB /* UAInboxMessage.m in Sources */,
-				1F16422816F26A8100C87CAB /* UAInboxMessageList.m in Sources */,
-				1F16422F16F26A8100C87CAB /* UAInboxPushHandler.m in Sources */,
-				1F16423416F26A8100C87CAB /* UAInboxURLCache.m in Sources */,
-				1F16423B16F26A8100C87CAB /* UAPush.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
