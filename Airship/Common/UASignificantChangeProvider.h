@@ -42,12 +42,14 @@
 
 /// Starts the significant change location service
 - (void)startReportingLocation;
+
 /// Stops the significant change location service
 - (void)stopReportingLocation;
 
-/** Returns a UASignificantChange provider with the given delegate 
-    @param delegateOrNil A UALocationProviderDelegate or nil
-    @return Provider with the parameter as the assiged delegate
+/** 
+ * Returns a UASignificantChange provider with the given delegate
+ * @param delegateOrNil A UALocationProviderDelegate or nil
+ * @return Provider with the parameter as the assiged delegate
  */
-+ (UASignificantChangeProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil;
++ (UASignificantChangeProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil;
 @end

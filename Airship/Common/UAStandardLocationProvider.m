@@ -31,8 +31,8 @@
 - (void)dealloc {
     self.delegate = nil;
     // Directly stop the location mananger for speed and clarity
-    [locationManager_ stopUpdatingLocation];
-    locationManager_.delegate = nil;
+    [self.locationManager stopUpdatingLocation];
+    self.locationManager.delegate = nil;
     // Super class deallocates location manager
     [super dealloc];
 }
@@ -40,7 +40,7 @@
 - (id)init {
     self = [super init];
     if (self){
-        provider_ = UALocationServiceProviderGps; 
+        self.provider = UALocationServiceProviderGps;
     }
     return self;
 }
@@ -65,15 +65,15 @@
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
+    [self.delegate locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    BOOL doesRespond = [self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [self.delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
@@ -83,12 +83,12 @@
 - (void)startReportingLocation {
     UALOG(@"Start standard location");
     [super startReportingLocation];
-    [locationManager_ startUpdatingLocation];
+    [self.locationManager startUpdatingLocation];
 }
 - (void)stopReportingLocation {
     UALOG(@"Stop standard location");
     [super stopReportingLocation];
-    [locationManager_ stopUpdatingLocation];
+    [self.locationManager stopUpdatingLocation];
 }
  
 + (UAStandardLocationProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {

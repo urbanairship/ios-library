@@ -30,6 +30,7 @@
 
 @class UALocationEvent;
 @interface UALocationService () {
+    
     UAStandardLocationProvider *standardLocationProvider_;
     UAStandardLocationProvider *singleLocationProvider_;   
     UASignificantChangeProvider *significantChangeProvider_;
@@ -37,6 +38,15 @@
     BOOL shouldStartReportingSignificantChange_;
     CLLocation *bestAvailableSingleLocation_;
     UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier_;
+
+    NSTimeInterval minimumTimeBetweenForegroundUpdates_;
+    NSTimeInterval timeoutForSingleLocationService_;
+    CLLocation *lastReportedLocation_;
+    NSDate *dateOfLastLocation_;
+    id <UALocationServiceDelegate> delegate_;
+    BOOL promptUserForLocationServices_;
+    BOOL automaticLocationOnForegroundEnabled_;
+    BOOL backroundLocationServiceEnabled_;
 }
 
 // Override property declarations for implementation and testing
