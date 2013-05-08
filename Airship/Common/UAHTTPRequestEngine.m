@@ -1,12 +1,8 @@
 
 #import "UAHTTPRequestEngine.h"
+#import "UADelayOperation.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UAGlobal.h"
-
-#define kUARequestEngineDefaultMaxConcurrentRequests 1
-#define kUARequestEngineDefaultInitialDelayIntervalSeconds 30
-#define kUARequestEngineDefaultMaxDelayIntervalSeconds 300
-#define kUARequestEngineDefaultBackoffFactor 2
 
 @interface UAHTTPRequestEngine()
 @property(nonatomic, retain) NSOperationQueue *queue;
@@ -14,15 +10,19 @@
 
 @implementation UAHTTPRequestEngine
 
-- (id)init {
+- (id)initWithQueue:(NSOperationQueue *)queue {
     if (self = [super init]) {
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
-        self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
+        self.queue = queue;
+        self.queue.maxConcurrentOperationCount = self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
         self.initialDelayIntervalInSeconds = kUARequestEngineDefaultInitialDelayIntervalSeconds;
         self.maxDelayIntervalInSeconds = kUARequestEngineDefaultMaxDelayIntervalSeconds;
         self.backoffFactor = kUARequestEngineDefaultBackoffFactor;
     }
     return self;
+}
+
+- (id)init {
+    return [self initWithQueue:[[[NSOperationQueue alloc] init] autorelease]];
 }
 
 //Multiply the current delay interval by the backoff factor, clipped at the max value
@@ -33,13 +33,10 @@
 //Enqueues two operations, first an operation that sleeps for the specified number of seconds, and next
 //a continuation operation with the former as a dependency. Useful for scheduling retries.
 - (void)sleepForSeconds:(NSInteger)seconds withContinuation:(UAHTTPConnectionOperation *)continuation {
-    NSBlockOperation *sleepOperation = [NSBlockOperation blockOperationWithBlock:^() {
-        sleep(seconds);
-    }];
+    UADelayOperation *delay = [UADelayOperation operationWithDelayInSeconds:seconds];
+    [continuation addDependency:delay];
 
-    [continuation addDependency:sleepOperation];
-
-    [self.queue addOperation:sleepOperation];
+    [self.queue addOperation:delay];
     [self.queue addOperation:continuation];
 }
 
@@ -54,6 +51,7 @@
     //Called in a retry condition.
     void (^retry)(UAHTTPRequest *request) = ^(UAHTTPRequest *request) {
         UA_LDEBUG(@"Retrying connection to %@ in %d seconds", request.url.description, delay);
+
         [self sleepForSeconds:delay withContinuation:
             [self operationWithRequest:theRequest
                     succeedWhere:succeedWhereBlock
@@ -70,7 +68,7 @@
         if (retryWhereBlock(request) || request.error) {
             retry(request);
         } else {
-            failureBlock(request);
+            failureBlock(request, delay);
         }
     };
 
@@ -78,7 +76,7 @@
         //Does this connection success meet our specified requirements?
         if (succeedWhereBlock(request)) {
             //if so, we're done
-            successBlock(request);
+            successBlock(request, delay);
         } else {
             //otherwise, retry if applicable
             retryIfNecessary(request);

@@ -24,13 +24,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define kUARequestEngineDefaultMaxConcurrentRequests 1
+#define kUARequestEngineDefaultInitialDelayIntervalSeconds 30
+#define kUARequestEngineDefaultMaxDelayIntervalSeconds 300
+#define kUARequestEngineDefaultBackoffFactor 2
 
 #import <Foundation/Foundation.h>
 #import "UAHTTPConnection.h"
 
 typedef BOOL (^UAHTTPRequestEngineWhereBlock)(UAHTTPRequest *request);
-typedef void (^UAHTTPRequestEngineSuccessBlock)(UAHTTPRequest *request);
-typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPRequestEngineSuccessBlock)(UAHTTPRequest *request, NSInteger lastDelay);
+typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSInteger lastDelay);
 
 /**
  * A generalized abstraction for running HTTP requests in an NSOperationQueue.
@@ -38,6 +42,16 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request);
  * as a modular component for designing REST clients
  */
 @interface UAHTTPRequestEngine : NSObject
+
+/**
+ * Default initializer.
+ */
+- (id)init;
+
+/**
+ * Initializer with argument for custom NSOperationQueue
+ */
+- (id)initWithQueue:(NSOperationQueue *)queue;
 
 /**
  * Enqueues a request for immediate or pending execution.
@@ -92,5 +106,12 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request);
  * Defaults to 2.
  */
 @property(nonatomic, assign) NSInteger backoffFactor;
+
+
+/**
+ * The operation queue used for running registrations.
+ */
+@property(nonatomic, readonly, retain) NSOperationQueue *queue;
+
 
 @end
