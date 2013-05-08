@@ -65,7 +65,9 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
 }
 
-@property (nonatomic, retain) NSURLConnection *urlConnection;
+@property (nonatomic, retain, readonly) NSURLConnection *urlConnection;
+@property (nonatomic, retain, readonly) UAHTTPRequest *request;
+
 
 @property (assign, nonatomic) id delegate;
 @property (nonatomic, assign) SEL successSelector;

@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UAGlobal.h"
 
 #import "UA_Base64.h"
@@ -32,13 +32,6 @@
 
 static NSString *defaultUserAgentString;
 
-@interface UAHTTPRequest()
-
-@property (retain, nonatomic) NSHTTPURLResponse *response;
-@property (retain, nonatomic) NSData *responseData;
-@property (retain, nonatomic) NSError *error;
-
-@end
 
 @implementation UAHTTPRequest
 
@@ -99,26 +92,10 @@ static NSString *defaultUserAgentString;
 @end
 
 
-
-
 //----------------------------------------
 // UAHTTPConnection
 //----------------------------------------
 
-
-
-#pragma mark -
-#pragma mark UAHTTPConnection Continuation
-
-@interface UAHTTPConnection()
-
-@property (nonatomic, retain) UAHTTPRequest *request;
-@property (nonatomic, retain) NSHTTPURLResponse *urlResponse;
-@property (nonatomic, retain) NSMutableData *responseData;
-
-- (NSData *)gzipCompress:(NSData *)uncompressedData;
-
-@end
 
 #pragma mark -
 #pragma mark UAHTTPConnection
