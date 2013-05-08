@@ -26,6 +26,15 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NSString *const UAPushJSONKey;
+
+extern UAPushJSONKey UAPushMultipleTagsJSONKey;
+extern UAPushJSONKey UAPushSingleTagJSONKey;
+extern UAPushJSONKey UAPushAliasJSONKey;
+extern UAPushJSONKey UAPushQuietTimeJSONKey;
+extern UAPushJSONKey UAPushTimeZoneJSONKey;
+extern UAPushJSONKey UAPushBadgeJSONKey;
+
 @interface UADeviceRegistrationPayload : NSObject
 
 - (id)initWithAlias:(NSString *)alias

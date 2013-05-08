@@ -39,6 +39,9 @@ extern UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey;
 extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
 extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 
+extern NSString *const UAPushQuietTimeStartKey;
+extern NSString *const UAPushQuietTimeEndKey;
+
 // Keys for the userInfo object on UA_ASIHTTPRequest objects
 typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;

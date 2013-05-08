@@ -2,8 +2,6 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UA_SBJsonWriter.h"
 
-typedef NSString *const UAPushJSONKey;
-
 UAPushJSONKey UAPushMultipleTagsJSONKey = @"tags";
 UAPushJSONKey UAPushSingleTagJSONKey = @"tag";
 UAPushJSONKey UAPushAliasJSONKey = @"alias";
@@ -12,9 +10,7 @@ UAPushJSONKey UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 
 @interface UADeviceRegistrationPayload()
-
 @property(nonatomic, retain) NSDictionary *payloadDictionary;
-
 @end
 
 @implementation UADeviceRegistrationPayload
