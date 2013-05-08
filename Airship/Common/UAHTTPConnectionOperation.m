@@ -66,8 +66,7 @@
         //the executing/finished/cancelled semantics granularly.
         self.isConcurrent = YES;
         self.isExecuting = NO;
-        self.isFinished = NO;
-        
+        self.isFinished = NO;        
     }
     return self;
 }
@@ -81,9 +80,25 @@
                                                      onFailure:failureBlock] autorelease];
 }
 
+- (void)setIsExecuting:(BOOL)isExecuting {
+    [self willChangeValueForKey:@"isExecuting"];
+    _isExecuting = isExecuting;
+    [self didChangeValueForKey:@"isExecuting"];
+}
 
+- (void)setIsConcurrent:(BOOL)isConcurrent {
+    [self willChangeValueForKey:@"isConcurrent"];
+    _isConcurrent = isConcurrent;
+    [self didChangeValueForKey:@"isConcurrent"];
+}
 
-- (void)cancelConnectionOnMainThread {    
+- (void)setIsFinished:(BOOL)isFinished {
+    [self willChangeValueForKey:@"isFinished"];
+    _isFinished = isFinished;
+    [self didChangeValueForKey:@"isFinished"];
+}
+
+- (void)cancelConnectionOnMainThread {
     [self.connection cancel];
     [self finish];
 }
