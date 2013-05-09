@@ -5,7 +5,7 @@
 
 @interface UAHTTPConnectionOperation()
 
-//NSOperation KVC properties
+//NSOperation KVO properties
 
 /**
  * Indicates whether the operation is concurrent.
@@ -104,7 +104,7 @@
 }
 
 - (void)cancel {
-    //the super call affects the isCancelled KVC value, synchronize to avoid a race
+    //the super call affects the isCancelled KVO value, synchronize to avoid a race
     @synchronized(self) {
         [super cancel];
     }
@@ -130,7 +130,7 @@
 }
 
 - (void)start {
-    //synchronize change to the isExecuting KVC value
+    //synchronize change to the isExecuting KVO value
     @synchronized(self) {
         //we may have already been cancelled at this point, in which case do nothing
         if (self.isCancelled) {
