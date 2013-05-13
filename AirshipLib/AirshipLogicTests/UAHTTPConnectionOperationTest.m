@@ -113,4 +113,6 @@
     STAssertEquals(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
 
+//TODO test for KVO compliance/correctness? not sure how best to do this
+
 @end
