@@ -327,6 +327,7 @@
     NSArray *info = [NSArray arrayWithObject:@"one"];
     [[[mockRequest stub] andReturn:info] userInfo];
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
+    [[[mockRequest stub] andReturn:mockResponse] response];
     NSInteger code = 200;
     [[[mockResponse stub] andReturnValue:OCMOCK_VALUE(code)] statusCode];
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
@@ -441,7 +442,6 @@
     // Intercept setConnection to prevent the mock that was just setup from being 
     // replaced during execution of the send method
     [[mockAnalytics stub] setConnection:OCMOCK_ANY];
-    [[mockConnection expect] setDelegate:analytics];
     // Casting this object prevents a compiler warning
     [(UAHTTPConnection*)[mockConnection expect] start];
     BOOL yes = YES;
