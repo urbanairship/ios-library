@@ -105,14 +105,12 @@
 
 - (void)testInFlightCancel {
     [self.operation start];
-    [self waitUntilNextRunLoopIteration];
     [self.operation cancel];
+    [self waitUntilNextRunLoopIteration];
     STAssertEquals(self.operation.isCancelled, YES, @"the operation should now be canceled");
     [self waitUntilNextRunLoopIteration];
     STAssertEquals(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     STAssertEquals(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
-
-//TODO test for KVO compliance/correctness? not sure how best to do this
 
 @end
