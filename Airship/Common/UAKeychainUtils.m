@@ -54,11 +54,8 @@ static NSString* _cachedDeviceID = nil;
 	
     //set access permission - we use the keychain for it's stickiness, not security,
     //so the least permissive setting is acceptable here
-    IF_IOS4_OR_GREATER(
-                       [dictionary setObject:(id)kSecAttrAccessibleAlways 
-                                          forKey:(id)kSecAttrAccessible];
-                       );
-    
+   [dictionary setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
+
 	//set username data
 	[dictionary setObject:username forKey:(id)kSecAttrAccount];
 	
@@ -227,10 +224,7 @@ static NSString* _cachedDeviceID = nil;
 
     //set access permission - we use the keychain for it's stickiness, not security,
     //so the least permissive setting is acceptable here
-    IF_IOS4_OR_GREATER(
-                       [keychainValues setObject:(id)kSecAttrAccessibleAlways 
-                                          forKey:(id)kSecAttrAccessible];
-                       );
+    [keychainValues setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
     
     //set model name (username) data
     [keychainValues setObject:[UAUtils deviceModelName] forKey:(id)kSecAttrAccount];

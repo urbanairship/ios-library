@@ -32,8 +32,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define INBOX_UI_CLASS @"UAInboxUI"
 
-UA_VERSION_INTERFACE(UAInboxVersion)
-
 /**
  * All UIs should implement this protocol to interact with the UAInbox object.
  */

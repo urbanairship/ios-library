@@ -56,8 +56,6 @@ UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
-UA_VERSION_IMPLEMENTATION(UAPushVersion, UA_VERSION)
-
 @implementation UAPush 
 //Internal
 @synthesize defaultPushHandler;
