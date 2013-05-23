@@ -54,11 +54,11 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
          withQuietTime:(NSDictionary *)quietTime
              withBadge:(NSNumber *)badge {
 
-    return [[UADeviceRegistrationPayload alloc] initWithAlias:alias
+    return [[[UADeviceRegistrationPayload alloc] initWithAlias:alias
                                                      withTags:tags
                                                  withTimeZone:timeZone
                                                 withQuietTime:quietTime
-                                                    withBadge:badge];
+                                                    withBadge:badge] autorelease];
 }
 
 - (NSDictionary *)asDictionary {
