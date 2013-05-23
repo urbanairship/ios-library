@@ -42,7 +42,7 @@ extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 extern NSString *const UAPushQuietTimeStartKey;
 extern NSString *const UAPushQuietTimeEndKey;
 
-// Keys for the userInfo object on UA_ASIHTTPRequest objects
+// Keys for the userInfo object on request objects
 typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
