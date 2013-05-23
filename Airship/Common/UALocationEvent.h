@@ -77,7 +77,7 @@ extern NSString * const UAAnalyticsValueNone;
  */
 - (id)initWithLocation:(CLLocation *)location 
               provider:(id<UALocationProviderProtocol>)provider 
-         andUpdateType:(UALocationEventUpdateType*)updateType; 
+         andUpdateType:(UALocationEventUpdateType *)updateType; 
 
 /** 
  * Creates a UALocationEvent parsing the necessary data form the method parameters.
@@ -88,7 +88,7 @@ extern NSString * const UAAnalyticsValueNone;
  */
 - (id)initWithLocation:(CLLocation *)location 
        locationManager:(CLLocationManager *)locationManager 
-         andUpdateType:(UALocationEventUpdateType*)updateType;
+         andUpdateType:(UALocationEventUpdateType *)updateType;
 
 /**
  * Creates a UALocationEvent parsing the necessary data from the method parameters
@@ -98,8 +98,8 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                     provider:(id<UALocationProviderProtocol>)provider 
-                                andUpdateType:(UALocationEventUpdateType *)updateType;
+                                      provider:(id<UALocationProviderProtocol>)provider 
+                                 andUpdateType:(UALocationEventUpdateType *)updateType;
 
 /**
  * Creates a UALocationEvent parsing the necessary data form the method parameters.
@@ -109,8 +109,8 @@ extern NSString * const UAAnalyticsValueNone;
  * @return UALocationEvent populated with the necessary values
  */
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                              locationManager:(CLLocationManager *)locationManager 
-                                andUpdateType:(UALocationEventUpdateType *)updateType;
+                               locationManager:(CLLocationManager *)locationManager 
+                                 andUpdateType:(UALocationEventUpdateType *)updateType;
 
 
 ///---------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ extern NSString * const UAAnalyticsValueNone;
  * @param doubleValue The double to convert.
  * @return NSString representing the 7 digit value
  */
-- (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue;
+- (NSString *)stringFromDoubleToSevenDigits:(double)doubleValue;
 
 /** 
  * Converts a double to a string and truncating it
@@ -160,7 +160,7 @@ extern NSString * const UAAnalyticsValueNone;
  * @param doubleValue The double to convert and truncate
  * @return NSString representing the double as an int
  */
-- (NSString*)stringAsIntFromDouble:(double)doubleValue;
+- (NSString *)stringAsIntFromDouble:(double)doubleValue;
 
 
 @end

@@ -30,13 +30,12 @@
 
 @class UALocationEvent;
 @interface UALocationService () {
-    UAStandardLocationProvider *standardLocationProvider_;
-    UAStandardLocationProvider *singleLocationProvider_;   
-    UASignificantChangeProvider *significantChangeProvider_;
-    BOOL shouldStartReportingStandardLocation_;
-    BOOL shouldStartReportingSignificantChange_;
-    CLLocation *bestAvailableSingleLocation_;
-    UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier_;
+
+  @private
+    UAStandardLocationProvider *_standardLocationProvider;
+    UAStandardLocationProvider *_singleLocationProvider;
+    UASignificantChangeProvider *_significantChangeProvider;
+
 }
 
 // Override property declarations for implementation and testing
@@ -87,16 +86,16 @@
 // Private setters for location providers
 // Custom get/set methods that have the side effect of setting the provider delegate
 // This also sets the desiredAccuracy and distanceFilter from the standard defaults
-- (UAStandardLocationProvider*)standardLocationProvider;
+- (UAStandardLocationProvider *)standardLocationProvider;
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider;
 
 // Side effect of setting the delegate
-- (UASignificantChangeProvider*)significantChangeProvider;
+- (UASignificantChangeProvider *)significantChangeProvider;
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider;
 
 // This method also sets the delegate of the provider. 
 // This method DOES NOT change the distanceFilter or desiredAccuracy
-- (UAStandardLocationProvider*)singleLocationProvider;
+- (UAStandardLocationProvider *)singleLocationProvider;
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 
 // convinence method to set properties common to all providers

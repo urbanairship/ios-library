@@ -38,85 +38,83 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
 
 @implementation UABaseLocationProvider
 
-@synthesize locationManager = locationManager_;
-@synthesize maximumElapsedTimeForCachedLocation = maximumElapsedTimeForCachedLocation_;
-@synthesize serviceStatus = serviceStatus_;
-@synthesize delegate = delegate_;
-@synthesize provider = provider_;
-
 #pragma mark -
 #pragma mark Object Lifecycle/NSObject Methods
 
 - (void)dealloc {
-    locationManager_.delegate = nil;
-    RELEASE_SAFELY(locationManager_);
-    RELEASE_SAFELY(provider_);
+    self.locationManager.delegate = nil;
+    self.locationManager = nil;
+    self.provider = nil;
     [super dealloc];
 }
 
 - (id)init {
     self = [super init];
     if (self){
-        locationManager_ = [[CLLocationManager alloc] init];
-        locationManager_.delegate = self;
-        provider_ = UALocationServiceProviderUnknown;
-        serviceStatus_ = UALocationProviderNotUpdating;
-        maximumElapsedTimeForCachedLocation_ = defaultMaximumElapsedTimeForCachedLocation;
+        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager.delegate = self;
+        self.provider = UALocationServiceProviderUnknown;
+        self.serviceStatus = UALocationProviderNotUpdating;
+        self.maximumElapsedTimeForCachedLocation = defaultMaximumElapsedTimeForCachedLocation;
     }
     return self;
 }
 
-- (id)initWithDelegate:(id<UALocationProviderDelegate>) delegate {
+- (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate {
     self = [self init];
     if (self && [delegate conformsToProtocol:@protocol(UALocationProviderDelegate)]) {
-        delegate_ = delegate;
+        self.delegate = delegate;
     }
     return self;
 }
 
 - (NSString*)description {
     return [NSString stringWithFormat:@"Provider:%@, Purpose:%@, Updating:%d, desiredAccuracy %f, distanceFilter %f", 
-            provider_, self.purpose, serviceStatus_, locationManager_.desiredAccuracy, locationManager_.distanceFilter];
+            self.provider,
+            self.purpose,
+            self.serviceStatus,
+            self.locationManager.desiredAccuracy,
+            self.locationManager.distanceFilter];
 }
 
 #pragma mark -
 #pragma mark CLLocationManager Accessors
 
 - (void)setLocationManager:(CLLocationManager *)locationManager {
-    [locationManager_ autorelease];
-    locationManager_ = [locationManager retain];
-    locationManager.delegate = self;
+    [_locationManager autorelease];
+    _locationManager = [locationManager retain];
+    _locationManager.delegate = self;
     self.serviceStatus = UALocationProviderNotUpdating;
 }
 
 - (void)setPurpose:(NSString *)purpose {
-    if(purpose) {
-        locationManager_.purpose = purpose;
+    if (purpose) {
+        self.locationManager.purpose = purpose;
     }
 }
 
-- (NSString*)purpose {
-    return locationManager_.purpose;
+- (NSString *)purpose {
+    return self.locationManager.purpose;
 }
 
 - (CLLocationDistance)distanceFilter {
-    return locationManager_.distanceFilter;
+    return self.locationManager.distanceFilter;
 }
 
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter{
-    locationManager_.distanceFilter = distanceFilter;
+    self.locationManager.distanceFilter = distanceFilter;
 }
 
 - (CLLocationAccuracy)desiredAccuracy{
-    return locationManager_.desiredAccuracy;
+    return self.locationManager.desiredAccuracy;
 }
 
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy{
-    locationManager_.desiredAccuracy = desiredAccuracy;
+    self.locationManager.desiredAccuracy = desiredAccuracy;
 }
 
 - (CLLocation*)location {
-    return locationManager_.location;
+    return self.locationManager.location;
 }
 
 #pragma mark -
@@ -154,15 +152,16 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
         default:
             break;
     }
-    if([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
-        [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    
+    if ([self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
+        [self.delegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
     }
 }
 
 - (void)stopAllReporting {
-    [locationManager_ stopUpdatingHeading];
-    [locationManager_ stopUpdatingLocation];
-    [locationManager_ stopMonitoringSignificantLocationChanges]; 
+    [self.locationManager stopUpdatingHeading];
+    [self.locationManager stopUpdatingLocation];
+    [self.locationManager stopMonitoringSignificantLocationChanges];
     self.serviceStatus = UALocationProviderNotUpdating;
     UALOG(@"Stopped all reporting");
 }
@@ -181,33 +180,38 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
         default:
             break;
     }
+
     UALOG(@"UA Location Manager %@ did fail with error %@", [self class], error);
-    if ([delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
-        [delegate_ locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
+    if ([self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
+        [self.delegate locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    BOOL doesRespond = [self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [self.delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
 #pragma mark -
 #pragma mark Location Accuracy calculations
 
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation {
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation {
     // Throw out old values
     NSTimeInterval old = -[newLocation.timestamp timeIntervalSinceNow];
-    if (old > maximumElapsedTimeForCachedLocation_) return NO;
+    if (old > self.maximumElapsedTimeForCachedLocation) {
+        return NO;
+    }
+    
     // accuracy values less than zero represent invalid lat/long values
     // If altitude becomes important in the future, add the check here for verticalAccuracy
     if (newLocation.horizontalAccuracy < 0) {
         UALOG(@"Location %@ did not met accuracy requirements", newLocation);
         return NO;
     }
+    
     UALOG(@"Location %@ met accuracy requirements", newLocation);
     return YES;
 }
