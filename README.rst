@@ -41,7 +41,6 @@ have additional linking requirements)::
     libz.dylib
     libsqlite3.dylib
     CoreTelephony.framework
-    StoreKit.framework
     CoreLocation.framework
 
 Build Settings
@@ -244,7 +243,6 @@ Third Party Packages
 ===================  ========  ======================================================
 Third party Package  License   Copyright / Creator 
 ===================  ========  ======================================================
-asi-http-request     BSD       Copyright (c) 2007-2010, All-Seeing Interactive.
 fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
 SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
 Base64               BSD       Copyright 2009-2010 Matt Gallagher.

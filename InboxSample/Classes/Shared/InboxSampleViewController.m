@@ -79,7 +79,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.version.text = [NSString stringWithFormat:@"UAInbox Version: %@", [UAInboxVersion get]];
+    self.version.text = [NSString stringWithFormat:@"UAInbox Version: %@", [UAirshipVersion get]];
     
     self.navigationItem.rightBarButtonItem 
         = [[[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)] autorelease];
