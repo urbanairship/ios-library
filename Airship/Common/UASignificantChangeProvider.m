@@ -31,15 +31,15 @@
 - (void)dealloc {
     
     self.delegate = nil;
-    [locationManager_ stopMonitoringSignificantLocationChanges];
-    locationManager_.delegate = nil;
+    [self.locationManager stopMonitoringSignificantLocationChanges];
+    self.locationManager.delegate = nil;
     [super dealloc];
 }
 
 - (id)init {
     self = [super init];
     if (self) {
-        provider_ = UALocationServiceProviderNetwork;
+        self.provider = UALocationServiceProviderNetwork;
     }
     return self;
 }
@@ -47,7 +47,7 @@
 
 #pragma mark -
 #pragma mark CLLocationManager Delegate
-//** iOS 4.2 or better */
+//** iOS 4.2+ */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Significant change did change authorization status %d", status);
     switch (status) {
@@ -64,14 +64,14 @@
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:locationManager_ didChangeAuthorizationStatus:status];
+    [self.delegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Significant change did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    BOOL doesRespond = [self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [self.delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
@@ -82,15 +82,15 @@
 - (void)startReportingLocation {
     UALOG(@"Start significant change service");
     [super startReportingLocation];
-    [locationManager_ startMonitoringSignificantLocationChanges];
+    [self.locationManager startMonitoringSignificantLocationChanges];
 }
 - (void)stopReportingLocation {
     UALOG(@"Stop reporting significant change service");
     [super stopReportingLocation];
-    [locationManager_ stopMonitoringSignificantLocationChanges];
+    [self.locationManager stopMonitoringSignificantLocationChanges];
 }
 
-+ (UASignificantChangeProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil {
++ (UASignificantChangeProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil {
     return [[[UASignificantChangeProvider alloc] initWithDelegate:delegateOrNil] autorelease];
 }
 @end
