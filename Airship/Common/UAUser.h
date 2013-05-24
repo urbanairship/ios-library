@@ -31,27 +31,17 @@
 
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,
-    UAUserStateNoEmail = 1,
-    UAUserStateWithEmail = 2,
-    UAUserStateInRecovery = 3,
-    UAUserStateCreating = 4
+    UAUserStateCreating = 1,
+    UAUserStateCreated = 2
 } UAUserState;
 
 @protocol UAUserObserver <NSObject>
 @optional
 
-// Notified when user created or modified, not including recovery
+// Notified when user created or modified
 - (void)userUpdated;
 - (void)userUpdateFailed;
 
-// Notified during recovering process
-- (void)userRecoveryStarted;
-- (void)userRecoveryFinished;
-- (void)userRecoveryFailed;
-
-- (void)userRetrieveStarted;
-- (void)userRetrieveFinished;
-- (void)userRetrieveFailed;
 @end
 
 @interface UAUser : UAObservable {
@@ -60,21 +50,9 @@ typedef enum _UAUserState {
     BOOL initialized;
     NSString *username;
     NSString *password;
-    NSString *email;
     NSString *url;
-    NSString *alias;
-    NSMutableSet *tags;
     
     UAUserState userState;
-    
-    //recovery
-    NSString *recoveryEmail;
-    NSString *recoveryStatusUrl;
-    NSTimer *recoveryPoller;
-    BOOL inRecovery;
-    BOOL recoveryStarted;
-    BOOL sentRecoveryEmail;
-    BOOL retrievingUser;
     
     BOOL isObservingDeviceToken;
     
@@ -83,33 +61,17 @@ typedef enum _UAUserState {
 
 }
 
-@property (retain, nonatomic) NSString *recoveryEmail;
-@property (retain, nonatomic) NSString *recoveryStatusUrl;
-@property (retain, nonatomic) NSTimer *recoveryPoller;
-
 // Public interface
 @property (assign, readonly, nonatomic) UAUserState userState;
 @property (retain, nonatomic) NSString *username;
 @property (retain, nonatomic) NSString *password;
-@property (retain, nonatomic) NSString *email;
 @property (retain, nonatomic) NSString *url;
-@property (retain, nonatomic) NSString *alias;
-@property (retain, nonatomic) NSMutableSet *tags;
 @property (retain, nonatomic) UAHTTPConnection *connection;
 
 + (UAUser *)defaultUser;
 + (void)land;
 
 - (BOOL)defaultUserCreated;
-- (BOOL)setUserEmail:(NSString *)address;//remove
-- (void)startRecovery;//remove
-- (void)cancelRecovery;//remove
-
-// Private interface - remove all
-@property (assign, nonatomic) BOOL inRecovery;
-@property (assign, nonatomic) BOOL recoveryStarted;
-@property (assign, nonatomic) BOOL sentRecoveryEmail;
-@property (assign, nonatomic) BOOL retrievingUser;
 
 //Specifies a default PRE-EXISTING username and password to use in the case a new user would 
 //otherwise be created by [UAUser defaultUser]
@@ -119,16 +81,6 @@ typedef enum _UAUserState {
 - (void)loadUser;
 
 - (void)createUser;
-- (void)createUserWithEmail:(NSString *)value;//remove
-- (void)modifyUserWithEmail:(NSString *)value;//remove
-
-- (void)retrieveUser;// remove if we get rid of the user-keychain
-
-- (void)startRecoveryPoller;//remove
-- (void)stopRecoveryPoller;//remove
-- (void)checkRecoveryStatus:(NSTimer *)timer;//remove
-
-- (void)didMergeWithUser:(NSDictionary *)userData;//remove
 
 - (void)saveUserData;
 - (void)updateUserState;
