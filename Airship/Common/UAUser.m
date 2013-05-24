@@ -39,18 +39,8 @@ static UAUser *_defaultUser;
 // UAUser
 @synthesize username;
 @synthesize password;
-@synthesize email;
-@synthesize recoveryEmail;
 @synthesize url;
-@synthesize alias;
-@synthesize tags;
 @synthesize userState;
-@synthesize recoveryStatusUrl;
-@synthesize recoveryStarted;
-@synthesize inRecovery;
-@synthesize retrievingUser;
-@synthesize sentRecoveryEmail;
-@synthesize recoveryPoller;
 
 + (UAUser *)defaultUser {
     @synchronized(self) {
@@ -74,16 +64,9 @@ static UAUser *_defaultUser;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(recoveryStatusUrl);
     RELEASE_SAFELY(username);
     RELEASE_SAFELY(password);
-    RELEASE_SAFELY(email);
-    RELEASE_SAFELY(recoveryEmail);
     RELEASE_SAFELY(url);
-    RELEASE_SAFELY(alias);
-    RELEASE_SAFELY(tags);
-    RELEASE_SAFELY(recoveryPoller);
-    
     [super dealloc];
 }
 
@@ -124,6 +107,7 @@ static UAUser *_defaultUser;
     // Can't use caseInsensitiveCompare, these values can be nil, which is an undefined result
     return ![[lastUpdatedToken lowercaseString] isEqualToString:[currentDeviceToken lowercaseString]];
 }
+
 - (void)initializeUser {
     
     @synchronized(self) {
@@ -135,9 +119,7 @@ static UAUser *_defaultUser;
         if (![UAirship shared].ready) {
             return;
         }
-        
-        [self migrateUser];
-        
+                
         NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
         NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
         
@@ -146,7 +128,7 @@ static UAUser *_defaultUser;
             self.password = storedPassword;
         }
         
-        // Boot strap - including processing our user recovery status
+        // Boot strap
         [self loadUser];
         
         [self performSelector:@selector(listenForDeviceTokenReg) withObject:nil afterDelay:0];
@@ -154,77 +136,6 @@ static UAUser *_defaultUser;
         initialized = YES;
                 
     }
-}
-
-- (void)migrateUser {
-    
-    //check for old inbox and subscription keys in user dictionary
-    //if they don't have stored values, return
-    //if there are existing values, save to keychain, then remove from user dictionary
-    
-    // Local dict ref for handling recovery state
-    NSMutableDictionary *userDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:[[UAirship shared] appId]];
-    UALOG(@"Migrating User Info: %@", userDictionary);
-    if (userDictionary == nil) {
-        return;
-    }
-    
-    //Check for an existing UAInboxMessageList user first
-    NSString *existingUsername = [userDictionary objectForKey:kLegacyInboxUserKey];
-    NSString *existingPassword = [userDictionary objectForKey:kLegacyInboxPassKey];
-    
-    //If there's not an UAInboxMessageList user, check for a Subscriptions user
-    if (existingUsername == nil && existingPassword == nil) {
-        existingUsername = [userDictionary objectForKey:kLegacySubscriptionsUserKey];
-        existingPassword = [userDictionary objectForKey:kLegacySubscriptionsPassKey];
-    }
-    
-    if (existingUsername != nil && existingPassword != nil) {
-        
-        UALOG(@"Migrating user to keychain with username=%@ and password=%@", existingUsername, existingPassword);
-        
-        // The Username has changed. This only happens in Recovery.
-        // So now we need to delete the keychain and recreate it.
-        [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
-        [UAKeychainUtils createKeychainValueForUsername:existingUsername withPassword:existingPassword forIdentifier:[[UAirship shared] appId]];
-        
-        //Remove old values and save
-        [userDictionary removeObjectForKey:kLegacyInboxUserKey];
-        [userDictionary removeObjectForKey:kLegacyInboxPassKey];
-        [userDictionary removeObjectForKey:kLegacySubscriptionsUserKey];
-        [userDictionary removeObjectForKey:kLegacySubscriptionsPassKey];
-    }
-    
-    // Migrate subscription recovery keys to new keychain store
-    // kLegacySubscriptionsEmailKey -> keychain
-    NSString *existingEmail = [userDictionary objectForKey:kLegacySubscriptionsEmailKey];
-    if (existingEmail != nil) {
-        UALOG(@"Migrating email address '%@' to keychain", existingEmail);
-        [UAKeychainUtils updateKeychainValueForUsername:[UAKeychainUtils getUsername:[[UAirship shared] appId]] 
-                                           withPassword:[UAKeychainUtils getPassword:[[UAirship shared] appId]] 
-                                       withEmailAddress:existingEmail
-                                          forIdentifier:[[UAirship shared] appId]];
-        [userDictionary removeObjectForKey:kLegacySubscriptionsEmailKey];
-    }
-    
-    // Migrate from UAInboxMessageList keys to new UAUser keys
-    // kLegacyInboxAliasKey to kAliasKey
-    NSObject *existingAlias = [userDictionary objectForKey:kLegacyInboxAliasKey];
-    if (existingAlias != nil) {
-        [userDictionary setObject:existingAlias forKey:kAliasKey];
-        [userDictionary removeObjectForKey:kLegacyInboxAliasKey];
-    }
-    
-    // kLegacyInboxTagsKey to kTagsKey
-    NSObject *existingTags = [userDictionary objectForKey:kLegacyInboxTagsKey];
-    if (existingTags != nil) {
-        [userDictionary setObject:existingTags forKey:kTagsKey];
-        [userDictionary removeObjectForKey:kLegacyInboxTagsKey];
-    }
-    
-    [[NSUserDefaults standardUserDefaults] setObject:userDictionary forKey:[[UAirship shared] appId]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
 }
 
 #pragma mark -
@@ -240,35 +151,6 @@ static UAUser *_defaultUser;
         return;
     }
 
-	self.retrievingUser = NO;
-    self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
-    
-    // Local dict ref for handling recovery state
-    NSMutableDictionary *userDictionary = [[NSUserDefaults standardUserDefaults] objectForKey:[[UAirship shared] appId]];
-    UALOG(@"User Info: %@", userDictionary);
-    
-    if (userDictionary == nil && username != nil && password != nil) {
-        //this is likely the first run after the app was uninstalled, then reinstalled, wiping the defaults dictionary
-        //retrieve the user from the server, but drop it in the run queue so that it will not run on init
-        [self performSelector:@selector(retrieveUser) withObject:nil afterDelay:0];
-        return;
-    }
-
-    self.recoveryEmail = [userDictionary objectForKey:kRecoveryEmail];
-    self.alias = [userDictionary objectForKey:kAliasKey];
-    self.url = [userDictionary objectForKey:kUserUrlKey];
-    self.tags = [NSMutableSet setWithArray:[userDictionary objectForKey:kTagsKey]];
-    
-    // Let's start out assuming that we do not need to recover an account's subscription data
-    // self.inRecovery is the recovery state from the previous run, it will only be YES if a recovery process previously started and is not done
-    //      This is saved out with a call to saveUserData.
-    // self.recoveryStarted is the current session state, start with NO right now
-
-    self.inRecovery = [(NSNumber*)[userDictionary objectForKey: kUserRecoveryKey] boolValue];
-    self.sentRecoveryEmail = [(NSNumber*)[userDictionary objectForKey: kAlreadySentUserRecoveryEmail] boolValue];
-    self.recoveryStatusUrl = [userDictionary objectForKey:kUserRecoveryStatusURL];
-    self.recoveryStarted = NO;
-
     // First thing we need to do is make sure we have a valid User.
 
     if (username != nil && password != nil) {
@@ -277,45 +159,18 @@ static UAUser *_defaultUser;
         [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
     } else {
         // Either the user or password is not set, so the "no user"/"initial run" case is still true, try to recreate the user
-
-        // If we're in a startup recovery case with email only (no User/Pass), we shouldn't run createUser every time - it functions but
-        // generates a lot of extra recovery emails which is not ideal/is confusing
-        if (!self.inRecovery) {
-            [self createUser];
-        }
+        [self createUser];
     }
 
-    // Now, we have a good User object, let's figure out our recovery status
-    if (self.recoveryStarted == NO && self.inRecovery == YES) {
-        // If we have previously been in a recovery process (on a prior run) we have to finish it. It is not finished until .inRecovery == NO
-
-        // We only want to make this call if we have yet to send the email - otherwise we want to skip straight to the logic in "(void)recoveryStarted:"
-        // and begin polling for a response to the previously sent email - need some UI Chrome to handle this, and the option to restart the whole process
-        // thus sending a new email.
-        if (self.sentRecoveryEmail) {
-
-            // User has already entered recovery at some point and did not finish, but got as far as having the email sent
-            self.recoveryStarted = YES;
-            self.sentRecoveryEmail = YES;
-            [self saveUserData];
-            [self startRecoveryPoller];
-            
-        } else {
-            // Begin the recovery process from the beginning
-            [self startRecovery];
-        }
-    } else {
-        // The previous run either finished the recovery process or never started one, safe to just update the User Status
-        [self updateUserState];
-    }
+    [self updateUserState];
 }
 
 #pragma mark -
 #pragma mark Update/Save User Data
 
 /*
- saveUserData - Saves all the existing password, username, email, and recovery data to disk.
- It then calls updateUserState to make sure the proper state is selected vis a vis email/password
+ saveUserData - Saves all the existing password and username data to disk.
+ It then calls updateUserState to make sure the proper state is selected
  and then notifies all observers.
  */
 - (void)saveUserData {
@@ -323,18 +178,8 @@ static UAUser *_defaultUser;
     [self updateUserState];
     
     NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
-    
-	// Handle cases where the username changed, or was just created
-	if (storedUsername != nil) {
 		
-        if(![storedUsername isEqualToString:username]) {        
-            // The Username has changed. This only happens in Recovery.
-            // So now we need to delete the keychain and recreate it.
-            [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
-            [UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:[[UAirship shared] appId]];   
-        }
-		
-	} else {
+    if (!storedUsername) {
 		// No username object stored in the keychain for this app, so let's create it
 		// but only if we indeed have a username and password to store
 		if (username != nil && password != nil) {
@@ -345,10 +190,9 @@ static UAUser *_defaultUser;
         }
 	}
     
-    //Update keychain with lateset password and email
-    [UAKeychainUtils updateKeychainValueForUsername:self.username 
+    //Update keychain with latest username and password
+    [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
-                                   withEmailAddress:self.email 
                                       forIdentifier:[[UAirship shared] appId]];
     
     NSDictionary *dictionary = [[NSUserDefaults standardUserDefaults] objectForKey:[[UAirship shared] appId]];
@@ -357,17 +201,9 @@ static UAUser *_defaultUser;
     if (userDictionary == nil) {
         userDictionary = [NSMutableDictionary dictionary];
     }
+
     
-    [userDictionary setObject:[NSNumber numberWithBool:self.inRecovery] forKey:kUserRecoveryKey];
-    [userDictionary setObject:[NSNumber numberWithBool:self.sentRecoveryEmail] forKey:kAlreadySentUserRecoveryEmail];
-    
-    //uses setValue:forKey: to auto-remove values that have changed to nil
-    [userDictionary setValue:self.recoveryEmail forKey:kRecoveryEmail];
-    [userDictionary setValue:self.recoveryStatusUrl forKey:kUserRecoveryStatusURL];
-    
-    [userDictionary setValue:self.alias forKey:kAliasKey];
     [userDictionary setValue:self.url forKey:kUserUrlKey];
-    [userDictionary setValue:[self.tags allObjects] forKey:kTagsKey];
     
     // Save in defaults for access with a Settings bundle
     [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
@@ -382,16 +218,8 @@ static UAUser *_defaultUser;
     } else if (username == nil || password == nil) {
         userState = UAUserStateEmpty;
     } else {
-        if (email == nil) {
-            userState = UAUserStateNoEmail;
-        } else {
-            userState = UAUserStateWithEmail;
-        }
-    }
-    
-    if ((recoveryStarted == YES) && (inRecovery == YES)) {
-        userState = UAUserStateInRecovery;
-    }
+        userState = UAUserStateCreated;
+    }    
 }
 
 - (void)notifyObserversUserUpdated {
@@ -426,11 +254,6 @@ static UAUser *_defaultUser;
     if ([self defaultUserCreated]) {
         return;
     }
-    [self createUser];
-}
-
-- (void)createUserWithEmail:(NSString *)value {
-    self.email = value;
     [self createUser];
 }
 
@@ -515,15 +338,6 @@ static UAUser *_defaultUser;
             [self notifyObserversUserUpdated];
             break;
         }
-        case 409:
-        {
-            // You will only hit this case if the default user (user with no email) was not created, and the first call to
-            // createUser included the email address as a part for the PUT data - usually from settings
-            // This means the user is truly unique, and if it exists we'll get a 409, and they should recover.
-            self.recoveryEmail = self.email;
-            [self startRecovery];
-            break;
-        }
         default:
         {
             [self updateUserState];
@@ -537,371 +351,6 @@ static UAUser *_defaultUser;
     creatingUser = NO;
     [self updateUserState];
     [self userRequestWentWrong:request];
-}
-
-#pragma mark -
-#pragma mark Modify
-
-- (BOOL)setUserEmail:(NSString *)address {
-    BOOL set = YES;
-    if (userState == UAUserStateEmpty) {
-        [self createUserWithEmail:address];
-    } else if (![email isEqualToString:address]) {
-        [self modifyUserWithEmail:address];
-    } else {
-        set = NO;
-    }
-    return set;
-}
-
-/*
- modifyUserWithNewEmail - called from two places, UASubscriptionSettingsViewController, and locally from purchaseAndRecoverIfNeeded
-
- setUserEmail: If the user changes their email address manually, we have to save it.
- promptForEmail: if a user buys something (UASubscriptionProductDetailViewController), this prompt is invoked,
- and based on the user clicking OK on the alertView, modifyUserWithNewEmail will be called
- */
-- (void)modifyUserWithEmail:(NSString *)value {
-    
-    self.email = value;
-    self.recoveryEmail = value;
-    
-    //old (PUT) method
-    //[self updateUserWithDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];
-    
-    NSDictionary *dict;
-    
-    if(value) {
-        dict = [NSDictionary dictionaryWithObject:value forKey:@"email"];
-    }
-    else {
-        dict = [NSDictionary dictionaryWithObject:[NSNull null] forKey:@"email"];
-    }
-   
-    [self updateUserInfo:dict withDelegate:self finish:@selector(modifyUserWithEmailUpdated:) fail:@selector(modifyUserWithEmailFailed:)];  
-}
-
-- (void)modifyUserWithEmailFailed:(UAHTTPRequest *)request {
-    
-    [UAUtils logFailedRequest:request withMessage:@"Modify user with email failed."];
-    [self notifyObservers:@selector(userUpdateFailed)];
-
-}
-
-- (void)modifyUserWithEmailUpdated:(UAHTTPRequest *)request {
-
-    UALOG(@"User updated: %d:%@, URL: %@", [request.response statusCode],
-          request.responseString, [request.url absoluteString]);
-
-    if ([request.response statusCode] == 409) {
-        self.email = [UAKeychainUtils getEmailAddress:[[UAirship shared] appId]];
-        // Data for this user exists already, so we need to start the recovery flow
-        [self startRecovery];
-
-    } else if ([request.response statusCode] == 200) {
-        // Need to save user data and also loadSubscriptions
-        [self saveUserData];
-	
-        [self notifyObserversUserUpdated];
-    } else {
-        [self modifyUserWithEmailFailed:request];
-    }
-
-}
-
-#pragma mark -
-#pragma mark Recover
-
-- (void)startRecovery {
-    
-    UALOG(@"Start Recovery");
-
-    self.recoveryStarted = YES;
-    self.inRecovery = YES;
-    [self saveUserData];
-
-    [self notifyObservers:@selector(userRecoveryStarted)];
-
-    NSString *urlString = [NSString stringWithFormat: @"%@%@",
-                           [[UAirship shared] server],
-                           @"/api/user/recover/"];
-
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
-
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
-    NSDictionary* data = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          self.recoveryEmail,
-                          @"email",
-                          [UAUtils deviceID],
-                          @"ua_device_id",
-                          nil];
-
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    NSString* body = [writer stringWithObject:data];
-
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                     delegate:self
-                                                      success:@selector(recoveryRequestSucceeded:)
-                                                      failure:@selector(recoveryRequestFailed:)];
-    [self.connection start];
-
-    [writer release];
-    [data release];
-    
-}
-
-- (void)recoveryRequestSucceeded:(UAHTTPRequest *)request {
-
-    // Check for an API rejection of the recovery
-    if([request.response statusCode] != 200) {
-        [self cancelRecovery];
-
-        [self notifyObservers:@selector(userRecoveryFailed)];
-
-    } else {
-        // No API rejection, so we're OK to continue with recovery
-
-        UALOG(@"Recovery Started: %d:%@, URL: %@", [request.response statusCode],
-              request.responseString, [request.url absoluteString]);
-        UALOG(@"Request Method: %@", request.HTTPMethod);
-
-        UA_SBJsonParser *parser = [UA_SBJsonParser new];
-        NSDictionary *result = [parser objectWithString: request.responseString];
-        self.recoveryStatusUrl = [NSString stringWithString: [result objectForKey: @"recovery_status_url"]];
-        [parser release];
-
-        // Need to save a status flag here that we successfully sent the recovery email
-        self.recoveryStarted = YES;
-        self.sentRecoveryEmail = YES;
-        [self saveUserData];
-        [self startRecoveryPoller];
-    }
-}
-
-- (void)recoveryRequestFailed:(UAHTTPRequest *)request {
-
-    // Send the bad request to error handling
-    [self requestWentWrong:request];
-
-    // Request failed, cleanup recovery process
-    [self cancelRecovery];
-
-    [self notifyObservers:@selector(userRecoveryFailed)];
-}
-
-- (void)cancelRecovery {
-    [self stopRecoveryPoller];
-
-    // Make sure emails are cleared out as well as recovery links - this is only called if we're stopping the process
-    self.recoveryStarted = NO;
-    self.inRecovery = NO;
-    self.recoveryEmail = @"";
-    self.email = @"";
-    self.sentRecoveryEmail = NO;
-    self.recoveryStatusUrl = @"";
-
-    [self saveUserData];
-}
-
-#pragma mark Recovery Poller
-
-- (void)startRecoveryPoller {
-
-    [self stopRecoveryPoller];
-    recoveryPoller = [NSTimer scheduledTimerWithTimeInterval: 5
-                                                      target: self
-                                                    selector: @selector(checkRecoveryStatus:)
-                                                    userInfo: nil
-                                                     repeats: YES];
-    // automatically stop the polling after 3 mins if user didn't click
-    // the recover link
-    [self performSelector:@selector(stopRecoveryPoller)
-               withObject:nil
-               afterDelay:60*3];
-    
-}
-
-- (void)stopRecoveryPoller {
-    
-    if (recoveryPoller != nil) {
-        UALOG(@"Stop recovery polling");
-        [recoveryPoller invalidate];
-        recoveryPoller = nil;
-    }
-    
-}
-
-- (void)checkRecoveryStatus:(NSTimer *)timer {
-
-    UALOG(@"Checking Recovery Status");
-    UALOG(@"recovery status url: %@", self.recoveryStatusUrl);
-
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:self.recoveryStatusUrl] method: @"GET"];
-    
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                     delegate:self
-                                                      success:@selector(recoveryStatusUpdated:)
-                                                      failure:nil];
-    [self.connection start];
-}
-
-- (void)recoveryStatusUpdated:(UAHTTPRequest *)request {
-
-    if ([request.response statusCode] == 200) {
-
-        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-        NSDictionary *result = [parser objectWithString: request.responseString];
-
-        NSString *status = [result objectForKey:@"status"];
-
-        UALOG(@"Status update received: %@", status);
-        UALOG(@"Response: %d\n%@\n", [request.response statusCode],
-              request.responseString);
-
-        // Only process this update if it is for status "complete" - meaning the server has registered that the user clicked the recovery link
-        if ([status isEqualToString: @"complete"]) {
-
-            // Stop polling.
-            [self stopRecoveryPoller];
-
-            // We can only get this far with a completely valid user, so set the state and save this data
-            NSDictionary* user_data = [result objectForKey: @"user_data"];
-            NSString* user_id = [user_data objectForKey: @"user_id"];
-            NSString* pw = [user_data objectForKey: @"password"];
-            
-            UALOG(@"New U/P: %@/%@", user_id, pw);
-
-            self.username = user_id;
-            self.password = pw;
-            self.url = [user_data objectForKey:@"user_url"];
-            self.email = self.recoveryEmail;
-            self.recoveryStatusUrl = @"";
-            self.sentRecoveryEmail = NO;
-            
-            //The user's existing tags and alias must now be retrieved
-            UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:self.url] method:@"GET"];
-
-            UAHTTPConnection *getConnection = [UAHTTPConnection connectionWithRequest:getRequest];
-            getConnection.successBlock = ^(UAHTTPRequest *finishedRequest) {
-                if ([finishedRequest.response statusCode] == 200) {
-
-                    NSDictionary *getResult = [parser objectWithString:finishedRequest.responseString];
-
-                    UALOG(@"Recover User GET result: %@", [getResult descriptionWithLocale: nil indent: 1]);
-
-                    self.tags = [NSMutableSet setWithArray:[getResult objectForKey:@"tags"]];
-                    self.alias = [getResult objectForKey:@"alias"];
-
-                    // Ensure that the device token is updated if it's available. If for some reason, the device token on
-                    // the UA server does not match our cached device token, we are out of sync and need to discard our
-                    // local cache to force an update
-                    NSArray *deviceTokens = [getResult objectForKey:@"device_tokens"];
-                    if([deviceTokens count] > 0) {
-                        NSString *deviceToken = [deviceTokens objectAtIndex:0];
-                        if (![[deviceToken lowercaseString] isEqualToString:[[self serverDeviceToken] lowercaseString]]) {
-                            UALOG(@"Existing token %@ does not match server side token %@", [self serverDeviceToken], deviceToken);
-                            [self setServerDeviceToken:nil];
-                        }
-                    }
-
-                } else {
-                    UALOG(@"Get existing alias and tags failed.");
-                }
-
-                // Current session is now done recovering.
-                self.inRecovery = NO;
-
-                [self saveUserData];
-
-                // Update the default device token - this will do the right thing based whether the device token still exists
-                // in the cache
-                [self updateDefaultDeviceToken];
-                
-                // Tell the world that we're done recovering
-                [self notifyObservers:@selector(userRecoveryFinished)];
-            };
-
-            [getConnection start];
-        }
-    } else {
-        // Send the bad request to error handling
-        [self requestWentWrong:request];
-    }
-}
-
-#pragma mark -
-#pragma mark Merge User (Autorenewables)
-
-
-- (void)didMergeWithUser:(NSDictionary *)userData {
-    
-    self.username = [userData objectForKey:@"user_id"];
-    self.password = [userData objectForKey:@"password"];
-    self.url = [userData objectForKey:@"user_url"];
-    self.alias = [userData objectForKey:@"alias"];
-    self.tags = [userData objectForKey:@"tags"];
-    
-    [self saveUserData];
-}
-
-
-#pragma mark -
-#pragma mark Retrieve User
-
-- (void)retrieveUser {
-    self.retrievingUser = YES;
-    
-    [self notifyObservers:@selector(userRetrieveStarted)];
-    
-    NSString *retrieveUrlString = [NSString stringWithFormat:@"%@%@%@/",
-                                 [[UAirship shared] server],
-                                 @"/api/user/",
-                                 [self username]];
-    
-    UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:[NSURL URLWithString:retrieveUrlString] method:@"GET"];
-
-    self.connection = [UAHTTPConnection connectionWithRequest:getRequest
-                                                     delegate:self
-                                                      success:@selector(retrieveRequestSucceeded:)
-                                                      failure:@selector(retrieveRequestFailed:)];
-    [self.connection start];
-}
-
-- (void)retrieveRequestSucceeded:(UAHTTPRequest *)request {
-    UALOG(@"User retrieved: %d:%@", [request.response statusCode], request.responseString);
-    
-    if ([request.response statusCode] == 200) {
-        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-        NSDictionary *result = [parser objectWithString:request.responseString];
-        
-        self.url = [result objectForKey:@"user_url"];
-        self.tags = [NSMutableSet setWithArray:[result objectForKey:@"tags"]];
-        self.alias = [result objectForKey:@"alias"];
-        
-        [self saveUserData];
-        
-        self.retrievingUser = NO;
-        
-        [self updateUserState];
-        
-        //check to see if the device token has changed, and trigger an update
-        [self updateDefaultDeviceToken];
-        
-        [self notifyObserversUserUpdated];
-        [self notifyObservers:@selector(userRetrieveFinished)];
-    } else {
-        [self retrieveRequestFailed:request];
-    }
-}
-
-- (void)retrieveRequestFailed:(UAHTTPRequest *)request {
-    UALOG(@"User retrieval failed: %d:%@", [request.response statusCode], request.responseString);
-    self.retrievingUser = NO;
-    
-    [self notifyObservers:@selector(userRetrieveFailed)];
-    
 }
 
 #pragma mark -
@@ -975,7 +424,7 @@ static UAUser *_defaultUser;
     
     UALOG(@"Updating device token.");
 
-    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || self.inRecovery || ![self defaultUserCreated] || self.retrievingUser){
+    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
 		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
@@ -1026,7 +475,6 @@ static UAUser *_defaultUser;
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                  [UAUtils deviceID], @"ua_device_id", nil ];
     
-    [data setValue:self.alias forKey:@"alias"];                             
     [data setValue:self.url forKey:@"user_url"];
     [data setValue:@"true" forKey:@"airmail"];
     
@@ -1037,15 +485,7 @@ static UAUser *_defaultUser;
         NSArray *deviceTokens = [NSArray arrayWithObjects:deviceToken, nil];
         [data setObject:deviceTokens forKey:@"device_tokens"];
     }
-    
-    if (self.email != nil) {
-        [data setObject:email forKey:@"email"];
-    }
-    
-    if ([tags count] > 0) {
-        [data setObject:[self.tags allObjects] forKey:@"tags"];
-    }
-    
+
     [data autorelease];
     
     return data;
