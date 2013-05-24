@@ -55,7 +55,3 @@ extern UALocationServiceNSDefaultsKey * const UADeprecatedLocationAuthorizationK
 
 typedef NSString UALocationServiceErrorDomain;
 extern UALocationServiceErrorDomain * const UALocationServiceTimeoutError;
-
-@interface UALocationCommonValues : NSObject
-
-@end

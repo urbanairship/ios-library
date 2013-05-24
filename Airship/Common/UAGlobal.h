@@ -172,9 +172,3 @@ __VA_ARGS__ \
 #define IF_IOS4_1_OR_GREATER(...)
 #endif
 
-
-// Add new __LIB__ macros as necessary
-#define __UA_LIB_1_3_0__ "Deprecated in libUAirship-1.3.0"
-#define __UA_LIB_1_3_2__ "Deprecated in libUAirship-1.3.2"
-#define UA_DEPRECATED(deprecatedMessage) __attribute__((deprecated(deprecatedMessage)))
-
