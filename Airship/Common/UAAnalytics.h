@@ -72,7 +72,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
-- (id)initWithOptions:(NSDictionary *)options;
+- (id)init;
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
 
