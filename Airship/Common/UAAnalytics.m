@@ -38,13 +38,14 @@
 #import "UAEvent.h"
 #import "UALocationEvent.h"
 #import "UAUser.h"
+#import "UAConfig.h"
+
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
 
-#define kAnalyticsProductionServer @"https://combine.urbanairship.com";
+
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
-NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
 UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
 UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
@@ -91,7 +92,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (id)initWithOptions:(NSDictionary *)options {
     if (self = [super init]) {
         //set server to default if not specified in options
-        self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
+        self.server = [UAirship shared].config.analyticsURL;
 
         if (self.server == nil) {
             self.server = kAnalyticsProductionServer;
@@ -421,7 +422,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)addEvent:(UAEvent *)event {
-    if (self.server.length > 0) {
+    if ([UAirship shared].config.analyticsEnabled) {
         UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
         [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
         self.databaseSize += [event getEstimatedSize];

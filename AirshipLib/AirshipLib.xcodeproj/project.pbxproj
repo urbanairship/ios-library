@@ -28,6 +28,8 @@
 		1F4230C016C09876004B52C1 /* libUAirship-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */; };
 		1F4230D316C178FF004B52C1 /* UAViewUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E921238462100B7E69F /* UAViewUtils.m */; };
 		1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
+		1F675935174FE10C00C062E0 /* UAConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F675933174FE10C00C062E0 /* UAConfig.h */; };
+		1F675936174FE10C00C062E0 /* UAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675934174FE10C00C062E0 /* UAConfig.m */; };
 		495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */; };
 		495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A31738778300F8B5BE /* UAHTTPConnection+Test.m */; };
 		495048A71738812500F8B5BE /* UADelayOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048A51738812500F8B5BE /* UADelayOperation.h */; };
@@ -173,6 +175,8 @@
 		1F2B10C312DD01B60020843D /* UATagUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATagUtils.h; sourceTree = "<group>"; };
 		1F2B10C412DD01B60020843D /* UATagUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtils.m; sourceTree = "<group>"; };
 		1F31E8FC15F14C5500DC63BA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		1F675933174FE10C00C062E0 /* UAConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfig.h; sourceTree = "<group>"; };
+		1F675934174FE10C00C062E0 /* UAConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfig.m; sourceTree = "<group>"; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -618,6 +622,8 @@
 			children = (
 				D9FD1A4A122DB77000522B4E /* UAirship.h */,
 				D9FD1A4B122DB77000522B4E /* UAirship.m */,
+				1F675933174FE10C00C062E0 /* UAConfig.h */,
+				1F675934174FE10C00C062E0 /* UAConfig.m */,
 			);
 			path = AirshipLib;
 			sourceTree = "<group>";
@@ -719,6 +725,7 @@
 				49995D031733202200103932 /* UADeviceRegistrationPayload.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
+				1F675935174FE10C00C062E0 /* UAConfig.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,6 +893,7 @@
 				49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */,
 				49995D041733202200103932 /* UADeviceRegistrationPayload.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
+				1F675936174FE10C00C062E0 /* UAConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,22 +25,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAGlobal.h"
 
+@class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
-
-/**
- * Key for the default preferences dictionary that 
- * is loaded into NSUserDefaults on start for location services
- */
-extern NSString * const UALocationServicePreferences;
-
-/**
- * The takeOff options key for setting custom AirshipConfig options. The value
- * must be an NSDictionary.
- */
-extern NSString * const UAirshipTakeOffOptionsAirshipConfigKey;
 
 /**
  * The takeOff options key for passing in the options dictionary provided
@@ -48,12 +37,6 @@ extern NSString * const UAirshipTakeOffOptionsAirshipConfigKey;
  * pair must always be included in the takeOff options.
  */
 extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
-
-/**
- * The takeOff options key for setting custom analytics options. The value must be
- * an NSDictionary with keys for UAAnalytics. This value is typically not used.
- */
-extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
 
 /**
  * The takeOff options key for setting a pre-exising UAUAser username. The value must be
@@ -79,6 +62,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * instance.
  */
 @interface UAirship : NSObject
+
+/**
+ * The application configuration. This is set on takeOff.
+ */
+@property (nonatomic, retain) UAConfig *config;
 
 /**
  * The current APNS/remote notification device token.
@@ -181,7 +169,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * a background thread.
  *
  */
-+ (void)takeOff:(NSDictionary *)options;
++ (void)takeOff:(NSDictionary *)options withConfig:(UAConfig *)config;
 
 /**
  * Perform teardown on the shared instance. This should be called when an application

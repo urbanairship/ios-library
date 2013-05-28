@@ -51,7 +51,6 @@
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
-extern NSString * const UAAnalyticsOptionsServerKey;
 
 typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
