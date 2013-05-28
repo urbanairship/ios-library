@@ -89,7 +89,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [super dealloc];
 }
 
-- (id)initWithOptions:(NSDictionary *)options {
+- (id)init {
     if (self = [super init]) {
         //set server to default if not specified in options
         self.server = [UAirship shared].config.analyticsURL;
@@ -139,8 +139,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                  selector:@selector(willResignActive)
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
-        
-        self.notificationUserInfo = [options objectForKey:UAAnalyticsOptionsRemoteNotificationKey];
         
         /*
          * This is the Build field in Xcode. If it's not set, use a blank string.
