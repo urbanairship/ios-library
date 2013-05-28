@@ -475,51 +475,65 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 // We send headers on all response codes, so let's set those values before checking for != 200
 // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
-- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response {
+- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse *)response {
     if ([response allHeaderFields]) {
+        int tmp = 0;
         
-        int tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Total"] intValue] * 1024;//value returned in KB
-        
-        if (tmp > 0) {
+        id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
+        if (maxTotalValue) {
+            tmp = [maxTotalValue intValue] * 1024;//value returned in KB
             
-            if(tmp >= X_UA_MAX_TOTAL) {
+            if (tmp > 0) {
+                
+                if(tmp >= X_UA_MAX_TOTAL) {
+                    x_ua_max_total = X_UA_MAX_TOTAL;
+                } else {
+                    x_ua_max_total = tmp;
+                }
+                
+            } else {
                 x_ua_max_total = X_UA_MAX_TOTAL;
-            } else {
-                x_ua_max_total = tmp;
             }
-            
-        } else {
-            x_ua_max_total = X_UA_MAX_TOTAL;
         }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;//value return in KB
-        
-        if (tmp > 0) {
+
+        id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
+        if (maxBatchValue) {
+            tmp = [maxBatchValue intValue] * 1024;//value return in KB
             
-            if (tmp >= X_UA_MAX_BATCH) {
+            if (tmp > 0) {
+                
+                if (tmp >= X_UA_MAX_BATCH) {
+                    x_ua_max_batch = X_UA_MAX_BATCH;
+                } else {
+                    x_ua_max_batch = tmp;
+                }
+                
+            } else {
                 x_ua_max_batch = X_UA_MAX_BATCH;
-            } else {
-                x_ua_max_batch = tmp;
             }
+        }
+
+
+        id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
+        if (maxWaitValue) {
+            tmp = [maxWaitValue intValue];
             
-        } else {
-            x_ua_max_batch = X_UA_MAX_BATCH;
+            if (tmp >= X_UA_MAX_WAIT) {
+                x_ua_max_wait = X_UA_MAX_WAIT;
+            } else {
+                x_ua_max_wait = tmp;
+            }
         }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Wait"] intValue];
-        
-        if (tmp >= X_UA_MAX_WAIT) {
-            x_ua_max_wait = X_UA_MAX_WAIT;
-        } else {
-            x_ua_max_wait = tmp;
-        }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Min-Batch-Interval"] intValue];
-        
-        if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-            x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-        } else {
-            x_ua_min_batch_interval = tmp;
+
+        id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
+        if (minBatchValue) {
+            tmp = [minBatchValue intValue];
+            
+            if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
+                x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+            } else {
+                x_ua_min_batch_interval = tmp;
+            }
         }
         
         [self saveDefault];
