@@ -31,24 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
-/**
- * The takeOff options key for passing in the options dictionary provided
- * by [UIApplication application:didFinishLaunchingWithOptions]. This key/value
- * pair must always be included in the takeOff options.
- */
-extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUAser username. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUser password. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -157,9 +139,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
  * 
- * @see UAirshipTakeOffOptionsAirshipConfigKey
  * @see UAirshipTakeOffOptionsLaunchOptionsKey
- * @see UAirshipTakeOffOptionsAnalyticsKey
  * @see UAirshipTakeOffOptionsDefaultUsernameKey
  * @see UAirshipTakeOffOptionsDefaultPasswordKey
  *
@@ -169,7 +149,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * a background thread.
  *
  */
-+ (void)takeOff:(NSDictionary *)options withConfig:(UAConfig *)config;
++ (void)takeOff:(UAConfig *)config withLaunchOptions:(NSDictionary *)launchOptions;
+
+/**
+ * Simplified takeOff method that uses AirshipConfig.plist for initialization.
+ */
++ (void)takeOff:(NSDictionary *)launchOptions;
 
 /**
  * Perform teardown on the shared instance. This should be called when an application

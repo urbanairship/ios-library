@@ -59,11 +59,6 @@
     // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
 
-
-    //Create Airship options dictionary and add the required UIApplication launchOptions
-    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionary];
-    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-
     uaLogLevel = UALogLevelTrace;//default for debugging config loading
     UAConfig *config = [UAConfig defaultConfig];
 
@@ -72,7 +67,7 @@
     // required.
     //
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-    [UAirship takeOff:takeOffOptions withConfig:config];
+    [UAirship takeOff:config withLaunchOptions:launchOptions];
 
     //UAConfig *c = [UAConfig defaultConfig];
     UA_LDEBUG(@"Config:\n%@", [config description]);

@@ -114,7 +114,7 @@
 /**
  * Apps may be set to self-configure based on the APS-environment set in the embedded.mobileprovision file.
  * If `YES`, the inProduction value will be determined at runtime by reading the provisioning profile. If
- * `NO`, the inProduction flag may be set directly or using the AirshipConfig.properties file. Defaults to
+ * `NO`, the inProduction flag may be set directly or using the AirshipConfig.plist file. Defaults to
  * `NO`.
  */
 @property (nonatomic, assign) BOOL detectProvisioningMode;
@@ -142,12 +142,12 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Creates an instance using the values set in the `AirshipConfig.properties` file.
+ * Creates an instance using the values set in the `AirshipConfig.plist` file.
  */
 + (UAConfig *)defaultConfig;
 
 /**
- * Creates an instance using the values found in the specified `.properties` file.
+ * Creates an instance using the values found in the specified `.plist` file.
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
 

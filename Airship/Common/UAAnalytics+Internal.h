@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "UAAnalytics.h"
+
 @class UAEvent;
 @class UAHTTPConnection;
 @class UAHTTPRequest;

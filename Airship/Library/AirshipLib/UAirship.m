@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship+Internal.h"
 
 #import "UAUser.h"
-#import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 #import "UAEvent.h"
 #import "UAUtils.h"
 #import "UAKeychainUtils.h"
@@ -82,6 +82,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     self.appId = nil;
     self.appSecret = nil;
     self.server = nil;
+    self.config = nil;
     
     // Analytics contains an NSTimer, and the invalidate method is required
     // before dealloc
@@ -100,7 +101,11 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     return self;
 }
 
-+ (void)takeOff:(NSDictionary *)options withConfig:(UAConfig *)config {
++ (void)takeOff:(NSDictionary *)launchOptions {
+    [UAirship takeOff:[UAConfig defaultConfig] withLaunchOptions:launchOptions];
+}
+
++ (void)takeOff:(UAConfig *)config withLaunchOptions:(NSDictionary *)launchOptions{
     
     // Airships only take off once!
     if (_sharedAirship) {
@@ -116,15 +121,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     }
 
     [UAirship setLogLevel:config.logLevel];
-    
-    /*
-     * Validate options - Now that logging is set up, peform some additional validation
-     */
-    
-    if (!options) {
-        UA_LERR(@"[UAirship takeOff] was called without options. The options dictionary must"
-                " include the UIApplication launch options (key: UAirshipTakeOffOptionsLaunchOptionsKey).");
-    }
 
     // Ensure that app credentials have been passed in
     if (![config validate]) {
@@ -138,16 +134,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         return;
     }
 
-    
-    
-
-//    //TODO: dispatch_once
-//
-//    static dispatch_once_t pred;
-//    static Foo *foo = nil;
-//
-//    dispatch_once(&pred, ^{ foo = [[self alloc] init]; });
-//    return foo;
+    //TODO: dispatch once for takeoff?
 
     _sharedAirship = [[UAirship alloc] initWithId:config.appKey identifiedBy:config.appSecret];
     _sharedAirship.config = config;
@@ -156,24 +143,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     UA_LINFO(@"App Key: %@", _sharedAirship.appId);
     UA_LINFO(@"App Secret: %@", _sharedAirship.appSecret);
     UA_LINFO(@"Server: %@", _sharedAirship.server);
-    
-    //Check the format of the app key and password.
-    //If they're missing or malformed, stop takeoff
-    //and prevent the app from connecting to UA.
-    NSPredicate *matchPred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^\\S{22}+$"];
-    BOOL match = [matchPred evaluateWithObject:_sharedAirship.appId] 
-                    && [matchPred evaluateWithObject:_sharedAirship.appSecret];  
-    
-    if (!match) {
-        UA_LERR(
-            @"Application KEY and/or SECRET not set properly, please"
-            " insert your application key from http://go.urbanairship.com into"
-                " your AirshipConfig.plist file");
-        
-        //Use blank credentials to prevent app from crashing
-        _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
-        return;
-    }
     
     // Build a custom user agent with the app key and name
     [_sharedAirship configureUserAgent];
@@ -203,28 +172,13 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     
     // Set up analytics - record when app is opened from a push
     
-    // Application launch options
-    NSDictionary *launchOptions = [options objectForKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-    NSMutableDictionary *analyticsOptions = analyticsOptions = [NSMutableDictionary dictionary];
-    [analyticsOptions setValue:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
-                        forKey:UAAnalyticsOptionsRemoteNotificationKey];
-    
-    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithOptions:analyticsOptions] autorelease];
+    _sharedAirship.analytics = [[[UAAnalytics alloc] init] autorelease];
+    _sharedAirship.analytics.notificationUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     
     //Send Startup Analytics Info
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
     
-    /*
-     * Set up UAUser
-     */
-    
-    //Handle custom options
-    NSString *defaultUsername = [options valueForKey:UAirshipTakeOffOptionsDefaultUsernameKey];
-    NSString *defaultPassword = [options valueForKey:UAirshipTakeOffOptionsDefaultPasswordKey];
-    if (defaultUsername && defaultPassword) {
-        [UAUser setDefaultUsername:defaultUsername withPassword:defaultPassword];
-    }
     
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
@@ -262,8 +216,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     return [[UAPush shared] deviceToken];
 }
 
-- (void)configureUserAgent
-{
+- (void)configureUserAgent {
     /*
      * [LIB-101] User agent string should be:
      * App 1.0 (iPad; iPhone OS 5.0.1; UALib 1.1.2; <app key>; en_US)
