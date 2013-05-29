@@ -26,7 +26,6 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
-#import "UAAnalytics.h"
 #import "UAAnalytics+Internal.h"
 
 #import "UA_SBJSON.h"
@@ -52,7 +51,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 @implementation UAAnalytics
 
-@synthesize server;
 @synthesize session;
 @synthesize notificationUserInfo = notificationUserInfo_;
 @synthesize connection = connection_;
@@ -79,24 +77,20 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     self.sendTimer = nil;
 }
 
-- (void) dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     RELEASE_SAFELY(notificationUserInfo_);
     RELEASE_SAFELY(session);
     RELEASE_SAFELY(connection_);
-    RELEASE_SAFELY(server);
+    self.config = nil;
     RELEASE_SAFELY(lastLocationSendTime);
     [super dealloc];
 }
 
-- (id)init {
+- (id)initWithConfig:(UAConfig *)airshipConfig {
     if (self = [super init]) {
         //set server to default if not specified in options
-        self.server = [UAirship shared].config.analyticsURL;
-
-        if (self.server == nil) {
-            self.server = kAnalyticsProductionServer;
-        }
+        self.config = airshipConfig;
         
         [self resetEventsDatabaseStatus];
         
@@ -416,11 +410,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     else {
         self.notificationUserInfo = userInfo;
     }
-    
+
 }
 
 - (void)addEvent:(UAEvent *)event {
-    if ([UAirship shared].config.analyticsEnabled) {
+    if (self.config.analyticsEnabled) {
         UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
         [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
         self.databaseSize += [event getEstimatedSize];
@@ -571,7 +565,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (BOOL)shouldSendAnalytics {
-    if (self.server == nil || [self.server length] == 0) {
+    if (!self.config.analyticsEnabled) {
         UA_LTRACE("Analytics disabled.");
         return NO;
     }
@@ -613,7 +607,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (UAHTTPRequest*)analyticsRequest {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.analyticsURL, @"/warp9/"];
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     request.compressBody = YES;//enable GZIP
     request.HTTPMethod = @"POST";
@@ -721,7 +715,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
     writer.humanReadable = YES;//turn on formatting for debugging
-    UA_LTRACE(@"Sending to server: %@", self.server);
+    UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];

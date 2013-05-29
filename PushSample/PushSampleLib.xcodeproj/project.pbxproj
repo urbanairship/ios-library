@@ -527,15 +527,15 @@
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXGroup;
 			children = (
-				BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */,
-				BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */,
-				BBD52B821587E4CC00AE32FD /* JRSwizzle.m */,
-				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,
 				BBEFB02B1507F65700976645 /* Gcov_Fix.c */,
+				BBD52B821587E4CC00AE32FD /* JRSwizzle.m */,
+				BBEFB01D1507F3A400976645 /* Supporting Files */,
+				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,
+				BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */,
 				BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */,
 				BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */,
-				BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */,
-				BBEFB01D1507F3A400976645 /* Supporting Files */,
+				BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */,
+				BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */,
 			);
 			path = AirshipApplicationTests;
 			sourceTree = "<group>";

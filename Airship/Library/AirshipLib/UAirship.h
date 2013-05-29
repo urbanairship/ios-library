@@ -31,7 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
-
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.
@@ -129,8 +128,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * 
  * This method must be called from your application delegate's
  * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The `UIApplication` options passed in on launch MUST be included in this method's options
- * parameter with the `UAirshipTakeOffOptionsLaunchOptionsKey`.
+ * only once. The `UIApplication` options MUST be passed in.
  *
  * Configuration are read from the `AirshipConfig.plist` file. You may overrride the
  * `AirshipConfig.plist` values at runtime by including an NSDictionary containing the override
@@ -138,10 +136,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
- * 
- * @see UAirshipTakeOffOptionsLaunchOptionsKey
- * @see UAirshipTakeOffOptionsDefaultUsernameKey
- * @see UAirshipTakeOffOptionsDefaultPasswordKey
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary MUST contain the UIApplication launch options.

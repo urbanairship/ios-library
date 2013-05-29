@@ -39,10 +39,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
-NSString * const UAirshipTakeOffOptionsLaunchOptionsKey = @"UAirshipTakeOffOptionsLaunchOptionsKey";
-NSString * const UAirshipTakeOffOptionsDefaultUsernameKey = @"UAirshipTakeOffOptionsDefaultUsernameKey";
-NSString * const UAirshipTakeOffOptionsDefaultPasswordKey = @"UAirshipTakeOffOptionsDefaultPasswordKey";
-
 //Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
 
@@ -130,7 +126,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         //Use blank credentials to prevent app from crashing while error msg
         //is displayed
         _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
-        
+        _sharedAirship.config = config;
         return;
     }
 
@@ -172,7 +168,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     
     // Set up analytics - record when app is opened from a push
     
-    _sharedAirship.analytics = [[[UAAnalytics alloc] init] autorelease];
+    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithConfig:config] autorelease];
     _sharedAirship.analytics.notificationUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     
     //Send Startup Analytics Info

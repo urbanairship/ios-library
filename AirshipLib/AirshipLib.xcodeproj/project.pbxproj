@@ -30,6 +30,11 @@
 		1F4230D716C183D6004B52C1 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E951238462100B7E69F /* UABarButtonSegmentedControl.m */; };
 		1F675935174FE10C00C062E0 /* UAConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F675933174FE10C00C062E0 /* UAConfig.h */; };
 		1F675936174FE10C00C062E0 /* UAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675934174FE10C00C062E0 /* UAConfig.m */; };
+		1F675946175682E000C062E0 /* UAConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675945175682DF00C062E0 /* UAConfigTest.m */; };
+		1F67594A1756A97B00C062E0 /* development-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759481756A97B00C062E0 /* development-embedded.mobileprovision */; };
+		1F67594F1756B9BD00C062E0 /* production-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 1F67594E1756B9BD00C062E0 /* production-embedded.mobileprovision */; };
+		1F6759521756C24200C062E0 /* AirshipConfig-Valid-Legacy.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy.plist */; };
+		1F6759531756C24200C062E0 /* AirshipConfig-Valid.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759511756C24100C062E0 /* AirshipConfig-Valid.plist */; };
 		495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */; };
 		495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A31738778300F8B5BE /* UAHTTPConnection+Test.m */; };
 		495048A71738812500F8B5BE /* UADelayOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048A51738812500F8B5BE /* UADelayOperation.h */; };
@@ -177,6 +182,13 @@
 		1F31E8FC15F14C5500DC63BA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		1F675933174FE10C00C062E0 /* UAConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfig.h; sourceTree = "<group>"; };
 		1F675934174FE10C00C062E0 /* UAConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfig.m; sourceTree = "<group>"; };
+		1F675944175682DF00C062E0 /* UAConfigTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfigTest.h; sourceTree = "<group>"; };
+		1F675945175682DF00C062E0 /* UAConfigTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfigTest.m; sourceTree = "<group>"; };
+		1F67594717568F5300C062E0 /* UAConfig+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAConfig+Internal.h"; sourceTree = "<group>"; };
+		1F6759481756A97B00C062E0 /* development-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = "development-embedded.mobileprovision"; path = "Support/development-embedded.mobileprovision"; sourceTree = "<group>"; };
+		1F67594E1756B9BD00C062E0 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; name = "production-embedded.mobileprovision"; path = "Support/production-embedded.mobileprovision"; sourceTree = "<group>"; };
+		1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "AirshipConfig-Valid-Legacy.plist"; path = "Support/AirshipConfig-Valid-Legacy.plist"; sourceTree = "<group>"; };
+		1F6759511756C24100C062E0 /* AirshipConfig-Valid.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "AirshipConfig-Valid.plist"; path = "Support/AirshipConfig-Valid.plist"; sourceTree = "<group>"; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
@@ -539,7 +551,8 @@
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
 				7BB679661429357100B877DB /* Frameworks */,
 				7BB6790D1429288D00B877DB /* Supporting Files */,
-				BB13C4241575706100541EF3 /* UABase64Test.m */,
+				1F675944175682DF00C062E0 /* UAConfigTest.h */,
+				1F675945175682DF00C062E0 /* UAConfigTest.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -547,8 +560,13 @@
 		7BB6790D1429288D00B877DB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy.plist */,
+				1F6759511756C24100C062E0 /* AirshipConfig-Valid.plist */,
+				1F67594E1756B9BD00C062E0 /* production-embedded.mobileprovision */,
+				1F6759481756A97B00C062E0 /* development-embedded.mobileprovision */,
 				7BB6790E1429288D00B877DB /* AirshipLogicTests-Info.plist */,
 				7BB6790F1429288D00B877DB /* InfoPlist.strings */,
+				BB13C4241575706100541EF3 /* UABase64Test.m */,
 				7BB679161429288D00B877DB /* AirshipLogicTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -623,6 +641,7 @@
 				D9FD1A4A122DB77000522B4E /* UAirship.h */,
 				D9FD1A4B122DB77000522B4E /* UAirship.m */,
 				1F675933174FE10C00C062E0 /* UAConfig.h */,
+				1F67594717568F5300C062E0 /* UAConfig+Internal.h */,
 				1F675934174FE10C00C062E0 /* UAConfig.m */,
 			);
 			path = AirshipLib;
@@ -806,6 +825,10 @@
 			files = (
 				7BB679111429288D00B877DB /* InfoPlist.strings in Resources */,
 				7BB679131429288D00B877DB /* UAUtilsTest.h in Resources */,
+				1F67594A1756A97B00C062E0 /* development-embedded.mobileprovision in Resources */,
+				1F67594F1756B9BD00C062E0 /* production-embedded.mobileprovision in Resources */,
+				1F6759521756C24200C062E0 /* AirshipConfig-Valid-Legacy.plist in Resources */,
+				1F6759531756C24200C062E0 /* AirshipConfig-Valid.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -844,6 +867,7 @@
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
 				495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */,
 				495048B5173AD41A00F8B5BE /* UADeviceRegistrationDataTest.m in Sources */,
+				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

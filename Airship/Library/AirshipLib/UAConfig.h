@@ -155,12 +155,6 @@
 /// @name Utilities, Helpers
 ///---------------------------------------------------------------------------------------
 
-/**
- * Determines whether or not the app is currently configured to use the APNS production servers.
- * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
- * configured for push.
- */
-+ (BOOL)usesProductionPushServer;
 
 /**
  * Validates the current configuration. In addition to performing a strict validation, this method

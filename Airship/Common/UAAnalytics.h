@@ -26,6 +26,7 @@
 #import "UAHTTPConnection.h"
 
 @class UAEvent;
+@class UAConfig;
 
 // Used for init local size if server didn't respond, or server sends bad data
 
@@ -58,7 +59,6 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
 @interface UAAnalytics : NSObject
 
-@property (nonatomic, copy, readonly) NSString *server;
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
 @property (nonatomic, assign, readonly) int databaseSize;
 @property (nonatomic, assign, readonly) int x_ua_max_total;
@@ -72,7 +72,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
-- (id)init;
+- (id)initWithConfig:(UAConfig *)airshipConfig;
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary *)userInfo;
 

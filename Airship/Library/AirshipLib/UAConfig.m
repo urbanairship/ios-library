@@ -24,7 +24,7 @@
  */
 #import <objc/runtime.h>
 
-#import "UAConfig.h"
+#import "UAConfig+Internal.h"
 #import "UAGlobal.h"
 
 @implementation UAConfig
@@ -54,6 +54,7 @@
         self.inProduction = NO;
         self.detectProvisioningMode = NO;
         self.analyticsEnabled = YES;
+        self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
     }
     return self;
 }
@@ -132,7 +133,7 @@
 }
 
 - (BOOL)inProduction {
-    return self.detectProvisioningMode ? [UAConfig usesProductionPushServer] : _inProduction;
+    return self.detectProvisioningMode ? [self usesProductionPushServer] : _inProduction;
 }
 
 #pragma mark -
@@ -167,7 +168,7 @@
         valid = NO;
     }
 
-    if (![matchPred evaluateWithObject:self.appKey]) {
+    if (![matchPred evaluateWithObject:self.appSecret]) {
         UA_LERR(@"Current App Secret (%@) is not valid.", self.appSecret);
         valid = NO;
     }
@@ -228,31 +229,34 @@
 #pragma mark -
 #pragma Provisioning Profile Detection
 
-+ (BOOL)usesProductionPushServer {
+- (BOOL)usesProductionPushServer {
 
     static dispatch_once_t usesProductionPred;
     static BOOL usesProductionPushServer = NO;
 
-    dispatch_once(&usesProductionPred, ^{ usesProductionPushServer = [UAConfig isProductionProvisioningProfile]; });
+    // only dispatch and test if a profile is available
+    // this is useful for testing
+    if (self.profilePath) {
+        dispatch_once(&usesProductionPred, ^{
+            usesProductionPushServer = [UAConfig isProductionProvisioningProfile:self.profilePath];
+        });
+    }
+    
     return usesProductionPushServer;
 }
 
-+ (BOOL)isProductionProvisioningProfile {
-    NSString *profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
++ (BOOL)isProductionProvisioningProfile:(NSString *)profilePath {
 
     // Attempt to read this file as ASCII (rather than UTF-8) due to the binary blocks before and after the plist data
     NSError *err = nil;
     NSString *embeddedProfile = [NSString stringWithContentsOfFile:profilePath
                                                           encoding:NSASCIIStringEncoding
                                                              error:&err];
-
-    NSLog(@"Profile path: %@", profilePath);
-    NSLog(@"Provisioning Profile:\n%@", embeddedProfile);
+    UA_LTRACE(@"Profile path: %@", profilePath);
 
     if (err) {
         UA_LDEBUG(@"No profile found. Simulator?");
-        NSLog(@"desc???? %@", [err localizedDescription]);
-        return YES;
+        return NO;
     }
 
     NSDictionary *plistDict = nil;
@@ -266,11 +270,11 @@
                                                          mutabilityOption:NSPropertyListImmutable
                                                                    format:nil
                                                          errorDescription:nil];
-            NSLog(@"Plist dict: %@", [plistDict description]);
+            //UA_LTRACE(@"Embedded Profile Plist dict:\n%@", [plistDict description]);
         }
     }
 
-    // Tell the logs a little about the 
+    // Tell the logs a little about the app
     if ([plistDict valueForKeyPath:@"ProvisionedDevices"]){
         if ([[plistDict valueForKeyPath:@"Entitlements.get-task-allow"] boolValue]) {
             UA_LDEBUG(@"Debug provisioning profile. Uses the APNS Sandbox Servers.");
@@ -298,7 +302,6 @@
 
     return NO;//Assume development/sandbox if not enabled
 }
-
 
 #pragma mark -
 #pragma KVC Overrides
