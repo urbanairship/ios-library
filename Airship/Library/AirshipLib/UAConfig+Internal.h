@@ -28,8 +28,18 @@
 /*
  * Testing extensions to UAConfig
  */
-@interface UAConfig ()
+@interface UAConfig () {
+  @private
+    // the following ivars are for instance-scoped dispatch_once control when parsing
+    // provisioning xml files
+    dispatch_once_t usesProductionPred_;
+    BOOL usesProductionPushServer_;
+}
 
+/**
+ * The provisioning profile path to use for this configuration. It defaults to the `embedded.mobileprovision` file
+ * included with app packages, but it may be customized for testing purposes.
+ */
 @property (nonatomic, copy) NSString *profilePath;
 
 /**

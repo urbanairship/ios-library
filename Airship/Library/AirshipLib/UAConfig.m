@@ -41,6 +41,8 @@
     self.deviceAPIURL = nil;
     self.analyticsURL = nil;
 
+    self.profilePath = nil;
+
     [super dealloc];
 }
 
@@ -55,6 +57,7 @@
         self.detectProvisioningMode = NO;
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
+        usesProductionPushServer_ = NO;
     }
     return self;
 }
@@ -206,12 +209,12 @@
 
         objc_property_t property = class_getProperty(self, [realKey UTF8String]);
 
-        UA_LDEBUG(@"Real key: %@", realKey);
+        UA_LTRACE(@"Real key: %@", realKey);
         if (property != NULL) {
             NSString *type = [NSString stringWithUTF8String:property_getAttributes(property)];
 
-            UA_LDEBUG(@"Type: %@", type);
-            if ([type hasPrefix:@"Tc"]) { // treat chars as bools
+            UA_LTRACE(@"Type: %@", type);
+            if ([type hasPrefix:@"Tc"]) {//treat chars as bools
                 value = [NSNumber numberWithBool:[value boolValue]];
             } else if (![type hasPrefix:@"T@"]) {//indicates an obj-c object (id)
                 value = [NSNumber numberWithInt:[value intValue]];
@@ -221,7 +224,7 @@
         [newKeyedValues setValue:value forKey:realKey];
     }
 
-    NSLog(@"New Dictionary: %@", [newKeyedValues description]);
+    UA_LTRACE(@"New Dictionary: %@", [newKeyedValues description]);
     
     return newKeyedValues;
 }
@@ -231,18 +234,15 @@
 
 - (BOOL)usesProductionPushServer {
 
-    static dispatch_once_t usesProductionPred;
-    static BOOL usesProductionPushServer = NO;
-
     // only dispatch and test if a profile is available
     // this is useful for testing
     if (self.profilePath) {
-        dispatch_once(&usesProductionPred, ^{
-            usesProductionPushServer = [UAConfig isProductionProvisioningProfile:self.profilePath];
+        dispatch_once(&usesProductionPred_, ^{
+            usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
         });
     }
     
-    return usesProductionPushServer;
+    return usesProductionPushServer_;
 }
 
 + (BOOL)isProductionProvisioningProfile:(NSString *)profilePath {
