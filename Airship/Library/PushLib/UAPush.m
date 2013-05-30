@@ -620,6 +620,7 @@ static Class _uiClass;
         // that uses push, the DELETE will fail with a 404.
         if (!self.deviceToken) {
             UALOG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
+            self.isRegistering = NO;
             return;
         }
         // Don't unregister more than once
