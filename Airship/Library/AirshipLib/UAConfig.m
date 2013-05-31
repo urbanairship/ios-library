@@ -234,14 +234,17 @@
 
 - (BOOL)usesProductionPushServer {
 
-    // only dispatch and test if a profile is available
-    // this is useful for testing
-    if (self.profilePath) {
-        dispatch_once(&usesProductionPred_, ^{
+    // only test if a profile is available
+    // this is useful for testing/detecting simulator
+    dispatch_once(&usesProductionPred_, ^{
+        if (self.profilePath) {
             usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
-        });
-    }
-    
+        } else {
+            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", _inProduction);
+            usesProductionPushServer_ = _inProduction;
+        }
+    });
+
     return usesProductionPushServer_;
 }
 
@@ -255,8 +258,8 @@
     UA_LTRACE(@"Profile path: %@", profilePath);
 
     if (err) {
-        UA_LDEBUG(@"No profile found. Simulator?");
-        return NO;
+        UA_LERR(@"No mobile provision profile found or the profile could not be read. Defaulting to production mode.");
+        return YES;
     }
 
     NSDictionary *plistDict = nil;
@@ -289,18 +292,16 @@
 
     NSString *apsEnvironment = [plistDict valueForKeyPath:@"Entitlements.aps-environment"];
     UA_LDEBUG(@"APS Environment set to %@", apsEnvironment);
-    if ([@"production" isEqualToString:apsEnvironment]) {
-        return YES;
+    if ([@"development" isEqualToString:apsEnvironment]) {
+        return NO;
     }
 
     // Let the dev know if there's not an APS entitlement in the profile. Something is terribly wrong.
     if (!apsEnvironment) {
         UA_LERR(@"aps-environment value is not set. If this is not a simulator, ensure that the app is properly provisioned for push");
-        return NO;
-
     }
 
-    return NO;//Assume development/sandbox if not enabled
+    return YES;// For safety, assume production unless the profile is explicitly set to development
 }
 
 #pragma mark -

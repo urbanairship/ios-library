@@ -60,7 +60,22 @@
 }
 
 - (void)testMissingEmbeddedProfile {
-    STAssertFalse([UAConfig isProductionProvisioningProfile:nil], @"Missing profiles should result in a development mode determination.");
+    STAssertTrue([UAConfig isProductionProvisioningProfile:nil], @"Missing profiles should result in a production mode determination.");
+}
+
+- (void)testSimulatorFallback {
+
+    // Ensure that the simulator falls back to the inProduction flag as it was set
+
+    UAConfig *configInProduction =[[[UAConfig alloc] init] autorelease];
+    configInProduction.inProduction = YES;
+    configInProduction.detectProvisioningMode = YES;
+    STAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
+
+    UAConfig *configInDevelopment =[[[UAConfig alloc] init] autorelease];
+    configInDevelopment.inProduction = NO;
+    configInDevelopment.detectProvisioningMode = YES;
+    STAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
 - (void)testProductionFlag {
