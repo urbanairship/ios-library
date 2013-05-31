@@ -101,7 +101,7 @@
 }
 
 - (void)testOldPlistFormat {
-    NSString *legacyPlistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid-Legacy" ofType:@"plist"];
+    NSString *legacyPlistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid-Legacy-NeXTStep" ofType:@"plist"];
 
 
     NSString *validAppValue = @"0A00000000000000000000";
@@ -127,7 +127,30 @@
     NSString *validAppValue = @"0A00000000000000000000";
     UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
 
-    STAssertTrue([config validate], @"Legacy Config File is invalid.");
+    STAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+
+    STAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
+    STAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
+    STAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
+    STAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
+
+    STAssertEquals(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
+    STAssertEquals(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
+    STAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
+    STAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
+
+    //special case this one since we have to disable detectProvisioningMode
+    config.detectProvisioningMode = NO;
+    STAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
+}
+
+- (void)testNeXTStepPlistParsing {
+    NSString *plistPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"AirshipConfig-Valid-NeXTStep" ofType:@"plist"];
+
+    NSString *validAppValue = @"0A00000000000000000000";
+    UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
+
+    STAssertTrue([config validate], @"NeXTStep plist file is invalid.");
 
     STAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
     STAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");

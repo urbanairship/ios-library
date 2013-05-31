@@ -1,12 +1,24 @@
-{
-	productionLogLevel = 5;
-	unknownKey = unknownValue;
-	developmentAppKey = "   0A00000000000000000000        ";
-	developmentAppSecret = "        0A00000000000000000000        ";
-	productionAppKey = "  0A00000000000000000000      ";
-	productionAppSecret = "    0A00000000000000000000     ";
-	clearKeychain = YES;
-	developmentLogLevel = 1;
-	inProduction = YES;
-	"detectProvisioningMode" = YES;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>developmentAppKey</key>
+	<string>   0A00000000000000000000        </string>
+	<key>developmentAppSecret</key>
+	<string>        0A00000000000000000000        </string>
+	<key>developmentLogLevel</key>
+	<string>1</string>
+	<key>productionAppKey</key>
+	<string>  0A00000000000000000000      </string>
+	<key>productionAppSecret</key>
+	<string>    0A00000000000000000000     </string>
+	<key>productionLogLevel</key>
+	<string>5</string>
+	<key>detectProvisioningMode</key>
+	<true/>
+	<key>clearKeychain</key>
+	<true/>
+	<key>inProduction</key>
+	<true/>
+</dict>
+</plist>
