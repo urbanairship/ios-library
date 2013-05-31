@@ -25,13 +25,14 @@
 
 #import <Foundation/Foundation.h>
 
+#import "UAAnalytics.h"
+
 @class UAEvent;
 @class UAHTTPConnection;
 @class UAHTTPRequest;
 
 @interface UAAnalytics () {
   @private
-    NSString *server;
     NSMutableDictionary *session;
     NSDictionary *notificationUserInfo_;
     UAHTTPConnection *connection_;
@@ -53,7 +54,6 @@
     BOOL isEnteringForeground_;
 }
 
-@property (nonatomic, copy) NSString *server;
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
 @property (nonatomic, retain) UAHTTPConnection *connection;
@@ -66,6 +66,7 @@
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
+@property (nonatomic, retain) UAConfig *config;
 
 // For testing purposes
 @property (nonatomic, assign) BOOL isEnteringForeground;

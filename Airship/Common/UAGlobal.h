@@ -71,6 +71,7 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelDebug
 
 // constants
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"
+#define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
 // code block
 #define RELEASE_SAFELY(__POINTER) { [__POINTER release]; __POINTER = nil; }

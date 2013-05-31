@@ -1,7 +1,16 @@
-{
-	"APP_STORE_OR_AD_HOC_BUILD" = NO;
-	"DEVELOPMENT_APP_KEY" = "Your Development App Key";
-	"DEVELOPMENT_APP_SECRET" = "Your Development App Secret";
-	"PRODUCTION_APP_KEY" = "Your Production App Key";
-	"PRODUCTION_APP_SECRET" = "Your Production App Secret";
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>inProduction</key>
+	<false/>
+	<key>developmentAppKey</key>
+	<string>Your Development App Key</string>
+	<key>developmentAppSecret</key>
+	<string>Your Development App Secret</string>
+	<key>productionAppKey</key>
+	<string>Your Production App Key</string>
+	<key>productionAppSecret</key>
+	<string>Your Production App Secret</string>
+</dict>
+</plist>
