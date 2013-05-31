@@ -31,7 +31,5 @@
 	<integer>3</integer>
 	<key>--logformat</key>
 	<integer>1</integer>
-    <key>--templates</key>
-    <string>../docs/doc_templates</string>
 </dict>
 </plist>

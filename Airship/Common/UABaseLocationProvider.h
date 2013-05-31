@@ -27,7 +27,6 @@
 #import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
-extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
 /**
  This is the base class for location providers. You should not
  implement this class directly. See the documentation for CLLocationManager for

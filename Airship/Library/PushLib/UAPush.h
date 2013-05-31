@@ -220,8 +220,10 @@ SINGLETON_INTERFACE(UAPush);
 /*
  * Returns `YES` if the device token has changed. This method is scheduled for removal 
  * in the short term, it is recommended that you do not use it.
+ *
+ * @deprecated 1.3.0
  */
-@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
+@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -253,8 +255,10 @@ SINGLETON_INTERFACE(UAPush);
  * 
  * @param enabled New value
  * @warning *Deprecated* Use the setAutobadgeEnabled: method instead
+ *
+ * @deprecated 1.3.0
  */
-- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)enableAutobadge:(BOOL)enabled __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -330,8 +334,10 @@ SINGLETON_INTERFACE(UAPush);
  * when appropriate.
  *
  * @param values The new tag values
+ *
+ * @deprecated 1.3.0
  */
-- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)updateTags:(NSMutableArray *)values __attribute__((deprecated("Deprecated in 1.3.0")));
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -343,8 +349,10 @@ SINGLETON_INTERFACE(UAPush);
  * when the alias is the only value that needs to be updated. 
  *
  * @param value New alias
+ *
+ * @deprecated 1.3.0
  */
-- (void)updateAlias:(NSString *)value UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)updateAlias:(NSString *)value __attribute__((deprecated("Deprecated in 1.3.0")));
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
@@ -384,23 +392,29 @@ SINGLETON_INTERFACE(UAPush);
 /*
  * Disables quiet time settings. This call updates the server with an API call.
  * This call is deprecated. Set quietTimeEnabled to NO instead;
+ *
+ * @deprecated 1.3.0
  */
-- (void)disableQuietTime UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)disableQuietTime __attribute__((deprecated("Deprecated in 1.3.0")));
 
 /*
  * The current time zone setting for quiet time.
  *
  * @return The time zone name
+ *
+ * @deprecated 1.3.0
  */
-- (NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
 
 /*
  * Set a new time zone for quiet time.
  *
  * @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
- * the default time zone [NSTimeZone localTimeZone] is used
+ * the default time zone [NSTimeZone localTimeZone] is used.
+ *
+ * @deprecated 1.3.0
  */
-- (void)setTz:(NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)setTz:(NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------

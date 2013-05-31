@@ -654,11 +654,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         CLAuthorizationStatus authorization = [CLLocationManager authorizationStatus];
         switch (authorization) {
             case kCLAuthorizationStatusNotDetermined:
-                return YES;
             case kCLAuthorizationStatusAuthorized:
                 return YES;
             case kCLAuthorizationStatusDenied:
-                return NO;
             case kCLAuthorizationStatusRestricted:
                 return NO;
             default:

@@ -45,10 +45,3 @@ UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"U
 #pragma mark -
 #pragma mark UALocationServiceErrors
 UALocationServiceErrorDomain *const UALocationServiceTimeoutError = @"UALocationServiceTimedOut";
-
-
-@implementation UALocationCommonValues
-
-@end
-
-

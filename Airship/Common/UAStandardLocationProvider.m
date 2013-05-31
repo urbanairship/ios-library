@@ -30,9 +30,11 @@
 
 - (void)dealloc {
     self.delegate = nil;
+    
     // Directly stop the location mananger for speed and clarity
     [self.locationManager stopUpdatingLocation];
     self.locationManager.delegate = nil;
+    
     // Super class deallocates location manager
     [super dealloc];
 }
@@ -48,20 +50,16 @@
 #pragma mark -
 #pragma mark CLLocationDelegate Methods
 
-//** iOS 4.2 or better */
+//** iOS 4.2 or higher */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Standard location authorization changed %d", status);
     switch (status) {
-        case kCLAuthorizationStatusAuthorized:
-            break;
-        case kCLAuthorizationStatusNotDetermined:
-            break;
         case kCLAuthorizationStatusDenied:
-            [self stopReportingLocation];
-            break;
         case kCLAuthorizationStatusRestricted:
             [self stopReportingLocation];
             break;
+        case kCLAuthorizationStatusAuthorized:
+        case kCLAuthorizationStatusNotDetermined:            
         default:
             break;
     }
@@ -91,7 +89,7 @@
     [self.locationManager stopUpdatingLocation];
 }
  
-+ (UAStandardLocationProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
++ (UAStandardLocationProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
     return [[[UAStandardLocationProvider alloc] initWithDelegate:serviceDelegateOrNil] autorelease];
 }
 @end
