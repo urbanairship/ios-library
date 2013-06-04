@@ -17,16 +17,20 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * Create a user.
  *
  * @param successBlock A UAUserAPIClientCreateSuccessBlock that will be called if user creation was successful.
- * @param onFailure A UAUserAPIClientFailureBlock that will be called if user creation was unsuccessful.
+ * @param failureBlock A UAUserAPIClientFailureBlock that will be called if user creation was unsuccessful.
  */
-- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
+                  onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 /**
  * Update a user's associated device token.
  *
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
- * @param onFailure A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
+ * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
-- (void)updateDeviceToken:(NSString *)deviceToken forUsername:(NSString *)username onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+- (void)updateDeviceToken:(NSString *)deviceToken
+              forUsername:(NSString *)username
+                onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+                onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 @end

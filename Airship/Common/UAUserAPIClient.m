@@ -92,7 +92,8 @@
     return request;
 }
 
-- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock onFailure:(UAUserAPIClientFailureBlock)failureBlock {
+- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
+                  onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
     //if APN hasn't finished yet or is not enabled, don't include the deviceToken
     NSString* deviceToken = [UAPush shared].deviceToken;
@@ -128,7 +129,10 @@
     }];
 }
 
-- (void)updateDeviceToken:(NSString *)deviceToken forUsername:(NSString *)username onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock onFailure:(UAUserAPIClientFailureBlock)failureBlock {
+- (void)updateDeviceToken:(NSString *)deviceToken
+              forUsername:(NSString *)username
+                onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+                onFailure:(UAUserAPIClientFailureBlock)failureBlock {
     UALOG(@"Updating device token.");
 
     UAHTTPRequest *request = [self requestToUpdateDeviceToken:deviceToken forUsername:username];
