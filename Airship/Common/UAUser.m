@@ -25,6 +25,7 @@
 
 #import "UAUser.h"
 #import "UAUser+Internal.h"
+#import "UAUserAPIClient.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAGlobal.h"
@@ -33,6 +34,20 @@
 #import "UA_SBJSON.h"
 
 static UAUser *_defaultUser;
+
+@interface UAUser()
+
+@property(nonatomic, retain) UAUserAPIClient *apiClient;
+@property(nonatomic, assign) BOOL initialized;
+@property(nonatomic, copy) NSString *username;
+@property(nonatomic, copy) NSString *password;
+@property(nonatomic, copy) NSString *url;
+@property(nonatomic, assign) UAUserState userState;
+@property(nonatomic, assign) BOOL isObservingDeviceToken;
+//creation flag
+@property(nonatomic, assign) BOOL creatingUser;
+
+@end
 
 @implementation UAUser
 
@@ -64,9 +79,10 @@ static UAUser *_defaultUser;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(username);
-    RELEASE_SAFELY(password);
-    RELEASE_SAFELY(url);
+    self.username = nil;
+    self.password = nil;
+    self.url = nil;
+    self.apiClient = nil;
     [super dealloc];
 }
 
@@ -82,7 +98,7 @@ static UAUser *_defaultUser;
     self = [super init];
     if (self) {
         // init
-        // no action required for now..
+        self.apiClient = [[[UAUserAPIClient alloc] init] autorelease];
     }
     
     return self;
@@ -112,7 +128,7 @@ static UAUser *_defaultUser;
     
     @synchronized(self) {
         
-        if (initialized) {
+        if (self.initialized) {
             return;
         }
         
@@ -133,7 +149,7 @@ static UAUser *_defaultUser;
         
         [self performSelector:@selector(listenForDeviceTokenReg) withObject:nil afterDelay:0];
         
-        initialized = YES;
+        self.initialized = YES;
                 
     }
 }
@@ -144,7 +160,7 @@ static UAUser *_defaultUser;
 // TODO: better user state representation
 - (void)loadUser {
 
-    if (creatingUser) {
+    if (self.creatingUser) {
         // if we're creating a user, do not load anything now
         // everything relevant has already beenloaded
         // and we don't want to step on the in-progress creation
@@ -213,7 +229,7 @@ static UAUser *_defaultUser;
 }
 
 - (void)updateUserState {
-    if (creatingUser) {
+    if (self.creatingUser) {
         userState = UAUserStateCreating;
     } else if (username == nil || password == nil) {
         userState = UAUserStateEmpty;
@@ -224,6 +240,10 @@ static UAUser *_defaultUser;
 
 - (void)notifyObserversUserUpdated {
     [self notifyObservers:@selector(userUpdated)];
+}
+
+- (void)notifyObserversUserUpdateFailed {
+    [self notifyObservers:@selector(userUpdateFailed)];
 }
 
 #pragma mark -
@@ -259,114 +279,53 @@ static UAUser *_defaultUser;
 
 - (void)createUser {
     
-    creatingUser = YES;
+    self.creatingUser = YES;
 
-    NSString *urlString = [NSString stringWithFormat:@"%@%@",
-                           [[UAirship shared] server],
-                           @"/api/user/"];
-	
-    NSURL *createUrl = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
+    [self.apiClient createUserOnSuccess:^(UAUserData *data, NSString *deviceToken) {
+        self.creatingUser = NO;
+        self.username = data.username;
+        self.password = data.password;
+        self.url = data.url;
 
-    NSMutableDictionary *data = [self createUserDictionary];
+        [self saveUserData];
 
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-    NSString *body = [writer stringWithObject:data];
-
-    UALOG(@"Create user with body: %@", body);
-
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                     delegate:self
-                                                      success:@selector(userCreated:)
-                                                      failure:@selector(userCreationDidFail:)];
-    [self.connection start];
-}
-
-- (void)userCreated:(UAHTTPRequest *)request {
-    
-    UALOG(@"User created: %d:%@", [request.response statusCode], [request responseString]);
-
-    // done creating! or it failed..
-    // wait to update the state enum until the next state is determined below
-    creatingUser = NO;
-
-    switch ([request.response statusCode]) {
-        case 201://created
-        {
-            UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
-            NSDictionary *result = [parser objectWithString:request.responseString];
-
-            self.username = [result objectForKey:@"user_id"];
-            self.password = [result objectForKey:@"password"];
-            self.url = [result objectForKey:@"user_url"];
-            
-            [self saveUserData];
-            
-            // Check for device token. If it was present in the request, it was just updated, so set the flag in Airship
-            if (request.body) {
-                
-                NSString *requestString = [[NSString alloc] initWithData:request.body encoding:NSUTF8StringEncoding];
-                NSDictionary *requestDict = [parser objectWithString:requestString];
-                
-                [requestString release];
-                
-                if (requestDict != nil && [requestDict objectForKey:@"device_tokens"] != nil) {
-                    
-                    // created a user w/ a device token
-                    UALOG(@"Created a user with a device token.");
-                    
-                    NSArray *deviceTokens = [requestDict objectForKey:@"device_tokens"];
-                    
-                    // get the first item from the request - we will only ever send 1 at most
-                    NSString *deviceToken = [deviceTokens objectAtIndex:0];
-                    
-                    // If we did send a token, then it needs to be updated in the store
-                    if (deviceToken) {
-                        [self setServerDeviceToken:deviceToken];
-                    }
-                }
-            }
-			
-            [parser release];
-            
-            //check to see if the device token has changed, and trigger an update
-            [self updateDefaultDeviceToken];
-            
-            [self notifyObserversUserUpdated];
-            break;
+        if (deviceToken) {
+            [self setServerDeviceToken:deviceToken];
         }
-        default:
-        {
-            [self updateUserState];
-            [self userRequestWentWrong:request];
-            break;
-        }
-    }
-}
 
-- (void)userCreationDidFail:(UAHTTPRequest *)request {
-    creatingUser = NO;
-    [self updateUserState];
-    [self userRequestWentWrong:request];
+        //check to see if the device token has changed, and trigger an update
+        [self updateDefaultDeviceToken];
+        [self notifyObserversUserUpdated];
+    } onFailure:^(UAHTTPRequest *request){
+        [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
+        self.creatingUser = NO;
+        [self updateUserState];
+        [self notifyObserversUserUpdateFailed];
+    }];
 }
 
 #pragma mark -
-#pragma mark HTTP Request Failure Handler
+#pragma mark Update
 
-// Default failure handler, set in UAUtils helper function
-- (void)requestWentWrong:(UAHTTPRequest *)request {
-    
-    [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
+-(void)updateDefaultDeviceToken {
 
-}
+    UALOG(@"Updating device token.");
 
-// For observer interested request
-- (void)userRequestWentWrong:(UAHTTPRequest *)request {
-    [self requestWentWrong:request];
-    [self notifyObservers:@selector(userUpdateFailed)];
+    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
+		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
+        return;
+    }
+
+    NSString *deviceToken = [[UAPush shared] deviceToken];
+
+    [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *token) {
+        // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
+        [self setServerDeviceToken:token];
+        UA_LDEBUG(@"Logged last updated key %@", token);
+        [self notifyObserversUserUpdated];
+    } onFailure:^(UAHTTPRequest *request) {
+        [self notifyObserversUserUpdateFailed];
+    }];
 }
 
 #pragma mark -
@@ -377,7 +336,7 @@ static UAUser *_defaultUser;
     
     UALOG(@"ListenForDeviceTokenReg");
     
-    if (isObservingDeviceToken) {
+    if (self.isObservingDeviceToken) {
         return;
     }
     
@@ -389,7 +348,7 @@ static UAUser *_defaultUser;
     }
     
     // Listen for changes to the device token
-    isObservingDeviceToken = YES;
+    self.isObservingDeviceToken = YES;
     [[UAPush shared] addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
     
     // Double check here incase we managed to recieve the token the same
@@ -414,212 +373,10 @@ static UAUser *_defaultUser;
 }
 
 -(void)cancelListeningForDeviceToken {
-    if (isObservingDeviceToken) {
+    if (self.isObservingDeviceToken) {
         [[UAPush shared] removeObserver:self forKeyPath:@"deviceToken"];
-        isObservingDeviceToken = NO;
+        self.isObservingDeviceToken = NO;
     }
-}
-
--(void)updateDefaultDeviceToken {
-    
-    UALOG(@"Updating device token.");
-
-    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
-		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
-        return;
-    }
-    
-    NSString *deviceToken = [[UAPush shared] deviceToken];
-    NSDictionary *dict = @{@"device_tokens" :@{@"add" : @[deviceToken]}};
-    [self updateUserInfo:dict withDelegate:self finish:@selector(updatedDefaultDeviceToken:) fail:@selector(requestWentWrong:)];
-    
-}
-
-- (void)updatedDefaultDeviceToken:(UAHTTPRequest *)request {
-
-    if ([request.response statusCode] == 200 || [request.response statusCode] == 201){
-        
-        // The dictionary for the post body is built as follows in updateDeviceToken
-        //    "device_tokens" =     {
-        //        add =         (
-        //                       a3dce91afd4aa3d2c44a66f2ef7be03b42ac05558ac6bdc2263a60b634f1c78a
-        //                       );
-        //    };
-        // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
-        
-        NSString *rawJson = [[[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding] autorelease];
-        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-        // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
-        NSDictionary *postBody = [parser objectWithString:rawJson];
-        NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
-        NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
-        
-        // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
-        [self setServerDeviceToken:successfullyUploadedDeviceToken];
-        
-        UALOG(@"Updated Device Token succeeded with response: %d", [request.response statusCode]);
-        UALOG(@"Logged last updated key %@", successfullyUploadedDeviceToken);
-    }
-    else {
-        // If we got an other than 200/201, that's just odd
-        UALOG(@"Update request did not succeed with expected response: %d", [request.response statusCode]);
-    }
-}
-
-#pragma mark -
-#pragma mark User Update
-
-- (NSMutableDictionary*)createUserDictionary {
- 
-    //set up basic payload
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                 [UAUtils deviceID], @"ua_device_id", nil ];
-    
-    [data setValue:self.url forKey:@"user_url"];
-    [data setValue:@"true" forKey:@"airmail"];
-    
-    //if APN hasn't finished yet or is not enabled, don't include the deviceToken
-    NSString* deviceToken = [UAPush shared].deviceToken;
-	
-    if (deviceToken != nil && [deviceToken length] > 0) {
-        NSArray *deviceTokens = [NSArray arrayWithObjects:deviceToken, nil];
-        [data setObject:deviceTokens forKey:@"device_tokens"];
-    }
-
-    [data autorelease];
-    
-    return data;
-    
-}
-
-
-- (void)updateUserGetFinished:(UAHTTPRequest *)request {
-	if([request.response statusCode] != 200) {
-		[self requestWentWrong:request];
-	}
-}
-
-- (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
-
-    UALOG(@"Updating user");
-    
-    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-								 [[UAirship shared] server],
-								 @"/api/user/",
-								 [self username]];
-	
-    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
-	
-	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
-    
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter new] autorelease];
-    NSString *body = [writer stringWithObject:info];
-    
-    UALOG(@"Update user with content: %@", body);
-    
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                     delegate:self
-                                                      success:finishSelector
-                                                      failure:failSelector];
-    [_connection start];
-}
-
-- (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
-
-	NSMutableDictionary *options = [[[NSMutableDictionary alloc] init] autorelease];
-	
-	[options setValue:delegate forKey:@"delegate"];
-	[options setValue:NSStringFromSelector(finishSelector) forKey:@"finishSelector"];
-	[options setValue:NSStringFromSelector(failSelector) forKey:@"failSelector"];
-	
-	// We have to do a GET before the modify, so let's do this in a new thread.
-	[self performSelectorInBackground:@selector(doUpdateUserWithDelegate:) withObject:options];
-	
-}	
-	
-- (void)doUpdateUserWithDelegate:(NSMutableDictionary *)selectors { 	
-	
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Top-level pool
-	
-    UALOG(@"Updating user");
-	
-	NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-								 [[UAirship shared] server],
-								 @"/api/user/",
-								 [self username]];
-	
-    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
-	
-	//The user's existing tags and alias must now be retrieved
-	UAHTTPRequest *getRequest = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"GET"];
-
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:getRequest];
-	[connection startSynchronous];
-
-	[self updateUserGetFinished:getRequest];
-	
-	NSMutableArray *deviceTokens = [[[NSMutableArray alloc] init] autorelease];
-	BOOL contains = NO;
-	
-	if ([getRequest.response statusCode] == 200) {
-		
-		UA_SBJsonParser *parser = [UA_SBJsonParser new];
-		NSDictionary *getResult = [parser objectWithString:getRequest.responseString];
-		[parser release];
-		
-		UALOG(@"Update User GET result: %@", [getResult descriptionWithLocale: nil indent: 1]);
-		
-		// Ensure that the device token is updated if it's available
-		[deviceTokens addObjectsFromArray:[getResult objectForKey:@"device_tokens"]];
-		
-		// If there are device tokens in the array, check them against the local one, if no match then need to update
-		for (NSString *deviceToken in deviceTokens) {
-			
-			if ([[UAPush shared] deviceToken] != nil && [[[[UAPush shared] deviceToken] lowercaseString] isEqualToString:[deviceToken lowercaseString]]) {
-				contains = YES;
-			}
-		}
-		
-		if((!contains) && ([[UAPush shared] deviceToken] != nil)) {
-			UALOG(@"Add device token");
-			[deviceTokens addObject:[[UAPush shared] deviceToken]];
-		}
-		
-	} else {
-		UALOG(@"Update User - Get existing deviceTokens failed.");
-	}
-	
-	// Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"PUT"];
-    
-	
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-    NSMutableDictionary *data = [self createUserDictionary];
-	
-	if([getRequest.response statusCode] == 200) {
-		[data setObject:deviceTokens forKey:@"device_tokens"];		
-	}
-
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    NSString* body = [writer stringWithObject:data];
-    
-    UALOG(@"Update user with content: %@", body);
-    
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    UAHTTPConnection *updateConnection = [UAHTTPConnection connectionWithRequest:request];
-    updateConnection.delegate = (id)[selectors objectForKey:@"delegate"];
-    updateConnection.successSelector = NSSelectorFromString([selectors objectForKey:@"finishSelector"]);
-    updateConnection.failureSelector = NSSelectorFromString([selectors objectForKey:@"failSelector"]);
-
-    [updateConnection start];
-
-	[pool drain];  // Release the objects in the pool.
 }
 
 @end

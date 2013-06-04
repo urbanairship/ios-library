@@ -26,9 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UAObservable.h"
 
-@class UAHTTPRequest;
-@class UAHTTPConnection;
-
 typedef enum _UAUserState {
     UAUserStateEmpty = 0,
     UAUserStateCreating = 1,
@@ -44,29 +41,13 @@ typedef enum _UAUserState {
 
 @end
 
-@interface UAUser : UAObservable {
-
-  @private
-    BOOL initialized;
-    NSString *username;
-    NSString *password;
-    NSString *url;
-    
-    UAUserState userState;
-    
-    BOOL isObservingDeviceToken;
-    
-    //creation flag
-    BOOL creatingUser;
-
-}
+@interface UAUser : UAObservable
 
 // Public interface
-@property (assign, readonly, nonatomic) UAUserState userState;
-@property (retain, nonatomic) NSString *username;
-@property (retain, nonatomic) NSString *password;
-@property (retain, nonatomic) NSString *url;
-@property (retain, nonatomic) UAHTTPConnection *connection;
+@property (nonatomic, readonly, assign) UAUserState userState;
+@property (nonatomic, readonly, copy) NSString *username;
+@property (nonatomic, readonly, copy, nonatomic) NSString *password;
+@property (nonatomic, readonly, copy, nonatomic) NSString *url;
 
 + (UAUser *)defaultUser;
 + (void)land;
@@ -79,21 +60,5 @@ typedef enum _UAUserState {
 
 - (void)initializeUser;
 - (void)loadUser;
-
-- (void)createUser;
-
-- (void)saveUserData;
-- (void)updateUserState;
-- (void)notifyObserversUserUpdated;
-
-- (void)requestWentWrong:(UAHTTPRequest *)request;
-- (void)userRequestWentWrong:(UAHTTPRequest *)request;
-
-//POST
-- (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
-
-//PUT
-- (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
-- (NSMutableDictionary*)createUserDictionary;
 
 @end
