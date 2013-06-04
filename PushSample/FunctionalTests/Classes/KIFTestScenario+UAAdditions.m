@@ -104,6 +104,49 @@
 + (id)scenarioToSetTag {
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a tag can be set."];
 
+    NSString *uniqueID = [UAUtils UUID];
+
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Token Settings"]];
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Tags"]];
+
+
+
+    for (NSString *tag in [UAPush shared].tags) {
+        [scenario addStep:
+            [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag]
+                                                      traits:UIAccessibilityTraitButton]];
+    }
+
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Add" traits:UIAccessibilityTraitButton]];
+
+    [scenario addStep:[KIFTestStep stepToEnterText:uniqueID intoViewWithAccessibilityLabel:@"Custom Tag Input"]];
+
+    // save the tag
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
+
+    // todo: verify that the tag exists
+
+    // back to token screen
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton]];
+
+    // back to main screen
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
+
+    // wait for registration
+    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
+
+    // Now send it a push!
+
+    [scenario addStep:[KIFTestStep stepWithDescription:@"Send a tag push." executionBlock:^(KIFTestStep *step, NSError **error) {
+        [UAPushClient sendAlert:uniqueID toTag:uniqueID];
+        return KIFTestStepResultSuccess;
+    }]];
+
+    KIFTestStep *waitStep = [KIFTestStep stepToWaitForTappableViewWithAccessibilityLabel:uniqueID];
+    waitStep.timeout = kPushWait;
+    [scenario addStep:waitStep];
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:uniqueID traits:UIAccessibilityTraitButton]];
+    
     return scenario;
 }
 

@@ -273,8 +273,8 @@
 		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
 		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
 		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
-		1FCBB55F175A9F7F00F42F07 /* PushSample copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1FCBB560175A9F7F00F42F07 /* PushSample copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PushSample copy-Info.plist"; path = "/Users/jeff/UrbanAirship/code/git/ios-library/PushSample/PushSample copy-Info.plist"; sourceTree = "<absolute>"; };
+		1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushSampleKIF.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FCBB560175A9F7F00F42F07 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PushSampleKIF-Info.plist"; path = "/Users/jeff/UrbanAirship/code/git/ios-library/PushSample/PushSampleKIF-Info.plist"; sourceTree = "<absolute>"; };
 		1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KIF.xcodeproj; path = FunctionalTests/Frameworks/KIF/KIF.xcodeproj; sourceTree = "<group>"; };
 		1FCBB617175AA3D400F42F07 /* UATestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestingDelegate.h; sourceTree = "<group>"; };
 		1FCBB618175AA3D400F42F07 /* UATestingDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestingDelegate.m; sourceTree = "<group>"; };
@@ -594,7 +594,7 @@
 			children = (
 				1D6058910D05DD3D006BFB54 /* PushSample.app */,
 				BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */,
-				1FCBB55F175A9F7F00F42F07 /* PushSample copy.app */,
+				1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -644,7 +644,7 @@
 				1FCBB56A175AA35C00F42F07 /* FunctionalTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				1FCBB560175A9F7F00F42F07 /* PushSample copy-Info.plist */,
+				1FCBB560175A9F7F00F42F07 /* PushSampleKIF-Info.plist */,
 				1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */,
 			);
 			name = CustomTemplate;
@@ -751,7 +751,7 @@
 			);
 			name = PushSampleKIF;
 			productName = PushLibSample;
-			productReference = 1FCBB55F175A9F7F00F42F07 /* PushSample copy.app */;
+			productReference = 1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BBEFB0161507F3A400976645 /* AirshipApplicationTests */ = {
@@ -1166,11 +1166,11 @@
 					"$(SRCROOT)/../Airship/**",
 					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
-				INFOPLIST_FILE = "PushSample copy-Info.plist";
+				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "PushSample copy";
+				PRODUCT_NAME = PushSampleKIF;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
@@ -1196,10 +1196,10 @@
 					"$(SRCROOT)/../Airship/**",
 					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
-				INFOPLIST_FILE = "PushSample copy-Info.plist";
+				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "PushSample copy";
+				PRODUCT_NAME = PushSampleKIF;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SDKROOT = iphoneos;

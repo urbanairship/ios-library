@@ -37,6 +37,7 @@
     [self addScenario:[KIFTestScenario scenarioToReceiveUnicastPush]];
     [self addScenario:[KIFTestScenario scenarioToReceiveBroadcastPush]];
     [self addScenario:[KIFTestScenario scenarioToSetAlias]];
+    [self addScenario:[KIFTestScenario scenarioToSetTag]];
 
     // moar
 
