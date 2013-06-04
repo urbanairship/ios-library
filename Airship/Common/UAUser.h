@@ -46,8 +46,8 @@ typedef enum _UAUserState {
 // Public interface
 @property (nonatomic, readonly, assign) UAUserState userState;
 @property (nonatomic, readonly, copy) NSString *username;
-@property (nonatomic, readonly, copy, nonatomic) NSString *password;
-@property (nonatomic, readonly, copy, nonatomic) NSString *url;
+@property (nonatomic, readonly, copy) NSString *password;
+@property (nonatomic, readonly, copy) NSString *url;
 
 + (UAUser *)defaultUser;
 + (void)land;
