@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binary form must reproduce the above copyright notice,
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
+ and/or other materials provided withthe distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -25,13 +25,10 @@
 
 #import "UAGlobal.h"
 #import "UAObservable.h"
+#import "UAHTTPConnection.h"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
-
-@class UA_ASIHTTPRequest;
-
-UA_VERSION_INTERFACE(UAPushVersion)
 
 /**
  * Implement this protocol to provide a custom UI for use with UAPush. The default
@@ -116,15 +113,15 @@ UA_VERSION_INTERFACE(UAPushVersion)
 @protocol UARegistrationObserver
 @optional
 - (void)registerDeviceTokenSucceeded;
-- (void)registerDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
 - (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UA_ASIHTTPRequest *)request;
+- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request;
 @end
 
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-@interface UAPush : UAObservable 
+@interface UAPush : UAObservable
 
 
 SINGLETON_INTERFACE(UAPush);
@@ -223,8 +220,10 @@ SINGLETON_INTERFACE(UAPush);
 /*
  * Returns `YES` if the device token has changed. This method is scheduled for removal 
  * in the short term, it is recommended that you do not use it.
+ *
+ * @deprecated 1.3.0
  */
-@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged UA_DEPRECATED(__UA_LIB_1_3_0__);
+@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -256,8 +255,10 @@ SINGLETON_INTERFACE(UAPush);
  * 
  * @param enabled New value
  * @warning *Deprecated* Use the setAutobadgeEnabled: method instead
+ *
+ * @deprecated 1.3.0
  */
-- (void)enableAutobadge:(BOOL)enabled UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)enableAutobadge:(BOOL)enabled __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -333,8 +334,10 @@ SINGLETON_INTERFACE(UAPush);
  * when appropriate.
  *
  * @param values The new tag values
+ *
+ * @deprecated 1.3.0
  */
-- (void)updateTags:(NSMutableArray *)values UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)updateTags:(NSMutableArray *)values __attribute__((deprecated("Deprecated in 1.3.0")));
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
@@ -346,8 +349,10 @@ SINGLETON_INTERFACE(UAPush);
  * when the alias is the only value that needs to be updated. 
  *
  * @param value New alias
+ *
+ * @deprecated 1.3.0
  */
-- (void)updateAlias:(NSString *)value UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)updateAlias:(NSString *)value __attribute__((deprecated("Deprecated in 1.3.0")));
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
@@ -387,23 +392,29 @@ SINGLETON_INTERFACE(UAPush);
 /*
  * Disables quiet time settings. This call updates the server with an API call.
  * This call is deprecated. Set quietTimeEnabled to NO instead;
+ *
+ * @deprecated 1.3.0
  */
-- (void)disableQuietTime UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)disableQuietTime __attribute__((deprecated("Deprecated in 1.3.0")));
 
 /*
  * The current time zone setting for quiet time.
  *
  * @return The time zone name
+ *
+ * @deprecated 1.3.0
  */
-- (NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
 
 /*
  * Set a new time zone for quiet time.
  *
  * @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
- * the default time zone [NSTimeZone localTimeZone] is used
+ * the default time zone [NSTimeZone localTimeZone] is used.
+ *
+ * @deprecated 1.3.0
  */
-- (void)setTz:(NSString *)tz UA_DEPRECATED(__UA_LIB_1_3_0__);
+- (void)setTz:(NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
@@ -427,54 +438,6 @@ SINGLETON_INTERFACE(UAPush);
  * @param token The device token to register.
  */
 - (void)registerDeviceToken:(NSData *)token;
-
-/*
- * Register the current device token with UA. You should not ordinarily call this method.
- * 
- * @param info An NSDictionary containing registration keys and values. See
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
- * for details.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token and alias with UA. You should not ordinarily call this method. Use
- * the `alias` property instead.
- *
- * An alias should only have a small
- * number (< 10) of device tokens associated with it. Use the tags API for arbitrary
- * groupings.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @param token The device token to register.
- * @param alias The alias to register for this device token.
- */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token with a custom API payload. You should not ordinarily call this method.
- * 
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- * 
- * @param token The device token to register.
- * @param info An NSDictionary containing registration keys and values. See
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
- */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Remove this device token's registration from the server. You should not ordinarily call this method.
- * This call is equivalent to an API DELETE call, as described here:
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Registration
- *  
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @warning Deprecated: Use the pushEnabled property on UAPush instead
- */
-- (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_2__);
 
 /**
  * Register the device for remote notifications (see Apple documentation for more

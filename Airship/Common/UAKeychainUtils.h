@@ -34,15 +34,15 @@
 + (BOOL)createKeychainValueForUsername:(NSString *)username 
 						withPassword:(NSString *)password 
 						forIdentifier:(NSString *)identifier;
+
 + (void)deleteKeychainValue:(NSString *)identifier;
-+ (BOOL)updateKeychainValueForUsername:(NSString *)username 
+
++ (BOOL)updateKeychainValueForUsername:(NSString *)username
 						withPassword:(NSString *)password
-                        withEmailAddress:(NSString *)password
 						forIdentifier:(NSString *)identifier;
 
 + (NSString *)getPassword:(NSString *)identifier;
 + (NSString *)getUsername:(NSString *)identifier;
-+ (NSString *)getEmailAddress:(NSString *)identifier;
 
 /**
  * Gets the device ID, creating or refreshing if necessary. Device IDs will be regenerated if a

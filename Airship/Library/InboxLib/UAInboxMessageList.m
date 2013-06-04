@@ -30,7 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxDBManager.h"
 #import "UAUtils.h"
 #import "UAUser.h"
-#import "UA_ASIHTTPRequest.h"
+#import "UAHTTPConnection.h"
 #import "UA_SBJSON.h"
 
 /*
@@ -40,13 +40,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadSavedMessages;
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
+- (void)requestWentWrong:(UAHTTPRequest *)request;
 
-- (void)messageListFailed:(UA_ASIHTTPRequest *)request;
-- (void)messageListReady:(UA_ASIHTTPRequest *)request;
+- (void)messageListFailed:(UAHTTPRequest *)request;
+- (void)messageListReady:(UAHTTPRequest *)request;
 
-- (void)batchUpdateFinished:(UA_ASIHTTPRequest *)request;
-- (void)batchUpdateFailed:(UA_ASIHTTPRequest *)request;
+- (void)batchUpdateFinished:(UAHTTPRequest *)request;
+- (void)batchUpdateFailed:(UAHTTPRequest *)request;
 
 @property(assign) int nRetrieving;
 
@@ -71,8 +71,14 @@ static UAInboxMessageList *_messageList = nil;
 + (void)land {
     if (_messageList) {
         if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
+            //TODO: address - MARC
+
+
+
             UALOG(@"Force quit now may cause crash if UA_ASIRequest is alive.");
-            [[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
+
+            //[[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
+            //TODO: cancel everything
         }
         RELEASE_SAFELY(_messageList);
     }
@@ -129,21 +135,19 @@ static UAInboxMessageList *_messageList = nil;
     UALOG(@"%@",urlString);
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl
-                                                      method:@"GET"
-                                                    delegate:self
-                                                      finish:@selector(messageListReady:)
-                                                        fail:@selector(messageListFailed:)];
-    
-    self.nRetrieving++;
-    [request startAsynchronous];
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+                                                                  delegate:self
+                                                                   success:@selector(messageListReady:)
+                                                                   failure:@selector(messageListFailed:)];
 
-    
+    self.nRetrieving++;
+    [connection start];
 }
 
-- (void)messageListReady:(UA_ASIHTTPRequest *)request {
-    
-    if ([request responseStatusCode] != 200) {
+- (void)messageListReady:(UAHTTPRequest *)request {
+
+    if ([request.response statusCode] != 200) {
         [self messageListFailed:request];
         return;
     }
@@ -185,7 +189,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
-- (void)messageListFailed:(UA_ASIHTTPRequest *)request {
+- (void)messageListFailed:(UAHTTPRequest *)request {
     self.nRetrieving--;
     [self requestWentWrong:request];
     if (self.nRetrieving == 0) {
@@ -233,11 +237,10 @@ static UAInboxMessageList *_messageList = nil;
     NSString* body = [writer stringWithObject:data];
     [writer release];
 
-    UA_ASIHTTPRequest *request = [UAUtils userRequestWithURL:requestUrl
-                                                      method:@"POST"
-                                                    delegate:self
-                                                      finish:@selector(batchUpdateFinished:)
-                                                        fail:@selector(batchUpdateFailed:)];
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
+                                                        method:@"POST"];
+
+    
     
     request.userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithInt:command], @"command",
@@ -245,20 +248,25 @@ static UAInboxMessageList *_messageList = nil;
                             nil];
     
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request appendPostData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-    [request startAsynchronous];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+                                                                  delegate:self
+                                                                   success:@selector(batchUpdateFinished:)
+                                                                   failure:@selector(batchUpdateFailed:)];
+    [connection start];
 
 }
 
-- (void)batchUpdateFinished:(UA_ASIHTTPRequest*)request {
-    
+- (void)batchUpdateFinished:(UAHTTPRequest *)request {
+
     self.isBatchUpdating = NO;
 
     id option = [request.userInfo objectForKey:@"command"];
     
     NSArray *updateMessageArray = [request.userInfo objectForKey:@"messages"];
 
-    if (request.responseStatusCode != 200) {
+    if ([request.response statusCode] != 200) {
         UALOG(@"Server error during batch update messages");
         if ([option intValue] == UABatchDeleteMessages) {
             [self notifyObservers:@selector(batchDeleteFailed)];
@@ -287,7 +295,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
-- (void)batchUpdateFailed:(UA_ASIHTTPRequest*)request {
+- (void)batchUpdateFailed:(UAHTTPRequest *)request {
     self.isBatchUpdating = NO;
 
     [self requestWentWrong:request];
@@ -300,8 +308,8 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
-- (void)requestWentWrong:(UA_ASIHTTPRequest *)request {
-    UALOG(@"Inbox Message List Request Failed: %@", [[request error] localizedDescription]);
+- (void)requestWentWrong:(UAHTTPRequest *)request {
+    UALOG(@"Inbox Message List Request Failed: %@", [request.error localizedDescription]);
 }
 
 #pragma mark -

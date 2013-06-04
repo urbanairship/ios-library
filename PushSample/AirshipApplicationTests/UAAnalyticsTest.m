@@ -26,7 +26,9 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
+
 #import "UAAnalytics.h"
+#import "UAConfig.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
 #import "UALocationEvent.h"
@@ -50,7 +52,10 @@
 
 
 - (void)setUp {
-    analytics = [[UAAnalytics alloc] initWithOptions:nil];
+    UAConfig *config = [[[UAConfig alloc] init] autorelease];
+    analytics = [[UAAnalytics alloc] initWithConfig:config];
+
+    [UAirship shared].analytics = analytics;
 }
 
 - (void)tearDown {
@@ -298,7 +303,7 @@
     analytics.oldestEventTime = 0;
     [analytics addEvent:event];
     [mockDBManager verify];
-    //
+
     // Should not send an event in the background when not location event
     STAssertTrue(analytics.oldestEventTime == [event.time doubleValue], nil);
     [[mockDBManager expect] addEvent:event withSession:analytics.session];
@@ -310,7 +315,7 @@
     [[mockAnalytics reject] send];
     [analytics addEvent:event];
     [mockAnalytics verify];
-    //
+
     // Should send a location event in the background
     mockAnalytics = [OCMockObject partialMockForObject:analytics];
     UALocationEvent *locationEvent = [[[UALocationEvent alloc] initWithLocationContext:nil] autorelease];
@@ -326,6 +331,7 @@
     NSArray *info = [NSArray arrayWithObject:@"one"];
     [[[mockRequest stub] andReturn:info] userInfo];
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
+    [[[mockRequest stub] andReturn:mockResponse] response];
     NSInteger code = 200;
     [[[mockResponse stub] andReturnValue:OCMOCK_VALUE(code)] statusCode];
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
@@ -333,7 +339,7 @@
     [[mockAnalytics expect] resetEventsDatabaseStatus];
     [[mockAnalytics expect] invalidateBackgroundTask];
     [[mockDBManager expect] deleteEvents:info];
-    [analytics requestDidSucceed:mockRequest response:mockResponse responseData:nil];
+    [analytics requestDidSucceed:mockRequest];
     [mockAnalytics verify];
     [mockDBManager verify];
     [mockResponse verify];
@@ -344,10 +350,10 @@
 - (void)testUpdateAnalyticsParameters {
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
     // Hit all the if statements that prevent values from changing
-    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_TOTAL + 1] forKey:@"X-Ua-Max-Total"];
-    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_BATCH + 1] forKey:@"X-Ua-Max-Batch"];
-    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT + 1] forKey:@"X-Ua-Max-Wait"];
-    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL - 1] forKey:@"X-Ua-Min-Batch-Interval"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_TOTAL + 1] forKey:@"X-UA-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_BATCH + 1] forKey:@"X-UA-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT + 1] forKey:@"X-UA-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL - 1] forKey:@"X-UA-Min-Batch-Interval"];
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
     [[mockAnalytics expect] saveDefault];
@@ -361,10 +367,10 @@
     // end the ifs
     // hit all the elses
     headers = [NSMutableDictionary dictionaryWithCapacity:4];
-    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-Ua-Max-Total"];
-    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-Ua-Max-Batch"];
-    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT - 1] forKey:@"X-Ua-Max-Wait"];
-    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL + 1] forKey:@"X-Ua-Min-Batch-Interval"];
+    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-UA-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:5] forKey:@"X-UA-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MAX_WAIT - 1] forKey:@"X-UA-Max-Wait"];
+    [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL + 1] forKey:@"X-UA-Min-Batch-Interval"];
     mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     mockAnalytics = [OCMockObject partialMockForObject:analytics];
     [[mockAnalytics expect] saveDefault];
@@ -389,11 +395,13 @@
 }
 
 - (void)testShouldSendAnalyticsCore {
-    analytics.server = nil;
+    analytics.config.analyticsEnabled = NO;
     STAssertFalse([analytics shouldSendAnalytics], nil);
-    analytics.server = @"cats";
+
+    analytics.config.analyticsEnabled = YES;
     analytics.connection = [UAHTTPConnection connectionWithRequest:nil];
     STAssertFalse([analytics shouldSendAnalytics], nil);
+
     analytics.connection = nil;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger zero = 0;
@@ -407,7 +415,7 @@
 }
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
-    analytics.server = @"cats";
+    analytics.config.analyticsURL = @"cats";
     analytics.connection = nil;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
@@ -440,7 +448,6 @@
     // Intercept setConnection to prevent the mock that was just setup from being 
     // replaced during execution of the send method
     [[mockAnalytics stub] setConnection:OCMOCK_ANY];
-    [[mockConnection expect] setDelegate:analytics];
     // Casting this object prevents a compiler warning
     [(UAHTTPConnection*)[mockConnection expect] start];
     BOOL yes = YES;

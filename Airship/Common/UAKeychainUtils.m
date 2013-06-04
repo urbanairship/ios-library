@@ -81,7 +81,6 @@ static NSString* _cachedDeviceID = nil;
 
 + (BOOL)updateKeychainValueForUsername:(NSString *)username 
                           withPassword:(NSString *)password 
-                      withEmailAddress:(NSString *)emailAddress
                          forIdentifier:(NSString *)identifier {
 	
 	//setup search dict, use username as query param
@@ -92,11 +91,7 @@ static NSString* _cachedDeviceID = nil;
     NSMutableDictionary *updateDictionary = [[NSMutableDictionary alloc] init];
     NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
     [updateDictionary setObject:passwordData forKey:(id)kSecValueData];
-    
-    //update email
-    if (emailAddress != nil) {
-        [updateDictionary setObject:emailAddress forKey:(id)kSecAttrLabel];
-    }
+
     
     OSStatus status = SecItemUpdate((CFDictionaryRef)searchDictionary,
                                     (CFDictionaryRef)updateDictionary);
@@ -167,34 +162,6 @@ static NSString* _cachedDeviceID = nil;
 	[attributeSearch release];
 	
 	return username;
-}
-
-+ (NSString *)getEmailAddress:(NSString *)identifier {
-    NSMutableDictionary *attributeSearch = [UAKeychainUtils newSearchDictionary:identifier];
-	
-    // Add search attributes
-    [attributeSearch setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
-	
-    // Add search return types
-    [attributeSearch setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
-	
-	//Get username first
-    NSMutableDictionary *attributeResult = nil;
-    OSStatus status = SecItemCopyMatching((CFDictionaryRef)attributeSearch,
-                                          (CFTypeRef *)&attributeResult);
-	
-	NSString *emailAddress = nil;
-	if (status == errSecSuccess) {
-		NSString* labelValue = [attributeResult objectForKey:(id)kSecAttrLabel];
-		if (labelValue) {
-			emailAddress = [[labelValue mutableCopy] autorelease];
-			//UALOG(@"Loaded Email Address: %@", emailAddress);
-		}
-	}
-	[attributeResult release];
-	[attributeSearch release];
-	
-	return emailAddress;
 }
 
 + (NSMutableDictionary *)newSearchDictionary:(NSString *)identifier {

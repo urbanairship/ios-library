@@ -31,7 +31,7 @@
 // UA external libraries
 #import "UA_SBJSON.h"
 #import "UA_Base64.h"
-#import "UA_ASIHTTPRequest.h"
+#import "UAHTTPConnection.h"
 
 // UALib
 #import "UAUser.h"
@@ -138,87 +138,38 @@
     return value;
 }
 
-#pragma mark -
-#pragma mark ASIHTTPRequest helper methods
-
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)selector {
-    
-    return [self requestWithURL:url method:method delegate:delegate
-                         finish:selector fail:@selector(requestWentWrong:)];
-}
-
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
-    
++ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url method:(NSString *)method {
     if (![UAirship shared].ready) {
         return nil;
     }
     
-    UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
-    [request setRequestMethod:method];
-    
-    request.username = [UAirship shared].appId;
-    request.password = [UAirship shared].appSecret;
-    request.shouldPresentCredentialsBeforeChallenge = YES;
-    [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
-    
-    request.delegate = delegate;
-    [request setDidFinishSelector:finishSelector];
-    [request setDidFailSelector:failSelector];
-    
-    request.timeOutSeconds = 60;
-    
-    return request;
-}
-
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)selector {
-    return [self userRequestWithURL:url method:method delegate:delegate
-                             finish:selector fail:@selector(requestWentWrong:)];
-}
-
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector {
-    
-    if (![UAirship shared].ready) {
-        return nil;
-    }
-    
-    UA_ASIHTTPRequest *request = [UA_ASIHTTPRequest requestWithURL:url];
-    [request setRequestMethod:method];
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
     
     request.username = [UAUser defaultUser].username;
     request.password = [UAUser defaultUser].password;
-    request.shouldPresentCredentialsBeforeChallenge = YES;
-    [request setAuthenticationScheme:(NSString *)kCFHTTPAuthenticationSchemeBasic];
     
-    request.delegate = delegate;
-    [request setDidFinishSelector:finishSelector];
-    [request setDidFailSelector:failSelector];
-    
-    request.timeOutSeconds = 60;
     
     return request;
 }
 
-+ (id)responseFromRequest:(UA_ASIHTTPRequest *)request {
-    return [UAUtils parseJSON:request.responseString];
++ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url method:(NSString *)method {
+    if (![UAirship shared].ready) {
+        return nil;
+    }
+    
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
+    request.HTTPMethod = method;
+    
+    request.username = [UAirship shared].appId;
+    request.password = [UAirship shared].appSecret;
+    
+    return request;
+    
 }
 
-+ (id)parseJSON:(NSString *)responseString {
-    UA_SBJsonParser *parser = [UA_SBJsonParser new];
-    id result = [parser objectWithString:responseString];
-    [parser release];
-    return result;
-}
-
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request {
-    [self requestWentWrong:request keyword:nil];
-}
-
-+ (void)requestWentWrong:(UA_ASIHTTPRequest*)request keyword:(NSString *)keyword{
-    UALOG(@"\n***** Request ERROR %@*****"
++ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message {
+    UA_LTRACE(@"***** Request ERROR: %@ *****"
           @"\n\tError: %@"
           @"\nRequest:"
           @"\n\tURL: %@"
@@ -230,11 +181,17 @@
           @"\n\tHeaders: %@"
           @"\n\tBody: %@"
           @"\nUsing U/P: [ %@ / %@ ]",
-          keyword ? [NSString stringWithFormat:@"[%@] ", keyword] : @"",
+          message,
           request.error,
-          request.url, request.requestHeaders, request.requestMethod, request.postBody,
-          request.responseStatusCode, request.responseHeaders, request.responseString,
-          request.username, request.password);
+          request.url,
+          [request.headers description],
+          request.HTTPMethod,
+          [request.body description],
+          [request.response statusCode],
+          [[request.response allHeaderFields] description],
+          [request.responseData description],
+          request.username,
+          request.password);
 }
 
 + (NSString *)userAuthHeaderString {

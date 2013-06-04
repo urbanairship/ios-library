@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,59 +25,82 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAHTTPRequest;
+typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
+typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
 @interface UAHTTPRequest : NSObject {
-    
-  @private
-    NSURL *url;
-    NSString *HTTPMethod;
-    NSMutableDictionary *headers;
-    NSString *username;
-    NSString *password;
-    NSMutableData *body;
-    BOOL compressBody;
-    id userInfo;
+
 }
+
 @property (readonly, nonatomic) NSURL *url;
 @property (copy, nonatomic) NSString *HTTPMethod;
 @property (readonly, nonatomic) NSDictionary *headers;
 @property (copy, nonatomic) NSString *username;
 @property (copy, nonatomic) NSString *password;
-@property (retain, nonatomic) NSData *body;
+@property (retain, nonatomic) NSMutableData *body;
 @property (assign, nonatomic) BOOL compressBody;
 @property (retain, nonatomic) id userInfo;
 
+@property (readonly, nonatomic) NSHTTPURLResponse *response;
+@property (readonly, nonatomic) NSString *responseString;
+@property (readonly, nonatomic) NSData *responseData;
+@property (readonly, nonatomic) NSError *error;
+
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
++ (UAHTTPRequest *)requestWithURL:(NSURL *)url;
+
 - (id)initWithURLString:(NSString *)urlString;
+- (id)initWithURL:(NSURL *)url;
+
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value;
 - (void)appendBodyData:(NSData *)data;
 
 @end
 
-@protocol UAHTTPConnectionDelegate <NSObject>
-@required
-- (void)requestDidSucceed:(UAHTTPRequest *)request
-               response:(NSHTTPURLResponse *)response
-             responseData:(NSData *)responseData;
-- (void)requestDidFail:(UAHTTPRequest *)request;
-@end
+/**
+ *
+ */
+@interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
 
-
-@interface UAHTTPConnection : NSObject {
-    UAHTTPRequest *request;
-
-    NSURLConnection *urlConnection_;
-    NSHTTPURLResponse *urlResponse;
-	NSMutableData *responseData;
-
-    id<UAHTTPConnectionDelegate> delegate;
 }
-@property (assign, nonatomic) id<UAHTTPConnectionDelegate> delegate;
-@property (nonatomic, retain) NSURLConnection *urlConnection;
+
+@property (nonatomic, retain, readonly) NSURLConnection *urlConnection;
+@property (nonatomic, retain, readonly) UAHTTPRequest *request;
+
+
+@property (assign, nonatomic) id delegate;
+@property (nonatomic, assign) SEL successSelector;
+@property (nonatomic, assign) SEL failureSelector;
+
+@property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+@property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
+
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                                   delegate:(id)delegate
+                                    success:(SEL)successSelector
+                                    failure:(SEL)failureSelector;
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                               failureBlock:(UAHTTPConnectionSuccessBlock)failureBlock;
+
++ (void)setDefaultUserAgentString:(NSString *)userAgent;
+
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
 - (BOOL)start;
+
+//TODO: ensure that empty PUTs have a content-length header
+
+
+- (BOOL)startSynchronous;
+- (void)cancel;
+
+#pragma mark -
+#pragma mark NSURLConnectionDelegate
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response;
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;

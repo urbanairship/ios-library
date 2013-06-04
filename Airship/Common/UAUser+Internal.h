@@ -32,9 +32,6 @@
 //Legacy keys for migration from pre-keychain user store
 #define kLegacyInboxUserKey @"UAAirMailDefaultInboxUser"
 #define kLegacyInboxPassKey @"UAAirMailDefaultInboxPass"
-#define kLegacySubscriptionsUserKey @"UASubscriptionUserKey"
-#define kLegacySubscriptionsPassKey @"UASubscriptionPassKey"
-#define kLegacySubscriptionsEmailKey @"UASubscriptionEmail"
 
 //Legacy keys from Inbox
 #define kLegacyInboxAliasKey @"UAAirMailDefaultInboxAlias"
@@ -42,13 +39,9 @@
 
 //Current dictionary keys
 
-#define kUserRecoveryKey @"UAUserRecoveryKey"
-#define kUserRecoveryStatusURL @"UAUserRecoveryStatusURL"
-#define kAlreadySentUserRecoveryEmail @"UAUserRecoveryKeySent"
-#define kRecoveryEmail @"UAUserRecoveryEmail"
-#define kTagsKey @"UAUserTagsKey"
-#define kAliasKey @"UAUserAliasKey"
 #define kUserUrlKey @"UAUserUrlKey"
+
+@class UAHTTPRequest;
 
 @interface UAUser()
 
@@ -70,20 +63,13 @@
 // the token on device
 - (BOOL)deviceTokenHasChanged;
 
-// Migrate user from user defaults to keychain
-- (void)migrateUser;
-
 //Device Token Change Listener
 - (void)listenForDeviceTokenReg;
 - (void)cancelListeningForDeviceToken;
 - (void)updateDefaultDeviceToken;
 
-//User retrieval
-- (void)retrieveRequestSucceeded:(UA_ASIHTTPRequest*)request;
-- (void)retrieveRequestFailed:(UA_ASIHTTPRequest*)request;
-
 //User creation
-- (void)userCreationDidFail:(UA_ASIHTTPRequest *)request;
+- (void)userCreationDidFail:(UAHTTPRequest *)request;
 
 @end
 

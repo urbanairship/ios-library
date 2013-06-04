@@ -55,20 +55,12 @@
     
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
     
-    //Create Airship options dictionary and add the required UIApplication launchOptions
-    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionary];
-    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-    
-    // To use your own pre-existing inbox credentials, uncomment and modify these lines:
-    // [takeOffOptions setValue:@"TheExistingUsername" forKey:UAAirshipTakeOffOptionsDefaultUsername];
-    // [takeOffOptions setValue:@"TheExistingPassword" forKey:UAAirshipTakeOffOptionsDefaultPassword];
-    
     // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
     // library can properly record when the app is launched from a push notification. This call is
     // required.
     //
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-    [UAirship takeOff:takeOffOptions];
+    [UAirship takeOff:launchOptions];
     
     // Register for remote notfications with the UA Library. The library will register with
     // iOS if push is enabled on UAPush.

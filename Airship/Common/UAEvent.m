@@ -195,7 +195,7 @@
 
 @implementation UAEventAppBackground
 
-- (NSString*)getType {
+- (NSString *)getType {
     return @"app_background";
 }
 

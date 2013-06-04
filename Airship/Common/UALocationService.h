@@ -36,7 +36,7 @@
 
 /** The best location received by the loction service if the desiredAccuracy
  is not available */
-extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
+extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 @protocol UALocationServiceDelegate <NSObject>
 
@@ -58,14 +58,14 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @param service Location service that generated the error
  @param error Error passed from a CLLocationManager
  */
-- (void)locationService:(UALocationService*)service didFailWithError:(NSError*)error;
+- (void)locationService:(UALocationService *)service didFailWithError:(NSError*)error;
 
 /** Updates the delegate when authorization status has changed
  @warning *Important:* Available on iOS 4.2 or greater only
  @param service Location service reporting the change
  @param status  The updated location authorization status
  */
-- (void)locationService:(UALocationService*)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
+- (void)locationService:(UALocationService *)service didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
 /** Updates the delegate when a new location is received. In case of a timeout, where locations have been acquired,
  but they do not meet the accuracy requirements, the most accurate location available will be returned.
@@ -77,7 +77,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @param newLocation The updated location reported by the service
  @param oldLocation The previously reported location. This value may be nil, if there is no previous location.
  */
-- (void)locationService:(UALocationService*)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+- (void)locationService:(UALocationService *)service didUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
 @end
 
 @class UAStandardLocationProvider;
@@ -86,17 +86,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
 /** The UALocationService class provides an interface to both the location services on 
  device and the Urban Airship API. 
  */
-@interface UALocationService : NSObject <UALocationProviderDelegate> {
-    
-    NSTimeInterval minimumTimeBetweenForegroundUpdates_;
-    NSTimeInterval timeoutForSingleLocationService_;
-    CLLocation *lastReportedLocation_;
-    NSDate *dateOfLastLocation_;
-    id <UALocationServiceDelegate> delegate_;
-    BOOL promptUserForLocationServices_;
-    BOOL automaticLocationOnForegroundEnabled_;
-    BOOL backroundLocationServiceEnabled_;
-}
+@interface UALocationService : NSObject <UALocationProviderDelegate>
 
 ///---------------------------------------------------------------------------------------
 /// @name Standard Location Accuracy and Distance
@@ -193,7 +183,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */
-- (CLLocation*)location;
+- (CLLocation *)location;
 
 /// Last location reported to Urban Airship
 @property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
@@ -244,7 +234,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  all new location services.
  @returns An NSString with the current purpose
  */
-- (NSString*)purpose;
+- (NSString *)purpose;
 
 /** Purpose for location services shown to user
  when prompted to allow location services to begin. The default value
@@ -252,7 +242,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  all new location services.
  @param purpose The new purpose of the service
  */
-- (void)setPurpose:(NSString*)purpose;
+- (void)setPurpose:(NSString *)purpose;
 
 ///---------------------------------------------------------------------------------------
 /// @name Creating the Location Service
@@ -263,7 +253,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  This is displayed to the user when asking for location authorization.
  @param purpose The description that is displayed to the user when prompted for authorization.
  */
-- (id)initWithPurpose:(NSString*)purpose;
+- (id)initWithPurpose:(NSString *)purpose;
 
 /** Starts the Standard Location service and 
  sends location data to Urban Airship. This service will continue updating if the location property is 
@@ -320,7 +310,7 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @param provider The provider that generated the location. Data is pulled from the provider for analytics
  @warning This must be called on the main thread. Not doing so will result in a crash
 */ 
- - (void)reportLocationToAnalytics:(CLLocation*)location fromProvider:(id<UALocationProviderProtocol>)provider;
+ - (void)reportLocationToAnalytics:(CLLocation *)location fromProvider:(id<UALocationProviderProtocol>)provider;
 
 ///---------------------------------------------------------------------------------------
 /// @name Single Location Service
@@ -372,8 +362,8 @@ extern NSString *const UALocationServiceBestAvailableSingleLocationKey;
  @param updateTypeOrNil The update type as described above or nil. 
  @warning This must be called from the main thread. Not doing so will result in a crash. 
  */
-- (void)reportLocation:(CLLocation*)location 
- fromLocationManager:(CLLocationManager*)locationManager 
-      withUpdateType:(UALocationEventUpdateType*)updateTypeOrNil;
+- (void)reportLocation:(CLLocation *)location 
+        fromLocationManager:(CLLocationManager *)locationManager 
+             withUpdateType:(UALocationEventUpdateType *)updateTypeOrNil;
 
 @end

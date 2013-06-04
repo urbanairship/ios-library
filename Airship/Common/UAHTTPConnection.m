@@ -23,71 +23,114 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnection.h"
+#import "UAHTTPConnection+Internal.h"
 #import "UAGlobal.h"
 
 #import "UA_Base64.h"
 #import <zlib.h>
 
+
+static NSString *defaultUserAgentString;
+
+
 @implementation UAHTTPRequest
 
-@synthesize url;
-@synthesize HTTPMethod;
-@synthesize headers;
-@synthesize username;
-@synthesize password;
-@synthesize body;
-@synthesize compressBody;
-@synthesize userInfo;
++ (UAHTTPRequest *)requestWithURL:(NSURL *)url {
+    return [[[UAHTTPRequest alloc] initWithURL:url] autorelease];
+}
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
     return [[[UAHTTPRequest alloc] initWithURLString:urlString] autorelease];
 }
 
-- (id)initWithURLString:(NSString *)urlString {
+- (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
-        url = [[NSURL URLWithString:urlString] retain];
-        headers = [[NSMutableDictionary alloc] init];
-        body = nil;
+        _url = [url retain];
+        _headers = [[NSMutableDictionary alloc] init];
+        
+        // Set Defaults
+        if (defaultUserAgentString) {
+            [self addRequestHeader:@"User-Agent" value:defaultUserAgentString];
+        }
         self.HTTPMethod = @"GET";
     }
     return self;
 }
 
+
+- (id)initWithURLString:(NSString *)urlString {
+    return [self initWithURL:[NSURL URLWithString:urlString]];
+}
+
 - (void) dealloc {
-    RELEASE_SAFELY(url);
-    RELEASE_SAFELY(HTTPMethod);
-    RELEASE_SAFELY(headers);
-    RELEASE_SAFELY(username);
-    RELEASE_SAFELY(password);
-    RELEASE_SAFELY(body);
-    RELEASE_SAFELY(userInfo);
+    RELEASE_SAFELY(_url);
+    RELEASE_SAFELY(_HTTPMethod);
+    RELEASE_SAFELY(_headers);
+    RELEASE_SAFELY(_username);
+    RELEASE_SAFELY(_password);
+    RELEASE_SAFELY(_body);
+    RELEASE_SAFELY(_userInfo);
     [super dealloc];
 }
 
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value {
-    [headers setValue:value forKey:header];
+    [self.headers setValue:value forKey:header];
 }
 
 - (void)appendBodyData:(NSData *)data {
-    if (body == nil) {
-        body = [[NSMutableData alloc] init];
+    if (!self.body) {
+        self.body = [NSMutableData data];
     }
-    [body appendData:data];
+    [self.body appendData:data];
+}
+
+- (NSString *)responseString {
+    //TODO: cache?
+    return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
 }
 
 @end
 
-@interface UAHTTPConnection()
-- (NSData *)gzipCompress:(NSData *)uncompressedData;
-@end
+
+//----------------------------------------
+// UAHTTPConnection
+//----------------------------------------
+
+
+#pragma mark -
+#pragma mark UAHTTPConnection
 
 @implementation UAHTTPConnection
-@synthesize urlConnection = urlConnection_;
-@synthesize delegate;
+
++ (void)setDefaultUserAgentString:(NSString *)userAgent {
+    [defaultUserAgentString autorelease];
+    defaultUserAgentString = [userAgent copy];
+}
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
     return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
+}
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                                   delegate:(id)delegate
+                                    success:(SEL)successSelector
+                                    failure:(SEL)failureSelector {
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    connection.delegate = delegate;
+    connection.successSelector = successSelector;
+    connection.failureSelector = failureSelector;
+
+    return connection;
+}
+
++ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock {
+    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:httpRequest];
+    connection.successBlock = successBlock;
+    connection.failureBlock = failureBlock;
+
+    return connection;
 }
 
 - (id)init {
@@ -97,102 +140,153 @@
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest {
     self = [self init];
     if (self) {
-        request = [httpRequest retain];
+        _request = [httpRequest retain];
     }
     return self;
 }
 
-- (void) dealloc {
-    RELEASE_SAFELY(request);
-    RELEASE_SAFELY(urlConnection_);
-    RELEASE_SAFELY(urlResponse);
-    RELEASE_SAFELY(responseData);
+- (void)dealloc {
+    RELEASE_SAFELY(_request);
+    RELEASE_SAFELY(_urlConnection);
+    RELEASE_SAFELY(_urlResponse);
+    RELEASE_SAFELY(_responseData);
     [super dealloc];
 }
 
-- (BOOL)start {
-    if (urlConnection_ != nil) {
-        UALOG(@"ERROR: UAHTTPConnection already started: %@", self);
-        return NO;
+- (NSURLRequest *)buildRequest {
+    if (self.urlConnection) {
+        UA_LDEBUG(@"ERROR: UAHTTPConnection already started: %@", self);
+        return nil;
     } else {
-        NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:request.url];
-        for (NSString *header in [request.headers allKeys]) {
-            [urlRequest setValue:[request.headers valueForKey:header] forHTTPHeaderField:header];
+
+        NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:_request.url];
+        
+        for (NSString *header in [_request.headers allKeys]) {
+            [urlRequest setValue:[_request.headers valueForKey:header] forHTTPHeaderField:header];
         }
-        
-        [urlRequest setHTTPMethod:request.HTTPMethod];
+
+        [urlRequest setHTTPMethod:_request.HTTPMethod];
         [urlRequest setHTTPShouldHandleCookies:NO];
-        
+
         //Set Auth
-        if (request.username && request.password) {
-            NSString *toEncode = [NSString stringWithFormat:@"%@:%@", request.username, request.password];
-            
+        if (_request.username && _request.password) {
+            NSString *toEncode = [NSString stringWithFormat:@"%@:%@", _request.username, _request.password];
+
             // base64 encode credentials
             NSString *authString = UA_base64EncodedStringFromData([toEncode dataUsingEncoding:NSUTF8StringEncoding]);
-            
+
             // strip CRLF sequences
             authString = [authString stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
-            
+
             // add Basic auth prefix
             authString = [NSString stringWithFormat: @"Basic %@", authString];
-            
+
             // set header
-            [urlRequest setValue:authString  forHTTPHeaderField:@"Authorization"];
+            [urlRequest setValue:authString forHTTPHeaderField:@"Authorization"];
         }
-        
-        
-        if (request.body != nil) {
-            
-            NSData *body = request.body;
-            
-            if (request.compressBody) {
-                
-                body = [self gzipCompress:request.body]; //returns nil if compression fails
+
+        if (_request.body) {
+
+            NSData *body = _request.body;
+
+            if (_request.compressBody) {
+
+                body = [self gzipCompress:_request.body]; //returns nil if compression fails
                 if (body) {
                     [urlRequest setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-                    //UALOG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
+                    //UA_LDEBUG(@"Sending compressed body. Original size: %d Compressed size: %d", [request.body length], [body length]);
                 } else {
-                    UALOG(@"Body compression failed.");
+                    UA_LDEBUG(@"Body compression failed.");
                 }
 
             }
-            
+
             [urlRequest setHTTPBody:body];
-            
+
         }
-        
-		responseData = [[NSMutableData alloc] init];
-        self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
-        return YES;
+        return urlRequest;
     }
+}
+
+- (BOOL)start {
+    NSURLRequest *urlRequest = [self buildRequest];
+
+    if (!urlRequest) {
+        return NO;
+    }
+
+    // keep ourselves around for a while so the request can complete
+    [self retain];
+
+    self.responseData = [NSMutableData data];
+    self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
+
+    return YES;
+}
+
+- (BOOL)startSynchronous {
+    NSURLRequest *urlRequest = [self buildRequest];
+
+    if (!urlRequest) {
+        return NO;
+    }
+
+    NSError *error = nil;
+
+    self.responseData = [[[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&_urlResponse error:&error] mutableCopy] autorelease];
+
+    self.request.response = self.urlResponse;
+    self.request.responseData = self.responseData;
+    self.request.error = error;
+
+    return !error;
+}
+
+- (void)cancel {
+    // TODO: moar?
+    [self.urlConnection cancel];
 }
 
 #pragma mark -
 #pragma mark NSURLConnection delegate
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response {
-    RELEASE_SAFELY(urlResponse);
-    urlResponse = [response retain];
-    [responseData setLength:0];
+    self.urlResponse = response;
+    [self.responseData setLength:0];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    if (responseData) {
-        [responseData appendData:data];
-    }
+    [self.responseData appendData:data];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    UALOG(@"ERROR: connection %@ didFailWithError: %@", self, error);
-    if (delegate && [delegate respondsToSelector:@selector(requestDidFail:)]) {
-        [delegate requestDidFail:request];
+    UA_LDEBUG(@"ERROR: connection %@ didFailWithError: %@", self, error);
+    self.request.error = error;
+    if ([self.delegate respondsToSelector:self.failureSelector]) {
+        [self.delegate performSelector:self.failureSelector withObject:_request];
     }
+
+    if (self.failureBlock) {
+        self.failureBlock(self.request);
+    }
+    
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    if (delegate) {
-        [delegate requestDidSucceed:request response:urlResponse responseData:responseData];
+    
+    self.request.response = self.urlResponse;
+    self.request.responseData = self.responseData;
+    
+    if ([self.delegate respondsToSelector:self.successSelector]) {
+        [self.delegate performSelector:self.successSelector withObject:self.request];
     }
+
+    if (self.successBlock) {
+        self.successBlock(self.request);
+    }
+    
+    [self release];
 }
 
 #pragma mark -

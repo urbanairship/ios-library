@@ -27,26 +27,19 @@
 #import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
-extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
 /**
  This is the base class for location providers. You should not
  implement this class directly. See the documentation for CLLocationManager for
  CLLocationManager details. https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html
  */
 
-@interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol> {
-    CLLocationManager *locationManager_;
-    NSTimeInterval maximumElapsedTimeForCachedLocation_;
-    id <UALocationProviderDelegate> delegate_;
-    UALocationProviderStatus serviceStatus_;
-    UALocationServiceProviderType *provider_;
-}
+@interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol>
 
 ///---------------------------------------------------------------------------------------
 /// @name NSObject 
 ///---------------------------------------------------------------------------------------
 
--(NSString*)description;
+-(NSString *)description;
 
 ///---------------------------------------------------------------------------------------
 /// @name CLLocationManager related methods
@@ -84,7 +77,7 @@ extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
  Current purpose attached to the CLLocationMananger locationManager
  @return Current purpose on the locationManager
  */
-- (NSString*)purpose;
+- (NSString *)purpose;
 
 /**
  Sets the purpose on the CLLocationManager locationManger which is displayed to the user
@@ -92,14 +85,14 @@ extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
  @warning This value cannot be nil.
  @param newPurpose String to be set on the locationManager
  */
-- (void)setPurpose:(NSString*)newPurpose;
+- (void)setPurpose:(NSString *)newPurpose;
 
 /** The most recently received location available from the CLLocationManager object. This may be more accurate than
  the last reported location, and it may also be nil. See CLLocationManager documentation for more details. 
  @return The most recent location, if one is available
  @return nil if no recent location is available
  */
-- (CLLocation*)location;
+- (CLLocation *)location;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Service methods
@@ -145,7 +138,7 @@ extern NSTimeInterval defaultMaximumElapsedTimeForCachedLocation;
  @return YES if the location meets accuracy requirements
  @return NO if the location does not meet accuracy requirements
  */
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)newLocation from:(CLLocation*)oldLocation;
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and stopping location services

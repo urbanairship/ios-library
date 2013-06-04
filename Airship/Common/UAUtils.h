@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UA_ASIHTTPRequest;
+@class UAHTTPRequest;
 
 @interface UAUtils : NSObject {
 
@@ -58,22 +58,15 @@
 
 + (NSString *)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
 
-
 ///---------------------------------------------------------------------------------------
-/// @name HTTP Authenticated Request Helpers
+/// @name UAHTTP Authenticated Request Helpers
 ///---------------------------------------------------------------------------------------
 
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)selector;
++ (UAHTTPRequest *)UAHTTPUserRequestWithURL:(NSURL *)url method:(NSString *)method;
 
-+ (UA_ASIHTTPRequest *)userRequestWithURL:(NSURL *)url method:(NSString *)method
-                                 delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
++ (UAHTTPRequest *)UAHTTPRequestWithURL:(NSURL *)url method:(NSString *)method;
 
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)selector;
-
-+ (UA_ASIHTTPRequest *)requestWithURL:(NSURL *)url method:(NSString *)method
-                             delegate:(id)delegate finish:(SEL)sel1 fail:(SEL)sel2;
++ (void)logFailedRequest:(UAHTTPRequest *)request withMessage:(NSString *)message;
 
 /**
  * Returns a basic auth header string.
@@ -84,13 +77,7 @@
  */
 + (NSString *)userAuthHeaderString;
 
-///---------------------------------------------------------------------------------------
-/// @name HTTP Response Helpers
-///---------------------------------------------------------------------------------------
-+ (id)responseFromRequest:(UA_ASIHTTPRequest *)request;
-+ (id)parseJSON:(NSString *)responseString;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest *)request;
-+ (void)requestWentWrong:(UA_ASIHTTPRequest *)request keyword:(NSString *)keyword;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers

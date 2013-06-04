@@ -30,9 +30,11 @@
 
 - (void)dealloc {
     self.delegate = nil;
+    
     // Directly stop the location mananger for speed and clarity
-    [locationManager_ stopUpdatingLocation];
-    locationManager_.delegate = nil;
+    [self.locationManager stopUpdatingLocation];
+    self.locationManager.delegate = nil;
+    
     // Super class deallocates location manager
     [super dealloc];
 }
@@ -40,7 +42,7 @@
 - (id)init {
     self = [super init];
     if (self){
-        provider_ = UALocationServiceProviderGps; 
+        self.provider = UALocationServiceProviderGps;
     }
     return self;
 }
@@ -48,32 +50,28 @@
 #pragma mark -
 #pragma mark CLLocationDelegate Methods
 
-//** iOS 4.2 or better */
+//** iOS 4.2 or higher */
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Standard location authorization changed %d", status);
     switch (status) {
-        case kCLAuthorizationStatusAuthorized:
-            break;
-        case kCLAuthorizationStatusNotDetermined:
-            break;
         case kCLAuthorizationStatusDenied:
-            [self stopReportingLocation];
-            break;
         case kCLAuthorizationStatusRestricted:
             [self stopReportingLocation];
             break;
+        case kCLAuthorizationStatusAuthorized:
+        case kCLAuthorizationStatusNotDetermined:            
         default:
             break;
     }
-    [delegate_ locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
+    [self.delegate locationProvider:self withLocationManager:manager didChangeAuthorizationStatus:status];
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL doesRespond = [delegate_ respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    BOOL doesRespond = [self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [delegate_ locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [self.delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
@@ -83,15 +81,15 @@
 - (void)startReportingLocation {
     UALOG(@"Start standard location");
     [super startReportingLocation];
-    [locationManager_ startUpdatingLocation];
+    [self.locationManager startUpdatingLocation];
 }
 - (void)stopReportingLocation {
     UALOG(@"Stop standard location");
     [super stopReportingLocation];
-    [locationManager_ stopUpdatingLocation];
+    [self.locationManager stopUpdatingLocation];
 }
  
-+ (UAStandardLocationProvider*)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
++ (UAStandardLocationProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
     return [[[UAStandardLocationProvider alloc] initWithDelegate:serviceDelegateOrNil] autorelease];
 }
 @end

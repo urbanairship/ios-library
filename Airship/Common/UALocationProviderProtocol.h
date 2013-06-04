@@ -30,25 +30,34 @@
 @required
 /// Required location manager for any location services
 @property (nonatomic, retain) CLLocationManager *locationManager;
+
 /// Distance Filter
 @property (nonatomic, assign) CLLocationDistance distanceFilter;
+
 /// Desired Accuracy
 @property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
+
 /// Current status of the location provider
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;
+
 /// This is a required parameter on the CLLocationManager and is presented to the user for authentication
 @property (nonatomic, copy) NSString *provider;
-/** This is intended to be a UALocationProviderDelegate */
-@property (nonatomic, assign) id delegate;
-/** 
- This is the purpose associated with the CLLocationManager that is displayed to the user when
- permission for location services is required
+
+/**
+ * The UALocationProviderDelegate that will receive updates.
  */
-- (NSString*)purpose;
-- (void)setPurpose:(NSString*)newPurpose;
+@property (nonatomic, assign) id delegate;
+
+/**
+ * The purpose associated with the CLLocationManager that is displayed to the user when
+ * permission for location services is required.
+ */
+- (NSString *)purpose;
+- (void)setPurpose:(NSString *)newPurpose;
 
 /// Starts updating location
 - (void)startReportingLocation;
+
 /// Stops providing location updates
 - (void)stopReportingLocation;
 @end

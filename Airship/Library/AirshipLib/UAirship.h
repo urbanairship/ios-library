@@ -24,50 +24,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAGlobal.h"
-#import "UAObservable.h"
 
+@class UAConfig;
 @class UAAnalytics;
-@class UA_ASIHTTPRequest;
 @class UALocationService;
 
-UA_VERSION_INTERFACE(AirshipVersion)
-
-/**
- * Key for the default preferences dictionary that 
- * is loaded into NSUserDefaults on start for location services
- */
-extern NSString * const UALocationServicePreferences;
-
-/**
- * The takeOff options key for setting custom AirshipConfig options. The value
- * must be an NSDictionary.
- */
-extern NSString * const UAirshipTakeOffOptionsAirshipConfigKey;
-
-/**
- * The takeOff options key for passing in the options dictionary provided
- * by [UIApplication application:didFinishLaunchingWithOptions]. This key/value
- * pair must always be included in the takeOff options.
- */
-extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
-
-/**
- * The takeOff options key for setting custom analytics options. The value must be
- * an NSDictionary with keys for UAAnalytics. This value is typically not used.
- */
-extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUAser username. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUser password. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
+UA_VERSION_INTERFACE(UAirshipVersion)
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -80,16 +42,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * called from `[UIApplication application:didFinishLaunchingWithOptions]` to initialize the shared
  * instance.
  */
-@interface UAirship : NSObject {
-    
-  @private
-    NSString *server;
-    NSString *appId;
-    NSString *appSecret;
+@interface UAirship : NSObject
 
-    BOOL ready;
-    
-}
+/**
+ * The application configuration. This is set on takeOff.
+ */
+@property (nonatomic, retain) UAConfig *config;
 
 /**
  * The current APNS/remote notification device token.
@@ -136,7 +94,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 ///---------------------------------------------------------------------------------------
 
 @property (nonatomic, retain, getter = locationService) UALocationService *locationService;
-- (UALocationService *)locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
@@ -171,8 +128,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * 
  * This method must be called from your application delegate's
  * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The `UIApplication` options passed in on launch MUST be included in this method's options
- * parameter with the `UAirshipTakeOffOptionsLaunchOptionsKey`.
+ * only once. The `UIApplication` options MUST be passed in.
  *
  * Configuration are read from the `AirshipConfig.plist` file. You may overrride the
  * `AirshipConfig.plist` values at runtime by including an NSDictionary containing the override
@@ -180,12 +136,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
- * 
- * @see UAirshipTakeOffOptionsAirshipConfigKey
- * @see UAirshipTakeOffOptionsLaunchOptionsKey
- * @see UAirshipTakeOffOptionsAnalyticsKey
- * @see UAirshipTakeOffOptionsDefaultUsernameKey
- * @see UAirshipTakeOffOptionsDefaultPasswordKey
  *
  * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
  * dictionary MUST contain the UIApplication launch options.
@@ -193,7 +143,12 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * a background thread.
  *
  */
-+ (void)takeOff:(NSDictionary *)options;
++ (void)takeOff:(UAConfig *)config withLaunchOptions:(NSDictionary *)launchOptions;
+
+/**
+ * Simplified takeOff method that uses AirshipConfig.plist for initialization.
+ */
++ (void)takeOff:(NSDictionary *)launchOptions;
 
 /**
  * Perform teardown on the shared instance. This should be called when an application
@@ -208,66 +163,5 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * @return The shared UAirship instance.
  */
 + (UAirship *)shared;
-
-///---------------------------------------------------------------------------------------
-/// @name APNS Device Token Registration
-///---------------------------------------------------------------------------------------
-
-/*
- * Register a device token with UA. This will register a device token without an alias or tags.
- * If an alias is set on the device token, it will be removed. Tags will not be changed.
- *
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @param token The device token to register.
- * @warning Deprecated: Use the method on UAPush instead
- */
-- (void)registerDeviceToken:(NSData *)token UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register the current device token with UA.
- *
- * @param info An NSDictionary containing registraton keys and values. See
- * http://urbanairship.com/docs/push.html#registration for details.
- *
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- * @warning Deprecated: Use the method on UAPush instead
- */
-- (void)registerDeviceTokenWithExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token and alias with UA.  An alias should only have a small
- * number (< 10) of device tokens associated with it. Use the tags API for arbitrary
- * groupings.
- *
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @param token The device token to register.
- * @param alias The alias to register for this device token.
- * @warning Deprecated: Use the method on UAPush instead
- */
-- (void)registerDeviceToken:(NSData *)token withAlias:(NSString *)alias UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Register a device token with a custom API payload.
- *
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- *
- * @param token The device token to register.
- * @param info An NSDictionary containing registraton keys and values. See
- * https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API for details.
- * @warning Deprecated: Use the method on UAPush instead
- */
-- (void)registerDeviceToken:(NSData *)token withExtraInfo:(NSDictionary *)info UA_DEPRECATED(__UA_LIB_1_3_0__);
-
-/*
- * Remove this device token's registration from the server.
- * This call is equivalent to an API DELETE call, as described here:
- * http://urbanairship.com/docs/push.html#registration
- *
- * Add a UARegistrationObserver to UAPush to receive success or failure callbacks.
- * @warning Deprecated: Use the pushEnabled property on UAPush instead
- */
-- (void)unRegisterDeviceToken UA_DEPRECATED(__UA_LIB_1_3_0__);
 
 @end
