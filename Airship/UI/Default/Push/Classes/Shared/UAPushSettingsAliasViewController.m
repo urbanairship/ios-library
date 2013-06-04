@@ -67,6 +67,8 @@ enum {
     self.title = @"Device Alias";
     
     aliasField.text = [UAPush shared].alias;
+    aliasField.clearsOnBeginEditing = YES;
+    aliasField.accessibilityLabel = @"Edit Alias";
     textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
                      @"the process of sending notifications.";
 }

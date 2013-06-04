@@ -204,6 +204,9 @@ static NSString *defaultUserAgentString;
             [urlRequest setHTTPBody:body];
 
         }
+
+        UA_LDEBUG(@"url headers: %@", [[urlRequest allHTTPHeaderFields] description]);
+
         return urlRequest;
     }
 }
