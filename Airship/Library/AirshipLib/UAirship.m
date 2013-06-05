@@ -64,7 +64,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 + (void)load {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:[UAirship class] selector:@selector(recordAppLaunchWithNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
-    [center addObserver:[UAirship class] selector:@selector(land) name:UIApplicationWillTerminateNotification object:nil];
+    [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
 
 }
 
@@ -193,13 +193,16 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
 }
 
++ (void)handleAppTerminationNotification:(NSNotification *)notification {
+    [[NSNotificationCenter defaultCenter] removeObserver:[self class]  name:UIApplicationWillTerminateNotification object:nil];
+    [UAirship land];
+}
+
 + (void)land {
 
     if (!_sharedAirship) {
         return;
     }
-
-    [[NSNotificationCenter defaultCenter] removeObserver:[self class]  name:UIApplicationWillTerminateNotification object:nil];
 
 	// add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];

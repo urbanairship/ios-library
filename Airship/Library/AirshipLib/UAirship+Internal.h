@@ -40,6 +40,10 @@
  */
 + (void)recordAppLaunchWithNotification:(NSNotification *)notification;
 
+/**
+ * Handle a termination event from NSNotification center (forward it to land)
+ */
++ (void)handleAppTerminationNotification:(NSNotification *)notification;
 
 /*
  * Perform teardown on the shared instance. This will automatically be called when an application
