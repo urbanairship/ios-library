@@ -106,6 +106,8 @@
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
+@property (nonatomic, assign) BOOL handleNotificationsAutomatically;
+
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options
 ///---------------------------------------------------------------------------------------

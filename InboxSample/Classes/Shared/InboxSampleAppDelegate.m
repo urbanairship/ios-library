@@ -85,45 +85,18 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
     
-    
     //TODO: think about clean up / dealloc for multiple UI classes
-    
-    [UAInboxPushHandler handleLaunchOptions:launchOptions];
-	
-    // Handle an incoming Rich Push message
-	if ([[UAInbox shared].pushHandler hasLaunchMessage]) {
-		[[[UAInbox shared] uiClass] loadLaunchMessage];
-	}
 
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LINFO(@"APNS device token: %@", deviceToken);
-    
-    // Updates the device token and registers the token with UA. This call is required.
-    [[UAPush shared] registerDeviceToken:deviceToken];
-}
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UA_LERR(@"did Fail To Register For Remote Notifications With Error: %@", error);
-}
-
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    
-    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
-    // is required.
-    [UAInboxPushHandler handleNotification:userInfo];
-}
-
 - (void)applicationWillResignActive:(UIApplication *)application {
     
     // Set the application's badge to the number of unread messages
     UAInbox *inbox = [UAInbox shared];
-    if (inbox && inbox.messageList && inbox.messageList.unreadCount >= 0) {
+    if (inbox.messageList.unreadCount >= 0) {
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:inbox.messageList.unreadCount];
     }
 }

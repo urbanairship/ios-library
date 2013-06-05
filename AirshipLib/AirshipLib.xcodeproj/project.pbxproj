@@ -37,6 +37,10 @@
 		1F6759531756C24200C062E0 /* AirshipConfig-Valid-NeXTStep.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759511756C24100C062E0 /* AirshipConfig-Valid-NeXTStep.plist */; };
 		1F675959175900BC00C062E0 /* AirshipConfig-Valid.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F675958175900BC00C062E0 /* AirshipConfig-Valid.plist */; };
 		1FCBB62B175EA31900F42F07 /* UAirship+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FCBB62A175EA31900F42F07 /* UAirship+Internal.h */; };
+		1FCBB637175F870500F42F07 /* UABaseAppDelegateSurrogate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FCBB635175F870500F42F07 /* UABaseAppDelegateSurrogate.h */; };
+		1FCBB638175F870500F42F07 /* UABaseAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB636175F870500F42F07 /* UABaseAppDelegateSurrogate.m */; };
+		1FCBB63B175F983600F42F07 /* UAAutoAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FCBB639175F983500F42F07 /* UAAutoAppDelegate.h */; };
+		1FCBB63C175F983600F42F07 /* UAAutoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB63A175F983500F42F07 /* UAAutoAppDelegate.m */; };
 		495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */; };
 		495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A31738778300F8B5BE /* UAHTTPConnection+Test.m */; };
 		495048A71738812500F8B5BE /* UADelayOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048A51738812500F8B5BE /* UADelayOperation.h */; };
@@ -195,6 +199,10 @@
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
 		1FCBB62A175EA31900F42F07 /* UAirship+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAirship+Internal.h"; sourceTree = "<group>"; };
+		1FCBB635175F870500F42F07 /* UABaseAppDelegateSurrogate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseAppDelegateSurrogate.h; sourceTree = "<group>"; };
+		1FCBB636175F870500F42F07 /* UABaseAppDelegateSurrogate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseAppDelegateSurrogate.m; sourceTree = "<group>"; };
+		1FCBB639175F983500F42F07 /* UAAutoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutoAppDelegate.h; sourceTree = "<group>"; };
+		1FCBB63A175F983500F42F07 /* UAAutoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutoAppDelegate.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
 		4950489F1738593000F8B5BE /* UAHTTPConnectionOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperationTest.h; sourceTree = "<group>"; };
@@ -649,6 +657,10 @@
 				1F675933174FE10C00C062E0 /* UAConfig.h */,
 				1F67594717568F5300C062E0 /* UAConfig+Internal.h */,
 				1F675934174FE10C00C062E0 /* UAConfig.m */,
+				1FCBB635175F870500F42F07 /* UABaseAppDelegateSurrogate.h */,
+				1FCBB636175F870500F42F07 /* UABaseAppDelegateSurrogate.m */,
+				1FCBB639175F983500F42F07 /* UAAutoAppDelegate.h */,
+				1FCBB63A175F983500F42F07 /* UAAutoAppDelegate.m */,
 			);
 			path = AirshipLib;
 			sourceTree = "<group>";
@@ -752,6 +764,8 @@
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				1F675935174FE10C00C062E0 /* UAConfig.h in Headers */,
 				1FCBB62B175EA31900F42F07 /* UAirship+Internal.h in Headers */,
+				1FCBB637175F870500F42F07 /* UABaseAppDelegateSurrogate.h in Headers */,
+				1FCBB63B175F983600F42F07 /* UAAutoAppDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -926,6 +940,8 @@
 				49995D041733202200103932 /* UADeviceRegistrationPayload.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
 				1F675936174FE10C00C062E0 /* UAConfig.m in Sources */,
+				1FCBB638175F870500F42F07 /* UABaseAppDelegateSurrogate.m in Sources */,
+				1FCBB63C175F983600F42F07 /* UAAutoAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

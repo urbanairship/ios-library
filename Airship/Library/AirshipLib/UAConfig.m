@@ -55,6 +55,7 @@
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
         self.detectProvisioningMode = NO;
+        self.handleNotificationsAutomatically = YES;
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         usesProductionPushServer_ = NO;

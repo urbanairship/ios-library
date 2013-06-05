@@ -85,6 +85,7 @@
     
     // Handle any incoming incoming push notifications.
     // This will invoke `handleBackgroundNotification` on your UAPushNotificationDelegate.
+    // TODO: call this automatically? figure this out with the new delegate structure
     [[UAPush shared] handleNotification:[launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
                        applicationState:application.applicationState];
 
@@ -98,26 +99,10 @@
     [[UAPush shared] resetBadge];
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LINFO(@"APNS device token: %@", deviceToken);
-    
-    // Updates the device token and registers the token with UA. This won't occur until
-    // push is enabled if the outlined process is followed. This call is required.
-    [[UAPush shared] registerDeviceToken:deviceToken];
-}
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UA_LERR(@"Failed To Register For Remote Notifications With Error: %@", error);
-}
-
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
-    UA_LINFO(@"Received remote notification: %@", userInfo);
-    
-    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
-    // is required.
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-    
+    UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
+
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
     // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
     

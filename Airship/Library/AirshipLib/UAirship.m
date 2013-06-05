@@ -36,6 +36,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UAPush.h"
 #import "UAConfig.h"
+#import "UAInboxPushHandler.h"
+
+#import "UABaseAppDelegateSurrogate.h"
+#import "UAAutoAppDelegate.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -142,11 +146,24 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     _sharedAirship = [[UAirship alloc] initWithId:config.appKey identifiedBy:config.appSecret];
     _sharedAirship.config = config;
     _sharedAirship.server = config.deviceAPIURL;
-    
+
     UA_LINFO(@"App Key: %@", _sharedAirship.appId);
     UA_LINFO(@"App Secret: %@", _sharedAirship.appSecret);
     UA_LINFO(@"Server: %@", _sharedAirship.server);
-    
+
+    if (config.handleNotificationsAutomatically) {
+
+        _sharedAirship.appDelegate = [[[UABaseAppDelegateSurrogate alloc ]init] autorelease];
+
+        //swap pointers with the initial app delegate
+        @synchronized ([UIApplication sharedApplication]) {
+            _sharedAirship.appDelegate.defaultAppDelegate = [UIApplication sharedApplication].delegate;
+            _sharedAirship.appDelegate.surrogateDelegate = [[[UAAutoAppDelegate alloc] init] autorelease];
+            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
+        }
+    }
+
+
     // Build a custom user agent with the app key and name
     [_sharedAirship configureUserAgent];
 
@@ -186,11 +203,19 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
-    _sharedAirship.analytics.notificationUserInfo = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+
+    _sharedAirship.analytics.notificationUserInfo = remoteNotification;
 
     //Send Startup Analytics Info
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
+
+    
+    [UAInboxPushHandler handleNotification:remoteNotification];
+    [[UAPush shared] handleNotification:remoteNotification applicationState:[UIApplication sharedApplication].applicationState];
+
+    UALOG(@"Active in nsnotification listener %d", ([UIApplication sharedApplication].applicationState == UIApplicationStateActive));
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {
