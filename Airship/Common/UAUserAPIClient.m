@@ -15,7 +15,7 @@
 
 - (id)init {
     if (self = [super init] ) {
-        [[self.requestEngine= [UAHTTPRequestEngine alloc] init] autorelease];
+        self.requestEngine= [[[UAHTTPRequestEngine alloc] init] autorelease];
     }
 
     return self;
@@ -26,18 +26,16 @@
     [super dealloc];
 }
 
-- (NSMutableDictionary*)createUserDictionaryWithDeviceToken:(NSString *)deviceToken {
+- (NSDictionary *)createUserDictionaryWithDeviceToken:(NSString *)deviceToken {
 
     //set up basic payload
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                 [UAUtils deviceID], @"ua_device_id", nil ];
+    NSMutableDictionary *data = [[[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                 [UAUtils deviceID], @"ua_device_id", nil ] autorelease];
 
     if (deviceToken) {
         NSArray *deviceTokens = [NSArray arrayWithObjects:deviceToken, nil];
         [data setObject:deviceTokens forKey:@"device_tokens"];
     }
-
-    [data autorelease];
 
     return data;
 }
@@ -50,7 +48,7 @@
     NSURL *createUrl = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
 
-    NSMutableDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
+    NSDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
 
 
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
