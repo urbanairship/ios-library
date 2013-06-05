@@ -97,10 +97,8 @@
 
     //if APN hasn't finished yet or is not enabled, don't include the deviceToken
     NSString* deviceToken = [UAPush shared].deviceToken;
-    if (deviceToken) {
-        if (deviceToken.length == 0) {
+    if (deviceToken && deviceToken.length == 0) {
             deviceToken = nil;
-        }
     }
 
     UAHTTPRequest *request = [self requestToCreateUserWithDeviceToken:deviceToken];
