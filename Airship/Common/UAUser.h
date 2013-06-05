@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const UAUserCreatedNotification;
+
 @interface UAUser : NSObject
 
 // Public interface
@@ -36,6 +38,13 @@
 + (void)land;
 
 - (BOOL)defaultUserCreated;
+
+/**
+ * Convenience method that schedules a block to be executed once the user has been created.
+ *
+ * @param onCreateBlock
+ */
+- (void)onceCreated:(void(^)())onCreateBlock;
 
 //Specifies a default PRE-EXISTING username and password to use in the case a new user would 
 //otherwise be created by [UAUser defaultUser]

@@ -113,15 +113,17 @@ static UAInboxMessageList *_messageList = nil;
     }
     self.messages = [[[NSMutableArray alloc] initWithArray:savedMessages] autorelease];
     UALOG(@"after retrieve saved messages: %@", messages);
-    
 }
 
 - (void)retrieveMessageList {
     
-	if(![[UAUser defaultUser] defaultUserCreated]) {
-		UALOG("Waiting for User Update message to retrieveMessageList");
-		return;
-	}
+    if(![[UAUser defaultUser] defaultUserCreated]) {
+        UA_LDEBUG("Waiting for User Update message to retrieveMessageList");
+        [[UAUser defaultUser] onceCreated:^{
+            [self retrieveMessageList];
+        }];
+        return;
+    }
 
     [self notifyObservers: @selector(messageListWillLoad)];
 

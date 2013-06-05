@@ -35,6 +35,8 @@
 
 static UAUser *_defaultUser;
 
+NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
+
 @interface UAUser()
 
 @property(nonatomic, retain) UAUserAPIClient *apiClient;
@@ -242,11 +244,25 @@ static UAUser *_defaultUser;
     return YES;
 }
 
+- (void)onceCreated:(void(^)())onCreateBlock {
+    __block id observer = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification
+                                                                            object:nil
+                                                                             queue:nil
+                                                                        usingBlock:^(NSNotification *note) {
+        onCreateBlock();
+        [[NSNotificationCenter defaultCenter] removeObserver:observer name:UAUserCreatedNotification object:nil];
+    }];
+}
+
 - (void)createDefaultUser {
     if ([self defaultUserCreated]) {
         return;
     }
     [self createUser];
+}
+
+- (void)sendUserCreatedNotification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAUserCreatedNotification object:nil];
 }
 
 - (void)createUser {
@@ -267,6 +283,9 @@ static UAUser *_defaultUser;
 
         //check to see if the device token has changed, and trigger an update
         [self updateDefaultDeviceToken];
+
+        [self sendUserCreatedNotification];
+
     } onFailure:^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
         self.creatingUser = NO;
