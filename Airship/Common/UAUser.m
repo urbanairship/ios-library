@@ -201,7 +201,7 @@ static UAUser *_defaultUser;
 		if (username != nil && password != nil) {
 			[UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:[[UAirship shared] appId]];
 		} else {
-            UALOG(@"Save failed: must have a username and password.");
+            UA_LINFO(@"Save failed: must have a username and password.");
             return;
         }
 	}
@@ -309,10 +309,10 @@ static UAUser *_defaultUser;
 
 -(void)updateDefaultDeviceToken {
 
-    UALOG(@"Updating device token.");
+    UA_LDEBUG(@"Updating device token.");
 
     if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
-		UALOG(@"Skipping device token update: no token, already up to date, or user is being updated.");
+		UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
 
@@ -334,7 +334,7 @@ static UAUser *_defaultUser;
 // Ensure the methods that need token are invoked even after inbox was created
 - (void)listenForDeviceTokenReg {
     
-    UALOG(@"ListenForDeviceTokenReg");
+    UA_LDEBUG(@"ListenForDeviceTokenReg");
     
     if (self.isObservingDeviceToken) {
         return;
@@ -366,7 +366,7 @@ static UAUser *_defaultUser;
                       context:(void *)context {
     
     if ( [keyPath isEqualToString:@"deviceToken"] ) {
-        UALOG(@"KVO device token modified");
+        UA_LDEBUG(@"KVO device token modified");
         [self cancelListeningForDeviceToken];
         [self updateDefaultDeviceToken];
     }

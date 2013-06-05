@@ -56,7 +56,7 @@
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString *body = [writer stringWithObject:data];
 
-    UALOG(@"Create user with body: %@", body);
+    UA_LDEBUG(@"Create user with body: %@", body);
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -68,7 +68,7 @@
 
     NSDictionary *dict = @{@"device_tokens" :@{@"add" : @[deviceToken]}};
 
-    UALOG(@"Updating user");
+    UA_LDEBUG(@"Updating user");
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
 								 [[UAirship shared] server],
@@ -85,7 +85,7 @@
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter new] autorelease];
     NSString *body = [writer stringWithObject:dict];
 
-    UALOG(@"Update user with content: %@", body);
+    UA_LDEBUG(@"Update user with content: %@", body);
 
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -131,7 +131,7 @@
               forUsername:(NSString *)username
                 onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
                 onFailure:(UAUserAPIClientFailureBlock)failureBlock {
-    UALOG(@"Updating device token.");
+    UA_LDEBUG(@"Updating device token.");
 
     UAHTTPRequest *request = [self requestToUpdateDeviceToken:deviceToken forUsername:username];
 
