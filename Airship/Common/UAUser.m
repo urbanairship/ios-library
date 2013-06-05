@@ -42,7 +42,7 @@ static UAUser *_defaultUser;
 @property(nonatomic, copy) NSString *username;
 @property(nonatomic, copy) NSString *password;
 @property(nonatomic, copy) NSString *url;
-@property(nonatomic, assign) UAUserState userState;
+@property(nonatomic, copy) NSString *serverDeviceToken;
 @property(nonatomic, assign) BOOL isObservingDeviceToken;
 //creation flag
 @property(nonatomic, assign) BOOL creatingUser;
@@ -50,12 +50,6 @@ static UAUser *_defaultUser;
 @end
 
 @implementation UAUser
-
-// UAUser
-@synthesize username;
-@synthesize password;
-@synthesize url;
-@synthesize userState;
 
 + (UAUser *)defaultUser {
     @synchronized(self) {
@@ -68,12 +62,12 @@ static UAUser *_defaultUser;
 
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
     
-    NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
+    NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].appId];
     
 	// If the keychain username is present a user already exists, if not, save
 	if (storedUsername == nil) {
         //Store un/pw
-        [UAKeychainUtils createKeychainValueForUsername:defaultUsername withPassword:defaultPassword forIdentifier:[[UAirship shared] appId]];
+        [UAKeychainUtils createKeychainValueForUsername:defaultUsername withPassword:defaultPassword forIdentifier:[UAirship shared].appId];
 	}
     
 }
@@ -118,8 +112,8 @@ static UAUser *_defaultUser;
 }
 
 - (BOOL)deviceTokenHasChanged {
-    NSString *lastUpdatedToken = [self serverDeviceToken];
-    NSString *currentDeviceToken = [[UAPush shared] deviceToken];
+    NSString *lastUpdatedToken = self.serverDeviceToken;
+    NSString *currentDeviceToken = [UAPush shared].deviceToken;
     // Can't use caseInsensitiveCompare, these values can be nil, which is an undefined result
     return ![[lastUpdatedToken lowercaseString] isEqualToString:[currentDeviceToken lowercaseString]];
 }
@@ -136,8 +130,8 @@ static UAUser *_defaultUser;
             return;
         }
                 
-        NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
-        NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
+        NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].appId];
+        NSString *storedPassword = [UAKeychainUtils getPassword:[UAirship shared].appId];
         
         if (storedUsername != nil && storedPassword != nil) {
             self.username = storedUsername;
@@ -169,16 +163,14 @@ static UAUser *_defaultUser;
 
     // First thing we need to do is make sure we have a valid User.
 
-    if (username != nil && password != nil) {
+    if (self.username != nil && self.password != nil) {
         // If the user and password are set, then we are not in a "no user"/"initial run" case - just set it in defaults
         // for the app to access with a Settings bundle
-        [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
+        [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
     } else {
         // Either the user or password is not set, so the "no user"/"initial run" case is still true, try to recreate the user
         [self createUser];
     }
-
-    [self updateUserState];
 }
 
 #pragma mark -
@@ -190,16 +182,14 @@ static UAUser *_defaultUser;
  and then notifies all observers.
  */
 - (void)saveUserData {
-    
-    [self updateUserState];
-    
-    NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
+        
+    NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].appId];
 		
     if (!storedUsername) {
 		// No username object stored in the keychain for this app, so let's create it
 		// but only if we indeed have a username and password to store
-		if (username != nil && password != nil) {
-			[UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:[[UAirship shared] appId]];
+		if (self.username != nil && self.password != nil) {
+			[UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:[UAirship shared].appId];
 		} else {
             UA_LINFO(@"Save failed: must have a username and password.");
             return;
@@ -209,9 +199,9 @@ static UAUser *_defaultUser;
     //Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
                                        withPassword:self.password
-                                      forIdentifier:[[UAirship shared] appId]];
+                                      forIdentifier:[UAirship shared].appId];
     
-    NSDictionary *dictionary = [[NSUserDefaults standardUserDefaults] objectForKey:[[UAirship shared] appId]];
+    NSDictionary *dictionary = [[NSUserDefaults standardUserDefaults] objectForKey:[UAirship shared].appId];
     NSMutableDictionary *userDictionary = [NSMutableDictionary dictionaryWithDictionary:dictionary];
     
     if (userDictionary == nil) {
@@ -222,28 +212,10 @@ static UAUser *_defaultUser;
     [userDictionary setValue:self.url forKey:kUserUrlKey];
     
     // Save in defaults for access with a Settings bundle
-    [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"ua_user_id"];
+    [[NSUserDefaults standardUserDefaults] setObject:self.username forKey:@"ua_user_id"];
     
-    [[NSUserDefaults standardUserDefaults] setObject:userDictionary forKey:[[UAirship shared] appId]];
+    [[NSUserDefaults standardUserDefaults] setObject:userDictionary forKey:[UAirship shared].appId];
     [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)updateUserState {
-    if (self.creatingUser) {
-        userState = UAUserStateCreating;
-    } else if (username == nil || password == nil) {
-        userState = UAUserStateEmpty;
-    } else {
-        userState = UAUserStateCreated;
-    }    
-}
-
-- (void)notifyObserversUserUpdated {
-    [self notifyObservers:@selector(userUpdated)];
-}
-
-- (void)notifyObserversUserUpdateFailed {
-    [self notifyObservers:@selector(userUpdateFailed)];
 }
 
 #pragma mark -
@@ -255,8 +227,8 @@ static UAUser *_defaultUser;
         return NO;
     }
     
-    NSString *storedUsername = [UAKeychainUtils getUsername:[[UAirship shared] appId]];
-	NSString *storedPassword = [UAKeychainUtils getPassword:[[UAirship shared] appId]];
+    NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].appId];
+	NSString *storedPassword = [UAKeychainUtils getPassword:[UAirship shared].appId];
 	
 	if (storedUsername == nil || storedPassword == nil) {
 		return NO;
@@ -290,17 +262,14 @@ static UAUser *_defaultUser;
         [self saveUserData];
 
         if (deviceToken) {
-            [self setServerDeviceToken:deviceToken];
+            self.serverDeviceToken = deviceToken;
         }
 
         //check to see if the device token has changed, and trigger an update
         [self updateDefaultDeviceToken];
-        [self notifyObserversUserUpdated];
     } onFailure:^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
         self.creatingUser = NO;
-        [self updateUserState];
-        [self notifyObserversUserUpdateFailed];
     }];
 }
 
@@ -311,20 +280,19 @@ static UAUser *_defaultUser;
 
     UA_LDEBUG(@"Updating device token.");
 
-    if (![[UAPush shared] deviceToken] || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
+    if (![UAPush shared].deviceToken || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
 		UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
 
-    NSString *deviceToken = [[UAPush shared] deviceToken];
+    NSString *deviceToken = [UAPush shared].deviceToken;
 
     [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *token) {
         // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
-        [self setServerDeviceToken:token];
+        self.serverDeviceToken = token;
         UA_LDEBUG(@"Logged last updated key %@", token);
-        [self notifyObserversUserUpdated];
     } onFailure:^(UAHTTPRequest *request) {
-        [self notifyObserversUserUpdateFailed];
+        UA_LDEBUG(@"Device token update failed with status: %d", request.response.statusCode);
     }];
 }
 

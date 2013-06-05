@@ -24,27 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAObservable.h"
 
-typedef enum _UAUserState {
-    UAUserStateEmpty = 0,
-    UAUserStateCreating = 1,
-    UAUserStateCreated = 2
-} UAUserState;
-
-@protocol UAUserObserver <NSObject>
-@optional
-
-// Notified when user created or modified
-- (void)userUpdated;
-- (void)userUpdateFailed;
-
-@end
-
-@interface UAUser : UAObservable
+@interface UAUser : NSObject
 
 // Public interface
-@property (nonatomic, readonly, assign) UAUserState userState;
 @property (nonatomic, readonly, copy) NSString *username;
 @property (nonatomic, readonly, copy) NSString *password;
 @property (nonatomic, readonly, copy) NSString *url;

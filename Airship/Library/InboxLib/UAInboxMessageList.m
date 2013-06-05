@@ -120,7 +120,6 @@ static UAInboxMessageList *_messageList = nil;
     
 	if(![[UAUser defaultUser] defaultUserCreated]) {
 		UALOG("Waiting for User Update message to retrieveMessageList");
-		[[UAUser defaultUser] addObserver:self];
 		return;
 	}
 
@@ -338,17 +337,6 @@ static UAInboxMessageList *_messageList = nil;
 
 - (int)indexOfMessage:(UAInboxMessage *)message {
     return [messages indexOfObject:message];
-}
-
-#pragma mark -
-#pragma mark UAUserObserver
-
-- (void)userUpdated {
-    UALOG(@"UAInboxMessageList notified: userUpdated");
-	if([[UAUser defaultUser] defaultUserCreated]) {
-		[[UAUser defaultUser] removeObserver:self];
-		[self retrieveMessageList];
-	}
 }
 
 @end
