@@ -130,31 +130,16 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * application:didFinishLaunchingWithOptions: method, and it may be called
  * only once. The `UIApplication` options MUST be passed in.
  *
- * Configuration are read from the `AirshipConfig.plist` file. You may overrride the
- * `AirshipConfig.plist` values at runtime by including an NSDictionary containing the override
- * values with the `UAirshipTakeOffOptionsAirshipConfigKey`.
- *
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
  *
- * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
- * dictionary MUST contain the UIApplication launch options.
- * @exception UAirshipTakeOffMainThreadException This exception is thrown if takeOff is called from
- * a background thread.
- *
  */
-+ (void)takeOff:(UAConfig *)config withLaunchOptions:(NSDictionary *)launchOptions;
++ (void)takeOff:(UAConfig *)config;
 
 /**
  * Simplified takeOff method that uses AirshipConfig.plist for initialization.
  */
-+ (void)takeOff:(NSDictionary *)launchOptions;
-
-/**
- * Perform teardown on the shared instance. This should be called when an application
- * terminates.
- */
-+ (void)land;
++ (void)takeOff;
 
 /**
  * Returns the shared `UAirship` instance. This will raise an exception

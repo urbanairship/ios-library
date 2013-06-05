@@ -55,12 +55,11 @@
     
     //[UAInbox useCustomUI: [UAInboxNavUI class]];
     
-    // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
-    // library can properly record when the app is launched from a push notification. This call is
+    // Call takeOff (which creates the UAirship singleton). This call is
     // required.
     //
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-    [UAirship takeOff:launchOptions];
+    [UAirship takeOff];
     
     // Register for remote notfications with the UA Library. The library will register with
     // iOS if push is enabled on UAPush.
@@ -118,11 +117,6 @@
     // Send the alert to UA so that it can be handled and tracked as a direct response. This call
     // is required.
     [UAInboxPushHandler handleNotification:userInfo];
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    // Tear down UA services
-    [UAirship land];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

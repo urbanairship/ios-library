@@ -61,6 +61,13 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     uaLogLevel = level;
 }
 
++ (void)load {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:[UAirship class] selector:@selector(recordAppLaunchWithNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    [center addObserver:[UAirship class] selector:@selector(land) name:UIApplicationWillTerminateNotification object:nil];
+
+}
+
 #pragma mark -
 #pragma mark Location Get/Set Methods
 
@@ -97,11 +104,11 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     return self;
 }
 
-+ (void)takeOff:(NSDictionary *)launchOptions {
-    [UAirship takeOff:[UAConfig defaultConfig] withLaunchOptions:launchOptions];
++ (void)takeOff {
+    [UAirship takeOff:[UAConfig defaultConfig]];
 }
 
-+ (void)takeOff:(UAConfig *)config withLaunchOptions:(NSDictionary *)launchOptions{
++ (void)takeOff:(UAConfig *)config {
     
     // Airships only take off once!
     if (_sharedAirship) {
@@ -143,6 +150,9 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     // Build a custom user agent with the app key and name
     [_sharedAirship configureUserAgent];
 
+    // Set up analytics
+    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithConfig:_sharedAirship.config] autorelease];
+
     /*
      * Handle Debug Options
      */
@@ -158,29 +168,38 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
     }
-    
+
+
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
-    
-    /*
-     * Set up Analytics Manager
-     */
-    
-    // Set up analytics - record when app is opened from a push
-    
-    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithConfig:config] autorelease];
-    _sharedAirship.analytics.notificationUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    
-    //Send Startup Analytics Info
-    //init first event
-    [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
-    
+
     
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
 }
 
++ (void)recordAppLaunchWithNotification:(NSNotification *)notification {
+
+    if (!_sharedAirship) {
+        UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
+
+    _sharedAirship.analytics.notificationUserInfo = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+
+    //Send Startup Analytics Info
+    //init first event
+    [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
+}
+
 + (void)land {
+
+    if (!_sharedAirship) {
+        return;
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:[self class]  name:UIApplicationWillTerminateNotification object:nil];
 
 	// add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];

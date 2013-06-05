@@ -29,7 +29,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
-#define kDefaultMaxCachedLocationAgeSeconds = 300;
+#define kDefaultMaxCachedLocationAgeSeconds 300.0;
 
 @interface UABaseLocationProvider ()
 // Stop reporting any location service

@@ -33,4 +33,18 @@
  */
 - (void)configureUserAgent;
 
+/*
+ * Handle app init. This should be called from NSNotification center
+ * and will record a launch from notification and record the app init even
+ * for analytics.
+ */
++ (void)recordAppLaunchWithNotification:(NSNotification *)notification;
+
+
+/*
+ * Perform teardown on the shared instance. This will automatically be called when an application
+ * terminates.
+ */
++ (void)land;
+
 @end
