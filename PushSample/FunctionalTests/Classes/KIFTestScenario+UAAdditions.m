@@ -37,7 +37,7 @@
 @implementation KIFTestScenario (UAAdditions)
 
 + (id)scenarioToEnablePush {
-    KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that push is can be enabled in the settings screen."];
+    KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that push can be enabled in the settings screen."];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Push Settings"]];
     [scenario addStep:[KIFTestStep stepToSetOn:YES forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
