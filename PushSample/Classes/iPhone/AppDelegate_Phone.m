@@ -59,17 +59,17 @@
     // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
 
-    uaLogLevel = UALogLevelTrace;//default for debugging config loading
+    // Set log level for debugging config loading
+    // It will be set to the value in the loaded config on takeOff
+    [UAirship setLogLevel:UALogLevelTrace];
+
+    // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
+    // or set runtime properties here.
     UAConfig *config = [UAConfig defaultConfig];
 
-    // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
-    // library can properly record when the app is launched from a push notification. This call is
-    // required.
-    //
-    // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-    [UAirship takeOff:config withLaunchOptions:launchOptions];
+    // Call takeOff (which creates the UAirship singleton)
+    [UAirship takeOff:config];
 
-    //UAConfig *c = [UAConfig defaultConfig];
     UA_LDEBUG(@"Config:\n%@", [config description]);
 
     // Set the icon badge to zero on startup (optional)
@@ -87,7 +87,7 @@
     // This will invoke `handleBackgroundNotification` on your UAPushNotificationDelegate.
     [[UAPush shared] handleNotification:[launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
                        applicationState:application.applicationState];
-    
+
     return YES;
 }
 
@@ -123,12 +123,6 @@
     
     // Reset the badge after a push received (optional)
     [[UAPush shared] resetBadge];
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    
-    // Tear down UA services
-    [UAirship land];
 }
 
 - (void)failIfSimulator {

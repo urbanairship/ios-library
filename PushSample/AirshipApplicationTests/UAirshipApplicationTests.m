@@ -31,7 +31,7 @@
     } while(![thread isFinished]);
     [thread release];
     
-    [UAirship takeOff:[NSMutableDictionary dictionary]]; // Recreate the shared instance
+    [UAirship takeOff]; // Recreate the shared instance
 }
 
 // A helper method that calls takeOff; intended to be called from a background thread.
