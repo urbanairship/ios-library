@@ -113,12 +113,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 }
 
 + (void)takeOff:(UAConfig *)config {
-    
-    // Airships only take off once!
-    if (_sharedAirship) {
-        return;
-    }
-    
+
     // takeOff needs to be run on the main thread
     if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
@@ -127,13 +122,27 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         [mainThreadException raise];
     }
 
+    dispatch_once(&takeOffPred_, ^{
+        [UAirship executeUnsafeTakeOff:config];
+    });
+}
+
+/*
+ * This is an unsafe version of takeOff - use takeOff: instead for dispatch_once
+ */
++ (void)executeUnsafeTakeOff:(UAConfig *)config {
+    // Airships only take off once!
+    if (_sharedAirship) {
+        return;
+    }
+
     [UAirship setLogLevel:config.logLevel];
 
     // Ensure that app credentials have been passed in
     if (![config validate]) {
-        
+
         UA_LERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
-        
+
         //Use blank credentials to prevent app from crashing while error msg
         //is displayed
         _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
@@ -173,15 +182,15 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     /*
      * Handle Debug Options
      */
-    
+
     //For testing, set this value in AirshipConfig to clear out
     //the keychain credentials, as they will otherwise be persisted
     //even when the application is uninstalled.
     if (config.clearKeychain) {
-        
+
         UA_LDEBUG(@"Deleting the keychain credentials");
         [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
-        
+
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
     }
@@ -190,7 +199,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
 
-    
+
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
 }
@@ -242,6 +251,8 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     //Finally, release the airship!
     [_sharedAirship release];
     _sharedAirship = nil;
+
+    takeOffPred_ = 0; // reset the dispatch_once_t flag for testing
 }
 
 + (UAirship *)shared {
