@@ -27,8 +27,6 @@
 
 @class UABaseAppDelegateSurrogate;
 
-static dispatch_once_t takeOffPred_;
-
 @interface UAirship()
 
 @property (nonatomic, retain) UABaseAppDelegateSurrogate *appDelegate;

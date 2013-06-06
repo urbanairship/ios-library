@@ -48,6 +48,8 @@ NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBac
 
 static UAirship *_sharedAirship;
 
+static dispatch_once_t takeOffPred_;
+
 // Logging info
 // Default to ON and DEBUG - options/plist will override
 BOOL uaLoggingEnabled = YES;
