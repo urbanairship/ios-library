@@ -42,6 +42,11 @@
  */
 @property (nonatomic, copy) NSString *profilePath;
 
+/*
+ * The master secret for running functional tests. Not for use in production!
+ */
+@property (nonatomic, copy) NSString *testingMasterSecret;
+
 /**
  * Determines whether or not the app is currently configured to use the APNS production servers.
  * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
