@@ -27,16 +27,25 @@
 
 extern NSString * const UAUserCreatedNotification;
 
+/**
+ * Primary interface for working with the application's associated UA user.
+ */
 @interface UAUser : NSObject
 
-// Public interface
-@property (nonatomic, readonly, copy) NSString *username;
-@property (nonatomic, readonly, copy) NSString *password;
-@property (nonatomic, readonly, copy) NSString *url;
-
+/**
+ * Returns the singleton user instance.
+ */
 + (UAUser *)defaultUser;
+
+/**
+ * Causes the user instance to stop listening for device token changes.
+ */
 + (void)land;
 
+/**
+ * Indicates whether the default user has been created.
+ * @return `YES` if the user has been created, `NO` otherwise.
+ */
 - (BOOL)defaultUserCreated;
 
 /**
@@ -46,10 +55,22 @@ extern NSString * const UAUserCreatedNotification;
  */
 - (void)onceCreated:(void(^)())onCreateBlock;
 
-//Specifies a default PRE-EXISTING username and password to use in the case a new user would 
-//otherwise be created by [UAUser defaultUser]
-+ (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword;
-
+/**
+ * Loads the user from disk if available, otherwise creates the user (asynchronously) from scratch.
+ */
 - (void)initializeUser;
+
+/**
+ * The user name.
+ */
+@property (nonatomic, readonly, copy) NSString *username;
+/**
+ * The user password.
+ */
+@property (nonatomic, readonly, copy) NSString *password;
+/**
+ * The user url.
+ */
+@property (nonatomic, readonly, copy) NSString *url;
 
 @end
