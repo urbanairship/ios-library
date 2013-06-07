@@ -146,6 +146,7 @@ static NSUInteger locationRowCount = 1;
 - (void)initCells {
     deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenCell.textLabel.text = @"Device Token";
+    deviceTokenCell.accessibilityIdentifier = @"Device Token";
     deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
@@ -156,10 +157,12 @@ static NSUInteger locationRowCount = 1;
     
     deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenAliasCell.textLabel.text = @"Alias";
+    deviceTokenAliasCell.accessibilityLabel = @"Alias";
     deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     deviceTokenTagsCell.textLabel.text = @"Tags";
+    deviceTokenTagsCell.accessibilityLabel = @"Tags";
     deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];

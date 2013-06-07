@@ -60,15 +60,8 @@
  * from the UIApplicationDelegate.
  * @param userInfo the notification as an NSDictionary
  */
-+ (void)handleNotification:(NSDictionary*)userInfo;
++ (void)handleNotification:(NSDictionary *)userInfo;
 
-/**
- * Handle the launch options passed in as the app starts, while will include
- * a noficiation if the app was launched in response to viewing one.  This should
- * typically be called from the UIApplicationDelegate.
- * @param options The launch options asn an NSDictionary.
- */
-+ (void)handleLaunchOptions:(NSDictionary*)options;
 
 /**
  * The message ID of the most recent rich push as an NSString.

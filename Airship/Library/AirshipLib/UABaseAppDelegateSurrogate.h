@@ -1,16 +1,16 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
- 
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,37 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAirship.h"
+#import <Foundation/Foundation.h>
+#import "UAGlobal.h"
 
-@class UABaseAppDelegateSurrogate;
+@interface UABaseAppDelegateSurrogate : NSObject <UIApplicationDelegate>
 
-@interface UAirship()
-
-@property (nonatomic, retain) UABaseAppDelegateSurrogate *appDelegate;
-
-/*
- * Should set this user agent up
- * [LIB-101] User agent string should be:
- * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)
+/* 
+ * delegates are typically not retained, but in this case we will take responsibility for them
+ * as we're essentially a man in the middle and we don't want to lose them.
  */
-- (void)configureUserAgent;
-
-/*
- * Handle app init. This should be called from NSNotification center
- * and will record a launch from notification and record the app init even
- * for analytics.
- */
-+ (void)recordAppLaunchWithNotification:(NSNotification *)notification;
-
-/**
- * Handle a termination event from NSNotification center (forward it to land)
- */
-+ (void)handleAppTerminationNotification:(NSNotification *)notification;
-
-/*
- * Perform teardown on the shared instance. This will automatically be called when an application
- * terminates.
- */
-+ (void)land;
+@property(nonatomic, retain) NSObject<UIApplicationDelegate> *surrogateDelegate;
+@property(nonatomic, retain) NSObject<UIApplicationDelegate> *defaultAppDelegate;
 
 @end

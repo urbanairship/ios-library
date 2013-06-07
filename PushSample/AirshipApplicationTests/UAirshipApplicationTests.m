@@ -6,7 +6,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UALocationService.h"
 
 @interface UAirshipApplicationTests : SenTestCase 
@@ -31,7 +31,7 @@
     } while(![thread isFinished]);
     [thread release];
     
-    [UAirship takeOff:[NSMutableDictionary dictionary]]; // Recreate the shared instance
+    [UAirship takeOff]; // Recreate the shared instance
 }
 
 // A helper method that calls takeOff; intended to be called from a background thread.
@@ -41,7 +41,7 @@
     NSLog(@"Testing [UAirship takeOff:nil] in background thread %@", [NSThread currentThread]); 
     STAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
     STAssertThrowsSpecificNamed(
-                                [UAirship takeOff:[NSMutableDictionary dictionary]],
+                                [UAirship takeOff],
                                 NSException, UAirshipTakeOffBackgroundThreadException,
                                 @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");
     

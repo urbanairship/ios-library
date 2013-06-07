@@ -29,7 +29,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
-NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
+#define kDefaultMaxCachedLocationAgeSeconds 300.0;
 
 @interface UABaseLocationProvider ()
 // Stop reporting any location service
@@ -55,7 +55,7 @@ NSTimeInterval defaultMaximumElapsedTimeForCachedLocation = 300;
         self.locationManager.delegate = self;
         self.provider = UALocationServiceProviderUnknown;
         self.serviceStatus = UALocationProviderNotUpdating;
-        self.maximumElapsedTimeForCachedLocation = defaultMaximumElapsedTimeForCachedLocation;
+        self.maximumElapsedTimeForCachedLocation = kDefaultMaxCachedLocationAgeSeconds;
     }
     return self;
 }

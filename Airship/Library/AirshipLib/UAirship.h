@@ -25,47 +25,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAGlobal.h"
 
+@class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
-
-/**
- * Key for the default preferences dictionary that 
- * is loaded into NSUserDefaults on start for location services
- */
-extern NSString * const UALocationServicePreferences;
-
-/**
- * The takeOff options key for setting custom AirshipConfig options. The value
- * must be an NSDictionary.
- */
-extern NSString * const UAirshipTakeOffOptionsAirshipConfigKey;
-
-/**
- * The takeOff options key for passing in the options dictionary provided
- * by [UIApplication application:didFinishLaunchingWithOptions]. This key/value
- * pair must always be included in the takeOff options.
- */
-extern NSString * const UAirshipTakeOffOptionsLaunchOptionsKey;
-
-/**
- * The takeOff options key for setting custom analytics options. The value must be
- * an NSDictionary with keys for UAAnalytics. This value is typically not used.
- */
-extern NSString * const UAirshipTakeOffOptionsAnalyticsKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUAser username. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultUsernameKey;
-
-/**
- * The takeOff options key for setting a pre-exising UAUser password. The value must be
- * an NSString.
- */
-extern NSString * const UAirshipTakeOffOptionsDefaultPasswordKey;
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -79,6 +43,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * instance.
  */
 @interface UAirship : NSObject
+
+/**
+ * The application configuration. This is set on takeOff.
+ */
+@property (nonatomic, retain) UAConfig *config;
 
 /**
  * The current APNS/remote notification device token.
@@ -159,35 +128,18 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * 
  * This method must be called from your application delegate's
  * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The `UIApplication` options passed in on launch MUST be included in this method's options
- * parameter with the `UAirshipTakeOffOptionsLaunchOptionsKey`.
- *
- * Configuration are read from the `AirshipConfig.plist` file. You may overrride the
- * `AirshipConfig.plist` values at runtime by including an NSDictionary containing the override
- * values with the `UAirshipTakeOffOptionsAirshipConfigKey`.
+ * only once. The `UIApplication` options MUST be passed in.
  *
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
- * 
- * @see UAirshipTakeOffOptionsAirshipConfigKey
- * @see UAirshipTakeOffOptionsLaunchOptionsKey
- * @see UAirshipTakeOffOptionsAnalyticsKey
- * @see UAirshipTakeOffOptionsDefaultUsernameKey
- * @see UAirshipTakeOffOptionsDefaultPasswordKey
- *
- * @param options An NSDictionary containing UAirshipTakeOffOptions[...] keys and values. This
- * dictionary MUST contain the UIApplication launch options.
- * @exception UAirshipTakeOffMainThreadException This exception is thrown if takeOff is called from
- * a background thread.
  *
  */
-+ (void)takeOff:(NSDictionary *)options;
++ (void)takeOff:(UAConfig *)config;
 
 /**
- * Perform teardown on the shared instance. This should be called when an application
- * terminates.
+ * Simplified takeOff method that uses AirshipConfig.plist for initialization.
  */
-+ (void)land;
++ (void)takeOff;
 
 /**
  * Returns the shared `UAirship` instance. This will raise an exception

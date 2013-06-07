@@ -52,26 +52,11 @@
 }
 
 
-+ (void)handleNotification:(NSDictionary*)userInfo{
++ (void)handleNotification:(NSDictionary *)userInfo{
 
-    UALOG(@"remote notification: %@", [userInfo description]);
-
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [userInfo objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
-	
-    // add push_received event, or handle appropriately
-    [[UAirship shared].analytics handleNotification:userInfo];
-    
+    NSString *richPushId = [userInfo objectForKey:@"_uamid"];
     if (richPushId) {
+
         [UAInbox shared].pushHandler.viewingMessageID = richPushId;
        
         //if the app is in the foreground, let the UI class decide how it
@@ -91,38 +76,10 @@
     }
 }
 
-+ (void)handleLaunchOptions:(NSDictionary*)options {
-    
-    if (options == nil) {
-        return;
-    }
-
-    UALOG(@"launch options: %@", options);
-
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [[options objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey] objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
-
-    if (richPushId) {
-		[[UAInbox shared].pushHandler setHasLaunchMessage:YES];
-		[[UAInbox shared].pushHandler setViewingMessageID:richPushId];
-    }
-    
-}
-
 - (void)messageListLoaded {
-    
+
     //only take action is there's a new message
-    if(viewingMessageID) {
-        
+    if (viewingMessageID) {
         Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
         
         //if the notification came in while the app was backgrounded, treat it as a launch message

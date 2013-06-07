@@ -25,6 +25,7 @@
 
 #import "AppDelegate_Phone.h"
 
+#import "UAConfig.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
@@ -57,17 +58,19 @@
     // If you just want everyone to immediately be prompted for push, you can
     // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
-    
-    //Create Airship options dictionary and add the required UIApplication launchOptions
-    NSMutableDictionary *takeOffOptions = [NSMutableDictionary dictionary];
-    [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
 
-    // Call takeOff (which creates the UAirship singleton), passing in the launch options so the
-    // library can properly record when the app is launched from a push notification. This call is
-    // required.
-    //
+    // Set log level for debugging config loading
+    // It will be set to the value in the loaded config on takeOff
+    [UAirship setLogLevel:UALogLevelTrace];
+
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-    [UAirship takeOff:takeOffOptions];
+    // or set runtime properties here.
+    UAConfig *config = [UAConfig defaultConfig];
+
+    // Call takeOff (which creates the UAirship singleton)
+    [UAirship takeOff:config];
+
+    UA_LDEBUG(@"Config:\n%@", [config description]);
 
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
@@ -82,9 +85,10 @@
     
     // Handle any incoming incoming push notifications.
     // This will invoke `handleBackgroundNotification` on your UAPushNotificationDelegate.
+    // TODO: call this automatically? figure this out with the new delegate structure
     [[UAPush shared] handleNotification:[launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
                        applicationState:application.applicationState];
-    
+
     return YES;
 }
 
@@ -95,37 +99,15 @@
     [[UAPush shared] resetBadge];
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LINFO(@"APNS device token: %@", deviceToken);
-    
-    // Updates the device token and registers the token with UA. This won't occur until
-    // push is enabled if the outlined process is followed. This call is required.
-    [[UAPush shared] registerDeviceToken:deviceToken];
-}
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UA_LERR(@"Failed To Register For Remote Notifications With Error: %@", error);
-}
-
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
-    UA_LINFO(@"Received remote notification: %@", userInfo);
-    
-    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
-    // is required.
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-    
+    UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
+
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
     // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
     
     // Reset the badge after a push received (optional)
     [[UAPush shared] resetBadge];
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-    
-    // Tear down UA services
-    [UAirship land];
 }
 
 - (void)failIfSimulator {

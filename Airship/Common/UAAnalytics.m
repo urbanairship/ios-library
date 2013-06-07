@@ -26,7 +26,6 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 
-#import "UAAnalytics.h"
 #import "UAAnalytics+Internal.h"
 
 #import "UA_SBJSON.h"
@@ -38,20 +37,20 @@
 #import "UAEvent.h"
 #import "UALocationEvent.h"
 #import "UAUser.h"
+#import "UAConfig.h"
+
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
 
-#define kAnalyticsProductionServer @"https://combine.urbanairship.com";
+
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
-NSString * const UAAnalyticsOptionsServerKey = @"UAAnalyticsOptionsServerKey";
 
 UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
 UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 @implementation UAAnalytics
 
-@synthesize server;
 @synthesize session;
 @synthesize notificationUserInfo = notificationUserInfo_;
 @synthesize connection = connection_;
@@ -78,24 +77,20 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     self.sendTimer = nil;
 }
 
-- (void) dealloc {
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     RELEASE_SAFELY(notificationUserInfo_);
     RELEASE_SAFELY(session);
     RELEASE_SAFELY(connection_);
-    RELEASE_SAFELY(server);
+    self.config = nil;
     RELEASE_SAFELY(lastLocationSendTime);
     [super dealloc];
 }
 
-- (id)initWithOptions:(NSDictionary *)options {
+- (id)initWithConfig:(UAConfig *)airshipConfig {
     if (self = [super init]) {
         //set server to default if not specified in options
-        self.server = [options objectForKey:UAAnalyticsOptionsServerKey];
-
-        if (self.server == nil) {
-            self.server = kAnalyticsProductionServer;
-        }
+        self.config = airshipConfig;
         
         [self resetEventsDatabaseStatus];
         
@@ -138,8 +133,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                  selector:@selector(willResignActive)
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
-        
-        self.notificationUserInfo = [options objectForKey:UAAnalyticsOptionsRemoteNotificationKey];
         
         /*
          * This is the Build field in Xcode. If it's not set, use a blank string.
@@ -417,11 +410,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     else {
         self.notificationUserInfo = userInfo;
     }
-    
+
 }
 
 - (void)addEvent:(UAEvent *)event {
-    if (self.server.length > 0) {
+    if (self.config.analyticsEnabled) {
         UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
         [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
         self.databaseSize += [event getEstimatedSize];
@@ -476,51 +469,65 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 // We send headers on all response codes, so let's set those values before checking for != 200
 // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
-- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response {
+- (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse *)response {
     if ([response allHeaderFields]) {
+        int tmp = 0;
         
-        int tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Total"] intValue] * 1024;//value returned in KB
-        
-        if (tmp > 0) {
+        id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
+        if (maxTotalValue) {
+            tmp = [maxTotalValue intValue] * 1024;//value returned in KB
             
-            if(tmp >= X_UA_MAX_TOTAL) {
+            if (tmp > 0) {
+                
+                if(tmp >= X_UA_MAX_TOTAL) {
+                    x_ua_max_total = X_UA_MAX_TOTAL;
+                } else {
+                    x_ua_max_total = tmp;
+                }
+                
+            } else {
                 x_ua_max_total = X_UA_MAX_TOTAL;
-            } else {
-                x_ua_max_total = tmp;
             }
-            
-        } else {
-            x_ua_max_total = X_UA_MAX_TOTAL;
         }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Batch"] intValue] * 1024;//value return in KB
-        
-        if (tmp > 0) {
+
+        id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
+        if (maxBatchValue) {
+            tmp = [maxBatchValue intValue] * 1024;//value return in KB
             
-            if (tmp >= X_UA_MAX_BATCH) {
+            if (tmp > 0) {
+                
+                if (tmp >= X_UA_MAX_BATCH) {
+                    x_ua_max_batch = X_UA_MAX_BATCH;
+                } else {
+                    x_ua_max_batch = tmp;
+                }
+                
+            } else {
                 x_ua_max_batch = X_UA_MAX_BATCH;
-            } else {
-                x_ua_max_batch = tmp;
             }
+        }
+
+
+        id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
+        if (maxWaitValue) {
+            tmp = [maxWaitValue intValue];
             
-        } else {
-            x_ua_max_batch = X_UA_MAX_BATCH;
+            if (tmp >= X_UA_MAX_WAIT) {
+                x_ua_max_wait = X_UA_MAX_WAIT;
+            } else {
+                x_ua_max_wait = tmp;
+            }
         }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Max-Wait"] intValue];
-        
-        if (tmp >= X_UA_MAX_WAIT) {
-            x_ua_max_wait = X_UA_MAX_WAIT;
-        } else {
-            x_ua_max_wait = tmp;
-        }
-        
-        tmp = [[[response allHeaderFields] objectForKey:@"X-Ua-Min-Batch-Interval"] intValue];
-        
-        if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-            x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-        } else {
-            x_ua_min_batch_interval = tmp;
+
+        id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
+        if (minBatchValue) {
+            tmp = [minBatchValue intValue];
+            
+            if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
+                x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+            } else {
+                x_ua_min_batch_interval = tmp;
+            }
         }
         
         [self saveDefault];
@@ -558,7 +565,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (BOOL)shouldSendAnalytics {
-    if (self.server == nil || [self.server length] == 0) {
+    if (!self.config.analyticsEnabled) {
         UA_LTRACE("Analytics disabled.");
         return NO;
     }
@@ -600,7 +607,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (UAHTTPRequest*)analyticsRequest {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", server, @"/warp9/"];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.analyticsURL, @"/warp9/"];
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     request.compressBody = YES;//enable GZIP
     request.HTTPMethod = @"POST";
@@ -708,7 +715,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
     request.userInfo = events;
     writer.humanReadable = YES;//turn on formatting for debugging
-    UA_LTRACE(@"Sending to server: %@", self.server);
+    UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
     UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
     [writer release];
