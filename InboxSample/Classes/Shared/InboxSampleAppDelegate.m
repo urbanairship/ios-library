@@ -113,7 +113,7 @@
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:@"You can see UAInbox in the simulator, but you will not be able to recieve push notifications"
+                                                            message:@"You can see UAInbox in the simulator, but you will not be able to recieve push notifications."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil];

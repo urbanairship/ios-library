@@ -23,9 +23,17 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AppDelegate_Pad.h"
+#import <UIKit/UIKit.h>
 
-@implementation AppDelegate_Pad
+@interface SampleAppDelegate : NSObject <UIApplicationDelegate> {
+    UIWindow *window;
+    UIViewController *controller;
+}
 
+@property (nonatomic, retain) IBOutlet UIWindow *window;
+@property (nonatomic, retain) IBOutlet UIViewController *controller;
+
+- (void)failIfSimulator;
 
 @end
+

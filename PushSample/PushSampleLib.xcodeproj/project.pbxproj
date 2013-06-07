@@ -27,8 +27,6 @@
 		1890BACB1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */; };
 		1890BACC1251B5E900E6EBF1 /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */; };
 		18A698BF129F679B00757214 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A698BE129F679B00757214 /* Security.framework */; };
-		18C02956124F216B00D49CD5 /* AppDelegate_Pad.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */; };
-		18C02957124F216B00D49CD5 /* AppDelegate_Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */; };
 		18C02958124F216B00D49CD5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
 		18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
 		18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
@@ -92,8 +90,6 @@
 		1FCBB537175A9F7F00F42F07 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */; };
 		1FCBB538175A9F7F00F42F07 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
 		1FCBB539175A9F7F00F42F07 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1FCBB53B175A9F7F00F42F07 /* AppDelegate_Pad.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */; };
-		1FCBB53C175A9F7F00F42F07 /* AppDelegate_Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */; };
 		1FCBB53D175A9F7F00F42F07 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
 		1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
 		1FCBB53F175A9F7F00F42F07 /* UAPushMoreSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */; };
@@ -129,6 +125,7 @@
 		1FCBB61F175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB61E175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m */; };
 		1FCBB622175D175000F42F07 /* UATestPushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB621175D175000F42F07 /* UATestPushDelegate.m */; };
 		1FCBB625175D56C600F42F07 /* UAPushClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB624175D56C600F42F07 /* UAPushClient.m */; };
+		1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
@@ -236,10 +233,6 @@
 		1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsTokenView.xib; sourceTree = "<group>"; };
 		1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UAPushSettingsView.xib; sourceTree = "<group>"; };
 		18A698BE129F679B00757214 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		18C02941124F216B00D49CD5 /* AppDelegate_Pad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Pad.h; sourceTree = "<group>"; };
-		18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Pad.m; sourceTree = "<group>"; };
-		18C02944124F216B00D49CD5 /* AppDelegate_Phone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Phone.h; sourceTree = "<group>"; };
-		18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Phone.m; sourceTree = "<group>"; };
 		18C02947124F216B00D49CD5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/Shared/main.m; sourceTree = "<group>"; };
 		18C02948124F216B00D49CD5 /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		18C02949124F216B00D49CD5 /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
@@ -286,6 +279,8 @@
 		1FCBB621175D175000F42F07 /* UATestPushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestPushDelegate.m; sourceTree = "<group>"; };
 		1FCBB623175D56C600F42F07 /* UAPushClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushClient.h; sourceTree = "<group>"; };
 		1FCBB624175D56C600F42F07 /* UAPushClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushClient.m; sourceTree = "<group>"; };
+		1FCBB64E176237BA00F42F07 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
+		1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
@@ -496,34 +491,16 @@
 		18C0293F124F216B00D49CD5 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				18C02940124F216B00D49CD5 /* iPad */,
-				18C02943124F216B00D49CD5 /* iPhone */,
 				18C02946124F216B00D49CD5 /* Shared */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		18C02940124F216B00D49CD5 /* iPad */ = {
-			isa = PBXGroup;
-			children = (
-				18C02941124F216B00D49CD5 /* AppDelegate_Pad.h */,
-				18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */,
-			);
-			path = iPad;
-			sourceTree = "<group>";
-		};
-		18C02943124F216B00D49CD5 /* iPhone */ = {
-			isa = PBXGroup;
-			children = (
-				18C02944124F216B00D49CD5 /* AppDelegate_Phone.h */,
-				18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */,
-			);
-			path = iPhone;
-			sourceTree = "<group>";
-		};
 		18C02946124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1FCBB64E176237BA00F42F07 /* SampleAppDelegate.h */,
+				1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */,
 				18C02948124F216B00D49CD5 /* SampleViewController.h */,
 				18C02949124F216B00D49CD5 /* SampleViewController.m */,
 			);
@@ -999,8 +976,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18C02956124F216B00D49CD5 /* AppDelegate_Pad.m in Sources */,
-				18C02957124F216B00D49CD5 /* AppDelegate_Phone.m in Sources */,
 				18C02958124F216B00D49CD5 /* main.m in Sources */,
 				18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */,
 				1890BABE1251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m in Sources */,
@@ -1015,6 +990,7 @@
 				BB935D9D152B5E9C006E6A92 /* UALocationDemoAnnotation.m in Sources */,
 				BB935D9E152B5E9C006E6A92 /* UALocationSettingsViewController.m in Sources */,
 				BB935D9F152B5E9C006E6A92 /* UAMapPresentationController.m in Sources */,
+				1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1022,8 +998,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FCBB53B175A9F7F00F42F07 /* AppDelegate_Pad.m in Sources */,
-				1FCBB53C175A9F7F00F42F07 /* AppDelegate_Phone.m in Sources */,
 				1FCBB53D175A9F7F00F42F07 /* main.m in Sources */,
 				1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */,
 				1FCBB53F175A9F7F00F42F07 /* UAPushMoreSettingsViewController.m in Sources */,

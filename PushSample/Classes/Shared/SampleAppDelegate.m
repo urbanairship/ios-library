@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AppDelegate_Phone.h"
+#import "SampleAppDelegate.h"
 
 #import "UAConfig.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
 
-@implementation AppDelegate_Phone
+@implementation SampleAppDelegate
 
 @synthesize window;
 @synthesize controller;
@@ -111,7 +111,7 @@
 }
 
 - (void)failIfSimulator {
-    if ([[[UIDevice currentDevice] model] compare:@"iPhone Simulator"] == NSOrderedSame) {
+    if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You will not be able to recieve push notifications in the simulator."
                                                            delegate:self
