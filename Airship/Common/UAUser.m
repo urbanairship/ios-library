@@ -180,8 +180,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 /*
  saveUserData - Saves all the existing password and username data to disk.
- It then calls updateUserState to make sure the proper state is selected
- and then notifies all observers.
  */
 - (void)saveUserData {
         

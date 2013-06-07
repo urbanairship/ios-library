@@ -51,6 +51,5 @@ extern NSString * const UAUserCreatedNotification;
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword;
 
 - (void)initializeUser;
-- (void)loadUser;
 
 @end
