@@ -1,12 +1,12 @@
 
 #import "UAUserTest.h"
 #import "UAUser.h"
-#import "UAirship.h"
+#import "UAirship+Test.h"
+#import <OCMock/OCMock.h>
+#import <OCMock/OCMConstraint.h>
 
 @interface UAUserTest()
-
 @property(nonatomic, retain) UAUser *user;
-
 @end
 
 @implementation UAUserTest
@@ -14,12 +14,15 @@
 - (void)setUp {
     [super setUp];
     self.user = [UAUser defaultUser];
-    [UAirship takeOff:nil];
+    id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[mockAirship stub] andReturn:@"9Q1tVTl0RF16baYKYp8HPQ"] appId];
+    [UAirship configure:mockAirship];
     // Set-up code here.
 }
 
 - (void)tearDown {
     // Tear-down code here.
+    [UAirship reset];
     [super tearDown];
 }
 
