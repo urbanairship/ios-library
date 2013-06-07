@@ -32,20 +32,17 @@
 
 @implementation SampleAppDelegate
 
-@synthesize window;
-@synthesize controller;
-
 - (void)dealloc {
-    [controller release];
-    [window release];
+    self.controller = nil;
+    self.window = nil;
     [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Override point for customization after application launch
-    [window addSubview:controller.view];
-    [window makeKeyAndVisible];
+    [self.window setRootViewController:_controller];
+    [self.window makeKeyAndVisible];
     
     // Display a UIAlertView warning developers that push notifications do not work in the simulator
     // You should remove this in your app.
@@ -112,14 +109,18 @@
 
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
+        UIAlertView *someError = [[[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You will not be able to recieve push notifications in the simulator."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                                                  otherButtonTitles:nil] autorelease];
 
-        [someError show];
-        [someError release];
+        // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
+        // Delay execution of the block for 1/2 second.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_current_queue(), ^{
+            [someError show];
+        });
+
     }
 }
 
