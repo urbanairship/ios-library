@@ -7,7 +7,7 @@ typedef void (^UAInboxClientSuccessBlock)(void);
 typedef void (^UAInboxClientRetrievalSuccessBlock)(NSMutableArray *messages, NSInteger unread);
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 
-@interface UAInboxClient : NSObject
+@interface UAInboxAPIClient : NSObject
 
 - (void)markMessageRead:(UAInboxMessage *)message
                      onSuccess:(UAInboxClientSuccessBlock)successBlock

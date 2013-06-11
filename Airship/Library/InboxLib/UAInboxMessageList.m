@@ -26,7 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessageList.h"
 
 #import "UAirship.h"
-#import "UAInboxClient.h"
+#import "UAInboxAPIClient.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager.h"
 #import "UAUtils.h"
@@ -41,7 +41,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadSavedMessages;
 
-@property(nonatomic, retain) UAInboxClient *client;
+@property(nonatomic, retain) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
 
 @end
@@ -79,7 +79,7 @@ static UAInboxMessageList *_messageList = nil;
             _messageList.unreadCount = -1;
             _messageList.isBatchUpdating = NO;
 
-            _messageList.client = [[[UAInboxClient alloc] init] autorelease];
+            _messageList.client = [[[UAInboxAPIClient alloc] init] autorelease];
         }
     }
     

@@ -1,5 +1,5 @@
 
-#import "UAInboxClient.h"
+#import "UAInboxAPIClient.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAHTTPRequestEngine.h"
@@ -9,13 +9,13 @@
 #import "UAUtils.h"
 #import "UA_SBJSON.h"
 
-@interface UAInboxClient()
+@interface UAInboxAPIClient()
 
 @property(nonatomic, retain) UAHTTPRequestEngine *requestEngine;
 
 @end
 
-@implementation UAInboxClient
+@implementation UAInboxAPIClient
 
 - (id)init {
     if (self = [super init]) {

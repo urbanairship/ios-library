@@ -27,7 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAirship.h"
 #import "UAInbox.h"
-#import "UAInboxClient.h"
+#import "UAInboxAPIClient.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
@@ -42,7 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)requestWentWrong:(UAHTTPRequest *)request;
 - (void)markAsReadFailed:(UAHTTPRequest *)request;
 
-@property(nonatomic, retain) UAInboxClient *client;
+@property(nonatomic, retain) UAInboxAPIClient *client;
 
 @end
 
@@ -85,7 +85,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.title = [message objectForKey: @"title"];
         self.extra = [message objectForKey: @"extra"];
 
-        self.client = [[[UAInboxClient alloc] init] autorelease];
+        self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }
 
     return self;
