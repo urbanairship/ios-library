@@ -41,8 +41,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadSavedMessages;
 
-- (void)requestWentWrong:(UAHTTPRequest *)request;
-
 @property(nonatomic, retain) UAInboxClient *client;
 
 @end
@@ -132,14 +130,14 @@ static UAInboxMessageList *_messageList = nil;
         [self notifyObservers:@selector(messageListLoaded)];
 
     } onFailure:^(UAHTTPRequest *request){
-        [self requestWentWrong:request];
+        UA_LDEBUG(@"Retrieve message list failed with status: %d", request.response.statusCode);
         [self notifyObservers:@selector(inboxLoadFailed)];
     }];
 }
 
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
 
-    if (command != UABatchDeleteMessages || command != UABatchReadMessages) {
+    if (command != UABatchDeleteMessages && command != UABatchReadMessages) {
         UA_LERR(@"command=%d is invalid.", command);
         return;
     }
@@ -173,18 +171,13 @@ static UAInboxMessageList *_messageList = nil;
              [self notifyObservers:@selector(batchMarkAsReadFinished)];
          }
      } onFailure:^(UAHTTPRequest *request){
-         UA_LDEBUG(@"Server error during batch update messages");
-         [self requestWentWrong:request];
+         UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
          if (command == UABatchDeleteMessages) {
              [self notifyObservers:@selector(batchDeleteFailed)];
          } else if (command == UABatchReadMessages) {
              [self notifyObservers:@selector(batchMarkAsReadFailed)];
          }
      }];
-}
-
-- (void)requestWentWrong:(UAHTTPRequest *)request {
-    UALOG(@"Inbox Message List Request Failed: %@", [request.error localizedDescription]);
 }
 
 #pragma mark -

@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAirship.h"
 #import "UAInbox.h"
+#import "UAInboxClient.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
@@ -134,9 +135,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark Mark As Read Delegate Methods
 
 - (void)requestWentWrong:(UAHTTPRequest *)request {
-    NSError *error = [request error];
-    UALOG(@"Connection ERROR: NSError query result: %@ for URL: %@",
-          error, [request.url absoluteString]);
+    UA_LDEBUG(@"Mark as read failed with status: %d", request.response.statusCode);
     inbox.isBatchUpdating = NO;
 }
 
