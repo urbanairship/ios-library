@@ -65,14 +65,7 @@ static UAInboxMessageList *_messageList = nil;
 + (void)land {
     if (_messageList) {
         if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
-            //TODO: address - MARC
-
-
-
-            UALOG(@"Force quit now may cause crash if UA_ASIRequest is alive.");
-
-            //[[UA_ASIHTTPRequest sharedQueue] cancelAllOperations];
-            //TODO: cancel everything
+            _messageList.client = nil;
         }
         RELEASE_SAFELY(_messageList);
     }
