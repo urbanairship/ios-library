@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)loadSavedMessages;
 
 @property(nonatomic, retain) UAInboxClient *client;
+@property(nonatomic, assign) BOOL isRetrieving;
 
 @end
 
@@ -115,11 +116,14 @@ static UAInboxMessageList *_messageList = nil;
 	}
 
     [self notifyObservers: @selector(messageListWillLoad)];
-
     [self loadSavedMessages];
 
+    self.isRetrieving = YES;
+
     [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSInteger unread){
-        
+
+        self.isRetrieving = NO;
+
         [[UAInboxDBManager shared] deleteMessages:messages];
         [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
         self.messages = newMessages;
@@ -128,8 +132,9 @@ static UAInboxMessageList *_messageList = nil;
 
         UALOG(@"after retrieveMessageList, messages: %@", messages);
         [self notifyObservers:@selector(messageListLoaded)];
-
     } onFailure:^(UAHTTPRequest *request){
+        self.isRetrieving = NO;
+
         UA_LDEBUG(@"Retrieve message list failed with status: %d", request.response.statusCode);
         [self notifyObservers:@selector(inboxLoadFailed)];
     }];
@@ -171,6 +176,8 @@ static UAInboxMessageList *_messageList = nil;
              [self notifyObservers:@selector(batchMarkAsReadFinished)];
          }
      } onFailure:^(UAHTTPRequest *request){
+         self.isBatchUpdating = NO;
+
          UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
          if (command == UABatchDeleteMessages) {
              [self notifyObservers:@selector(batchDeleteFailed)];
