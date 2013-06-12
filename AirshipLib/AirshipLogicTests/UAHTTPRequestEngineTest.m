@@ -81,14 +81,14 @@
 /* tests */
 
 - (void)testDefaults {
-    STAssertEquals(self.engine.maxConcurrentRequests, kUARequestEngineDefaultMaxConcurrentRequests, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.initialDelayIntervalInSeconds, kUARequestEngineDefaultInitialDelayIntervalSeconds, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.maxDelayIntervalInSeconds, kUARequestEngineDefaultMaxDelayIntervalSeconds, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.backoffFactor, kUARequestEngineDefaultBackoffFactor, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.maxConcurrentRequests, (NSUInteger)kUARequestEngineDefaultMaxConcurrentRequests, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.initialDelayIntervalInSeconds, (NSUInteger)kUARequestEngineDefaultInitialDelayIntervalSeconds, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.maxDelayIntervalInSeconds, (NSUInteger)kUARequestEngineDefaultMaxDelayIntervalSeconds, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.backoffFactor, (NSUInteger)kUARequestEngineDefaultBackoffFactor, @"default value should be set to preprocessor constant");
 }
 
 - (void)testMaxConcurrentRequests {
-    STAssertEquals(self.engine.maxConcurrentRequests, self.engine.queue.maxConcurrentOperationCount, @"max concurrent requests is constrained by the concurrent operation count of the queue");
+    STAssertEquals(self.engine.maxConcurrentRequests, (NSUInteger)self.engine.queue.maxConcurrentOperationCount, @"max concurrent requests is constrained by the concurrent operation count of the queue");
 }
 
 - (void)testInitialDelayInterval {
