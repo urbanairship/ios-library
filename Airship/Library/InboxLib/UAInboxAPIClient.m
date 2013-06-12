@@ -84,7 +84,7 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToPerformBatchReadForMessages:(NSArray *)messages {
+- (UAHTTPRequest *)requestToPerformBatchMarkReadForMessages:(NSArray *)messages {
     NSURL *requestUrl;
     NSDictionary *data;
     NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
@@ -173,24 +173,33 @@
       }];
 }
 
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                      forMessages:(NSArray *)messages
-                         onSuccess:(UAInboxClientSuccessBlock)successBlock
-                        onFailure:(UAInboxClientFailureBlock)failureBlock  {
+- (void)performBatchDeleteForMessages:(NSArray *)messages
+                            onSuccess:(UAInboxClientSuccessBlock)successBlock
+                            onFailure:(UAInboxClientFailureBlock)failureBlock {
 
-    UAHTTPRequest *batchUpdateRequest;
-
-    if (command == UABatchDeleteMessages) {
-        batchUpdateRequest = [self requestToPerformBatchDeleteForMessages:messages];
-    } else if (command == UABatchReadMessages) {
-        batchUpdateRequest = [self requestToPerformBatchReadForMessages:messages];
-    } else {
-        UA_LERR(@"command=%d is invalid.", command);
-        return;
-    }
+    UAHTTPRequest *batchDeleteRequest = [self requestToPerformBatchDeleteForMessages:messages];
 
     [self.requestEngine
-     runRequest:batchUpdateRequest
+     runRequest:batchDeleteRequest
+     succeedWhere:^(UAHTTPRequest *request){
+         return (BOOL)(request.response.statusCode == 200);
+     } retryWhere:^(UAHTTPRequest *request){
+         return NO;
+     } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay){
+         successBlock();
+     } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay){
+         failureBlock(request);
+     }];
+}
+
+- (void)performBatchMarkAsReadForMessages:(NSArray *)messages
+                                onSuccess:(UAInboxClientSuccessBlock)successBlock
+                                onFailure:(UAInboxClientFailureBlock)failureBlock {
+
+    UAHTTPRequest *batchMarkAsReadRequest = [self requestToPerformBatchMarkReadForMessages:messages];
+
+    [self.requestEngine
+     runRequest:batchMarkAsReadRequest
      succeedWhere:^(UAHTTPRequest *request){
          return (BOOL)(request.response.statusCode == 200);
      } retryWhere:^(UAHTTPRequest *request){

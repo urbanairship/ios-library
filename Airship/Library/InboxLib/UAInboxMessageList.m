@@ -136,48 +136,52 @@ static UAInboxMessageList *_messageList = nil;
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
 
     if (command != UABatchDeleteMessages && command != UABatchReadMessages) {
-        UA_LERR(@"command=%d is invalid.", command);
+        UA_LINFO(@"command=%d is invalid.", command);
         return;
     }
 
     NSArray *updateMessageArray = [messages objectsAtIndexes:messageIndexSet];
-    
+
     self.isBatchUpdating = YES;
     [self notifyObservers: @selector(messageListWillLoad)];
 
-    [self.client
-     performBatchUpdateCommand:command
-     forMessages:updateMessageArray
-     onSuccess:^{
-         self.isBatchUpdating = NO;
+    void (^succeed)(void) = ^{
+        self.isBatchUpdating = NO;
+        for (UAInboxMessage *msg in updateMessageArray) {
+            if (msg.unread) {
+                msg.unread = NO;
+                self.unreadCount -= 1;
+            }
+        }
+    };
 
-         for (UAInboxMessage *msg in updateMessageArray) {
-             if (msg.unread) {
-                 msg.unread = NO;
-                 self.unreadCount -= 1;
-             }
-         }
+    void (^fail)(UAHTTPRequest *) = ^(UAHTTPRequest *request){
+        self.isBatchUpdating = NO;
+        UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
+    };
 
-         if (command == UABatchDeleteMessages) {
-             [messages removeObjectsInArray:updateMessageArray];
-             // TODO: add delete to sync
-             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
-             [self notifyObservers:@selector(batchDeleteFinished)];
+    if (command == UABatchDeleteMessages) {
+        [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
+            succeed();
+            [messages removeObjectsInArray:updateMessageArray];
+            // TODO: add delete to sync
+            [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
+            [self notifyObservers:@selector(batchDeleteFinished)];
+        }onFailure:^(UAHTTPRequest *request){
+            fail(request);
+            [self notifyObservers:@selector(batchDeleteFailed)];
+        }];
 
-         } else if (command == UABatchReadMessages) {
-             [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
-             [self notifyObservers:@selector(batchMarkAsReadFinished)];
-         }
-     } onFailure:^(UAHTTPRequest *request){
-         self.isBatchUpdating = NO;
-
-         UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
-         if (command == UABatchDeleteMessages) {
-             [self notifyObservers:@selector(batchDeleteFailed)];
-         } else if (command == UABatchReadMessages) {
-             [self notifyObservers:@selector(batchMarkAsReadFailed)];
-         }
-     }];
+    } else if (command == UABatchReadMessages) {
+        [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
+            succeed();
+            [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+            [self notifyObservers:@selector(batchMarkAsReadFinished)];
+        }onFailure:^(UAHTTPRequest *request){
+            fail(request);
+            [self notifyObservers:@selector(batchMarkAsReadFailed)];
+        }];
+    }
 }
 
 #pragma mark -

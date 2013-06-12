@@ -33,17 +33,27 @@ typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
                            onFailure:(UAInboxClientFailureBlock)failureBlock;
 
 /**
- * Performs a batch update request on the server.
+ * Performs a batch delete request on the server.
  *
- * @param command The batch update command to be executed.
- * @param messages An NSArray of messages to be updated.
+ * @param messages An NSArray of messages to be deleted.
  * @param successBlock A block to be executed when the call completes successfully.
  * @param failureBlock A block to be executed if the call fails.
  */
 
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-                      forMessages:(NSArray *)messages
+- (void)performBatchDeleteForMessages:(NSArray *)messages
                          onSuccess:(UAInboxClientSuccessBlock)successBlock
+                        onFailure:(UAInboxClientFailureBlock)failureBlock;
+
+/**
+ * Performs a batch mark-as-read request on the server.
+ *
+ * @param messages An NSArray of messages to be marked as read.
+ * @param successBlock A block to be executed when the call completes successfully.
+ * @param failureBlock A block to be executed if the call fails.
+ */
+
+- (void)performBatchMarkAsReadForMessages:(NSArray *)messages
+                        onSuccess:(UAInboxClientSuccessBlock)successBlock
                         onFailure:(UAInboxClientFailureBlock)failureBlock;
 
 @end
