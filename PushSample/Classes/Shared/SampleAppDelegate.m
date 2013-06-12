@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,29 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "AppDelegate_Phone.h"
+#import "SampleAppDelegate.h"
 
 #import "UAConfig.h"
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
 
-@implementation AppDelegate_Phone
-
-@synthesize window;
-@synthesize controller;
+@implementation SampleAppDelegate
 
 - (void)dealloc {
-    [controller release];
-    [window release];
+    self.controller = nil;
+    self.window = nil;
     [super dealloc];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // Override point for customization after application launch
-    [window addSubview:controller.view];
-    [window makeKeyAndVisible];
+    [self.window setRootViewController:_controller];
+    [self.window makeKeyAndVisible];
     
     // Display a UIAlertView warning developers that push notifications do not work in the simulator
     // You should remove this in your app.
@@ -111,15 +108,19 @@
 }
 
 - (void)failIfSimulator {
-    if ([[[UIDevice currentDevice] model] compare:@"iPhone Simulator"] == NSOrderedSame) {
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
+    if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
+        UIAlertView *someError = [[[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You will not be able to recieve push notifications in the simulator."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
+                                                  otherButtonTitles:nil] autorelease];
 
-        [someError show];
-        [someError release];
+        // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
+        // Delay execution of the block for 1/2 second.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_current_queue(), ^{
+            [someError show];
+        });
+
     }
 }
 
