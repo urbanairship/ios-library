@@ -4,7 +4,7 @@
 #import "UAInboxMessageList.h"
 
 typedef void (^UAInboxClientSuccessBlock)(void);
-typedef void (^UAInboxClientRetrievalSuccessBlock)(NSMutableArray *messages, NSInteger unread);
+typedef void (^UAInboxClientRetrievalSuccessBlock)(NSMutableArray *messages, NSUInteger unread);
 typedef void (^UAInboxClientFailureBlock)(UAHTTPRequest *request);
 
 /**

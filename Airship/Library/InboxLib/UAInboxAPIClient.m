@@ -43,10 +43,10 @@
 
 - (UAHTTPRequest *)requestToRetrieveMessageList {
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
-                           [[UAirship shared] server], @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
+                           [UAirship shared].server, @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
 
 
-    UALOG(@"%@",urlString);
+    UA_LDEBUG(@"%@",urlString);
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
@@ -66,13 +66,12 @@
                            [UAUser defaultUser].username,
                            @"/messages/delete/"];
     requestUrl = [NSURL URLWithString:urlString];
-    UALOG(@"batch delete url: %@", requestUrl);
+    UA_LDEBUG(@"batch delete url: %@", requestUrl);
 
-    data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"delete"];
+    data = @{@"delete" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString* body = [writer stringWithObject:data];
-    [writer release];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
                                                         method:@"POST"];
@@ -96,13 +95,12 @@
                            [UAUser defaultUser].username,
                            @"/messages/unread/"];
     requestUrl = [NSURL URLWithString:urlString];
-    UALOG(@"batch mark as read url: %@", requestUrl);
+    UA_LDEBUG(@"batch mark as read url: %@", requestUrl);
 
-    data = [NSDictionary dictionaryWithObject:updateMessageURLs forKey:@"mark_as_read"];
+    data = @{@"mark_as_read" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
+    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString* body = [writer stringWithObject:data];
-    [writer release];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
                                                         method:@"POST"];
@@ -126,9 +124,9 @@
         return (BOOL)(request.response.statusCode == 200);
      } retryWhere:^(UAHTTPRequest *request){
         return NO;
-     } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
         successBlock();
-     } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
         failureBlock(request);
      }];
 }
@@ -144,10 +142,10 @@
           return (BOOL)(request.response.statusCode == 200);
       } retryWhere:^(UAHTTPRequest *request){
           return NO;
-      } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay){
+      } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
           UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-          NSDictionary *jsonResponse = [parser objectWithString: [request responseString]];
-          UALOG(@"Retrieved Messages: %@", [request responseString]);
+          NSDictionary *jsonResponse = [parser objectWithString:request.responseString];
+          UA_LDEBUG(@"Retrieved Messages: %@", request.responseString);
 
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];
@@ -165,10 +163,10 @@
               [newMessages sortUsingDescriptors:sortDescriptors];
           }
 
-          NSInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
+          NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
           successBlock(newMessages, unread);
-      } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay){
+      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
           failureBlock(request);
       }];
 }
@@ -185,9 +183,9 @@
          return (BOOL)(request.response.statusCode == 200);
      } retryWhere:^(UAHTTPRequest *request){
          return NO;
-     } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
          successBlock();
-     } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
          failureBlock(request);
      }];
 }
@@ -204,9 +202,9 @@
          return (BOOL)(request.response.statusCode == 200);
      } retryWhere:^(UAHTTPRequest *request){
          return NO;
-     } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
          successBlock();
-     } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay){
+     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
          failureBlock(request);
      }];
 }

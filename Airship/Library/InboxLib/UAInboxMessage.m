@@ -154,7 +154,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
-             [inbox setUnreadCount:(inbox.unreadCount - 1)];
+             inbox.unreadCount = inbox.unreadCount - 1;
              self.unread = NO;
              [[UAInboxDBManager shared] updateMessageAsRead:self];
          }

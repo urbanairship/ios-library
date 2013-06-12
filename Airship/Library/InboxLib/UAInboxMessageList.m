@@ -102,7 +102,7 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)retrieveMessageList {
     
-	if(![[UAUser defaultUser] defaultUserCreated]) {
+	if(![UAUser defaultUser].defaultUserCreated) {
 		UALOG("Waiting for User Update message to retrieveMessageList");
 		[[UAUser defaultUser] addObserver:self];
 		return;
@@ -113,12 +113,12 @@ static UAInboxMessageList *_messageList = nil;
 
     self.isRetrieving = YES;
 
-    [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSInteger unread){
+    [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
 
         self.isRetrieving = NO;
 
         [[UAInboxDBManager shared] deleteMessages:messages];
-        [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
+        [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].appId];
         self.messages = newMessages;
 
         unreadCount = unread;
