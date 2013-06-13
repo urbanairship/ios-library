@@ -185,6 +185,13 @@
 			remoteGlobalIDString = AAB07268139719AC008AF393;
 			remoteInfo = KIF;
 		};
+		7681EF62176A5179004EA765 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AAB07267139719AC008AF393;
+			remoteInfo = KIF;
+		};
 		7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
@@ -725,6 +732,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7681EF63176A5179004EA765 /* PBXTargetDependency */,
 				1FCBB512175A9F7F00F42F07 /* PBXTargetDependency */,
 			);
 			name = PushSampleKIF;
@@ -1047,6 +1055,11 @@
 			isa = PBXTargetDependency;
 			name = AirshipLib;
 			targetProxy = 1FCBB513175A9F7F00F42F07 /* PBXContainerItemProxy */;
+		};
+		7681EF63176A5179004EA765 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KIF;
+			targetProxy = 7681EF62176A5179004EA765 /* PBXContainerItemProxy */;
 		};
 		BBEFB02A1507F4AC00976645 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
