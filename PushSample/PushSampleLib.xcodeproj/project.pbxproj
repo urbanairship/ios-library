@@ -309,6 +309,7 @@
 		BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
+		CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIF-Info.plist"; sourceTree = "<group>"; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5C75CB312BC24150041239E /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
@@ -612,6 +613,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
 				18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */,
 				1890B9111251B5E900E6EBF1 /* Airship */,
 				18C0293F124F216B00D49CD5 /* Classes */,
