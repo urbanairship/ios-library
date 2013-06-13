@@ -150,6 +150,7 @@
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
+		CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		D5A3F63512C15636009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
 		D5A3F63712C15644009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63612C15644009731BE /* iTunesArtwork */; };
 		D5C75CB712BC24150041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB312BC24150041239E /* Icon-72.png */; };
@@ -267,7 +268,6 @@
 		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
 		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
 		1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushSampleKIF.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1FCBB560175A9F7F00F42F07 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PushSampleKIF-Info.plist"; path = "/Users/jeff/UrbanAirship/code/git/ios-library/PushSample/PushSampleKIF-Info.plist"; sourceTree = "<absolute>"; };
 		1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KIF.xcodeproj; path = FunctionalTests/Frameworks/KIF/KIF.xcodeproj; sourceTree = "<group>"; };
 		1FCBB617175AA3D400F42F07 /* UATestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestingDelegate.h; sourceTree = "<group>"; };
 		1FCBB618175AA3D400F42F07 /* UATestingDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestingDelegate.m; sourceTree = "<group>"; };
@@ -621,7 +621,6 @@
 				1FCBB56A175AA35C00F42F07 /* FunctionalTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				1FCBB560175A9F7F00F42F07 /* PushSampleKIF-Info.plist */,
 				1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */,
 			);
 			name = CustomTemplate;
@@ -998,6 +997,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */,
 				1FCBB53D175A9F7F00F42F07 /* main.m in Sources */,
 				1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */,
 				1FCBB53F175A9F7F00F42F07 /* UAPushMoreSettingsViewController.m in Sources */,
