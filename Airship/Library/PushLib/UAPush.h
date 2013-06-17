@@ -69,35 +69,36 @@
 @optional
 
 /**
- * Called when an alert notification is received.
+ * Called when an alert notification is received in the foreground.
  * @param alertMessage a simple string to be displayed as an alert
  */
 - (void)displayNotificationAlert:(NSString *)alertMessage;
 
 /**
- * Called when an alert notification is received with additional localization info.
+ * Called when an alert notification is received in the foreground with additional localization info.
  * @param alertDict a dictionary containing the alert and localization info
  */
 - (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict;
 
 /**
- * Called when a push notification is received with a sound associated
+ * Called when a push notification is received in the foreground with a sound associated
  * @param sound the sound to play
  */
 - (void)playNotificationSound:(NSString *)sound;
 
-/**
- * Called when a push notification is received with a custom payload
- * @param notification basic information about the notification
- * @param customPayload user-defined custom payload
- */
-- (void)handleNotification:(NSDictionary *)notification withCustomPayload:(NSDictionary *)customPayload;
 
 /**
- * Called when a push notification is received with a badge number
+ * Called when a push notification is received in the foreground with a badge number.
  * @param badgeNumber The badge number to display
  */
 - (void)handleBadgeUpdate:(int)badgeNumber;
+
+/**
+ * Called when a push notification is received while the app is running in the foreground
+ * @param notification basic information about the notification
+ */
+- (void)receivedForegroundNotification:(NSDictionary *)notification;
+
 
 /**
  * Called when the app is started or resumed because a user opened a notification.

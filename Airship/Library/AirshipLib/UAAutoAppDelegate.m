@@ -47,10 +47,8 @@
 
     UA_LINFO(@"Received remote notification: %@", userInfo);
 
-    // Send the alert to UA so that it can be handled and tracked as a direct response. This call
-    // is required.
+    // Fire the handlers for both regular and rich push
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-
     [UAInboxPushHandler handleNotification:userInfo];
 }
 

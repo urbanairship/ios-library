@@ -452,6 +452,8 @@ static Class _uiClass;
             [delegate launchedFromNotification:notification];
         return;
     }
+
+    UA_LDEBUG(@"Received a notification for a foregrounded application.");
     
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
 	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
@@ -495,27 +497,11 @@ static Class _uiClass;
         
 	}//aps
 
-    //TODO: figure out how to handle foreground notifications
-
-	// Now remove all the UA and Apple payload items
-	NSMutableDictionary *customPayload = [[notification mutableCopy] autorelease];
-
-	if([[customPayload allKeys] containsObject:@"aps"]) {
-		[customPayload removeObjectForKey:@"aps"];
-	}
-	if([[customPayload allKeys] containsObject:@"_uamid"]) {
-		[customPayload removeObjectForKey:@"_uamid"];
-	}
-	if([[customPayload allKeys] containsObject:@"_"]) {
-		[customPayload removeObjectForKey:@"_"];
-	}
-	
-	// If any top level items remain, those are custom payload, pass it to the handler
-	// Note: There is some convenience built into this check, if for some reason there's a key collision
-	//	and we're stripping yours above, it's safe to remove this conditional
-	if([[customPayload allKeys] count] > 0 && [delegate respondsToSelector:@selector(handleNotification:withCustomPayload:)]) {
-		[delegate handleNotification:notification withCustomPayload:customPayload];
+	// 
+	if([delegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
+		[delegate receivedForegroundNotification:notification];
     }
+    
 }
 
 + (NSString *)pushTypeString:(UIRemoteNotificationType)types {
@@ -651,11 +637,6 @@ static Class _uiClass;
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
-}
-
-- (void)unRegisterDeviceToken {
-    //the setter will implicitly update registration on its own
-    self.pushEnabled = NO;
 }
 
 #pragma mark -
