@@ -103,7 +103,7 @@
  * Called when the app is started or resumed because a user opened a notification.
  * @param notification the push notification
  */
-- (void)handleBackgroundNotification:(NSDictionary *)notification;
+- (void)launchedFromNotification:(NSDictionary *)notification;
 @end
 
 /**

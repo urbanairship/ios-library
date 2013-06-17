@@ -443,13 +443,13 @@ static Class _uiClass;
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
     
-    [[UAirship shared].analytics handleNotification:notification];
-        
+    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
+
     if (state != UIApplicationStateActive) {
         UA_LDEBUG(@"Received a notification for an inactive application state.");
         
-        if ([delegate respondsToSelector:@selector(handleBackgroundNotification:)])
-            [delegate handleBackgroundNotification:notification];
+        if ([delegate respondsToSelector:@selector(launchedFromNotification:)])
+            [delegate launchedFromNotification:notification];
         return;
     }
     
@@ -480,7 +480,7 @@ static Class _uiClass;
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
             
-			if(self.autobadgeEnabled) {
+			if (self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
 				[delegate handleBadgeUpdate:[badgeNumber intValue]];
@@ -494,10 +494,12 @@ static Class _uiClass;
 		}
         
 	}//aps
-    
+
+    //TODO: figure out how to handle foreground notifications
+
 	// Now remove all the UA and Apple payload items
 	NSMutableDictionary *customPayload = [[notification mutableCopy] autorelease];
-	
+
 	if([[customPayload allKeys] containsObject:@"aps"]) {
 		[customPayload removeObjectForKey:@"aps"];
 	}

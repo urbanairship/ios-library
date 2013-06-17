@@ -74,7 +74,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
 - (id)initWithConfig:(UAConfig *)airshipConfig;
 - (void)addEvent:(UAEvent *)event;
-- (void)handleNotification:(NSDictionary *)userInfo;
+- (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState;
 
 /** This class contains an NSTimer. This timer must be invalidated before
  this class is released, or there will be a memory leak. Call invalidate
