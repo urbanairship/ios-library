@@ -27,18 +27,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAirship.h"
 #import "UAInbox.h"
+#import "UAInboxAPIClient.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
 #import "UAUtils.h"
+#import "UAGlobal.h"
 
 /*
  * Private methods
  */
 @interface UAInboxMessage()
+
 - (void)requestWentWrong:(UAHTTPRequest *)request;
-- (void)markAsReadFinished:(UAHTTPRequest *)request;
 - (void)markAsReadFailed:(UAHTTPRequest *)request;
+
+@property(nonatomic, retain) UAInboxAPIClient *client;
+
 @end
 
 /*
@@ -79,6 +84,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         self.title = [message objectForKey: @"title"];
         self.extra = [message objectForKey: @"extra"];
+
+        self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }
 
     return self;
@@ -92,6 +99,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     RELEASE_SAFELY(messageSent);
     RELEASE_SAFELY(title);
     RELEASE_SAFELY(extra);
+    self.client = nil;
     [super dealloc];
 }
 
@@ -127,9 +135,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark Mark As Read Delegate Methods
 
 - (void)requestWentWrong:(UAHTTPRequest *)request {
-    NSError *error = [request error];
-    UALOG(@"Connection ERROR: NSError query result: %@ for URL: %@",
-          error, [request.url absoluteString]);
+    UA_LDEBUG(@"Mark as read failed with status: %d", request.response.statusCode);
     inbox.isBatchUpdating = NO;
 }
 
@@ -145,45 +151,22 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     inbox.isBatchUpdating = YES;
 
-    NSString *urlString = [NSString stringWithFormat: @"%@%@", self.messageURL, @"read/"];
-    NSURL *url = [NSURL URLWithString: urlString];
-    UALOG(@"MARK AS READ %@", urlString);
-    
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:url method:@"POST"];
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
-                                                                  delegate:self
-                                                                   success:@selector(markAsReadFinished:)
-                                                                   failure:@selector(markAsReadFailed:)];
-    [connection start];
+    [self.client
+     markMessageRead:self onSuccess:^{
+         if (self.unread) {
+             inbox.unreadCount = inbox.unreadCount - 1;
+             self.unread = NO;
+             [[UAInboxDBManager shared] updateMessageAsRead:self];
+         }
+
+         inbox.isBatchUpdating = NO;
+         [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+
+     }onFailure:^(UAHTTPRequest *request){
+         [self markAsReadFailed:request];
+     }];
 
     return YES;
-}
-
-- (void)markAsReadFinished:(UAHTTPRequest *)request {
-    
-    if ([request.response statusCode] != 200) {
-        
-        UALOG(@"Server error when setting message as read, response: %d - %@",
-              [request.response statusCode],
-              request.responseString);
-        [self markAsReadFailed:request];
-        
-    } else {
-        UALOG(@"Finished: %@ - %d - %@", [[request url] absoluteString],
-              [request.response statusCode],
-              request.responseString);
-        
-        if (self.unread) {
-            
-            [inbox setUnreadCount:([inbox unreadCount] - 1)];
-            self.unread = NO;
-            [[UAInboxDBManager shared] updateMessageAsRead:self];
-        
-        }
-        
-        inbox.isBatchUpdating = NO;
-        [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-    }
 }
 
 - (void)markAsReadFailed:(UAHTTPRequest *)request {

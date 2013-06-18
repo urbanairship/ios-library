@@ -25,6 +25,7 @@
 
 #import "UAHTTPConnection+Internal.h"
 #import "UAGlobal.h"
+#import "UAInboxURLCache.h"
 
 #import "UA_Base64.h"
 #import <zlib.h>
@@ -287,6 +288,16 @@ static NSString *defaultUserAgentString;
     }
     
     [self release];
+}
+
+//TODO: fix UAInboxURLCache and its usage logic so that this is not something we need to worry about
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection
+                  willCacheResponse:(NSCachedURLResponse *)cachedResponse {
+    if ([[NSURLCache sharedURLCache] isKindOfClass:[UAInboxURLCache class]]) {
+        return nil;
+    } else {
+        return cachedResponse;
+    }
 }
 
 #pragma mark -

@@ -26,13 +26,13 @@
 }
 
 //Multiply the current delay interval by the backoff factor, clipped at the max value
-- (NSInteger)nextBackoff:(NSInteger)currentDelay {
+- (NSUInteger)nextBackoff:(NSUInteger)currentDelay {
     return MIN(currentDelay*self.backoffFactor, self.maxDelayIntervalInSeconds);
 }
 
 //Enqueues two operations, first an operation that sleeps for the specified number of seconds, and next
 //a continuation operation with the former as a dependency. Useful for scheduling retries.
-- (void)sleepForSeconds:(NSInteger)seconds withContinuation:(UAHTTPConnectionOperation *)continuation {
+- (void)sleepForSeconds:(NSUInteger)seconds withContinuation:(UAHTTPConnectionOperation *)continuation {
     UADelayOperation *delay = [UADelayOperation operationWithDelayInSeconds:seconds];
     [continuation addDependency:delay];
 
@@ -46,7 +46,7 @@
                                          retryWhere:(UAHTTPRequestEngineWhereBlock)retryWhereBlock
                                           onSuccess:(UAHTTPRequestEngineSuccessBlock)successBlock
                                           onFailure:(UAHTTPRequestEngineFailureBlock)failureBlock
-                                          withDelay:(NSInteger)delay {
+                                          withDelay:(NSUInteger)delay {
 
     //Called in a retry condition.
     void (^retry)(UAHTTPRequest *request) = ^(UAHTTPRequest *request) {
@@ -99,7 +99,7 @@
             retryWhere:(UAHTTPRequestEngineWhereBlock)retryWhereBlock
              onSuccess:(UAHTTPRequestEngineSuccessBlock)successBlock
              onFailure:(UAHTTPRequestEngineFailureBlock)failureBlock
-             withDelay:(NSInteger)delay{
+             withDelay:(NSUInteger)delay{
     
     UAHTTPConnectionOperation *operation = [self operationWithRequest:theRequest
                                                          succeedWhere:succeedWhereBlock

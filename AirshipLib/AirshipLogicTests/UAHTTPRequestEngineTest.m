@@ -81,14 +81,14 @@
 /* tests */
 
 - (void)testDefaults {
-    STAssertEquals(self.engine.maxConcurrentRequests, kUARequestEngineDefaultMaxConcurrentRequests, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.initialDelayIntervalInSeconds, kUARequestEngineDefaultInitialDelayIntervalSeconds, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.maxDelayIntervalInSeconds, kUARequestEngineDefaultMaxDelayIntervalSeconds, @"default value should be set to preprocessor constant");
-    STAssertEquals(self.engine.backoffFactor, kUARequestEngineDefaultBackoffFactor, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.maxConcurrentRequests, (NSUInteger)kUARequestEngineDefaultMaxConcurrentRequests, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.initialDelayIntervalInSeconds, (NSUInteger)kUARequestEngineDefaultInitialDelayIntervalSeconds, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.maxDelayIntervalInSeconds, (NSUInteger)kUARequestEngineDefaultMaxDelayIntervalSeconds, @"default value should be set to preprocessor constant");
+    STAssertEquals(self.engine.backoffFactor, (NSUInteger)kUARequestEngineDefaultBackoffFactor, @"default value should be set to preprocessor constant");
 }
 
 - (void)testMaxConcurrentRequests {
-    STAssertEquals(self.engine.maxConcurrentRequests, self.engine.queue.maxConcurrentOperationCount, @"max concurrent requests is constrained by the concurrent operation count of the queue");
+    STAssertEquals(self.engine.maxConcurrentRequests, (NSUInteger)self.engine.queue.maxConcurrentOperationCount, @"max concurrent requests is constrained by the concurrent operation count of the queue");
 }
 
 - (void)testInitialDelayInterval {
@@ -98,10 +98,10 @@
          return YES;
      }retryWhere:^(UAHTTPRequest *request) {
          return NO;
-     }onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+     }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STAssertEquals(lastDelay, self.engine.initialDelayIntervalInSeconds, @"after one successful try, the last delay should be the initial value");
          [self done];
-     }onFailure:^(UAHTTPRequest *request, NSInteger lastDelay ) {
+     }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay ) {
          STFail(@"this should not happen");
          [self done];
      }];
@@ -119,10 +119,10 @@
          BOOL result = (tries < 10);
          tries++;
          return result;
-     }onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+     }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STFail(@"this hould not happen");
          [self done];
-     }onFailure:^(UAHTTPRequest *request, NSInteger lastDelay) {
+     }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STAssertEquals(lastDelay, self.engine.maxDelayIntervalInSeconds, @"at this point, we should have clipped at the max delay interval");
          [self done];
      }];
@@ -140,10 +140,10 @@
          BOOL result = (tries < 2);
          tries++;
          return result;
-     }onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+     }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STFail(@"this hould not happen");
          [self done];
-     }onFailure:^(UAHTTPRequest *request, NSInteger lastDelay) {
+     }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STAssertEquals(self.engine.initialDelayIntervalInSeconds, lastDelay/self.engine.backoffFactor, @"with two tries, the last delay should be the initial interval * backoff factor");
          [self done];
      }];

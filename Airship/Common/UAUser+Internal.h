@@ -45,7 +45,6 @@
 
 @interface UAUser()
 
-
 // This device token represents the device token that is assigned to
 // a user and is represented on the UA Servers. It may or may not be in sync
 // with the device token on the UAPush object, which represents the token currently
@@ -67,9 +66,6 @@
 - (void)listenForDeviceTokenReg;
 - (void)cancelListeningForDeviceToken;
 - (void)updateDefaultDeviceToken;
-
-//User creation
-- (void)userCreationDidFail:(UAHTTPRequest *)request;
 
 @end
 

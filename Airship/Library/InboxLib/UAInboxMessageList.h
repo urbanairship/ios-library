@@ -26,6 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 
 #import "UAUser.h"
+#import "UAObservable.h"
 
 @class UAInboxMessage;
 
@@ -44,7 +45,7 @@ typedef enum {
  * delete or mark messages as read, retrieve individual messages from the
  * list.
  */
-@interface UAInboxMessageList : UAObservable <UAUserObserver> {
+@interface UAInboxMessageList : UAObservable  {
   @private
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
@@ -127,6 +128,6 @@ typedef enum {
  */
 @property(assign) BOOL isBatchUpdating;
 
-@property(readonly) BOOL isRetrieving;
+@property(nonatomic, readonly, assign) BOOL isRetrieving;
 
 @end
