@@ -24,76 +24,53 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAObservable.h"
 
-@class UAHTTPRequest;
-@class UAHTTPConnection;
+extern NSString * const UAUserCreatedNotification;
 
-typedef enum _UAUserState {
-    UAUserStateEmpty = 0,
-    UAUserStateCreating = 1,
-    UAUserStateCreated = 2
-} UAUserState;
+/**
+ * Primary interface for working with the application's associated UA user.
+ */
+@interface UAUser : NSObject
 
-@protocol UAUserObserver <NSObject>
-@optional
-
-// Notified when user created or modified
-- (void)userUpdated;
-- (void)userUpdateFailed;
-
-@end
-
-@interface UAUser : UAObservable {
-
-  @private
-    BOOL initialized;
-    NSString *username;
-    NSString *password;
-    NSString *url;
-    
-    UAUserState userState;
-    
-    BOOL isObservingDeviceToken;
-    
-    //creation flag
-    BOOL creatingUser;
-
-}
-
-// Public interface
-@property (assign, readonly, nonatomic) UAUserState userState;
-@property (retain, nonatomic) NSString *username;
-@property (retain, nonatomic) NSString *password;
-@property (retain, nonatomic) NSString *url;
-@property (retain, nonatomic) UAHTTPConnection *connection;
-
+/**
+ * Returns the singleton user instance.
+ */
 + (UAUser *)defaultUser;
+
+/**
+ * Causes the user instance to stop listening for device token changes.
+ */
 + (void)land;
 
+/**
+ * Indicates whether the default user has been created.
+ * @return `YES` if the user has been created, `NO` otherwise.
+ */
 - (BOOL)defaultUserCreated;
 
-//Specifies a default PRE-EXISTING username and password to use in the case a new user would 
-//otherwise be created by [UAUser defaultUser]
-+ (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword;
+/**
+ * Convenience method that schedules a block to be executed once the user has been created.
+ *
+ * @param onCreateBlock
+ */
+- (void)onceCreated:(void(^)())onCreateBlock;
 
+/**
+ * Loads the user from disk if available, otherwise creates the user (asynchronously) from scratch.
+ */
 - (void)initializeUser;
-- (void)loadUser;
 
-- (void)createUser;
-
-- (void)saveUserData;
-- (void)updateUserState;
-- (void)notifyObserversUserUpdated;
-
-- (void)requestWentWrong:(UAHTTPRequest *)request;
-- (void)userRequestWentWrong:(UAHTTPRequest *)request;
-
-//POST
-- (void)updateUserInfo:(NSDictionary *)info withDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
-
-//PUT
-- (void)updateUserWithDelegate:(id)delegate finish:(SEL)finishSelector fail:(SEL)failSelector;
-- (NSMutableDictionary*)createUserDictionary;
+/**
+ * The user name.
+ */
+@property (nonatomic, readonly, copy) NSString *username;
+/**
+ * The user password.
+ */
+@property (nonatomic, readonly, copy) NSString *password;
+/**
+ * The user url.
+ */
+@property (nonatomic, readonly, copy) NSString *url;
 
 @end
