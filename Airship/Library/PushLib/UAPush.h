@@ -82,16 +82,17 @@
 
 /**
  * Called when a push notification is received in the foreground with a sound associated
- * @param sound the sound to play
+ * @param soundFilename The sound file to play or `default` for the standard notification sound.
+ *        This file must be included in the application bundle.
  */
-- (void)playNotificationSound:(NSString *)sound;
+- (void)playNotificationSound:(NSString *)soundFilename;
 
 
 /**
  * Called when a push notification is received in the foreground with a badge number.
  * @param badgeNumber The badge number to display
  */
-- (void)handleBadgeUpdate:(int)badgeNumber;
+- (void)handleBadgeUpdate:(NSInteger)badgeNumber;
 
 /**
  * Called when a push notification is received while the app is running in the foreground

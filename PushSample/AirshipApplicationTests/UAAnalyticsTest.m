@@ -81,7 +81,7 @@
         [invocation getArgument:&arg atIndex:2];
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
-    [analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"]];
+    [analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"] inApplicationState:UIApplicationStateActive];
     STAssertNotNil(arg, nil);
     STAssertTrue([arg isKindOfClass:[UAEventPushReceived class]], nil);    
 }
@@ -198,7 +198,7 @@
     
     //mock a notification - the "_" id is all that matters - we don't need an aps payload
     //this value is passed in through the app delegate's didReceiveRemoteNotification method
-    [[UAirship shared].analytics handleNotification:[NSDictionary dictionaryWithObject:incomingPushId forKey:@"_"]];
+    [[UAirship shared].analytics handleNotification:[NSDictionary dictionaryWithObject:incomingPushId forKey:@"_"] inApplicationState:UIApplicationStateInactive];
     
     //now the app is active, according to NSNotificationCenter
     [[UAirship shared].analytics didBecomeActive];

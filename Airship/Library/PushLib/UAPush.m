@@ -446,14 +446,14 @@ static Class _uiClass;
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
     if (state != UIApplicationStateActive) {
-        UA_LDEBUG(@"Received a notification for an inactive application state.");
+        UA_LTRACE(@"Received a notification for an inactive application state.");
         
         if ([delegate respondsToSelector:@selector(launchedFromNotification:)])
             [delegate launchedFromNotification:notification];
         return;
     }
 
-    UA_LDEBUG(@"Received a notification for a foregrounded application.");
+    UA_LTRACE(@"Received a notification for a foregrounded application.");
     
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
 	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1

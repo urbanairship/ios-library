@@ -226,9 +226,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
         [UAInboxPushHandler handleNotification:remoteNotification];
     }
-
-    UALOG(@"Inactive: %d", UIApplicationStateInactive);
-    UALOG(@"Active in nsnotification listener %d", [UIApplication sharedApplication].applicationState);
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {

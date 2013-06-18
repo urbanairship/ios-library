@@ -87,9 +87,6 @@
     
     //TODO: think about clean up / dealloc for multiple UI classes
 
-
-UALOG(@"Active in delegate did finish launching  %d", [UIApplication sharedApplication].applicationState);
-
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;

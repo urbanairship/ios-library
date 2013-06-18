@@ -26,8 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UAPush.h"
 
-@interface UAPushNotificationHandler : NSObject<UAPushNotificationDelegate> {
-    
-}
+@interface UAPushNotificationHandler : NSObject<UAPushNotificationDelegate>
 
 @end
