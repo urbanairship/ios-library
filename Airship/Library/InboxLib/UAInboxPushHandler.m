@@ -54,11 +54,22 @@
 
 + (void)handleNotification:(NSDictionary *)userInfo{
 
-    NSString *richPushId = [userInfo objectForKey:@"_uamid"];
+    NSString *richPushId = nil;
+    NSObject *richPushValue = [userInfo objectForKey:@"_uamid"];
+    if ([richPushValue isKindOfClass:[NSArray class]]) {
+        NSArray *richPushIds = (NSArray *)richPushValue;
+        if (richPushIds.count > 0) {
+            richPushId = richPushIds[0];
+        }
+    } else if ([richPushValue isKindOfClass:[NSString class]]) {
+        richPushId = (NSString *)richPushValue;
+    }
+    
     if (richPushId) {
 
+        UA_LDEBUG(@"Received push for rich message id %@", richPushId);
         [UAInbox shared].pushHandler.viewingMessageID = richPushId;
-       
+
         //if the app is in the foreground, let the UI class decide how it
         //wants to respond to the incoming push
         if ([self isApplicationActive]) {
