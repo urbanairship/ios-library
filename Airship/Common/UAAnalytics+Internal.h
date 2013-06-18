@@ -28,14 +28,12 @@
 #import "UAAnalytics.h"
 
 @class UAEvent;
-@class UAHTTPConnection;
 @class UAHTTPRequest;
 
 @interface UAAnalytics () {
   @private
     NSMutableDictionary *session;
     NSDictionary *notificationUserInfo_;
-    UAHTTPConnection *connection_;
     int x_ua_max_total;
     int x_ua_max_batch;
     int x_ua_max_wait;
@@ -44,7 +42,6 @@
     int databaseSize_;
     NSTimeInterval oldestEventTime;    
     NSDate *lastLocationSendTime;    
-    NSTimer *sendTimer_;
     NSString *packageVersion;
     UIBackgroundTaskIdentifier sendBackgroundTask_;
     
@@ -56,17 +53,16 @@
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
-@property (nonatomic, retain) UAHTTPConnection *connection;
 @property (nonatomic, assign) int x_ua_max_total;
 @property (nonatomic, assign) int x_ua_max_batch;
 @property (nonatomic, assign) int x_ua_max_wait;
 @property (nonatomic, assign) int x_ua_min_batch_interval;
-@property (nonatomic, assign, setter = setSendInterval:) int sendInterval;
+@property (nonatomic, assign) int sendInterval;
 @property (nonatomic, assign) int databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
-@property (nonatomic, retain) NSTimer *sendTimer;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain) UAConfig *config;
+@property (nonatomic, retain) NSOperationQueue *queue;
 
 // For testing purposes
 @property (nonatomic, assign) BOOL isEnteringForeground;
@@ -81,12 +77,6 @@
 /* Sending analytics */
 - (void)send;
 
-/* Set send interval. This has the side effect of creating a new NSTimer
- in sendTimer with the new interval. */
-- (void)setSendInterval:(int)sendTimer;
-
-/* Refresh the send timer */
-- (void)setupSendTimer:(NSTimeInterval)timeInterval;
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
 
 - (BOOL)shouldSendAnalytics;
@@ -115,10 +105,6 @@
  format the JSON field as a dictionary
  */
 - (NSArray*)prepareEventsForUpload;
-
-// UAHTTP
-- (void)requestDidSucceed:(UAHTTPRequest *)request;
-- (void)requestDidFail:(UAHTTPRequest *)request;
 
 
 @end

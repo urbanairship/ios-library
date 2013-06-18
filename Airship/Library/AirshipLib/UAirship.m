@@ -92,10 +92,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     self.appSecret = nil;
     self.server = nil;
     self.config = nil;
-    
-    // Analytics contains an NSTimer, and the invalidate method is required
-    // before dealloc
-    [self.analytics invalidate];
     self.analytics = nil;
     self.locationService = nil;
     

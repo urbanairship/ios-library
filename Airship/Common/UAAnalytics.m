@@ -38,11 +38,12 @@
 #import "UALocationEvent.h"
 #import "UAUser.h"
 #import "UAConfig.h"
+#import "UAHTTPConnectionOperation.h"
+#import "UADelayOperation.h"
+
 
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
-
-
 
 NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 
@@ -53,7 +54,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 @synthesize session;
 @synthesize notificationUserInfo = notificationUserInfo_;
-@synthesize connection = connection_;
 @synthesize databaseSize = databaseSize_;
 @synthesize x_ua_max_total;
 @synthesize x_ua_max_batch;
@@ -61,7 +61,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 @synthesize x_ua_min_batch_interval;
 @synthesize sendInterval = sendInterval_;
 @synthesize oldestEventTime;
-@synthesize sendTimer = sendTimer_;
 @synthesize sendBackgroundTask = sendBackgroundTask_;
 
 // Testing properties
@@ -70,20 +69,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark -
 #pragma mark Object Lifecycle
 
-// This has to be called before dealloc, or dealloc will never be called
-// There is a retain cycle setup between this class and the timer.
-- (void)invalidate {
-    [sendTimer_ invalidate];
-    self.sendTimer = nil;
-}
-
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     RELEASE_SAFELY(notificationUserInfo_);
     RELEASE_SAFELY(session);
-    RELEASE_SAFELY(connection_);
-    self.config = nil;
     RELEASE_SAFELY(lastLocationSendTime);
+    self.config = nil;
+    self.queue = nil;
     [super dealloc];
 }
 
@@ -143,8 +135,19 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         }
         
         [self initSession];
-        [self setupSendTimer:UAAnalyticsFirstBatchUploadInterval];
         sendBackgroundTask_ = UIBackgroundTaskInvalid;
+
+        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue.maxConcurrentOperationCount = 1;
+
+        //call send after waiting for the first batch upload interval
+        UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:UAAnalyticsFirstBatchUploadInterval];
+        delayOperation.completionBlock = ^{
+            [self send];
+        };
+
+        [self.queue addOperation:delayOperation];
+
         // TODO: add a one time perform selector after delay for init analytics on cold start (app_open)
     }
     return self;
@@ -264,9 +267,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
-    [self invalidateBackgroundTask];
-    [self setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
-    
+    [self invalidateBackgroundTask];    
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
@@ -283,13 +284,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     self.notificationUserInfo = nil;
     // Only place where a background task is created
     self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        if (connection_.urlConnection) {
-            [connection_.urlConnection cancel];
-        } 
+        [self.queue cancelAllOperations];
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
-    [sendTimer_ invalidate];
     [self send];
 }
 
@@ -431,42 +429,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
 }
 
-#pragma mark -
-#pragma mark UAHTTPConnectionDelegate
-
-- (void)requestDidSucceed:(UAHTTPRequest *)request {
-
-    UALOG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
-    UA_LTRACE(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
-
-    // Update analytics settings with new header values
-    [self updateAnalyticsParametersWithHeaderValues:request.response];
-    [self setupSendTimer:x_ua_min_batch_interval];
-    if ([request.response statusCode] == 200) {
-        id userInfo = request.userInfo;
-        if([userInfo isKindOfClass:[NSArray class]]){
-            [[UAAnalyticsDBManager shared] deleteEvents:request.userInfo];
-        }
-        else {
-            UA_LTRACE(@"Analytics received response that contained a userInfo object that was not an expected NSArray");
-        }
-        [self resetEventsDatabaseStatus];
-        self.lastSendTime = [NSDate date];
-    } 
-    else {
-        UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
-    } 
-    self.connection = nil;
-    [self invalidateBackgroundTask];
-}
-
-- (void)requestDidFail:(UAHTTPRequest *)request {
-    UA_LTRACE(@"Send analytics data request failed.");
-    self.connection = nil;
-    [self invalidateBackgroundTask];
-}
-
-
 // We send headers on all response codes, so let's set those values before checking for != 200
 // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse *)response {
@@ -544,7 +506,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         sendInterval_ = x_ua_max_wait;
     } else {
         sendInterval_ = newVal;
-        [self setupSendTimer:(NSTimeInterval)newVal];
     }
 }
 
@@ -569,10 +530,12 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_LTRACE("Analytics disabled.");
         return NO;
     }
-    if (connection_ != nil) {
+
+    if (self.queue.operationCount) {
         UA_LTRACE(@"Analytics upload in progress");
         return NO;
-    }    
+    }
+
     int eventCount = [[UAAnalyticsDBManager shared] eventCount];
     if (eventCount == 0) {
         UA_LTRACE(@"No analytics events to upload");
@@ -694,13 +657,73 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     return events;
 }
 
+- (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
+
+    UAHTTPRequest *analyticsRequest = [self analyticsRequest];
+
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] autorelease];
+    writer.humanReadable = NO;//strip whitespace
+    [analyticsRequest appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
+    writer.humanReadable = YES;//turn on formatting for debugging
+    UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
+    UA_LTRACE(@"Sending analytics headers: %@", [analyticsRequest.headers descriptionWithLocale:nil indent:1]);
+    UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
+
+    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
+        UA_LDEBUG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
+        UA_LTRACE(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
+
+        // Update analytics settings with new header values
+        [self updateAnalyticsParametersWithHeaderValues:request.response];
+        if ([request.response statusCode] == 200) {
+            [[UAAnalyticsDBManager shared] deleteEvents:events];
+            [self resetEventsDatabaseStatus];
+            self.lastSendTime = [NSDate date];
+            [self send];
+        }
+        else {
+            UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
+            [self send];
+        }
+        [self invalidateBackgroundTask];
+    };
+
+    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        UA_LTRACE(@"Send analytics data request failed.");
+        [self invalidateBackgroundTask];
+    };
+
+    UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:analyticsRequest
+                                                                                 onSuccess:successBlock
+                                                                                 onFailure:failureBlock];
+    return operation;
+}
+
+- (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
+    NSTimeInterval delay = 0;
+    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+    if (timeSinceLastSend < x_ua_min_batch_interval) {
+        delay = x_ua_min_batch_interval - timeSinceLastSend;
+    }
+    return delay;
+}
+
+- (void)batchAndSendEvents:(NSArray *)events {
+    NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
+    UA_LDEBUG(@"Scheduling analytics batch update in %g seconds", delay);
+    UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
+    UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+    [sendOperation addDependency:delayOperation];
+    [self.queue addOperation:delayOperation];
+    [self.queue addOperation:sendOperation];
+}
+
 - (void)send {
     UA_LTRACE(@"Attemping to send analytics");
     if (![self shouldSendAnalytics]) {
         UA_LTRACE(@"ShouldSendAnalytics returned no");
         return;
     }
-    UAHTTPRequest *request = [self analyticsRequest];
     NSArray* events = [self prepareEventsForUpload];
     if (!events) {
         UA_LTRACE(@"Error parsing events into array, skipping analytics send");
@@ -710,38 +733,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_LTRACE(@"No events to upload, skipping analytics send");
         return;
     }
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
-    writer.humanReadable = NO;//strip whitespace
-    [request appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
-    request.userInfo = events;
-    writer.humanReadable = YES;//turn on formatting for debugging
-    UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
-    UA_LTRACE(@"Sending analytics headers: %@", [request.headers descriptionWithLocale:nil indent:1]);
-    UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
-    [writer release];
 
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                     delegate:self
-                                                      success:@selector(requestDidSucceed:)
-                                                      failure:@selector(requestDidFail:)];
-    [self.connection start];
-}
-
-#pragma mark -
-#pragma mark NSTimer methods
-- (void)setupSendTimer:(NSTimeInterval)timeInterval {
-    if ([sendTimer_ isValid]) {
-        // Simply invalidating the timer and adding another one is less prone to error. Timers fire date
-        // need to be modified from the thread that the timer is attached to.
-        [sendTimer_ invalidate];
-    }
-    NSMethodSignature *methodSignature = [self methodSignatureForSelector:@selector(send)];
-    NSInvocation *sendInvocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-    [sendInvocation setTarget:self];
-    [sendInvocation setSelector:@selector(send)];
-    // In Objective C, you don't retain timer, timer retains you
-    self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval invocation:sendInvocation repeats:YES];
-    UA_LTRACE(@"Added timer for analytics set to %f", sendTimer_.timeInterval);
+    [self batchAndSendEvents:events];
 }
 
 @end
