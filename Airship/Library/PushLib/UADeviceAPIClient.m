@@ -95,13 +95,13 @@
          runRequest:request
          succeedWhere:succeedWhereBlock
          retryWhere:retryWhereBlock
-         onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+         onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
              //clear the pending cache,  update last successful cache
              self.pendingRegistration = nil;
              self.lastSuccessfulRegistration = registrationData;
              successBlock();
          }
-         onFailure:^(UAHTTPRequest *request, NSInteger lastDelay) {
+         onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
              //clear the pending cache
              self.pendingRegistration = nil;
              failureBlock(request);

@@ -33,8 +33,8 @@
 #import "UAHTTPConnection.h"
 
 typedef BOOL (^UAHTTPRequestEngineWhereBlock)(UAHTTPRequest *request);
-typedef void (^UAHTTPRequestEngineSuccessBlock)(UAHTTPRequest *request, NSInteger lastDelay);
-typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSInteger lastDelay);
+typedef void (^UAHTTPRequestEngineSuccessBlock)(UAHTTPRequest *request, NSUInteger lastDelay);
+typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteger lastDelay);
 
 /**
  * A generalized abstraction for running HTTP requests in an NSOperationQueue.
@@ -84,28 +84,28 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSIntege
  *
  * Defaults to 1.
  */
-@property(nonatomic, assign) NSInteger maxConcurrentRequests;
+@property(nonatomic, assign) NSUInteger maxConcurrentRequests;
 
 /**
  * The initial delay interval in seconds, to be used in retry backoff sequences. 
  *
  * Defaults to 30 seconds.
  */
-@property(nonatomic, assign) NSInteger initialDelayIntervalInSeconds;
+@property(nonatomic, assign) NSUInteger initialDelayIntervalInSeconds;
 
 /**
  * The maximum delay interval in seconds, to be used in retry backoff sequences. 
  *
  * Defaults to 300 seconds.
  */
-@property(nonatomic, assign) NSInteger maxDelayIntervalInSeconds;
+@property(nonatomic, assign) NSUInteger maxDelayIntervalInSeconds;
 
 /**
  * The multiplier used to obtain new delay intervals during retry backoff sequences.
  *
  * Defaults to 2.
  */
-@property(nonatomic, assign) NSInteger backoffFactor;
+@property(nonatomic, assign) NSUInteger backoffFactor;
 
 
 /**

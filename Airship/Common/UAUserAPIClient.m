@@ -108,7 +108,7 @@
     } retryWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(status >= 500 && status <= 599);
-    } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
         NSDictionary *result = [parser objectWithString:request.responseString];
 
@@ -120,7 +120,7 @@
 
         successBlock(data, deviceToken);
         
-    } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay) {
+    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         failureBlock(request);
     }];
 }
@@ -139,7 +139,7 @@
     } retryWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(status >= 500 && status <= 599);
-    } onSuccess:^(UAHTTPRequest *request, NSInteger lastDelay) {
+    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         // The dictionary for the post body is built as follows in updateDeviceToken
         //    "device_tokens" =     {
         //        add =         (
@@ -159,7 +159,7 @@
 
         successBlock(successfullyUploadedDeviceToken);
         
-    } onFailure:^(UAHTTPRequest *request, NSInteger lastDelay) {
+    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         if (request.response) {
             // If we got an other than 200/201, that's just odd
 

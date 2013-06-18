@@ -41,6 +41,8 @@
 		1FCBB638175F870500F42F07 /* UABaseAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB636175F870500F42F07 /* UABaseAppDelegateSurrogate.m */; };
 		1FCBB63B175F983600F42F07 /* UAAutoAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FCBB639175F983500F42F07 /* UAAutoAppDelegate.h */; };
 		1FCBB63C175F983600F42F07 /* UAAutoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB63A175F983500F42F07 /* UAAutoAppDelegate.m */; };
+		4907256E1770D5B100A972BC /* UAInboxAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4907256C1770D5B100A972BC /* UAInboxAPIClient.h */; };
+		4907256F1770D5B100A972BC /* UAInboxAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 4907256D1770D5B100A972BC /* UAInboxAPIClient.m */; };
 		494BF703176277E000B25E12 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF702176277E000B25E12 /* UAUserTest.m */; };
 		494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7051762789D00B25E12 /* UAUser+Internal.h */; };
 		494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7061762789D00B25E12 /* UAUserAPIClient.h */; };
@@ -212,6 +214,8 @@
 		1FCBB63A175F983500F42F07 /* UAAutoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutoAppDelegate.m; sourceTree = "<group>"; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
+		4907256C1770D5B100A972BC /* UAInboxAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxAPIClient.h; sourceTree = "<group>"; };
+		4907256D1770D5B100A972BC /* UAInboxAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxAPIClient.m; sourceTree = "<group>"; };
 		494BF701176277E000B25E12 /* UAUserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserTest.h; sourceTree = "<group>"; };
 		494BF702176277E000B25E12 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		494BF7051762789D00B25E12 /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
@@ -421,6 +425,8 @@
 		1F1641FC16F26A8100C87CAB /* InboxLib */ = {
 			isa = PBXGroup;
 			children = (
+				4907256C1770D5B100A972BC /* UAInboxAPIClient.h */,
+				4907256D1770D5B100A972BC /* UAInboxAPIClient.m */,
 				1F1641FD16F26A8100C87CAB /* UAInbox.h */,
 				1F1641FE16F26A8100C87CAB /* UAInbox.m */,
 				1F1641FF16F26A8100C87CAB /* UAInboxDBManager.h */,
@@ -794,6 +800,7 @@
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
 				494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */,
 				494BF70D1762789D00B25E12 /* UAUserData.h in Headers */,
+				4907256E1770D5B100A972BC /* UAInboxAPIClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,6 +981,7 @@
 				1FCBB63C175F983600F42F07 /* UAAutoAppDelegate.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
+				4907256F1770D5B100A972BC /* UAInboxAPIClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

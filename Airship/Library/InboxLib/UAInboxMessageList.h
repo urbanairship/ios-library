@@ -128,6 +128,6 @@ typedef enum {
  */
 @property(assign) BOOL isBatchUpdating;
 
-@property(readonly) BOOL isRetrieving;
+@property(nonatomic, readonly, assign) BOOL isRetrieving;
 
 @end
