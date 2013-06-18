@@ -363,8 +363,14 @@
     analytics.config.analyticsEnabled = NO;
     STAssertFalse([analytics shouldSendAnalytics], nil);
 
-    //TODO: queue logic
     analytics.config.analyticsEnabled = YES;
+
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    [analytics.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
+        sleep(3);
+    }]];
+    [analytics.queue cancelAllOperations];
+
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger zero = 0;
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(zero)] eventCount];
@@ -378,6 +384,10 @@
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
     analytics.config.analyticsURL = @"cats";
+    id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    NSUInteger zero = 0;
+    [[[mockQueue stub] andReturnValue:OCMOCK_VALUE(zero)] operationCount];
+    analytics.queue = mockQueue;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger five = 5;
@@ -399,31 +409,16 @@
 }
 
 - (void)testSend {
-    //TODO: rewrite
-    /*
-    __block id arg = nil;
-    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
-    };
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    id mockConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
-    analytics.connection = mockConnection;
-    // Intercept setConnection to prevent the mock that was just setup from being 
-    // replaced during execution of the send method
-    [[mockAnalytics stub] setConnection:OCMOCK_ANY];
-    // Casting this object prevents a compiler warning
-    [(UAHTTPConnection*)[mockConnection expect] start];
+    id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    analytics.queue = mockQueue;
+    [[mockQueue expect] addOperation:[OCMArg any]];
     BOOL yes = YES;
     [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(yes)] shouldSendAnalytics];
-    UAHTTPRequest *request = [analytics analyticsRequest];
-    id mockRequest = [OCMockObject partialMockForObject:request];
-    [[[mockRequest stub] andDo:getSingleArg] setUserInfo:OCMOCK_ANY];
-    [[[mockAnalytics stub] andReturn:request] analyticsRequest];
     NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [analytics send];
-    [mockConnection verify];
-    STAssertEqualObjects(arg, data, @"UAAnalytics send method not populating request userInfo object with correct data"); */
+    [mockQueue verify];
 }
 
 // This test is not comprehensive for this method, as the method needs refactoring.
