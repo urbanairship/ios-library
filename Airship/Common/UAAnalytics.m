@@ -708,14 +708,36 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     return delay;
 }
 
-- (void)batchAndSendEvents:(NSArray *)events {
+- (void)batchAndSendEvents {
+
     NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
     UA_LDEBUG(@"Scheduling analytics batch update in %g seconds", delay);
+
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
-    UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-    [sendOperation addDependency:delayOperation];
+
+    NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
+        //execute this bit on the main queue, so that we don't risk pulling from the db on a worker thread
+        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
+            NSArray* events = [self prepareEventsForUpload];
+            if (!events) {
+                UA_LTRACE(@"Error parsing events into array, skipping analytics send");
+                return;
+            }
+            if ([events count] == 0) {
+                UA_LTRACE(@"No events to upload, skipping analytics send");
+                return;
+            }
+
+            UA_LDEBUG(@"adding a dang send operation");
+            UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+            [self.queue addOperation:sendOperation];
+        }]];
+    }];
+
+    [batchOperation addDependency:delayOperation];
+
     [self.queue addOperation:delayOperation];
-    [self.queue addOperation:sendOperation];
+    [self.queue addOperation:batchOperation];
 }
 
 - (void)send {
@@ -724,17 +746,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_LTRACE(@"ShouldSendAnalytics returned no");
         return;
     }
-    NSArray* events = [self prepareEventsForUpload];
-    if (!events) {
-        UA_LTRACE(@"Error parsing events into array, skipping analytics send");
-        return;
-    }
-    if ([events count] == 0) {
-        UA_LTRACE(@"No events to upload, skipping analytics send");
-        return;
-    }
 
-    [self batchAndSendEvents:events];
+    [self batchAndSendEvents];
 }
 
 @end
