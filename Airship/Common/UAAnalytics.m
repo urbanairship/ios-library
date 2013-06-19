@@ -711,27 +711,23 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)batchAndSendEvents {
 
     NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
-    UA_LDEBUG(@"Scheduling analytics batch update in %g seconds", delay);
+    UA_LTRACE(@"Scheduling analytics batch update in %g seconds", delay);
 
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
 
     NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-        //execute this bit on the main queue, so that we don't risk pulling from the db on a worker thread
-        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            NSArray* events = [self prepareEventsForUpload];
-            if (!events) {
-                UA_LTRACE(@"Error parsing events into array, skipping analytics send");
-                return;
-            }
-            if ([events count] == 0) {
-                UA_LTRACE(@"No events to upload, skipping analytics send");
-                return;
-            }
+        NSArray* events = [self prepareEventsForUpload];
+        if (!events) {
+            UA_LTRACE(@"Error parsing events into array, skipping analytics send");
+            return;
+        }
+        if ([events count] == 0) {
+            UA_LTRACE(@"No events to upload, skipping analytics send");
+            return;
+        }
 
-            UA_LDEBUG(@"adding a dang send operation");
-            UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-            [self.queue addOperation:sendOperation];
-        }]];
+        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+        [self.queue addOperation:sendOperation];
     }];
 
     [batchOperation addDependency:delayOperation];
