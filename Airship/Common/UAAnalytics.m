@@ -740,13 +740,15 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)send {
-    UA_LTRACE(@"Attemping to send analytics");
-    if (![self shouldSendAnalytics]) {
-        UA_LTRACE(@"ShouldSendAnalytics returned no");
-        return;
-    }
+    @synchronized(self) {
+        UA_LTRACE(@"Attemping to send analytics");
+        if (![self shouldSendAnalytics]) {
+            UA_LTRACE(@"ShouldSendAnalytics returned no");
+            return;
+        }
 
-    [self batchAndSendEvents];
+        [self batchAndSendEvents];
+    }
 }
 
 @end
