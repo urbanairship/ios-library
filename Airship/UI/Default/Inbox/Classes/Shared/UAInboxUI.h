@@ -25,7 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAViewUtils.h"
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"

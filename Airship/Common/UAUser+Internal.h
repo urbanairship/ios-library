@@ -29,16 +29,7 @@
 // is no longer used. 
 #define kLastUpdatedDeviceTokenKey @"UAUserLastUpdatedDeviceTokenKey"
 
-//Legacy keys for migration from pre-keychain user store
-#define kLegacyInboxUserKey @"UAAirMailDefaultInboxUser"
-#define kLegacyInboxPassKey @"UAAirMailDefaultInboxPass"
-
-//Legacy keys from Inbox
-#define kLegacyInboxAliasKey @"UAAirMailDefaultInboxAlias"
-#define kLegacyInboxTagsKey @"UAAirMailDefaultInboxTags"
-
-//Current dictionary keys
-
+// Current dictionary keys
 #define kUserUrlKey @"UAUserUrlKey"
 
 @class UAHTTPRequest;

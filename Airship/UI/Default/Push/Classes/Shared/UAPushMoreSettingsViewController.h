@@ -29,7 +29,6 @@
 
 @interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver> {
     IBOutlet UITableView *tableView;
-    IBOutlet UIImageView *footerImageView;
 
     UITableViewCell *deviceTokenCell;
     UITableViewCell *deviceTokenTypesCell;
