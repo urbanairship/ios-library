@@ -222,11 +222,10 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
 
-    
-    [UAInboxPushHandler handleNotification:remoteNotification];
-    [[UAPush shared] handleNotification:remoteNotification applicationState:[UIApplication sharedApplication].applicationState];
-
-    UALOG(@"Active in nsnotification listener %d", ([UIApplication sharedApplication].applicationState == UIApplicationStateActive));
+    if (remoteNotification) {
+        [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
+        [UAInboxPushHandler handleNotification:remoteNotification];
+    }
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {

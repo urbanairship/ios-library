@@ -79,12 +79,6 @@
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
                                                          UIRemoteNotificationTypeAlert)];
-    
-    // Handle any incoming incoming push notifications.
-    // This will invoke `handleBackgroundNotification` on your UAPushNotificationDelegate.
-    // TODO: call this automatically? figure this out with the new delegate structure
-    [[UAPush shared] handleNotification:[launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey]
-                       applicationState:application.applicationState];
 
     return YES;
 }

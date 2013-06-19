@@ -403,11 +403,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark -
 #pragma mark Analytics
 
-- (void)handleNotification:(NSDictionary*)userInfo {
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+- (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState {
+    if (applicationState == UIApplicationStateActive) {
         [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
-    }
-    else {
+    } else {
         self.notificationUserInfo = userInfo;
     }
 
