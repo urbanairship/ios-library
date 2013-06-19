@@ -28,6 +28,7 @@
 #import "UAGlobal.h"
 
 #import "UATestController.h"
+#import "UA_Reachability.h"
 
 
 @implementation UATestingDelegate
@@ -42,10 +43,19 @@ SINGLETON_IMPLEMENTATION(UATestingDelegate);
 }
 
 - (void)runKIF:(NSNotification *)notification {
-    [[UATestController sharedInstance] startTestingWithCompletionBlock:^{
-        // Exit after the tests complete so that CI knows we're done
-        exit([[UATestController sharedInstance] failureCount]);
-    }];
+    
+    // Capture connection type using Reachability
+    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
+    if (netStatus == UA_NotReachable) {
+        NSLog(@"The Internet connection appears to be offline. Abort KIF tests.");
+        exit(EXIT_FAILURE);
+    } else {
+        [[UATestController sharedInstance] startTestingWithCompletionBlock:^{
+            // Exit after the tests complete so that CI knows we're done
+            exit([[UATestController sharedInstance] failureCount]);
+        }];
+    }
+
 }
 
 @end
