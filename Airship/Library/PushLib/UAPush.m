@@ -69,7 +69,6 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 // Public - UserDefaults
 @dynamic pushEnabled;
 @synthesize deviceToken;
-@synthesize deviceTokenHasChanged;
 @dynamic alias;
 @dynamic tags;
 @dynamic quietTime;

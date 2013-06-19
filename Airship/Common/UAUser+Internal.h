@@ -50,18 +50,6 @@
 // with the device token on the UAPush object, which represents the token currently
 // on the device.
 
-// The current device token, stored in NSUserDefaults
-- (NSString*)serverDeviceToken;
-
-// Sets a new device token in NSUserDefaults. This has the side effect of lowercasing the string
-// since strings returned from the server are upper case. 
-- (void)setServerDeviceToken:(NSString*)token;
-
-// Compares the currently persisted device token, which representes what is
-// on the UA servers to the token associated with UAPush, which represents
-// the token on device
-- (BOOL)deviceTokenHasChanged;
-
 //Device Token Change Listener
 - (void)listenForDeviceTokenReg;
 - (void)cancelListeningForDeviceToken;
