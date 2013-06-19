@@ -711,7 +711,10 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)batchAndSendEvents {
 
     NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
-    UA_LTRACE(@"Scheduling analytics batch update in %g seconds", delay);
+
+    if (delay) {
+        UA_LTRACE(@"Scheduling analytics batch update in %g seconds", delay);
+    }
 
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
 
