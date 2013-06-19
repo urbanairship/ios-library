@@ -148,7 +148,7 @@
         //    };
         // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
 
-        UA_LDEBUG(@"Updated Device Token succeeded with response: %d", [request.response statusCode]);
+        UA_LDEBUG(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
 
         NSString *rawJson = [[[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding] autorelease];
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];

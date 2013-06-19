@@ -217,15 +217,7 @@ SINGLETON_INTERFACE(UAPush);
 + (void)setDefaultPushEnabledValue:(BOOL)enabled;
 
 /** The device token for this device, as a hex string. */
-@property (nonatomic, copy, readonly) NSString *deviceToken; 
-
-/*
- * Returns `YES` if the device token has changed. This method is scheduled for removal 
- * in the short term, it is recommended that you do not use it.
- *
- * @deprecated 1.3.0
- */
-@property (nonatomic, assign, readonly) BOOL deviceTokenHasChanged __attribute__((deprecated("Deprecated in 1.3.0")));
+@property (nonatomic, copy, readonly) NSString *deviceToken;
 
 
 ///---------------------------------------------------------------------------------------

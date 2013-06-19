@@ -44,7 +44,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 @property(nonatomic, copy) NSString *username;
 @property(nonatomic, copy) NSString *password;
 @property(nonatomic, copy) NSString *url;
-@property(nonatomic, copy) NSString *serverDeviceToken;
 @property(nonatomic, assign) BOOL isObservingDeviceToken;
 //creation flag
 @property(nonatomic, assign) BOOL creatingUser;
@@ -98,26 +97,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }
     
     return self;
-}
-
-#pragma mark -
-#pragma mark Device Token
-
-- (NSString*)serverDeviceToken {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:kLastUpdatedDeviceTokenKey];
-}
-
-- (void)setServerDeviceToken:(NSString *)token {
-    // Lowercase the string here because the server will send an upper case string, and we are parsing tokens
-    // out of responses
-    [[NSUserDefaults standardUserDefaults] setValue:[token lowercaseString] forKey:kLastUpdatedDeviceTokenKey];
-}
-
-- (BOOL)deviceTokenHasChanged {
-    NSString *lastUpdatedToken = self.serverDeviceToken;
-    NSString *currentDeviceToken = [UAPush shared].deviceToken;
-    // Can't use caseInsensitiveCompare, these values can be nil, which is an undefined result
-    return ![[lastUpdatedToken lowercaseString] isEqualToString:[currentDeviceToken lowercaseString]];
 }
 
 - (void)initializeUser {
@@ -267,7 +246,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     self.creatingUser = YES;
 
-    [self.apiClient createUserOnSuccess:^(UAUserData *data, NSString *deviceToken) {
+    [self.apiClient createUserOnSuccess:^(UAUserData *data, NSString *sentDeviceToken) {
         self.creatingUser = NO;
         self.username = data.username;
         self.password = data.password;
@@ -275,12 +254,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self saveUserData];
 
-        if (deviceToken) {
-            self.serverDeviceToken = deviceToken;
+        //if we didnt send a token up on creation, try updating now
+        if (!sentDeviceToken) {
+            [self updateDefaultDeviceToken];
         }
-
-        //check to see if the device token has changed, and trigger an update
-        [self updateDefaultDeviceToken];
 
         [self sendUserCreatedNotification];
 
@@ -297,17 +274,15 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
     UA_LDEBUG(@"Updating device token.");
 
-    if (![UAPush shared].deviceToken || [self deviceTokenHasChanged] == NO || ![self defaultUserCreated]){
+    if (![UAPush shared].deviceToken || ![self defaultUserCreated]){
 		UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
 
     NSString *deviceToken = [UAPush shared].deviceToken;
 
-    [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *token) {
-        // Cache the token, even if it's nil, because we may have uploaded a nil token on purpose
-        self.serverDeviceToken = token;
-        UA_LDEBUG(@"Logged last updated key %@", token);
+    [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *updatedToken) {
+        UA_LDEBUG(@"Logged last updated key %@", updatedToken);
     } onFailure:^(UAHTTPRequest *request) {
         UA_LDEBUG(@"Device token update failed with status: %d", request.response.statusCode);
     }];
