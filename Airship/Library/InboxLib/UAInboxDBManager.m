@@ -117,12 +117,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userId app:(NSString *)appId {
+- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey {
 
     UA_FMResultSet *rs;
     NSMutableArray *result = [NSMutableArray array];
     UAInboxMessage *msg;
-    rs = [db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appId, userId];
+    rs = [db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appKey, userID];
     while ([rs next]) {
         msg = [[[UAInboxMessage alloc] init] autorelease];
         msg.messageID = [rs stringForColumn:@"id"];
@@ -149,7 +149,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return result;
 }
 
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId app:(NSString *)appId {
+- (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey {
 
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
 	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
@@ -167,8 +167,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          [dateFormatter stringFromDate:message.messageSent],
          [NSNumber numberWithInt:(message.unread?1:0)],
          message.messageURL,
-         appId,
-         userId,
+         appKey,
+         userID,
          [[[UA_SBJsonWriter new] autorelease] stringWithObject:extra]];
     }
     [db commit];

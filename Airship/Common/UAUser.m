@@ -39,20 +39,7 @@ static UAUser *_defaultUser;
 
 NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.user_created";
 
-@interface UAUser()
 
-@property(nonatomic, retain) UAUserAPIClient *apiClient;
-@property(nonatomic, assign) BOOL initialized;
-@property(nonatomic, copy) NSString *username;
-@property(nonatomic, copy) NSString *password;
-@property(nonatomic, copy) NSString *url;
-@property(nonatomic, assign) BOOL isObservingDeviceToken;
-@property(nonatomic, copy) NSString *appKey;
-
-//creation flag
-@property(nonatomic, assign) BOOL creatingUser;
-
-@end
 
 @implementation UAUser
 

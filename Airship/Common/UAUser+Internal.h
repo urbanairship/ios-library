@@ -23,6 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAUser.h"
+
+
+
 // NSUserDefaultsKey for libUAirship verision >= v1.3.6
 // Changing the key forces devices to update with UA at least once
 // with new workflow. Previous key was "UAUserLastDeviceTokenKey", and
@@ -33,6 +37,7 @@
 #define kUserUrlKey @"UAUserUrlKey"
 
 @class UAHTTPRequest;
+@class UAUserAPIClient;
 
 @interface UAUser()
 
@@ -45,6 +50,17 @@
 - (void)listenForDeviceTokenReg;
 - (void)cancelListeningForDeviceToken;
 - (void)updateDefaultDeviceToken;
+
+@property(nonatomic, retain) UAUserAPIClient *apiClient;
+@property(nonatomic, assign) BOOL initialized;
+@property(nonatomic, copy) NSString *username;
+@property(nonatomic, copy) NSString *password;
+@property(nonatomic, copy) NSString *url;
+@property(nonatomic, assign) BOOL isObservingDeviceToken;
+@property(nonatomic, copy) NSString *appKey;
+
+//creation flag
+@property(nonatomic, assign) BOOL creatingUser;
 
 @end
 
