@@ -5,6 +5,7 @@
 #import "UAHTTPRequestEngine.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "UA_SBJSON.h"
@@ -43,7 +44,7 @@
 
 - (UAHTTPRequest *)requestToRetrieveMessageList {
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
-                           [UAirship shared].server, @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
+                           [UAirship shared].config.deviceAPIURL, @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
 
 
     UA_LDEBUG(@"%@",urlString);
@@ -61,7 +62,7 @@
     UA_LDEBUG(@"%@", updateMessageURLs);
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
-                           [UAirship shared].server,
+                           [UAirship shared].config.deviceAPIURL,
                            @"/api/user/",
                            [UAUser defaultUser].username,
                            @"/messages/delete/"];
@@ -90,7 +91,7 @@
     UA_LDEBUG(@"%@", updateMessageURLs);
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
-                           [UAirship shared].server,
+                           [UAirship shared].config.deviceAPIURL,
                            @"/api/user/",
                            [UAUser defaultUser].username,
                            @"/messages/unread/"];

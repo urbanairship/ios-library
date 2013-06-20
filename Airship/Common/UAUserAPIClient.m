@@ -1,6 +1,7 @@
 
 #import "UAUserAPIClient.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
 #import "UAPush.h"
@@ -42,7 +43,7 @@
 
 - (UAHTTPRequest *)requestToCreateUserWithDeviceToken:(NSString *)deviceToken {
     NSString *urlString = [NSString stringWithFormat:@"%@%@",
-                           [[UAirship shared] server],
+                           [UAirship shared].config.appKey,
                            @"/api/user/"];
 
     NSURL *createUrl = [NSURL URLWithString:urlString];
@@ -69,7 +70,7 @@
     UA_LDEBUG(@"Updating user");
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-								 [[UAirship shared] server],
+								 [UAirship shared].config.appKey,
 								 @"/api/user/",
 								 username];
 

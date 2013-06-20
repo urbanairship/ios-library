@@ -36,6 +36,7 @@
 // UALib
 #import "UAUser.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAKeychainUtils.h"
 
 // C includes
@@ -161,8 +162,8 @@
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
     request.HTTPMethod = method;
     
-    request.username = [UAirship shared].appId;
-    request.password = [UAirship shared].appSecret;
+    request.username = [UAirship shared].config.appKey;
+    request.password = [UAirship shared].config.appSecret;
     
     return request;
     
