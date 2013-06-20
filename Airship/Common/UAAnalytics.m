@@ -582,11 +582,17 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
+    
     // Optional Items
     [request addRequestHeader:@"X-UA-Lib-Version" value:[UAirshipVersion get]];
     [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];
     [request addRequestHeader:@"X-UA-OS-Version" value:[[UIDevice currentDevice] systemVersion]];
     [request addRequestHeader:@"Content-Type" value: @"application/json"];
+    [request addRequestHeader:@"X-UA-Timezone" value:[[NSTimeZone systemTimeZone] name]];
+    [request addRequestHeader:@"X-UA-Locale-Language" value:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode]];
+    [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale currentLocale] objectForKey: NSLocaleCountryCode]];
+    [request addRequestHeader:@"X-UA-Locale-Varient" value:[[NSLocale currentLocale] objectForKey: NSLocaleVariantCode]];
+
     return request;
 }
 
