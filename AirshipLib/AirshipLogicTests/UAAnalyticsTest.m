@@ -34,24 +34,41 @@
 
 @interface UAAnalyticsTest()
 @property(nonatomic, retain) UAAnalytics *analytics;
+@property(nonatomic, retain) id mockedKeychainClass;
+@property(nonatomic, retain) id mockLocaleClass;
+@property(nonatomic, retain) id mockTimeZoneClass;
 @end
 
 @implementation UAAnalyticsTest
 
+- (void)dealloc {
+    self.mockedKeychainClass = nil;
+    self.mockLocaleClass = nil;
+    self.mockTimeZoneClass = nil;
+    self.analytics = nil;
+
+    [super dealloc];
+}
 
 - (void)setUp {
     [super setUp];
     
-    id mockedKeyChainClass = [OCMockObject mockForClass:[UAKeychainUtils class]];
-    [[[mockedKeyChainClass stub] andReturn:@"some-device-id"] getDeviceID];
-    
+    self.mockedKeychainClass = [OCMockObject mockForClass:[UAKeychainUtils class]];
+    [[[self.mockedKeychainClass stub] andReturn:@"some-device-id"] getDeviceID];
+
+    self.mockLocaleClass = [OCMockObject mockForClass:[NSLocale class]];
+    self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
+
     UAConfig *config = [[[UAConfig alloc] init] autorelease];
     self.analytics = [[UAAnalytics alloc] initWithConfig:config];
  }
 
 - (void)tearDown {
     [super tearDown];
-    RELEASE(self.analytics);
+
+    [self.mockedKeychainClass stopMocking];
+    [self.mockLocaleClass stopMocking];
+    [self.mockTimeZoneClass stopMocking];
 }
 
 - (void)testRequestTimezoneHeader {
@@ -83,21 +100,15 @@
 }
 
 - (void) setCurrentLocale:(NSString*)localeCode {
-    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeCode];
-    [locale autorelease];
-    
-    
-    id mockLocaleClass = [OCMockObject mockForClass:[NSLocale class]];
-    [[[mockLocaleClass stub] andReturn:locale] currentLocale];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:localeCode] autorelease];
+
+    [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
 - (void) setTimeZone:(NSString*)name {
-    NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:name];
-    [timeZone autorelease];
+    NSTimeZone *timeZone = [[[NSTimeZone alloc] initWithName:name] autorelease];
     
-    
-    id mockTimeZone = [OCMockObject mockForClass:[NSTimeZone class]];
-    [[[mockTimeZone stub] andReturn:timeZone] systemTimeZone];
+    [[[self.mockTimeZoneClass stub] andReturn:timeZone] systemTimeZone];
 }
 
 @end
