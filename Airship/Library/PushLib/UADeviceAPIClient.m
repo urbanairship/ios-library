@@ -33,7 +33,7 @@
 }
 
 - (NSString *)deviceTokenURLStringWithRegistrationData:(UADeviceRegistrationData *)registrationData {
-    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
+    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
 }
 
 - (UAHTTPRequest *)requestToRegisterDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {

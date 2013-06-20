@@ -218,7 +218,7 @@
     NSString *referer = [[request allHTTPHeaderFields] objectForKey:@"Referer"];
     BOOL whitelisted = [resourceTypes containsObject:response.response.MIMEType];
     NSString *host = request.URL.host;
-    NSString  *airshipHost = [[NSURL URLWithString:[UAirship shared].config.appKey] host];
+    NSString  *airshipHost = [[NSURL URLWithString:[UAirship shared].config.deviceAPIURL] host];
     
     //only cache responses to requests for content from the airship server, 
     //or content types in the whitelist with no referer
