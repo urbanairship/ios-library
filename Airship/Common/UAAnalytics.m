@@ -719,18 +719,20 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
 
     NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-        NSArray* events = [self prepareEventsForUpload];
-        if (!events) {
-            UA_LTRACE(@"Error parsing events into array, skipping analytics send");
-            return;
-        }
-        if ([events count] == 0) {
-            UA_LTRACE(@"No events to upload, skipping analytics send");
-            return;
-        }
+        @synchronized(self){
+            NSArray* events = [self prepareEventsForUpload];
+            if (!events) {
+                UA_LTRACE(@"Error parsing events into array, skipping analytics send");
+                return;
+            }
+            if ([events count] == 0) {
+                UA_LTRACE(@"No events to upload, skipping analytics send");
+                return;
+            }
 
-        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-        [self.queue addOperation:sendOperation];
+            UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+            [self.queue addOperation:sendOperation];
+        }
     }];
 
     [batchOperation addDependency:delayOperation];
