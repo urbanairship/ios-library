@@ -25,7 +25,6 @@
 
 #import "UAPushMoreSettingsViewController.h"
 #import "UAirship.h"
-#import "UAViewUtils.h"
 #import "UAPush.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
@@ -59,7 +58,6 @@ static NSUInteger locationRowCount = 1;
 
 @implementation UAPushMoreSettingsViewController
 
-@synthesize footerImageView;
 @synthesize tableView;
 @synthesize locationCell = locationCell_;
 
@@ -104,8 +102,6 @@ static NSUInteger locationRowCount = 1;
 
     [self initCells];
 
-    [UAViewUtils roundView:footerImageView borderRadius:10
-               borderWidth:1 color:[UIColor lightGrayColor]];
     [[UAPush shared] addObserver:self];
 }
 

@@ -620,7 +620,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
 				18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */,
 				1890B9111251B5E900E6EBF1 /* Airship */,
 				18C0293F124F216B00D49CD5 /* Classes */,
@@ -640,6 +639,7 @@
 			children = (
 				1F79711212DE3BFB00D4937F /* AirshipConfig.plist */,
 				D5F70FBC12C94C39007285C4 /* PushSample-Info.plist */,
+				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
 				D5F70FBD12C94C39007285C4 /* PushSample_Prefix.pch */,
 				18C02947124F216B00D49CD5 /* main.m */,
 				0D2E051611AA61F300C4CD8A /* checkConfig.sh */,

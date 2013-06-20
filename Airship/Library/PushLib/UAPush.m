@@ -29,7 +29,6 @@
 #import "UAPush+Internal.h"
 
 #import "UAirship.h"
-#import "UAViewUtils.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
 #import "UADeviceRegistrationData.h"
