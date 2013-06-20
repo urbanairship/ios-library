@@ -50,7 +50,7 @@
     
     STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Language"], @"en", @"Wrong local language code in event headers");
     STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Country"],  @"US", @"Wrong local country code in event headers");
-    STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Varient"],  @"POSIX", @"Wrong local varient in event headers");
+    STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Variant"],  @"POSIX", @"Wrong local variant in event headers");
 }
 
 - (void)testAnalyticRequestLocationHeadersPartialCode {
@@ -60,7 +60,7 @@
     
     STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Language"], @"de", @"Wrong local language code in event headers");
     STAssertNil([headers objectForKey:@"X-UA-Locale-Country"], @"Wrong local country code in event headers");
-    STAssertNil([headers objectForKey:@"X-UA-Locale-Varient"], @"Wrong local varient in event headers");
+    STAssertNil([headers objectForKey:@"X-UA-Locale-Variant"], @"Wrong local variant in event headers");
 }
 
 - (void) setCurrentLocale:(NSString*)localeCode {
