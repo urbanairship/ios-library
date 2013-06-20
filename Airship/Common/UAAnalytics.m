@@ -610,6 +610,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     request.compressBody = YES;//enable GZIP
     request.HTTPMethod = @"POST";
+    
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
@@ -617,7 +618,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request addRequestHeader:@"X-UA-Package-Version" value:packageVersion];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
-    [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].appId];
+    [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
+    
     // Optional Items
     [request addRequestHeader:@"X-UA-Lib-Version" value:[UAirshipVersion get]];
     [request addRequestHeader:@"X-UA-Device-Model" value:[UAUtils deviceModelName]];

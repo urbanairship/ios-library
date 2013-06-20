@@ -88,9 +88,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
-    self.appId = nil;
-    self.appSecret = nil;
-    self.server = nil;
+
     self.config = nil;
     
     // Analytics contains an NSTimer, and the invalidate method is required
@@ -102,10 +100,9 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [super dealloc];
 }
 
-- (id)initWithId:(NSString *)appkey identifiedBy:(NSString *)secret {
+- (id)init {
     if (self = [super init]) {
-        self.appId = appkey;
-        self.appSecret = secret;
+        self.ready = NO;
     }
     return self;
 }
@@ -140,27 +137,21 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
     [UAirship setLogLevel:config.logLevel];
 
+    _sharedAirship = [[UAirship alloc] init];
+    _sharedAirship.config = config;
+
     // Ensure that app credentials have been passed in
     if (![config validate]) {
 
         UA_LERR(@"The AirshipConfig.plist file is missing and no application credentials were specified at runtime.");
 
-        //Use blank credentials to prevent app from crashing while error msg
-        //is displayed
-        _sharedAirship = [[UAirship alloc] initWithId:@"" identifiedBy:@""];
-        _sharedAirship.config = config;
+        // Bail now. Don't continue the takeOff sequence.
         return;
     }
 
-    //TODO: dispatch once for takeoff?
-
-    _sharedAirship = [[UAirship alloc] initWithId:config.appKey identifiedBy:config.appSecret];
-    _sharedAirship.config = config;
-    _sharedAirship.server = config.deviceAPIURL;
-
-    UA_LINFO(@"App Key: %@", _sharedAirship.appId);
-    UA_LINFO(@"App Secret: %@", _sharedAirship.appSecret);
-    UA_LINFO(@"Server: %@", _sharedAirship.server);
+    UA_LINFO(@"App Key: %@", _sharedAirship.config.appKey);
+    UA_LINFO(@"App Secret: %@", _sharedAirship.config.appSecret);
+    UA_LINFO(@"Server: %@", _sharedAirship.config.deviceAPIURL);
 
     if (config.handleNotificationsAutomatically) {
 
@@ -191,7 +182,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     if (config.clearKeychain) {
 
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:[[UAirship shared] appId]];
+        [UAKeychainUtils deleteKeychainValue:_sharedAirship.config.appKey];
 
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
@@ -293,7 +284,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     NSString *locale = [[NSLocale currentLocale] localeIdentifier];
     
     NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
-                           appName, appVersion, deviceModel, osName, osVersion, libVersion, self.appId, locale];
+                           appName, appVersion, deviceModel, osName, osVersion, libVersion, self.config.appKey, locale];
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UAHTTPConnection setDefaultUserAgentString:userAgent];

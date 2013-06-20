@@ -26,6 +26,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessageList.h"
 
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager.h"
@@ -91,7 +92,8 @@ static UAInboxMessageList *_messageList = nil;
 - (void)loadSavedMessages {
     
     UALOG(@"before retrieve saved messages: %@", messages);
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username app:[[UAirship shared] appId]];
+    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username
+                                                                              app:[UAirship shared].config.appKey];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
@@ -119,7 +121,7 @@ static UAInboxMessageList *_messageList = nil;
         self.isRetrieving = NO;
 
         [[UAInboxDBManager shared] deleteMessages:messages];
-        [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].appId];
+        [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
         self.messages = newMessages;
 
         unreadCount = unread;

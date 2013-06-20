@@ -61,29 +61,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, retain) UAAnalytics *analytics;
 
 /**
- * The Urban Airship API server. Defaults to https://device-api.urbanairship.com.
- */
-@property (nonatomic, copy) NSString *server;
-
-/**
- * The current Urban Airship app key. This value is loaded from the `AirshipConfig.plist` file or
- * an NSDictionary passed in to [UAirship takeOff:] with the
- * UAirshipTakeOffOptionsAirshipConfigKey. If `APP_STORE_OR_AD_HOC_BUILD` is set to `YES`, the value set
- * in `PRODUCTION_APP_KEY` will be used. If `APP_STORE_OR_AD_HOC_BUILD` is set to `NO`, the value set in
- * `DEVELOPMENT_APP_KEY` will be used.
- */
-@property (nonatomic, copy) NSString *appId;
-
-/**
- * The current Urban Airship app secret. This value is loaded from the AirshipConfig.plist file or
- * an NSDictionary passed in to `[UAirship takeOff:]` with the
- * `UAirshipTakeOffOptionsAirshipConfigKey`. If `APP_STORE_OR_AD_HOC_BUILD` is set to `YES`, the value set
- * in `PRODUCTION_APP_SECRET` will be used. If `APP_STORE_OR_AD_HOC_BUILD` is set to `NO`, the value set in
- * `DEVELOPMENT_APP_SECRET` will be used.
- */
-@property (nonatomic, copy) NSString *appSecret;
-
-/**
  * This flag is set to `YES` if the shared instance of
  * UAirship has been initialized and is ready for use.
  */

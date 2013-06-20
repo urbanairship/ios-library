@@ -1,7 +1,6 @@
 
 #import "UAUserTest.h"
-#import "UAUser.h"
-#import "UAirship+Test.h"
+#import "UAUser+Internal.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 
@@ -14,15 +13,13 @@
 - (void)setUp {
     [super setUp];
     self.user = [UAUser defaultUser];
-    id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[mockAirship stub] andReturn:@"9Q1tVTl0RF16baYKYp8HPQ"] appId];
-    [UAirship configure:mockAirship];
-    // Set-up code here.
+
+    // set an app key to allow the keychain utils to look for a username
+    self.user.appKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 }
 
 - (void)tearDown {
     // Tear-down code here.
-    [UAirship reset];
     [super tearDown];
 }
 

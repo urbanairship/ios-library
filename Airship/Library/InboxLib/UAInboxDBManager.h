@@ -43,8 +43,8 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 
 - (void)createEditableCopyOfDatabaseIfNeeded;
 - (void)initDBIfNeeded;
-- (NSMutableArray *)getMessagesForUser:(NSString *)userId app:(NSString *)appId;
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userId app:(NSString *)appId;
+- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
+- (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey;
 - (void)deleteMessages:(NSArray *)messages;
 - (void)updateMessageAsRead:(UAInboxMessage *)msg;
 - (void)updateMessagesAsRead:(NSArray *)messages;

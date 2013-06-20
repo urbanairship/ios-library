@@ -2,6 +2,7 @@
 #import "UADeviceAPIClient.h"
 #import "UAGlobal.h"
 #import "UAirship.h"
+#import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAHTTPConnectionOperation.h"
 
@@ -32,7 +33,7 @@
 }
 
 - (NSString *)deviceTokenURLStringWithRegistrationData:(UADeviceRegistrationData *)registrationData {
-    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].server, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
+    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
 }
 
 - (UAHTTPRequest *)requestToRegisterDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {
