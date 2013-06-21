@@ -340,17 +340,8 @@ static Class _uiClass;
     [[[UAPush shared] uiClass] openApnsSettings:viewController animated:animated];
 }
 
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated {
-    [[[UAPush shared] uiClass] openTokenSettings:viewController animated:animated];
-}
-
 + (void)closeApnsSettingsAnimated:(BOOL)animated {
     [[[UAPush shared] uiClass] closeApnsSettingsAnimated:animated];
-}
-
-+ (void)closeTokenSettingsAnimated:(BOOL)animated {
-    [[[UAPush shared] uiClass] closeTokenSettingsAnimated:animated];
 }
 
 #pragma mark -

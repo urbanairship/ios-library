@@ -38,7 +38,7 @@
     if (sender == settingsButton) {
         [UAPush openApnsSettings:self animated:YES];
     } else if (sender == tokenButton) {
-        [UAPush openTokenSettings:self animated:YES];
+        [UAPushUI openTokenSettings:self animated:YES];
     }
 }
 

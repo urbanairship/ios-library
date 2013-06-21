@@ -157,22 +157,6 @@ SINGLETON_INTERFACE(UAPush);
  */
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
-+ (void)closeTokenSettingsAnimated:(BOOL)animated;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAPush

@@ -26,6 +26,7 @@
 #import "UAPushMoreSettingsViewController.h"
 #import "UAirship.h"
 #import "UAPush.h"
+#import "UAPushUI.h"
 #import "UAPushSettingsTokenViewController.h"
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsTagsViewController.h"
@@ -50,7 +51,6 @@ enum {
 
 enum {
     HelpSectionSounds   = 0,
-    //HelpSectionLog = 1,
     HelpSectionRowCount = 1
 };
 
@@ -176,7 +176,7 @@ static NSUInteger locationRowCount = 1;
 }
 
 - (void)quit {
-    [UAPush closeTokenSettingsAnimated:YES];
+    [UAPushUI closeTokenSettingsAnimated:YES];
 }
 
 #pragma mark -
