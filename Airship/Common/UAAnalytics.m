@@ -685,7 +685,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
             [self send];
         }
-        [self invalidateBackgroundTask];
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
@@ -719,20 +718,20 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
 
     NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-        @synchronized(self){
-            NSArray* events = [self prepareEventsForUpload];
-            if (!events) {
-                UA_LTRACE(@"Error parsing events into array, skipping analytics send");
-                return;
-            }
-            if ([events count] == 0) {
-                UA_LTRACE(@"No events to upload, skipping analytics send");
-                return;
-            }
-
-            UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-            [self.queue addOperation:sendOperation];
+        NSArray* events = [self prepareEventsForUpload];
+        if (!events) {
+            UA_LTRACE(@"Error parsing events into array, skipping analytics send");
+            [self invalidateBackgroundTask];
+            return;
         }
+        if ([events count] == 0) {
+            UA_LTRACE(@"No events to upload, skipping analytics send");
+            [self invalidateBackgroundTask];
+            return;
+        }
+
+        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+        [self.queue addOperation:sendOperation];
     }];
 
     [batchOperation addDependency:delayOperation];
@@ -742,15 +741,14 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)send {
-    @synchronized(self) {
-        UA_LTRACE(@"Attemping to send analytics");
-        if (![self shouldSendAnalytics]) {
-            UA_LTRACE(@"ShouldSendAnalytics returned no");
-            return;
-        }
-
-        [self batchAndSendEvents];
+    UA_LTRACE(@"Attemping to send analytics");
+    if (![self shouldSendAnalytics]) {
+        UA_LTRACE(@"ShouldSendAnalytics returned no");
+        [self invalidateBackgroundTask];
+        return;
     }
+
+    [self batchAndSendEvents];
 }
 
 @end
