@@ -102,7 +102,7 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
-- (NSString*)parseDeviceToken:(NSString*)tokenStr {
+- (NSString *)parseDeviceToken:(NSString *)tokenStr {
     return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
              stringByReplacingOccurrencesOfString:@">" withString:@""]
             stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -126,14 +126,6 @@ static Class _uiClass;
 
 - (void)setAlias:(NSString *)alias {
     [[NSUserDefaults standardUserDefaults] setObject:alias forKey:UAPushAliasSettingsKey];
-}
-
-- (BOOL)canEditTagsFromDevice {
-   return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushDeviceCanEditTagsKey];
-}
-
-- (void)setCanEditTagsFromDevice:(BOOL)canEditTagsFromDevice {
-    [[NSUserDefaults standardUserDefaults] setBool:canEditTagsFromDevice forKey:UAPushDeviceCanEditTagsKey];
 }
 
 - (NSArray *)tags {
@@ -196,7 +188,7 @@ static Class _uiClass;
 }
 
 - (NSTimeZone *)timeZone {
-    NSString* timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
+    NSString *timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
     return [NSTimeZone timeZoneWithName:timeZoneName];
 }
 
@@ -224,10 +216,6 @@ static Class _uiClass;
     return _uiClass;
 }
 
-- (NSString *)getTagFromUrl:(NSURL *)url {
-    return [[url.relativePath componentsSeparatedByString:@"/"] lastObject];
-}
-
 #pragma mark -
 #pragma mark APNS wrapper
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
@@ -246,8 +234,8 @@ static Class _uiClass;
     NSString *alias =  self.alias;
     NSArray *tags = nil;
     
-    if (self.canEditTagsFromDevice) {
-        tags = [self tags];
+    if (self.deviceTagsEnabled) {
+        tags = self.tags;
         // If there are no tags, and tags are editable, send an 
         // empty array
         if (!tags) {
@@ -255,7 +243,7 @@ static Class _uiClass;
         }
     }
     
-    NSString* tz = nil;
+    NSString *tz = nil;
     NSDictionary *quietTime = nil;
     if (self.timeZone.name != nil && self.quietTimeEnabled) {
         tz = self.timeZone.name;
@@ -264,7 +252,7 @@ static Class _uiClass;
 
     NSNumber *badge = nil;
     
-    if ([self autobadgeEnabled]) {
+    if (self.autobadgeEnabled) {
         badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
 
@@ -295,7 +283,7 @@ static Class _uiClass;
         UA_LDEBUG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
         return;
     }
-    if(!timezone){
+    if (!timezone) {
         timezone = [self defaultTimeZoneForQuietTime];
     }
     NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
@@ -361,10 +349,6 @@ static Class _uiClass;
     [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
-- (void)enableAutobadge:(BOOL)autobadge {
-    self.autobadgeEnabled = autobadge;
-}
-
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
 
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
@@ -380,7 +364,7 @@ static Class _uiClass;
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
         UA_LDEBUG(@"Sending autobadge update to UA server");
-        [self updateRegistrationForcefully:YES  ];
+        [self updateRegistrationForcefully:YES];
     }
 }
 

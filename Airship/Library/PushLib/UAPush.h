@@ -286,7 +286,7 @@ SINGLETON_INTERFACE(UAPush);
  * server side values (tags, alias, time zone, quiet time) set the values first, then
  * call updateRegistration. Batching these calls improves API and client performance.
  */
-- (void)removeTagsFromCurrentDevice:(NSArray*)tags;
+- (void)removeTagsFromCurrentDevice:(NSArray *)tags;
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
