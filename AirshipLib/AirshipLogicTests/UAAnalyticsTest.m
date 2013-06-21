@@ -108,7 +108,7 @@
 - (void) setTimeZone:(NSString*)name {
     NSTimeZone *timeZone = [[[NSTimeZone alloc] initWithName:name] autorelease];
     
-    [[[self.mockTimeZoneClass stub] andReturn:timeZone] systemTimeZone];
+    [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
 }
 
 @end
