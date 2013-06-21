@@ -248,7 +248,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     
     [session setObject:notification_types forKey:@"notification_types"];
     
-    NSTimeZone *localtz = [NSTimeZone localTimeZone];
+    NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
     [session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
     [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
     
