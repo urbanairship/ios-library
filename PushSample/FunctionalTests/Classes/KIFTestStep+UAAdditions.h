@@ -23,12 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "KIFTestStep.h"
 
-#import "UAPush.h"
+@interface KIFTestStep (UAAdditions)
 
-@interface UATestPushDelegate : NSObject<UAPushNotificationDelegate>
-
-@property (nonatomic, retain) NSString *uniqueID;
++ (id)stepToSetUniqueID:(NSString *)alertID;
 
 @end

@@ -28,14 +28,19 @@
 
 @implementation UATestPushDelegate
 
+@synthesize uniqueID;
+
 - (void)displayNotificationAlert:(NSString *)alertMessage {
-    // display the push with the alert (a UUID) in all fields
-    UIAlertView *alert = [[[UIAlertView alloc] initWithTitle: @"alertMessage"
-                                                     message:alertMessage
-                                                    delegate:nil
-                                           cancelButtonTitle:alertMessage
-                                           otherButtonTitles:nil] autorelease];
-    [alert show];
+    // if uniqueID matches, display alert else ignore and don't display alert message
+    if ([self.uniqueID isEqualToString:alertMessage]) {
+        // display the push with the alert (a UUID) in all fields
+        UIAlertView *alert = [[[UIAlertView alloc] initWithTitle: @"alertMessage"
+                                                         message:alertMessage
+                                                        delegate:nil
+                                               cancelButtonTitle:alertMessage
+                                               otherButtonTitles:nil] autorelease];
+        [alert show];
+    }
 }
 
 @end

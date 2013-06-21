@@ -23,12 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "KIFTestStep+UAAdditions.h"
+#import "UATestPushDelegate.h"
 
-#import "UAPush.h"
+@implementation KIFTestStep (UAAdditions)
 
-@interface UATestPushDelegate : NSObject<UAPushNotificationDelegate>
++ (id)stepToSetUniqueID:(NSString *)alertID {
+    return [KIFTestStep stepWithDescription:@"Set uniqueID." executionBlock:^(KIFTestStep *step, NSError **error) {
 
-@property (nonatomic, retain) NSString *uniqueID;
+        UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAPush shared].delegate;
+        pushDelegate.uniqueID = alertID;
+
+        return KIFTestStepResultSuccess;
+    }];
+}
 
 @end

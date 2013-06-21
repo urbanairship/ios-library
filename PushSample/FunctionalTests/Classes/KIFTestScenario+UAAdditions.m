@@ -25,14 +25,15 @@
 
 #import "KIFTestScenario+UAAdditions.h"
 
-#import "KIFTestStep.h"
+#import "KIFTestStep+UAAdditions.h"
 
 #import "UAPush.h"
 #import "UAUtils.h"
 #import "UAPushClient.h"
+#import "UATestPushDelegate.h"
 
 #define kRegistrationWait 30.0
-#define kPushWait 60.0
+#define kPushWait 90.0
 
 @implementation KIFTestScenario (UAAdditions)
 
@@ -54,6 +55,7 @@
 
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a unicast push is received and properly handled."];
 
+    [scenario addStep:[KIFTestStep stepToSetUniqueID:alertID]];
     [scenario addStep:[KIFTestStep stepWithDescription:@"Send a unicast push." executionBlock:^(KIFTestStep *step, NSError **error) {
         [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
         return KIFTestStepResultSuccess;
@@ -72,6 +74,7 @@
 
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a broadcast push is received and properly handled."];
 
+    [scenario addStep:[KIFTestStep stepToSetUniqueID:alertID]];
     [scenario addStep:[KIFTestStep stepWithDescription:@"Send a broadcast push." executionBlock:^(KIFTestStep *step, NSError **error) {
         [UAPushClient sendBroadcastAlert:alertID];
         return KIFTestStepResultSuccess;
@@ -101,7 +104,7 @@
     [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
 
     // Now send it a push!
-
+    [scenario addStep:[KIFTestStep stepToSetUniqueID:uniqueID]];
     [scenario addStep:[KIFTestStep stepWithDescription:@"Send an alias push." executionBlock:^(KIFTestStep *step, NSError **error) {
         [UAPushClient sendAlert:uniqueID toAlias:uniqueID];
         return KIFTestStepResultSuccess;
@@ -154,7 +157,7 @@
     [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
 
     // Now send it a push!
-
+    [scenario addStep:[KIFTestStep stepToSetUniqueID:uniqueID]];
     [scenario addStep:[KIFTestStep stepWithDescription:@"Send a tag push." executionBlock:^(KIFTestStep *step, NSError **error) {
         [UAPushClient sendAlert:uniqueID toTag:uniqueID];
         return KIFTestStepResultSuccess;
