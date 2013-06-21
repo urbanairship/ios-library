@@ -25,6 +25,9 @@
 
 #import "KIFTestStep+UAAdditions.h"
 #import "UATestPushDelegate.h"
+#import "UAUtils.h"
+
+#define kPushWait 90.0
 
 @implementation KIFTestStep (UAAdditions)
 
@@ -37,5 +40,27 @@
         return KIFTestStepResultSuccess;
     }];
 }
+
++ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock {
+    NSString *alertID = [UAUtils UUID];
+
+    NSMutableArray *steps = [NSMutableArray array];
+
+    [steps addObject:[KIFTestStep stepToSetUniqueID:alertID]];
+
+    [steps addObject:[KIFTestStep stepWithDescription:description executionBlock:^(KIFTestStep *step, NSError **error) {
+        sendPushBlock(alertID);
+        return KIFTestStepResultSuccess;
+    }]];
+
+    KIFTestStep *waitStep = [KIFTestStep stepToWaitForTappableViewWithAccessibilityLabel:alertID];
+    waitStep.timeout = kPushWait;
+
+    [steps addObject:waitStep];
+    [steps addObject:[KIFTestStep stepToTapViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton]];
+
+    return steps;
+}
+
 
 @end

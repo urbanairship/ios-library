@@ -24,9 +24,11 @@
  */
 
 #import "KIFTestStep.h"
+typedef void (^SendPushBlock)(NSString *alertID);
 
 @interface KIFTestStep (UAAdditions)
 
 + (id)stepToSetUniqueID:(NSString *)alertID;
++ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
 
 @end
