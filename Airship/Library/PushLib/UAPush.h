@@ -53,11 +53,6 @@
  */
 + (void)closeApnsSettingsAnimated:(BOOL)animated;
 
-
-/* TODO: remove the following two methods from lib/protocol - it's a demo feature */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-+ (void)closeTokenSettingsAnimated:(BOOL)animated;
 @end
 
 
@@ -243,18 +238,6 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)resetBadge;
 
-/*
- * Enable the Urban Airship autobadge feature. This will update the badge number stored by UA
- * every time the app is started or foregrounded.
- * 
- * @param enabled New value
- * @warning *Deprecated* Use the setAutobadgeEnabled: method instead
- *
- * @deprecated 1.3.0
- */
-- (void)enableAutobadge:(BOOL)enabled __attribute__((deprecated("Deprecated in 1.3.0")));
-
-
 ///---------------------------------------------------------------------------------------
 /// @name Alias
 ///---------------------------------------------------------------------------------------
@@ -273,7 +256,7 @@ SINGLETON_INTERFACE(UAPush);
  * Allows tag editing from device. Set this to `NO` to prevent the device from sending any tag
  * information to the server when using server side tagging. Defaults to `YES`.
  */
-@property (nonatomic, assign) BOOL canEditTagsFromDevice; /* getter = canEditTagsFromDevice, setter = setCanEditTagsFromDevice: */
+@property (nonatomic, assign) BOOL deviceTagsEnabled;
 
 /**
  * Adds a tag to the list of tags for the device.
@@ -321,33 +304,6 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)removeTagsFromCurrentDevice:(NSArray*)tags;
 
-/*
- * Updates the tag list on the device and on Urban Airship. Use `setTags`
- * instead. This method updates the server after setting the tags. Use
- * the other tag manipulation methods instead, and update the server
- * when appropriate.
- *
- * @param values The new tag values
- *
- * @deprecated 1.3.0
- */
-- (void)updateTags:(NSMutableArray *)values __attribute__((deprecated("Deprecated in 1.3.0")));
-
-///---------------------------------------------------------------------------------------
-/// @name Alias
-///---------------------------------------------------------------------------------------
-
-
-/*
- * Updates the alias on the device and on Urban Airship. Use only 
- * when the alias is the only value that needs to be updated. 
- *
- * @param value New alias
- *
- * @deprecated 1.3.0
- */
-- (void)updateAlias:(NSString *)value __attribute__((deprecated("Deprecated in 1.3.0")));
-
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
 ///---------------------------------------------------------------------------------------
@@ -355,7 +311,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Quiet time settings for this device.
  */
-@property (nonatomic, copy, readonly) NSDictionary *quietTime; /* getter = quietTime */
+@property (nonatomic, copy, readonly) NSDictionary *quietTime;
 
 /**
  * Time Zone for quiet time.
@@ -382,33 +338,6 @@ SINGLETON_INTERFACE(UAPush);
  * @param tz The time zone for the from and to dates
  */
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
-
-/*
- * Disables quiet time settings. This call updates the server with an API call.
- * This call is deprecated. Set quietTimeEnabled to NO instead;
- *
- * @deprecated 1.3.0
- */
-- (void)disableQuietTime __attribute__((deprecated("Deprecated in 1.3.0")));
-
-/*
- * The current time zone setting for quiet time.
- *
- * @return The time zone name
- *
- * @deprecated 1.3.0
- */
-- (NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
-
-/*
- * Set a new time zone for quiet time.
- *
- * @param tz NSString representing the new time zone name. If the name does not resolve to an actual NSTimeZone,
- * the default time zone [NSTimeZone localTimeZone] is used.
- *
- * @deprecated 1.3.0
- */
-- (void)setTz:(NSString *)tz __attribute__((deprecated("Deprecated in 1.3.0")));
 
 
 ///---------------------------------------------------------------------------------------
