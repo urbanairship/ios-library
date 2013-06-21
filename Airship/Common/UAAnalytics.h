@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <Foundation/Foundation.h>
-#import "UAHTTPConnection.h"
 
 @class UAEvent;
 @class UAConfig;
@@ -67,7 +66,6 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (nonatomic, assign, readonly) int x_ua_min_batch_interval;
 @property (nonatomic, assign, readonly) int sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
-@property (nonatomic, retain, readonly) NSTimer *sendTimer;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
@@ -76,10 +74,6 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 - (void)addEvent:(UAEvent *)event;
 - (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState;
 
-/** This class contains an NSTimer. This timer must be invalidated before
- this class is released, or there will be a memory leak. Call invalidate
- before deallocating this class */
-- (void)invalidate;
 
 /** Date representing the last attempt to send analytics */
 - (NSDate*)lastSendTime;

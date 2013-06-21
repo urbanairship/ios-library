@@ -59,7 +59,6 @@
 }
 
 - (void)tearDown {
-    [analytics invalidate];
     RELEASE(analytics);
 }
 
@@ -95,7 +94,6 @@
 - (void)testEnterForeground {
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
     [[mockAnalytics expect] invalidateBackgroundTask];
-    [[mockAnalytics expect] setupSendTimer:X_UA_MIN_BATCH_INTERVAL];
     
     //set up event capture
     __block id arg = nil;
@@ -225,7 +223,6 @@
     [analytics enterBackground];
     STAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
     STAssertTrue(analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
-    STAssertFalse([analytics.sendTimer isValid], @"sendTimer should be invalid");
     [mockAnalytics verify];
 }
 
@@ -325,28 +322,6 @@
     [mockAnalytics verify];
 }
 
-- (void)testRequestDidSucceed {
-    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
-    NSArray *info = [NSArray arrayWithObject:@"one"];
-    [[[mockRequest stub] andReturn:info] userInfo];
-    id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
-    [[[mockRequest stub] andReturn:mockResponse] response];
-    NSInteger code = 200;
-    [[[mockResponse stub] andReturnValue:OCMOCK_VALUE(code)] statusCode];
-    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] updateAnalyticsParametersWithHeaderValues:mockResponse];
-    [[mockAnalytics expect] resetEventsDatabaseStatus];
-    [[mockAnalytics expect] invalidateBackgroundTask];
-    [[mockDBManager expect] deleteEvents:info];
-    [analytics requestDidSucceed:mockRequest];
-    [mockAnalytics verify];
-    [mockDBManager verify];
-    [mockResponse verify];
-    [mockRequest verify];
-    STAssertEqualsWithAccuracy([[NSDate date] timeIntervalSinceDate:analytics.lastSendTime], (NSTimeInterval)0, 2, nil);
-}
-
 - (void)testUpdateAnalyticsParameters {
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
     // Hit all the if statements that prevent values from changing
@@ -384,25 +359,18 @@
     STAssertEquals(analytics.x_ua_min_batch_interval, X_UA_MIN_BATCH_INTERVAL + 1, nil);
 }
 
-- (void)testRequestDidFail {
-    id mockRequest = [OCMockObject niceMockForClass:[UAHTTPRequest class]];
-    id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] invalidateBackgroundTask];
-    analytics.connection = [UAHTTPConnection connectionWithRequest:mockRequest];
-    [analytics requestDidFail:mockRequest];
-    [mockAnalytics verify];
-    STAssertNil(analytics.connection, nil);
-}
-
 - (void)testShouldSendAnalyticsCore {
     analytics.config.analyticsEnabled = NO;
     STAssertFalse([analytics shouldSendAnalytics], nil);
 
     analytics.config.analyticsEnabled = YES;
-    analytics.connection = [UAHTTPConnection connectionWithRequest:nil];
-    STAssertFalse([analytics shouldSendAnalytics], nil);
 
-    analytics.connection = nil;
+    STAssertFalse([analytics shouldSendAnalytics], nil);
+    [analytics.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
+        sleep(3);
+    }]];
+    [analytics.queue cancelAllOperations];
+
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger zero = 0;
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(zero)] eventCount];
@@ -416,7 +384,10 @@
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
     analytics.config.analyticsURL = @"cats";
-    analytics.connection = nil;
+    id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    NSUInteger zero = 0;
+    [[[mockQueue stub] andReturnValue:OCMOCK_VALUE(zero)] operationCount];
+    analytics.queue = mockQueue;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger five = 5;
@@ -438,29 +409,16 @@
 }
 
 - (void)testSend {
-    __block id arg = nil;
-    void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
-    };
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    id mockConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
-    analytics.connection = mockConnection;
-    // Intercept setConnection to prevent the mock that was just setup from being 
-    // replaced during execution of the send method
-    [[mockAnalytics stub] setConnection:OCMOCK_ANY];
-    // Casting this object prevents a compiler warning
-    [(UAHTTPConnection*)[mockConnection expect] start];
+    id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
+    analytics.queue = mockQueue;
+    [[mockQueue expect] addOperation:[OCMArg any]];
     BOOL yes = YES;
     [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(yes)] shouldSendAnalytics];
-    UAHTTPRequest *request = [analytics analyticsRequest];
-    id mockRequest = [OCMockObject partialMockForObject:request];
-    [[[mockRequest stub] andDo:getSingleArg] setUserInfo:OCMOCK_ANY];
-    [[[mockAnalytics stub] andReturn:request] analyticsRequest];
     NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [analytics send];
-    [mockConnection verify];
-    STAssertEqualObjects(arg, data, @"UAAnalytics send method not populating request userInfo object with correct data");
+    [mockQueue verify];
 }
 
 // This test is not comprehensive for this method, as the method needs refactoring.
@@ -479,14 +437,10 @@
 }
 
 - (void)testSetSendInterval {
-    STAssertEquals(UAAnalyticsFirstBatchUploadInterval, (int)analytics.sendTimer.timeInterval, nil);
-    STAssertTrue([analytics.sendTimer isValid], nil);
     int newVal = 42;
     analytics.x_ua_min_batch_interval = 5;
     analytics.x_ua_max_wait = 50;
     analytics.sendInterval = newVal;
-    STAssertTrue([analytics.sendTimer isValid], nil);
-    STAssertEquals(42, (int)analytics.sendTimer.timeInterval, nil);
     STAssertEquals(42, analytics.sendInterval, nil);
 }
 
