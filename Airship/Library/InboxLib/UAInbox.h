@@ -181,6 +181,14 @@ SINGLETON_INTERFACE(UAInbox);
 ///---------------------------------------------------------------------------------------
 
 /**
+ * Determines whether the contents of Rich Push messges should be cached
+ * using the custom Inbox-specific URL cache.
+ *
+ * Defaults to YES.
+ */
+@property(nonatomic, assign) BOOL shouldUseInboxCache;
+
+/**
  * The default URL Cache ([NSURLCache sharedURLCache]).
  * This is saved prior to switching the URL Cache to the inboxCache.
  */

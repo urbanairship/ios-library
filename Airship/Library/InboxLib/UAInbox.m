@@ -79,7 +79,10 @@ static Class _uiClass;
 #pragma mark Open API, enter/quit Inbox
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
+    //if configured to use the inbox cache, swap it in here
+    if (g_sharedUAInbox.shouldUseInboxCache) {
+        [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
+    }
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 }
 
@@ -90,7 +93,11 @@ static Class _uiClass;
 
 + (void)quitInbox {
     [[[UAInbox shared] uiClass] quitInbox];
-    [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
+    //swap out the inbox cache if it's currently in place
+    //(the value of shouldUseInboxCache may have changed, but we'll want to swap it out regardless)
+    if ([[NSURLCache sharedURLCache] isEqual:g_sharedUAInbox.inboxCache]) {
+        [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
+    }
 }
 
 + (void)land {
@@ -126,10 +133,11 @@ static Class _uiClass;
         [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
                                   withIntermediateDirectories:YES
                                                    attributes:nil error:&error];
+        self.shouldUseInboxCache = YES;
         
-		self.inboxCache = [[[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
-                                                                diskCapacity:10*1024*1024
-                                                                    diskPath:diskCachePath] autorelease];
+        self.inboxCache = [[[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
+                                                              diskCapacity:10*1024*1024
+                                                                  diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
         
         self.messageList = [UAInboxMessageList shared];
