@@ -290,10 +290,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
-    [self.queue cancelAllOperations];
-    [self sendEventsWithCompletionBlock:^{
-        [self invalidateBackgroundTask];
-    }];
+    [self send];
 }
 
 - (void)invalidateBackgroundTask {
@@ -779,7 +776,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)send {
-    [self sendEventsWithCompletionBlock:^{}];
+    [self sendEventsWithCompletionBlock:^{[self invalidateBackgroundTask];}];
 }
 
 @end
