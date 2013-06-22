@@ -290,6 +290,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
+    [self.queue cancelAllOperations];
     [self sendEventsWithCompletionBlock:^{
         [self invalidateBackgroundTask];
     }];
@@ -770,6 +771,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
     if (![self shouldSendAnalytics]) {
         UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send");
+        completionBlock();
         return;
     }
 
