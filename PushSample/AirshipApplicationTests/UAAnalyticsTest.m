@@ -362,15 +362,7 @@
 - (void)testShouldSendAnalyticsCore {
     analytics.config.analyticsEnabled = NO;
     STAssertFalse([analytics shouldSendAnalytics], nil);
-
     analytics.config.analyticsEnabled = YES;
-
-    STAssertFalse([analytics shouldSendAnalytics], nil);
-    [analytics.queue addOperation:[NSBlockOperation blockOperationWithBlock:^{
-        sleep(3);
-    }]];
-    [analytics.queue cancelAllOperations];
-
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger zero = 0;
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(zero)] eventCount];
