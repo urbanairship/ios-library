@@ -32,7 +32,8 @@
 #import "UAPushClient.h"
 #import "UATestPushDelegate.h"
 
-#define kRegistrationWait 30.0
+#define kPushRegistrationWait 10.0
+#define kAliasTagsRegistrationWait 30.0
 #define kPushWait 90.0
 
 @implementation KIFTestScenario (UAAdditions)
@@ -47,7 +48,10 @@
 
     // save push enabled
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
-    
+
+    // wait for registration
+    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kPushRegistrationWait description:@"Wait for the registration to succeed."]];
+
     // verify push is enabled
     [scenario addStep:[KIFTestStep stepToVerifyPushEnabled:YES]];
 
@@ -94,7 +98,7 @@
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
 
-    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
+    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kAliasTagsRegistrationWait description:@"Wait for the registration to succeed."]];
 
     // Now send a push to the alias and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send Push to alias" sendPushBlock:^(NSString *alertID) {
@@ -139,7 +143,7 @@
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
 
     // wait for registration
-    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
+    [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kAliasTagsRegistrationWait description:@"Wait for the registration to succeed."]];
 
     // Now send a push to the tag and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send Push to tag" sendPushBlock:^(NSString *alertID) {
