@@ -25,4 +25,4 @@ fabfile.py*
 cover.py
 OCMockLibrary
 *.swp
-
+Deploy/output
