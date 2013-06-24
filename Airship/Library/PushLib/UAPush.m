@@ -56,25 +56,6 @@ NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
 @implementation UAPush 
-//Internal
-@synthesize defaultPushHandler;
-@synthesize hasEnteredBackground;
-
-//Public
-@synthesize delegate;
-@synthesize notificationTypes;
-@synthesize autobadgeEnabled = autobadgeEnabled_;
-
-// Public - UserDefaults
-@dynamic pushEnabled;
-@synthesize deviceToken;
-@dynamic alias;
-@dynamic tags;
-@dynamic quietTime;
-@dynamic timeZone;
-@dynamic quietTimeEnabled;
-@synthesize retryOnConnectionError;
-
 
 SINGLETON_IMPLEMENTATION(UAPush)
 
@@ -90,7 +71,7 @@ static Class _uiClass;
 }
 
 -(void)dealloc {
-    RELEASE_SAFELY(defaultPushHandler);
+    self.defaultPushHandler = nil;
     self.deviceAPIClient = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
@@ -101,8 +82,8 @@ static Class _uiClass;
     if (self) {
         //init with default delegate implementation
         // released when replaced
-        defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
-        delegate = defaultPushHandler;
+        self.defaultPushHandler = [[[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init] autorelease];
+        self.delegate = _defaultPushHandler;
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(applicationDidBecomeActive) 
                                                      name:UIApplicationDidBecomeActiveNotification 
@@ -121,7 +102,7 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
-- (NSString*)parseDeviceToken:(NSString*)tokenStr {
+- (NSString *)parseDeviceToken:(NSString *)tokenStr {
     return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
              stringByReplacingOccurrencesOfString:@">" withString:@""]
             stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -145,14 +126,6 @@ static Class _uiClass;
 
 - (void)setAlias:(NSString *)alias {
     [[NSUserDefaults standardUserDefaults] setObject:alias forKey:UAPushAliasSettingsKey];
-}
-
-- (BOOL)canEditTagsFromDevice {
-   return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushDeviceCanEditTagsKey];
-}
-
-- (void)setCanEditTagsFromDevice:(BOOL)canEditTagsFromDevice {
-    [[NSUserDefaults standardUserDefaults] setBool:canEditTagsFromDevice forKey:UAPushDeviceCanEditTagsKey];
 }
 
 - (NSArray *)tags {
@@ -188,7 +161,7 @@ static Class _uiClass;
 
         if (enabled) {
             UA_LDEBUG(@"registering for remote notifcations");
-            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
             //note: we don't want to use the wrapper method here, because otherwise it will blow away the existing notificationTypes
@@ -202,7 +175,7 @@ static Class _uiClass;
     return [[NSUserDefaults standardUserDefaults] dictionaryForKey:UAPushQuietTimeSettingsKey];
 }
 
-- (void)setQuietTime:(NSMutableDictionary *)quietTime {
+- (void)setQuietTime:(NSDictionary *)quietTime {
     [[NSUserDefaults standardUserDefaults] setObject:quietTime forKey:UAPushQuietTimeSettingsKey];
 }
 
@@ -214,17 +187,8 @@ static Class _uiClass;
     [[NSUserDefaults standardUserDefaults] setBool:quietTimeEnabled forKey:UAPushQuietTimeEnabledSettingsKey];
 }
 
-- (NSString *)tz {
-    return [[self timeZone] name];
-}
-
-- (void)setTz:(NSString *)tz {
-    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:tz];
-    self.timeZone = timeZone;
-}
-
 - (NSTimeZone *)timeZone {
-    NSString* timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
+    NSString *timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
     return [NSTimeZone timeZoneWithName:timeZoneName];
 }
 
@@ -252,17 +216,13 @@ static Class _uiClass;
     return _uiClass;
 }
 
-- (NSString *)getTagFromUrl:(NSURL *)url {
-    return [[url.relativePath componentsSeparatedByString:@"/"] lastObject];
-}
-
 #pragma mark -
 #pragma mark APNS wrapper
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
     self.notificationTypes = types;
     
     if (self.pushEnabled) {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:notificationTypes];
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
     }
 }
 
@@ -274,8 +234,8 @@ static Class _uiClass;
     NSString *alias =  self.alias;
     NSArray *tags = nil;
     
-    if (self.canEditTagsFromDevice) {
-        tags = [self tags];
+    if (self.deviceTagsEnabled) {
+        tags = self.tags;
         // If there are no tags, and tags are editable, send an 
         // empty array
         if (!tags) {
@@ -283,7 +243,7 @@ static Class _uiClass;
         }
     }
     
-    NSString* tz = nil;
+    NSString *tz = nil;
     NSDictionary *quietTime = nil;
     if (self.timeZone.name != nil && self.quietTimeEnabled) {
         tz = self.timeZone.name;
@@ -292,7 +252,7 @@ static Class _uiClass;
 
     NSNumber *badge = nil;
     
-    if ([self autobadgeEnabled]) {
+    if (self.autobadgeEnabled) {
         badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
     }
 
@@ -317,44 +277,30 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open APIs - Property Setters
 
-- (void)updateAlias:(NSString *)value {
-    self.alias = value;
-    [self updateRegistration];
-}
-
-- (void)updateTags:(NSMutableArray *)value {
-    self.tags = value;
-    [self updateRegistration];
-}
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to) {
         UA_LDEBUG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
         return;
     }
-    if(!timezone){
+    if (!timezone) {
         timezone = [self defaultTimeZoneForQuietTime];
     }
     NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-    NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
-                         [cal components:NSHourCalendarUnit fromDate:from].hour,
-                         [cal components:NSMinuteCalendarUnit fromDate:from].minute];
+    NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
+                              [cal components:NSHourCalendarUnit fromDate:from].hour,
+                              [cal components:NSMinuteCalendarUnit fromDate:from].minute];
     
-    NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
-                       [cal components:NSHourCalendarUnit fromDate:to].hour,
-                       [cal components:NSMinuteCalendarUnit fromDate:to].minute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%d:%02d",
+                            [cal components:NSHourCalendarUnit fromDate:to].hour,
+                            [cal components:NSMinuteCalendarUnit fromDate:to].minute];
     
-    self.quietTime = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                      fromStr, UAPushQuietTimeStartKey,
-                      toStr, UAPushQuietTimeEndKey, nil];
+    self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
+                       UAPushQuietTimeEndKey : endTimeStr };
     
     self.timeZone = timezone;
 }
 
-- (void)disableQuietTime {
-    self.quietTimeEnabled = NO;
-    [self updateRegistration];
-}
 
 #pragma mark -
 #pragma mark Open APIs
@@ -382,17 +328,8 @@ static Class _uiClass;
     [[[UAPush shared] uiClass] openApnsSettings:viewController animated:animated];
 }
 
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated {
-    [[[UAPush shared] uiClass] openTokenSettings:viewController animated:animated];
-}
-
 + (void)closeApnsSettingsAnimated:(BOOL)animated {
     [[[UAPush shared] uiClass] closeApnsSettingsAnimated:animated];
-}
-
-+ (void)closeTokenSettingsAnimated:(BOOL)animated {
-    [[[UAPush shared] uiClass] closeTokenSettingsAnimated:animated];
 }
 
 #pragma mark -
@@ -412,10 +349,6 @@ static Class _uiClass;
     [[NSUserDefaults standardUserDefaults] setObject:mutableTags forKey:UAPushTagsSettingsKey];
 }
 
-- (void)enableAutobadge:(BOOL)autobadge {
-    self.autobadgeEnabled = autobadge;
-}
-
 - (void)setBadgeNumber:(NSInteger)badgeNumber {
 
     if ([[UIApplication sharedApplication] applicationIconBadgeNumber] == badgeNumber) {
@@ -431,7 +364,7 @@ static Class _uiClass;
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
         UA_LDEBUG(@"Sending autobadge update to UA server");
-        [self updateRegistrationForcefully:YES  ];
+        [self updateRegistrationForcefully:YES];
     }
 }
 
@@ -446,8 +379,8 @@ static Class _uiClass;
     if (state != UIApplicationStateActive) {
         UA_LTRACE(@"Received a notification for an inactive application state.");
         
-        if ([delegate respondsToSelector:@selector(launchedFromNotification:)])
-            [delegate launchedFromNotification:notification];
+        if ([self.delegate respondsToSelector:@selector(launchedFromNotification:)])
+            [self.delegate launchedFromNotification:notification];
         return;
     }
 
@@ -463,15 +396,15 @@ static Class _uiClass;
 		if ([[apsDict allKeys] containsObject:@"alert"]) {
 
 			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]] &&
-                [delegate respondsToSelector:@selector(displayNotificationAlert:)]) {
+                [self.delegate respondsToSelector:@selector(displayNotificationAlert:)]) {
                 
 				// The alert is a single string message so we can display it
-                [delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
 
-			} else if ([delegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
+			} else if ([self.delegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 				// The alert is a a dictionary with more localization details
 				// This should be customized to fit your message details or usage scenario 
-                [delegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.delegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
 			}
 
 		}
@@ -482,22 +415,22 @@ static Class _uiClass;
             
 			if (self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-			} else if ([delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-				[delegate handleBadgeUpdate:[badgeNumber intValue]];
+			} else if ([self.delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
+				[self.delegate handleBadgeUpdate:[badgeNumber intValue]];
 			}
         }
 		
         //sound
 		NSString *soundName = [apsDict valueForKey:@"sound"];
-		if (soundName && [delegate respondsToSelector:@selector(playNotificationSound:)]) {
-			[delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+		if (soundName && [self.delegate respondsToSelector:@selector(playNotificationSound:)]) {
+			[self.delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
 		}
         
 	}//aps
 
 	// 
-	if([delegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-		[delegate receivedForegroundNotification:notification];
+	if([self.delegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
+		[self.delegate receivedForegroundNotification:notification];
     }
     
 }
@@ -535,7 +468,7 @@ static Class _uiClass;
 
 - (void)applicationDidBecomeActive {
     UA_LDEBUG(@"Checking registration status after foreground notification");
-    if (hasEnteredBackground) {
+    if (self.hasEnteredBackground) {
         [self updateRegistration];
     }
     else {
@@ -544,7 +477,7 @@ static Class _uiClass;
 }
 
 - (void)applicationDidEnterBackground {
-    hasEnteredBackground = YES;
+    self.hasEnteredBackground = YES;
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
@@ -626,7 +559,7 @@ static Class _uiClass;
 
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
-    if (!notificationTypes) {
+    if (!self.notificationTypes) {
         UA_LDEBUG(@"***ERROR***: attempted to register device token with no notificationTypes set!  \
               Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication");
         return;
@@ -653,10 +586,12 @@ static Class _uiClass;
     // Migration for pre 1.3.0 library quiet time settings
     // This pulls an object, instead of a BOOL
     id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
-    NSDictionary* currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
+
+    NSDictionary *currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
     if (!quietTimeEnabled && currentQuietTime) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
     }
+    
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushDeviceCanEditTagsKey];

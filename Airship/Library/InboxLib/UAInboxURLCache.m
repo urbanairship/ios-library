@@ -80,8 +80,7 @@
     if (self = [super initWithMemoryCapacity:memoryCapacity diskCapacity:diskCapacity diskPath:path]) {
         self.cacheDirectory = path;
 
-        self.resourceTypes = [NSArray arrayWithObjects:
-                              @"image/png", @"image/gif", @"image/jpg", @"image/jpeg", @"text/javascript", @"application/javascript", @"text/css", nil];
+        self.resourceTypes = @[@"image/png", @"image/gif", @"image/jpg", @"image/jpeg", @"text/javascript", @"application/javascript", @"text/css"];
         
         self.actualDiskCapacity = diskCapacity;
         
@@ -298,11 +297,11 @@
         contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         charset = [[contentType substringFromIndex:(range.location + range.length)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        return [NSArray arrayWithObjects:contentSubType, charset, nil];
+        return @[contentSubType, charset];
     }
     
     else {
-        return [NSArray arrayWithObjects:contentType, nil];
+        return @[contentType];
     }    
 }
 

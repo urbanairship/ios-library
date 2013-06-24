@@ -66,9 +66,6 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 @property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
 
-/* Set quiet time. */
-- (void)setQuietTime:(NSMutableDictionary *)quietTime;
-
 /* Get the local time zone, considered the default. */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 

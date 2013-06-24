@@ -30,12 +30,10 @@
 - (NSDictionary *)createUserDictionaryWithDeviceToken:(NSString *)deviceToken {
 
     //set up basic payload
-    NSMutableDictionary *data = [[[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                 [UAUtils deviceID], @"ua_device_id", nil ] autorelease];
+    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
 
     if (deviceToken) {
-        NSArray *deviceTokens = [NSArray arrayWithObjects:deviceToken, nil];
-        [data setObject:deviceTokens forKey:@"device_tokens"];
+        [data setObject:@[deviceToken] forKey:@"device_tokens"];
     }
 
     return data;
