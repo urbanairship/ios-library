@@ -741,7 +741,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         NSBlockOperation *rebatchOperation = [NSBlockOperation blockOperationWithBlock:^{
             //if we're not in the background, and there's still stuff to send, create a new delay/batch and add them
             //otherwise, we should complete here and return
-            BOOL moreBatchesNecessary = [self prepareEventsForUpload] != nil;
+            BOOL moreBatchesNecessary = [self hasEventsToSend];
 
             if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && moreBatchesNecessary) {
                 [self batchAndSendEventsWithCompletionBlock:completionBlock];
@@ -780,6 +780,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [self.queue addOperation:batchOperation];
 }
 
+//NOTE: this method is intended to be called from the main thread
 - (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
     UA_LTRACE(@"Attemping to send analytics");
 
@@ -800,6 +801,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [self batchAndSendEventsWithCompletionBlock:completionBlock];
 }
 
+//NOTE: this method should only be called from the main thread.
 - (void)send {
     [self sendEventsWithCompletionBlock:^{
         //marshall this onto the main queue, in case the block is called in the background 
