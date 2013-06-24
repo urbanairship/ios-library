@@ -38,21 +38,27 @@
 @implementation KIFTestScenario (UAAdditions)
 
 + (id)scenarioToEnablePush {
+    
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that push can be enabled in the settings screen."];
+    
+    // enable push via the UI
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Push Settings"]];
     [scenario addStep:[KIFTestStep stepToSetOn:YES forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"]];
-    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
 
-    //TODO: verify that UAPush thinks push is enabled
+    // save push enabled
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
+    
+    // verify push is enabled
+    [scenario addStep:[KIFTestStep stepToVerifyPushEnabled:YES]];
 
     return scenario;
-
 }
 
 + (id)scenarioToReceiveUnicastPush {
-
+    
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a unicast push is received and properly handled."];
-
+    
+    // Now send a unicast push to the device token and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send a unicast Push" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
     }]];
@@ -61,9 +67,10 @@
 }
 
 + (id)scenarioToReceiveBroadcastPush {
-
+    
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a broadcast push is received and properly handled."];
 
+    // Now send a broadcast push and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send a broadcast Push" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendBroadcastAlert:alertID];
     }]];
@@ -76,17 +83,20 @@
     NSString *uniqueAlias = [UAUtils UUID];
 
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that an alias can be set and we can receive a push"];
+
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Token Settings"]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Alias"]];
 
+    // edit the alias with the uniqueAlias
     [scenario addStep:[KIFTestStep stepToEnterText:uniqueAlias intoViewWithAccessibilityLabel:@"Edit Alias"]];
-    
+
+    // save the alias and go back
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
 
     [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
 
-    // Now send it a push!
+    // Now send a push to the alias and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send Push to alias" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toAlias:uniqueAlias];
     }]];
@@ -95,6 +105,7 @@
 }
 
 + (id)scenarioToSetTag {
+    
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a tag can be set."];
 
     NSString *uniqueTag = [UAUtils UUID];
@@ -102,6 +113,7 @@
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Token Settings"]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Tags"]];
 
+    // delete any existing tags
     for (NSString *tag in [UAPush shared].tags) {
         [scenario addStep:
             [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag]
@@ -111,8 +123,8 @@
                                                    traits:UIAccessibilityTraitButton]];
     }
 
+    // add a tag with the uniqueTag
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Add" traits:UIAccessibilityTraitButton]];
-
     [scenario addStep:[KIFTestStep stepToEnterText:uniqueTag intoViewWithAccessibilityLabel:@"Custom Tag Input"]];
 
     // save the tag
@@ -129,11 +141,28 @@
     // wait for registration
     [scenario addStep:[KIFTestStep stepToWaitForTimeInterval:kRegistrationWait description:@"Wait for the registration to succeed."]];
 
-    // Now send it a push!
+    // Now send a push to the tag and verify we received the notification
     [scenario addStepsFromArray:[KIFTestStep stepsToSendAndWaitForNotification:@"Send Push to tag" sendPushBlock:^(NSString *alertID) {
         [UAPushClient sendAlert:alertID toTag:uniqueTag];
     }]];
     
+    return scenario;
+}
+
++ (id)scenarioToDisablePush {
+    
+    KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that push can be disabled in the settings screen."];
+
+    // disable push via the UI
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Push Settings"]];
+    [scenario addStep:[KIFTestStep stepToSetOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"]];
+
+    // save push disabled
+    [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton]];
+
+    // verify push is disabled
+    [scenario addStep:[KIFTestStep stepToVerifyPushEnabled:NO]];
+
     return scenario;
 }
 

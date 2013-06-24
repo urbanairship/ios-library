@@ -30,5 +30,5 @@ typedef void (^SendPushBlock)(NSString *alertID);
 
 + (id)stepToSetUniqueID:(NSString *)alertID;
 + (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
-
++ (id)stepToVerifyPushEnabled:(Boolean)enabled;
 @end

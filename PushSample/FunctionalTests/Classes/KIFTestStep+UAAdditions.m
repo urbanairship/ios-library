@@ -31,6 +31,7 @@
 
 @implementation KIFTestStep (UAAdditions)
 
+// This method stores the uniqueID for the expected push notification
 + (id)stepToSetUniqueID:(NSString *)alertID {
     return [KIFTestStep stepWithDescription:@"Set uniqueID." executionBlock:^(KIFTestStep *step, NSError **error) {
 
@@ -41,6 +42,7 @@
     }];
 }
 
+// This method sends the push notification with the uniqueID and verifies the expected push arrived
 + (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock {
     NSString *alertID = [UAUtils UUID];
 
@@ -62,5 +64,14 @@
     return steps;
 }
 
+// This method verifies the pushEnabled value
++ (id)stepToVerifyPushEnabled:(Boolean)enabled {
+    return [KIFTestStep stepWithDescription:@"Verify PushEnabled" executionBlock:^(KIFTestStep *step, NSError **error) {
+
+        KIFTestCondition(([UAPush shared].pushEnabled == enabled), error, @"PushEnabled does not match expected value.");
+
+        return KIFTestStepResultSuccess;
+    }];
+}
 
 @end
