@@ -59,7 +59,7 @@
     if ([richPushValue isKindOfClass:[NSArray class]]) {
         NSArray *richPushIds = (NSArray *)richPushValue;
         if (richPushIds.count > 0) {
-            richPushId = richPushIds[0];
+            richPushId = [richPushIds objectAtIndex:0];
         }
     } else if ([richPushValue isKindOfClass:[NSString class]]) {
         richPushId = (NSString *)richPushValue;
