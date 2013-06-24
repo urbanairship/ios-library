@@ -528,7 +528,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (BOOL)hasEventsToSend {
-    return databaseSize_ > 0 || [[UAAnalyticsDBManager shared] eventCount] > 0;
+    return databaseSize_ > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
 }
 
 - (BOOL)shouldSendAnalytics {
