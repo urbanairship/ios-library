@@ -32,6 +32,7 @@
 + (id)scenarioToReceiveBroadcastPush;
 + (id)scenarioToSetAlias;
 + (id)scenarioToSetTag;
++ (id)scenarioToDisablePush;
 
 
 @end

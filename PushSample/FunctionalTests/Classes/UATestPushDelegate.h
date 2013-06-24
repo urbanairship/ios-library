@@ -29,4 +29,7 @@
 
 @interface UATestPushDelegate : NSObject<UAPushNotificationDelegate>
 
+// the unique alert ID for the expected push notification
+@property (nonatomic, copy) NSString *uniqueID;
+
 @end
