@@ -801,7 +801,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [self batchAndSendEventsWithCompletionBlock:completionBlock];
 }
 
-//NOTE: this method should only be called from the main thread.
+//NOTE: this method is intended to be called from the main thread
 - (void)send {
     [self sendEventsWithCompletionBlock:^{
         //marshall this onto the main queue, in case the block is called in the background 
