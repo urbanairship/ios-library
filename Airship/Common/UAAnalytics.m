@@ -269,7 +269,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
-    [self invalidateBackgroundTask];    
+    [self invalidateBackgroundTask];
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
@@ -730,10 +730,28 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         }
 
         UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-        NSBlockOperation *rebatchOperation = [self batchOperationWithCompletionBlock:completionBlock];
-        [rebatchOperation addDependency:sendOperation];
 
         [self.queue addOperation:sendOperation];
+
+        NSBlockOperation *rebatchOperation = [NSBlockOperation blockOperationWithBlock:^{
+            //if we're not in the background, and there's still stuff to send, create a new delay/batch and add them
+            //otherwise, we should complete here and return
+            BOOL moreBatchesNecessary = [self prepareEventsForUpload] != nil;
+
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && moreBatchesNecessary) {
+                [self batchAndSendEventsWithCompletionBlock:completionBlock];
+            } else {
+                if (!moreBatchesNecessary) {
+                    UA_LTRACE(@"no more events to upload");
+                } else {
+                    UA_LTRACE(@"application state is background or inactive, not sending any more batches");
+                }
+                completionBlock();
+            }
+        }];
+
+        [rebatchOperation addDependency:sendOperation];
+
         [self.queue addOperation:rebatchOperation];
     }];
 
@@ -761,7 +779,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UA_LTRACE(@"Attemping to send analytics");
 
     //if there's anything in the queue, we're already attempting to upload analytics
-    if (self.queue.operationCount) {
+    if (self.isSending) {
         UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
         return;
     }
@@ -772,11 +790,19 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         return;
     }
 
+    self.isSending = YES;
+
     [self batchAndSendEventsWithCompletionBlock:completionBlock];
 }
 
 - (void)send {
-    [self sendEventsWithCompletionBlock:^{[self invalidateBackgroundTask];}];
+    [self sendEventsWithCompletionBlock:^{
+        //marshall this onto the main queue, in case the block is called in the background 
+        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
+            [self invalidateBackgroundTask];
+            self.isSending = NO;
+        }]];
+    }];
 }
 
 @end
