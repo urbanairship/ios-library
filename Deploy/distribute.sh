@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/sh
 
 # Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 #
@@ -23,47 +23,32 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: make this configurable?
-buildConfig="Release"
-srcRoot=$(pwd)
 
-srcPath="${srcRoot}/../Airship"
-destPath="${srcRoot}/../${buildConfig}/Airship"
+outputPath="./output"
+originalPath=`pwd`
 
-rm -rf "${destPath}"
-mkdir -p "${destPath}"
-echo "cp -R \"${srcPath}\" \"${srcRoot}/../${buildConfig}\""
-cp -R "${srcPath}" "${srcRoot}/../${buildConfig}"
+cd `dirname $0`
 
-cd "${destPath}"
+# Grab the release version
+version=$(cat ../AirshipLib/Config.xcconfig | awk "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
-# Remove all non .h files from /Library and /Common
-# Remove all non UA_ items & dirs from Airship/External
+# Clean up ouput directory
+rm -rf $outputPath
+mkdir -p $outputPath
 
-find Library \! -name "*.h" -type f -delete
-find Common \! -name "*.h" -type f -delete
+./package_sample.sh "../InboxSample" $outputPath
+./package_sample.sh "../PushSample" $outputPath
+./package_airshiplib.sh $outputPath
 
-#delete internal test headers
-rm -rf `find . -name "*+Internal.h" `
+# Rename InboxSample to RichPushSample
+mv "${outputPath}/InboxSample" "${outputPath}/RichPushSample"
 
-find External \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
-find External -type d -empty -delete
-rm -rf TestSamples
-rm -rf Test
+cd $outputPath
 
-#Remove the Appledoc documenation settings from the distribution
-rm AppledocSettings.plist
+for package in RichPushSample PushSample Airship; do
+	zip -r libUAirship-latest.zip $package
+	zip -r "libUAirship-${version}.zip" $package
+done
 
-find . -name "*.orig" -delete
+cd $originalPath
 
-#copy LICENSE, README and CHANGELOG
-cp "${srcPath}/../CHANGELOG" "${destPath}"
-cp "${srcPath}/../README.rst" "${destPath}"
-cp "${srcPath}/../LICENSE" "${destPath}"
-
-#TODO: use actual paths instead of moving everywhere
-cd ..
-find . -name "libUAirship*.zip" -delete
-
-#TODO: pull out version number from xcodeproject and create both files. Also bundle samples.
-zip -r libUAirship-latest.zip Airship

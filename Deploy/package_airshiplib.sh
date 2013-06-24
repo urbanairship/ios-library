@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -ex
 
 # Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 #
@@ -25,31 +25,27 @@
 
 # TODO: make this configurable?
 buildConfig="Release"
-srcRoot=$(pwd)
-destPath="${srcRoot}/${buildConfig}"
 
-for expected in InboxSample PushSample Airship; do
-	if [ ! -d "$expected" ]; then
-		echo "You need to run this script under root directory."
-		exit -1
-	fi
-done
+rootPath=`dirname "${0}"`/../
+destPath=$1
 
-# Remove any old deploy
-rm -rf "${destPath}"
-mkdir -p "${destPath}"
+airshipPath="${rootPath}/Airship"
 
-# Prepare Airship
-#################
+# Build the distribution binary
+cd "${rootPath}/AirshipLib"
 rm -rf distribution_binaries
 ./buildTarget.sh AirshipLib
 ./update_library_reference.sh
-./package_airshiplib.sh
+cd -
 
-airshipPath="${srcRoot}/Airship"
+# Remove any old deploy
+rm -rf "${destPath}/Airship"
+mkdir -p "${destPath}/Airship"
 
-echo "cp -R \"${airshipPath}\" \"${srcRoot}/${buildConfig}\""
-cp -R "${airshipPath}" "${srcRoot}/${buildConfig}"
+# Prepare Airship
+#################
+echo "cp -R \"${airshipPath}\" \"${destPath}\""
+cp -R "${airshipPath}" "${destPath}"
 
 # Remove all non .h files from /Library and /Common
 # Remove all non UA_ items & dirs from Airship/External
@@ -70,56 +66,6 @@ rm "${destPath}/Airship/AppledocSettings.plist"
 find "${destPath}/Airship" -name "*.orig" -delete
 
 # Copy LICENSE, README and CHANGELOG
-cp "${airshipPath}/../CHANGELOG" "${destPath}/Airship"
-cp "${airshipPath}/../README.rst" "${destPath}/Airship"
-cp "${airshipPath}/../LICENSE" "${destPath}/Airship"
-
-
-# Prepare Samples
-#################
-
-cp -R InboxSample "${destPath}/RichPushSample" # Rename InboxSample to RichPushSample
-cp -R PushSample "${destPath}"
-
-# copy the sample plist into place
-for sample in RichPushSample PushSample; do
-	samplePath="${destPath}/${sample}"
-
-	rm -rf `find ${samplePath} -name "build"`
-	rm -rf `find ${samplePath} -name "*SampleLib.xcodeproj"`
-	rm -rf `find ${samplePath} -name "*Tests"`
-	rm -rf `find ${samplePath} -name "*Test*.plist"`
-	rm -rf `find ${samplePath} -name "*Test*.pch"`
-	rm -rf `find ${samplePath} -name "*.orig" `
-
-	#delete user-specific xcode files
-	rm -rf `find ${samplePath} -name "*.mode1v3" `
-	rm -rf `find ${samplePath} -name "*.pbxuser" `
-	rm -rf `find ${samplePath} -name "*.perspective*" `
-	rm -rf `find ${samplePath} -name "xcuserdata" `
-
-	#delete the testing config plist
-	rm -rf `find ${samplePath} -name "AirshipDevelopment.plist" `
-
-    cp CHANGELOG $samplePath
-    cp LICENSE $samplePath
-    cp README.rst $samplePath
-    mv -f $samplePath/AirshipConfig.plist.sample $samplePath/AirshipConfig.plist
-done
-
-# Package Release
-#################
-
-#TODO: pull out version number from xcodeproject and create both files.
-cd $destPath
-
-for package in RichPushSample PushSample Airship; do
-	zip -r libUAirship-latest.zip $package
-done
-
-cd ..
-
-
-
-
-
+cp "${rootPath}/CHANGELOG" "${destPath}/Airship"
+cp "${rootPath}/README.rst" "${destPath}/Airship"
+cp "${rootPath}/LICENSE" "${destPath}/Airship"
