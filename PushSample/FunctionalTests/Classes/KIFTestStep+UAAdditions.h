@@ -23,42 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UATestController.h"
+#import "KIFTestStep.h"
+typedef void (^SendPushBlock)(NSString *alertID);
 
-#import "KIFTestScenario+UAAdditions.h"
-#import "UATestPushDelegate.h"
-#import "UAPush.h"
+@interface KIFTestStep (UAAdditions)
 
-
-@implementation UATestController
-
-- (void)dealloc {
-    if ([UAPush shared].delegate == self.pushDelegate) {
-        [UAPush shared].delegate = nil;
-    }
-    self.pushDelegate = nil;
-
-    [super dealloc];
-    
-}
-
-- (void)initializeScenarios {
-
-    // replace existing push delegate with new handler that prints the alert in the cancel button
-
-    // pull master secret from internal airship config properties
-    self.pushDelegate = [[[UATestPushDelegate alloc] init] autorelease];
-    [UAPush shared].delegate = self.pushDelegate;
-
-    [self addScenario:[KIFTestScenario scenarioToEnablePush]];
-    [self addScenario:[KIFTestScenario scenarioToReceiveUnicastPush]];
-    [self addScenario:[KIFTestScenario scenarioToReceiveBroadcastPush]];
-    [self addScenario:[KIFTestScenario scenarioToSetAlias]];
-    [self addScenario:[KIFTestScenario scenarioToSetTag]];
-    [self addScenario:[KIFTestScenario scenarioToDisablePush]];
-
-    // moar
-
-}
-
++ (id)stepToSetUniqueID:(NSString *)alertID;
++ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
++ (id)stepToVerifyPushEnabled:(Boolean)enabled;
 @end

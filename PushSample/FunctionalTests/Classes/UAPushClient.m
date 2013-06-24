@@ -68,6 +68,7 @@
         NSLog(@"Response Body: %@", [NSString stringWithUTF8String:[[request responseData] bytes]]);
     };
     [connection start];
+    NSLog(@"payload: %@", payload);
 }
 
 + (void)sendBroadcastAlert:(NSString *)alert {

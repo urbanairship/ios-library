@@ -129,6 +129,7 @@
 		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
 		BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB6B828B15892C0D00C42B03 /* TagTest.plist */; };
@@ -290,6 +291,8 @@
 		1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFTestStep+UAAdditions.h"; sourceTree = "<group>"; };
+		76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFTestStep+UAAdditions.m"; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
@@ -613,6 +616,8 @@
 				1FCBB621175D175000F42F07 /* UATestPushDelegate.m */,
 				1FCBB623175D56C600F42F07 /* UAPushClient.h */,
 				1FCBB624175D56C600F42F07 /* UAPushClient.m */,
+				76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */,
+				76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1007,6 +1012,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */,
 				CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */,
 				1FCBB53D175A9F7F00F42F07 /* main.m in Sources */,
 				1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */,
