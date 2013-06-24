@@ -56,6 +56,7 @@
 
 /**
  * Tests if the profile at a given path is set up for the production push environment.
+ * @param profilePath The specified path of the profile.
  * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
  * configured for push.
  */

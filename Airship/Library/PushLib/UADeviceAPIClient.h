@@ -40,8 +40,8 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  * Register the device.
  * 
  * @param registrationData An instance of UADeviceRegistrationData.
- * @param onSuccess A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
- * @param onFailure A UADeviceAPIClientFailureBlock that will be called if the registration was unsuccessful.
+ * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
+ * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration was unsuccessful.
  * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
  *
  */
@@ -54,8 +54,8 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  * Unregister the device.
  *
  * @param registrationData An instance of UADeviceRegistrationData.
- * @param onSuccess A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
- * @param onFailure A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
+ * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
+ * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
  * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
  *
  */
@@ -68,8 +68,8 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  * Register the device.
  *
  * @param registrationData An instance of UADeviceRegistrationData.
- * @param onSuccess A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
- * @param onFailure A UADeviceAPIClientFailureBlock that will be called if the registration failed.
+ * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
+ * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration failed.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
@@ -82,8 +82,8 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  * Unregister the device.
  *
  * @param registrationData An instance of UADeviceRegistrationData.
- * @param onSuccess A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
- * @param onFailure A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
+ * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
+ * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */

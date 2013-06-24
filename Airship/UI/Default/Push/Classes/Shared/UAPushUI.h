@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -27,6 +27,10 @@
 #import "UAPush.h"
 
 #define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
+
+/**
+ * The default implementation provided in the library's sample UI distribution.
+ */
 
 @interface UAPushUI : NSObject<UAPushUIProtocol> {
     UIViewController *_apnsSettingsViewController;

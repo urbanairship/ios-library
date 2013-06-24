@@ -109,6 +109,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  *
  * @warning *Important:* takeOff: must be called on the main thread. This method will throw
  * an UAirshipTakeOffMainThreadException if it is run on a background thread.
+ * @param config The AirshipConfig plist file.
  *
  */
 + (void)takeOff:(UAConfig *)config;

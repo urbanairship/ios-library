@@ -37,8 +37,8 @@
 /**
  * UAHTTPConnectionOperation initializer.
  * @param request An instance of UAHTTPRequest to be executed in the connection.
- * @param onSuccess A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
- * @param onFailure A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
+ * @param successBlock A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
+ * @param failureBlock A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
  */
 - (id)initWithRequest:(UAHTTPRequest *)request
             onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
@@ -47,8 +47,8 @@
 /**
  * Autoreleased UAHTTPConnectionOperation class factory method.
  * @param request An instance of UAHTTPRequest to be executed in the connection.
- * @param onSuccess A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
- * @param onFailure A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
+ * @param successBlock A UAHTTPConnectionSuccessBlock which will be called if the resulting connection succeeds.
+ * @param failureBlock A UAHTTPConnectionFailureBlock which will be called if the resulting connection fails.
  */
 + (id)operationWithRequest:(UAHTTPRequest *)request
                  onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
