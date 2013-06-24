@@ -29,7 +29,7 @@ originalPath=`pwd`
 cd `dirname $0`
 
 # Grab the release version
-version=$(cat ../AirshipLib/Config.xcconfig | awk "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
+version=$(awk <../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
 # Clean up ouput directory
 rm -rf $outputPath
