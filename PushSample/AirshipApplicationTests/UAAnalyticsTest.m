@@ -384,10 +384,6 @@
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
     analytics.config.analyticsURL = @"cats";
-    id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
-    NSUInteger zero = 0;
-    [[[mockQueue stub] andReturnValue:OCMOCK_VALUE(zero)] operationCount];
-    analytics.queue = mockQueue;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     NSInteger five = 5;
