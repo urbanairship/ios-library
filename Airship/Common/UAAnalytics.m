@@ -784,7 +784,6 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
     UA_LTRACE(@"Attemping to send analytics");
 
-    //if there's anything in the queue, we're already attempting to upload analytics
     if (self.isSending) {
         UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
         return;
