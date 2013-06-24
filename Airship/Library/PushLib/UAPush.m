@@ -95,6 +95,7 @@ static Class _uiClass;
                                                 object:[UIApplication sharedApplication]];
         
         self.deviceAPIClient = [[[UADeviceAPIClient alloc] init] autorelease];
+        self.deviceTagsEnabled = YES;
     }
     return self;
 }
@@ -594,7 +595,6 @@ static Class _uiClass;
     
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
-    [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushDeviceCanEditTagsKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
