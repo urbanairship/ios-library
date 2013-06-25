@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -37,6 +37,9 @@ typedef enum {
     UATagTypeDeviceType           = 1 << 4  /** Device type: iPhone, iPad or iPod */
 } UATagType;
 
+/**
+ * The UATagUtils object provides an interface for creating tags.
+ */
 @interface UATagUtils : NSObject {
 
 }

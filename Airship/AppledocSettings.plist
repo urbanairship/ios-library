@@ -10,6 +10,7 @@
 		<string>External</string>
 		<string>Test</string>
 		<string>TestSamples</string>
+		<string>UI</string>
 	</array>
 	<key>--project-company</key>
 	<string>Urban Airship</string>
