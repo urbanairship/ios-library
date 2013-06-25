@@ -214,12 +214,11 @@ Building for Distribution
 To build full and push-only static libraries from the command line, run the distribution script:
 
 .. code:: bash
+    
+    ./Deploy/distribute.sh
 
-    cd AirshipLib
-    ./distribute.sh
-
-This will produce static libraries (.a files) in /Airship and a distribution zip file in
-/AirshipLib/Release
+This will produce static libraries (.a files) in /Airship and create the samples and Airship library distribution zip file in
+Deploy/output
 
 
 Xcode 4.5 now supports the armv7s architecture, but armv6 builds are not longer supported.
