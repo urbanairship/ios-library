@@ -58,7 +58,7 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
 
 /**
- * The UAAnalytics object provides an interface to the UrbanAirship Analytics API.
+ * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
 @interface UAAnalytics : NSObject
 
