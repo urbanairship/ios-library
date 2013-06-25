@@ -152,6 +152,7 @@
 
 /**
  * Creates an instance using the values found in the specified `.plist` file.
+ * @param path The path of the specified file.
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
 

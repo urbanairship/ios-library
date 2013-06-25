@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -56,6 +56,10 @@ typedef NSString UAAnalyticsValue;
 extern UAAnalyticsValue * const UAAnalyticsTrueValue;
 extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 
+
+/**
+ * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
+ */
 @interface UAAnalytics : NSObject
 
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
@@ -70,10 +74,24 @@ extern UAAnalyticsValue * const UAAnalyticsFalseValue;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
+/**
+ * Initializes with the specified airshipConfig file.
+ * @param airshipConfig The 'AirshipConfig.plist' file
+ */
 - (id)initWithConfig:(UAConfig *)airshipConfig;
-- (void)addEvent:(UAEvent *)event;
-- (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState;
 
+/**
+ * Triggers an analytics event
+ * @param event The event to be triggered
+ */
+- (void)addEvent:(UAEvent *)event;
+
+/**
+ * Handle incoming push notifications.
+ * @param userInfo The notification as an NSDictionary.
+ * @param applicationState The application state at the time the notification was received.
+ */
+- (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState;
 
 /** Date representing the last attempt to send analytics */
 - (NSDate*)lastSendTime;

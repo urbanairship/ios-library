@@ -4,7 +4,7 @@ iOS Urban Airship Library
 Overview
 --------
 
-Urban Airship's libUArship is a drop-in static library that provides a simple way to
+Urban Airship's libUAirship is a drop-in static library that provides a simple way to
 integrate Urban Airship services into your iOS applications. This entire project will
 allow you to build the library files and all sample projects. If you just want to
 include the library in your app, you can simply download the latest ``libUAirship.zip``
@@ -58,7 +58,7 @@ Quickstart
 Prerequisite
 ############
 
-Before getting started you must perform the steps above outlined above.
+Before getting started you must perform the steps outlined above.
 
 In addition you'll need to include *UAirship.h* in your source files.
 
@@ -82,7 +82,7 @@ You can also edit the file as plain-text:
         "PRODUCTION_APP_SECRET" = "Your production app secret";
     }
 
-If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to false. For
+If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to NO. For
 App Store and Ad-Hoc builds, set it to YES.
 
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
@@ -100,57 +100,68 @@ To enable push notifications, you will need to make several additions to your ap
     
         // Your other application code.....
     
-        // Call takeOff, passing in the launch options so the library can properly record when
-        // the app is launched from a push notification
-        NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
-        [takeOffOptions setValue:launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
-        
-        // This prevents the UA Library from registering with UIApplcation by default when
+        // This prevents the UA Library from registering with UIApplication by default when
         // registerForRemoteNotifications is called. This will allow you to prompt your
         // users at a later time. This gives your app the opportunity to explain the benefits
         // of push or allows users to turn it on explicitly in a settings screen.
         // If you just want everyone to immediately be prompted for push, you can
         // leave this line out.
         [UAPush setDefaultPushEnabledValue:NO];
-        
-        // Create Airship singleton that's used to talk to Urban Airhship servers.
-        // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
-        [UAirship takeOff:takeOffOptions];
+
+        // Set log level for debugging config loading
+        // It will be set to the value in the loaded config on takeOff
+        [UAirship setLogLevel:UALogLevelTrace];
+
+        // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
+        // or set runtime properties here.
+        UAConfig *config = [UAConfig defaultConfig];
+
+        // Call takeOff (which creates the UAirship singleton)
+        [UAirship takeOff:config];
+
+        UA_LDEBUG(@"Config:\n%@", [config description]);
+
+        // Set the icon badge to zero on startup (optional)
+        [[UAPush shared] resetBadge];
     
-        [[UAPush shared] resetBadge];//zero badge on startup
-        
-        // Register for remote notfications. With the default value of push set to no,
-        // UAPush will record the desired remote notifcation types, but not register for
-        // push notfications as mentioned above.
-        // When push is enabled at a later time, the registration will occur as normal.
+        // Register for remote notifications with the UA Library. With the default value of push set to no,
+        // UAPush will record the desired remote notification types, but not register for
+        // push notifications as mentioned above. When push is enabled at a later time, the registration
+        // will occur normally. This call is required.
         [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                              UIRemoteNotificationTypeSound |
                                                              UIRemoteNotificationTypeAlert)];
+
         return YES;
     }
     
     // Implement the iOS device token registration callback
     - (void)application:(UIApplication *)application
             didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-        UALOG(@"APN device token: %@", deviceToken);
+        UA_LINFO(@"APNS device token: %@", deviceToken);
 
         // Updates the device token and registers the token with UA. This won't occur until
-        // push is enabled if the outlined process is followed.
+        // push is enabled if the outlined process is followed. This call is required.
         [[UAPush shared] registerDeviceToken:deviceToken];
     }
     
     // Implement the iOS callback for incoming notifications
     //
     // Incoming Push notifications can be handled by the UAPush default alert handler,
-    // which displays a simple UIAlertView, or you can provide you own delegate which
+    // which displays a simple UIAlertView, or you can provide your own delegate which
     // conforms to the UAPushNotificationDelegate protocol.
     - (void)application:(UIApplication *)application
             didReceiveRemoteNotification:(NSDictionary *)userInfo {
 
-        // Send the alert to UA
+        UA_LINFO(@"Received remote notification: %@", userInfo);
+
+        // Fire the handler for regular push
         [[UAPush shared] handleNotification:userInfo
                            applicationState:application.applicationState];
-        
+
+        // Fire the handler for rich push
+        [UAInboxPushHandler handleNotification:userInfo];
+
         // Reset the badge if you are using that functionality
         [[UAPush shared] resetBadge]; // zero badge after push received
     }
@@ -159,7 +170,7 @@ To enable push:
 
 .. code:: obj-c
 
-    // Somewhere in the app, this will enable push, setting it to NO will disable push
+    // Somewhere in the app, this will enable push, setting it to NO will disable push.
     // This will trigger the proper registration or de-registration code in the library.
     [[UAPush shared] setPushEnabled:YES];
 
@@ -170,7 +181,7 @@ Logging can be configured through either the AirshipConfig.plist file or directl
 default log level for production apps is `UALogLevelError` and the default for development apps
 is `UALogLevelDebug`.
 
-In `AirshiCconfig.plist`, set `LOG_LEVEL` to one of the following integer values:
+In `AirshipConfig.plist`, set `LOG_LEVEL` to one of the following integer values:
 
 .. code:: obj-c
 

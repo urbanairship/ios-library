@@ -50,6 +50,7 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
 
 /**
  * Initializer with argument for custom NSOperationQueue
+ * @param queue A custom NSOperationQueue
  */
 - (id)initWithQueue:(NSOperationQueue *)queue;
 
@@ -61,10 +62,10 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
  * callback indicates "true" success, however that is defined, rather than merely a successful HTTP response.
  *
  * @param request An instance of UAHTTPRequest to be executed.
- * @param succeedWhere A UAHTTPRequestEngineWhereBlock indicating the conditions in which a request should succeed.
- * @param retryWhere A UAHTTPRequestEngineWhereBlock indicating the conditions in which a request should be retried.
- * @param onSuccess A UAHTTPRequestEngineSuccessBlock that will be called on success.
- * @param onFailure A UAHTTPRequestEngineFailureBlock that will be called on failure.
+ * @param succeedWhereBlock A UAHTTPRequestEngineWhereBlock indicating the conditions in which a request should succeed.
+ * @param retryWhereBlock A UAHTTPRequestEngineWhereBlock indicating the conditions in which a request should be retried.
+ * @param successBlock A UAHTTPRequestEngineSuccessBlock that will be called on success.
+ * @param failureBlock A UAHTTPRequestEngineFailureBlock that will be called on failure.
  *
  */
 - (void)runRequest:(UAHTTPRequest *)request

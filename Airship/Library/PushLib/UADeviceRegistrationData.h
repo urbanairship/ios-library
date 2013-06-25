@@ -37,7 +37,7 @@
  *
  * @param token A device token string.
  * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param pushEnabled A BOOL indicating whether push is currently enabled.
+ * @param enabled A BOOL indicating whether push is currently enabled.
  */
 - (id)initWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
 
@@ -46,7 +46,7 @@
  *
  * @param token A device token string.
  * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param pushEnabled A BOOL indicating whether push is currently enabled.
+ * @param enabled A BOOL indicating whether push is currently enabled.
  */
 + (id)dataWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
 

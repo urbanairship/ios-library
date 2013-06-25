@@ -48,7 +48,7 @@
     // You should remove this in your app.
     [self failIfSimulator];
     
-    // This prevents the UA Library from registering with UIApplcation by default when
+    // This prevents the UA Library from registering with UIApplication by default when
     // registerForRemoteNotifications is called. This will allow you to prompt your
     // users at a later time. This gives your app the opportunity to explain the benefits
     // of push or allows users to turn it on explicitly in a settings screen.
@@ -72,9 +72,9 @@
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
     
-    // Register for remote notfications with the UA Library. With the default value of push set to no,
-    // UAPush will record the desired remote notifcation types, but not register for
-    // push notfications as mentioned above. When push is enabled at a later time, the registration
+    // Register for remote notifications with the UA Library. With the default value of push set to no,
+    // UAPush will record the desired remote notification types, but not register for
+    // push notifications as mentioned above. When push is enabled at a later time, the registration
     // will occur normally. This call is required.
     [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
                                                          UIRemoteNotificationTypeSound |
@@ -104,7 +104,7 @@
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:@"You will not be able to recieve push notifications in the simulator."
+                                                            message:@"You will not be able to receive push notifications in the simulator."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil] autorelease];

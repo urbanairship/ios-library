@@ -25,6 +25,8 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Update a user's associated device token.
  *
+ * @param deviceToken The specified device token to be updated.
+ * @param username The specified user to update.
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */

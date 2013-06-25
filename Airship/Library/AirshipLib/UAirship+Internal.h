@@ -47,6 +47,7 @@
 
 /**
  * Handle a termination event from NSNotification center (forward it to land)
+ * @param notification The app termination notification
  */
 + (void)handleAppTerminationNotification:(NSNotification *)notification;
 
