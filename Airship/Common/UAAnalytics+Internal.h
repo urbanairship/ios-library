@@ -27,11 +27,6 @@
 
 #import "UAAnalytics.h"
 
-@class UAEvent;
-@class UAHTTPRequest;
-
-@interface UAAnalytics ()
-
 //total size in bytes that the event queue is allowed to grow to.
 #define kMaxTotalDBSizeBytes 5*1024*1024 // local max of 5MB
 #define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
@@ -56,6 +51,11 @@
 // creation and first upload. Subsequent uploads are defined by
 // X_UA_MIN_BATCH_INTERVAL
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
+
+@class UAEvent;
+@class UAHTTPRequest;
+
+@interface UAAnalytics ()
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
