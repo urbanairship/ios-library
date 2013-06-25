@@ -43,8 +43,6 @@
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
-// NOTE: Setup a background task in the appDidBackground method, then use
-// that background identifier for should send background logic
 
 @implementation UAAnalytics
 

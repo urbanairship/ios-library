@@ -38,6 +38,7 @@
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
 
 
+
 /**
  * Initializes with the specified airshipConfig file.
  * @param airshipConfig The 'AirshipConfig.plist' file

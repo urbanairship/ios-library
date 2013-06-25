@@ -44,7 +44,6 @@
 #define kMaxWaitSeconds 14*24*3600		// local max of 14 days
 #define kMinWaitSeconds 7*24*3600		// local min of 7 days
 
-
 // The actual amount of time in seconds that elapse between event-server posts
 // TODO: Get with the analytics team and rename this header field
 #define kMinBatchIntervalSeconds 60        // local min of 60s
@@ -57,6 +56,8 @@
 // creation and first upload. Subsequent uploads are defined by
 // X_UA_MIN_BATCH_INTERVAL
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
+
+
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
