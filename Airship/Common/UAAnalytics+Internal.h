@@ -32,13 +32,13 @@
 
 @interface UAAnalytics ()
 
-//total size in kilobytes that the event queue is allowed to grow to.
-#define kMaxTotalDBSizeKB 5*1024*1024 // local max of 5MB
-#define kMinTotalDBSizeKB 10*1024     // local min of 10KB
+//total size in bytes that the event queue is allowed to grow to.
+#define kMaxTotalDBSizeBytes 5*1024*1024 // local max of 5MB
+#define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
 
-// total size in kilobytes that a given event post is allowed to send.
-#define kMaxBatchSizeKB 500*1024		// local max of 500KB
-#define kMinBatchSizeKB 1024          // local min of 1KB
+// total size in bytes that a given event post is allowed to send.
+#define kMaxBatchSizeBytes 500*1024		// local max of 500KB
+#define kMinBatchSizeBytes 1024          // local min of 1KB
 
 // maximum amount of time in seconds that events should queue for
 #define kMaxWaitSeconds 14*24*3600		// local max of 14 days

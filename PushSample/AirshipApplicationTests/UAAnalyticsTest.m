@@ -279,14 +279,14 @@
 }
 
 - (void)testSaveDefault  {
-    analytics.maxBatchSize = kMinBatchSizeKB + 10;
-    analytics.maxTotalDBSize = kMinTotalDBSizeKB + 20;
+    analytics.maxBatchSize = kMinBatchSizeBytes + 10;
+    analytics.maxTotalDBSize = kMinTotalDBSizeBytes + 20;
     analytics.maxWait = kMinWaitSeconds + 1;
     analytics.minBatchInterval = kMinBatchIntervalSeconds + 10;
     [analytics saveUploadEventSettings];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == kMinTotalDBSizeKB + 20, nil);
-    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Batch"] intValue] == kMinBatchSizeKB + 10, nil);
+    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == kMinTotalDBSizeBytes + 20, nil);
+    STAssertTrue([[defaults valueForKey:@"X-UA-Max-Batch"] intValue] == kMinBatchSizeBytes + 10, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Wait"] intValue] == kMinWaitSeconds + 1, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Min-Batch-Interval"] intValue] == kMinBatchIntervalSeconds + 10, nil);
 
@@ -325,8 +325,8 @@
 - (void)testUpdateAnalyticsParameters {
     NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:4];
     // Hit all the if statements that prevent values from changing
-    [headers setValue:[NSNumber numberWithInt:kMaxTotalDBSizeKB + 1] forKey:@"X-UA-Max-Total"];
-    [headers setValue:[NSNumber numberWithInt:kMaxBatchSizeKB + 1] forKey:@"X-UA-Max-Batch"];
+    [headers setValue:[NSNumber numberWithInt:kMaxTotalDBSizeBytes + 1] forKey:@"X-UA-Max-Total"];
+    [headers setValue:[NSNumber numberWithInt:kMaxBatchSizeBytes + 1] forKey:@"X-UA-Max-Batch"];
     [headers setValue:[NSNumber numberWithInt:kMaxWaitSeconds + 1] forKey:@"X-UA-Max-Wait"];
     [headers setValue:[NSNumber numberWithInt:kMinBatchIntervalSeconds - 1] forKey:@"X-UA-Min-Batch-Interval"];
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
@@ -334,8 +334,8 @@
     [[mockAnalytics expect] saveUploadEventSettings];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
     [analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
-    STAssertEquals(analytics.maxTotalDBSize, kMaxTotalDBSizeKB, nil);
-    STAssertEquals(analytics.maxBatchSize, kMaxBatchSizeKB, nil);
+    STAssertEquals(analytics.maxTotalDBSize, kMaxTotalDBSizeBytes, nil);
+    STAssertEquals(analytics.maxBatchSize, kMaxBatchSizeBytes, nil);
     STAssertEquals(analytics.maxWait, kMaxWaitSeconds, nil);
     STAssertEquals(analytics.minBatchInterval, kMinBatchIntervalSeconds, nil);
     [mockAnalytics verify];
@@ -417,8 +417,8 @@
     STAssertNotNil(appEvent, nil);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset
     // preferences if the methods under test rely on them
-    analytics.maxTotalDBSize = kMaxTotalDBSizeKB;
-    analytics.maxBatchSize = kMaxBatchSizeKB;
+    analytics.maxTotalDBSize = kMaxTotalDBSizeBytes;
+    analytics.maxBatchSize = kMaxBatchSizeBytes;
     [analytics addEvent:appEvent];
     NSArray* events = [analytics prepareEventsForUpload];
     STAssertTrue([events isKindOfClass:[NSArray class]], nil);

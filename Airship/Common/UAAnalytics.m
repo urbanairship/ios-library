@@ -415,20 +415,20 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
-    if (maxTotalDBSize < kMinTotalDBSizeKB) {
-        _maxTotalDBSize = kMinTotalDBSizeKB;
-    }else if (maxTotalDBSize > kMaxTotalDBSizeKB) {
-        _maxTotalDBSize = kMaxTotalDBSizeKB;
+    if (maxTotalDBSize < kMinTotalDBSizeBytes) {
+        _maxTotalDBSize = kMinTotalDBSizeBytes;
+    }else if (maxTotalDBSize > kMaxTotalDBSizeBytes) {
+        _maxTotalDBSize = kMaxTotalDBSizeBytes;
     } else {
         _maxTotalDBSize = maxTotalDBSize;
     }
 }
 
 - (void)setMaxBatchSize:(NSInteger)maxBatchSize {
-    if (maxBatchSize < kMinBatchSizeKB) {
-        _maxBatchSize = kMinBatchSizeKB;
-    }else if (maxBatchSize > kMaxBatchSizeKB) {
-        _maxBatchSize = kMaxBatchSizeKB;
+    if (maxBatchSize < kMinBatchSizeBytes) {
+        _maxBatchSize = kMinBatchSizeBytes;
+    }else if (maxBatchSize > kMaxBatchSizeBytes) {
+        _maxBatchSize = kMaxBatchSizeBytes;
     } else {
         _maxBatchSize = maxBatchSize;
     }
