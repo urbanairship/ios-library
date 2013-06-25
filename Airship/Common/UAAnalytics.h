@@ -58,8 +58,6 @@
 // X_UA_MIN_BATCH_INTERVAL
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
-extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
-
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
