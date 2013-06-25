@@ -229,16 +229,16 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.session setObject:notification_types forKey:@"notification_types"];
     
     NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
-    [self.session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
-    [self.session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
-    
-    [self.session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [self.session setObject:[UAirshipVersion get] forKey:@"lib_version"];
+    [self.session setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
+    [self.session setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
+
+    [self.session setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
+    [self.session setValue:[UAirshipVersion get] forKey:@"lib_version"];
     [self.session setValue:packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
-    [self.session setObject:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
+    [self.session setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 }
 
 #pragma mark -
