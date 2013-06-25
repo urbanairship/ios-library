@@ -558,7 +558,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     int batchEventCount = 0;
     
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
-    NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
+    NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
         actualSize += [[event objectForKey:@"event_size"] intValue];
