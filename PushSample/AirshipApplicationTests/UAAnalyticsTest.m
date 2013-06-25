@@ -266,10 +266,10 @@
 }
 
 - (void)testRestoreFromDefault {
-    analytics.x_ua_max_batch = 0;
-    analytics.x_ua_max_total = 0;
-    analytics.x_ua_max_wait = 0;
-    analytics.x_ua_min_batch_interval = 0;
+    analytics.maxBatchSize = 0;
+    analytics.maxTotalDBSize = 0;
+    analytics.maxWait = 0;
+    analytics.minBatchInterval = 0;
     [analytics restoreFromDefault];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue(analytics.x_ua_max_total == [[defaults valueForKey:@"X-UA-Max-Total"] intValue], nil);
@@ -279,10 +279,10 @@
 }
 
 - (void)testSaveDefault  {
-    analytics.x_ua_max_batch = 7;
-    analytics.x_ua_max_total = 7;
-    analytics.x_ua_max_wait = 7;
-    analytics.x_ua_min_batch_interval = 7; 
+    analytics.maxBatchSize = 7;
+    analytics.maxTotalDBSize = 7;
+    analytics.maxWait = 7;
+    analytics.minBatchInterval = 7; 
     [analytics saveDefault];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == 7, nil);
@@ -416,8 +416,8 @@
     STAssertNotNil(appEvent, nil);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset
     // preferences if the methods under test rely on them
-    analytics.x_ua_max_total = X_UA_MAX_TOTAL;
-    analytics.x_ua_max_batch = X_UA_MAX_BATCH;
+    analytics.maxTotalDBSize = X_UA_MAX_TOTAL;
+    analytics.maxBatchSize = X_UA_MAX_BATCH;
     [analytics addEvent:appEvent];
     NSArray* events = [analytics prepareEventsForUpload];
     STAssertTrue([events isKindOfClass:[NSArray class]], nil);
@@ -426,8 +426,8 @@
 
 - (void)testSetSendInterval {
     int newVal = 42;
-    analytics.x_ua_min_batch_interval = 5;
-    analytics.x_ua_max_wait = 50;
+    analytics.minBatchInterval = 5;
+    analytics.maxWait = 50;
     analytics.sendInterval = newVal;
     STAssertEquals(42, analytics.sendInterval, nil);
 }

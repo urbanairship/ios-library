@@ -71,10 +71,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         
         [self resetEventsDatabaseStatus];
         
-        self.x_ua_max_total = X_UA_MAX_TOTAL;
-        self.x_ua_max_batch = X_UA_MAX_BATCH;
-        self.x_ua_max_wait = X_UA_MAX_WAIT;
-        self.x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+        self.maxTotalDBSize = X_UA_MAX_TOTAL;
+        self.maxBatchSize = X_UA_MAX_BATCH;
+        self.maxWait = X_UA_MAX_WAIT;
+        self.minBatchInterval = X_UA_MIN_BATCH_INTERVAL;
         
         // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
         self.sendInterval = X_UA_MIN_BATCH_INTERVAL;
@@ -338,25 +338,25 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     int tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
     
     if (tmp > 0) {
-        self.x_ua_max_total = tmp;
+        self.maxTotalDBSize = tmp;
     }
 
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
     
     if (tmp > 0) {
-        self.x_ua_max_batch = tmp;
+        self.maxBatchSize = tmp;
     }
     
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
     
     if (tmp > 0) {
-        self.x_ua_max_wait = tmp;
+        self.maxWait = tmp;
     }
     
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
     
     if (tmp > 0) {
-        self.x_ua_min_batch_interval = tmp;
+        self.minBatchInterval = tmp;
     }
     
     
@@ -371,10 +371,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 // TODO: Change this method call to a more descriptive name, and add some documentation
 - (void)saveDefault {
-    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_total forKey:@"X-UA-Max-Total"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_batch forKey:@"X-UA-Max-Batch"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_wait forKey:@"X-UA-Max-Wait"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:@"X-UA-Max-Total"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:@"X-UA-Max-Batch"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:@"X-UA-Max-Wait"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:@"X-UA-Min-Batch-Interval"];
 
     /*
     UALOG(@"Response Headers Saved:");
@@ -429,13 +429,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             if (tmp > 0) {
                 
                 if(tmp >= X_UA_MAX_TOTAL) {
-                    self.x_ua_max_total = X_UA_MAX_TOTAL;
+                    self.maxTotalDBSize = X_UA_MAX_TOTAL;
                 } else {
-                    self.x_ua_max_total = tmp;
+                    self.maxTotalDBSize = tmp;
                 }
                 
             } else {
-                self.x_ua_max_total = X_UA_MAX_TOTAL;
+                self.maxTotalDBSize = X_UA_MAX_TOTAL;
             }
         }
 
@@ -446,13 +446,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             if (tmp > 0) {
                 
                 if (tmp >= X_UA_MAX_BATCH) {
-                    self.x_ua_max_batch = X_UA_MAX_BATCH;
+                    self.maxBatchSize = X_UA_MAX_BATCH;
                 } else {
-                    self.x_ua_max_batch = tmp;
+                    self.maxBatchSize = tmp;
                 }
                 
             } else {
-                self.x_ua_max_batch = X_UA_MAX_BATCH;
+                self.maxBatchSize = X_UA_MAX_BATCH;
             }
         }
 
@@ -462,9 +462,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             tmp = [maxWaitValue intValue];
             
             if (tmp >= X_UA_MAX_WAIT) {
-                self.x_ua_max_wait = X_UA_MAX_WAIT;
+                self.maxWait = X_UA_MAX_WAIT;
             } else {
-                self.x_ua_max_wait = tmp;
+                self.maxWait = tmp;
             }
         }
 
@@ -473,9 +473,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             tmp = [minBatchValue intValue];
             
             if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-                self.x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+                self.minBatchInterval = X_UA_MIN_BATCH_INTERVAL;
             } else {
-                self.x_ua_min_batch_interval = tmp;
+                self.minBatchInterval = tmp;
             }
         }
         
@@ -487,10 +487,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark Custom Property Setters
 
 - (void)setSendInterval:(int)newVal {
-    if(newVal < self.x_ua_min_batch_interval) {
-        _sendInterval = self.x_ua_min_batch_interval;
-    } else if (newVal > self.x_ua_max_wait) {
-        _sendInterval = self.x_ua_max_wait;
+    if(newVal < self.minBatchInterval) {
+        _sendInterval = self.minBatchInterval;
+    } else if (newVal > self.maxWait) {
+        _sendInterval = self.maxWait;
     } else {
         _sendInterval = newVal;
     }
@@ -579,8 +579,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSArray*) prepareEventsForUpload {
 
     // Delete older events until upload size threshold is met
-    while (self.databaseSize > self.x_ua_max_total) {
-        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.x_ua_max_total);
+    while (self.databaseSize > self.maxTotalDBSize) {
+        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -598,13 +598,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     int actualSize = 0;
     int batchEventCount = 0;
     
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.x_ua_max_batch/avgEventSize];
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
     NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
 
     for (NSMutableDictionary *event in events) {
         actualSize += [[event objectForKey:@"event_size"] intValue];
         
-        if (actualSize <= self.x_ua_max_batch) {
+        if (actualSize <= self.maxBatchSize) {
             batchEventCount++; 
         } else {
             UA_LTRACE(@"Met batch limit.");
@@ -655,8 +655,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
     NSTimeInterval delay = 0;
     NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-    if (timeSinceLastSend < self.x_ua_min_batch_interval) {
-        delay = self.x_ua_min_batch_interval - timeSinceLastSend;
+    if (timeSinceLastSend < self.minBatchInterval) {
+        delay = self.minBatchInterval - timeSinceLastSend;
     }
     return delay;
 }

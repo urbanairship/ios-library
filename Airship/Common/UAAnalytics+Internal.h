@@ -39,10 +39,10 @@
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
-@property (nonatomic, assign) int x_ua_max_total;
-@property (nonatomic, assign) int x_ua_max_batch;
-@property (nonatomic, assign) int x_ua_max_wait;
-@property (nonatomic, assign) int x_ua_min_batch_interval;
+@property (nonatomic, assign) int maxTotalDBSize;
+@property (nonatomic, assign) int maxBatchSize;
+@property (nonatomic, assign) int maxWait;
+@property (nonatomic, assign) int minBatchInterval;
 @property (nonatomic, assign) int sendInterval;
 @property (nonatomic, assign) int databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;

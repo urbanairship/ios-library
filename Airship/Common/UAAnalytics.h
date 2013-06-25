@@ -59,10 +59,10 @@ extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
 @property (nonatomic, assign, readonly) int databaseSize;
-@property (nonatomic, assign, readonly) int x_ua_max_total;
-@property (nonatomic, assign, readonly) int x_ua_max_batch;
-@property (nonatomic, assign, readonly) int x_ua_max_wait;
-@property (nonatomic, assign, readonly) int x_ua_min_batch_interval;
+@property (nonatomic, assign, readonly) int maxTotalDBSize;
+@property (nonatomic, assign, readonly) int maxBatchSize;
+@property (nonatomic, assign, readonly) int maxWait;
+@property (nonatomic, assign, readonly) int minBatchInterval;
 @property (nonatomic, assign, readonly) int sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
