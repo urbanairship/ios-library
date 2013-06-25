@@ -53,8 +53,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    RELEASE_SAFELY(lastLocationSendTime);
-
+    self.packageVersion = nil;
     self.notificationUserInfo = nil;
     self.session = nil;
     self.config = nil;
@@ -103,13 +102,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
         
-        /*
-         * This is the Build field in Xcode. If it's not set, use a blank string.
-         */
-        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        if (packageVersion == nil) {
-            packageVersion = @"";
-        }
+        // This is the Build field in Xcode. If it's not set, use a blank string.
+        self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
         
         [self initSession];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
@@ -231,7 +225,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     [self.session setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [self.session setValue:[UAirshipVersion get] forKey:@"lib_version"];
-    [self.session setValue:packageVersion forKey:@"package_version"];
+    [self.session setValue:self.packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
@@ -514,7 +508,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
-    [request addRequestHeader:@"X-UA-Package-Version" value:packageVersion];
+    [request addRequestHeader:@"X-UA-Package-Version" value:self.packageVersion];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
