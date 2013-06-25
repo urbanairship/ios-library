@@ -495,7 +495,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             // There is no background task, and the app is in the background, it is likely that
             // this is a location related event and we should only send every 15 minutes
             NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-            return timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL;
+            return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
         }
     }
     

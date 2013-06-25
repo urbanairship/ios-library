@@ -50,7 +50,7 @@
 #define kMaxBatchIntervalSeconds 7*24*3600	// local max of 7 days
 
 // minimum amount of time between background location events
-#define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900 // 900 seconds = 15 minutes
+#define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
 
 // Offset time for use when the app init. This is the time between object
 // creation and first upload. Subsequent uploads are defined by
