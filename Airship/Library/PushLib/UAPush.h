@@ -27,8 +27,9 @@
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
 
-#define PUSH_UI_CLASS @"UAPushUI"
-#define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
+//---------------------------------------------------------------------------------------
+// UAPushUIProtocol Protocol
+//---------------------------------------------------------------------------------------
 
 /**
  * Implement this protocol to provide a custom UI for use with UAPush. The default
@@ -55,6 +56,9 @@
 
 @end
 
+//---------------------------------------------------------------------------------------
+// UAPushNotificationDelegate Protocol
+//---------------------------------------------------------------------------------------
 
 /**
  * Protocol to be implemented by push notification clients. All methods are optional.
@@ -103,6 +107,11 @@
 - (void)launchedFromNotification:(NSDictionary *)notification;
 @end
 
+
+//---------------------------------------------------------------------------------------
+// UARegistrationObserver Protocol
+//---------------------------------------------------------------------------------------
+
 /**
  * Implement this protocol and register with the UAPush shared instance to receive
  * device token registration success and failure callbacks.
@@ -114,6 +123,12 @@
 - (void)unRegisterDeviceTokenSucceeded;
 - (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request;
 @end
+
+
+
+//---------------------------------------------------------------------------------------
+// UAPush Class
+//---------------------------------------------------------------------------------------
 
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
