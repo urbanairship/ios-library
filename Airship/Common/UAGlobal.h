@@ -82,84 +82,66 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelDebug
 #define UA_VERSION @ "1.1.2"
 #endif
 
-#define UA_VERSION_INTERFACE(CLASSNAME)  \
+#define UA_VERSION_INTERFACE(CLASSNAME) \
 @interface CLASSNAME : NSObject         \
 + (NSString *)get;                      \
 @end
 
 
-#define UA_VERSION_IMPLEMENTATION(CLASSNAME, VERSION_STR)    \
+#define UA_VERSION_IMPLEMENTATION(CLASSNAME, VERSION_STR)   \
 @implementation CLASSNAME                                   \
 + (NSString *)get {                                         \
-return VERSION_STR;                                     \
+return VERSION_STR;                                         \
 }                                                           \
 @end
 
 
-#define SINGLETON_INTERFACE(CLASSNAME)  \
-+ (CLASSNAME*)shared;\
-- (void)forceRelease;
+#define SINGLETON_INTERFACE(CLASSNAME)                                                      \
++ (CLASSNAME*)shared;                                                                       \
 
-
-#define SINGLETON_IMPLEMENTATION(CLASSNAME)         \
-                                                    \
-static CLASSNAME* g_shared##CLASSNAME = nil;        \
+#define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
+                                                                                            \
+static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
+static dispatch_once_t oncePredicate;                                                       \
+static dispatch_queue_t singletonQueue;                                                     \
 \
-+ (CLASSNAME*)shared                                \
-{                                                   \
-if (g_shared##CLASSNAME != nil) {                   \
-return g_shared##CLASSNAME;                         \
-}                                                   \
++ (CLASSNAME*)shared                                                                        \
+{                                                                                           \
+dispatch_once(&oncePredicate, ^{                                                            \
+g_shared##CLASSNAME = [[self alloc] init];                                                  \
+});                                                                                         \
+return g_shared##CLASSNAME;                                                                 \
+}                                                                                           \
 \
-@synchronized(self) {                               \
-if (g_shared##CLASSNAME == nil) {                   \
-    g_shared##CLASSNAME = [[self alloc] init];      \
-}                                                   \
-}                                                   \
++ (id)allocWithZone:(NSZone*)zone                                                           \
+{                                                                                           \
+static dispatch_once_t oncePredicate;                                                       \
+dispatch_once(&oncePredicate, ^{                                                            \
+singletonQueue = dispatch_queue_create("com.urbanairship.##CLASSNAME.singletonQueue", NULL);\
+if (g_shared##CLASSNAME == nil) {                                                           \
+g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
+}                                                                                           \
+});                                                                                         \
+return g_shared##CLASSNAME;                                                                 \
+}                                                                                           \
 \
-return g_shared##CLASSNAME;                         \
-}                                                   \
+- (id)copyWithZone:(NSZone*)zone                                                            \
+{                                                                                           \
+return self;                                                                                \
+}                                                                                           \
 \
-+ (id)allocWithZone:(NSZone*)zone                   \
-{                                                   \
-@synchronized(self) {                               \
-if (g_shared##CLASSNAME == nil) {                   \
-g_shared##CLASSNAME = [super allocWithZone:zone];    \
-return g_shared##CLASSNAME;                         \
-}                                                   \
-}                                                   \
-NSAssert(NO, @ "[" #CLASSNAME                       \
-" alloc] explicitly called on singleton class.");   \
-return nil;                                         \
-}                                                   \
+- (id)retain                                                                                \
+{                                                                                           \
+return self;                                                                                \
+}                                                                                           \
 \
-- (id)copyWithZone:(NSZone*)zone                    \
-{                                                   \
-return self;                                        \
-}                                                   \
+- (oneway void)release                                                                      \
+{                                                                                           \
+}                                                                                           \
 \
-- (id)retain                                        \
-{                                                   \
-return self;                                        \
-}                                                   \
-\
-- (oneway void)release                                     \
-{                                                   \
-}                                                   \
-\
-- (void)forceRelease {                              \
-UALOG(@"Force release "#CLASSNAME"");               \
-@synchronized(self) {                               \
-if (g_shared##CLASSNAME != nil) {                   \
-g_shared##CLASSNAME = nil;                          \
-}                                                   \
-}                                                   \
-[super release];                                    \
-}                                                   \
-\
-- (id)autorelease                                   \
-{                                                   \
-return self;                                        \
+- (id)autorelease                                                                           \
+{                                                                                           \
+return self;                                                                                \
 }
 
 
