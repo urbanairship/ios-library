@@ -7,8 +7,9 @@ Overview
 Urban Airship's libUArship is a drop-in static library that provides a simple way to
 integrate Urban Airship services into your iOS applications. This entire project will
 allow you to build the library files and all sample projects. If you just want to
-include the library in your app, you can simply download the latest ``libUAirship.zip``
-and a sample project. These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library.
+include the library in your app, you can download the latest ``libUAirship.zip``
+These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library as well as the
+samples.
 
 Working with the Library
 ------------------------
