@@ -43,6 +43,10 @@
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
+#define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
+#define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
+#define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
+#define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
 
 @implementation UAAnalytics
 
@@ -317,20 +321,20 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)restoreSavedUploadEventSettings {
     // If the key is missing the int will end up being 0 and the values will clamp to there lower end.
-    self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
-    self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
-    self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
-    self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
+    self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
+    self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
+    self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
 
     // Set out starting interval to the kMinBatchInterval as the default value
     self.sendInterval = kMinBatchIntervalSeconds;
 }
 
 - (void)saveUploadEventSettings {
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:@"X-UA-Max-Total"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:@"X-UA-Max-Batch"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:@"X-UA-Max-Wait"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:@"X-UA-Min-Batch-Interval"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:kMaxWaitUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 #pragma mark -
