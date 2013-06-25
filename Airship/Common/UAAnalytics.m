@@ -46,7 +46,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
 
-NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
 
 UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
 UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
