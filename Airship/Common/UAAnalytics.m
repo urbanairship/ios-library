@@ -734,7 +734,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 //NOTE: this method is intended to be called from the main thread
 - (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
-    UA_LTRACE(@"Attemping to send analytics");
+    UA_LTRACE(@"Attempting to send analytics");
 
     if (self.isSending) {
         UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
