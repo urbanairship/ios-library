@@ -134,7 +134,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)initSession {
-    self.session = [[NSMutableDictionary alloc] init];
+    self.session = [NSMutableDictionary dictionary];
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
