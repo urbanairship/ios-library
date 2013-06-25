@@ -244,10 +244,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 }
 
 + (UAirship *)shared {
-    if (_sharedAirship == nil) {
-        [NSException raise:@"InstanceNotExists"
-                    format:@"Attempted to access UAirship instance before initializaion. Please call [UAirship takeOff:] first."];
-    }
     return _sharedAirship;
 }
 
