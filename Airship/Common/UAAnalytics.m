@@ -351,17 +351,18 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     } else {
         self.notificationUserInfo = userInfo;
     }
-
 }
 
 - (void)addEvent:(UAEvent *)event {
     if (self.config.analyticsEnabled) {
-        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
+        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
+
         [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
         self.databaseSize += [event getEstimatedSize];
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];
         }
+        
         // If the app is in the background without a background task id, then this is a location
         // event, and we should attempt to send. 
         UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
