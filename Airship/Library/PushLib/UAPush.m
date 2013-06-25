@@ -25,7 +25,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "UAPush.h"
 #import "UAPush+Internal.h"
 
 #import "UAirship.h"
