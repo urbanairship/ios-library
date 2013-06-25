@@ -100,6 +100,11 @@ static NSUInteger locationRowCount = 1;
                                               action:@selector(quit)]
                                              autorelease];
 
+    // make our existing layout work beyond iOS6
+    if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
+        [self setValue:[NSNumber numberWithInt:0] forKey:@"edgesForExtendedLayout"];
+    }
+
     [self initCells];
 
     [[UAPush shared] addObserver:self];

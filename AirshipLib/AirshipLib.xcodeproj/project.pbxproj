@@ -164,7 +164,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00781A4A12AC9FE700165A66 /* package_airshiplib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_airshiplib.sh; sourceTree = "<group>"; };
 		1857645912AE0A2F001D7DCC /* update_library_reference.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = update_library_reference.sh; sourceTree = "<group>"; };
 		1F1641FD16F26A8100C87CAB /* UAInbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInbox.h; sourceTree = "<group>"; };
 		1F1641FE16F26A8100C87CAB /* UAInbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInbox.m; sourceTree = "<group>"; };
@@ -512,7 +511,6 @@
 			children = (
 				D5A4B9431300A8F200002F71 /* AirshipTest-Info.plist */,
 				1857645912AE0A2F001D7DCC /* update_library_reference.sh */,
-				00781A4A12AC9FE700165A66 /* package_airshiplib.sh */,
 				D905032712398BDC00D60744 /* mergeArmSymbols.sh */,
 			);
 			name = "Other Sources";

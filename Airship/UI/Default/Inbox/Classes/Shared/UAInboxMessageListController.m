@@ -104,8 +104,12 @@
         [self initNibNames];
         
         self.shouldShowAlerts = YES;
-    }
-    
+
+        // make our existing layout work beyond iOS6
+        if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
+            [self setValue:[NSNumber numberWithInt:0] forKey:@"edgesForExtendedLayout"];
+        }
+    }    
     return self;
 }
 
