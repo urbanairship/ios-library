@@ -64,12 +64,6 @@
 @interface UAAnalytics : NSObject
 
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
-@property (nonatomic, assign, readonly) NSInteger databaseSize;
-@property (nonatomic, assign, readonly) NSInteger maxTotalDBSize;
-@property (nonatomic, assign, readonly) NSInteger maxBatchSize;
-@property (nonatomic, assign, readonly) NSInteger maxWait;
-@property (nonatomic, assign, readonly) NSInteger minBatchInterval;
-@property (nonatomic, assign, readonly) NSInteger sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
