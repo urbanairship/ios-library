@@ -30,7 +30,7 @@ OUTPUT_PATH=$SCRIPT_DIRECTORY/output
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
-# Clean up ouput directory
+# Clean up output directory
 rm -rf $OUTPUT_PATH
 mkdir -p $OUTPUT_PATH
 
