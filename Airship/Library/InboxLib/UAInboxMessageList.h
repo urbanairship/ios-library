@@ -50,7 +50,6 @@ typedef enum {
     NSMutableArray *messages;
     // If unreadCount < 0, that means the message list hasn't retrieved.
     int unreadCount;
-    int nRetrieving;
     BOOL isBatchUpdating;
 }
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,8 +18,6 @@
 		1890BAC61251B5E900E6EBF1 /* middle-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA151251B5E900E6EBF1 /* middle-detail@2x.png */; };
 		1890BAC71251B5E900E6EBF1 /* top-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA161251B5E900E6EBF1 /* top-detail.png */; };
 		1890BAC81251B5E900E6EBF1 /* top-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA171251B5E900E6EBF1 /* top-detail@2x.png */; };
-		18C02956124F216B00D49CD5 /* AppDelegate_Pad.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */; };
-		18C02957124F216B00D49CD5 /* AppDelegate_Phone.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */; };
 		18C02958124F216B00D49CD5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
 		18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
 		18C0295B124F216B00D49CD5 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
@@ -33,6 +31,7 @@
 		1F3CC4D0165C48AD008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */; };
 		1F79711612DE3C1000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711512DE3C1000D4937F /* AirshipConfig.plist */; };
 		1FD26EBF13FB318700DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EBE13FB318700DBC45F /* libz.dylib */; };
+		1FE3959E177A25DC00388531 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3959C177A25DC00388531 /* SampleAppDelegate.m */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
@@ -90,10 +89,6 @@
 		1890BA151251B5E900E6EBF1 /* middle-detail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "middle-detail@2x.png"; sourceTree = "<group>"; };
 		1890BA161251B5E900E6EBF1 /* top-detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "top-detail.png"; sourceTree = "<group>"; };
 		1890BA171251B5E900E6EBF1 /* top-detail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "top-detail@2x.png"; sourceTree = "<group>"; };
-		18C02941124F216B00D49CD5 /* AppDelegate_Pad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Pad.h; sourceTree = "<group>"; };
-		18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Pad.m; sourceTree = "<group>"; };
-		18C02944124F216B00D49CD5 /* AppDelegate_Phone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate_Phone.h; sourceTree = "<group>"; };
-		18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate_Phone.m; sourceTree = "<group>"; };
 		18C02947124F216B00D49CD5 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Classes/Shared/main.m; sourceTree = "<group>"; };
 		18C02948124F216B00D49CD5 /* SampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleViewController.h; sourceTree = "<group>"; };
 		18C02949124F216B00D49CD5 /* SampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleViewController.m; sourceTree = "<group>"; };
@@ -111,6 +106,8 @@
 		1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F79711512DE3C1000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FD26EBE13FB318700DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1FE3959C177A25DC00388531 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
+		1FE3959D177A25DC00388531 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		BB935DA4152B6081006E6A92 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
@@ -310,34 +307,16 @@
 		18C0293F124F216B00D49CD5 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				18C02940124F216B00D49CD5 /* iPad */,
-				18C02943124F216B00D49CD5 /* iPhone */,
 				18C02946124F216B00D49CD5 /* Shared */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		18C02940124F216B00D49CD5 /* iPad */ = {
-			isa = PBXGroup;
-			children = (
-				18C02941124F216B00D49CD5 /* AppDelegate_Pad.h */,
-				18C02942124F216B00D49CD5 /* AppDelegate_Pad.m */,
-			);
-			path = iPad;
-			sourceTree = "<group>";
-		};
-		18C02943124F216B00D49CD5 /* iPhone */ = {
-			isa = PBXGroup;
-			children = (
-				18C02944124F216B00D49CD5 /* AppDelegate_Phone.h */,
-				18C02945124F216B00D49CD5 /* AppDelegate_Phone.m */,
-			);
-			path = iPhone;
-			sourceTree = "<group>";
-		};
 		18C02946124F216B00D49CD5 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1FE3959C177A25DC00388531 /* SampleAppDelegate.m */,
+				1FE3959D177A25DC00388531 /* SampleAppDelegate.h */,
 				18C02948124F216B00D49CD5 /* SampleViewController.h */,
 				18C02949124F216B00D49CD5 /* SampleViewController.m */,
 			);
@@ -476,8 +455,11 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PushSample" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -563,8 +545,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18C02956124F216B00D49CD5 /* AppDelegate_Pad.m in Sources */,
-				18C02957124F216B00D49CD5 /* AppDelegate_Phone.m in Sources */,
 				18C02958124F216B00D49CD5 /* main.m in Sources */,
 				18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */,
 				D56857BE12C183CA00BBF31A /* UAPushMoreSettingsViewController.m in Sources */,
@@ -579,6 +559,7 @@
 				BB935DAD152B60BD006E6A92 /* UALocationDemoAnnotation.m in Sources */,
 				BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */,
 				BB935DAF152B60BD006E6A92 /* UAMapPresentationController.m in Sources */,
+				1FE3959E177A25DC00388531 /* SampleAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,16 +617,25 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Debug;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
@@ -661,13 +651,21 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BUILD_STYLE = Release;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;

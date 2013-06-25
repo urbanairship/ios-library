@@ -108,7 +108,7 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)(status >= 500 && status <= 599);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+        UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString:request.responseString];
 
         NSString *username = [result objectForKey:@"user_id"];

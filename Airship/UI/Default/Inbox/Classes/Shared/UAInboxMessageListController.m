@@ -104,7 +104,6 @@
         [self initNibNames];
         
         self.shouldShowAlerts = YES;
-
     }
     
     return self;
@@ -590,7 +589,13 @@ static float label_width = 0.0;
     if ([tabbar respondsToSelector:@selector(setTintColor:)]) {
         //if iOS5
         [tabbar setTintColor:[UIColor clearColor]];
-        [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
+
+        // if iOS5 or 6
+        if (tabbar.subviews.count > 1) {
+            [badgeView addSubview:[tabbar.subviews objectAtIndex:1]];
+        } else if (tabbar.subviews.count > 0) {
+            [badgeView addSubview:[tabbar.subviews objectAtIndex:0]];
+        }
     } else {
         //if < iOS5
         [badgeView addSubview:[((UIView *)[tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];

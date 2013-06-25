@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInbox.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageList.h"
+#import "UAInboxMessageListObserver.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
 #import "UAUtils.h"
