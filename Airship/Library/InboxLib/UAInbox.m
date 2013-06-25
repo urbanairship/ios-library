@@ -168,6 +168,8 @@ static Class _uiClass;
 }
 
 - (void)setShouldUseInboxCache:(BOOL)shouldUseInboxCache {
+    //sync on the class object so that we can be consistent with
+    //display/quitInbox
     @synchronized([self class]) {
         _shouldUseInboxCache = shouldUseInboxCache;
         if (shouldUseInboxCache) {
