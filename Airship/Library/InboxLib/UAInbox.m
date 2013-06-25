@@ -80,8 +80,10 @@ static Class _uiClass;
 
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
     //if configured to use the inbox cache, swap it in here
-    if (g_sharedUAInbox.shouldUseInboxCache) {
-        [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
+    @synchronized(self) {
+        if (g_sharedUAInbox.shouldUseInboxCache) {
+            [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
+        }
     }
     [[[UAInbox shared] uiClass] displayInbox:viewController animated:animated];
 }
@@ -94,9 +96,11 @@ static Class _uiClass;
 + (void)quitInbox {
     [[[UAInbox shared] uiClass] quitInbox];
     //swap out the inbox cache if it's currently in place
-    //(the value of shouldUseInboxCache may have changed, but we'll want to swap it out regardless)
-    if ([[NSURLCache sharedURLCache] isEqual:g_sharedUAInbox.inboxCache]) {
-        [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
+    //(the value of shouldUseInboxCache may have changed, but we'll want to swap it out regardles
+    @synchronized(self) {
+        if ([[NSURLCache sharedURLCache] isEqual:g_sharedUAInbox.inboxCache]) {
+            [NSURLCache setSharedURLCache:[UAInbox shared].clientCache];
+        }
     }
 }
 
@@ -123,22 +127,12 @@ static Class _uiClass;
         // create the DB and clear out legacy info
         // prior to creating the new caches directory
         [UAInboxDBManager shared];
-        
-        /* Using custom URLCache */
-        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cacheDirectory = [cachePaths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
-        NSError *error;
 
-        [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
-                                  withIntermediateDirectories:YES
-                                                   attributes:nil error:&error];
-        self.shouldUseInboxCache = YES;
-        
-        self.inboxCache = [[[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
-                                                              diskCapacity:10*1024*1024
-                                                                  diskPath:diskCachePath] autorelease];
         self.clientCache = [NSURLCache sharedURLCache];
+
+        //use the inbox cache by default
+        self.shouldUseInboxCache = YES;
+        [self initInboxCache];
         
         self.messageList = [UAInboxMessageList shared];
         
@@ -155,6 +149,35 @@ static Class _uiClass;
     }
 
     return self;
+}
+
+- (void)initInboxCache {
+
+    NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+    NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
+    NSError *error;
+
+    [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
+                              withIntermediateDirectories:YES
+                                               attributes:nil error:&error];
+
+    self.inboxCache = [[[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
+                                                          diskCapacity:10*1024*1024
+                                                              diskPath:diskCachePath] autorelease];
+}
+
+- (void)setShouldUseInboxCache:(BOOL)shouldUseInboxCache {
+    @synchronized([self class]) {
+        _shouldUseInboxCache = shouldUseInboxCache;
+        if (shouldUseInboxCache) {
+            if (!self.inboxCache) {
+                [self initInboxCache];
+            }
+        } else {
+            self.inboxCache = nil;
+        }
+    }
 }
 
 - (void)dealloc {
