@@ -42,6 +42,7 @@ rm -rf `find ${TARGET_PATH} -name "*Tests"`
 rm -rf `find ${TARGET_PATH} -name "*Test*.plist"`
 rm -rf `find ${TARGET_PATH} -name "*Test*.pch"`
 rm -rf `find ${TARGET_PATH} -name "*.orig" `
+rm -rf `find ${TARGET_PATH} -name "*KIF-Info.plist" `
 
 # Delete user-specific xcode files
 rm -rf `find ${TARGET_PATH} -name "*.mode1v3" `
