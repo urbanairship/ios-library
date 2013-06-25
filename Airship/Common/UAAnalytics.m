@@ -70,10 +70,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.config = airshipConfig;
         
         [self resetEventsDatabaseStatus];
-        
-        // Set out starting interval to the kMinBatchInterval as the default value
-        self.sendInterval = kMinBatchInterval;
-        
+
         [self restoreSavedUploadEventSettings];
         [self saveUploadEventSettings];//save defaults to store lastSendTime if this was an initial condition
         
@@ -332,6 +329,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
     self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
     self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
+
+    // Set out starting interval to the kMinBatchInterval as the default value
+    self.sendInterval = kMinBatchInterval;
 }
 
 - (void)saveUploadEventSettings {
