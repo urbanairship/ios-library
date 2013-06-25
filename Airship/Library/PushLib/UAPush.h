@@ -134,7 +134,6 @@ SINGLETON_INTERFACE(UAPush);
  * a custom implementation.
  *
  * @see UAPushUIProtocol
- * @see UAPushUI
  *
  * @param customUIClass An implementation of UAPushUIProtocol
  */
