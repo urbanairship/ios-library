@@ -325,7 +325,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
 
     // Set out starting interval to the kMinBatchInterval as the default value
-    self.sendInterval = kMinBatchInterval;
+    self.sendInterval = kMinBatchIntervalSeconds;
 }
 
 - (void)saveUploadEventSettings {
@@ -411,40 +411,40 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
-    if (maxTotalDBSize < kMinTotalDBSize) {
-        _maxTotalDBSize = kMinTotalDBSize;
-    }else if (maxTotalDBSize > kMaxTotalDBSize) {
-        _maxTotalDBSize = kMaxTotalDBSize;
+    if (maxTotalDBSize < kMinTotalDBSizeKB) {
+        _maxTotalDBSize = kMinTotalDBSizeKB;
+    }else if (maxTotalDBSize > kMaxTotalDBSizeKB) {
+        _maxTotalDBSize = kMaxTotalDBSizeKB;
     } else {
         _maxTotalDBSize = maxTotalDBSize;
     }
 }
 
 - (void)setMaxBatchSize:(NSInteger)maxBatchSize {
-    if (maxBatchSize < kMinBatchSize) {
-        _maxBatchSize = kMinBatchSize;
-    }else if (maxBatchSize > kMaxBatchSize) {
-        _maxBatchSize = kMaxBatchSize;
+    if (maxBatchSize < kMinBatchSizeKB) {
+        _maxBatchSize = kMinBatchSizeKB;
+    }else if (maxBatchSize > kMaxBatchSizeKB) {
+        _maxBatchSize = kMaxBatchSizeKB;
     } else {
         _maxBatchSize = maxBatchSize;
     }
 }
 
 - (void)setMaxWait:(NSInteger)maxWait {
-    if (maxWait < kMinWait) {
-        _maxWait = kMinWait;
-    }else if (maxWait > kMaxWait) {
-        _maxWait = kMaxWait;
+    if (maxWait < kMinWaitSeconds) {
+        _maxWait = kMinWaitSeconds;
+    }else if (maxWait > kMaxWaitSeconds) {
+        _maxWait = kMaxWaitSeconds;
     } else {
         _maxWait = maxWait;
     }
 }
 
 - (void)setMinBatchInterval:(int)minBatchInterval {
-    if (minBatchInterval < kMinBatchInterval) {
-        _minBatchInterval = kMinBatchInterval;
-    }else if (minBatchInterval > kMaxBatchInterval) {
-        _minBatchInterval = kMaxBatchInterval;
+    if (minBatchInterval < kMinBatchIntervalSeconds) {
+        _minBatchInterval = kMinBatchIntervalSeconds;
+    }else if (minBatchInterval > kMaxBatchIntervalSeconds) {
+        _minBatchInterval = kMaxBatchIntervalSeconds;
     } else {
         _minBatchInterval = minBatchInterval;
     }

@@ -33,22 +33,22 @@
 @interface UAAnalytics ()
 
 //total size in kilobytes that the event queue is allowed to grow to.
-#define kMaxTotalDBSize 5*1024*1024 // local max of 5MB
-#define kMinTotalDBSize 10*1024     // local min of 10KB
+#define kMaxTotalDBSizeKB 5*1024*1024 // local max of 5MB
+#define kMinTotalDBSizeKB 10*1024     // local min of 10KB
 
 // total size in kilobytes that a given event post is allowed to send.
-#define kMaxBatchSize 500*1024		// local max of 500KB
-#define kMinBatchSize 1024          // local min of 1KB
+#define kMaxBatchSizeKB 500*1024		// local max of 500KB
+#define kMinBatchSizeKB 1024          // local min of 1KB
 
 // maximum amount of time in seconds that events should queue for
-#define kMaxWait 14*24*3600		// local max of 14 days
-#define kMinWait 7*24*3600		// local min of 7 days
+#define kMaxWaitSeconds 14*24*3600		// local max of 14 days
+#define kMinWaitSeconds 7*24*3600		// local min of 7 days
 
 
 // The actual amount of time in seconds that elapse between event-server posts
 // TODO: Get with the analytics team and rename this header field
-#define kMinBatchInterval 60        // local min of 60s
-#define kMaxBatchInterval 7*24*3600	// local max of 7 days
+#define kMinBatchIntervalSeconds 60        // local min of 60s
+#define kMaxBatchIntervalSeconds 7*24*3600	// local max of 7 days
 
 // minimum amount of time between background location events
 #define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900 // 900 seconds = 15 minutes
