@@ -46,32 +46,19 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
 
-
 @implementation UAAnalytics
-
-@synthesize session;
-@synthesize notificationUserInfo = notificationUserInfo_;
-@synthesize databaseSize = databaseSize_;
-@synthesize x_ua_max_total;
-@synthesize x_ua_max_batch;
-@synthesize x_ua_max_wait;
-@synthesize x_ua_min_batch_interval;
-@synthesize sendInterval = sendInterval_;
-@synthesize oldestEventTime;
-@synthesize sendBackgroundTask = sendBackgroundTask_;
-
-// Testing properties
-@synthesize isEnteringForeground = isEnteringForeground_;
 
 #pragma mark -
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    RELEASE_SAFELY(notificationUserInfo_);
-    RELEASE_SAFELY(session);
     RELEASE_SAFELY(lastLocationSendTime);
+
+    self.notificationUserInfo = nil;
+    self.session = nil;
     self.config = nil;
+    
     [self.queue cancelAllOperations];
     self.queue = nil;
     [super dealloc];
@@ -84,13 +71,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         
         [self resetEventsDatabaseStatus];
         
-        x_ua_max_total = X_UA_MAX_TOTAL;
-        x_ua_max_batch = X_UA_MAX_BATCH;
-        x_ua_max_wait = X_UA_MAX_WAIT;
-        x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+        self.x_ua_max_total = X_UA_MAX_TOTAL;
+        self.x_ua_max_batch = X_UA_MAX_BATCH;
+        self.x_ua_max_wait = X_UA_MAX_WAIT;
+        self.x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
         
         // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
-        sendInterval_ = X_UA_MIN_BATCH_INTERVAL;
+        self.sendInterval = X_UA_MIN_BATCH_INTERVAL;
         
         [self restoreFromDefault];
         [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
@@ -133,7 +120,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         }
         
         [self initSession];
-        sendBackgroundTask_ = UIBackgroundTaskInvalid;
+        self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 1;
@@ -152,7 +139,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)initSession {
-    session = [[NSMutableDictionary alloc] init];
+    self.session = [[NSMutableDictionary alloc] init];
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
@@ -182,33 +169,33 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             break;
         }
     }    
-    [session setValue:connectionTypeString forKey:@"connection_type"];
+    [self.session setValue:connectionTypeString forKey:@"connection_type"];
 }
 
 - (void)refreshSessionWhenActive {
     
     // marking the beginning of a new session
-    [session setObject:[UAUtils UUID] forKey:@"session_id"];
+    [self.session setObject:[UAUtils UUID] forKey:@"session_id"];
     
     // setup session with push id
-    BOOL launchedFromPush = notificationUserInfo_ != nil;
+    BOOL launchedFromPush = self.notificationUserInfo != nil;
     
-    NSString *pushId = [notificationUserInfo_ objectForKey:@"_"];
+    NSString *pushId = [self.notificationUserInfo objectForKey:@"_"];
     
     // set launched-from-push session values for both push and rich push
     if (pushId != nil) {
-        [session setValue:pushId forKey:@"launched_from_push_id"];
+        [self.session setValue:pushId forKey:@"launched_from_push_id"];
     } else if (launchedFromPush) {
         //if the server did not send a push ID (likely because the payload did not have room)
         //generate an ID for the server to use
-        [session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
+        [self.session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
     } else {
-        [session removeObjectForKey:@"launched_from_push_id"];
+        [self.session removeObjectForKey:@"launched_from_push_id"];
     }
     
     // Get the rich push ID, which can be sent as a one-element array or a string
     NSString *richPushId = nil;
-    NSObject *richPushValue = [notificationUserInfo_ objectForKey:@"_uamid"];
+    NSObject *richPushValue = [self.notificationUserInfo objectForKey:@"_uamid"];
     if ([richPushValue isKindOfClass:[NSArray class]]) {
         NSArray *richPushIds = (NSArray *)richPushValue;
         if (richPushIds.count > 0) {
@@ -219,7 +206,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
     
     if (richPushId != nil) {
-        [session setValue:richPushId forKey:@"launched_from_rich_push_id"];
+        [self.session setValue:richPushId forKey:@"launched_from_rich_push_id"];
     }
     
     self.notificationUserInfo = nil;
@@ -244,19 +231,19 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [notification_types addObject:@"newsstand"];
     }
     
-    [session setObject:notification_types forKey:@"notification_types"];
+    [self.session setObject:notification_types forKey:@"notification_types"];
     
     NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
-    [session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
-    [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
+    [self.session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
+    [self.session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
     
-    [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [session setObject:[UAirshipVersion get] forKey:@"lib_version"];
-    [session setValue:packageVersion forKey:@"package_version"];
+    [self.session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
+    [self.session setObject:[UAirshipVersion get] forKey:@"lib_version"];
+    [self.session setValue:packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
-    [session setObject:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
+    [self.session setObject:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 }
 
 #pragma mark -
@@ -269,7 +256,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
-    isEnteringForeground_ = YES;
+    self.isEnteringForeground = YES;
 }
 
 - (void)enterBackground {
@@ -279,15 +266,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
     
     //Set a blank session_id for app_exit events
-    [session removeAllObjects];
-    [session setValue:@"" forKey:@"session_id"];
+    [self.session removeAllObjects];
+    [self.session setValue:@"" forKey:@"session_id"];
 
     self.notificationUserInfo = nil;
 
     // Only place where a background task is created
     self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [self.queue cancelAllOperations];
-        [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
+        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }];
 
@@ -295,10 +282,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)invalidateBackgroundTask {
-    if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending analytics background task %u", sendBackgroundTask_);
+    if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
+        UA_LTRACE(@"Ending analytics background task %u", self.sendBackgroundTask);
         
-        [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
+        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }
 }
@@ -308,8 +295,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     // If this is the first 'inactive->active' transition in this session,
     // send 
-    if (isEnteringForeground_) {
-        isEnteringForeground_ = NO;
+    if (self.isEnteringForeground) {
+        self.isEnteringForeground = NO;
         
         //update the network connection_type value
         [self refreshSessionWhenNetworkChanged];
@@ -351,25 +338,25 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     int tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
     
     if (tmp > 0) {
-        x_ua_max_total = tmp;
+        self.x_ua_max_total = tmp;
     }
 
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
     
     if (tmp > 0) {
-        x_ua_max_batch = tmp;
+        self.x_ua_max_batch = tmp;
     }
     
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
     
     if (tmp > 0) {
-        x_ua_max_wait = tmp;
+        self.x_ua_max_wait = tmp;
     }
     
     tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
     
     if (tmp > 0) {
-        x_ua_min_batch_interval = tmp;
+        self.x_ua_min_batch_interval = tmp;
     }
     
     
@@ -384,10 +371,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 // TODO: Change this method call to a more descriptive name, and add some documentation
 - (void)saveDefault {
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_total forKey:@"X-UA-Max-Total"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_batch forKey:@"X-UA-Max-Batch"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_wait forKey:@"X-UA-Max-Wait"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_total forKey:@"X-UA-Max-Total"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_batch forKey:@"X-UA-Max-Batch"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_max_wait forKey:@"X-UA-Max-Wait"];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
 
     /*
     UALOG(@"Response Headers Saved:");
@@ -413,10 +400,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)addEvent:(UAEvent *)event {
     if (self.config.analyticsEnabled) {
         UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
-        [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
+        [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
         self.databaseSize += [event getEstimatedSize];
-        if (oldestEventTime == 0) {
-            oldestEventTime = [event.time doubleValue];
+        if (self.oldestEventTime == 0) {
+            self.oldestEventTime = [event.time doubleValue];
         }
         // If the app is in the background without a background task id, then this is a location
         // event, and we should attempt to send. 
@@ -442,13 +429,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             if (tmp > 0) {
                 
                 if(tmp >= X_UA_MAX_TOTAL) {
-                    x_ua_max_total = X_UA_MAX_TOTAL;
+                    self.x_ua_max_total = X_UA_MAX_TOTAL;
                 } else {
-                    x_ua_max_total = tmp;
+                    self.x_ua_max_total = tmp;
                 }
                 
             } else {
-                x_ua_max_total = X_UA_MAX_TOTAL;
+                self.x_ua_max_total = X_UA_MAX_TOTAL;
             }
         }
 
@@ -459,13 +446,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             if (tmp > 0) {
                 
                 if (tmp >= X_UA_MAX_BATCH) {
-                    x_ua_max_batch = X_UA_MAX_BATCH;
+                    self.x_ua_max_batch = X_UA_MAX_BATCH;
                 } else {
-                    x_ua_max_batch = tmp;
+                    self.x_ua_max_batch = tmp;
                 }
                 
             } else {
-                x_ua_max_batch = X_UA_MAX_BATCH;
+                self.x_ua_max_batch = X_UA_MAX_BATCH;
             }
         }
 
@@ -475,9 +462,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             tmp = [maxWaitValue intValue];
             
             if (tmp >= X_UA_MAX_WAIT) {
-                x_ua_max_wait = X_UA_MAX_WAIT;
+                self.x_ua_max_wait = X_UA_MAX_WAIT;
             } else {
-                x_ua_max_wait = tmp;
+                self.x_ua_max_wait = tmp;
             }
         }
 
@@ -486,9 +473,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             tmp = [minBatchValue intValue];
             
             if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-                x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
+                self.x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
             } else {
-                x_ua_min_batch_interval = tmp;
+                self.x_ua_min_batch_interval = tmp;
             }
         }
         
@@ -500,12 +487,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark Custom Property Setters
 
 - (void)setSendInterval:(int)newVal {
-    if(newVal < x_ua_min_batch_interval) {
-        sendInterval_ = x_ua_min_batch_interval;
-    } else if (newVal > x_ua_max_wait) {
-        sendInterval_ = x_ua_max_wait;
+    if(newVal < self.x_ua_min_batch_interval) {
+        _sendInterval = self.x_ua_min_batch_interval;
+    } else if (newVal > self.x_ua_max_wait) {
+        _sendInterval = self.x_ua_max_wait;
     } else {
-        sendInterval_ = newVal;
+        _sendInterval = newVal;
     }
 }
 
@@ -518,17 +505,17 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
     if ([events count] > 0) {
         NSDictionary *event = [events objectAtIndex:0];
-        oldestEventTime = [[event objectForKey:@"time"] doubleValue];
+        self.oldestEventTime = [[event objectForKey:@"time"] doubleValue];
     } else {
-        oldestEventTime = 0;
+        self.oldestEventTime = 0;
     }
 
-    UA_LTRACE(@"Database size: %d", databaseSize_);
-    UA_LTRACE(@"Oldest Event: %f", oldestEventTime);
+    UA_LTRACE(@"Database size: %d", self.databaseSize);
+    UA_LTRACE(@"Oldest Event: %f", self.oldestEventTime);
 }
 
 - (BOOL)hasEventsToSend {
-    return databaseSize_ > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
+    return self.databaseSize > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
 }
 
 - (BOOL)shouldSendAnalytics {
@@ -544,7 +531,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
         // If the app is in the background and there is a valid background task to upload events
-        if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
+        if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
             return YES;
         } else {
             // There is no background task, and the app is in the background, it is likely that
@@ -592,8 +579,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSArray*) prepareEventsForUpload {
 
     // Delete older events until upload size threshold is met
-    while (databaseSize_ > x_ua_max_total) {
-        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
+    while (self.databaseSize > self.x_ua_max_total) {
+        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.x_ua_max_total);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -603,7 +590,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    int avgEventSize = databaseSize_ / eventCount;
+    int avgEventSize = self.databaseSize / eventCount;
     if (avgEventSize <= 0) {
         return nil;
     }
@@ -611,13 +598,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     int actualSize = 0;
     int batchEventCount = 0;
     
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:x_ua_max_batch/avgEventSize];
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.x_ua_max_batch/avgEventSize];
     NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
 
     for (NSMutableDictionary *event in events) {
         actualSize += [[event objectForKey:@"event_size"] intValue];
         
-        if (actualSize <= x_ua_max_batch) {
+        if (actualSize <= self.x_ua_max_batch) {
             batchEventCount++; 
         } else {
             UA_LTRACE(@"Met batch limit.");
@@ -668,8 +655,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
     NSTimeInterval delay = 0;
     NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-    if (timeSinceLastSend < x_ua_min_batch_interval) {
-        delay = x_ua_min_batch_interval - timeSinceLastSend;
+    if (timeSinceLastSend < self.x_ua_min_batch_interval) {
+        delay = self.x_ua_min_batch_interval - timeSinceLastSend;
     }
     return delay;
 }

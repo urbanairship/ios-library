@@ -32,23 +32,9 @@
 
 @interface UAAnalytics () {
   @private
-    NSMutableDictionary *session;
-    NSDictionary *notificationUserInfo_;
-    int x_ua_max_total;
-    int x_ua_max_batch;
-    int x_ua_max_wait;
-    int x_ua_min_batch_interval;
-    int sendInterval_;
-    int databaseSize_;
-    NSTimeInterval oldestEventTime;    
+
     NSDate *lastLocationSendTime;    
     NSString *packageVersion;
-    UIBackgroundTaskIdentifier sendBackgroundTask_;
-    
-    // YES if the app is in the process of entering the foreground, but is not yet active.
-    // This flag is used to delay sending an `app_foreground` event until the app is active
-    // and all of the launch/notification data is present.
-    BOOL isEnteringForeground_;
 }
 
 @property (nonatomic, retain) NSMutableDictionary *session;
@@ -66,6 +52,9 @@
 @property (assign) BOOL isSending;
 
 // For testing purposes
+// YES if the app is in the process of entering the foreground, but is not yet active.
+// This flag is used to delay sending an `app_foreground` event until the app is active
+// and all of the launch/notification data is present.
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 
