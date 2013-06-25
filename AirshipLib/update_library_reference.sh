@@ -24,11 +24,12 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 TARGET_NAME="AirshipLib"
+PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
 XCODE_SETTINGS="/tmp/${TARGET_NAME}.settings"
 
 # Query the Xcode Project for the current settings, based on the current target
 # Dump the settings output as an awkdb into /tmp
-xcodebuild -showBuildSettings -target $TARGET_NAME > ${XCODE_SETTINGS}
+xcodebuild -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > ${XCODE_SETTINGS}
 xcode_setting() {
     echo $(cat ${XCODE_SETTINGS} | awk "\$1 == \"${1}\" { print \$3 }")
 }

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+# Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -23,46 +23,38 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-for sample in InboxSample PushSample StoreFrontSample SubscriptionSample; do
-	if [ ! -d "$sample" ]; then
-		echo "You need to run this script under root directory."
-		exit -1
-	fi
-done
+ROOT_PATH=`dirname "${0}"`/../
+SRC_PATH=$1
+DEST_PATH=$2
+TARGET_PATH="${DEST_PATH}/`basename ${SRC_PATH}`"
 
-rm -rf Release
-mkdir Release
-cp -R *Sample Release
+# Remvove old package
+rm -rf $TARGET_PATH
 
-cd Release
-rm -rf `find . -name "build"`
-rm -rf `find . -name "*SampleLib.xcodeproj"`
-rm -rf `find . -name "*Tests"`
-rm -rf `find . -name "*Test*.plist"`
-rm -rf `find . -name "*Test*.pch"`
-rm -rf `find . -name "*.orig" `
+# Create parent directories
+mkdir -p $DEST_PATH
+cp -R $SRC_PATH $DEST_PATH
 
-#delete user-specific xcode files
-rm -rf `find . -name "*.mode1v3" `
-rm -rf `find . -name "*.pbxuser" `
-rm -rf `find . -name "*.perspective*" `
-rm -rf `find . -name "xcuserdata" `
+# Delete unwanted files
+rm -rf `find ${TARGET_PATH} -name "build"`
+rm -rf `find ${TARGET_PATH} -name "*SampleLib.xcodeproj"`
+rm -rf `find ${TARGET_PATH} -name "*Tests"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.plist"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.pch"`
+rm -rf `find ${TARGET_PATH} -name "*.orig" `
 
-#delete the testing config plist
-rm -rf `find . -name "AirshipDevelopment.plist" `
+# Delete user-specific xcode files
+rm -rf `find ${TARGET_PATH} -name "*.mode1v3" `
+rm -rf `find ${TARGET_PATH} -name "*.pbxuser" `
+rm -rf `find ${TARGET_PATH} -name "*.perspective*" `
+rm -rf `find ${TARGET_PATH} -name "xcuserdata" `
 
+# Delete the testing config plist
+rm -rf `find ${TARGET_PATH} -name "AirshipDevelopment.plist" `
 
-#rename packages for distribution
-mv InboxSample RichPushSample
+# Copy common change log, license, and readme
+cp "${ROOT_PATH}/CHANGELOG" $TARGET_PATH
+cp "${ROOT_PATH}/LICENSE" $TARGET_PATH
+cp "${ROOT_PATH}/README.rst" $TARGET_PATH
 
-# copy the sample plist into place
-for sample in RichPushSample PushSample; do
-    cp ../CHANGELOG $sample
-    cp ../LICENSE $sample
-    cp ../README.rst $sample
-    mv -f $sample/AirshipConfig.plist.sample $sample/AirshipConfig.plist
-    zip -r $sample-latest.zip $sample
-done
-
-
-
+mv -f $TARGET_PATH/AirshipConfig.plist.sample $TARGET_PATH/AirshipConfig.plist
