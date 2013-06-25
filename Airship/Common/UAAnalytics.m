@@ -269,8 +269,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // Only place where a background task is created
     self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [self.queue cancelAllOperations];
-        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
+        [self invalidateBackgroundTask];
     }];
 
     [self send];
