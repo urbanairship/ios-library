@@ -55,13 +55,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [self.queue cancelAllOperations];
+    
+    self.queue = nil;
     self.packageVersion = nil;
     self.notificationUserInfo = nil;
     self.session = nil;
     self.config = nil;
     
-    [self.queue cancelAllOperations];
-    self.queue = nil;
     [super dealloc];
 }
 
