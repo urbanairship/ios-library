@@ -133,9 +133,9 @@ NSString * const UAAnalyticsValueNone = @"NONE";
     
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
     if (state == UIApplicationStateActive){
-        [self.data setValue:UAAnalyticsTrueValue forKey:UALocationEventForegroundKey];
+        [self.data setValue:@"true" forKey:UALocationEventForegroundKey];
     } else {
-        [self.data setValue:UAAnalyticsFalseValue forKey:UALocationEventForegroundKey];
+        [self.data setValue:@"false" forKey:UALocationEventForegroundKey];
     }
 }
 

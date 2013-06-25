@@ -47,9 +47,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // that background identifier for should send background logic
 
 
-UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
-UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
-
 @implementation UAAnalytics
 
 @synthesize session;

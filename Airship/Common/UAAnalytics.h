@@ -52,11 +52,6 @@
 
 extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 
-typedef NSString UAAnalyticsValue;
-extern UAAnalyticsValue * const UAAnalyticsTrueValue;
-extern UAAnalyticsValue * const UAAnalyticsFalseValue;
-
-
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
  */
