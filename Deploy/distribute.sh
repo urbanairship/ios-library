@@ -23,31 +23,28 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-outputPath="./output"
-originalPath=`pwd`
 
-cd `dirname $0`
+SCRIPT_DIRECTORY=`dirname $0`
+OUTPUT_PATH=$SCRIPT_DIRECTORY/output
 
 # Grab the release version
-version=$(awk <../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
+VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
 # Clean up ouput directory
-rm -rf $outputPath
-mkdir -p $outputPath
+rm -rf $OUTPUT_PATH
+mkdir -p $OUTPUT_PATH
 
-./package_sample.sh "../InboxSample" $outputPath
-./package_sample.sh "../PushSample" $outputPath
-./package_airshiplib.sh $outputPath
+./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
+./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
+./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
 
 # Rename InboxSample to RichPushSample
-mv "${outputPath}/InboxSample" "${outputPath}/RichPushSample"
+mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
 
-cd $outputPath
-
-for package in RichPushSample PushSample Airship; do
-	zip -r libUAirship-latest.zip $package
-	zip -r "libUAirship-${version}.zip" $package
+cd $OUTPUT_PATH
+for PACKAGE in RichPushSample PushSample Airship; do
+	zip -r libUAirship-latest.zip $PACKAGE
+	zip -r "libUAirship-${VERSION}.zip" $PACKAGE
 done
-
-cd $originalPath
+cd -
 

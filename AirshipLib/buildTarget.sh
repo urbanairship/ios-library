@@ -16,13 +16,15 @@
 DEBUG_THIS_SCRIPT="true"
 
 CONFIGURATION="Release"
+PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
+
 TARGET_NAME=$1
 
 XCODE_SETTINGS="/tmp/${TARGET_NAME}.settings"
 
 # Query the Xcode Project for the current settings, based on the current target
 # Dump the settings output as an awkdb into /tmp
-xcodebuild -showBuildSettings -target $TARGET_NAME > ${XCODE_SETTINGS}
+xcodebuild -showBuildSettings -project $PROJECT_PATH -target $TARGET_NAME > ${XCODE_SETTINGS}
 xcode_setting() {
     echo $(cat ${XCODE_SETTINGS} | awk "\$1 == \"${1}\" { print \$3 }")
 }
@@ -84,15 +86,15 @@ echo "BUILT_PRODUCTS_DIR = $BUILT_PRODUCTS_DIR"
 echo "TARGET_BUILD_DIR = $TARGET_BUILD_DIR"
 fi
 
-echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" -arch \"${ARM_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
+echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" -arch \"${ARM_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${ARM_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
 
-echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
+echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
 
 #
 # Build an ARMV6 if an older version of Xcode is provided via an environment variable or $2 argument
@@ -113,7 +115,7 @@ if [ -n "$DEVELOPER_DIR" ]
 then
   echo "Building ARMv6 Legacy Library"
   # Switch to Xcode 4.4
-  xcodebuild -configuration "${CONFIGURATION}" -target "${TARGET_NAME}" -sdk "${ARMV6_SDK_TO_BUILD}" -arch "armv6" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}-armv6" SYMROOT="${SYMROOT}-armv6" OBJROOT="${OBJROOT}-armv6" BUILD_ROOT="${BUILD_ROOT}-armv6" TARGET_BUILD_DIR="$CURRENTCONFIG_ARMV6_DEVICE_DIR" | tee ${ARMV6_LOG_FILE}
+  xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}"  -target "${TARGET_NAME}" -sdk "${ARMV6_SDK_TO_BUILD}" -arch "armv6" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}-armv6" SYMROOT="${SYMROOT}-armv6" OBJROOT="${OBJROOT}-armv6" BUILD_ROOT="${BUILD_ROOT}-armv6" TARGET_BUILD_DIR="$CURRENTCONFIG_ARMV6_DEVICE_DIR" | tee ${ARMV6_LOG_FILE}
 
   # Unset DEVELOPER_DIR for the rest of the script
   export -n DEVELOPER_DIR
