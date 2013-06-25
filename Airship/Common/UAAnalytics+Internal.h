@@ -52,6 +52,11 @@
 // X_UA_MIN_BATCH_INTERVAL
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
+#define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
+#define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
+#define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
+#define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
+
 @class UAEvent;
 @class UAHTTPRequest;
 

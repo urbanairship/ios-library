@@ -41,11 +41,6 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 
-#define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
-#define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
-#define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
-#define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
-
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 @implementation UAAnalytics
