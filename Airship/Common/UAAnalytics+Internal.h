@@ -57,8 +57,6 @@
 // X_UA_MIN_BATCH_INTERVAL
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
-
-
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
 @property (nonatomic, assign) NSInteger maxTotalDBSize;
@@ -74,7 +72,6 @@
 @property (nonatomic, retain) NSOperationQueue *queue;
 @property (assign) BOOL isSending;
 
-// For testing purposes
 // YES if the app is in the process of entering the foreground, but is not yet active.
 // This flag is used to delay sending an `app_foreground` event until the app is active
 // and all of the launch/notification data is present.
