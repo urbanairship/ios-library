@@ -28,6 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAInboxAPIClient.h"
+#import "UAInboxMessageListObserver.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager.h"
 #import "UAUtils.h"
@@ -44,6 +45,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @property(nonatomic, retain) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
+
+
 
 @end
 

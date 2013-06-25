@@ -90,7 +90,7 @@ enum {
     if (indexPath.section == SectionDesc) {
         CGFloat height = [textLabel.text sizeWithFont:textLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
-                              lineBreakMode:UILineBreakModeWordWrap].height;
+                              lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;
     } else {
         return 44;

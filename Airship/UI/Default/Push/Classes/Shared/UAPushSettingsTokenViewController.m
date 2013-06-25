@@ -68,7 +68,7 @@
     UIFont *font = [UIFont systemFontOfSize:17];
     CGFloat height = [text sizeWithFont:font
                       constrainedToSize:CGSizeMake(280.0, 1500.0)
-                          lineBreakMode:UILineBreakModeWordWrap].height;
+                          lineBreakMode:NSLineBreakByWordWrapping].height;
     return height + kCellPaddingHeight;
 }
 
@@ -100,7 +100,7 @@
     [description setFont: font];
     CGFloat height = [text sizeWithFont:font
                       constrainedToSize:CGSizeMake(280.0, 800.0)
-                          lineBreakMode:UILineBreakModeWordWrap].height;
+                          lineBreakMode:NSLineBreakByWordWrapping].height;
     [description setFrame: CGRectMake(0.0f, 10.0f, 320.0f, height)];
     [description setBounds: CGRectMake(0.20f, 0.0f, 290.0f, height)];
     [description setAutoresizingMask:UIViewAutoresizingFlexibleWidth];

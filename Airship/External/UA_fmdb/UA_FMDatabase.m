@@ -112,12 +112,14 @@
     return [cachedStatements objectForKey:query];
 }
 
-- (void) setCachedStatement:(UA_FMStatement*)statement forQuery:(NSString*)query {
+- (void) setCachedStatement:(UA_FMStatement*)statement forQuery:(NSString *)query {
     //NSLog(@"setting query: %@", query);
     query = [query copy]; // in case we got handed in a mutable string...
-    [statement setQuery:query];
-    [cachedStatements setObject:statement forKey:query];
-    [query release];
+    if (query) {
+        [statement setQuery:query];
+        [cachedStatements setValue:statement forKey:query];
+        [query release];
+    }
 }
 
 
