@@ -30,17 +30,25 @@
 // Used for init local size if server didn't respond, or server sends bad data
 
 //total size in kilobytes that the event queue is allowed to grow to.
-#define X_UA_MAX_TOTAL 5*1024*1024	// local max of 5MB
+#define kMaxTotalDBSize 5*1024*1024 // local max of 5MB
+#define kMinTotalDBSize 10*1024     // local min of 10KB
+
 
 // total size in kilobytes that a given event post is allowed to send.
-#define X_UA_MAX_BATCH 500*1024		// local max of 500kb
+#define kMaxBatchSize 500*1024		// local max of 500KB
+#define kMinBatchSize 1024          // local min of 1KB
+
 
 // maximum amount of time in seconds that events should queue for
-#define X_UA_MAX_WAIT 7*24*3600		// local max of 7 days
+#define kMaxWait 14*24*3600		// local max of 14 days
+#define kMinWait 7*24*3600		// local min of 7 days
+
 
 // The actual amount of time in seconds that elapse between event-server posts
 // TODO: Get with the analytics team and rename this header field
-#define X_UA_MIN_BATCH_INTERVAL 60	// local min of 60s
+#define kMinBatchInterval 60        // local min of 60s
+#define kMaxBatchInterval 7*24*3600	// local max of 7 days
+
 
 // minimum amount of time between background location events
 #define X_UA_MIN_BACKGROUND_LOCATION_INTERVAL 900 // 900 seconds = 15 minutes
@@ -58,12 +66,12 @@ extern NSString * const UAAnalyticsOptionsRemoteNotificationKey;
 @interface UAAnalytics : NSObject
 
 @property (nonatomic, retain, readonly) NSMutableDictionary *session;
-@property (nonatomic, assign, readonly) int databaseSize;
-@property (nonatomic, assign, readonly) int maxTotalDBSize;
-@property (nonatomic, assign, readonly) int maxBatchSize;
-@property (nonatomic, assign, readonly) int maxWait;
-@property (nonatomic, assign, readonly) int minBatchInterval;
-@property (nonatomic, assign, readonly) int sendInterval;
+@property (nonatomic, assign, readonly) NSInteger databaseSize;
+@property (nonatomic, assign, readonly) NSInteger maxTotalDBSize;
+@property (nonatomic, assign, readonly) NSInteger maxBatchSize;
+@property (nonatomic, assign, readonly) NSInteger maxWait;
+@property (nonatomic, assign, readonly) NSInteger minBatchInterval;
+@property (nonatomic, assign, readonly) NSInteger sendInterval;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;

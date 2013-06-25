@@ -39,12 +39,12 @@
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
-@property (nonatomic, assign) int maxTotalDBSize;
-@property (nonatomic, assign) int maxBatchSize;
-@property (nonatomic, assign) int maxWait;
-@property (nonatomic, assign) int minBatchInterval;
-@property (nonatomic, assign) int sendInterval;
-@property (nonatomic, assign) int databaseSize;
+@property (nonatomic, assign) NSInteger maxTotalDBSize;
+@property (nonatomic, assign) NSInteger maxBatchSize;
+@property (nonatomic, assign) NSInteger maxWait;
+@property (nonatomic, assign) NSInteger minBatchInterval;
+@property (nonatomic, assign) NSInteger sendInterval;
+@property (nonatomic, assign) NSInteger databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain) UAConfig *config;

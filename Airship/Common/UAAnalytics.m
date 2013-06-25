@@ -71,13 +71,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         
         [self resetEventsDatabaseStatus];
         
-        self.maxTotalDBSize = X_UA_MAX_TOTAL;
-        self.maxBatchSize = X_UA_MAX_BATCH;
-        self.maxWait = X_UA_MAX_WAIT;
-        self.minBatchInterval = X_UA_MIN_BATCH_INTERVAL;
+        self.maxTotalDBSize = kMaxTotalDBSize;
+        self.maxBatchSize = kMaxBatchSize;
+        self.maxWait = kMinWait;  //Default to the lower end of the maxWait -- 7 days
+        self.minBatchInterval = kMinBatchInterval;
         
         // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
-        self.sendInterval = X_UA_MIN_BATCH_INTERVAL;
+        self.sendInterval = kMinBatchInterval;
         
         [self restoreFromDefault];
         [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
@@ -333,40 +333,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)restoreFromDefault {
-    
     // If the key is missing the int will end up being 0, which is what these checks are (not actual limits)
-    int tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
-    
-    if (tmp > 0) {
-        self.maxTotalDBSize = tmp;
-    }
-
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
-    
-    if (tmp > 0) {
-        self.maxBatchSize = tmp;
-    }
-    
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
-    
-    if (tmp > 0) {
-        self.maxWait = tmp;
-    }
-    
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
-    
-    if (tmp > 0) {
-        self.minBatchInterval = tmp;
-    }
-    
-    
-    /*
-    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
-    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
-    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
-    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
-    UALOG(@"X-UA-Last-Send-Time: %@", [lastSendTime description]);
-    */
+    self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
+    self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
+    self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
+    self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
 }
 
 // TODO: Change this method call to a more descriptive name, and add some documentation
@@ -375,14 +346,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:@"X-UA-Max-Batch"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:@"X-UA-Max-Wait"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:@"X-UA-Min-Batch-Interval"];
-
-    /*
-    UALOG(@"Response Headers Saved:");
-    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
-    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
-    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
-    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
-    */
 }
 
 #pragma mark -
@@ -419,84 +382,87 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // We send headers on all response codes, so let's set those values before checking for != 200
 // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse *)response {
-    if ([response allHeaderFields]) {
-        int tmp = 0;
-        
-        id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
-        if (maxTotalValue) {
-            tmp = [maxTotalValue intValue] * 1024;//value returned in KB
-            
-            if (tmp > 0) {
-                
-                if(tmp >= X_UA_MAX_TOTAL) {
-                    self.maxTotalDBSize = X_UA_MAX_TOTAL;
-                } else {
-                    self.maxTotalDBSize = tmp;
-                }
-                
-            } else {
-                self.maxTotalDBSize = X_UA_MAX_TOTAL;
-            }
-        }
-
-        id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
-        if (maxBatchValue) {
-            tmp = [maxBatchValue intValue] * 1024;//value return in KB
-            
-            if (tmp > 0) {
-                
-                if (tmp >= X_UA_MAX_BATCH) {
-                    self.maxBatchSize = X_UA_MAX_BATCH;
-                } else {
-                    self.maxBatchSize = tmp;
-                }
-                
-            } else {
-                self.maxBatchSize = X_UA_MAX_BATCH;
-            }
-        }
-
-
-        id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
-        if (maxWaitValue) {
-            tmp = [maxWaitValue intValue];
-            
-            if (tmp >= X_UA_MAX_WAIT) {
-                self.maxWait = X_UA_MAX_WAIT;
-            } else {
-                self.maxWait = tmp;
-            }
-        }
-
-        id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
-        if (minBatchValue) {
-            tmp = [minBatchValue intValue];
-            
-            if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-                self.minBatchInterval = X_UA_MIN_BATCH_INTERVAL;
-            } else {
-                self.minBatchInterval = tmp;
-            }
-        }
-        
-        [self saveDefault];
+    if (![response allHeaderFields]) {
+        return;
     }
+
+    id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
+    if (maxTotalValue) {
+        self.maxTotalDBSize = [maxTotalValue integerValue] * 1024; //value returned in KB;
+    }
+
+    id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
+    if (maxBatchValue) {
+        self.maxBatchSize = [maxBatchValue integerValue] * 1024; //value return in KB
+    }
+
+    id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
+    if (maxWaitValue) {
+        self.maxWait = [maxWaitValue integerValue];
+    }
+
+    id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
+    if (minBatchValue) {
+        self.minBatchInterval = [minBatchValue integerValue];
+    }
+
+    [self saveDefault];
 }
 
 #pragma mark - 
 #pragma mark Custom Property Setters
 
-- (void)setSendInterval:(int)newVal {
-    if(newVal < self.minBatchInterval) {
+- (void)setSendInterval:(NSInteger)interval {
+    if(interval < self.minBatchInterval) {
         _sendInterval = self.minBatchInterval;
-    } else if (newVal > self.maxWait) {
+    } else if (interval > self.maxWait) {
         _sendInterval = self.maxWait;
     } else {
-        _sendInterval = newVal;
+        _sendInterval = interval;
     }
 }
 
-#pragma mark - 
+- (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
+    if (maxTotalDBSize < kMinTotalDBSize) {
+        _maxTotalDBSize = kMinTotalDBSize;
+    }else if (maxTotalDBSize > kMaxTotalDBSize) {
+        _maxTotalDBSize = kMaxTotalDBSize;
+    } else {
+        _maxTotalDBSize = maxTotalDBSize;
+    }
+}
+
+- (void)setMaxBatchSize:(NSInteger)maxBatchSize {
+    if (maxBatchSize < kMinBatchSize) {
+        _maxBatchSize = kMinBatchSize;
+    }else if (maxBatchSize > kMaxBatchSize) {
+        _maxBatchSize = kMaxBatchSize;
+    } else {
+        _maxBatchSize = maxBatchSize;
+    }
+}
+
+- (void)setMaxWait:(NSInteger)maxWait {
+    if (maxWait < kMinWait) {
+        _maxWait = kMinWait;
+    }else if (maxWait > kMaxWait) {
+        _maxWait = kMaxWait;
+    } else {
+        _maxWait = maxWait;
+    }
+}
+
+- (void)setMinBatchInterval:(int)minBatchInterval {
+    if (minBatchInterval < kMinBatchInterval) {
+        _minBatchInterval = kMinBatchInterval;
+    }else if (minBatchInterval > kMaxBatchInterval) {
+        _minBatchInterval = kMaxBatchInterval;
+    } else {
+        _minBatchInterval = minBatchInterval;
+    }
+}
+
+#pragma mark -
 #pragma mark Send Logic
 
 - (void)resetEventsDatabaseStatus {
