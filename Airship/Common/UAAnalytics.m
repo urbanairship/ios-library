@@ -71,16 +71,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         
         [self resetEventsDatabaseStatus];
         
-        self.maxTotalDBSize = kMaxTotalDBSize;
-        self.maxBatchSize = kMaxBatchSize;
-        self.maxWait = kMinWait;  //Default to the lower end of the maxWait -- 7 days
-        self.minBatchInterval = kMinBatchInterval;
-        
-        // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
+        // Set out starting interval to the kMinBatchInterval as the default value
         self.sendInterval = kMinBatchInterval;
         
-        [self restoreFromDefault];
-        [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
+        [self restoreSavedUploadEventSettings];
+        [self saveUploadEventSettings];//save defaults to store lastSendTime if this was an initial condition
         
         // Register for interface-change notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -332,16 +327,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (void)restoreFromDefault {
-    // If the key is missing the int will end up being 0, which is what these checks are (not actual limits)
+- (void)restoreSavedUploadEventSettings {
+    // If the key is missing the int will end up being 0 and the values will clamp to there lower end.
     self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
     self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
     self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
     self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
 }
 
-// TODO: Change this method call to a more descriptive name, and add some documentation
-- (void)saveDefault {
+- (void)saveUploadEventSettings {
     [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:@"X-UA-Max-Total"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:@"X-UA-Max-Batch"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:@"X-UA-Max-Wait"];
@@ -406,7 +400,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.minBatchInterval = [minBatchValue integerValue];
     }
 
-    [self saveDefault];
+    [self saveUploadEventSettings];
 }
 
 #pragma mark - 

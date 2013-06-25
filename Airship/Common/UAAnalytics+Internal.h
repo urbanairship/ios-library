@@ -60,8 +60,16 @@
 
 - (void)initSession;
 
-- (void)restoreFromDefault;
-- (void)saveDefault;
+/* Restores any upload event settings from the 
+ standardUserDefaults
+ */
+- (void)restoreSavedUploadEventSettings;
+
+/* Saves any upload event settings from the headers to the 
+ standardUserDefaults 
+ */
+- (void)saveUploadEventSettings;
+
 - (void)resetEventsDatabaseStatus;
 
 /* Sending analytics */

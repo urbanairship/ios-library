@@ -270,7 +270,7 @@
     analytics.maxTotalDBSize = 0;
     analytics.maxWait = 0;
     analytics.minBatchInterval = 0;
-    [analytics restoreFromDefault];
+    [analytics restoreSavedUploadEventSettings];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue(analytics.x_ua_max_total == [[defaults valueForKey:@"X-UA-Max-Total"] intValue], nil);
     STAssertTrue(analytics.x_ua_max_batch == [[defaults valueForKey:@"X-UA-Max-Batch"] intValue], nil);
@@ -283,7 +283,7 @@
     analytics.maxTotalDBSize = 7;
     analytics.maxWait = 7;
     analytics.minBatchInterval = 7; 
-    [analytics saveDefault];
+    [analytics saveUploadEventSettings];
     NSDictionary *defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Total"] intValue] == 7, nil);
     STAssertTrue([[defaults valueForKey:@"X-UA-Max-Batch"] intValue] == 7, nil);
@@ -331,7 +331,7 @@
     [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL - 1] forKey:@"X-UA-Min-Batch-Interval"];
     id mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     id mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] saveDefault];
+    [[mockAnalytics expect] saveUploadEventSettings];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
     [analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
     STAssertEquals(analytics.x_ua_max_total, X_UA_MAX_TOTAL, nil);
@@ -348,7 +348,7 @@
     [headers setValue:[NSNumber numberWithInt:X_UA_MIN_BATCH_INTERVAL + 1] forKey:@"X-UA-Min-Batch-Interval"];
     mockResponse = [OCMockObject niceMockForClass:[NSHTTPURLResponse class]];
     mockAnalytics = [OCMockObject partialMockForObject:analytics];
-    [[mockAnalytics expect] saveDefault];
+    [[mockAnalytics expect] saveUploadEventSettings];
     [[[mockResponse stub] andReturn:headers] allHeaderFields];
     [analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
     // There is some math here, account for these in the test
