@@ -63,6 +63,7 @@
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain) UAConfig *config;
 @property (nonatomic, retain) NSOperationQueue *queue;
+@property (assign) BOOL isSending;
 
 // For testing purposes
 @property (nonatomic, assign) BOOL isEnteringForeground;

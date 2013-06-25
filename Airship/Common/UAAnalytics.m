@@ -41,6 +41,7 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 
+typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 // NOTE: Setup a background task in the appDidBackground method, then use
 // that background identifier for should send background logic
@@ -75,6 +76,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     RELEASE_SAFELY(session);
     RELEASE_SAFELY(lastLocationSendTime);
     self.config = nil;
+    [self.queue cancelAllOperations];
     self.queue = nil;
     [super dealloc];
 }
@@ -267,7 +269,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
-    [self invalidateBackgroundTask];    
+    [self invalidateBackgroundTask];
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
@@ -422,7 +424,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         // event, and we should attempt to send. 
         UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
         BOOL isLocation = [event isKindOfClass:[UALocationEvent class]];
-        if (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation) {
+        if (appState == UIApplicationStateActive ||
+            (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation)) {
             [self send];
         }
     }
@@ -524,26 +527,21 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     UA_LTRACE(@"Oldest Event: %f", oldestEventTime);
 }
 
+- (BOOL)hasEventsToSend {
+    return databaseSize_ > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
+}
+
 - (BOOL)shouldSendAnalytics {
     if (!self.config.analyticsEnabled) {
         UA_LTRACE("Analytics disabled.");
         return NO;
     }
 
-    if (self.queue.operationCount) {
-        UA_LTRACE(@"Analytics upload in progress");
+    if (![self hasEventsToSend]) {
+        UA_LTRACE(@"No analytics events to upload");
         return NO;
     }
 
-    int eventCount = [[UAAnalyticsDBManager shared] eventCount];
-    if (eventCount == 0) {
-        UA_LTRACE(@"No analytics events to upload");
-        return NO;
-    }   
-    if (databaseSize_ <= 0) {
-        UA_LTRACE(@"Analytics database size is zero, no analytics sent");
-        return NO;
-    }
     UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
     if (applicationState == UIApplicationStateBackground) {
         // If the app is in the background, and there is a valid background task identifier, this is is 
@@ -663,6 +661,15 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     return events;
 }
 
+- (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
+    NSTimeInterval delay = 0;
+    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+    if (timeSinceLastSend < x_ua_min_batch_interval) {
+        delay = x_ua_min_batch_interval - timeSinceLastSend;
+    }
+    return delay;
+}
+
 - (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
@@ -685,17 +692,14 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             [[UAAnalyticsDBManager shared] deleteEvents:events];
             [self resetEventsDatabaseStatus];
             self.lastSendTime = [NSDate date];
-            [self send];
         }
         else {
             UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
-            [self send];
         }
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Send analytics data request failed.");
-        [self invalidateBackgroundTask];
     };
 
     UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:analyticsRequest
@@ -704,16 +708,62 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     return operation;
 }
 
-- (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
-    NSTimeInterval delay = 0;
-    NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-    if (timeSinceLastSend < x_ua_min_batch_interval) {
-        delay = x_ua_min_batch_interval - timeSinceLastSend;
-    }
-    return delay;
+- (NSBlockOperation *)batchOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
+
+    NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
+
+        //in case the facts on the ground have changed since we last checked
+        if (![self shouldSendAnalytics]) {
+            UA_LTRACE(@"shouldSendAnalytics returned NO, skiping batchOperation");
+            completionBlock();
+        }
+
+        NSArray* events = [self prepareEventsForUpload];
+
+        //this could indicate a read problem, or simply an empty database
+        if (!events) {
+            UA_LTRACE(@"Empty database or error parsing events into array, skipping batchOperation");
+            completionBlock();
+            return;
+        }
+
+        //unlikely, due to the checks above, but theoretically possible
+        if (events.count == 0) {
+            UA_LTRACE(@"No events to upload, skipping batchOperation");
+            completionBlock();
+            return;
+        }
+
+        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
+
+        [self.queue addOperation:sendOperation];
+
+        NSBlockOperation *rebatchOperation = [NSBlockOperation blockOperationWithBlock:^{
+            //if we're not in the background, and there's still stuff to send, create a new delay/batch and add them
+            //otherwise, we should complete here and return
+            BOOL moreBatchesNecessary = [self hasEventsToSend];
+
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && moreBatchesNecessary) {
+                [self batchAndSendEventsWithCompletionBlock:completionBlock];
+            } else {
+                if (!moreBatchesNecessary) {
+                    UA_LTRACE(@"no more events to upload");
+                } else {
+                    UA_LTRACE(@"application state is background or inactive, not sending any more batches");
+                }
+                completionBlock();
+            }
+        }];
+
+        [rebatchOperation addDependency:sendOperation];
+
+        [self.queue addOperation:rebatchOperation];
+    }];
+
+    return batchOperation;
 }
 
-- (void)batchAndSendEvents {
+- (void)batchAndSendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
 
     NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
 
@@ -722,23 +772,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
 
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
-
-    NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-        NSArray* events = [self prepareEventsForUpload];
-        if (!events) {
-            UA_LTRACE(@"Error parsing events into array, skipping analytics send");
-            [self invalidateBackgroundTask];
-            return;
-        }
-        if ([events count] == 0) {
-            UA_LTRACE(@"No events to upload, skipping analytics send");
-            [self invalidateBackgroundTask];
-            return;
-        }
-
-        UAHTTPConnectionOperation *sendOperation = [self sendOperationWithEvents:events];
-        [self.queue addOperation:sendOperation];
-    }];
+    NSBlockOperation *batchOperation = [self batchOperationWithCompletionBlock:completionBlock];
 
     [batchOperation addDependency:delayOperation];
 
@@ -746,15 +780,35 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [self.queue addOperation:batchOperation];
 }
 
-- (void)send {
+//NOTE: this method is intended to be called from the main thread
+- (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
     UA_LTRACE(@"Attemping to send analytics");
-    if (![self shouldSendAnalytics]) {
-        UA_LTRACE(@"ShouldSendAnalytics returned no");
-        [self invalidateBackgroundTask];
+
+    if (self.isSending) {
+        UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
         return;
     }
 
-    [self batchAndSendEvents];
+    if (![self shouldSendAnalytics]) {
+        UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send");
+        completionBlock();
+        return;
+    }
+
+    self.isSending = YES;
+
+    [self batchAndSendEventsWithCompletionBlock:completionBlock];
+}
+
+//NOTE: this method is intended to be called from the main thread
+- (void)send {
+    [self sendEventsWithCompletionBlock:^{
+        //marshall this onto the main queue, in case the block is called in the background 
+        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
+            [self invalidateBackgroundTask];
+            self.isSending = NO;
+        }]];
+    }];
 }
 
 @end
