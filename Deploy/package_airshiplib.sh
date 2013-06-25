@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-# Copyright 2009-2012 Urban Airship Inc. All rights reserved.
+# Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -23,49 +23,45 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# TODO: make this configurable?
-buildConfig="Release"
+ROOT_PATH=`dirname "${0}"`/../
+DEST_PATH=$1
 
-rootPath=`dirname "${0}"`/../
-destPath=$1
-
-airshipPath="${rootPath}/Airship"
+AIRSHIP_PATH="${ROOT_PATH}/Airship"
+AIRSHIP_LIB_PATH="${ROOT_PATH}/AirshipLib"
 
 # Build the distribution binary
-cd "${rootPath}/AirshipLib"
-rm -rf distribution_binaries
-./buildTarget.sh AirshipLib
-./update_library_reference.sh
-cd -
+rm -rf "${AIRSHIP_LIB_PATH}/distribution_binaries"
+bash "${AIRSHIP_LIB_PATH}/buildTarget.sh" AirshipLib
+bash "${AIRSHIP_LIB_PATH}/update_library_reference.sh"
 
 # Remove any old deploy
-rm -rf "${destPath}/Airship"
-mkdir -p "${destPath}/Airship"
+rm -rf "${DEST_PATH}/Airship"
+mkdir -p "${DEST_PATH}/Airship"
 
 # Prepare Airship
 #################
-echo "cp -R \"${airshipPath}\" \"${destPath}\""
-cp -R "${airshipPath}" "${destPath}"
+echo "cp -R \"${AIRSHIP_PATH}\" \"${DEST_PATH}\""
+cp -R "${AIRSHIP_PATH}" "${DEST_PATH}"
 
 # Remove all non .h files from /Library and /Common
 # Remove all non UA_ items & dirs from Airship/External
-find "${destPath}/Airship/Library" \! -name "*.h" -type f -delete
-find "${destPath}/Airship/Common" \! -name "*.h" -type f -delete
+find "${DEST_PATH}/Airship/Library" \! -name "*.h" -type f -delete
+find "${DEST_PATH}/Airship/Common" \! -name "*.h" -type f -delete
 
 # Delete internal test headers
-rm -rf `find "${destPath}/Airship" -name "*+Internal.h" `
+rm -rf `find "${DEST_PATH}/Airship" -name "*+Internal.h" `
 
-find "${destPath}/Airship/External" \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
-find "${destPath}/Airship/External" -type d -empty -delete
-rm -rf "${destPath}/Airship/TestSamples"
-rm -rf "${destPath}/Airship/Test"
+find "${DEST_PATH}/Airship/External" \! '(' -name "UA_*.h" -o -name "UA_" ')' -type f -delete
+find "${DEST_PATH}/Airship/External" -type d -empty -delete
+rm -rf "${DEST_PATH}/Airship/TestSamples"
+rm -rf "${DEST_PATH}/Airship/Test"
 
 # Remove the Appledoc documenation settings from the distribution
-rm "${destPath}/Airship/AppledocSettings.plist"
+rm "${DEST_PATH}/Airship/AppledocSettings.plist"
 
-find "${destPath}/Airship" -name "*.orig" -delete
+find "${DEST_PATH}/Airship" -name "*.orig" -delete
 
 # Copy LICENSE, README and CHANGELOG
-cp "${rootPath}/CHANGELOG" "${destPath}/Airship"
-cp "${rootPath}/README.rst" "${destPath}/Airship"
-cp "${rootPath}/LICENSE" "${destPath}/Airship"
+cp "${ROOT_PATH}/CHANGELOG" "${DEST_PATH}/Airship"
+cp "${ROOT_PATH}/README.rst" "${DEST_PATH}/Airship"
+cp "${ROOT_PATH}/LICENSE" "${DEST_PATH}/Airship"

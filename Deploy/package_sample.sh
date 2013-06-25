@@ -23,38 +23,38 @@
 # OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-rootPath=`dirname "${0}"`/../
-srcPath=$1
-destPath=$2
-targetPath="${destPath}/`basename ${srcPath}`"
+ROOT_PATH=`dirname "${0}"`/../
+SRC_PATH=$1
+DEST_PATH=$2
+TARGET_PATH="${DEST_PATH}/`basename ${SRC_PATH}`"
 
 # Remvove old package
-rm -rf $targetPath
+rm -rf $TARGET_PATH
 
 # Create parent directories
-mkdir -p $destPath
-cp -R $srcPath $destPath
+mkdir -p $DEST_PATH
+cp -R $SRC_PATH $DEST_PATH
 
 # Delete unwanted files
-rm -rf `find ${targetPath} -name "build"`
-rm -rf `find ${targetPath} -name "*SampleLib.xcodeproj"`
-rm -rf `find ${targetPath} -name "*Tests"`
-rm -rf `find ${targetPath} -name "*Test*.plist"`
-rm -rf `find ${targetPath} -name "*Test*.pch"`
-rm -rf `find ${targetPath} -name "*.orig" `
+rm -rf `find ${TARGET_PATH} -name "build"`
+rm -rf `find ${TARGET_PATH} -name "*SampleLib.xcodeproj"`
+rm -rf `find ${TARGET_PATH} -name "*Tests"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.plist"`
+rm -rf `find ${TARGET_PATH} -name "*Test*.pch"`
+rm -rf `find ${TARGET_PATH} -name "*.orig" `
 
 # Delete user-specific xcode files
-rm -rf `find ${targetPath} -name "*.mode1v3" `
-rm -rf `find ${targetPath} -name "*.pbxuser" `
-rm -rf `find ${targetPath} -name "*.perspective*" `
-rm -rf `find ${targetPath} -name "xcuserdata" `
+rm -rf `find ${TARGET_PATH} -name "*.mode1v3" `
+rm -rf `find ${TARGET_PATH} -name "*.pbxuser" `
+rm -rf `find ${TARGET_PATH} -name "*.perspective*" `
+rm -rf `find ${TARGET_PATH} -name "xcuserdata" `
 
 # Delete the testing config plist
-rm -rf `find ${targetPath} -name "AirshipDevelopment.plist" `
+rm -rf `find ${TARGET_PATH} -name "AirshipDevelopment.plist" `
 
 # Copy common change log, license, and readme
-cp "${rootPath}/CHANGELOG" $targetPath
-cp "${rootPath}/LICENSE" $targetPath
-cp "${rootPath}/README.rst" $targetPath
+cp "${ROOT_PATH}/CHANGELOG" $TARGET_PATH
+cp "${ROOT_PATH}/LICENSE" $TARGET_PATH
+cp "${ROOT_PATH}/README.rst" $TARGET_PATH
 
-mv -f $targetPath/AirshipConfig.plist.sample $targetPath/AirshipConfig.plist
+mv -f $TARGET_PATH/AirshipConfig.plist.sample $TARGET_PATH/AirshipConfig.plist
