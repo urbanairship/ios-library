@@ -533,29 +533,28 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return request;
 }
 
-// Clean up event data for sending.
-// Enforce max batch limits
-// Loop through events and discard DB-only items, format the JSON data field
-// as a dictionary
-- (NSArray*) prepareEventsForUpload {
-
-    // Delete older events until upload size threshold is met
+- (void) pruneEvents {
+    // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
         UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
+}
 
-    int eventCount = [[UAAnalyticsDBManager shared] eventCount];
-    if (eventCount <= 0) {
+// Clean up event data for sending.
+// Enforce max batch limits
+// Loop through events and discard DB-only items, format the JSON data field
+// as a dictionary
+- (NSArray*) prepareEventsForUpload {
+    
+    [self pruneEvents];
+
+    if (![self hasEventsToSend]) {
         return nil;
     }
 
-    int avgEventSize = self.databaseSize / eventCount;
-    if (avgEventSize <= 0) {
-        return nil;
-    }
-
+    int avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
     int batchEventCount = 0;
     

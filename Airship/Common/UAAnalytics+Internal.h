@@ -104,5 +104,9 @@
  */
 - (NSArray*)prepareEventsForUpload;
 
+/* Removes old events from the database until the 
+ size of the database is less then databaseSize
+ */
+- (void) pruneEvents;
 
 @end
