@@ -99,7 +99,7 @@
 }
 
 - (void)restoreSavedUploadEventSettingsEmptyUserDefaults {
-    // Clear the settings form the standard user defaults
+    // Clear the settings from the standard user defaults
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxBatchSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxWaitUserDefaultsKey];
@@ -139,7 +139,7 @@
 }
 
 - (void) testSaveUploadEventSettings {
-    // Clear the settings form the standard user defaults
+    // Clear the settings from the standard user defaults
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxBatchSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxWaitUserDefaultsKey];
