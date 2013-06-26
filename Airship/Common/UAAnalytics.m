@@ -565,7 +565,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     for (NSMutableDictionary *event in events) {
         
         if (![self isEventValid:event]) {
-            UA_LERR("Detected invalid event due to possible datbase corruption. Recreating database");
+            UA_LERR("Detected invalid event due to possible database corruption. Recreating database");
             [[UAAnalyticsDBManager shared] resetDB];
             return nil;
         }
