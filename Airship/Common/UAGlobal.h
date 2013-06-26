@@ -102,12 +102,11 @@ return VERSION_STR;                                         \
 #define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
                                                                                             \
 static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
-static dispatch_once_t oncePredicate;                                                       \
-static dispatch_queue_t singletonQueue;                                                     \
+static dispatch_once_t sharedOncePredicate;                                                       \
 \
 + (CLASSNAME*)shared                                                                        \
 {                                                                                           \
-dispatch_once(&oncePredicate, ^{                                                            \
+dispatch_once(&sharedOncePredicate, ^{                                                            \
 g_shared##CLASSNAME = [[self alloc] init];                                                  \
 });                                                                                         \
 return g_shared##CLASSNAME;                                                                 \
@@ -115,9 +114,8 @@ return g_shared##CLASSNAME;                                                     
 \
 + (id)allocWithZone:(NSZone*)zone                                                           \
 {                                                                                           \
-static dispatch_once_t oncePredicate;                                                       \
-dispatch_once(&oncePredicate, ^{                                                            \
-singletonQueue = dispatch_queue_create("com.urbanairship.##CLASSNAME.singletonQueue", NULL);\
+static dispatch_once_t allocOncePredicate;                                                       \
+dispatch_once(&allocOncePredicate, ^{                                                            \
 if (g_shared##CLASSNAME == nil) {                                                           \
 g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
 }                                                                                           \
