@@ -534,6 +534,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
+- (BOOL) isEventValid:(NSMutableDictionary *)event {
+    return [[event objectForKey:@"event_size"]  respondsToSelector:NSSelectorFromString(@"intValue")] &&
+            [[event objectForKey:@"data"]       isKindOfClass:[NSData class]] &&
+            [[event objectForKey:@"session_id"] isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"type"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"time"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"event_id"]    isKindOfClass:[NSString class]];
+}
+
 // Clean up event data for sending.
 // Enforce max batch limits
 // Loop through events and discard DB-only items, format the JSON data field
@@ -554,6 +563,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
+        
+        if (![self isEventValid:event]) {
+            UA_LERR("Detected invalid event due to possible datbase corruption. Recreating database");
+            [[UAAnalyticsDBManager shared] resetDB];
+            return nil;
+        }
+
         actualSize += [[event objectForKey:@"event_size"] intValue];
         
         if (actualSize <= self.maxBatchSize) {
