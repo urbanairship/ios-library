@@ -27,8 +27,8 @@
 #import "UAInboxPushHandler.h"
 #import "UAirship.h"
 
-#import "NSDictionary+RichPushData.h"
 #import "UAInbox.h"
+#import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
@@ -52,10 +52,9 @@
     return ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
 }
 
-
 + (void)handleNotification:(NSDictionary *)userInfo{
     
-    [userInfo getRichPushMessageIDWithAction:^(NSString *richPushId){
+    [UAInboxUtils getRichPushMessageIDFromNotification:userInfo withAction:^(NSString *richPushId){
         UA_LDEBUG(@"Received push for rich message id %@", richPushId);
         [UAInbox shared].pushHandler.viewingMessageID = richPushId;
 

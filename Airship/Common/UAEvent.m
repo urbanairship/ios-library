@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSDictionary+RichPushData.h"
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
@@ -31,6 +30,7 @@
 #import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
+#import "UAInboxUtils.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -259,7 +259,7 @@
 
 - (void)gatherIndividualData:(NSDictionary *)context {
 
-    [context getRichPushMessageIDWithAction:^(NSString *richPushId) {
+    [UAInboxUtils getRichPushMessageIDFromNotification:context withAction:^(NSString *richPushId){
         [self addDataWithValue:richPushId forKey:@"rich_push_id"];
     }];
     

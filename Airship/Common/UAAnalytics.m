@@ -31,7 +31,6 @@
 #import "UA_SBJSON.h"
 #import "UA_Reachability.h"
 
-#import "NSDictionary+RichPushData.h"
 #import "UAirship.h"
 #import "UAUtils.h"
 #import "UAAnalyticsDBManager.h"
@@ -41,6 +40,7 @@
 #import "UAConfig.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
+#import "UAInboxUtils.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -211,7 +211,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [session removeObjectForKey:@"launched_from_push_id"];
     }
 
-    [notificationUserInfo_ getRichPushMessageIDWithAction:^(NSString *richPushId){
+    [UAInboxUtils getRichPushMessageIDFromNotification:notificationUserInfo_ withAction:^(NSString *richPushId){
         [session setValue:richPushId forKey:@"launched_from_rich_push_id"];
     }];
 
