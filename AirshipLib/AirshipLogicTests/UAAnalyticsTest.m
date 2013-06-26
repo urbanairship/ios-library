@@ -114,7 +114,7 @@
     STAssertEquals(self.analytics.minBatchInterval, kMinBatchIntervalSeconds, @"minBatchInterval is setting an incorrect value when trying to set the value to 0");
 }
 
--(void) restoreSavedUploadEventSettingsExistingData {
+- (void)restoreSavedUploadEventSettingsExistingData {
     // Set valid date for the defaults
     [[NSUserDefaults standardUserDefaults] setInteger:kMinTotalDBSizeBytes + 5 forKey:kMaxTotalDBSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] setInteger:kMinBatchSizeBytes + 5 forKey:kMaxBatchSizeUserDefaultsKey];
@@ -130,7 +130,7 @@
     STAssertEquals(self.analytics.minBatchInterval, kMinBatchIntervalSeconds + 5, @"minBatchInterval value did not restore properly");
 }
 
--(void) restoreSavedUploadEventSettingsSetsSendInterval {
+- (void)restoreSavedUploadEventSettingsSetsSendInterval {
     self.analytics.sendInterval = kMinBatchIntervalSeconds + 50;
     
     [self.analytics restoreSavedUploadEventSettings];
@@ -138,7 +138,7 @@
     STAssertEquals(self.analytics.sendInterval, kMinBatchIntervalSeconds, @"sendInterval was not correctly set in restoreSavedUploadEventSettings");
 }
 
-- (void) testSaveUploadEventSettings {
+- (void)testSaveUploadEventSettings {
     // Clear the settings from the standard user defaults
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxBatchSizeUserDefaultsKey];
@@ -174,7 +174,7 @@
     STAssertEquals(self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
 }
 
-- (void) testSetSendInterval {
+- (void)testSetSendInterval {
     // Set the min value (minBatchInterval) and the max value (maxWait)
     self.analytics.minBatchInterval = kMinBatchIntervalSeconds;
     self.analytics.maxWait = kMinWaitSeconds;
@@ -192,7 +192,7 @@
     STAssertEquals(self.analytics.sendInterval, kMinBatchIntervalSeconds + 1, @"sendInterval is unable to be set to a valid value");
 }
 
-- (void) testSetMaxTotalDBSize {
+- (void)testSetMaxTotalDBSize {
     // Set a value higher then the max, should set to the max
     self.analytics.maxTotalDBSize = kMaxTotalDBSizeBytes + 1;
     STAssertEquals(self.analytics.maxTotalDBSize, kMaxTotalDBSizeBytes, @"maxTotalDBSize is able to be set above the max value");
@@ -206,7 +206,7 @@
     STAssertEquals(self.analytics.maxTotalDBSize, kMinTotalDBSizeBytes + 1, @"maxTotalDBSize is unable to be set to a valid value");
 }
 
-- (void) testSetMaxBatchSize {
+- (void)testSetMaxBatchSize {
     // Set a value higher then the max, should set to the max
     self.analytics.maxBatchSize = kMaxBatchSizeBytes + 1;
     STAssertEquals(self.analytics.maxBatchSize, kMaxBatchSizeBytes, @"maxBatchSize is able to be set above the max value");
@@ -220,7 +220,7 @@
     STAssertEquals(self.analytics.maxBatchSize, kMinBatchSizeBytes + 1, @"maxBatchSize is unable to be set to a valid value");
 }
 
-- (void) testSetMaxWait {
+- (void)testSetMaxWait {
     // Set a value higher then the max, should set to the max
     self.analytics.maxWait = kMaxWaitSeconds + 1;
     STAssertEquals(self.analytics.maxWait, kMaxWaitSeconds, @"maxWait is able to be set above the max value");
@@ -234,7 +234,7 @@
     STAssertEquals(self.analytics.maxWait, kMinWaitSeconds + 1, @"maxWait is unable to be set to a valid value");
 }
 
-- (void) testSetMinBatchInterval {
+- (void)testSetMinBatchInterval {
     // Set a value higher then the max, should set to the max
     self.analytics.minBatchInterval = kMaxBatchIntervalSeconds + 1;
     STAssertEquals(self.analytics.minBatchInterval, kMaxBatchIntervalSeconds, @"minBatchInterval is able to be set above the max value");
@@ -248,13 +248,13 @@
     STAssertEquals(self.analytics.minBatchInterval, kMinBatchIntervalSeconds + 1, @"minBatchInterval is unable to be set to a valid value");
 }
 
-- (void) setCurrentLocale:(NSString*)localeCode {
+- (void)setCurrentLocale:(NSString*)localeCode {
     NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:localeCode] autorelease];
 
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
-- (void) setTimeZone:(NSString*)name {
+- (void)setTimeZone:(NSString*)name {
     NSTimeZone *timeZone = [[[NSTimeZone alloc] initWithName:name] autorelease];
     
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];

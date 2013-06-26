@@ -525,7 +525,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return request;
 }
 
-- (void) pruneEvents {
+- (void)pruneEvents {
     // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
         UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
@@ -538,7 +538,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 // Enforce max batch limits
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
-- (NSArray*) prepareEventsForUpload {
+- (NSArray*)prepareEventsForUpload {
     
     [self pruneEvents];
 
