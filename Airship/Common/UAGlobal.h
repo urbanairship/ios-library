@@ -102,11 +102,11 @@ return VERSION_STR;                                         \
 #define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
                                                                                             \
 static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
-static dispatch_once_t sharedOncePredicate;                                                       \
+static dispatch_once_t sharedOncePredicate;                                                 \
 \
 + (CLASSNAME*)shared                                                                        \
 {                                                                                           \
-dispatch_once(&sharedOncePredicate, ^{                                                            \
+dispatch_once(&sharedOncePredicate, ^{                                                      \
 g_shared##CLASSNAME = [[self alloc] init];                                                  \
 });                                                                                         \
 return g_shared##CLASSNAME;                                                                 \
@@ -114,8 +114,8 @@ return g_shared##CLASSNAME;                                                     
 \
 + (id)allocWithZone:(NSZone*)zone                                                           \
 {                                                                                           \
-static dispatch_once_t allocOncePredicate;                                                       \
-dispatch_once(&allocOncePredicate, ^{                                                            \
+static dispatch_once_t allocOncePredicate;                                                  \
+dispatch_once(&allocOncePredicate, ^{                                                       \
 if (g_shared##CLASSNAME == nil) {                                                           \
 g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
 }                                                                                           \
