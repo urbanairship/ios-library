@@ -27,6 +27,7 @@
 #import "UAInboxPushHandler.h"
 #import "UAirship.h"
 
+#import "NSDictionary+RichPushData.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAAnalytics.h"
@@ -53,20 +54,8 @@
 
 
 + (void)handleNotification:(NSDictionary *)userInfo{
-
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [userInfo objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
     
-    if (richPushId) {
-
+    [userInfo getRichPushMessageIDWithAction:^(NSString *richPushId){
         UA_LDEBUG(@"Received push for rich message id %@", richPushId);
         [UAInbox shared].pushHandler.viewingMessageID = richPushId;
 
@@ -75,16 +64,16 @@
         if ([self isApplicationActive]) {
             [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
         }
-        
+
         //otherwise, load the message list
         else {
             //this will result in calling loadLaunchMessage on the UI class
             //once the request is complete
             [UAInbox shared].pushHandler.hasLaunchMessage = YES;
-            
+
             [[UAInbox shared].messageList retrieveMessageList];
         }
-    }
+    }];
 }
 
 - (void)messageListLoaded {

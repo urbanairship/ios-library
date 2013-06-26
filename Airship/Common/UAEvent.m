@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "NSDictionary+RichPushData.h"
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
@@ -257,23 +258,10 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [context objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
-    
-    //Add the rich push id, if present
-    if (richPushId) {
+
+    [context getRichPushMessageIDWithAction:^(NSString *richPushId) {
         [self addDataWithValue:richPushId forKey:@"rich_push_id"];
-    }
+    }];
     
     //Add the std push id, if present, else create a UUID
     NSString *pushId = [context objectForKey:@"_"];
