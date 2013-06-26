@@ -134,7 +134,7 @@
  */
 - (void) pruneEvents;
 
-/* Checks a event dictionary for expected fields
+/** Checks a event dictionary for expected fields
  and values */
 - (BOOL) isEventValid:(NSMutableDictionary *)event;
 
