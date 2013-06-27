@@ -116,6 +116,10 @@ To enable push notifications, you will need to make several additions to your ap
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         UAConfig *config = [UAConfig defaultConfig];
+
+        // You can then programatically override the plist values:
+        // config.developmentAppKey = @"YourKey";
+        // etc.
     
         // Call takeOff (which creates the UAirship singleton)
         // You may also simply call [UAirship takeOff] without any arguments if you want

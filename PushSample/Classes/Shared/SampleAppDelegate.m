@@ -64,6 +64,10 @@
     // or set runtime properties here.
     UAConfig *config = [UAConfig defaultConfig];
 
+    // You can then programatically override the plist values:
+    // config.developmentAppKey = @"YourKey";
+    // etc.
+
     // Call takeOff (which creates the UAirship singleton)
     [UAirship takeOff:config];
 
