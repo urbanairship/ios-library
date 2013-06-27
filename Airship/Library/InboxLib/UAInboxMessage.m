@@ -72,14 +72,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         }
         if ([message objectForKey: @"message_sent"] != [NSNull null]) {
             NSString *dateString = [message objectForKey: @"message_sent"];
-            NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+            NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
             NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
             [dateFormatter setLocale:enUSPOSIXLocale];
             [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
             [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
             [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
             self.messageSent = [dateFormatter dateFromString:dateString];
-            [dateFormatter release];
         } else {
             self.messageSent = nil;
         }
