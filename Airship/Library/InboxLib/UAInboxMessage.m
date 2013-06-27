@@ -67,21 +67,29 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
         self.contentType = [message objectForKey:@"content_type"];
         self.unread = NO;
-        if([message objectForKey: @"unread"] != [NSNull null] && [[message objectForKey: @"unread"] intValue] != 0) {
+        if ([message objectForKey: @"unread"] != [NSNull null] && [[message objectForKey: @"unread"] intValue] != 0) {
             self.unread = YES;
         }
-        NSString *dateString = [message objectForKey: @"message_sent"];
-        NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-		[dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        self.messageSent = [dateFormatter dateFromString:dateString];
-        [dateFormatter release];
+        if ([message objectForKey: @"message_sent"] != [NSNull null]) {
+            NSString *dateString = [message objectForKey: @"message_sent"];
+            NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+            NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+            [dateFormatter setLocale:enUSPOSIXLocale];
+            [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+            self.messageSent = [dateFormatter dateFromString:dateString];
+            [dateFormatter release];
+        } else {
+            self.messageSent = nil;
+        }
 
         self.title = [message objectForKey: @"title"];
-        self.extra = [message objectForKey: @"extra"];
+        if ([message objectForKey: @"extra"] != [NSNull null]) {
+            self.extra = [message objectForKey: @"extra"];
+        } else {
+            self.extra = nil;
+        }
 
         self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }
