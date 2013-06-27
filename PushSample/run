@@ -1,0 +1,9 @@
+#!/bin/bash
+# Exit on errors
+set -e
+# Build KIF for use on the device
+xcodebuild -project "PushSampleLib.xcodeproj" -target "PushSampleKIF" -sdk iphoneos clean build CONFIGURATION_BUILD_DIR=/tmp/build
+# Use fruitstrap as a means to install and run the app
+fruitstrap -d -b /tmp/build/PushSampleKIF.app -i $1 2>&1 | tee /tmp/KIF-$$.out
+# Check the log to see if testing finished correctly
+grep -q "TESTING FINISHED: 0 failures" /tmp/KIF-$$.out
