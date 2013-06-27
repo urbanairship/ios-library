@@ -248,6 +248,34 @@
     STAssertEquals(self.analytics.minBatchInterval, kMinBatchIntervalSeconds + 1, @"minBatchInterval is unable to be set to a valid value");
 }
 
+- (void)testIsEventValid {
+    // Create a valid dictionary
+    NSMutableDictionary *event = [self createValidEvent];
+    STAssertTrue([self.analytics isEventValid:event], @"isEventValid should be true for a valid event");
+}
+
+- (void)testIsEventValidEmptyDictionary {
+    NSMutableDictionary *invalidEventData = [NSMutableDictionary dictionary];
+    STAssertFalse([self.analytics isEventValid:invalidEventData], @"isEventValid should be false for an empty dictionary");
+}
+
+- (void)testIsEventValidInvalidValues {
+    NSArray *eventKeysToTest = @[@"event_id", @"session_id", @"type", @"time", @"event_size", @"data"];
+
+    for (NSString *key in eventKeysToTest) {
+        // Create a valid event
+        NSMutableDictionary *event = [self createValidEvent];
+
+        // Make the value invalid - empty array is an invalid type for all the fields
+        [event setValue:@[] forKey:@"eventId"];
+        STAssertFalse([self.analytics isEventValid:event], [NSString stringWithFormat:@"isEventValid did not detect invalid %@", key]);
+
+        // Remove the value
+        [event setValue:NULL forKey:@"eventId"];
+        STAssertFalse([self.analytics isEventValid:event], [NSString stringWithFormat:@"isEventValid did not detect empty %@", key]);
+    }
+}
+
 - (void)setCurrentLocale:(NSString*)localeCode {
     NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:localeCode] autorelease];
 
@@ -258,6 +286,15 @@
     NSTimeZone *timeZone = [[[NSTimeZone alloc] initWithName:name] autorelease];
     
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
+}
+
+-(NSMutableDictionary *) createValidEvent {
+    return [@{@"event_id": @"some-event-id",
+             @"data": [NSMutableData dataWithCapacity:1],
+             @"session_id": @"some-session-id",
+             @"type": @"base",
+             @"time":[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]],
+             @"event_size":@"40"} mutableCopy];
 }
 
 @end
