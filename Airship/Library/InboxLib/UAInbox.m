@@ -139,7 +139,8 @@ static Class _uiClass;
         [messageList retrieveMessageList];
 		
 		pushHandler = [[UAInboxPushHandler alloc] init];
-        
+
+        [self.messageList addObserver:pushHandler];
 
        [[NSNotificationCenter defaultCenter] addObserver:self
                                                 selector:@selector(enterForeground)

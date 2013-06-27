@@ -98,7 +98,6 @@
 - (id)init {
     if (self = [super init]) {
 		hasLaunchMessage = NO;
-        [[[UAInbox shared] messageList] addObserver:self];
 	}
 	return self;
 }
