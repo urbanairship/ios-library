@@ -30,6 +30,7 @@
 #import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UA_SBJsonWriter.h"
+#import "UAInboxUtils.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -257,23 +258,10 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [context objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
-    
-    //Add the rich push id, if present
-    if (richPushId) {
+
+    [UAInboxUtils getRichPushMessageIDFromNotification:context withAction:^(NSString *richPushId){
         [self addDataWithValue:richPushId forKey:@"rich_push_id"];
-    }
+    }];
     
     //Add the std push id, if present, else create a UUID
     NSString *pushId = [context objectForKey:@"_"];

@@ -40,6 +40,7 @@
 #import "UAConfig.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
+#import "UAInboxUtils.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -177,22 +178,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     } else {
         [self.session removeObjectForKey:@"launched_from_push_id"];
     }
-    
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    NSString *richPushId = nil;
-    NSObject *richPushValue = [self.notificationUserInfo objectForKey:@"_uamid"];
-    if ([richPushValue isKindOfClass:[NSArray class]]) {
-        NSArray *richPushIds = (NSArray *)richPushValue;
-        if (richPushIds.count > 0) {
-            richPushId = [richPushIds objectAtIndex:0];
-        }
-    } else if ([richPushValue isKindOfClass:[NSString class]]) {
-        richPushId = (NSString *)richPushValue;
-    }
-    
-    if (richPushId != nil) {
+
+    [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo withAction:^(NSString *richPushId){
         [self.session setValue:richPushId forKey:@"launched_from_rich_push_id"];
-    }
+    }];
     
     self.notificationUserInfo = nil;
     
