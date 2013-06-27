@@ -267,11 +267,11 @@
         NSMutableDictionary *event = [self createValidEvent];
 
         // Make the value invalid - empty array is an invalid type for all the fields
-        [event setValue:@[] forKey:@"eventId"];
+        [event setValue:@[] forKey:key];
         STAssertFalse([self.analytics isEventValid:event], [NSString stringWithFormat:@"isEventValid did not detect invalid %@", key]);
 
         // Remove the value
-        [event setValue:NULL forKey:@"eventId"];
+        [event setValue:NULL forKey:key];
         STAssertFalse([self.analytics isEventValid:event], [NSString stringWithFormat:@"isEventValid did not detect empty %@", key]);
     }
 }
