@@ -43,41 +43,22 @@
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
-// NOTE: Setup a background task in the appDidBackground method, then use
-// that background identifier for should send background logic
-
-NSString * const UAAnalyticsOptionsRemoteNotificationKey = @"UAAnalyticsOptionsRemoteNotificationKey";
-
-UAAnalyticsValue * const UAAnalyticsTrueValue = @"true";
-UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
-
 @implementation UAAnalytics
-
-@synthesize session;
-@synthesize notificationUserInfo = notificationUserInfo_;
-@synthesize databaseSize = databaseSize_;
-@synthesize x_ua_max_total;
-@synthesize x_ua_max_batch;
-@synthesize x_ua_max_wait;
-@synthesize x_ua_min_batch_interval;
-@synthesize sendInterval = sendInterval_;
-@synthesize oldestEventTime;
-@synthesize sendBackgroundTask = sendBackgroundTask_;
-
-// Testing properties
-@synthesize isEnteringForeground = isEnteringForeground_;
 
 #pragma mark -
 #pragma mark Object Lifecycle
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    RELEASE_SAFELY(notificationUserInfo_);
-    RELEASE_SAFELY(session);
-    RELEASE_SAFELY(lastLocationSendTime);
-    self.config = nil;
+    
     [self.queue cancelAllOperations];
+    
     self.queue = nil;
+    self.packageVersion = nil;
+    self.notificationUserInfo = nil;
+    self.session = nil;
+    self.config = nil;
+    
     [super dealloc];
 }
 
@@ -87,17 +68,9 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         self.config = airshipConfig;
         
         [self resetEventsDatabaseStatus];
-        
-        x_ua_max_total = X_UA_MAX_TOTAL;
-        x_ua_max_batch = X_UA_MAX_BATCH;
-        x_ua_max_wait = X_UA_MAX_WAIT;
-        x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-        
-        // Set out starting interval to the X_UA_MIN_BATCH_INTERVAL as the default value
-        sendInterval_ = X_UA_MIN_BATCH_INTERVAL;
-        
-        [self restoreFromDefault];
-        [self saveDefault];//save defaults to store lastSendTime if this was an initial condition
+
+        [self restoreSavedUploadEventSettings];
+        [self saveUploadEventSettings];//save defaults to store lastSendTime if this was an initial condition
         
         // Register for interface-change notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -128,16 +101,11 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
         
-        /*
-         * This is the Build field in Xcode. If it's not set, use a blank string.
-         */
-        packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        if (packageVersion == nil) {
-            packageVersion = @"";
-        }
+        // This is the Build field in Xcode. If it's not set, use a blank string.
+        self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
         
         [self initSession];
-        sendBackgroundTask_ = UIBackgroundTaskInvalid;
+        self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 1;
@@ -156,7 +124,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)initSession {
-    session = [[NSMutableDictionary alloc] init];
+    self.session = [NSMutableDictionary dictionary];
     [self refreshSessionWhenNetworkChanged];
     [self refreshSessionWhenActive];
 }
@@ -186,33 +154,33 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
             break;
         }
     }    
-    [session setValue:connectionTypeString forKey:@"connection_type"];
+    [self.session setValue:connectionTypeString forKey:@"connection_type"];
 }
 
 - (void)refreshSessionWhenActive {
     
     // marking the beginning of a new session
-    [session setObject:[UAUtils UUID] forKey:@"session_id"];
+    [self.session setObject:[UAUtils UUID] forKey:@"session_id"];
     
     // setup session with push id
-    BOOL launchedFromPush = notificationUserInfo_ != nil;
+    BOOL launchedFromPush = self.notificationUserInfo != nil;
     
-    NSString *pushId = [notificationUserInfo_ objectForKey:@"_"];
+    NSString *pushId = [self.notificationUserInfo objectForKey:@"_"];
     
     // set launched-from-push session values for both push and rich push
     if (pushId != nil) {
-        [session setValue:pushId forKey:@"launched_from_push_id"];
+        [self.session setValue:pushId forKey:@"launched_from_push_id"];
     } else if (launchedFromPush) {
         //if the server did not send a push ID (likely because the payload did not have room)
         //generate an ID for the server to use
-        [session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
+        [self.session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
     } else {
-        [session removeObjectForKey:@"launched_from_push_id"];
+        [self.session removeObjectForKey:@"launched_from_push_id"];
     }
     
     // Get the rich push ID, which can be sent as a one-element array or a string
     NSString *richPushId = nil;
-    NSObject *richPushValue = [notificationUserInfo_ objectForKey:@"_uamid"];
+    NSObject *richPushValue = [self.notificationUserInfo objectForKey:@"_uamid"];
     if ([richPushValue isKindOfClass:[NSArray class]]) {
         NSArray *richPushIds = (NSArray *)richPushValue;
         if (richPushIds.count > 0) {
@@ -223,7 +191,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
     
     if (richPushId != nil) {
-        [session setValue:richPushId forKey:@"launched_from_rich_push_id"];
+        [self.session setValue:richPushId forKey:@"launched_from_rich_push_id"];
     }
     
     self.notificationUserInfo = nil;
@@ -248,19 +216,19 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         [notification_types addObject:@"newsstand"];
     }
     
-    [session setObject:notification_types forKey:@"notification_types"];
+    [self.session setObject:notification_types forKey:@"notification_types"];
     
     NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
-    [session setObject:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
-    [session setObject:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
-    
-    [session setObject:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [session setObject:[UAirshipVersion get] forKey:@"lib_version"];
-    [session setValue:packageVersion forKey:@"package_version"];
+    [self.session setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
+    [self.session setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
+
+    [self.session setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
+    [self.session setValue:[UAirshipVersion get] forKey:@"lib_version"];
+    [self.session setValue:self.packageVersion forKey:@"package_version"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
-    [session setObject:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
+    [self.session setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 }
 
 #pragma mark -
@@ -273,30 +241,35 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
-    isEnteringForeground_ = YES;
+    self.isEnteringForeground = YES;
 }
 
 - (void)enterBackground {
     UA_LTRACE(@"Enter Background.");
+
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
-    if(session)[session removeAllObjects];
+    
     //Set a blank session_id for app_exit events
-    [session setValue:@"" forKey:@"session_id"];
+    [self.session removeAllObjects];
+    [self.session setValue:@"" forKey:@"session_id"];
+
     self.notificationUserInfo = nil;
+
     // Only place where a background task is created
     self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
         [self.queue cancelAllOperations];
-        [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
+        [self invalidateBackgroundTask];
     }];
+
     [self send];
 }
 
 - (void)invalidateBackgroundTask {
-    if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending analytics background task %u", sendBackgroundTask_);
-        [[UIApplication sharedApplication] endBackgroundTask:sendBackgroundTask_];
+    if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
+        UA_LTRACE(@"Ending analytics background task %u", self.sendBackgroundTask);
+        
+        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
     }
 }
@@ -306,9 +279,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     
     // If this is the first 'inactive->active' transition in this session,
     // send 
-    if (isEnteringForeground_) {
-
-        isEnteringForeground_ = NO;
+    if (self.isEnteringForeground) {
+        self.isEnteringForeground = NO;
         
         //update the network connection_type value
         [self refreshSessionWhenNetworkChanged];
@@ -325,7 +297,8 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 }
 
 - (void)willResignActive {
-    UA_LTRACE(@"Application will resign active.");    
+    UA_LTRACE(@"Application will resign active.");
+    
     //add activity_stopped / AppInactive event
     [self addEvent:[UAEventAppInactive eventWithContext:nil]];
 }
@@ -334,11 +307,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 #pragma mark NSUserDefaults
 
 - (NSDate*)lastSendTime {
-    NSDate* date = [[NSUserDefaults standardUserDefaults] objectForKey:@"X-UA-Last-Send-Time"];
-    if (!date) {
-        date = [NSDate distantPast];
-    }
-    return date;
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"X-UA-Last-Send-Time"] ?: [NSDate distantPast];
 }
 
 - (void)setLastSendTime:(NSDate *)lastSendTime {
@@ -347,57 +316,22 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     }
 }
 
-- (void)restoreFromDefault {
-    
-    // If the key is missing the int will end up being 0, which is what these checks are (not actual limits)
-    int tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Total"];
-    
-    if (tmp > 0) {
-        x_ua_max_total = tmp;
-    }
-    
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Batch"];
-    
-    if (tmp > 0) {
-        x_ua_max_batch = tmp;
-    }
-    
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Max-Wait"];
-    
-    if (tmp > 0) {
-        x_ua_max_wait = tmp;
-    }
-    
-    tmp = [[NSUserDefaults standardUserDefaults] integerForKey:@"X-UA-Min-Batch-Interval"];
-    
-    if (tmp > 0) {
-        x_ua_min_batch_interval = tmp;
-    }
-    
-    
-    /*
-    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
-    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
-    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
-    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
-    UALOG(@"X-UA-Last-Send-Time: %@", [lastSendTime description]);
-    */
+- (void)restoreSavedUploadEventSettings {
+    // If the key is missing the int will end up being 0 and the values will clamp to there lower end.
+    self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
+    self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
+    self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
+
+    // Set out starting interval to the kMinBatchInterval as the default value
+    self.sendInterval = kMinBatchIntervalSeconds;
 }
 
-// TODO: Change this method call to a more descriptive name, and add some documentation
-- (void)saveDefault {
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_total forKey:@"X-UA-Max-Total"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_batch forKey:@"X-UA-Max-Batch"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_max_wait forKey:@"X-UA-Max-Wait"];
-    [[NSUserDefaults standardUserDefaults] setInteger:x_ua_min_batch_interval forKey:@"X-UA-Min-Batch-Interval"];
-
-    /*
-    UALOG(@"Response Headers Saved:");
-    UALOG(@"X-UA-Max-Total: %d", x_ua_max_total);
-    UALOG(@"X-UA-Min-Batch-Interval: %d", x_ua_min_batch_interval);
-    UALOG(@"X-UA-Max-Wait: %d", x_ua_max_wait);
-    UALOG(@"X-UA-Max-Batch: %d", x_ua_max_batch);
-    */
+- (void)saveUploadEventSettings {
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:kMaxWaitUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 #pragma mark -
@@ -409,17 +343,18 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     } else {
         self.notificationUserInfo = userInfo;
     }
-
 }
 
 - (void)addEvent:(UAEvent *)event {
     if (self.config.analyticsEnabled) {
-        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);    
-        [[UAAnalyticsDBManager shared] addEvent:event withSession:session];    
+        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
+
+        [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
         self.databaseSize += [event getEstimatedSize];
-        if (oldestEventTime == 0) {
-            oldestEventTime = [event.time doubleValue];
+        if (self.oldestEventTime == 0) {
+            self.oldestEventTime = [event.time doubleValue];
         }
+        
         // If the app is in the background without a background task id, then this is a location
         // event, and we should attempt to send. 
         UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
@@ -434,101 +369,106 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 // We send headers on all response codes, so let's set those values before checking for != 200
 // NOTE: NSURLHTTPResponse converts header names to title case, so use the X-Ua-Header-Name format
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse *)response {
-    if ([response allHeaderFields]) {
-        int tmp = 0;
-        
-        id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
-        if (maxTotalValue) {
-            tmp = [maxTotalValue intValue] * 1024;//value returned in KB
-            
-            if (tmp > 0) {
-                
-                if(tmp >= X_UA_MAX_TOTAL) {
-                    x_ua_max_total = X_UA_MAX_TOTAL;
-                } else {
-                    x_ua_max_total = tmp;
-                }
-                
-            } else {
-                x_ua_max_total = X_UA_MAX_TOTAL;
-            }
-        }
-
-        id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
-        if (maxBatchValue) {
-            tmp = [maxBatchValue intValue] * 1024;//value return in KB
-            
-            if (tmp > 0) {
-                
-                if (tmp >= X_UA_MAX_BATCH) {
-                    x_ua_max_batch = X_UA_MAX_BATCH;
-                } else {
-                    x_ua_max_batch = tmp;
-                }
-                
-            } else {
-                x_ua_max_batch = X_UA_MAX_BATCH;
-            }
-        }
-
-
-        id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
-        if (maxWaitValue) {
-            tmp = [maxWaitValue intValue];
-            
-            if (tmp >= X_UA_MAX_WAIT) {
-                x_ua_max_wait = X_UA_MAX_WAIT;
-            } else {
-                x_ua_max_wait = tmp;
-            }
-        }
-
-        id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
-        if (minBatchValue) {
-            tmp = [minBatchValue intValue];
-            
-            if (tmp <= X_UA_MIN_BATCH_INTERVAL) {
-                x_ua_min_batch_interval = X_UA_MIN_BATCH_INTERVAL;
-            } else {
-                x_ua_min_batch_interval = tmp;
-            }
-        }
-        
-        [self saveDefault];
+    if (![response allHeaderFields]) {
+        return;
     }
+
+    id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
+    if (maxTotalValue) {
+        self.maxTotalDBSize = [maxTotalValue integerValue] * 1024; //value returned in KB;
+    }
+
+    id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
+    if (maxBatchValue) {
+        self.maxBatchSize = [maxBatchValue integerValue] * 1024; //value return in KB
+    }
+
+    id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
+    if (maxWaitValue) {
+        self.maxWait = [maxWaitValue integerValue];
+    }
+
+    id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
+    if (minBatchValue) {
+        self.minBatchInterval = [minBatchValue integerValue];
+    }
+
+    [self saveUploadEventSettings];
 }
 
 #pragma mark - 
 #pragma mark Custom Property Setters
 
-- (void)setSendInterval:(int)newVal {
-    if(newVal < x_ua_min_batch_interval) {
-        sendInterval_ = x_ua_min_batch_interval;
-    } else if (newVal > x_ua_max_wait) {
-        sendInterval_ = x_ua_max_wait;
+- (void)setSendInterval:(NSInteger)interval {
+    if(interval < self.minBatchInterval) {
+        _sendInterval = self.minBatchInterval;
+    } else if (interval > self.maxWait) {
+        _sendInterval = self.maxWait;
     } else {
-        sendInterval_ = newVal;
+        _sendInterval = interval;
     }
 }
 
-#pragma mark - 
+- (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
+    if (maxTotalDBSize < kMinTotalDBSizeBytes) {
+        _maxTotalDBSize = kMinTotalDBSizeBytes;
+    }else if (maxTotalDBSize > kMaxTotalDBSizeBytes) {
+        _maxTotalDBSize = kMaxTotalDBSizeBytes;
+    } else {
+        _maxTotalDBSize = maxTotalDBSize;
+    }
+}
+
+- (void)setMaxBatchSize:(NSInteger)maxBatchSize {
+    if (maxBatchSize < kMinBatchSizeBytes) {
+        _maxBatchSize = kMinBatchSizeBytes;
+    }else if (maxBatchSize > kMaxBatchSizeBytes) {
+        _maxBatchSize = kMaxBatchSizeBytes;
+    } else {
+        _maxBatchSize = maxBatchSize;
+    }
+}
+
+- (void)setMaxWait:(NSInteger)maxWait {
+    if (maxWait < kMinWaitSeconds) {
+        _maxWait = kMinWaitSeconds;
+    }else if (maxWait > kMaxWaitSeconds) {
+        _maxWait = kMaxWaitSeconds;
+    } else {
+        _maxWait = maxWait;
+    }
+}
+
+- (void)setMinBatchInterval:(int)minBatchInterval {
+    if (minBatchInterval < kMinBatchIntervalSeconds) {
+        _minBatchInterval = kMinBatchIntervalSeconds;
+    }else if (minBatchInterval > kMaxBatchIntervalSeconds) {
+        _minBatchInterval = kMaxBatchIntervalSeconds;
+    } else {
+        _minBatchInterval = minBatchInterval;
+    }
+}
+
+#pragma mark -
 #pragma mark Send Logic
 
 - (void)resetEventsDatabaseStatus {
     self.databaseSize = [[UAAnalyticsDBManager shared] sizeInBytes];
+
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:1];
     if ([events count] > 0) {
         NSDictionary *event = [events objectAtIndex:0];
-        oldestEventTime = [[event objectForKey:@"time"] doubleValue];
+        self.oldestEventTime = [[event objectForKey:@"time"] doubleValue];
     } else {
-        oldestEventTime = 0;
-    }    
-    UA_LTRACE(@"Database size: %d", databaseSize_);
-    UA_LTRACE(@"Oldest Event: %f", oldestEventTime);
+        self.oldestEventTime = 0;
+    }
+
+    UA_LTRACE(@"Database size: %d", self.databaseSize);
+    UA_LTRACE(@"Oldest Event: %f", self.oldestEventTime);
 }
 
 - (BOOL)hasEventsToSend {
-    return databaseSize_ > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
+    return self.databaseSize > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
 }
 
 - (BOOL)shouldSendAnalytics {
@@ -541,28 +481,19 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
         UA_LTRACE(@"No analytics events to upload");
         return NO;
     }
-
-    UIApplicationState applicationState = [[UIApplication sharedApplication] applicationState];
-    if (applicationState == UIApplicationStateBackground) {
-        // If the app is in the background, and there is a valid background task identifier, this is is 
-        // right after an app background
-        if (sendBackgroundTask_ != UIBackgroundTaskInvalid) {
+    
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
+        // If the app is in the background and there is a valid background task to upload events
+        if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
             return YES;
+        } else {
+            // There is no background task, and the app is in the background, it is likely that
+            // this is a location related event and we should only send every 15 minutes
+            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+            return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
         }
-        // If there is no background task, and the app is in the background, it is likely that
-        // this is a location related event and we should only send every 15 minutes
-        else {
-            // self.lastSendTime is not nil, in case a value doesn't exist or is not parsable
-            // , it will be [NSDate distantPast]
-            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime]; 
-            if (timeSinceLastSend > X_UA_MIN_BACKGROUND_LOCATION_INTERVAL) {
-                return YES;
-            }
-            else {
-                return NO;
-            }
-        }//if(sendBackgroundTask_
-    }//if(applicationState
+    }
+    
     return YES;
 }
 
@@ -576,7 +507,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
-    [request addRequestHeader:@"X-UA-Package-Version" value:packageVersion];
+    [request addRequestHeader:@"X-UA-Package-Version" value:self.packageVersion];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
@@ -594,42 +525,64 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
     return request;
 }
 
+- (void)pruneEvents {
+    // Delete older events until the database size is met
+    while (self.databaseSize > self.maxTotalDBSize) {
+        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
+        [[UAAnalyticsDBManager shared] deleteOldestSession];
+        [self resetEventsDatabaseStatus];
+    }
+}
+
+- (BOOL) isEventValid:(NSMutableDictionary *)event {
+    return [[event objectForKey:@"event_size"]  respondsToSelector:NSSelectorFromString(@"intValue")] &&
+            [[event objectForKey:@"data"]       isKindOfClass:[NSData class]] &&
+            [[event objectForKey:@"session_id"] isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"type"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"time"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"event_id"]    isKindOfClass:[NSString class]];
+}
+
 // Clean up event data for sending.
 // Enforce max batch limits
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
-- (NSArray*) prepareEventsForUpload {
-    //Delete older events until upload size threshold is met
-    while (databaseSize_ > x_ua_max_total) {
-        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", x_ua_max_total);
-        [[UAAnalyticsDBManager shared] deleteOldestSession];
-        [self resetEventsDatabaseStatus];
-    }
-    int eventCount = [[UAAnalyticsDBManager shared] eventCount];
-    if (eventCount <= 0) {
+- (NSArray*)prepareEventsForUpload {
+    
+    [self pruneEvents];
+
+    if (![self hasEventsToSend]) {
         return nil;
     }
-    int avgEventSize = databaseSize_ / eventCount;
-    if (avgEventSize <= 0) {
-        return nil;
-    }
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:x_ua_max_batch/avgEventSize];
-    NSArray *topLevelKeys = [NSArray arrayWithObjects:@"type", @"time", @"event_id", @"data", nil];
+
+    int avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
     int batchEventCount = 0;
-    NSString *key;
-    NSMutableDictionary *event;
-    for (event in events) {
+    
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
+    NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
+
+    for (NSMutableDictionary *event in events) {
+        
+        if (![self isEventValid:event]) {
+            UA_LERR("Detected invalid event due to possible database corruption. Recreating database");
+            [[UAAnalyticsDBManager shared] resetDB];
+            return nil;
+        }
+
         actualSize += [[event objectForKey:@"event_size"] intValue];
-        if (actualSize <= x_ua_max_batch) {
+        
+        if (actualSize <= self.maxBatchSize) {
             batchEventCount++; 
         } else {
             UA_LTRACE(@"Met batch limit.");
             break;
         }
+        
         // The event data returned by the DB is a binary plist. Deserialize now.
         NSMutableDictionary *eventData = nil;
         NSData *serializedEventData = (NSData *)[event objectForKey:@"data"];
+        
         if (serializedEventData) {
             NSString *errString = nil;
             eventData = (NSMutableDictionary *)[NSPropertyListSerialization
@@ -637,35 +590,41 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
                                                 mutabilityOption:NSPropertyListMutableContainersAndLeaves
                                                 format:NULL /* an out param */
                                                 errorDescription:&errString];
+            
             if (errString) {
                 UA_LTRACE("Deserialization Error: %@", errString);
                 [errString release];//must be relased by caller per docs
             }
         }
+        
         // Always include a data entry, even if it is empty
         if (!eventData) {
             eventData = [[[NSMutableDictionary alloc] init] autorelease];
         }
+        
         [eventData setValue:[event objectForKey:@"session_id"] forKey:@"session_id"];
         [event setValue:eventData forKey:@"data"];
+        
         // Remove unused DB values
-        for (key in [event allKeys]) {
+        for (NSString *key in [event allKeys]) {
             if (![topLevelKeys containsObject:key]) {
                 [event removeObjectForKey:key];
             }
-        }//for(key
-    }//for(event
+        }
+    }
+    
     if (batchEventCount < [events count]) {
         events = [events subarrayWithRange:NSMakeRange(0, batchEventCount)];
     }
+    
     return events;
 }
 
 - (NSTimeInterval)timeToWaitBeforeSendingNextBatch {
     NSTimeInterval delay = 0;
     NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-    if (timeSinceLastSend < x_ua_min_batch_interval) {
-        delay = x_ua_min_batch_interval - timeSinceLastSend;
+    if (timeSinceLastSend < self.minBatchInterval) {
+        delay = self.minBatchInterval - timeSinceLastSend;
     }
     return delay;
 }
@@ -673,11 +632,13 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 - (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
-
+    
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] autorelease];
+    
     writer.humanReadable = NO;//strip whitespace
     [analyticsRequest appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
-    writer.humanReadable = YES;//turn on formatting for debugging
+    
+    writer.humanReadable = YES; //turn on formatting for debugging
     UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [analyticsRequest.headers descriptionWithLocale:nil indent:1]);
     UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
@@ -688,12 +649,12 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
         // Update analytics settings with new header values
         [self updateAnalyticsParametersWithHeaderValues:request.response];
+        
         if ([request.response statusCode] == 200) {
             [[UAAnalyticsDBManager shared] deleteEvents:events];
             [self resetEventsDatabaseStatus];
             self.lastSendTime = [NSDate date];
-        }
-        else {
+        } else {
             UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
         }
     };
@@ -782,7 +743,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 
 //NOTE: this method is intended to be called from the main thread
 - (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
-    UA_LTRACE(@"Attemping to send analytics");
+    UA_LTRACE(@"Attempting to send analytics");
 
     if (self.isSending) {
         UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
@@ -803,7 +764,7 @@ UAAnalyticsValue * const UAAnalyticsFalseValue = @"false";
 //NOTE: this method is intended to be called from the main thread
 - (void)send {
     [self sendEventsWithCompletionBlock:^{
-        //marshall this onto the main queue, in case the block is called in the background 
+        // Marshall this onto the main queue, in case the block is called in the background 
         [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
             [self invalidateBackgroundTask];
             self.isSending = NO;

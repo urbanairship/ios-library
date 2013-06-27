@@ -27,52 +27,74 @@
 
 #import "UAAnalytics.h"
 
+//total size in bytes that the event queue is allowed to grow to.
+#define kMaxTotalDBSizeBytes 5*1024*1024 // local max of 5MB
+#define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
+
+// total size in bytes that a given event post is allowed to send.
+#define kMaxBatchSizeBytes 500*1024		// local max of 500KB
+#define kMinBatchSizeBytes 1024          // local min of 1KB
+
+// maximum amount of time in seconds that events should queue for
+#define kMaxWaitSeconds 14*24*3600		// local max of 14 days
+#define kMinWaitSeconds 7*24*3600		// local min of 7 days
+
+// The actual amount of time in seconds that elapse between event-server posts
+// TODO: Get with the analytics team and rename this header field
+#define kMinBatchIntervalSeconds 60        // local min of 60s
+#define kMaxBatchIntervalSeconds 7*24*3600	// local max of 7 days
+
+// minimum amount of time between background location events
+#define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
+
+// Offset time for use when the app init. This is the time between object
+// creation and first upload. Subsequent uploads are defined by
+// X_UA_MIN_BATCH_INTERVAL
+#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
+
+#define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
+#define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
+#define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
+#define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
+
 @class UAEvent;
 @class UAHTTPRequest;
 
-@interface UAAnalytics () {
-  @private
-    NSMutableDictionary *session;
-    NSDictionary *notificationUserInfo_;
-    int x_ua_max_total;
-    int x_ua_max_batch;
-    int x_ua_max_wait;
-    int x_ua_min_batch_interval;
-    int sendInterval_;
-    int databaseSize_;
-    NSTimeInterval oldestEventTime;    
-    NSDate *lastLocationSendTime;    
-    NSString *packageVersion;
-    UIBackgroundTaskIdentifier sendBackgroundTask_;
-    
-    // YES if the app is in the process of entering the foreground, but is not yet active.
-    // This flag is used to delay sending an `app_foreground` event until the app is active
-    // and all of the launch/notification data is present.
-    BOOL isEnteringForeground_;
-}
+@interface UAAnalytics ()
 
 @property (nonatomic, retain) NSMutableDictionary *session;
 @property (nonatomic, retain) NSDictionary *notificationUserInfo;
-@property (nonatomic, assign) int x_ua_max_total;
-@property (nonatomic, assign) int x_ua_max_batch;
-@property (nonatomic, assign) int x_ua_max_wait;
-@property (nonatomic, assign) int x_ua_min_batch_interval;
-@property (nonatomic, assign) int sendInterval;
-@property (nonatomic, assign) int databaseSize;
+@property (nonatomic, assign) NSInteger maxTotalDBSize;
+@property (nonatomic, assign) NSInteger maxBatchSize;
+@property (nonatomic, assign) NSInteger maxWait;
+@property (nonatomic, assign) NSInteger minBatchInterval;
+@property (nonatomic, assign) NSInteger sendInterval;
+@property (nonatomic, assign) NSInteger databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 @property (nonatomic, retain) UAConfig *config;
+@property (nonatomic, copy) NSString *packageVersion;
 @property (nonatomic, retain) NSOperationQueue *queue;
 @property (assign) BOOL isSending;
 
-// For testing purposes
+// YES if the app is in the process of entering the foreground, but is not yet active.
+// This flag is used to delay sending an `app_foreground` event until the app is active
+// and all of the launch/notification data is present.
 @property (nonatomic, assign) BOOL isEnteringForeground;
 
 
 - (void)initSession;
 
-- (void)restoreFromDefault;
-- (void)saveDefault;
+/* Restores any upload event settings from the 
+ standardUserDefaults
+ */
+- (void)restoreSavedUploadEventSettings;
+
+/* Saves any upload event settings from the headers to the 
+ standardUserDefaults 
+ */
+- (void)saveUploadEventSettings;
+
 - (void)resetEventsDatabaseStatus;
 
 /* Sending analytics */
@@ -107,5 +129,13 @@
  */
 - (NSArray*)prepareEventsForUpload;
 
+/* Removes old events from the database until the 
+ size of the database is less then databaseSize
+ */
+- (void) pruneEvents;
+
+/** Checks a event dictionary for expected fields
+ and values */
+- (BOOL) isEventValid:(NSMutableDictionary *)event;
 
 @end

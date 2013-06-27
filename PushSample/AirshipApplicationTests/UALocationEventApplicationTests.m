@@ -88,7 +88,7 @@
     // update_type
     STAssertEquals((int )locationManager.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] intValue] ,nil);
     STAssertTrue((UALocationEventUpdateTypeSingle == [data valueForKey:UALocationEventUpdateTypeKey]) ,nil);
-    STAssertTrue((UAAnalyticsTrueValue == [data valueForKey:UALocationEventForegroundKey]), nil);
+    STAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey], nil);
     STAssertTrue((UALocationServiceProviderUnknown == [data valueForKey:UALocationEventProviderKey]), nil);
 
 }
@@ -106,7 +106,7 @@
     STAssertEquals(standard.desiredAccuracy, [[data valueForKey:UALocationEventDesiredAccuracyKey] doubleValue],nil);
     STAssertEquals(standard.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] doubleValue] ,nil);
     STAssertTrue((UALocationEventUpdateTypeContinuous == [data valueForKey:UALocationEventUpdateTypeKey]) ,nil);
-    STAssertTrue((UAAnalyticsTrueValue == [data valueForKey:UALocationEventForegroundKey]), nil);
+    STAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey], nil);
     STAssertTrue((UALocationServiceProviderGps == [data valueForKey:UALocationEventProviderKey]), nil);
     
 }
