@@ -182,8 +182,13 @@ SINGLETON_INTERFACE(UAPush);
  */
 @property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 
-/** Notification types this app will request from APNS. */
-@property (nonatomic, readonly) UIRemoteNotificationType notificationTypes;
+/**
+ * Notification types this app will request from APNS. If push is enabled, changes to this value will
+ * take effect the next time the app registers with [UAPush registerForRemoteNotifications].
+ *
+ * Defaults to alert, sound and badge.
+ */
+@property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /**
  * Clean up when app is terminated. You should not ordinarily call this method as it is called
@@ -367,6 +372,12 @@ SINGLETON_INTERFACE(UAPush);
  * @param types Bitmask of UIRemoteNotificationType types
  */
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
+
+/**
+ * Register the device for remote notifications using the types set in UAPush.notificationTypes (see Apple documentation for more
+ * detail).
+ */
+- (void)registerForRemoteNotifications;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

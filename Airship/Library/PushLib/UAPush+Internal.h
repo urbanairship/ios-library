@@ -52,10 +52,6 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 @interface UAPush ()
 
-
-/* Remote notification types that are used for registering/unregistering for notfications */
-@property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
-
 /* Default push handler. */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 

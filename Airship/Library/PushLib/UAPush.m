@@ -95,6 +95,9 @@ static Class _uiClass;
         
         self.deviceAPIClient = [[[UADeviceAPIClient alloc] init] autorelease];
         self.deviceTagsEnabled = YES;
+        self.notificationTypes = (UIRemoteNotificationTypeAlert
+                                  |UIRemoteNotificationTypeBadge
+                                  |UIRemoteNotificationTypeSound);
     }
     return self;
 }
@@ -220,8 +223,11 @@ static Class _uiClass;
 #pragma mark APNS wrapper
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types {
     self.notificationTypes = types;
-    
-    if (self.pushEnabled) {
+    [self registerForRemoteNotifications];
+}
+
+- (void)registerForRemoteNotifications {
+    if (self.pushEnabled && self.notificationTypes != UIRemoteNotificationTypeNone) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
     }
 }

@@ -43,7 +43,7 @@
  * and will record a launch from notification and record the app init even
  * for analytics.
  */
-+ (void)recordAppLaunchWithNotification:(NSNotification *)notification;
++ (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification;
 
 /**
  * Handle a termination event from NSNotification center (forward it to land)
