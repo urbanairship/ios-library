@@ -44,7 +44,6 @@
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
     RELEASE_SAFELY(delegate);
-    [[[UAInbox shared] messageList] removeObserver:self];
     [super dealloc];
 }
 
@@ -98,7 +97,6 @@
 - (id)init {
     if (self = [super init]) {
 		hasLaunchMessage = NO;
-        [[[UAInbox shared] messageList] addObserver:self];
 	}
 	return self;
 }
