@@ -41,11 +41,6 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 
-#define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
-#define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
-#define kMaxWaitUserDefaultsKey @"X-UA-Max-Wait"
-#define kMinBatchIntervalUserDefaultsKey @"X-UA-Min-Batch-Interval"
-
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 @implementation UAAnalytics
@@ -530,7 +525,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return request;
 }
 
-- (void) pruneEvents {
+- (void)pruneEvents {
     // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
         UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
@@ -539,11 +534,20 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
+- (BOOL) isEventValid:(NSMutableDictionary *)event {
+    return [[event objectForKey:@"event_size"]  respondsToSelector:NSSelectorFromString(@"intValue")] &&
+            [[event objectForKey:@"data"]       isKindOfClass:[NSData class]] &&
+            [[event objectForKey:@"session_id"] isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"type"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"time"]       isKindOfClass:[NSString class]] &&
+            [[event objectForKey:@"event_id"]    isKindOfClass:[NSString class]];
+}
+
 // Clean up event data for sending.
 // Enforce max batch limits
 // Loop through events and discard DB-only items, format the JSON data field
 // as a dictionary
-- (NSArray*) prepareEventsForUpload {
+- (NSArray*)prepareEventsForUpload {
     
     [self pruneEvents];
 
@@ -559,6 +563,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
+        
+        if (![self isEventValid:event]) {
+            UA_LERR("Detected invalid event due to possible database corruption. Recreating database");
+            [[UAAnalyticsDBManager shared] resetDB];
+            return nil;
+        }
+
         actualSize += [[event objectForKey:@"event_size"] intValue];
         
         if (actualSize <= self.maxBatchSize) {
