@@ -44,7 +44,6 @@
 - (void)dealloc {
     RELEASE_SAFELY(viewingMessageID);
     RELEASE_SAFELY(delegate);
-    [[[UAInbox shared] messageList] removeObserver:self];
     [super dealloc];
 }
 

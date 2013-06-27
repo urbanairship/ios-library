@@ -107,11 +107,10 @@ static Class _uiClass;
 + (void)land {
     
     if (g_sharedUAInbox) {
-        
-        [UAInbox shared].messageList = nil;
-        
-        [[[UAInbox shared] uiClass] land];
-        
+
+        [g_sharedUAInbox.messageList removeObserver:g_sharedUAInbox.pushHandler];
+        g_sharedUAInbox.messageList = nil;
+        [[g_sharedUAInbox uiClass]land];
         [UAInboxMessageList land];
         
         RELEASE_SAFELY(g_sharedUAInbox);
