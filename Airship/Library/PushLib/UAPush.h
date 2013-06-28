@@ -214,7 +214,9 @@ SINGLETON_INTERFACE(UAPush);
  */
 + (void)setDefaultPushEnabledValue:(BOOL)enabled;
 
-/** The device token for this device, as a hex string. */
+/**
+ * The device token for this device, as a hex string.
+ */
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 
 
@@ -386,12 +388,6 @@ SINGLETON_INTERFACE(UAPush);
  * Register an implementation of UARegistrationObserver with UAPush to receive success and failure callbacks.
  */
 - (void)updateRegistration;
-
-/** 
- * Automatically retry on errors. Defaults to `YES`. If set to `YES` and there is a recoverable
- * error when connecting to the Urban Airship servers, the library will retry until successful. 
- */
-@property (nonatomic, assign) BOOL retryOnConnectionError;
 
 ///---------------------------------------------------------------------------------------
 /// @name Receiving Notifications
