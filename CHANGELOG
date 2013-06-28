@@ -1,5 +1,31 @@
 -------------------------
-1.4.0 - Feb 7, 2012
+2.0.0 - July 2013
+-------------------------
+- Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
+  options are available and can be set directly on the object (or through the AirshipConfig.plist)
+- New AirshipConfig.plist format. The new key names match the property names on UAConfig, though the old
+  keys are still valid.
+- Added an auto-integration feature. By default, it is no longer necessary to add remote notification
+  callbacks to your app delegate or explicitly register for push. This can be configured with a UAConfig option.
+- The UA app key can now be automatically toggled between development and production based on the status
+  of an app as indicated in the embedded .mobileprovision file.
+- Push conversion events are now automatically collected - no integration required.
+- Simplified the UAPushNotificationDelegate so that it provides callbacks when the app is launched
+  from a notification and when one is received while the app is already in the foreground.
+- Rich Push Inbox cache is now optional.
+- Removed In-App Purchase and Subscriptions.
+- Replaced ASIHTTPRequest with a wrapper around NSURLRequest/Connection
+- Added KIF (functional) tests to PushSample (available in our GitHub repo)
+- Reports data now includes the Olson/IANA timezone and Locale. This will enable future reports and push
+  segmentation features.
+- Updated much of the code with more modern Obj-C features.
+- Improved header documentation (which feeds http://docs.urbanairship.com/ios-lib/).
+- Removed deprecated methods from UAPush. Direct access to the device token registration API can now
+  be done directly with UADeviceAPIClient
+
+
+-------------------------
+1.4.0 - Feb 7, 2013
 -------------------------
 - Removed all IAP/Subscriptions code from libUAirship-version.a. Applications using subscriptions
   or in-app purchase must use libUAirshipFull-version.a. libUAirshipPush is no longer distributed

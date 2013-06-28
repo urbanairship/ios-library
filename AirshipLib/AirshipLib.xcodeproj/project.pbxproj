@@ -25,7 +25,7 @@
 		1F16423516F26A8100C87CAB /* UAPush+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420D16F26A8100C87CAB /* UAPush+Internal.h */; };
 		1F16423716F26A8100C87CAB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F16420E16F26A8100C87CAB /* UAPush.h */; };
 		1F16423916F26A8100C87CAB /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F16420F16F26A8100C87CAB /* UAPush.m */; };
-		1F4230C016C09876004B52C1 /* libUAirship-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */; };
+		1F4230C016C09876004B52C1 /* libUAirship-2.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-2.0.0.a */; };
 		1F675935174FE10C00C062E0 /* UAConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F675933174FE10C00C062E0 /* UAConfig.h */; };
 		1F675936174FE10C00C062E0 /* UAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675934174FE10C00C062E0 /* UAConfig.m */; };
 		1F675946175682E000C062E0 /* UAConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675945175682DF00C062E0 /* UAConfigTest.m */; };
@@ -287,7 +287,7 @@
 		BB42FB7D150969F200FC4B1B /* UALocationCommonValues.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationCommonValues.m; sourceTree = "<group>"; };
 		BB484B2915910C370097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2A15910C370097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
-		BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-1.5.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB88612C159A7E9600584445 /* libUAirship-2.0.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-2.0.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
@@ -341,7 +341,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4230C016C09876004B52C1 /* libUAirship-1.5.0.a in Frameworks */,
+				1F4230C016C09876004B52C1 /* libUAirship-2.0.0.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
 				7B909D431429363300D0AB36 /* Security.framework in Frameworks */,
@@ -379,7 +379,7 @@
 			isa = PBXGroup;
 			children = (
 				7BB679061429288D00B877DB /* AirshipLogicTests.octest */,
-				BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */,
+				BB88612C159A7E9600584445 /* libUAirship-2.0.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -837,7 +837,7 @@
 			);
 			name = AirshipLib;
 			productName = AirshipLib;
-			productReference = BB88612C159A7E9600584445 /* libUAirship-1.5.0.a */;
+			productReference = BB88612C159A7E9600584445 /* libUAirship-2.0.0.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
