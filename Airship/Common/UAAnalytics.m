@@ -635,6 +635,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LDEBUG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
         UA_LTRACE(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
+        self.lastSendTime = [NSDate date];
 
         // Update analytics settings with new header values
         [self updateAnalyticsParametersWithHeaderValues:request.response];
@@ -642,7 +643,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         if ([request.response statusCode] == 200) {
             [[UAAnalyticsDBManager shared] deleteEvents:events];
             [self resetEventsDatabaseStatus];
-            self.lastSendTime = [NSDate date];
         } else {
             UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
         }
@@ -650,6 +650,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Send analytics data request failed.");
+        self.lastSendTime = [NSDate date];
     };
 
     UAHTTPConnectionOperation *operation = [UAHTTPConnectionOperation operationWithRequest:analyticsRequest
