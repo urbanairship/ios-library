@@ -40,9 +40,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface UAInboxMessage()
 
-- (void)requestWentWrong:(UAHTTPRequest *)request;
-- (void)markAsReadFailed:(UAHTTPRequest *)request;
-
 @property(nonatomic, retain) UAInboxAPIClient *client;
 
 @end
@@ -128,17 +125,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 // NSObject override
-- (NSString*)description {
+- (NSString *)description {
     return [NSString stringWithFormat: @"%@ - %@", messageID, title];
 }
 
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
-
-- (void)requestWentWrong:(UAHTTPRequest *)request {
-    UA_LDEBUG(@"Mark as read failed with status: %d", request.response.statusCode);
-    inbox.isBatchUpdating = NO;
-}
 
 - (BOOL)markAsRead {
     
@@ -164,15 +156,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 
      }onFailure:^(UAHTTPRequest *request){
-         [self markAsReadFailed:request];
+         UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
+         inbox.isBatchUpdating = NO;
+         [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
 
     return YES;
-}
-
-- (void)markAsReadFailed:(UAHTTPRequest *)request {
-    [self requestWentWrong:request];
-    [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 }
 
 #pragma mark -
