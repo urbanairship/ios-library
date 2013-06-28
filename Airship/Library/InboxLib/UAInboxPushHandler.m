@@ -34,16 +34,10 @@
 #import "UAEvent.h"
 
 
-
 @implementation UAInboxPushHandler
 
-@synthesize viewingMessageID;
-@synthesize delegate;
-@synthesize hasLaunchMessage;
-
 - (void)dealloc {
-    RELEASE_SAFELY(viewingMessageID);
-    RELEASE_SAFELY(delegate);
+    self.viewingMessageID = nil;
     [super dealloc];
 }
 
@@ -68,6 +62,7 @@
             //this will result in calling loadLaunchMessage on the UI class
             //once the request is complete
             [UAInbox shared].pushHandler.hasLaunchMessage = YES;
+            [[UAInbox shared].pushHandler.delegate applicationLaunchedWithMessage:userInfo];
 
             [[UAInbox shared].messageList retrieveMessageList];
         }
@@ -77,28 +72,24 @@
 - (void)messageListLoaded {
 
     //only take action is there's a new message
-    if (viewingMessageID) {
+    if(self.viewingMessageID) {
+
         Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
-        
+
         //if the notification came in while the app was backgrounded, treat it as a launch message
-        if (hasLaunchMessage) {
-            [uiClass loadLaunchMessage];
+        if (self.hasLaunchMessage) {
+            UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
+            [self.delegate launchRichPushMessageAvailable:message];
+            self.hasLaunchMessage = NO;
         }
-        
+
         //otherwise, have the UI class display it
         else {
-            [uiClass displayMessage:nil message:viewingMessageID];
-            [self setViewingMessageID:nil];
+            [uiClass displayMessage:nil message:self.viewingMessageID];
+
         }
+
+        self.viewingMessageID = nil;
     }
 }
-
-
-- (id)init {
-    if (self = [super init]) {
-		hasLaunchMessage = NO;
-	}
-	return self;
-}
-
 @end

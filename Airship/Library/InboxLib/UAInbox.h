@@ -44,12 +44,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 + (void)quitInbox;
 
 /**
- * Open the Rich Push Inbox directly to the message associated with
- * the push notification that launched or foregrounded the application.
- */
-+ (void)loadLaunchMessage;
-
-/**
  * Display the inbox UI.
  *
  * @param viewController The parent view controller
