@@ -61,27 +61,31 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
     if (self = [super init]) {
-        self.messageID = [message objectForKey: @"message_id"];
-        self.inbox = i;
-        self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];
-        self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
-        self.contentType = [message objectForKey:@"content_type"];
-        self.unread = NO;
-        if([message objectForKey: @"unread"] != [NSNull null] && [[message objectForKey: @"unread"] intValue] != 0) {
-            self.unread = YES;
-        }
-        NSString *dateString = [message objectForKey: @"message_sent"];
-        NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-		[dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        self.messageSent = [dateFormatter dateFromString:dateString];
-        [dateFormatter release];
 
+        message = [message dictionaryWithValuesForKeys:[[message keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+                return ![obj isEqual:[NSNull null]];
+            }] allObjects]];
+
+        self.inbox = i;
+
+        self.messageID = [message objectForKey: @"message_id"];
+        self.contentType = [message objectForKey:@"content_type"];
         self.title = [message objectForKey: @"title"];
         self.extra = [message objectForKey: @"extra"];
+
+        self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];
+        self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
+
+        self.unread = [[message objectForKey: @"unread"] intValue] ? YES : NO;
+
+        NSString *dateString = [message objectForKey: @"message_sent"];
+        NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+        [dateFormatter setLocale:enUSPOSIXLocale];
+        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+        self.messageSent = [dateFormatter dateFromString:dateString];
 
         self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }
