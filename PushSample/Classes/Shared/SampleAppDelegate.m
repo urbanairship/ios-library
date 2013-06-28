@@ -43,42 +43,48 @@
     // Override point for customization after application launch
     [self.window setRootViewController:_controller];
     [self.window makeKeyAndVisible];
-    
+
     // Display a UIAlertView warning developers that push notifications do not work in the simulator
     // You should remove this in your app.
     [self failIfSimulator];
-    
-    // This prevents the UA Library from registering with UIApplication by default when
-    // registerForRemoteNotifications is called. This will allow you to prompt your
-    // users at a later time. This gives your app the opportunity to explain the benefits
-    // of push or allows users to turn it on explicitly in a settings screen.
+
+    // This prevents the UA Library from registering with UIApplication by default. This will allow
+    // you to prompt your users at a later time. This gives your app the opportunity to explain the
+    // benefits of push or allows users to turn it on explicitly in a settings screen.
+    //
     // If you just want everyone to immediately be prompted for push, you can
     // leave this line out.
     [UAPush setDefaultPushEnabledValue:NO];
 
-    // Set log level for debugging config loading
-    // It will be set to the value in the loaded config on takeOff
+    // Set log level for debugging config loading (optional)
+    // It will be set to the value in the loaded config upon takeOff
     [UAirship setLogLevel:UALogLevelTrace];
 
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     // or set runtime properties here.
     UAConfig *config = [UAConfig defaultConfig];
 
+    // You can then programatically override the plist values:
+    // config.developmentAppKey = @"YourKey";
+    // etc.
+
     // Call takeOff (which creates the UAirship singleton)
     [UAirship takeOff:config];
 
+    // Print out the application configuration for debugging (optional)
     UA_LDEBUG(@"Config:\n%@", [config description]);
 
     // Set the icon badge to zero on startup (optional)
     [[UAPush shared] resetBadge];
-    
-    // Register for remote notifications with the UA Library. With the default value of push set to no,
+
+    // Set the notification types required for the app (optional). With the default value of push set to no,
     // UAPush will record the desired remote notification types, but not register for
     // push notifications as mentioned above. When push is enabled at a later time, the registration
-    // will occur normally. This call is required.
-    [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                                         UIRemoteNotificationTypeSound |
-                                                         UIRemoteNotificationTypeAlert)];
+    // will occur normally. This value defaults to badge, alert and sound, so it's only necessary to
+    // set it if you want to add or remove types.
+    [UAPush shared].notificationTypes = (UIRemoteNotificationTypeBadge |
+                                         UIRemoteNotificationTypeSound |
+                                         UIRemoteNotificationTypeAlert);
 
     return YES;
 }

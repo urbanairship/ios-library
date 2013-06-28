@@ -106,7 +106,15 @@
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
-@property (nonatomic, assign) BOOL handleNotificationsAutomatically;
+/**
+ * If enabled, the UA library automatically registers for remote notifications when push is enabled
+ * and intercepts incoming notifications in both the foreground and upon launch.
+ *
+ * Defaults to YES. If this is disabled, you will need to register for remote notifications
+ * in application:didFinishLaunchingWithOptions: and forward all notification-related app delegate
+ * calls to UAPush and UAInbox.
+ */
+@property (nonatomic, assign) BOOL automaticSetupEnabled;
 
 ///---------------------------------------------------------------------------------------
 /// @name Advanced Configuration Options

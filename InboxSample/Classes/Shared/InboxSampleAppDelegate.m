@@ -60,12 +60,6 @@
     //
     // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
     [UAirship takeOff];
-    
-    // Register for remote notfications with the UA Library. The library will register with
-    // iOS if push is enabled on UAPush.
-    [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                                         UIRemoteNotificationTypeSound |
-                                                         UIRemoteNotificationTypeAlert)];
 
     // Configure Inbox behaviour before UAInboxPushHandler since it may need it
     // when launching from notification

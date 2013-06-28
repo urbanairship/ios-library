@@ -76,11 +76,11 @@ You can also edit the file as plain-text:
 
     {
         /* NOTE: DO NOT USE THE MASTER SECRET */
-        "APP_STORE_OR_AD_HOC_BUILD" = NO; /* set to YES for production builds */
-        "DEVELOPMENT_APP_KEY" = "Your development app key";
-        "DEVELOPMENT_APP_SECRET" = "Your development app secret";
-        "PRODUCTION_APP_KEY" = "Your production app key";
-        "PRODUCTION_APP_SECRET" = "Your production app secret";
+        "inProduction" = NO; /* set to YES for production builds */
+        "developmentAppKey" = "Your development app key";
+        "developmentAppSecret" = "Your development app secret";
+        "productionAppKey" = "Your production app key";
+        "productionAppSecret" = "Your production app secret";
     }
 
 If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to NO. For
@@ -101,70 +101,47 @@ To enable push notifications, you will need to make several additions to your ap
     
         // Your other application code.....
     
-        // This prevents the UA Library from registering with UIApplication by default when
-        // registerForRemoteNotifications is called. This will allow you to prompt your
-        // users at a later time. This gives your app the opportunity to explain the benefits
-        // of push or allows users to turn it on explicitly in a settings screen.
+        // This prevents the UA Library from registering with UIApplication by default. This will allow
+        // you to prompt your users at a later time. This gives your app the opportunity to explain the
+        // benefits of push or allows users to turn it on explicitly in a settings screen.
+        //
         // If you just want everyone to immediately be prompted for push, you can
         // leave this line out.
         [UAPush setDefaultPushEnabledValue:NO];
-
-        // Set log level for debugging config loading
-        // It will be set to the value in the loaded config on takeOff
+    
+        // Set log level for debugging config loading (optional)
+        // It will be set to the value in the loaded config upon takeOff
         [UAirship setLogLevel:UALogLevelTrace];
-
+    
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         UAConfig *config = [UAConfig defaultConfig];
 
+        // You can then programatically override the plist values:
+        // config.developmentAppKey = @"YourKey";
+        // etc.
+    
         // Call takeOff (which creates the UAirship singleton)
+        // You may also simply call [UAirship takeOff] without any arguments if you want
+        // to use the default config loaded from AirshipConfig.plist
         [UAirship takeOff:config];
-
+    
+        // Print out the application configuration for debugging (optional)
         UA_LDEBUG(@"Config:\n%@", [config description]);
-
+    
         // Set the icon badge to zero on startup (optional)
         [[UAPush shared] resetBadge];
     
-        // Register for remote notifications with the UA Library. With the default value of push set to no,
+        // Set the notification types required for the app (optional). With the default value of push set to no,
         // UAPush will record the desired remote notification types, but not register for
         // push notifications as mentioned above. When push is enabled at a later time, the registration
-        // will occur normally. This call is required.
-        [[UAPush shared] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge |
-                                                             UIRemoteNotificationTypeSound |
-                                                             UIRemoteNotificationTypeAlert)];
+        // will occur normally. This value defaults to badge, alert and sound, so it's only necessary to
+        // set it if you want to add or remove types.
+        [UAPush shared].notificationTypes = (UIRemoteNotificationTypeBadge |
+                                             UIRemoteNotificationTypeSound |
+                                             UIRemoteNotificationTypeAlert);
 
         return YES;
-    }
-    
-    // Implement the iOS device token registration callback
-    - (void)application:(UIApplication *)application
-            didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-        UA_LINFO(@"APNS device token: %@", deviceToken);
-
-        // Updates the device token and registers the token with UA. This won't occur until
-        // push is enabled if the outlined process is followed. This call is required.
-        [[UAPush shared] registerDeviceToken:deviceToken];
-    }
-    
-    // Implement the iOS callback for incoming notifications
-    //
-    // Incoming Push notifications can be handled by the UAPush default alert handler,
-    // which displays a simple UIAlertView, or you can provide your own delegate which
-    // conforms to the UAPushNotificationDelegate protocol.
-    - (void)application:(UIApplication *)application
-            didReceiveRemoteNotification:(NSDictionary *)userInfo {
-
-        UA_LINFO(@"Received remote notification: %@", userInfo);
-
-        // Fire the handler for regular push
-        [[UAPush shared] handleNotification:userInfo
-                           applicationState:application.applicationState];
-
-        // Fire the handler for rich push
-        [UAInboxPushHandler handleNotification:userInfo];
-
-        // Reset the badge if you are using that functionality
-        [[UAPush shared] resetBadge]; // zero badge after push received
     }
     
 To enable push:
@@ -193,7 +170,7 @@ In `AirshipConfig.plist`, set `LOG_LEVEL` to one of the following integer values
     Debug = 4
     Trace = 5
 
-To set the log level in code, use:
+To set the log level in code, call `setLogLevel` after `takeOff`:
 
 .. code:: obj-c
 
@@ -257,7 +234,6 @@ Third party Package  License   Copyright / Creator
 fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
 SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
 Base64               BSD       Copyright 2009-2010 Matt Gallagher.
-ZipFile-OC           BSD       Copyright (C) 1998-2005 Gilles Vollant.
 Reachability         BSD       Copyright (C) 2010 Apple Inc.
 MTPopupWindow        MIT       Copyright 2011 Marin Todorov
 JRSwizzle            MIT       Copyright 2012 Jonathan Rentzsch

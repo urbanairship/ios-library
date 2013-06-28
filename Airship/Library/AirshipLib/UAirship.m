@@ -69,7 +69,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 + (void)load {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:[UAirship class] selector:@selector(recordAppLaunchWithNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
+    [center addObserver:[UAirship class] selector:@selector(handleAppDidFinishLaunchingNotification:) name:UIApplicationDidFinishLaunchingNotification object:nil];
     [center addObserver:[UAirship class] selector:@selector(handleAppTerminationNotification:) name:UIApplicationWillTerminateNotification object:nil];
 
 }
@@ -149,7 +149,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     UA_LINFO(@"App Secret: %@", _sharedAirship.config.appSecret);
     UA_LINFO(@"Server: %@", _sharedAirship.config.deviceAPIURL);
 
-    if (config.handleNotificationsAutomatically) {
+    if (config.automaticSetupEnabled) {
 
         _sharedAirship.appDelegate = [[[UABaseAppDelegateSurrogate alloc ]init] autorelease];
 
@@ -193,7 +193,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [[UAUser defaultUser] initializeUser];
 }
 
-+ (void)recordAppLaunchWithNotification:(NSNotification *)notification {
++ (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
 
     if (!_sharedAirship) {
         UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
@@ -213,10 +213,15 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
         [UAInboxPushHandler handleNotification:remoteNotification];
     }
+
+    // Register now
+    if ([UAirship shared].config.automaticSetupEnabled) {
+        [[UAPush shared] registerForRemoteNotifications];
+    }
 }
 
 + (void)handleAppTerminationNotification:(NSNotification *)notification {
-    [[NSNotificationCenter defaultCenter] removeObserver:[self class]  name:UIApplicationWillTerminateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class]  name:UIApplicationWillTerminateNotification object:nil];
     [UAirship land];
 }
 
