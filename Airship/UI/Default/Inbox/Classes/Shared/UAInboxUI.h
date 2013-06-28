@@ -70,11 +70,12 @@ SINGLETON_INTERFACE(UAInboxUI);
 + (void)quitInbox;
 + (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
-+ (void)loadLaunchMessage;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAInboxPushHandlerDelegate Methods
 ///---------------------------------------------------------------------------------------
 - (void)newMessageArrived:(NSDictionary *)message;
+- (void)applicationLaunchedWithMessage:(NSDictionary *)message;
+- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
 @end

@@ -197,27 +197,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     
 }
 
-+ (void)loadLaunchMessage {
-	
-	// if pushhandler has a messageID load it
-    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
-	if (pushHandler.viewingMessageID && pushHandler.hasLaunchMessage) {
-
-		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
-		if (!msg) {
-			return;
-		}
-        
-        UIViewController *rvc = [UAInboxNavUI shared].rootViewController;
-		
-		[UAInbox displayMessage:rvc message:pushHandler.viewingMessageID];
-		
-		pushHandler.viewingMessageID = nil;
-		pushHandler.hasLaunchMessage = NO;
-	}
-
-}
-
 + (void)land {
     //do any necessary teardown here
 }
@@ -234,5 +213,12 @@ static BOOL runiPhoneTargetOniPad = NO;
     [alertHandler showNewMessageAlert:alertText];
 }
 
+- (void)applicationLaunchedWithMessage:(NSDictionary *)message {
+    //custom launch notification handling here
+}
+
+- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
+    [[self class] displayMessage:nil message:richPushMessage.messageID];
+}
 
 @end
