@@ -127,7 +127,7 @@
     NSError *regexError = nil;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:regexPattern options:NSRegularExpressionCaseInsensitive error:&regexError];
     STAssertNil(regexError,nil);
-    NSUInteger match = [regex numberOfMatchesInString:target options:NSRegularExpressionCaseInsensitive range:NSMakeRange(0, target.length)];
+    NSUInteger match = [regex numberOfMatchesInString:target options:0 range:NSMakeRange(0, target.length)];
     return match >= 1 ? YES:NO;
 }
 
