@@ -24,15 +24,11 @@
  */
 #import <UIKit/UIKit.h>
 
-@interface SampleViewController : UIViewController {
-    IBOutlet UIButton *settingsButton;
-    IBOutlet UIButton *tokenButton;
-    IBOutlet UILabel *version;
-}
+@interface SampleViewController : UIViewController
 
-@property (nonatomic, retain) UIButton *settingsButton;
-@property (nonatomic, retain) UIButton *tokenButton;
-@property (nonatomic, retain) UILabel *version;
+@property (nonatomic, retain) IBOutlet UIButton *settingsButton;
+@property (nonatomic, retain) IBOutlet UIButton *tokenButton;
+@property (nonatomic, retain) IBOutlet UILabel *version;
 
 - (IBAction)buttonPressed:(id)sender;
 
