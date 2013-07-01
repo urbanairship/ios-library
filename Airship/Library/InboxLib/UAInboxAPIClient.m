@@ -106,7 +106,7 @@
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    UA_LTRACE(@"Request to perfom batch mark messages as readS: %@ body: %@", requestUrl, body);
+    UA_LTRACE(@"Request to perfom batch mark messages as read: %@ body: %@", requestUrl, body);
     return request;
 }
 

@@ -163,7 +163,7 @@ static Class _uiClass;
         // It is cleared on successful unregistration
 
         if (enabled) {
-            UA_LDEBUG(@"Registering for remote notifcations");
+            UA_LDEBUG(@"Registering for remote notifications");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
