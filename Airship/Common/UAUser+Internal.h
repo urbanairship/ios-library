@@ -25,14 +25,6 @@
 
 #import "UAUser.h"
 
-
-
-// NSUserDefaultsKey for libUAirship verision >= v1.3.6
-// Changing the key forces devices to update with UA at least once
-// with new workflow. Previous key was "UAUserLastDeviceTokenKey", and
-// is no longer used. 
-#define kLastUpdatedDeviceTokenKey @"UAUserLastUpdatedDeviceTokenKey"
-
 // Current dictionary keys
 #define kUserUrlKey @"UAUserUrlKey"
 

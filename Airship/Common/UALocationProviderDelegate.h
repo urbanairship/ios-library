@@ -30,7 +30,7 @@
 /**
  * Delegate methods for Location providers. All are required.
  */
-@protocol UALocationProviderDelegate <NSObject>
+@protocol UALocationProviderDelegate<NSObject>
 
 @required
 /**

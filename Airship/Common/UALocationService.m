@@ -81,7 +81,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     return self;
 }
 
-- (id)initWithPurpose:(NSString*)purpose {
+- (id)initWithPurpose:(NSString *)purpose {
     self = [self init];
     if(self){
         if (purpose){

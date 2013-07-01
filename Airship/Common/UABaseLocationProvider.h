@@ -28,69 +28,72 @@
 #import "UALocationCommonValues.h"
 
 /**
- This is the base class for location providers. You should not
- implement this class directly. See the documentation for CLLocationManager for
- CLLocationManager details. https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html
+ * This is the base class for location providers. You should not
+ * implement this class directly. See the documentation for CLLocationManager for
+ * CLLocationManager details. https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html
  */
-
-@interface UABaseLocationProvider : NSObject <CLLocationManagerDelegate, UALocationProviderProtocol>
+@interface UABaseLocationProvider : NSObject<CLLocationManagerDelegate, UALocationProviderProtocol>
 
 ///---------------------------------------------------------------------------------------
 /// @name NSObject 
 ///---------------------------------------------------------------------------------------
 
--(NSString *)description;
+- (NSString *)description;
 
 ///---------------------------------------------------------------------------------------
 /// @name CLLocationManager related methods
 ///---------------------------------------------------------------------------------------
 
 /** 
- Location manager used for providing location data. Setting this value has
- the side effect of assigning this class as the delegate of the
- new CLLocationManager
+ * Location manager used for providing location data. Setting this value has
+ * the side effect of assigning this class as the delegate of the
+ * new CLLocationManager
  */
 @property (nonatomic, retain) CLLocationManager *locationManager;
 
-/** In certain cases, cached values are immediately returned when starting a location service.
- Any location with a time interval older than this value will be considered invalid. 
-*/
+/**
+ * In certain cases, cached values are immediately returned when starting a location service.
+ * Any location with a time interval older than this value will be considered invalid.
+ */
 @property (nonatomic, assign) NSTimeInterval maximumElapsedTimeForCachedLocation;
 
 /// The distance filter one the locationManager
 - (CLLocationDistance)distanceFilter;
 
-/** Changes the distanceFilter on the locationManager
- @param distanceFilter The new distance filter
+/**
+ * Changes the distanceFilter on the locationManager.
+ * @param distanceFilter The new distance filter
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
 /// The desired accuracy currently set on the locationManager
 - (CLLocationAccuracy)desiredAccuracy;
 
-/** Changes the desiredAccuracy on the locationManager
- @param desiredAccuracy The new desiredAccuracy
+/**
+ * Changes the desiredAccuracy on the locationManager.
+ * @param desiredAccuracy The new desiredAccuracy
  */
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
 /**
- Current purpose attached to the CLLocationMananger locationManager
- @return Current purpose on the locationManager
+ * Current purpose attached to the CLLocationMananger locationManager.
+ * @return Current purpose on the locationManager
  */
 - (NSString *)purpose;
 
 /**
- Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- when the UIAlertView is displayed asking the user for location permission.
- @warning This value cannot be nil.
- @param newPurpose String to be set on the locationManager
+ * Sets the purpose on the CLLocationManager locationManger which is displayed to the user
+ * when the UIAlertView is displayed asking the user for location permission.
+ * @warning This value cannot be nil.
+ * @param newPurpose String to be set on the locationManager
  */
 - (void)setPurpose:(NSString *)newPurpose;
 
-/** The most recently received location available from the CLLocationManager object. This may be more accurate than
- the last reported location, and it may also be nil. See CLLocationManager documentation for more details. 
- @return The most recent location, if one is available
- @return nil if no recent location is available
+/**
+ * The most recently received location available from the CLLocationManager object. This may be more accurate than
+ * the last reported location, and it may also be nil. See CLLocationManager documentation for more details.
+ * @return The most recent location, if one is available
+ * @return nil if no recent location is available
  */
 - (CLLocation *)location;
 
@@ -100,16 +103,15 @@
 
 
 /// Delegate that receives location updates 
-@property (nonatomic, assign) id <UALocationProviderDelegate> delegate;
+@property (nonatomic, assign) id<UALocationProviderDelegate> delegate;
 
 /** 
- Status of the location service. 
- 
- Possible values are
- 
- + kUALocationProviderUpdating The service is currently updating location
- + kUALocationProviderNotUpdating The service is not updating location
- 
+ * Status of the location service.
+ *
+ * Possible UALocationProviderStatus values are:
+ *
+ * + kUALocationProviderUpdating The service is currently updating location
+ * + kUALocationProviderNotUpdating The service is not updating location
  */
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;
 
@@ -121,9 +123,10 @@
 ///---------------------------------------------------------------------------------------
 
 - (id)init;
+
 /**
- Initializes the object with a delegate
- @param delegate Delegate object that implements the UALocationProviderDelegate protocol
+ * Initializes the object with a delegate
+ * @param delegate Delegate object that implements the UALocationProviderDelegate protocol
  */
 - (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
 
@@ -132,29 +135,30 @@
 ///---------------------------------------------------------------------------------------
 
 /** 
- Calculates location change accuracy
- @param newLocation The updated location from the location service.
- @param oldLocation The location that the new location is compared to. 
- @return YES if the location meets accuracy requirements
- @return NO if the location does not meet accuracy requirements
+ * Calculates location change accuracy
+ * @param newLocation The updated location from the location service.
+ * @param oldLocation The location that the new location is compared to.
+ *
+ * @return YES if the location meets accuracy requirements
+ * @return NO if the location does not meet accuracy requirements
  */
 - (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation;
 
 ///---------------------------------------------------------------------------------------
-/// @name Starting and stopping location services
+/// @name Starting and Stopping Location Services
 ///---------------------------------------------------------------------------------------
 
 /**
- Empty method meant to be overridden. 
- @warning This method only controls the service status on this object. Call super when
- overriding this method
+ * Abstract method for starting the location service.
+ * @warning This method only controls the service status on this object. A call to
+ * [super startReportingLocation] is required when overriding this method.
  */
 - (void)startReportingLocation;
 
 /**
- Empty method meant to be overridden. 
- @warning This method only controls the service status on this object. Call super when
- overriding this method
+ * Abstract method for stopping the location service.
+ * @warning This method only controls the service status on this object. A call to 
+ * [super stopReportingLocation] is required when overriding this method.
  */
 - (void)stopReportingLocation;
 

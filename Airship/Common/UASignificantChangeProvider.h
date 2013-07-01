@@ -25,29 +25,31 @@
 
 #import "UABaseLocationProvider.h"
 
-/** UASignificantChangeProvider
- 
- The significant change provider uses the significant change service 
- provided by the CLLocationManager. This uses cell towers for triangulation for 
- location and is a low power alternative to GPS, with less accuracy. This will run
- in the background without entitlements. The CLLocationManager distanceFilter and desiredAccuracy
- settings have no affect on the significant change service. 
+/**
+ * The significant change provider uses the significant change service 
+ * provided by the CLLocationManager. This uses cell towers for triangulation for
+ * location and is a low power alternative to GPS, with less accuracy. This will run
+ * in the background without entitlements. The CLLocationManager distanceFilter and desiredAccuracy
+ * settings have no affect on the significant change service. 
  */
-
 @interface UASignificantChangeProvider : UABaseLocationProvider
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping the location service
 ///---------------------------------------------------------------------------------------
 
-/// Starts the significant change location service
+/**
+ * Starts the significant change location service.
+ */
 - (void)startReportingLocation;
 
-/// Stops the significant change location service
+/**
+ * Stops the significant change location service.
+ */
 - (void)stopReportingLocation;
 
 /** 
- * Returns a UASignificantChange provider with the given delegate
+ * Constructs a UASignificantChange provider with the given delegate
  * @param delegateOrNil A UALocationProviderDelegate or nil
  * @return Provider with the parameter as the assiged delegate
  */

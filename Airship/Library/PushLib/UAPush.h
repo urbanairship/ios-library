@@ -118,10 +118,30 @@
  */
 @protocol UARegistrationObserver
 @optional
+
+/**
+ * Called when the device token is successfully registered with Urban Airship.
+ */
 - (void)registerDeviceTokenSucceeded;
+
+/**
+ * Called when the device token registration fails.
+ *
+ * @param request The failed request.
+ */
 - (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-- (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request;
+
+/**
+ * Called when the device token is successfully deactivated with Urban Airship.
+ */
+- (void)unregisterDeviceTokenSucceeded;
+
+/**
+ * Called when the device token deactivation fails and cannot be retried.
+ *
+ * @param request The failed request.
+ */
+- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
 @end
 
 
