@@ -314,9 +314,8 @@ enum {
         
         if (pushEnabledSwitch.on) {
             [self updateQuietTime];
-        } else {
-            [[UAPush shared] updateRegistration];
         }
+        
         dirty = NO;
     }
     
@@ -426,10 +425,7 @@ enum {
         NSString *toString = toCell.detailTextLabel.text;
         NSDate *fromDate = [formatter dateFromString:fromString];
         NSDate *toDate = [formatter dateFromString:toString];
-        
-        UALOG(@"Start String: %@", fromString);
-        UALOG(@"End String: %@", toString);
-        
+                
         [UAPush shared].quietTimeEnabled = YES;
         [[UAPush shared] setQuietTimeFrom:fromDate to:toDate withTimeZone:[NSTimeZone localTimeZone]];
         [[UAPush shared] updateRegistration];

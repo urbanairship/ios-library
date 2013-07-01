@@ -53,10 +53,10 @@
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString *body = [writer stringWithObject:data];
 
-    UA_LDEBUG(@"Create user with body: %@", body);
-
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UA_LDEBUG(@"Request to create user with body: %@", body);
 
     return request;
 }
@@ -64,8 +64,6 @@
 - (UAHTTPRequest *)requestToUpdateDeviceToken:(NSString *)deviceToken forUsername:(NSString *)username {
 
     NSDictionary *dict = @{@"device_tokens" :@{@"add" : @[deviceToken]}};
-
-    UA_LDEBUG(@"Updating user");
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
 								 [UAirship shared].config.deviceAPIURL,
@@ -82,9 +80,9 @@
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter new] autorelease];
     NSString *body = [writer stringWithObject:dict];
 
-    UA_LDEBUG(@"Update user with content: %@", body);
-
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UA_LTRACE(@"Request to update user with content: %@", body);
 
     return request;
 }
@@ -147,7 +145,7 @@
         //    };
         // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
 
-        UA_LDEBUG(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
+        UA_LTRACE(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
 
         NSString *rawJson = [[[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding] autorelease];
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];

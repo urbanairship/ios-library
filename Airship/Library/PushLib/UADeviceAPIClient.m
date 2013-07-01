@@ -108,7 +108,7 @@
              failureBlock(request);
          }];
     } else {
-        UA_LDEBUG(@"Ignoring duplicate request");
+        UA_LDEBUG(@"Ignoring duplicate request.");
     }
 }
 
@@ -119,7 +119,7 @@
 
     UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithData:registrationData];
 
-    UA_LDEBUG(@"Running device registration");
+    UA_LDEBUG(@"Running device registration.");
 
     [self
      runRequest:putRequest withData:registrationData
@@ -149,7 +149,7 @@
 
     UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceTokenWithData:registrationData];
 
-    UA_LDEBUG(@"Running device unregistration");
+    UA_LDEBUG(@"Running device unregistration.");
 
     [self
      runRequest:deleteRequest withData:registrationData

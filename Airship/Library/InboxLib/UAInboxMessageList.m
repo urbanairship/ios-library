@@ -93,26 +93,27 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
-    
-    UALOG(@"before retrieve saved messages: %@", messages);
     NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username
                                                                               app:[UAirship shared].config.appKey];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
+
     self.messages = [[[NSMutableArray alloc] initWithArray:savedMessages] autorelease];
-    UALOG(@"after retrieve saved messages: %@", messages);
+    UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
 }
 
 - (void)retrieveMessageList {
     
-    if(![[UAUser defaultUser] defaultUserCreated]) {
-        UA_LDEBUG("Waiting for User Update message to retrieveMessageList");
+    if (![[UAUser defaultUser] defaultUserCreated]) {
+        UA_LDEBUG("Postponing retrieving message list once the user is created.");
         [[UAUser defaultUser] onceCreated:^{
             [self retrieveMessageList];
         }];
         return;
     }
+
+    UA_LDEBUG("Retrieving message list.");
 
     [self notifyObservers: @selector(messageListWillLoad)];
     [self loadSavedMessages];
@@ -129,7 +130,7 @@ static UAInboxMessageList *_messageList = nil;
 
         unreadCount = unread;
 
-        UALOG(@"after retrieveMessageList, messages: %@", messages);
+        UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", messages);
         [self notifyObservers:@selector(messageListLoaded)];
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
@@ -142,7 +143,7 @@ static UAInboxMessageList *_messageList = nil;
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
 
     if (command != UABatchDeleteMessages && command != UABatchReadMessages) {
-        UA_LINFO(@"command=%d is invalid.", command);
+        UA_LWARN(@"Unable to perform batch update with invalid command type: %d", command);
         return;
     }
 
@@ -208,7 +209,7 @@ static UAInboxMessageList *_messageList = nil;
 
 - (UAInboxMessage *)messageAtIndex:(int)index {
     if (index < 0 || index >= [messages count]) {
-        UALOG("Load message(index=%d, count=%d) error.", index, [messages count]);
+        UA_LWARN("Load message(index=%d, count=%d) error.", index, [messages count]);
         return nil;
     }
     return [messages objectAtIndex:index];
