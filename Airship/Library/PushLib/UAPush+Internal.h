@@ -52,44 +52,69 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 @interface UAPush ()
 
-/* Default push handler. */
+/**
+ * Default push handler.
+ */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Device token as a string */
+/**
+ * Device token as a string.
+ */
 @property (nonatomic, copy) NSString *deviceToken;
 
-/* Indicates that the app has entered the background once
+/**
+ * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
+/**
+ * The client for the Urban Airship device registration API.
+ */
 @property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
 
-/* Get the local time zone, considered the default. */
+/**
+ * Get the local time zone, considered the default.
+ */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 
-/*
- * Parse a device token string out of the NSData string representation.
- * @param tokenStr NSString returned from [NSData* description]
+/**
+ * Parse a device token string from the NSData string representation.
+ * @param tokenStr NSString returned from [NSData description]
+ *
+ * @return The device token as a hex-encoded string without dashes or spaces.
  */
 - (NSString *)parseDeviceToken:(NSString *)tokenStr;
 
-
-/* Return a dictionary representing the JSON payload of Push settings. */
+/**
+ * Generate a payload object for the current push settings.
+ *
+ * @return The current push settings as a UADeviceRegistrationPayload.
+ */
 - (UADeviceRegistrationPayload *)registrationPayload;
 
-/* Called on foreground notifications, triggers an updateRegistration
+/**
+ * Called on active NSNotificationCenter notifications (on "active" rather than "foreground" so that we
+ * can capture the push ID sent with a converting push). Triggers an updateRegistration.
  */
 - (void)applicationDidBecomeActive;
 
-/* Called to set a flag on foreground to prevent double registration on 
- * app init
+/**
+ * Used to clear a flag set on foreground to prevent double registration on
+ * app init.
  */
 - (void)applicationDidEnterBackground;
 
-/* Register the user defaults for this class. You should not need to call this method
- unless you are bypassing UAirship
+/**
+ * Register the user defaults for this class. You should not need to call this method
+ * unless you are bypassing UAirship
  */
 + (void)registerNSUserDefaults;
+
+/**
+ * Clean up when app is terminated. You should not ordinarily call this method as it is called
+ * during [UAirship land].
+ */
++ (void)land;
 
 @end

@@ -26,13 +26,26 @@
 #import <Foundation/Foundation.h>
 #import "UAGlobal.h"
 
-@interface UABaseAppDelegateSurrogate : NSObject <UIApplicationDelegate>
-
-/* 
- * delegates are typically not retained, but in this case we will take responsibility for them
+/**
+ * This class is designed to take the place of the default application delegate and forward messages
+ * to both a surrogate delegate and the original delegate. This is useful for intercepting messages
+ * sent to the app delegate that do not have corresponding NSNotificationCenter events (such as 
+ * application:didReceiveRemoteNotification: and other APNS-related calls).
+ *
+ * @note Delegates are typically not retained, but in this case we will take responsibility for them
  * as we're essentially a man in the middle and we don't want to lose them.
  */
+@interface UABaseAppDelegateSurrogate : NSObject<UIApplicationDelegate>
+
+/**
+ * The surrogate delegate. This delegate will receive all messages initially destined for
+ * the original app delegate (defaultAppDelegate).
+ */
 @property(nonatomic, retain) NSObject<UIApplicationDelegate> *surrogateDelegate;
+
+/**
+ * The original app delegate.
+ */
 @property(nonatomic, retain) NSObject<UIApplicationDelegate> *defaultAppDelegate;
 
 @end

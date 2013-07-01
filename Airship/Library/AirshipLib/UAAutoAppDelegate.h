@@ -25,6 +25,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAAutoAppDelegate : NSObject <UIApplicationDelegate>
+/**
+ * This class is a replacement app delegate that handles incoming push notifications and registration
+ * callbacks. When used with UABaseAppDelegateSurrogate, both this class and the original app delegate
+ * can receive and respond to messages sent to the default app delegate.
+ */
+@interface UAAutoAppDelegate : NSObject<UIApplicationDelegate>
 
 @end

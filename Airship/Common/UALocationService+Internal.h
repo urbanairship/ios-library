@@ -24,6 +24,7 @@
  */
 
 #import <CoreLocation/CoreLocation.h>
+
 #import "UALocationService.h"
 #import "UABaseLocationProvider.h"
 
@@ -45,28 +46,36 @@
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
 
-/* Keep a record of the location with the highest horizontalAccuracy in case
+/**
+ * Keep a record of the location with the highest horizontalAccuracy in case
  * the single location service times out before acquiring a location that meets
  * accuracy requirements setup in desiredAccuracy
  */
 @property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
 
-/* Background identifier for the singleLocationService */
+/**
+ * Background identifier for the singleLocationService
+ */
 @property (nonatomic, assign) UIBackgroundTaskIdentifier singleLocationBackgroundIdentifier;
 
-/* Value indicating that the single location service shutdown call has been scheduled for this
+/**
+ * Value indicating that the single location service shutdown call has been scheduled for this
  * object with performSelector:withObject:afterDelay 
  */
 @property (nonatomic, assign) BOOL singleLocationShutdownScheduled;
 
-// Sets appropriate value in NSUserDefaults
-+ (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
+/**
+ * Convenience method which set appropriate value in NSUserDefaults.
+ */
++ (void)setObject:(id)value forLocationServiceKey:(UALocationServiceNSDefaultsKey *)key;
 
-// gets values out of location service
-+ (id)objectForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
+/**
+ * Convenience method which retrieves values out of location service.
+ */
++ (id)objectForLocationServiceKey:(UALocationServiceNSDefaultsKey *)key;
 
 // Sets appropriate bool in NSUserDefaults
-+ (void)setBool:(BOOL)boolValue forLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
++ (void)setBool:(BOOL)boolValue forLocationServiceKey:(UALocationServiceNSDefaultsKey *)key;
 
 + (BOOL)boolForLocationServiceKey:(UALocationServiceNSDefaultsKey*)key;
 
@@ -98,7 +107,7 @@
 - (UAStandardLocationProvider *)singleLocationProvider;
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 
-// convinence method to set properties common to all providers
+// Convenience method to set properties common to all providers
 // currently sets the delegate and purpose
 - (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
 
@@ -117,29 +126,37 @@
 // Checks the elapsed time and other variables to decide whether a foreground report is needed
 - (BOOL)shouldPerformAutoLocationUpdate;
 
-// Convinence method to check authorization before starting provider
-// Has the side effect of setting the delegate on the provider to self if the 
-// delegate is nil
+/**
+ * Convenience method to check authorization before starting provider
+ * Has the side effect of setting the delegate on the provider to self if the
+ * delegate is nil.
+ */
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
 
-// deprecated LOCATION SUPPORT
-// Use deprecated location calls
+/**
+ * deprecated LOCATION SUPPORT
+ * Use deprecated location calls
+ */
 + (BOOL)useDeprecatedMethods;
 
-// Standard location location update 
-- (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+/**
+ * Standard location location update
+ */
+- (void)standardLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
 
-// Sig change update method
-- (void)significantChangeDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+/**
+ * Sig change update method
+ */
+- (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
 
 // Single Location update logic
-- (void)singleLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation*)oldLocation;
+- (void)singleLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
 
 // Single Location when a good location is received
-- (void)stopSingleLocationWithLocation:(CLLocation*)location;
+- (void)stopSingleLocationWithLocation:(CLLocation *)location;
 
 // Stop single location when an error is returned, or the service timed out
-- (void)stopSingleLocationWithError:(NSError*)locationError;
+- (void)stopSingleLocationWithError:(NSError *)locationError;
 
 // Stop the single location service and cleanup the background task
 // Do not call this directly, instead, use stopSingleLocationWithLocation
@@ -147,7 +164,7 @@
 - (void)stopSingleLocation;
 
 // Error indicating a location service timed out before getting a location that meets accuracy requirements
-- (NSError*)locationTimeoutError;
+- (NSError *)locationTimeoutError;
 
 // Shuts down the single location service with a timeout error
 - (void)shutdownSingleLocationWithTimeoutError;

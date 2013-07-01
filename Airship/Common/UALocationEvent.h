@@ -53,7 +53,6 @@ extern NSString * const UAAnalyticsValueNone;
  * A UALocationEvent captures all the necessary information for
  * UAAnalytics
  */
-
 @interface UALocationEvent : UAEvent
 
 
@@ -69,7 +68,7 @@ extern NSString * const UAAnalyticsValueNone;
 - (id)initWithLocationContext:(NSDictionary *)context;
 
 /** 
- * Creates a UALocationEvent parsing the necessary data from the method parameters
+ * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
  * @param provider Provider that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
@@ -80,7 +79,7 @@ extern NSString * const UAAnalyticsValueNone;
          andUpdateType:(UALocationEventUpdateType *)updateType; 
 
 /** 
- * Creates a UALocationEvent parsing the necessary data form the method parameters.
+ * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
  * @param locationManager The location manager that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
@@ -91,7 +90,7 @@ extern NSString * const UAAnalyticsValueNone;
          andUpdateType:(UALocationEventUpdateType *)updateType;
 
 /**
- * Creates a UALocationEvent parsing the necessary data from the method parameters
+ * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
  * @param provider Provider that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
@@ -102,7 +101,7 @@ extern NSString * const UAAnalyticsValueNone;
                                  andUpdateType:(UALocationEventUpdateType *)updateType;
 
 /**
- * Creates a UALocationEvent parsing the necessary data form the method parameters.
+ * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
  * @param locationManager The location manager that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
@@ -118,21 +117,21 @@ extern NSString * const UAAnalyticsValueNone;
 ///---------------------------------------------------------------------------------------
 
 /** 
- * Creates a dictionary with the appropriate data gathered from the CLLocation
+ * Populates a dictionary with the appropriate data gathered from the CLLocation
  * @param dictionary The dictionary to populate with values
  * @param location Location to parse values from
  */
 - (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationValues:(CLLocation *)location;
 
 /** 
- * Creates a dictionary with the appropriate data gathered from the CLLocationManager
+ * Populates a dictionary with the appropriate data gathered from the CLLocationManager
  * @param dictionary The dictionary to populate with values
  * @param locationManager The location manager to parse values from
  */
 - (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationManagerValues:(CLLocationManager *)locationManager;
 
 /** 
- * Creates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
+ * Populates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
  * @param dictionary The dictionary to populate with values from the location provider
  * @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */

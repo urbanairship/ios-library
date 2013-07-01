@@ -24,7 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import <CoreLocation/CoreLocation.h>
-#import "UAirship.h"
+
 #import "UAirship+Internal.h"
 
 #import "UAUser.h"
