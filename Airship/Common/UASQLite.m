@@ -26,16 +26,12 @@
 #import "UASQLite.h"
 #import "UAGlobal.h"
 
-
 @implementation UASQLite
-
-@synthesize busyRetryTimeout;
-@synthesize dbPath;
 
 - (id)init {
     if ((self = [super init])) {
-        busyRetryTimeout = 1;
-        dbPath = nil;
+        self.busyRetryTimeout = 1;
+        self.dbPath = nil;
         db = nil;
     }
 
@@ -60,11 +56,11 @@
     [self close];
 
     if (sqlite3_open([aDBPath fileSystemRepresentation], &db) != SQLITE_OK) {
-        UALOG(@"SQLite Opening Error: %s", sqlite3_errmsg(db));
+        UA_LDEBUG(@"SQLite Opening Error: %s", sqlite3_errmsg(db));
         return NO;
     }
 
-    dbPath = [aDBPath retain];
+    self.dbPath = [aDBPath retain];
     return YES;
 }
 
@@ -77,20 +73,19 @@
     while (1) {
         rc = sqlite3_close(db);
         if (rc == SQLITE_OK) {
-            [dbPath release];
-            dbPath = nil;
+            self.dbPath = nil;
             db = nil;
             break;
         }
 
         if (rc == SQLITE_BUSY) {
-            if (numOfRetries++ >= busyRetryTimeout) {
-                UALOG(@"SQLite Busy, unable to close: %@", dbPath);
+            if (numOfRetries++ >= self.busyRetryTimeout) {
+                UA_LDEBUG(@"SQLite Busy, unable to close: %@", self.dbPath);
                 break;
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UALOG(@"SQLite %@ Closing Error: %s", dbPath, sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite %@ Closing Error: %s", self.dbPath, sqlite3_errmsg(db));
             break;
         }
     }
@@ -114,14 +109,14 @@
             return YES;
 
         if (rc == SQLITE_BUSY) {
-            if (numOfRetries++ >= busyRetryTimeout) {
-                UALOG(@"SQLite Busy: %@", dbPath);
+            if (numOfRetries++ >= self.busyRetryTimeout) {
+                UA_LDEBUG(@"SQLite Busy: %@", self.dbPath);
                 break;
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UALOG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
-            UALOG(@" - Query: %@", sql);
+            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@" - Query: %@", sql);
             break;
         }
     }
@@ -139,13 +134,13 @@
             return YES;
 
         if (rc == SQLITE_BUSY) {
-            if (numOfRetries++ >= busyRetryTimeout) {
-                UALOG(@"SQLite Busy: %@", dbPath);
+            if (numOfRetries++ >= self.busyRetryTimeout) {
+                UA_LDEBUG(@"SQLite Busy: %@", self.dbPath);
                 break;
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UALOG(@"SQLite Step Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite Step Failed: %s", sqlite3_errmsg(db));
             break;
         }
     }
@@ -192,13 +187,13 @@
             break;
 
         if (rc == SQLITE_BUSY) {
-            if (numOfRetries++ >= busyRetryTimeout) {
-                UALOG(@"SQLite Busy: %@", dbPath);
+            if (numOfRetries++ >= self.busyRetryTimeout) {
+                UA_LDEBUG(@"SQLite Busy: %@", self.dbPath);
                 break;
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UALOG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
             break;
         }
     }
@@ -297,7 +292,7 @@
         if ([sql characterAtIndex:i] == '?') {
             id arg = va_arg(args, id);
             if (!arg) {
-                UALOG(@"Update failed. Attempted to insert a nil value into DB.");
+                UA_LDEBUG(@"Update failed. Attempted to insert a nil value into DB.");
                 [argsArray release];// clean up before bailing
                 return NO;
             }

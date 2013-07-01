@@ -28,13 +28,11 @@
 #import "sqlite3.h"
 
 @interface UASQLite : NSObject {
-    NSInteger busyRetryTimeout;
-    NSString *dbPath;
     sqlite3 *db;
 }
 
-@property (readwrite) NSInteger busyRetryTimeout;
-@property (readonly) NSString *dbPath;
+@property (assign) NSInteger busyRetryTimeout;
+@property (copy) NSString *dbPath;
 
 - (id)initWithDBPath:(NSString *)aDBPath;
 
