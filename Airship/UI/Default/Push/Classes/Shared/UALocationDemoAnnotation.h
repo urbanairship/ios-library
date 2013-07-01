@@ -25,11 +25,7 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-@interface UALocationDemoAnnotation : NSObject <MKAnnotation> {
-    CLLocationCoordinate2D coordinate_;
-    NSString *title_;
-    NSString *subtitle_;
-}
+@interface UALocationDemoAnnotation : NSObject <MKAnnotation>
 
 @property (nonatomic, assign) CLLocationCoordinate2D coordinate;
 @property (nonatomic, readonly, copy) NSString *title;
