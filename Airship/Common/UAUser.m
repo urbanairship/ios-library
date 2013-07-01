@@ -258,9 +258,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark Update
 
 -(void)updateDefaultDeviceToken {
-
-    UA_LDEBUG(@"Updating device token.");
-
     if (![UAPush shared].deviceToken || ![self defaultUserCreated]){
 		UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
