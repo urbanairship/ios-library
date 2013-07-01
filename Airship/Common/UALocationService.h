@@ -168,7 +168,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 + (BOOL)locationServiceAuthorized;
 
 /**
- * This method checks the underlying Core Location service for to see if a user
+ * This method checks the underlying Core Location service to see if a user
  * will receive a prompt requesting permission for Core Location services to run.
  *
  * @warning On iOS < 4.2 This method's default value is YES until after an initial attempt to start location services
@@ -185,7 +185,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 + (BOOL)coreLocationWillPromptUserForPermissionToRun;
 
 /**
- * This flag will allows UA Location Services to re prompt the user to allow services
+ * This flag will allow UA Location Services to reprompt the user to allow services
  * The user may have explicitly disallowed location services, so reprompting them may not
  * be welcome. A value of NO (default value) will ensure that the user is only prompted in the
  * case where system location services have indicated that the user has not disabled location
@@ -202,7 +202,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * The most recently received location available from the CLLocationManager objec. This may be more accurate than
+ * The most recently received location available from the CLLocationManager object. This may be more accurate than
  * the last reported location, and it may also be nil. See CLLocationManager documentation for more details.
  * @return The most recent location, or nil if no locations are available
  */

@@ -68,6 +68,9 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
+/**
+ * The client for the Urban Airship device registration API.
+ */
 @property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
 
 /**
@@ -75,15 +78,18 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 
-/*
- * Parse a device token string out of the NSData string representation.
- * @param tokenStr NSString returned from [NSData* description]
+/**
+ * Parse a device token string from the NSData string representation.
+ * @param tokenStr NSString returned from [NSData description]
+ *
+ * @return The device token as a hex-encoded string without dashes or spaces.
  */
 - (NSString *)parseDeviceToken:(NSString *)tokenStr;
 
-
 /**
- * Return a dictionary representing the JSON payload of Push settings.
+ * Generate a payload object for the current push settings.
+ *
+ * @return The current push settings as a UADeviceRegistrationPayload.
  */
 - (UADeviceRegistrationPayload *)registrationPayload;
 
