@@ -314,9 +314,8 @@ enum {
         
         if (pushEnabledSwitch.on) {
             [self updateQuietTime];
-        } else {
-            [[UAPush shared] updateRegistration];
         }
+        
         dirty = NO;
     }
     
