@@ -31,7 +31,6 @@
 @class UAInboxMessage;
 
 #define UA_FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
-#define OLD_DB_NAME @"AirMail.db"
 #define DB_NAME @"UAInbox.db"
 
 @interface UAInboxDBManager : NSObject {
@@ -48,8 +47,6 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 - (void)deleteMessages:(NSArray *)messages;
 - (void)updateMessageAsRead:(UAInboxMessage *)msg;
 - (void)updateMessagesAsRead:(NSArray *)messages;
-
-- (void)removeLegacyDatabase;
 
 // Helper for development
 - (void)resetDB;

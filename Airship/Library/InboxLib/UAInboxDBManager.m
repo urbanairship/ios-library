@@ -61,55 +61,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
         UA_FMDBLogError
     }
-}   
-
-- (void)removeLegacyDatabase {
-    
-    NSArray *docPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [docPaths objectAtIndex:0];
-    NSString *oldDbPath = [documentsDirectory stringByAppendingPathComponent:OLD_DB_NAME];
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error = nil;
-    
-    if ([fileManager fileExistsAtPath:oldDbPath]) {
-        UA_LDEBUG(@"Removing legacy AirMail database and cache.");
-        [fileManager removeItemAtPath:oldDbPath error:&error];
-        
-        if (error) {
-            UA_LDEBUG(@"Failed to remove the old database: %@", [error localizedDescription]);
-            error = nil;//will be reused
-        }
-        
-        // clear the old caches
-        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesDirectory = [cachePaths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
-        
-        if ([fileManager fileExistsAtPath:diskCachePath]) {
-            [fileManager removeItemAtPath:diskCachePath error:&error];
-            
-            if (error) {
-                UA_LDEBUG(@"Failed to remove the old cache: %@", [error localizedDescription]);
-            }
-        }
-        
-    }
-    
 }
 
 - (void)createEditableCopyOfDatabaseIfNeeded {
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-
     NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
     NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
-    
-    if (![fileManager fileExistsAtPath:dbPath]) {
-        //move old db
-        [self removeLegacyDatabase];
-    }
 
     db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
     if (![db open]) {
