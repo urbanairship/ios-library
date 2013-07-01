@@ -467,7 +467,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 
     if (![self hasEventsToSend]) {
-        UA_LTRACE(@"No analytics events to upload");
+        UA_LTRACE(@"No analytics events to upload.");
         return NO;
     }
     
@@ -698,9 +698,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                 [self batchAndSendEventsWithCompletionBlock:completionBlock];
             } else {
                 if (!moreBatchesNecessary) {
-                    UA_LTRACE(@"no more events to upload");
+                    UA_LTRACE(@"No more events to upload.");
                 } else {
-                    UA_LTRACE(@"application state is background or inactive, not sending any more batches");
+                    UA_LTRACE(@"Application state is background or inactive, not sending any more batches.");
                 }
                 completionBlock();
             }
@@ -719,7 +719,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     NSTimeInterval delay = [self timeToWaitBeforeSendingNextBatch];
 
     if (delay) {
-        UA_LTRACE(@"Scheduling analytics batch update in %g seconds", delay);
+        UA_LTRACE(@"Scheduling analytics batch update in %g seconds.", delay);
     }
 
     UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:delay];
@@ -733,15 +733,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 //NOTE: this method is intended to be called from the main thread
 - (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
-    UA_LTRACE(@"Attempting to send analytics");
+    UA_LTRACE(@"Attempting to send analytics.");
 
     if (self.isSending) {
-        UA_LTRACE(@"Analytics upload in progress, skipping analytics send");
+        UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
         return;
     }
 
     if (![self shouldSendAnalytics]) {
-        UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send");
+        UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send.");
         completionBlock();
         return;
     }
