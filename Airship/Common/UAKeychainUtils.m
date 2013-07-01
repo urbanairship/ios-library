@@ -236,9 +236,6 @@ static NSString* _cachedDeviceID = nil;
         UALOG(@"Retrieved device id info from keychain.");
 		
         if (result) {
-            
-            UALOG(@"Device ID result is not nil.");
-            
             //grab the deviceId and associated model name
             deviceID = [[[NSString alloc] initWithData:[result valueForKey:(id)kSecValueData] encoding:NSUTF8StringEncoding] autorelease];
             modelName = [[[result objectForKey:(id)kSecAttrAccount] mutableCopy] autorelease];
@@ -248,6 +245,8 @@ static NSString* _cachedDeviceID = nil;
 
             UALOG(@"Loaded Device ID: %@", deviceID);
             UALOG(@"Loaded Model Name: %@", modelName);
+        } else {
+            UALOG(@"Device ID result is nil.");
         }
 	}
     
