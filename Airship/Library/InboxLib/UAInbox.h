@@ -106,16 +106,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * This class bridges library functionality with the UI and is the main point of interaction.
  * Most implementations will only use functionality found in this class.
  */
-@interface UAInbox : NSObject {
-  @private
-    UAInboxMessageList *messageList;
-	UAInboxPushHandler *pushHandler;
-	
-    id<UAInboxJavaScriptDelegate> jsDelegate;
-    
-	NSURLCache *clientCache;
-    NSURLCache *inboxCache;
-}
+@interface UAInbox : NSObject
 
 SINGLETON_INTERFACE(UAInbox);
 
