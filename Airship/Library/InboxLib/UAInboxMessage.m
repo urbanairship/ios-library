@@ -49,16 +49,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @implementation UAInboxMessage
 
-@synthesize messageID;
-@synthesize messageBodyURL;
-@synthesize messageURL;
-@synthesize contentType;
-@synthesize unread;
-@synthesize messageSent;
-@synthesize title;
-@synthesize extra;
-@synthesize inbox; //TODO: this could be removed and replaced with a singleton reference
-
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
     if (self = [super init]) {
 
@@ -94,13 +84,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(messageID);
-    RELEASE_SAFELY(messageBodyURL);
-    RELEASE_SAFELY(messageURL);
-    RELEASE_SAFELY(contentType);
-    RELEASE_SAFELY(messageSent);
-    RELEASE_SAFELY(title);
-    RELEASE_SAFELY(extra);
+    self.messageID = nil;
+    self.messageBodyURL = nil;
+    self.messageURL = nil;
+    self.contentType = nil;
+    self.messageSent = nil;
+    self.title = nil;
+    self.extra = nil;
     self.client = nil;
     [super dealloc];
 }
@@ -125,12 +115,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // NSObject override
 - (NSUInteger)hash {
-    return [messageID hash];
+    return [self.messageID hash];
 }
 
 // NSObject override
 - (NSString *)description {
-    return [NSString stringWithFormat: @"%@ - %@", messageID, title];
+    return [NSString stringWithFormat: @"%@ - %@", self.messageID, self.title];
 }
 
 #pragma mark -
@@ -138,31 +128,31 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (BOOL)markAsRead {
     
-    if (!unread) {
+    if (!self.unread) {
         return YES;
     }
     
-    if (inbox.isBatchUpdating) {
+    if (self.inbox.isBatchUpdating) {
         return NO;
     }
     
-    inbox.isBatchUpdating = YES;
+    self.inbox.isBatchUpdating = YES;
 
     [self.client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
-             inbox.unreadCount = inbox.unreadCount - 1;
+             self.inbox.unreadCount = self.inbox.unreadCount - 1;
              self.unread = NO;
              [[UAInboxDBManager shared] updateMessageAsRead:self];
          }
 
-         inbox.isBatchUpdating = NO;
-         [inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+         self.inbox.isBatchUpdating = NO;
+         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 
      }onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
-         inbox.isBatchUpdating = NO;
-         [inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
+         self.inbox.isBatchUpdating = NO;
+         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
 
     return YES;
