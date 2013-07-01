@@ -106,12 +106,14 @@ static UAInboxMessageList *_messageList = nil;
 - (void)retrieveMessageList {
     
     if (![[UAUser defaultUser] defaultUserCreated]) {
-        UA_LDEBUG("Waiting for User Update message to retrieveMessageList.");
+        UA_LDEBUG("Postponing retrieving message list once the user is created.");
         [[UAUser defaultUser] onceCreated:^{
             [self retrieveMessageList];
         }];
         return;
     }
+
+    UA_LDEBUG("Retrieving message list.");
 
     [self notifyObservers: @selector(messageListWillLoad)];
     [self loadSavedMessages];

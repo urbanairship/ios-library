@@ -32,26 +32,23 @@
 }
 
 - (UAHTTPRequest *)requestToMarkMessageRead:(UAInboxMessage *)message {
-    
     NSString *urlString = [NSString stringWithFormat: @"%@%@", message.messageURL, @"read/"];
     NSURL *url = [NSURL URLWithString: urlString];
-    UA_LDEBUG(@"MARK AS READ %@", urlString);
-
+    
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:url method:@"POST"];
-
+    
+    UA_LTRACE(@"Request to mark message as read: %@", urlString);
     return request;
 }
 
 - (UAHTTPRequest *)requestToRetrieveMessageList {
     NSString *urlString = [NSString stringWithFormat: @"%@%@%@%@",
                            [UAirship shared].config.deviceAPIURL, @"/api/user/", [UAUser defaultUser].username ,@"/messages/"];
-
-
-    UA_LDEBUG(@"%@",urlString);
     NSURL *requestUrl = [NSURL URLWithString: urlString];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl method:@"GET"];
-
+    
+    UA_LTRACE(@"Request to retrieve message list: %@", urlString);
     return request;
 }
 
@@ -67,7 +64,6 @@
                            [UAUser defaultUser].username,
                            @"/messages/delete/"];
     requestUrl = [NSURL URLWithString:urlString];
-    UA_LDEBUG(@"batch delete url: %@", requestUrl);
 
     data = @{@"delete" : updateMessageURLs};
 
@@ -81,6 +77,7 @@
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
+    UA_LTRACE(@"Request to perform batch delete: %@  body: %@", requestUrl, body);
     return request;
 }
 
@@ -96,7 +93,6 @@
                            [UAUser defaultUser].username,
                            @"/messages/unread/"];
     requestUrl = [NSURL URLWithString:urlString];
-    UA_LDEBUG(@"batch mark as read url: %@", requestUrl);
 
     data = @{@"mark_as_read" : updateMessageURLs};
 
@@ -110,6 +106,7 @@
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
+    UA_LTRACE(@"Request to perfom batch mark messages as readS: %@ body: %@", requestUrl, body);
     return request;
 }
 
@@ -146,7 +143,7 @@
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
           UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
           NSDictionary *jsonResponse = [parser objectWithString:request.responseString];
-          UA_LDEBUG(@"Retrieved Messages: %@", request.responseString);
+          UA_LTRACE(@"Retrieved message list respose: %@", request.responseString);
 
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];
