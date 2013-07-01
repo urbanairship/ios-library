@@ -94,15 +94,17 @@
 - (void)handleBadgeUpdate:(NSInteger)badgeNumber;
 
 /**
- * Called when a push notification is received while the app is running in the foreground
- * @param notification basic information about the notification
+ * Called when a push notification is received while the app is running in the foreground.
+ *
+ * @param notification The notification dictionary.
  */
 - (void)receivedForegroundNotification:(NSDictionary *)notification;
 
 
 /**
  * Called when the app is started or resumed because a user opened a notification.
- * @param notification the push notification
+ *
+ * @param notification The notification dictionary.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 @end
