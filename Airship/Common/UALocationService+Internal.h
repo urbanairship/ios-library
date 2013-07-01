@@ -24,6 +24,7 @@
  */
 
 #import <CoreLocation/CoreLocation.h>
+
 #import "UALocationService.h"
 #import "UABaseLocationProvider.h"
 

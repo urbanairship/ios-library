@@ -27,7 +27,6 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 
-#import "UALocationService.h"
 #import "UALocationService+Internal.h"
 #import "UALocationEvent.h"
 #import "UALocationCommonValues.h"

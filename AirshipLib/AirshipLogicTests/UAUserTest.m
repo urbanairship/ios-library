@@ -1,6 +1,7 @@
 
 #import "UAUserTest.h"
 #import "UAUser+Internal.h"
+
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 

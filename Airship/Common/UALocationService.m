@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UALocationService.h"
 #import "UALocationService+Internal.h"
 #import "UABaseLocationProvider.h"
 #import "UAGlobal.h"

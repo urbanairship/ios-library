@@ -27,7 +27,6 @@
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "UAAnalytics.h"
 #import "UAConfig.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"

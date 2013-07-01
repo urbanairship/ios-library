@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAUser.h"
 #import "UAUser+Internal.h"
 #import "UAUserAPIClient.h"
 #import "UAirship.h"
