@@ -73,11 +73,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSError *error = nil;
     
     if ([fileManager fileExistsAtPath:oldDbPath]) {
-        UALOG(@"Removing legacy AirMail database and cache");
+        UA_LDEBUG(@"Removing legacy AirMail database and cache.");
         [fileManager removeItemAtPath:oldDbPath error:&error];
         
         if (error) {
-            UALOG(@"Failed to remove the old database. %@", [error localizedDescription]);
+            UA_LDEBUG(@"Failed to remove the old database: %@", [error localizedDescription]);
             error = nil;//will be reused
         }
         
@@ -90,7 +90,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
             [fileManager removeItemAtPath:diskCachePath error:&error];
             
             if (error) {
-                UALOG(@"Failed to remove the old cache. %@", [error localizedDescription]);
+                UA_LDEBUG(@"Failed to remove the old cache: %@", [error localizedDescription]);
             }
         }
         
@@ -113,7 +113,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
     db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
     if (![db open]) {
-        UALOG(@"Failed to open database");
+        UA_LDEBUG(@"Failed to open database.");
     }
 }
 
@@ -180,7 +180,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
     NSString *deleteStmt = [NSString stringWithFormat:
                             @"DELETE FROM messages WHERE id IN (%@)", idsString];
-    UALOG(@"batch delete statement: %@", deleteStmt);
+    
+    UA_LTRACE(@"Delete messages statement: %@", deleteStmt);
 
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
@@ -196,12 +197,13 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (void)updateMessagesAsRead:(NSArray *)messages {
     NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
     NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
-    NSString *deleteStmt = [NSString stringWithFormat:
+    NSString *updateStmt = [NSString stringWithFormat:
                             @"UPDATE messages SET unread = 0 WHERE id IN (%@)", idsString];
-    UALOG(@"batch mark as read statement: %@", deleteStmt);
+
+    UA_LTRACE(@"Update messages as read statement: %@", updateStmt);
 
     [db beginTransaction];
-    [db executeUpdate:deleteStmt];
+    [db executeUpdate:updateStmt];
     [db commit];
     UA_FMDBLogError
 }

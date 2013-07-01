@@ -100,7 +100,7 @@ static UAInboxMessageList *_messageList = nil;
     }
 
     self.messages = [[[NSMutableArray alloc] initWithArray:savedMessages] autorelease];
-    UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
+    UA_LDEBUG(@"Loaded saved messages: %@.", messages);
 }
 
 - (void)retrieveMessageList {
@@ -168,6 +168,7 @@ static UAInboxMessageList *_messageList = nil;
     };
 
     if (command == UABatchDeleteMessages) {
+        UA_LDEBUG("Deleting messages: %@", updateMessageArray);
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             succeed();
             [messages removeObjectsInArray:updateMessageArray];
@@ -180,6 +181,7 @@ static UAInboxMessageList *_messageList = nil;
         }];
 
     } else if (command == UABatchReadMessages) {
+        UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             succeed();
             [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
