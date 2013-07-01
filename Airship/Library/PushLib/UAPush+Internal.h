@@ -52,20 +52,27 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 @interface UAPush ()
 
-/* Default push handler. */
+/**
+ * Default push handler.
+ */
 @property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
-/* Device token as a string */
+/**
+ * Device token as a string.
+ */
 @property (nonatomic, copy) NSString *deviceToken;
 
-/* Indicates that the app has entered the background once
+/**
+ * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
 @property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
 
-/* Get the local time zone, considered the default. */
+/**
+ * Get the local time zone, considered the default.
+ */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 
 /*
@@ -75,21 +82,33 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 - (NSString *)parseDeviceToken:(NSString *)tokenStr;
 
 
-/* Return a dictionary representing the JSON payload of Push settings. */
+/**
+ * Return a dictionary representing the JSON payload of Push settings.
+ */
 - (UADeviceRegistrationPayload *)registrationPayload;
 
-/* Called on foreground notifications, triggers an updateRegistration
+/**
+ * Called on active NSNotificationCenter notifications (on "active" rather than "foreground" so that we
+ * can capture the push ID sent with a converting push). Triggers an updateRegistration.
  */
 - (void)applicationDidBecomeActive;
 
-/* Called to set a flag on foreground to prevent double registration on 
- * app init
+/**
+ * Used to clear a flag set on foreground to prevent double registration on
+ * app init.
  */
 - (void)applicationDidEnterBackground;
 
-/* Register the user defaults for this class. You should not need to call this method
- unless you are bypassing UAirship
+/**
+ * Register the user defaults for this class. You should not need to call this method
+ * unless you are bypassing UAirship
  */
 + (void)registerNSUserDefaults;
+
+/**
+ * Clean up when app is terminated. You should not ordinarily call this method as it is called
+ * during [UAirship land].
+ */
++ (void)land;
 
 @end

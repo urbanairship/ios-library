@@ -29,8 +29,9 @@
 
 /**
  * This is the base class for location providers. You should not
- * implement this class directly. See the documentation for CLLocationManager for
- * CLLocationManager details. https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html
+ * implement this class directly. See the 
+ * [CLLocationManager documentation](https://developer.apple.com/library/ios/#documentation/CoreLocation/Reference/CLLocationManager_Class/CLLocationManager/CLLocationManager.html)
+ * for details.
  */
 @interface UABaseLocationProvider : NSObject<CLLocationManagerDelegate, UALocationProviderProtocol>
 

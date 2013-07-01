@@ -39,7 +39,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
- * called from `[UIApplication application:didFinishLaunchingWithOptions]` to initialize the shared
+ * called from `[UIApplication application:didFinishLaunchingWithOptions:]` to initialize the shared
  * instance.
  */
 @interface UAirship : NSObject
@@ -47,7 +47,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /**
  * The application configuration. This is set on takeOff.
  */
-@property (nonatomic, retain) UAConfig *config;
+@property (nonatomic, retain, readonly) UAConfig *config;
 
 /**
  * The current APNS/remote notification device token.
@@ -58,19 +58,19 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * The shared analytics manager. There are not currently any user-defined events,
  * so this is for internal library use only at this time.
  */
-@property (nonatomic, retain) UAAnalytics *analytics;
+@property (nonatomic, retain, readonly) UAAnalytics *analytics;
 
 /**
  * This flag is set to `YES` if the shared instance of
  * UAirship has been initialized and is ready for use.
  */
-@property (nonatomic, assign) BOOL ready;
+@property (nonatomic, assign, readonly) BOOL ready;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Services
 ///---------------------------------------------------------------------------------------
 
-@property (nonatomic, retain, getter = locationService) UALocationService *locationService;
+@property (nonatomic, retain, readonly) UALocationService *locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
@@ -78,7 +78,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * Enables or disables logging. Logging is enabled by default, though the log level must still be set
- * to an appropriate value. This flag overrides the AirshipConfig settings if called after takeOff.
+ * to an appropriate value.
  *
  * @param enabled If `YES`, console logging is enabled.
  */
@@ -86,9 +86,9 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * Sets the log level for the Urban Airship library. The log level defaults to `UALogLevelDebug`
- * for development apps, and `UALogLevelError` for production apps (when the APP_STORE_OR_AD_HOC_BUILD
- * AirshipConfig flag is set to `YES`). Setting `LOG_LEVEL` in the AirshipConfig settings will override
- * these defaults, but will not override a value set with this method.
+ * for development apps, and `UALogLevelError` for production apps (when the inProduction
+ * AirshipConfig flag is set to `YES`). Values set with this method prior to `takeOff` will be overridden
+ * during takeOff.
  * 
  * @param level The desired `UALogLevel` value.
  */
@@ -103,27 +103,26 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * configuration values, initializes the analytics/reporting
  * module and creates a UAUser if one does not already exist.
  * 
- * This method must be called from your application delegate's
- * application:didFinishLaunchingWithOptions: method, and it may be called
- * only once. The `UIApplication` options MUST be passed in.
+ * This method *must* be called from your application delegate's
+ * `application:didFinishLaunchingWithOptions:` method, and it may be called
+ * only once.
  *
- * @warning *Important:* takeOff: must be called on the main thread. This method will throw
- * an UAirshipTakeOffMainThreadException if it is run on a background thread.
- * @param config The AirshipConfig plist file.
+ * @warning `takeOff:` must be called on the main thread. This method will throw
+ * an `UAirshipTakeOffMainThreadException` if it is run on a background thread.
+ * @param config The populated UAConfig to use.
  *
  */
 + (void)takeOff:(UAConfig *)config;
 
 /**
- * Simplified takeOff method that uses AirshipConfig.plist for initialization.
+ * Simplified `takeOff` method that uses `AirshipConfig.plist` for initialization.
  */
 + (void)takeOff;
 
 /**
- * Returns the shared `UAirship` instance. This will raise an exception
- * if [UAirship takeOff:] has not been called.
+ * Returns the shared `UAirship` instance.
  *
- * @return The shared UAirship instance.
+ * @return The shared `UAirship` instance.
  */
 + (UAirship *)shared;
 

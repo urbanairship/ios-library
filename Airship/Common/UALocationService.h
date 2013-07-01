@@ -66,7 +66,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * @param service Location service that generated the error
  * @param error Error passed from a CLLocationManager
  */
-- (void)locationService:(UALocationService *)service didFailWithError:(NSError* )error;
+- (void)locationService:(UALocationService *)service didFailWithError:(NSError *)error;
 
 /**
  * Updates the delegate when authorization status has changed
