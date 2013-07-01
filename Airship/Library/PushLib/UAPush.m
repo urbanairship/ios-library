@@ -163,7 +163,7 @@ static Class _uiClass;
         // It is cleared on successful unregistration
 
         if (enabled) {
-            UA_LDEBUG(@"registering for remote notifcations");
+            UA_LDEBUG(@"Registering for remote notifcations");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
@@ -286,7 +286,7 @@ static Class _uiClass;
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to) {
-        UA_LDEBUG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
+        UA_LERR(@"Unable to set quiet time, paramater is nil. From: %@ To: %@", from, to);
         return;
     }
 
@@ -479,12 +479,9 @@ static Class _uiClass;
 #pragma mark UIApplication State Observation
 
 - (void)applicationDidBecomeActive {
-    UA_LDEBUG(@"Checking registration status after foreground notification");
     if (self.hasEnteredBackground) {
+        UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
         [self updateRegistration];
-    }
-    else {
-        UA_LDEBUG(@"Checking registration on app foreground disabled on app initialization");
     }
 }
 
@@ -572,7 +569,7 @@ static Class _uiClass;
 //The new token to register, or nil if updating the existing token 
 - (void)registerDeviceToken:(NSData *)token {
     if (!self.notificationTypes) {
-        UA_LDEBUG(@"***ERROR***: attempted to register device token with no notificationTypes set!  \
+        UA_LERR(@"Attempted to register device token with no notificationTypes set!  \
               Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication");
         return;
     }

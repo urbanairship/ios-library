@@ -32,7 +32,7 @@
 @implementation UAAutoAppDelegate
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    UA_LINFO(@"APNS device token: %@", deviceToken);
+    UA_LTRACE(@"APNS device token: %@", deviceToken);
 
     // Updates the device token and registers the token with UA. This won't occur until
     // push is enabled if the outlined process is followed. This call is required.

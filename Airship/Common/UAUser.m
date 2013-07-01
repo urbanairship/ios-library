@@ -266,7 +266,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     NSString *deviceToken = [UAPush shared].deviceToken;
 
     [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *updatedToken) {
-        UA_LDEBUG(@"Logged last updated key %@", updatedToken);
+        UA_LINFO(@"Device token updated to: %@", updatedToken);
     } onFailure:^(UAHTTPRequest *request) {
         UA_LDEBUG(@"Device token update failed with status: %d", request.response.statusCode);
     }];
@@ -277,9 +277,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 // Ensure the methods that need token are invoked even after inbox was created
 - (void)listenForDeviceTokenReg {
-    
-    UA_LDEBUG(@"ListenForDeviceTokenReg");
-    
     if (self.isObservingDeviceToken) {
         return;
     }
@@ -310,7 +307,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                       context:(void *)context {
     
     if ([keyPath isEqualToString:@"deviceToken"]) {
-        UA_LDEBUG(@"KVO device token modified");
+        UA_LTRACE(@"KVO device token modified.");
         [self cancelListeningForDeviceToken];
         [self updateDefaultDeviceToken];
     }
