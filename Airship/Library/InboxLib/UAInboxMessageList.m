@@ -52,16 +52,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInboxMessageList
 
-@synthesize messages;
-@synthesize unreadCount;
-@synthesize isBatchUpdating;
-
 #pragma mark Create Inbox
 
 static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
-    RELEASE_SAFELY(messages);
+    self.messages = nil;
     self.client = nil;
     [super dealloc];
 }
@@ -124,13 +120,13 @@ static UAInboxMessageList *_messageList = nil;
 
         self.isRetrieving = NO;
 
-        [[UAInboxDBManager shared] deleteMessages:messages];
+        [[UAInboxDBManager shared] deleteMessages:self.messages];
         [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
         self.messages = newMessages;
 
-        unreadCount = unread;
+        self.unreadCount = unread;
 
-        UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", messages);
+        UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
@@ -147,7 +143,7 @@ static UAInboxMessageList *_messageList = nil;
         return;
     }
 
-    NSArray *updateMessageArray = [messages objectsAtIndexes:messageIndexSet];
+    NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
 
     self.isBatchUpdating = YES;
     [self notifyObservers: @selector(messageListWillLoad)];
@@ -170,7 +166,7 @@ static UAInboxMessageList *_messageList = nil;
     if (command == UABatchDeleteMessages) {
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             succeed();
-            [messages removeObjectsInArray:updateMessageArray];
+            [self.messages removeObjectsInArray:updateMessageArray];
             // TODO: add delete to sync
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
@@ -195,11 +191,11 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Get messages
 
 - (int)messageCount {
-    return [messages count];
+    return [self.messages count];
 }
 
 - (UAInboxMessage *)messageForID:(NSString *)mid {
-    for (UAInboxMessage *msg in messages) {
+    for (UAInboxMessage *msg in self.messages) {
         if ([msg.messageID isEqualToString:mid]) {
             return msg;
         }
@@ -208,15 +204,15 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (UAInboxMessage *)messageAtIndex:(int)index {
-    if (index < 0 || index >= [messages count]) {
-        UA_LWARN("Load message(index=%d, count=%d) error.", index, [messages count]);
+    if (index < 0 || index >= [self.messages count]) {
+        UA_LWARN("Load message(index=%d, count=%d) error.", index, [self.messages count]);
         return nil;
     }
-    return [messages objectAtIndex:index];
+    return [self.messages objectAtIndex:index];
 }
 
 - (int)indexOfMessage:(UAInboxMessage *)message {
-    return [messages indexOfObject:message];
+    return [self.messages indexOfObject:message];
 }
 
 @end

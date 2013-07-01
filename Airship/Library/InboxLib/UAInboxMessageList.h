@@ -45,14 +45,7 @@ typedef enum {
  * delete or mark messages as read, retrieve individual messages from the
  * list.
  */
-@interface UAInboxMessageList : UAObservable  {
-  @private
-    NSMutableArray *messages;
-    // If unreadCount < 0, that means the message list hasn't retrieved.
-    int unreadCount;
-    BOOL isBatchUpdating;
-}
-
+@interface UAInboxMessageList : UAObservable
 /**
  * The shared singleton accessor.
  */
