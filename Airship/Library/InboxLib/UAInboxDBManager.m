@@ -61,59 +61,16 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
         UA_FMDBLogError
     }
-}   
-
-- (void)removeLegacyDatabase {
-    
-    NSArray *docPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [docPaths objectAtIndex:0];
-    NSString *oldDbPath = [documentsDirectory stringByAppendingPathComponent:OLD_DB_NAME];
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSError *error = nil;
-    
-    if ([fileManager fileExistsAtPath:oldDbPath]) {
-        UALOG(@"Removing legacy AirMail database and cache");
-        [fileManager removeItemAtPath:oldDbPath error:&error];
-        
-        if (error) {
-            UALOG(@"Failed to remove the old database. %@", [error localizedDescription]);
-            error = nil;//will be reused
-        }
-        
-        // clear the old caches
-        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesDirectory = [cachePaths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cachesDirectory, @"UAInboxCache"];
-        
-        if ([fileManager fileExistsAtPath:diskCachePath]) {
-            [fileManager removeItemAtPath:diskCachePath error:&error];
-            
-            if (error) {
-                UALOG(@"Failed to remove the old cache. %@", [error localizedDescription]);
-            }
-        }
-        
-    }
-    
 }
 
 - (void)createEditableCopyOfDatabaseIfNeeded {
-
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-
     NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
     NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
-    
-    if (![fileManager fileExistsAtPath:dbPath]) {
-        //move old db
-        [self removeLegacyDatabase];
-    }
 
     db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
     if (![db open]) {
-        UALOG(@"Failed to open database");
+        UA_LDEBUG(@"Failed to open database.");
     }
 }
 
@@ -180,7 +137,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
     NSString *deleteStmt = [NSString stringWithFormat:
                             @"DELETE FROM messages WHERE id IN (%@)", idsString];
-    UALOG(@"batch delete statement: %@", deleteStmt);
+    
+    UA_LTRACE(@"Delete messages statement: %@", deleteStmt);
 
     [db beginTransaction];
     [db executeUpdate:deleteStmt];
@@ -196,12 +154,13 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (void)updateMessagesAsRead:(NSArray *)messages {
     NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
     NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
-    NSString *deleteStmt = [NSString stringWithFormat:
+    NSString *updateStmt = [NSString stringWithFormat:
                             @"UPDATE messages SET unread = 0 WHERE id IN (%@)", idsString];
-    UALOG(@"batch mark as read statement: %@", deleteStmt);
+
+    UA_LTRACE(@"Update messages as read statement: %@", updateStmt);
 
     [db beginTransaction];
-    [db executeUpdate:deleteStmt];
+    [db executeUpdate:updateStmt];
     [db commit];
     UA_FMDBLogError
 }

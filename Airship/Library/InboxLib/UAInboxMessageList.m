@@ -130,7 +130,7 @@ static UAInboxMessageList *_messageList = nil;
 
         unreadCount = unread;
 
-        UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", messages);
+        UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
@@ -168,9 +168,10 @@ static UAInboxMessageList *_messageList = nil;
     };
 
     if (command == UABatchDeleteMessages) {
+        UA_LDEBUG("Deleting messages: %@", updateMessageArray);
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             succeed();
-            [messages removeObjectsInArray:updateMessageArray];
+            [self.messages removeObjectsInArray:updateMessageArray];
             // TODO: add delete to sync
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
@@ -180,6 +181,7 @@ static UAInboxMessageList *_messageList = nil;
         }];
 
     } else if (command == UABatchReadMessages) {
+        UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             succeed();
             [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
@@ -195,11 +197,11 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Get messages
 
 - (int)messageCount {
-    return [messages count];
+    return [self.messages count];
 }
 
 - (UAInboxMessage *)messageForID:(NSString *)mid {
-    for (UAInboxMessage *msg in messages) {
+    for (UAInboxMessage *msg in self.messages) {
         if ([msg.messageID isEqualToString:mid]) {
             return msg;
         }
@@ -208,15 +210,15 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (UAInboxMessage *)messageAtIndex:(int)index {
-    if (index < 0 || index >= [messages count]) {
-        UA_LWARN("Load message(index=%d, count=%d) error.", index, [messages count]);
+    if (index < 0 || index >= [self.messages count]) {
+        UA_LWARN("Load message(index=%d, count=%d) error.", index, [self.messages count]);
         return nil;
     }
-    return [messages objectAtIndex:index];
+    return [self.messages objectAtIndex:index];
 }
 
 - (int)indexOfMessage:(UAInboxMessage *)message {
-    return [messages indexOfObject:message];
+    return [self.messages indexOfObject:message];
 }
 
 @end
