@@ -107,7 +107,7 @@
 - (UAStandardLocationProvider *)singleLocationProvider;
 - (void)setSingleLocationProvider:(UAStandardLocationProvider*)singleLocationProvider;
 
-// convinence method to set properties common to all providers
+// Convenience method to set properties common to all providers
 // currently sets the delegate and purpose
 - (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
 
@@ -127,7 +127,7 @@
 - (BOOL)shouldPerformAutoLocationUpdate;
 
 /**
- * Convinence method to check authorization before starting provider
+ * Convenience method to check authorization before starting provider
  * Has the side effect of setting the delegate on the provider to self if the
  * delegate is nil.
  */
