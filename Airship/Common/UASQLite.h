@@ -28,7 +28,7 @@
 #import "sqlite3.h"
 
 @interface UASQLite : NSObject {
-    sqlite3 *db;
+    sqlite3 *_db;
 }
 
 @property (assign) NSInteger busyRetryTimeout;

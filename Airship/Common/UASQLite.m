@@ -32,7 +32,7 @@
     if ((self = [super init])) {
         self.busyRetryTimeout = 1;
         self.dbPath = nil;
-        db = nil;
+        _db = nil;
     }
 
     return self;
@@ -55,8 +55,8 @@
 - (BOOL)open:(NSString *)aDBPath {
     [self close];
 
-    if (sqlite3_open([aDBPath fileSystemRepresentation], &db) != SQLITE_OK) {
-        UA_LDEBUG(@"SQLite Opening Error: %s", sqlite3_errmsg(db));
+    if (sqlite3_open([aDBPath fileSystemRepresentation], &_db) != SQLITE_OK) {
+        UA_LDEBUG(@"SQLite Opening Error: %s", sqlite3_errmsg(_db));
         return NO;
     }
 
@@ -65,16 +65,16 @@
 }
 
 - (void)close {
-    if (db == nil) return;
+    if (_db == nil) return;
 
     int numOfRetries = 0;
     int rc;
 
     while (1) {
-        rc = sqlite3_close(db);
+        rc = sqlite3_close(_db);
         if (rc == SQLITE_OK) {
             self.dbPath = nil;
-            db = nil;
+            _db = nil;
             break;
         }
 
@@ -85,18 +85,18 @@
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UA_LDEBUG(@"SQLite %@ Closing Error: %s", self.dbPath, sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite %@ Closing Error: %s", self.dbPath, sqlite3_errmsg(_db));
             break;
         }
     }
 }
 
 - (NSString*) lastErrorMessage {
-    return [NSString stringWithFormat:@"%s", sqlite3_errmsg(db)];
+    return [NSString stringWithFormat:@"%s", sqlite3_errmsg(_db)];
 }
 
 - (NSInteger) lastErrorCode {
-    return sqlite3_errcode(db);
+    return sqlite3_errcode(_db);
 }
 
 - (BOOL)prepareSql:(NSString *)sql inStatament:(sqlite3_stmt **)stmt {
@@ -104,7 +104,7 @@
     int rc;
 
     while (1) {
-        rc = sqlite3_prepare_v2(db, [sql UTF8String], -1, stmt, NULL);
+        rc = sqlite3_prepare_v2(_db, [sql UTF8String], -1, stmt, NULL);
         if (rc == SQLITE_OK)
             return YES;
 
@@ -115,7 +115,7 @@
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(_db));
             UA_LDEBUG(@" - Query: %@", sql);
             break;
         }
@@ -140,7 +140,7 @@
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UA_LDEBUG(@"SQLite Step Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite Step Failed: %s", sqlite3_errmsg(_db));
             break;
         }
     }
@@ -193,7 +193,7 @@
             }
             [NSThread sleepForTimeInterval:0.02];
         } else {
-            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(db));
+            UA_LDEBUG(@"SQLite Prepare Failed: %s", sqlite3_errmsg(_db));
             break;
         }
     }
