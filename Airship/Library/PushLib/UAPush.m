@@ -505,7 +505,7 @@ static Class _uiClass;
         
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping DT registration. The app is currently backgrounded.");
+        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
         return;
     }
     
