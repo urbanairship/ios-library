@@ -289,10 +289,13 @@ static Class _uiClass;
         UA_LDEBUG(@"Set Quiet Time - parameter is nil. from: %@ to: %@", from, to);
         return;
     }
+
     if (!timezone) {
         timezone = [self defaultTimeZoneForQuietTime];
     }
+
     NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    
     NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
                               [cal components:NSHourCalendarUnit fromDate:from].hour,
                               [cal components:NSMinuteCalendarUnit fromDate:from].minute];
@@ -300,11 +303,14 @@ static Class _uiClass;
     NSString *endTimeStr = [NSString stringWithFormat:@"%d:%02d",
                             [cal components:NSHourCalendarUnit fromDate:to].hour,
                             [cal components:NSMinuteCalendarUnit fromDate:to].minute];
-    
+
+    UA_LDEBUG("Setting quiet time: (%@) %@ to %@", [timezone name], startTimeStr, endTimeStr);
+
     self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
                        UAPushQuietTimeEndKey : endTimeStr };
-    
+
     self.timeZone = timezone;
+
 }
 
 
