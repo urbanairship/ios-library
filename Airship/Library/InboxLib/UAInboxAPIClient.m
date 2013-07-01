@@ -56,7 +56,6 @@
     NSURL *requestUrl;
     NSDictionary *data;
     NSArray *updateMessageURLs = [messages valueForKeyPath:@"messageURL.absoluteString"];
-    UA_LDEBUG(@"%@", updateMessageURLs);
 
     NSString *urlString = [NSString stringWithFormat:@"%@%@%@%@",
                            [UAirship shared].config.deviceAPIURL,
