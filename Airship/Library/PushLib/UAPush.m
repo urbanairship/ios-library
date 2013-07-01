@@ -163,7 +163,7 @@ static Class _uiClass;
         // It is cleared on successful unregistration
 
         if (enabled) {
-            UA_LDEBUG(@"Registering for remote notifications");
+            UA_LDEBUG(@"Registering for remote notifications.");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
@@ -375,7 +375,7 @@ static Class _uiClass;
     // we are post-registration and will need to make
     // and update call
     if (self.autobadgeEnabled && self.deviceToken) {
-        UA_LDEBUG(@"Sending autobadge update to UA server");
+        UA_LDEBUG(@"Sending autobadge update to UA server.");
         [self updateRegistrationForcefully:YES];
     }
 }
@@ -557,7 +557,7 @@ static Class _uiClass;
              forcefully:forcefully];
         }
         else {
-            UA_LDEBUG(@"Device has already been unregistered, no update scheduled");
+            UA_LDEBUG(@"Device has already been unregistered, no update scheduled.");
         }
     }
 }
@@ -570,7 +570,7 @@ static Class _uiClass;
 - (void)registerDeviceToken:(NSData *)token {
     if (!self.notificationTypes) {
         UA_LERR(@"Attempted to register device token with no notificationTypes set!  \
-              Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication");
+              Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication.");
         return;
     }
     self.deviceToken = [self parseDeviceToken:[token description]];
