@@ -33,9 +33,9 @@
 
 @interface UAEvent : NSObject
 
-@property (nonatomic, readonly) NSString *time;
-@property (nonatomic, readonly) NSString *event_id;
-@property (nonatomic, readonly) NSMutableDictionary *data;
+@property (nonatomic, readonly, copy) NSString *time;
+@property (nonatomic, readonly, copy) NSString *event_id;
+@property (nonatomic, readonly, retain) NSMutableDictionary *data;
 
 + (id)event;
 - (id)initWithContext:(NSDictionary *)context;

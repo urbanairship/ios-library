@@ -42,10 +42,10 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (assign, nonatomic) BOOL compressBody;
 @property (retain, nonatomic) id userInfo;
 
-@property (readonly, nonatomic) NSHTTPURLResponse *response;
+@property (readonly, retain, nonatomic) NSHTTPURLResponse *response;
 @property (readonly, nonatomic) NSString *responseString;
-@property (readonly, nonatomic) NSData *responseData;
-@property (readonly, nonatomic) NSError *error;
+@property (readonly, retain, nonatomic) NSData *responseData;
+@property (readonly, retain, nonatomic) NSError *error;
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
 + (UAHTTPRequest *)requestWithURL:(NSURL *)url;
