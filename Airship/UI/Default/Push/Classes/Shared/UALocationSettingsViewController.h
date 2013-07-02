@@ -26,13 +26,7 @@
 #import <UIKit/UIKit.h>
 #import "UALocationService.h"
 
-@interface UALocationSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UALocationServiceDelegate> {
-    UALocationService *locationService_;
-    NSMutableArray *locationDisplay_;
-    NSMutableArray *reportedLocations_;
-    UITableView *locationTableView_;
-    
-}
+@interface UALocationSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UALocationServiceDelegate>
 
 @property (nonatomic, retain) UALocationService *locationService;
 @property (nonatomic, retain) NSMutableArray *locationDisplay;
