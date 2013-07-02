@@ -39,12 +39,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInbox
 
-@synthesize messageList;
-@synthesize jsDelegate;
-@synthesize pushHandler;
-@synthesize clientCache;
-@synthesize inboxCache;
-
 SINGLETON_IMPLEMENTATION(UAInbox)
 
 #pragma mark -
@@ -65,7 +59,7 @@ static Class _uiClass;
 }
 
 - (void)enterForeground {
-    [messageList retrieveMessageList];
+    [self.messageList retrieveMessageList];
 }
 
 #pragma mark -
@@ -135,11 +129,11 @@ static Class _uiClass;
         
         self.messageList = [UAInboxMessageList shared];
         
-        [messageList retrieveMessageList];
+        [self.messageList retrieveMessageList];
 		
-		pushHandler = [[UAInboxPushHandler alloc] init];
+		self.pushHandler = [[UAInboxPushHandler alloc] init];
 
-        [self.messageList addObserver:pushHandler];
+        [self.messageList addObserver:self.pushHandler];
 
        [[NSNotificationCenter defaultCenter] addObserver:self
                                                 selector:@selector(enterForeground)
@@ -183,9 +177,9 @@ static Class _uiClass;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(clientCache);
-    RELEASE_SAFELY(inboxCache);
-	RELEASE_SAFELY(pushHandler);
+    self.clientCache = nil;
+    self.inboxCache = nil;
+    self.pushHandler = nil;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 

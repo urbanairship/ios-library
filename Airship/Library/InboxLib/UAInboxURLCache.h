@@ -25,14 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAInboxURLCache : NSURLCache {
-  @private
-    NSString *cacheDirectory;
-    NSArray *resourceTypes;
-    NSMutableDictionary *metadata;
-    NSUInteger actualDiskCapacity;
-    NSOperationQueue *queue;
-}
+@interface UAInboxURLCache : NSURLCache
 
 @property(nonatomic, retain) NSString *cacheDirectory;
 @property(nonatomic, retain) NSArray *resourceTypes;

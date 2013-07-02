@@ -32,18 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * the available information about a message, including the URLs where
  * the message can be retrieved.
  */
-@interface UAInboxMessage : NSObject {
-  @private
-    NSString *messageID;
-    NSURL *messageBodyURL;
-    NSURL *messageURL;
-    NSString *contentType;
-    BOOL unread;
-    NSDate *messageSent;
-    NSString *title;
-    NSDictionary *extra;
-    UAInboxMessageList *inbox;//not retained - see property
-}
+@interface UAInboxMessage : NSObject
 
 
 /**

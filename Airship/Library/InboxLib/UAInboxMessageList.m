@@ -52,16 +52,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInboxMessageList
 
-@synthesize messages;
-@synthesize unreadCount;
-@synthesize isBatchUpdating;
-
 #pragma mark Create Inbox
 
 static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
-    RELEASE_SAFELY(messages);
+    self.messages = nil;
     self.client = nil;
     [super dealloc];
 }
@@ -124,11 +120,11 @@ static UAInboxMessageList *_messageList = nil;
 
         self.isRetrieving = NO;
 
-        [[UAInboxDBManager shared] deleteMessages:messages];
+        [[UAInboxDBManager shared] deleteMessages:self.messages];
         [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
         self.messages = newMessages;
 
-        unreadCount = unread;
+        self.unreadCount = unread;
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
@@ -147,7 +143,7 @@ static UAInboxMessageList *_messageList = nil;
         return;
     }
 
-    NSArray *updateMessageArray = [messages objectsAtIndexes:messageIndexSet];
+    NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
 
     self.isBatchUpdating = YES;
     [self notifyObservers: @selector(messageListWillLoad)];
