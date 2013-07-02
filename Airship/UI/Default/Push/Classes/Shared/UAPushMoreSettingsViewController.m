@@ -144,32 +144,32 @@ static NSUInteger locationRowCount = 1;
 #pragma mark -
 
 - (void)initCells {
-    self.deviceTokenCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenCell.textLabel.text = @"Device Token";
     self.deviceTokenCell.accessibilityIdentifier = @"Device Token";
     self.deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    self.deviceTokenTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenTypesCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenTypesCell.textLabel.text = @"Notification Types";
 
-    self.deviceTokenDisabledTypesCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenDisabledTypesCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenDisabledTypesCell.textLabel.text = @"Disabled Notification Types";
     
-    self.deviceTokenAliasCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenAliasCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenAliasCell.textLabel.text = @"Alias";
     self.deviceTokenAliasCell.accessibilityLabel = @"Alias";
     self.deviceTokenAliasCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    self.deviceTokenTagsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.deviceTokenTagsCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenTagsCell.textLabel.text = @"Tags";
     self.deviceTokenTagsCell.accessibilityLabel = @"Tags";
     self.deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    self.helpSoundsCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    self.helpSoundsCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
     self.helpSoundsCell.textLabel.text = @"Notification Sounds";
     self.helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
-    self.helpLogCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    self.helpLogCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
     self.helpLogCell.textLabel.text = @"Device Log";
     self.helpLogCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
@@ -267,21 +267,21 @@ static NSUInteger locationRowCount = 1;
     if (indexPath.section == SectionDeviceToken) {
         if (indexPath.row == DeviceTokenSectionTokenCell) {
             if (!self.tokenViewController) {
-                self.tokenViewController = [[UAPushSettingsTokenViewController alloc]
-                                       initWithNibName:@"UAPushSettingsTokenView" bundle:nil];
+                self.tokenViewController = [[[UAPushSettingsTokenViewController alloc]
+                                       initWithNibName:@"UAPushSettingsTokenView" bundle:nil] autorelease];
             }
             [self.navigationController pushViewController:self.tokenViewController animated:YES];
         } else if (indexPath.row == DeviceTokenSectionAliasCell) {
             if (!self.aliasViewController) {
-                self.aliasViewController = [[UAPushSettingsAliasViewController alloc]
-                                       initWithNibName:@"UAPushSettingsAliasView" bundle:nil];
+                self.aliasViewController = [[[UAPushSettingsAliasViewController alloc]
+                                       initWithNibName:@"UAPushSettingsAliasView" bundle:nil] autorelease];
             }
             [self.navigationController pushViewController:self.aliasViewController animated:YES];
             
         } else if (indexPath.row == DeviceTokenSectionTagsCell) {
             if (!self.tagsViewController) {
-                self.tagsViewController = [[UAPushSettingsTagsViewController alloc]
-                                      initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil];
+                self.tagsViewController = [[[UAPushSettingsTagsViewController alloc]
+                                      initWithNibName:@"UAPushSettingsTagsViewController" bundle:nil] autorelease];
             }
             [self.navigationController pushViewController:self.tagsViewController animated:YES];
             

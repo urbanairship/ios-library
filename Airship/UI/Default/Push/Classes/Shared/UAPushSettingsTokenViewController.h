@@ -29,7 +29,8 @@
 @interface UAPushSettingsTokenViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, copy) NSString *text;
-@property (nonatomic, retain) IBOutlet UIButton *copyButton;
+//note: naming this property copyButton will confuse cocoa's getter naming conventions with respect to memory management
+@property (nonatomic, retain) IBOutlet UIButton *cpyButton;
 @property (nonatomic, retain) IBOutlet UIButton *emailButton;
 @property (nonatomic, retain) IBOutlet UILabel *tokenLabel;
 

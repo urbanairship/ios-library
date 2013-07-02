@@ -60,12 +60,12 @@ enum TagSections {
     
     //Create an add button in the nav bar
     if (self.cancelButton == nil) {
-        self.cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+        self.cancelButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)] autorelease];
     }
     self.navigationItem.leftBarButtonItem = self.cancelButton;
     
     if (self.saveButton == nil) {
-        self.saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)];
+        self.saveButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)] autorelease];
     }
     self.navigationItem.rightBarButtonItem = self.saveButton;
 }

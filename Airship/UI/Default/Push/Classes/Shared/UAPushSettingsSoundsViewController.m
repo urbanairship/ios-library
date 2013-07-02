@@ -57,7 +57,7 @@ enum {
         NSArray *wavFiles = [[NSBundle mainBundle] pathsForResourcesOfType:@"wav" inDirectory:nil];
 
                               
-        self.soundList = [[NSMutableArray alloc] init];
+        self.soundList = [[[NSMutableArray alloc] init] autorelease];
         [self.soundList addObjectsFromArray:aiffFiles];
         [self.soundList addObjectsFromArray:cafFiles];
         [self.soundList addObjectsFromArray:wavFiles];

@@ -49,7 +49,7 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
         UIViewController *root = [[[UAPushSettingsViewController alloc]
                                    initWithNibName:@"UAPushSettingsView"
                                    bundle:nil] autorelease];
-        self.apnsSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
+        self.apnsSettingsViewController = [[[UINavigationController alloc] initWithRootViewController:root] autorelease];
     }
     return self.apnsSettingsViewController;
 }
@@ -59,7 +59,7 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
         UIViewController *root = [[[UAPushMoreSettingsViewController alloc]
                                    initWithNibName:@"UAPushMoreSettingsView"
                                    bundle:nil] autorelease];
-        self.tokenSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
+        self.tokenSettingsViewController = [[[UINavigationController alloc] initWithRootViewController:root] autorelease];
     }
     return self.tokenSettingsViewController;
 }

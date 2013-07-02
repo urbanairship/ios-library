@@ -29,7 +29,7 @@
 @implementation UAPushSettingsTokenViewController
 
 - (void)dealloc {
-    self.copyButton = nil;
+    self.cpyButton = nil;
     self.emailButton = nil;
     self.tokenLabel = nil;
     self.text = nil;

@@ -51,7 +51,7 @@ enum {
     
     //Create an add button in the nav bar
     if (self.addButton == nil) {
-        self.addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)];
+        self.addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)] autorelease];
     }
     self.navigationItem.rightBarButtonItem = self.addButton;
     
@@ -203,8 +203,8 @@ enum {
 
 - (void)addItem:(id)sender {
     
-    if (self.addTagController == nil) {
-        self.addTagController = [[UAPushSettingsAddTagViewController alloc] init];
+    if (!self.addTagController) {
+        self.addTagController = [[[UAPushSettingsAddTagViewController alloc] init] autorelease];
         self.addTagController.tagDelegate = self;
     }
     
@@ -257,17 +257,14 @@ enum {
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
-    
-    if (self.addTagController) {
-        self.addTagController.tagDelegate = nil;
-        RELEASE_SAFELY(self.addTagController);
-    }
+
+    self.addTagController.tagDelegate = nil;
+    self.addTagController = nil;
     
     self.textCell = nil;
     self.textLabel = nil;
-    
-    RELEASE_SAFELY(self.addButton);
-    
+    self.addButton = nil;
+
     [super viewDidUnload];
 }
 
