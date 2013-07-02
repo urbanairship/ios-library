@@ -1236,6 +1236,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALID_ARCHS = "armv6 armv7 i386 armv7s";
@@ -1269,6 +1270,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
