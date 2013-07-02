@@ -27,14 +27,7 @@
 #import <MapKit/MapKit.h>
 
 @class UALocationService;
-@interface UAMapPresentationController : UIViewController <MKMapViewDelegate>  {
-    UALocationService *locationService_;
-    NSMutableArray *locations_;
-    MKMapView *mapView_;
-    NSMutableArray *annotations_;
-    UIBarButtonItem *rightButton_;
-    id <MKAnnotation> lastUserAnnotation_;
-}
+@interface UAMapPresentationController : UIViewController <MKMapViewDelegate>
 
 @property (nonatomic, retain) UALocationService *locationService;
 @property (nonatomic, copy) NSMutableArray *locations;
