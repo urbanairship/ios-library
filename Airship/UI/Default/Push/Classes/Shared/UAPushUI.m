@@ -86,8 +86,8 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 
 - (void)dealloc {
     self.localizationBundle = nil;
-    [self.apnsSettingsViewController release];
-    [self.tokenSettingsViewController release];
+    self.apnsSettingsViewController = nil;
+    self.tokenSettingsViewController = nil;
     [super dealloc];
 }
 

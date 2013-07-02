@@ -45,7 +45,7 @@
     if (self){
         self.coordinate = location.coordinate;
         self.title = @"Location";
-        self.subtitle = [[self monthDateFromDate:location.timestamp] retain];
+        self.subtitle = [self monthDateFromDate:location.timestamp];
     }
     return self;
 }
