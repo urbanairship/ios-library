@@ -173,7 +173,6 @@ enum {
 
 
 - (void)dealloc {
-    
     self.textCell = nil;
     self.textLabel = nil;
     self.soundList = nil;
