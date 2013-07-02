@@ -111,7 +111,7 @@
         
         NSURL *url = request.URL;
         
-        //default to "text/html" if the server doesn't provide a content type
+        // default to "text/html" if the server doesn't provide a content type
         NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
         NSString *textEncoding = cachedResponse.response.textEncodingName;
         if (textEncoding) {
@@ -149,12 +149,12 @@
     
     NSCachedURLResponse* cachedResponse = nil;
     
-    //retrieve resource from cache or populate if needed
+    // retrieve resource from cache or populate if needed
     NSString *contentPath = [self getStoragePathForURL:request.URL];
     NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
-        //retrieve it
+        // retrieve it
         NSData *content = [NSData dataWithContentsOfFile:contentPath];
         
         NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath 
@@ -163,18 +163,22 @@
         
         NSString *textEncoding = nil;
         
-        //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
-        //into separate arguments so UIWebView doesn't get confused
+        // if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
+        // into separate arguments so UIWebView doesn't get confused
         NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
 
         if (subTypes.count > 0) {
             contentType = [subTypes objectAtIndex:0];
+        } else {
+            // default to "text/html" if the server doesn't provide a content type
+            contentType = @"text/html";
         }
+
         if(subTypes.count > 1) {
             textEncoding = [subTypes objectAtIndex:1];
         }
-        
-        //default to utf-8 when there isn't a content type for html
+
+        // default to utf-8 when there isn't a textEncoding for html content type
         if (!textEncoding && [@"text/html" isEqualToString:contentType]) {
             textEncoding = @"utf-8";
         }
