@@ -26,15 +26,12 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@interface UAPushSettingsTokenViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate> {
-    NSString *text;
-    IBOutlet UIButton *copyButton;
-    IBOutlet UIButton *emailButton;
-    IBOutlet UILabel *tokenLabel;
-}
+@interface UAPushSettingsTokenViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate>
 
-@property (nonatomic, retain) UILabel *tokenLabel;
-@property (nonatomic, retain) UIButton *emailButton;
+@property (nonatomic, copy) NSString *text;
+@property (nonatomic, retain) IBOutlet UIButton *copyButton;
+@property (nonatomic, retain) IBOutlet UIButton *emailButton;
+@property (nonatomic, retain) IBOutlet UILabel *tokenLabel;
 
 - (IBAction)copyDeviceToken;
 - (IBAction)emailDeviceToken;
