@@ -293,7 +293,11 @@
     
     NSString *contentSubType;
     NSString *charset;
-    
+
+    if (!contentType) {
+        return nil;
+    }
+
     if (range.location != NSNotFound) {
         contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
