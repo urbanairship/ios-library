@@ -26,18 +26,12 @@
 #import <UIKit/UIKit.h>
 
 
-@interface UAPushSettingsAliasViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate> {
-    IBOutlet UITableView *tableView;
-    IBOutlet UITableViewCell *aliasCell;
-    IBOutlet UITableViewCell *textCell;
-    IBOutlet UILabel *textLabel;
-    IBOutlet UITextField *aliasField;
-}
+@interface UAPushSettingsAliasViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) UITableViewCell *aliasCell;
-@property (nonatomic, retain) UITableViewCell *textCell;
-@property (nonatomic, retain) UILabel *textLabel;
-@property (nonatomic, retain) UITextField *aliasField;
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, retain) IBOutlet UITableViewCell *aliasCell;
+@property (nonatomic, retain) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, retain) IBOutlet UILabel *textLabel;
+@property (nonatomic, retain) IBOutlet UITextField *aliasField;
 
 @end
