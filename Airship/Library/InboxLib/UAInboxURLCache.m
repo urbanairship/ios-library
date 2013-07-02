@@ -166,7 +166,10 @@
         //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
         //into separate arguments so UIWebView doesn't get confused
         NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
-        contentType = [subTypes objectAtIndex:0];
+
+        if (subTypes.count > 0) {
+            contentType = [subTypes objectAtIndex:0];
+        }
         if(subTypes.count > 1) {
             textEncoding = [subTypes objectAtIndex:1];
         }
