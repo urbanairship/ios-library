@@ -131,7 +131,7 @@ static Class _uiClass;
         
         [self.messageList retrieveMessageList];
 		
-		self.pushHandler = [[UAInboxPushHandler alloc] init];
+		self.pushHandler = [[[UAInboxPushHandler alloc] init] autorelease];
 
         [self.messageList addObserver:self.pushHandler];
 
@@ -177,11 +177,12 @@ static Class _uiClass;
 }
 
 - (void)dealloc {
+    [self.messageList removeObserver:self.pushHandler];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     self.clientCache = nil;
     self.inboxCache = nil;
     self.pushHandler = nil;
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [super dealloc];
 }
