@@ -311,9 +311,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
     self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
     self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
-
-    // Set out starting interval to the kMinBatchInterval as the default value
-    self.sendInterval = kMinBatchIntervalSeconds;
 }
 
 - (void)saveUploadEventSettings {
@@ -387,17 +384,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 #pragma mark - 
 #pragma mark Custom Property Setters
-
-- (void)setSendInterval:(NSInteger)interval {
-    if(interval < self.minBatchInterval) {
-        _sendInterval = self.minBatchInterval;
-    } else if (interval > self.maxWait) {
-        _sendInterval = self.maxWait;
-    } else {
-        _sendInterval = interval;
-    }
-}
-
 - (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
     if (maxTotalDBSize < kMinTotalDBSizeBytes) {
         _maxTotalDBSize = kMinTotalDBSizeBytes;
