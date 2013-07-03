@@ -32,13 +32,10 @@
  * The default implementation provided in the library's sample UI distribution.
  */
 
-@interface UAPushUI : NSObject<UAPushUIProtocol> {
-    UIViewController *_apnsSettingsViewController;
-    UIViewController *_tokenSettingsViewController;
-    
-    NSBundle *localizationBundle;
-}
+@interface UAPushUI : NSObject<UAPushUIProtocol>
 
+@property (nonatomic, retain) UIViewController *apnsSettingsViewController;
+@property (nonatomic, retain) UIViewController *tokenSettingsViewController;
 @property (nonatomic, retain) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAPushUI)

@@ -26,15 +26,9 @@
 #import <UIKit/UIKit.h>
 
 
-@interface UAPushSettingsSoundsViewController : UITableViewController {
+@interface UAPushSettingsSoundsViewController : UITableViewController
 
-    NSMutableArray *soundList;
-
-    IBOutlet UITableViewCell *textCell;
-    IBOutlet UILabel *textLabel;
-    
-}
-
+@property (nonatomic, retain) NSMutableArray *soundList;
 @property (nonatomic, retain) UITableViewCell *textCell;
 @property (nonatomic, retain) UILabel *textLabel;
 

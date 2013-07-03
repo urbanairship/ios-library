@@ -25,23 +25,27 @@
 #import "UALocationDemoAnnotation.h"
 #import "UAGlobal.h"
 
+@interface UALocationDemoAnnotation()
+
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *subtitle;
+
+@end
+
 @implementation UALocationDemoAnnotation
-@synthesize coordinate = coordinate_;
-@synthesize title = title_;
-@synthesize subtitle = subtitle_;
 
 - (void)dealloc {
-    RELEASE_SAFELY(title_);
-    RELEASE_SAFELY(subtitle_);
+    self.title = nil;
+    self.subtitle = nil;
     [super dealloc];
 }
 
 - (id)initWithLocation:(CLLocation*)location {
     self = [super init];
     if (self){
-        coordinate_ = location.coordinate;
-        title_ = @"Location";
-        subtitle_ = [[self monthDateFromDate:location.timestamp] retain];
+        self.coordinate = location.coordinate;
+        self.title = @"Location";
+        self.subtitle = [self monthDateFromDate:location.timestamp];
     }
     return self;
 }
@@ -57,7 +61,7 @@
 }
 
 - (NSString*)description {
-    return [NSString stringWithFormat:@"%@ %@ %f %f", title_, subtitle_, coordinate_.longitude, coordinate_.latitude];
+    return [NSString stringWithFormat:@"%@ %@ %f %f", self.title, self.subtitle, self.coordinate.longitude, self.coordinate.latitude];
 }
 
 

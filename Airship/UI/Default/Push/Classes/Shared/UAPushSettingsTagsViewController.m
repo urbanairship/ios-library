@@ -40,9 +40,6 @@ enum {
 
 @implementation UAPushSettingsTagsViewController
 
-@synthesize textCell;
-@synthesize textLabel;
-
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -53,12 +50,12 @@ enum {
     self.title = @"Tags";
     
     //Create an add button in the nav bar
-    if (addButton == nil) {
-        addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)];
+    if (self.addButton == nil) {
+        self.addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)] autorelease];
     }
-    self.navigationItem.rightBarButtonItem = addButton;
+    self.navigationItem.rightBarButtonItem = self.addButton;
     
-    textLabel.text = @"Assign tags to a device to simplify "
+    self.textLabel.text = @"Assign tags to a device to simplify "
     @"the process of sending notifications. Define custom tags, or use UATagUtils to "
     @"generate commonly used tags.";
 }
@@ -109,7 +106,7 @@ enum {
     switch (indexPath.section) {
         case SectionDesc:
         {
-            cell = textCell;
+            cell = self.textCell;
             break;
         }
         case SectionTags:
@@ -192,7 +189,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
+        CGFloat height = [self.textLabel.text sizeWithFont:self.textLabel.font
                           constrainedToSize:CGSizeMake(240, 1500)
                               lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;
@@ -206,12 +203,12 @@ enum {
 
 - (void)addItem:(id)sender {
     
-    if (addTagController == nil) {
-        addTagController = [[UAPushSettingsAddTagViewController alloc] init];
-        addTagController.tagDelegate = self;
+    if (!self.addTagController) {
+        self.addTagController = [[[UAPushSettingsAddTagViewController alloc] init] autorelease];
+        self.addTagController.tagDelegate = self;
     }
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:addTagController];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.addTagController];
     [[self navigationController] presentModalViewController:navigationController animated:YES];
     [navigationController release];
 }
@@ -260,34 +257,24 @@ enum {
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
-    
-    if (addTagController) {
-        addTagController.tagDelegate = nil;
-        RELEASE_SAFELY(addTagController);
-    }
+
+    self.addTagController.tagDelegate = nil;
+    self.addTagController = nil;
     
     self.textCell = nil;
     self.textLabel = nil;
-    
-    RELEASE_SAFELY(addButton);
-    
+    self.addButton = nil;
+
     [super viewDidUnload];
 }
 
 
-- (void)dealloc {
-    
-    RELEASE_SAFELY(addButton);
-    
+- (void)dealloc {    
+    self.addButton = nil;
     self.textCell = nil;
     self.textLabel = nil;
-    
-    if (addTagController) {
-        addTagController.tagDelegate = nil;
-        RELEASE_SAFELY(addTagController);
-    }
-
-    
+    self.addTagController.tagDelegate = nil;
+    self.addTagController = nil;    
     [super dealloc];
 }
 
