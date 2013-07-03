@@ -49,7 +49,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (void)dealloc {
     self.localizationBundle = nil;
-	self.alertHandler = nil;
+    self.alertHandler = nil;
     self.rootViewController = nil;
     self.inboxParentController = nil;
     self.messageListController = nil;
