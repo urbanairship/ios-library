@@ -27,12 +27,7 @@
 @class InboxSampleViewController;
 @class UAInboxDefaultJSDelegate;
 
-@interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
-    InboxSampleViewController *viewController;
-    UINavigationController *navigationController;
-    UAInboxDefaultJSDelegate *jsDelegate;
-}
+@interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> 
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet InboxSampleViewController *viewController;

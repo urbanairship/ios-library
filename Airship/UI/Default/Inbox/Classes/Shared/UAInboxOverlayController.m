@@ -66,11 +66,13 @@ static NSMutableSet *overlayControllers = nil;
 - (void)displayWindow;
 - (void)closePopupWindow;
 
+@property(nonatomic, retain) UIViewController *parentViewController;
+@property(nonatomic, retain) UIView *bgView;
+@property(nonatomic, retain) UIView *bigPanelView;
+@property(nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator;
 @end
 
 @implementation UAInboxOverlayController
-
-@synthesize webView, message;
 
 // Setup a container for the newly allocated controllers, will be released by OS. 
 + (void)initialize {
@@ -91,23 +93,23 @@ static NSMutableSet *overlayControllers = nil;
     if (self) {
         // Initialization code here.
         
-        parentViewController = [parent retain];
+        self.parentViewController = [parent retain];
         UIView *sview = parent.view;
         
-        bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];
-        bgView.autoresizesSubviews = YES;
-        bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];
+        self.bgView.autoresizesSubviews = YES;
+        self.bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        [sview addSubview: bgView];
+        [sview addSubview: self.bgView];
         
         //set the frame later
-        webView = [[UIWebView alloc] initWithFrame:CGRectZero];
-        webView.backgroundColor = [UIColor clearColor];
-        webView.opaque = NO;
-        webView.delegate = self;
+        self.webView = [[[UIWebView alloc] initWithFrame:CGRectZero] autorelease];
+        self.webView.backgroundColor = [UIColor clearColor];
+        self.webView.opaque = NO;
+        self.webView.delegate = self;
         
         //hack to hide the ugly webview gradient
-        for (UIView* subView in [webView subviews]) {
+        for (UIView* subView in [self.webView subviews]) {
             if ([subView isKindOfClass:[UIScrollView class]]) {
                 for (UIView* shadowView in [subView subviews]) {
                     if ([shadowView isKindOfClass:[UIImageView class]]) {
@@ -117,12 +119,12 @@ static NSMutableSet *overlayControllers = nil;
             }
         }
         
-        loadingIndicator = [[UABeveledLoadingIndicator indicator] retain];
+        self.loadingIndicator = [UABeveledLoadingIndicator indicator];
                 
         //required to receive orientation updates from NSNotificationCenter
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self 
+        [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(orientationChanged:) 
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
         
@@ -136,8 +138,11 @@ static NSMutableSet *overlayControllers = nil;
 - (void)dealloc {
     self.message = nil;
     self.webView = nil;
-    [parentViewController release];
-    [loadingIndicator release];
+    self.parentViewController = nil;
+    self.loadingIndicator = nil;
+    self.bgView = nil;
+    self.bigPanelView = nil;
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIDeviceOrientationDidChangeNotification
                                                   object:nil];
@@ -152,14 +157,14 @@ static NSMutableSet *overlayControllers = nil;
         return;
     }
     
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
+    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: self.message.messageBodyURL];
     NSString *auth = [UAUtils userAuthHeaderString];
     
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
     [requestObj setTimeoutInterval:5];
     
-    [webView stopLoading];
-    [webView loadRequest:requestObj];
+    [self.webView stopLoading];
+    [self.webView loadRequest:requestObj];
     [self performSelector:@selector(displayWindow) withObject:nil afterDelay:0.1];
 }
 
@@ -181,31 +186,33 @@ static NSMutableSet *overlayControllers = nil;
 - (void)constructWindow {
     
     //the new panel
-    bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, bgView.frame.size.width, bgView.frame.size.height)] autorelease];
-    bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    bigPanelView.autoresizesSubviews = YES;
-    bigPanelView.center = CGPointMake( bgView.frame.size.width/2, bgView.frame.size.height/2);
+    self.bigPanelView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bgView.frame.size.width, self.bgView.frame.size.height)]
+                         autorelease];
+    
+    self.bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.bigPanelView.autoresizesSubviews = YES;
+    self.bigPanelView.center = CGPointMake( self.bgView.frame.size.width/2, self.bgView.frame.size.height/2);
     
     //add the window background
     UIView *background = [[[UIView alloc] initWithFrame:CGRectInset
-                           (bigPanelView.frame, 15, 30)] autorelease];
+                           (self.bigPanelView.frame, 15, 30)] autorelease];
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
     background.layer.borderColor = [[UIColor blackColor] CGColor];
     background.layer.borderWidth = 2;
-    background.center = CGPointMake(bigPanelView.frame.size.width/2, bigPanelView.frame.size.height/2);
-    [bigPanelView addSubview: background];
+    background.center = CGPointMake(self.bigPanelView.frame.size.width/2, self.bigPanelView.frame.size.height/2);
+    [self.bigPanelView addSubview: background];
     
     //add the web view
     int webOffset = 2;
-    webView.frame = CGRectInset(background.frame, webOffset, webOffset);
-    webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    [bigPanelView addSubview: webView];
+    [self.bigPanelView addSubview: self.webView];
     
-    [webView addSubview:loadingIndicator];
-    loadingIndicator.center = CGPointMake(webView.frame.size.width/2, webView.frame.size.height/2);
-    [loadingIndicator show];
+    [self.webView addSubview:self.loadingIndicator];
+    self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2, self.webView.frame.size.height/2);
+    [self.loadingIndicator show];
     
     //add the close button
     int closeBtnOffset = 10;
@@ -218,7 +225,7 @@ static NSMutableSet *overlayControllers = nil;
                                   closeBtnImg.size.width + closeBtnOffset, 
                                   closeBtnImg.size.height + closeBtnOffset)];
     [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
-    [bigPanelView addSubview: closeBtn];
+    [self.bigPanelView addSubview: closeBtn];
     
 }
 
@@ -226,10 +233,10 @@ static NSMutableSet *overlayControllers = nil;
     
     if ([self shouldTransition]) {
         //faux view
-        UIView* fauxView = [[[UIView alloc] initWithFrame: bgView.bounds] autorelease];
+        UIView* fauxView = [[[UIView alloc] initWithFrame: self.bgView.bounds] autorelease];
         fauxView.autoresizesSubviews = YES;
         fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [bgView addSubview: fauxView];
+        [self.bgView addSubview: fauxView];
         
         //animation options
         UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromRight |
@@ -239,43 +246,43 @@ static NSMutableSet *overlayControllers = nil;
         [self constructWindow];
         
         //run the animation
-        [UIView transitionFromView:fauxView toView:bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
+        [UIView transitionFromView:fauxView toView:self.bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
             
             //dim the contents behind the popup window
-            UIView* shadeView = [[[UIView alloc] initWithFrame:bigPanelView.bounds] autorelease];
+            UIView* shadeView = [[[UIView alloc] initWithFrame:self.bigPanelView.bounds] autorelease];
             shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             shadeView.backgroundColor = [UIColor blackColor];
             shadeView.alpha = 0.3;
             shadeView.tag = kShadeViewTag;
-            [bigPanelView addSubview: shadeView];
-            [bigPanelView sendSubviewToBack: shadeView];
+            [self.bigPanelView addSubview: shadeView];
+            [self.bigPanelView sendSubviewToBack: shadeView];
         }];
     }
     
     else {
         [self constructWindow];
-        [bgView addSubview:bigPanelView];
+        [self.bgView addSubview:self.bigPanelView];
     }
 }
 
 - (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
     
-    if(![parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
+    if(![self.parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
         return;
     }
     
     switch (toInterfaceOrientation) {
         case UIDeviceOrientationPortrait:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeLeft:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeRight:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationPortraitUpsideDown:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
             break;
         default:
             break;
@@ -315,7 +322,7 @@ static NSMutableSet *overlayControllers = nil;
     /*
      * Set the current message ID.
      */
-    NSString* messageID = message.messageID;
+    NSString* messageID = self.message.messageID;
     js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
     
     /*
@@ -326,7 +333,7 @@ static NSMutableSet *overlayControllers = nil;
     /*
      * Execute the JS we just constructed.
      */
-    [webView stringByEvaluatingJavaScriptFromString:js];
+    [self.webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)injectViewportFix {
@@ -335,7 +342,7 @@ static NSMutableSet *overlayControllers = nil;
     "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
     "document.getElementsByTagName('head')[0].appendChild(metaTag);";
     
-    [webView stringByEvaluatingJavaScriptFromString:js];
+    [self.webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 /**
@@ -343,7 +350,7 @@ static NSMutableSet *overlayControllers = nil;
  */
 - (void)closePopupWindow {
     //remove the shade
-    [[bigPanelView viewWithTag: kShadeViewTag] removeFromSuperview];
+    [[self.bigPanelView viewWithTag: kShadeViewTag] removeFromSuperview];
     [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];
     
 }
@@ -352,10 +359,10 @@ static NSMutableSet *overlayControllers = nil;
  * Removes child views from bigPanelView and bgView
  */
 - (void)removeChildViews {
-    for (UIView* child in bigPanelView.subviews) {
+    for (UIView* child in self.bigPanelView.subviews) {
         [child removeFromSuperview];
     }
-    for (UIView* child in bgView.subviews) {
+    for (UIView* child in self.bgView.subviews) {
         [child removeFromSuperview];
     }
 }
@@ -370,28 +377,25 @@ static NSMutableSet *overlayControllers = nil;
         
         //faux view
         UIView* fauxView = [[[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)] autorelease];
-        [bgView addSubview: fauxView];
+        [self.bgView addSubview: fauxView];
         
         //run the animation
         UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromLeft |
         UIViewAnimationOptionAllowUserInteraction    |
         UIViewAnimationOptionBeginFromCurrentState;
-        
-        //hold to the bigPanelView, because it'll be removed during the animation
-        [bigPanelView retain];
-        
-        [UIView transitionFromView:bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
+                
+        [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
             
             [self removeChildViews];
-            [bigPanelView release];
-            [bgView removeFromSuperview];
+            self.bigPanelView = nil;
+            [self.bgView removeFromSuperview];
             [overlayControllers removeObject:self];
         }];
     }
     
     else {
         [self removeChildViews];
-        [bgView removeFromSuperview];
+        [self.bgView removeFromSuperview];
         [overlayControllers removeObject:self];
     }
 }
@@ -489,11 +493,11 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
-    [loadingIndicator hide];
+    [self.loadingIndicator hide];
     
     // Mark message as read after it has finished loading
-    if(message.unread) {
-        [message markAsRead];
+    if(self.message.unread) {
+        [self.message markAsRead];
     }
 
     [self injectViewportFix];
@@ -501,7 +505,7 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
     
-    [loadingIndicator hide];
+    [self.loadingIndicator hide];
     
     if (error.code == NSURLErrorCancelled)
         return;

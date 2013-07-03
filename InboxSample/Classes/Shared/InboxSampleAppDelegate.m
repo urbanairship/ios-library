@@ -35,19 +35,18 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
+@interface InboxSampleAppDelegate()
+@property (nonatomic, retain) UAInboxDefaultJSDelegate *jsDelegate;
+@end
 
 @implementation InboxSampleAppDelegate
-
-@synthesize window;
-@synthesize viewController;
-@synthesize navigationController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     self.navigationController = [[[UINavigationController alloc] init] autorelease];
-    [navigationController pushViewController:viewController animated:NO];
-    [window addSubview:navigationController.view];
-    [window makeKeyAndVisible];
+    [self.navigationController pushViewController:self.viewController animated:NO];
+    [self.window addSubview:self.navigationController.view];
+    [self.window makeKeyAndVisible];
 
     // Display a UIAlertView warning developers that push notifications do not work in the simulator
     // You should remove this in your app.
@@ -67,15 +66,15 @@
     [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
     // Optional: Delegate for JavaScript callback
-    jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
-    [UAInbox shared].jsDelegate = jsDelegate;
+    self.jsDelegate = [[[UAInboxDefaultJSDelegate alloc] init] autorelease];
+    [UAInbox shared].jsDelegate = self.jsDelegate;
     
     // For modal UI:
-    [UAInboxUI shared].inboxParentController = navigationController;
+    [UAInboxUI shared].inboxParentController = self.navigationController;
     [UAInboxUI shared].useOverlay = YES;
     
     // For Navigation UI:
-    [UAInboxNavUI shared].inboxParentController = navigationController;
+    [UAInboxNavUI shared].inboxParentController = self.navigationController;
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
     
@@ -96,10 +95,11 @@
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(jsDelegate);
+    self.jsDelegate = nil;
     self.viewController = nil;
     self.navigationController = nil;
     self.window = nil;
+    [UAInbox shared].jsDelegate = nil;
     
     [super dealloc];
 }

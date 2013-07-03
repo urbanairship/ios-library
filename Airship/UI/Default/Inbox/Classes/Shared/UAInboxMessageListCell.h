@@ -30,13 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * The UITableViewCell subclass used by UAInboxMessageListController.
  */
-@interface UAInboxMessageListCell : UITableViewCell {
-    IBOutlet UILabel* title;
-    IBOutlet UILabel* dateView;
-    IBOutlet UIView* unreadIndicator;
-    IBOutlet UIImageView *checkmark;
-    IBOutlet UIView *selectedEditingBackgroundView;
-}
+@interface UAInboxMessageListCell : UITableViewCell
 
 /**
  *Displays the message date.

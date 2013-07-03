@@ -6,11 +6,7 @@
  * loading indicator that embeds a UIActivityIndicatorView
  * in a translucent black beveled rect.
  */
-@interface UABeveledLoadingIndicator : UIView {
-    
-    UIActivityIndicatorView *activity;
-    
-}
+@interface UABeveledLoadingIndicator : UIView
 
 /**
  * Construct an autoreleased UABeveledLoadingIndicator with

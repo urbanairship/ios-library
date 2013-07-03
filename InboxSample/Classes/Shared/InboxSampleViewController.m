@@ -36,8 +36,6 @@
 
 @implementation InboxSampleViewController
 
-@synthesize version;
-
 - (IBAction)mail:(id)sender {
     [UAInbox displayInbox:self.navigationController animated:YES];   
 }
@@ -98,7 +96,7 @@
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(version);
+    self.version = nil;
     [super dealloc];
 }
 

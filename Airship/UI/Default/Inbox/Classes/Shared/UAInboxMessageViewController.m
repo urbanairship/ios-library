@@ -40,29 +40,24 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @property (nonatomic, retain) UIActivityIndicatorView* activity;
 @property (nonatomic, retain) UIView* statusBar;
-@property (nonatomic, retain) UIView* statusBarTitle;
+@property (nonatomic, retain) UILabel* statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl* messageNav;
 
 @end
 
 @implementation UAInboxMessageViewController
 
-@synthesize webView;
-@synthesize activity;
-@synthesize statusBar;
-@synthesize statusBarTitle;
-@synthesize messageNav;
-@synthesize message;
-@synthesize shouldShowAlerts;
+
 
 - (void)dealloc {
     [[UAInbox shared].messageList removeObserver:self];
-    RELEASE_SAFELY(message);
-    RELEASE_SAFELY(webView);
-    RELEASE_SAFELY(activity);
-    RELEASE_SAFELY(statusBar);
-    RELEASE_SAFELY(statusBarTitle);
-    RELEASE_SAFELY(messageNav);
+    self.message = nil;
+    self.webView = nil;
+    self.activity = nil;
+    self.statusBar = nil;
+    self.statusBarTitle = nil;
+    self.messageNav = nil;
+
     [super dealloc];
 }
 
@@ -89,7 +84,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.navigationItem.rightBarButtonItem = segmentBarItem;
         [segmentBarItem release];
 
-        [webView setDataDetectorTypes:UIDataDetectorTypeAll];
+        [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
         
         self.shouldShowAlerts = YES;
     }
@@ -98,7 +93,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)viewDidLoad {
-    int index = [[UAInbox shared].messageList indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
     // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
     [self loadMessageAtIndex:index];
@@ -111,16 +106,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     switch (toInterfaceOrientation) {
         case UIDeviceOrientationPortrait:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeLeft:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeRight:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationPortraitUpsideDown:
-            [webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
+            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
             break;
         default:
             break;
@@ -133,13 +128,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)refreshHeader {
     int count = [[UAInbox shared].messageList messageCount];
-    int index = [[UAInbox shared].messageList indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
     if (index >= 0 && index < count) {
         self.title = [NSString stringWithFormat: @"%d %@ %d", index+1, UA_INBOX_TR(@"UA_Of"), count];
     } else {
-        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-        statusBar.hidden = YES;
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+        self.statusBar.hidden = YES;
         self.title = @"";
     }
 
@@ -165,15 +160,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     [self refreshHeader];
 
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: message.messageBodyURL];
+    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: self.message.messageBodyURL];
     
     [requestObj setTimeoutInterval:5];
     
     NSString *auth = [UAUtils userAuthHeaderString];
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
     
-    [webView stopLoading];
-    [webView loadRequest:requestObj];
+    [self.webView stopLoading];
+    [self.webView loadRequest:requestObj];
 }
 
 #pragma mark UIWebViewDelegate
@@ -289,7 +284,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Set the current message ID.
      */
-    NSString* messageID = message.messageID;
+    NSString* messageID = self.message.messageID;
     js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
     
     /*
@@ -300,7 +295,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Execute the JS we just constructed.
      */
-    [webView stringByEvaluatingJavaScriptFromString:js];
+    [self.webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)injectViewportFix {
@@ -309,38 +304,38 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
     "document.getElementsByTagName('head')[0].appendChild(metaTag);";
     
-    [webView stringByEvaluatingJavaScriptFromString:js];
+    [self.webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    [statusBar setHidden: NO];
-    [activity startAnimating];
-    statusBarTitle.text = message.title;
+    [self.statusBar setHidden: NO];
+    [self.activity startAnimating];
+    self.statusBarTitle.text = self.message.title;
     
     [self populateJavascriptEnvironment];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
-    [statusBar setHidden: YES];
-    [activity stopAnimating];
+    [self.statusBar setHidden: YES];
+    [self.activity stopAnimating];
 
     // Mark message as read after it has finished loading
-    if(message.unread) {
-        [message markAsRead];
+    if(self.message.unread) {
+        [self.message markAsRead];
     }
     
     [self injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
-    [statusBar setHidden: YES];
-    [activity stopAnimating];
+    [self.statusBar setHidden: YES];
+    [self.activity stopAnimating];
 
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
     
-    if (shouldShowAlerts) {
+    if (self.shouldShowAlerts) {
         
         UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
                                                             message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
@@ -356,7 +351,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (IBAction)segmentAction:(id)sender {
     UISegmentedControl *segmentedControl = (UISegmentedControl *)sender;
-    int index = [[UAInbox shared].messageList indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
     if(segmentedControl.selectedSegmentIndex == kMessageUp) {
         [self loadMessageAtIndex:index-1];
@@ -366,21 +361,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)updateMessageNavButtons {
-    int index = [[UAInbox shared].messageList indexOfMessage:message];
+    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
-    if (message == nil || index == NSNotFound) {
-        [messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
-        [messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
+    if (self.message == nil || index == NSNotFound) {
+        [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
+        [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
     } else {
         if(index <= 0) {
-            [messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
+            [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
         } else {
-            [messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
+            [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
         }
         if(index >= [[UAInbox shared].messageList messageCount] - 1) {
-            [messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
+            [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
         } else {
-            [messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
+            [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
         }
     }
 

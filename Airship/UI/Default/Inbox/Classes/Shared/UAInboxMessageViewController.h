@@ -31,17 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * This class is a reference implementation of a view controller embedding
  * a UIWebview sourcing content from a rich push message.
  */
-@interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> {
-    UISegmentedControl* messageNav;
-    IBOutlet UIWebView *webView;
-    IBOutlet UIActivityIndicatorView* activity;
-    IBOutlet UILabel* statusBarTitle;
-    IBOutlet UIView* statusBar;
-
-    UAInboxMessage* message;
-    
-    BOOL shouldShowAlerts;
-}
+@interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> 
 
 /**
  * The UIWebView used to display the message content.
