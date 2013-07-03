@@ -53,7 +53,7 @@
 - (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
-@property (nonatomic, retain) UITableView *messageTable;
+@property (nonatomic, retain) IBOutlet UITableView *messageTable;
 @property (nonatomic, retain) IBOutlet UIView *loadingView;
 @property (nonatomic, retain) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
 @property (nonatomic, retain) IBOutlet UILabel *loadingLabel;
