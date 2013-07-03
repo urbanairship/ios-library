@@ -76,12 +76,12 @@
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
 
     /* display a new alert */
-	self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
+	self.notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
                                                                  message:message
                                                                 delegate:self
                                                        cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                                        otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                                       nil];
+                                       nil] autorelease];
     [self.notificationAlert show];
 	
 }
