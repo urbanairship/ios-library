@@ -359,14 +359,6 @@
     STAssertTrue([events count] > 0, nil);
 }
 
-- (void)testSetSendInterval {
-    int newVal = kMinBatchIntervalSeconds + 20;
-    analytics.minBatchInterval = kMinBatchIntervalSeconds;
-    analytics.maxWait = kMinWaitSeconds;
-    analytics.sendInterval = newVal;
-    STAssertEquals(newVal, analytics.sendInterval, nil);
-}
-
 - (void)testAnalyticsIsThreadSafe {
     UAAnalytics *airshipAnalytics = [[UAirship shared] analytics];
     dispatch_queue_t testQueue = dispatch_queue_create("com.urbanairship.analyticsThreadsafeTest", DISPATCH_QUEUE_CONCURRENT);
