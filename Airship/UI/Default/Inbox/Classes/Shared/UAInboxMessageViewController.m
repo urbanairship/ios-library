@@ -38,9 +38,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshHeader;
 - (void)updateMessageNavButtons;
 
-@property (nonatomic, retain) UIActivityIndicatorView* activity;
-@property (nonatomic, retain) UIView* statusBar;
-@property (nonatomic, retain) UILabel* statusBarTitle;
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView* activity;
+@property (nonatomic, retain) IBOutlet UIView* statusBar;
+@property (nonatomic, retain) IBOutlet UILabel* statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl* messageNav;
 
 @end

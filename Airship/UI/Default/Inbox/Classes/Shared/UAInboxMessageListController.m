@@ -54,11 +54,11 @@
 - (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
 @property (nonatomic, retain) UITableView *messageTable;
-@property (nonatomic, retain) UIView *loadingView;
-@property (nonatomic, retain) UABeveledLoadingIndicator *loadingIndicator;
-@property (nonatomic, retain) UILabel *loadingLabel;
-@property (nonatomic, retain) UITabBarItem *tabbarItem;
-@property (nonatomic, retain) UITabBar *tabbar;
+@property (nonatomic, retain) IBOutlet UIView *loadingView;
+@property (nonatomic, retain) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, retain) IBOutlet UILabel *loadingLabel;
+@property (nonatomic, retain) IBOutlet UITabBarItem *tabbarItem;
+@property (nonatomic, retain) IBOutlet UITabBar *tabbar;
 @property (nonatomic, retain) NSMutableSet *setOfUnreadMessagesInSelection;
 @property (nonatomic, retain) UIView *badgeView;
 @property (nonatomic, retain) NSMutableSet *selectedIndexPathsForEditing;

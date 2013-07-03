@@ -36,7 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * The UIWebView used to display the message content.
  */
-@property (nonatomic, retain) UIWebView* webView;
+@property (nonatomic, retain) IBOutlet UIWebView* webView;
 
 /**
  * The UAInboxMessage being displayed.
