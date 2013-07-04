@@ -44,21 +44,15 @@
 
 @implementation UAInboxUI
 
-@synthesize localizationBundle;
-@synthesize rootViewController;
-@synthesize messageListController;
-@synthesize inboxParentController;
-@synthesize alertHandler;
-@synthesize useOverlay;
-@synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (void)dealloc {
-    RELEASE_SAFELY(localizationBundle);
-	RELEASE_SAFELY(alertHandler);
-    RELEASE_SAFELY(rootViewController);
-    RELEASE_SAFELY(inboxParentController);
+    self.localizationBundle = nil;
+    self.alertHandler = nil;
+    self.rootViewController = nil;
+    self.inboxParentController = nil;
+    self.messageListController = nil;
     [super dealloc];
 } 
 
@@ -72,12 +66,12 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         self.isVisible = NO;
         
         self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
-        messageListController.title = @"Inbox";
-        messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
+        self.messageListController.title = @"Inbox";
+        self.messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:messageListController] autorelease];
+        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:self.messageListController] autorelease];
         
-        alertHandler = [[UAInboxAlertHandler alloc] init];        		
+        self.alertHandler = [[[UAInboxAlertHandler alloc] init] autorelease];
     }
     
     return self;
@@ -138,15 +132,15 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     
     NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
     
-    [alertHandler showNewMessageAlert:alertText];
+    [self.alertHandler showNewMessageAlert:alertText];
 }
 
 - (void)quitInbox {
     
-    [[[UAInbox shared] messageList] removeObserver:messageListController];
+    [[[UAInbox shared] messageList] removeObserver:self.messageListController];
 
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
+    if ([self.rootViewController isKindOfClass:[UINavigationController class]]) {
+        [(UINavigationController *)self.rootViewController popToRootViewControllerAnimated:NO];
     }
 	
     self.isVisible = NO;

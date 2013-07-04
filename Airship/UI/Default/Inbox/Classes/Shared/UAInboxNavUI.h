@@ -45,25 +45,7 @@
  * to be displayed in either a navigation controller (in the iPhone UI idiom)
  * or a popover controller (in the iPad UI idiom).
  */
-@interface UAInboxNavUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate, UIPopoverControllerDelegate> {
-  @private
-    NSBundle *localizationBundle;
-	UAInboxAlertHandler *alertHandler;
-    UIViewController *rootViewController;
-    
-    UIViewController *inboxParentController;
-    UINavigationController *navigationController;
-    UAInboxMessageViewController *messageViewController;
-    UAInboxMessageListController *messageListController;
-    
-    UIPopoverController *popoverController;
-    UIBarButtonItem *popoverButton;
-    
-    BOOL useOverlay;
-    BOOL isVisible;
-    
-    CGSize popoverSize;
-}
+@interface UAInboxNavUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate, UIPopoverControllerDelegate>
 
 /**
  * Set this property to YES if the class should display in-app messages

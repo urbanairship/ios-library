@@ -29,6 +29,10 @@
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 
+@interface UAInboxAlertHandler()
+@property(nonatomic, retain) UIAlertView *notificationAlert;
+@end
+
 @implementation UAInboxAlertHandler
 
 - (id)init {
@@ -44,13 +48,13 @@
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(notificationAlert);
+    self.notificationAlert = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
 
 - (void)enterBackground {
-    [notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+    [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
     [[UAInbox shared].pushHandler setViewingMessageID:nil];
 }
 
@@ -64,23 +68,21 @@
     //retrieve the message list -- if viewmessageID is non-nil,
     //the corresponding message will be displayed.
     [[UAInbox shared].messageList retrieveMessageList];
-
-    RELEASE_SAFELY(notificationAlert);
+    self.notificationAlert = nil;
 }
 
 - (void)showNewMessageAlert:(NSString *)message {
     /* In the event that one happens to be showing. (These are no-ops if notificationAlert is nil.) */
-    [notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
-    RELEASE_SAFELY(notificationAlert);
-	
+    [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+
     /* display a new alert */
-	notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
+	self.notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
                                                                  message:message
                                                                 delegate:self
                                                        cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                                        otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                                       nil];
-    [notificationAlert show];
+                                       nil] autorelease];
+    [self.notificationAlert show];
 	
 }
 

@@ -2,6 +2,10 @@
 #import "UABeveledLoadingIndicator.h"
 #include <QuartzCore/QuartzCore.h>
 
+@interface UABeveledLoadingIndicator()
+@property(nonatomic, retain) UIActivityIndicatorView *activity;
+@end
+
 @implementation UABeveledLoadingIndicator
 
 + (UABeveledLoadingIndicator *)indicator {
@@ -14,12 +18,12 @@
     self.layer.cornerRadius = 10.0;
     self.hidden = YES;
     
-    activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activity.hidesWhenStopped = YES;
+    self.activity = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
+    self.activity.hidesWhenStopped = YES;
 
-    [self addSubview:activity];
+    [self addSubview:self.activity];
     
-    activity.center = CGPointMake( self.frame.size.width/2, self.frame.size.height/2);
+    self.activity.center = CGPointMake( self.frame.size.width/2, self.frame.size.height/2);
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -36,16 +40,16 @@
 
 - (void)show {
     self.hidden = NO;
-    [activity startAnimating];
+    [self.activity startAnimating];
 }
 
 - (void)hide {
     self.hidden = YES;
-    [activity stopAnimating];
+    [self.activity stopAnimating];
 }
 
 - (void)dealloc {
-    [activity release];
+    self.activity = nil;
     [super dealloc];
 }
 
