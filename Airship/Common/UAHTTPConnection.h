@@ -63,7 +63,7 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 + (UAHTTPRequest *)requestWithURL:(NSURL *)url;
 
 /**
- * UAHTTPRequest initializer taking a URL String.
+ * UAHTTPRequest initializer taking a URL string.
  * @param urlString The URL string.
  */
 - (id)initWithURLString:(NSString *)urlString;
