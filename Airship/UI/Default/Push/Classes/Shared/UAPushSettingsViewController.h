@@ -27,21 +27,21 @@
 
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, retain)IBOutlet UITableView *tableView;
-@property (nonatomic, retain)IBOutlet UIDatePicker *datePicker;
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, retain) IBOutlet UIDatePicker *datePicker;
 @property (nonatomic, assign) CGRect pickerShownFrame;
 @property (nonatomic, assign) CGRect pickerHiddenFrame;
 
 
-@property (nonatomic, retain)IBOutlet UITableViewCell *pushEnabledCell;
-@property (nonatomic, retain)IBOutlet UILabel *pushEnabledLabel;
-@property (nonatomic, retain)IBOutlet UISwitch *pushEnabledSwitch;
+@property (nonatomic, retain) IBOutlet UITableViewCell *pushEnabledCell;
+@property (nonatomic, retain) IBOutlet UILabel *pushEnabledLabel;
+@property (nonatomic, retain) IBOutlet UISwitch *pushEnabledSwitch;
 
-@property (nonatomic, retain)IBOutlet UITableViewCell *quietTimeEnabledCell;
-@property (nonatomic, retain)IBOutlet UILabel *quietTimeLabel;
-@property (nonatomic, retain)UISwitch *quietTimeSwitch;
-@property (nonatomic, retain)UITableViewCell *fromCell;
-@property (nonatomic, retain)UITableViewCell *toCell;
+@property (nonatomic, retain) IBOutlet UITableViewCell *quietTimeEnabledCell;
+@property (nonatomic, retain) IBOutlet UILabel *quietTimeLabel;
+@property (nonatomic, retain) IBOutlet UISwitch *quietTimeSwitch;
+@property (nonatomic, retain) UITableViewCell *fromCell;
+@property (nonatomic, retain) UITableViewCell *toCell;
 
 @property (nonatomic, retain) IBOutlet UISwitch *airshipLocationEnabledSwitch;
 @property (nonatomic, retain) IBOutlet UILabel *airshipLocationEnabledLabel;

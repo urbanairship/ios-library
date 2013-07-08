@@ -40,7 +40,7 @@
 @property (nonatomic, retain) UIBarButtonItem *saveButton;
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
 @property (nonatomic, retain) IBOutlet UITableViewCell *tagCell;
-@property (nonatomic, retain) UITextField *tagField;
+@property (nonatomic, retain) IBOutlet UITextField *tagField;
 @property (nonatomic, retain) NSArray *presetTags;
 
 @end
