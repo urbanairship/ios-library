@@ -93,7 +93,7 @@ static NSMutableSet *overlayControllers = nil;
     if (self) {
         // Initialization code here.
         
-        self.parentViewController = [parent retain];
+        self.parentViewController = parent;
         UIView *sview = parent.view;
         
         self.bgView = [[[UIView alloc] initWithFrame: sview.bounds] autorelease];

@@ -66,8 +66,8 @@
 @property (nonatomic, retain) UIBarButtonItem *markAsReadButtonItem;
 @property (nonatomic, retain) UIBarButtonItem *editItem;
 @property (nonatomic, retain) UIBarButtonItem *cancelItem;
-@property (nonatomic, retain) NSString *cellReusableId;
-@property (nonatomic, retain) NSString *cellNibName;
+@property (nonatomic, copy) NSString *cellReusableId;
+@property (nonatomic, copy) NSString *cellNibName;
 
 @end
 
@@ -95,8 +95,8 @@
 }
 
 - (void)initNibNames {
-    self.cellReusableId = [@"UAInboxMessageListCell" retain];
-    self.cellNibName = [@"UAInboxMessageListCell" retain];
+    self.cellReusableId = @"UAInboxMessageListCell";
+    self.cellNibName = @"UAInboxMessageListCell";
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
