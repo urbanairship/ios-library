@@ -38,22 +38,37 @@
 
 @required
 /**
- * Handle an incoming push message.
- * @param message An NSDictionary with the push notification contents.
+ * Handle an incoming rich push notification.
+ * @param notification An NSDictionary with the push notification contents.
  */
-- (void)newMessageArrived:(NSDictionary *)message;
+- (void)richPushNotificationArrived:(NSDictionary *)notification;
+/**
+ * Handle a rich push notification that launched the application.
+ * @param notification An NSDictionary with thep ush notification contents.
+ */
+- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
+
+/**
+ * Called when a new Rich Push message is available for viewing.
+ * @param richPushMessage The Rich Push message
+ */
+- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+
+/**
+ * Called when a Rich Push message associated with the push that launched the application
+ * is available for viewing.
+ *
+ * @param richPushMessage The Rich Push message
+ */
+- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+
 @end
 
 /**
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
-@interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver> {
-  @private
-    NSString *viewingMessageID;
-    id <UAInboxPushHandlerDelegate> delegate;
-	BOOL hasLaunchMessage;
-}
+@interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver>
 
 /**
  * Handle an incoming in-app notification.  This should typically be called 
@@ -62,16 +77,15 @@
  */
 + (void)handleNotification:(NSDictionary *)userInfo;
 
+/**
+ * YES if the most recent rich push launched the app, NO otherwise.
+ */
+@property (nonatomic, assign) BOOL hasLaunchMessage;
 
 /**
  * The message ID of the most recent rich push as an NSString.
  */
 @property (nonatomic, retain) NSString *viewingMessageID;
-
-/**
- * YES if the most recent rich push launched the app, NO otherwise.
- */
-@property (nonatomic, assign) BOOL hasLaunchMessage;
 
 /**
  * The delegate that should be notified when an incoming push is handled,

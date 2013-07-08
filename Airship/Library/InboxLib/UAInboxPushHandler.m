@@ -34,16 +34,10 @@
 #import "UAEvent.h"
 
 
-
 @implementation UAInboxPushHandler
 
-@synthesize viewingMessageID;
-@synthesize delegate;
-@synthesize hasLaunchMessage;
-
 - (void)dealloc {
-    RELEASE_SAFELY(viewingMessageID);
-    RELEASE_SAFELY(delegate);
+    self.viewingMessageID = nil;
     [super dealloc];
 }
 
@@ -60,7 +54,7 @@
         //if the app is in the foreground, let the UI class decide how it
         //wants to respond to the incoming push
         if ([self isApplicationActive]) {
-            [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
+            [[UAInbox shared].pushHandler.delegate richPushNotificationArrived:userInfo];
         }
 
         //otherwise, load the message list
@@ -68,37 +62,32 @@
             //this will result in calling loadLaunchMessage on the UI class
             //once the request is complete
             [UAInbox shared].pushHandler.hasLaunchMessage = YES;
-
-            [[UAInbox shared].messageList retrieveMessageList];
+            [[UAInbox shared].pushHandler.delegate applicationLaunchedWithRichPushNotification:userInfo];
         }
+
+        [[UAInbox shared].messageList retrieveMessageList];
     }];
 }
 
 - (void)messageListLoaded {
 
     //only take action is there's a new message
-    if (viewingMessageID) {
-        Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
-        
+    if(self.viewingMessageID) {
+
+        UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
+
         //if the notification came in while the app was backgrounded, treat it as a launch message
-        if (hasLaunchMessage) {
-            [uiClass loadLaunchMessage];
+        if (self.hasLaunchMessage) {
+            [self.delegate launchRichPushMessageAvailable:message];
+            self.hasLaunchMessage = NO;
         }
-        
+
         //otherwise, have the UI class display it
         else {
-            [uiClass displayMessage:nil message:viewingMessageID];
-            [self setViewingMessageID:nil];
+            [self.delegate richPushMessageAvailable:message];
         }
+
+        self.viewingMessageID = nil;
     }
 }
-
-
-- (id)init {
-    if (self = [super init]) {
-		hasLaunchMessage = NO;
-	}
-	return self;
-}
-
 @end
