@@ -95,11 +95,12 @@
 }
 
 - (void)dealloc {
+    [UAInbox shared].jsDelegate = nil;
+    
     self.jsDelegate = nil;
     self.viewController = nil;
     self.navigationController = nil;
     self.window = nil;
-    [UAInbox shared].jsDelegate = nil;
     
     [super dealloc];
 }
