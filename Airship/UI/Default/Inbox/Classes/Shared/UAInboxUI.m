@@ -134,7 +134,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 - (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
     NSString *alertText = richPushMessage.title;
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[self class] displayMessage:nil message:richPushMessage.messageID];
+        [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
     }];
 }
 
@@ -143,7 +143,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 }
 
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[self class] displayMessage:nil message:richPushMessage.messageID];
+    [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
 }
 
 - (void)quitInbox {
