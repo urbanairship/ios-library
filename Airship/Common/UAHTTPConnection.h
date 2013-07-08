@@ -146,12 +146,12 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 - (BOOL)start;
 
-/*
+/**
  * Start the connection synchronously
  */
 - (BOOL)startSynchronous;
 
-/*
+/**
  * Cancel the connection
  */
 - (void)cancel;
