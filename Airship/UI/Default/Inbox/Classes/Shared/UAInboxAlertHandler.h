@@ -25,10 +25,12 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate> {
-    UIAlertView *notificationAlert;
-}
+typedef void (^UAInboxAlertHandlerViewBlock)(void);
 
-- (void)showNewMessageAlert:(NSString *)message;
+@interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate>
+
+@property(nonatomic, assign) UIAlertView *notificationAlert;
+
+- (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock;
 
 @end
