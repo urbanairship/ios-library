@@ -114,8 +114,9 @@ SINGLETON_INTERFACE(UAInboxNavUI);
 ///---------------------------------------------------------------------------------------
 /// @name UAInboxPushHandlerDelegate Methods
 ///---------------------------------------------------------------------------------------
-- (void)newMessageArrived:(NSDictionary *)message;
-- (void)applicationLaunchedWithMessage:(NSDictionary *)message;
+- (void)richPushNotificationArrived:(NSDictionary *)message;
+- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
 ///---------------------------------------------------------------------------------------
