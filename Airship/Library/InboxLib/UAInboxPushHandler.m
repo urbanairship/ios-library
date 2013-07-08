@@ -54,7 +54,7 @@
         //if the app is in the foreground, let the UI class decide how it
         //wants to respond to the incoming push
         if ([self isApplicationActive]) {
-            [[UAInbox shared].pushHandler.delegate newMessageArrived:userInfo];
+            [[UAInbox shared].pushHandler.delegate richPushNotificationArrived:userInfo];
         }
 
         //otherwise, load the message list
@@ -62,10 +62,10 @@
             //this will result in calling loadLaunchMessage on the UI class
             //once the request is complete
             [UAInbox shared].pushHandler.hasLaunchMessage = YES;
-            [[UAInbox shared].pushHandler.delegate applicationLaunchedWithMessage:userInfo];
-
-            [[UAInbox shared].messageList retrieveMessageList];
+            [[UAInbox shared].pushHandler.delegate applicationLaunchedWithRichPushNotification:userInfo];
         }
+
+        [[UAInbox shared].messageList retrieveMessageList];
     }];
 }
 
@@ -74,19 +74,17 @@
     //only take action is there's a new message
     if(self.viewingMessageID) {
 
-        Class <UAInboxUIProtocol> uiClass  = [UAInbox shared].uiClass;
+        UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
 
         //if the notification came in while the app was backgrounded, treat it as a launch message
         if (self.hasLaunchMessage) {
-            UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
             [self.delegate launchRichPushMessageAvailable:message];
             self.hasLaunchMessage = NO;
         }
 
         //otherwise, have the UI class display it
         else {
-            [uiClass displayMessage:nil message:self.viewingMessageID];
-
+            [self.delegate richPushMessageAvailable:message];
         }
 
         self.viewingMessageID = nil;

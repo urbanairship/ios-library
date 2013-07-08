@@ -38,15 +38,21 @@
 
 @required
 /**
- * Handle an incoming rich push message.
- * @param message An NSDictionary with the push notification contents.
+ * Handle an incoming rich push notification.
+ * @param notification An NSDictionary with the push notification contents.
  */
-- (void)newMessageArrived:(NSDictionary *)message;
+- (void)richPushNotificationArrived:(NSDictionary *)notification;
 /**
- * Handle a rich push message that launched the application.
- * @param message An NSDictionary with thepush notification contents.
+ * Handle a rich push notification that launched the application.
+ * @param notification An NSDictionary with thep ush notification contents.
  */
-- (void)applicationLaunchedWithMessage:(NSDictionary *)message;
+- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
+
+/**
+ * Called when a new Rich Push message is available for viewing.
+ * @param richPushMessage The Rich Push message
+ */
+- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage;
 
 /**
  * Called when a Rich Push message associated with the push that launched the application
@@ -55,6 +61,7 @@
  * @param richPushMessage The Rich Push message
  */
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage;
+
 @end
 
 /**
