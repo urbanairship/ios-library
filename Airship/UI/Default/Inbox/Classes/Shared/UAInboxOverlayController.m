@@ -58,7 +58,7 @@
 
 static NSMutableSet *overlayControllers = nil;
 
-@interface UAInboxOverlayController(Private)
+@interface UAInboxOverlayController()
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
 - (void)loadMessageAtIndex:(int)index;

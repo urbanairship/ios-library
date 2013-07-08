@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAInbox.h"
 #import "UAInboxAlertHandler.h"
 #import "UAInboxUI.h"
 
@@ -30,7 +31,7 @@
 #import "UAInboxMessageList.h"
 
 @interface UAInboxAlertHandler()
-@property(nonatomic, retain) UIAlertView *notificationAlert;
+@property(nonatomic, copy) UAInboxAlertHandlerViewBlock viewBlock;
 @end
 
 @implementation UAInboxAlertHandler
@@ -38,16 +39,17 @@
 - (id)init {
     if (self = [super init]) {
 
-       [[NSNotificationCenter defaultCenter] addObserver:self
-                                                selector:@selector(enterBackground)
-                                                    name:UIApplicationDidEnterBackgroundNotification
-                                                  object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(enterBackground)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
     }
-    
+
     return self;
 }
 
 - (void)dealloc {
+    self.viewBlock = nil;
     self.notificationAlert = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
@@ -55,35 +57,32 @@
 
 - (void)enterBackground {
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
-    [[UAInbox shared].pushHandler setViewingMessageID:nil];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-	
-	if (buttonIndex == alertView.cancelButtonIndex) {
-		// If we cancel, clear the pushHandler viewmessageID
-		[[UAInbox shared].pushHandler setViewingMessageID:nil];
+
+	if (buttonIndex != alertView.cancelButtonIndex) {
+        self.viewBlock();
     }
-    
-    //retrieve the message list -- if viewmessageID is non-nil,
-    //the corresponding message will be displayed.
-    [[UAInbox shared].messageList retrieveMessageList];
+
     self.notificationAlert = nil;
 }
 
-- (void)showNewMessageAlert:(NSString *)message {
+- (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock {
+    self.viewBlock = viewBlock;
     /* In the event that one happens to be showing. (These are no-ops if notificationAlert is nil.) */
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+    self.notificationAlert = nil;
 
     /* display a new alert */
-	self.notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
-                                                                 message:message
-                                                                delegate:self
-                                                       cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                                       otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                                       nil] autorelease];
+	self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
+                                                        message:message
+                                                       delegate:self
+                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
+                                              otherButtonTitles:UA_INBOX_TR(@"UA_View"),
+                              nil];
     [self.notificationAlert show];
-	
+
 }
 
 @end

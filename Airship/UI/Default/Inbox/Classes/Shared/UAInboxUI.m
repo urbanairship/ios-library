@@ -24,6 +24,7 @@
  */
 
 #import "UAInboxUI.h"
+#import "UAInboxUtils.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxOverlayController.h"
@@ -44,7 +45,6 @@
 
 @implementation UAInboxUI
 
-
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (void)dealloc {
@@ -52,7 +52,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     self.alertHandler = nil;
     self.rootViewController = nil;
     self.inboxParentController = nil;
-    self.messageListController = nil;
     [super dealloc];
 } 
 
@@ -128,11 +127,23 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     }
 }
 
-- (void)newMessageArrived:(NSDictionary *)message {
-    
-    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
-    
-    [self.alertHandler showNewMessageAlert:alertText];
+- (void)richPushNotificationArrived:(NSDictionary *)message {
+    //custom launch notification handling here
+}
+
+- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
+    NSString *alertText = richPushMessage.title;
+    [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
+        [[self class] displayMessage:nil message:richPushMessage.messageID];
+    }];
+}
+
+- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
+    //custom launch notification handling here
+}
+
+- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
+    [[self class] displayMessage:nil message:richPushMessage.messageID];
 }
 
 - (void)quitInbox {
@@ -171,23 +182,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 + (void)quitInbox {
     [[UAInboxUI shared] quitInbox];
-}
-
-+ (void)loadLaunchMessage {
-	
-	// if pushhandler has a messageID load it
-    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
-
-    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
-    
-    if (!msg) {
-        return;
-    }
-            
-    [UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
-    
-    pushHandler.viewingMessageID = nil;
-    pushHandler.hasLaunchMessage = NO;
 }
 
 + (void)land {
