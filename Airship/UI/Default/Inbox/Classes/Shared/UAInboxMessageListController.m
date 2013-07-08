@@ -597,8 +597,6 @@ static float label_width = 0.0;
         // if iOS5 or 6
         if (self.tabbar.subviews.count > 1) {
             [self.badgeView addSubview:[self.tabbar.subviews objectAtIndex:1]];
-        } else if (self.tabbar.subviews.count > 0) {
-            [self.badgeView addSubview:[self.tabbar.subviews objectAtIndex:0]];
         }
     } else {
         //if < iOS5
