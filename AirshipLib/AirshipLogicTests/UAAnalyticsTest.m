@@ -59,7 +59,7 @@
     self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
 
     UAConfig *config = [[[UAConfig alloc] init] autorelease];
-    self.analytics = [[UAAnalytics alloc] initWithConfig:config];
+    self.analytics = [[[UAAnalytics alloc] initWithConfig:config] autorelease];
  }
 
 - (void)tearDown {
@@ -130,14 +130,6 @@
     STAssertEquals(self.analytics.minBatchInterval, kMinBatchIntervalSeconds + 5, @"minBatchInterval value did not restore properly");
 }
 
-- (void)restoreSavedUploadEventSettingsSetsSendInterval {
-    self.analytics.sendInterval = kMinBatchIntervalSeconds + 50;
-    
-    [self.analytics restoreSavedUploadEventSettings];
-
-    STAssertEquals(self.analytics.sendInterval, kMinBatchIntervalSeconds, @"sendInterval was not correctly set in restoreSavedUploadEventSettings");
-}
-
 - (void)testSaveUploadEventSettings {
     // Clear the settings from the standard user defaults
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
@@ -172,24 +164,6 @@
     STAssertEquals(self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save update its value from response header");
     STAssertEquals(self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save update its value from response header");
     STAssertEquals(self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
-}
-
-- (void)testSetSendInterval {
-    // Set the min value (minBatchInterval) and the max value (maxWait)
-    self.analytics.minBatchInterval = kMinBatchIntervalSeconds;
-    self.analytics.maxWait = kMinWaitSeconds;
-
-    // Set a value higher then the max, should set to the max
-    self.analytics.sendInterval = kMinWaitSeconds + 1;
-    STAssertEquals(self.analytics.sendInterval, kMinWaitSeconds, @"sendInterval is able to be set above the max value");
-
-    // Set a value lower then then min, should set to the min
-    self.analytics.sendInterval = kMinBatchIntervalSeconds - 1;
-    STAssertEquals(self.analytics.sendInterval, kMinBatchIntervalSeconds, @"sendInterval is able to be set below the min value");
-
-    // Set a value between
-    self.analytics.sendInterval = kMinBatchIntervalSeconds + 1;
-    STAssertEquals(self.analytics.sendInterval, kMinBatchIntervalSeconds + 1, @"sendInterval is unable to be set to a valid value");
 }
 
 - (void)testSetMaxTotalDBSize {
@@ -289,12 +263,12 @@
 }
 
 -(NSMutableDictionary *) createValidEvent {
-    return [@{@"event_id": @"some-event-id",
+    return [[@{@"event_id": @"some-event-id",
              @"data": [NSMutableData dataWithCapacity:1],
              @"session_id": @"some-session-id",
              @"type": @"base",
              @"time":[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]],
-             @"event_size":@"40"} mutableCopy];
+             @"event_size":@"40"} mutableCopy] autorelease];
 }
 
 @end
