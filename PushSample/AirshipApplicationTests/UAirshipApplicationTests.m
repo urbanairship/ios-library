@@ -6,6 +6,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+
 #import "UAirship+Internal.h"
 #import "UALocationService.h"
 

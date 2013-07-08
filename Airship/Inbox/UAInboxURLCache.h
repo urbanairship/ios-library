@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -24,15 +24,37 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
 
-@interface UABaseAppDelegateSurrogate : NSObject <UIApplicationDelegate>
+@interface UAInboxURLCache : NSURLCache
 
-/* 
- * delegates are typically not retained, but in this case we will take responsibility for them
- * as we're essentially a man in the middle and we don't want to lose them.
+@property(nonatomic, retain) NSString *cacheDirectory;
+@property(nonatomic, retain) NSArray *resourceTypes;
+
+/**
+ * The actual disk capacity of this cache.
+ *
+ * This method is useful because the diskCapacity getter on this class returns a highly
+ * inflated value.
+ *
+ * @see diskCapacity
+ *
+ * @returns The cache's actual maximum size, in bytes
  */
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *surrogateDelegate;
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *defaultAppDelegate;
+ 
+@property(nonatomic, assign) NSUInteger actualDiskCapacity;
+
+/**
+ * Overrides [NSURLCache diskCapacity].
+ *
+ * This method returns a highly inflated number. UIWebView will fail to cache large items
+ * if the size of the content is large in comparison to the size of the disk cache. A large
+ * value (actual capacity) * 50 ensures that it will attempt to cache everything, allowing
+ * this cache to make its own decisions.
+ *
+ * @see actualDiskCapacity
+ *
+ * @returns actualDiskCapacity * 50
+ */
+- (NSUInteger)diskCapacity;
 
 @end

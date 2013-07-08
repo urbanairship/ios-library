@@ -30,14 +30,11 @@
 
 
 @implementation SampleViewController
-@synthesize version;
-@synthesize settingsButton;
-@synthesize tokenButton;
 
 - (IBAction)buttonPressed:(id)sender {
-    if (sender == settingsButton) {
+    if (sender == self.settingsButton) {
         [UAPush openApnsSettings:self animated:YES];
-    } else if (sender == tokenButton) {
+    } else if (sender == self.tokenButton) {
         [UAPushUI openTokenSettings:self animated:YES];
     }
 }
@@ -48,12 +45,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    version.text = [NSString stringWithFormat:@"UAirship Version: %@", [UAirshipVersion get]];
+    self.version.text = [NSString stringWithFormat:@"UAirship Version: %@", [UAirshipVersion get]];
     [UAPush useCustomUI:[UAPushUI class]];
 }
 
 - (void)dealloc {
-    [version release];
+    self.version = nil;
+    self.settingsButton = nil;
+    self.tokenButton = nil;
     [super dealloc];
 }
 

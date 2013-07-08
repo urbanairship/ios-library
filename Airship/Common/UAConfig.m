@@ -77,7 +77,7 @@
             "Resolved Log Level: %d\n"
             "Detect Provisioning Mode: %d\n"
             "Clear Keychain: %d\n"
-            "Analytics Enabled: %d"
+            "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n",
             self.appKey,

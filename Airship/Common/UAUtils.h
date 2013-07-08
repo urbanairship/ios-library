@@ -30,9 +30,7 @@
 /**
  * The UAUtils object provides an interface for utility methods.
  */
-@interface UAUtils : NSObject {
-
-}
+@interface UAUtils : NSObject
 
 ///---------------------------------------------------------------------------------------
 /// @name Digest/Hash Utils
@@ -44,8 +42,18 @@
 /// @name Device ID Utils
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Generate a UUID.
+ * Uses CFUUID to generate and return a UUID.
+ *
+ * @return A UUID.
+ */
 + (NSString *)UUID;
 
+/**
+ * Get the device model name. e.g., iPhone3,1
+ * @return The device model name.
+ */
 + (NSString *)deviceModelName;
 
 /**
@@ -79,8 +87,6 @@
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
 + (NSString *)userAuthHeaderString;
-
-
 
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers

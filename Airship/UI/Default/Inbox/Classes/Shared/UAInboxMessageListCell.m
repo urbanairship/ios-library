@@ -31,31 +31,25 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInboxMessageListCell
 
-@synthesize dateView;
-@synthesize title;
-@synthesize unreadIndicator;
-@synthesize checkmark;
-@synthesize selectedEditingBackgroundView;
-
 - (void)dealloc {
-    RELEASE_SAFELY(dateView);
-    RELEASE_SAFELY(title);
-    RELEASE_SAFELY(unreadIndicator);
-    RELEASE_SAFELY(checkmark);
-    RELEASE_SAFELY(selectedEditingBackgroundView);
+    self.dateView = nil;
+    self.title = nil;
+    self.unreadIndicator = nil;
+    self.checkmark = nil;
+    self.selectedEditingBackgroundView = nil;
     [super dealloc];
 }
 
 - (void)setData:(UAInboxMessage*)message {
 
-    dateView.text = [UADateUtils formattedDateRelativeToNow:message.messageSent];
+    self.dateView.text = [UADateUtils formattedDateRelativeToNow:message.messageSent];
 
-    [title setText: message.title];
+    [self.title setText: message.title];
 
     if(!message.unread) {
-        unreadIndicator.hidden = YES;
+        self.unreadIndicator.hidden = YES;
     } else {
-        unreadIndicator.hidden = NO;
+        self.unreadIndicator.hidden = NO;
     }
 }
 
@@ -65,23 +59,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         if (self.editingStyle == UITableViewCellEditingStyleNone) {
             // batch update
-            checkmark.hidden = NO;
+            self.checkmark.hidden = NO;
             if (self.selected) {
-                checkmark.image = [UIImage imageNamed:@"check.png"];
-                self.backgroundView = selectedEditingBackgroundView;
+                self.checkmark.image = [UIImage imageNamed:@"check.png"];
+                self.backgroundView = self.selectedEditingBackgroundView;
             } else {
-                checkmark.image = [UIImage imageNamed:@"uncheck.png"];
+                self.checkmark.image = [UIImage imageNamed:@"uncheck.png"];
                 self.backgroundView = nil;
             }
         } else if (self.editingStyle == UITableViewCellEditingStyleDelete) {
             // swipe deletion
-            dateView.hidden = YES;
+            self.dateView.hidden = YES;
         }
     } else {
         self.backgroundView = nil;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
-        checkmark.hidden = YES;
-        dateView.hidden = NO;
+        self.checkmark.hidden = YES;
+        self.dateView.hidden = NO;
     }
 
     [super layoutSubviews];

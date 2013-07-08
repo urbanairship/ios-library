@@ -23,7 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInbox.h"
 #import "UAInboxAlertHandler.h"
 #import "UAInboxUI.h"
 
@@ -31,7 +30,7 @@
 #import "UAInboxMessageList.h"
 
 @interface UAInboxAlertHandler()
-@property(nonatomic, copy) UAInboxAlertHandlerViewBlock viewBlock;
+@property(nonatomic, retain) UIAlertView *notificationAlert;
 @end
 
 @implementation UAInboxAlertHandler
@@ -49,7 +48,6 @@
 }
 
 - (void)dealloc {
-    self.viewBlock = nil;
     self.notificationAlert = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
@@ -57,30 +55,33 @@
 
 - (void)enterBackground {
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
+    [[UAInbox shared].pushHandler setViewingMessageID:nil];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	
-	if (buttonIndex != alertView.cancelButtonIndex) {
-        self.viewBlock();
+	if (buttonIndex == alertView.cancelButtonIndex) {
+		// If we cancel, clear the pushHandler viewmessageID
+		[[UAInbox shared].pushHandler setViewingMessageID:nil];
     }
     
+    //retrieve the message list -- if viewmessageID is non-nil,
+    //the corresponding message will be displayed.
+    [[UAInbox shared].messageList retrieveMessageList];
     self.notificationAlert = nil;
 }
 
-- (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock {
-    self.viewBlock = viewBlock;
+- (void)showNewMessageAlert:(NSString *)message {
     /* In the event that one happens to be showing. (These are no-ops if notificationAlert is nil.) */
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
-    self.notificationAlert = nil;
-	
+
     /* display a new alert */
-	self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
+	self.notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Remote_Notification_Title")
                                                                  message:message
                                                                 delegate:self
                                                        cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                                        otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                                       nil];
+                                       nil] autorelease];
     [self.notificationAlert show];
 	
 }

@@ -37,6 +37,7 @@
 @property (nonatomic, assign) BOOL isVisible;
 @property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
 @property (nonatomic, retain) UAInboxMessageListController *messageListController;
+@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
 
 - (void)quitInbox;
 
@@ -44,17 +45,6 @@
 
 @implementation UAInboxNavUI
 
-@synthesize localizationBundle;
-@synthesize rootViewController;
-@synthesize inboxParentController;
-@synthesize navigationController;
-@synthesize messageListController;
-@synthesize messageViewController;
-@synthesize popoverController;
-@synthesize popoverButton;
-@synthesize useOverlay;
-@synthesize isVisible;
-@synthesize popoverSize;
 
 SINGLETON_IMPLEMENTATION(UAInboxNavUI)
 
@@ -65,10 +55,11 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(localizationBundle);
-	RELEASE_SAFELY(alertHandler);
-    RELEASE_SAFELY(rootViewController);
-    RELEASE_SAFELY(inboxParentController);
+    self.localizationBundle = nil;
+    self.localizationBundle = nil;
+	self.alertHandler = nil;
+    self.rootViewController = nil;
+    self.inboxParentController = nil;
     self.popoverController = nil;
     self.popoverButton = nil;
     self.navigationController = nil;
@@ -93,7 +84,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         
         self.messageListController = mlc;
         
-        alertHandler = [[UAInboxAlertHandler alloc] init];
+        self.alertHandler = [[[UAInboxAlertHandler alloc] init] autorelease];
         
         self.popoverSize = CGSizeMake(320, 1100);
     }
@@ -186,7 +177,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     [[UAInbox shared].messageList removeObserver:[UAInboxNavUI shared].messageListController];
     
     self.isVisible = NO;
-    [self.navigationController popToViewController:messageListController animated:YES];
+    [self.navigationController popToViewController:self.messageListController animated:YES];
     [self.navigationController popViewControllerAnimated:YES];
     
     if (self.popoverController) {
@@ -195,6 +186,27 @@ static BOOL runiPhoneTargetOniPad = NO;
     }
 
     
+}
+
++ (void)loadLaunchMessage {
+	
+	// if pushhandler has a messageID load it
+    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
+	if (pushHandler.viewingMessageID && pushHandler.hasLaunchMessage) {
+
+		UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
+		if (!msg) {
+			return;
+		}
+        
+        UIViewController *rvc = [UAInboxNavUI shared].rootViewController;
+		
+		[UAInbox displayMessage:rvc message:pushHandler.viewingMessageID];
+		
+		pushHandler.viewingMessageID = nil;
+		pushHandler.hasLaunchMessage = NO;
+	}
+
 }
 
 + (void)land {
@@ -207,23 +219,11 @@ static BOOL runiPhoneTargetOniPad = NO;
     }
 }
 
-- (void)richPushNotificationArrived:(NSDictionary *)message {
-    //custom launch notification handling here
+- (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    [self.alertHandler showNewMessageAlert:alertText];
 }
 
-- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    NSString *alertText = richPushMessage.title;
-    [alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[self class] displayMessage:nil message:richPushMessage.messageID];
-    }];
-}
-
-- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
-    //custom launch notification handling here
-}
-
-- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[self class] displayMessage:nil message:richPushMessage.messageID];
-}
 
 @end

@@ -24,7 +24,6 @@
  */
 
 #import "UAInboxUI.h"
-#import "UAInboxUtils.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
 #import "UAInboxOverlayController.h"
@@ -45,21 +44,15 @@
 
 @implementation UAInboxUI
 
-@synthesize localizationBundle;
-@synthesize rootViewController;
-@synthesize messageListController;
-@synthesize inboxParentController;
-@synthesize alertHandler;
-@synthesize useOverlay;
-@synthesize isVisible;
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (void)dealloc {
-    RELEASE_SAFELY(localizationBundle);
-	RELEASE_SAFELY(alertHandler);
-    RELEASE_SAFELY(rootViewController);
-    RELEASE_SAFELY(inboxParentController);
+    self.localizationBundle = nil;
+    self.alertHandler = nil;
+    self.rootViewController = nil;
+    self.inboxParentController = nil;
+    self.messageListController = nil;
     [super dealloc];
 } 
 
@@ -73,12 +66,12 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         self.isVisible = NO;
         
         self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
-        messageListController.title = @"Inbox";
-        messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
+        self.messageListController.title = @"Inbox";
+        self.messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:messageListController] autorelease];
+        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:self.messageListController] autorelease];
         
-        alertHandler = [[UAInboxAlertHandler alloc] init];        		
+        self.alertHandler = [[[UAInboxAlertHandler alloc] init] autorelease];
     }
     
     return self;
@@ -135,31 +128,19 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     }
 }
 
-- (void)richPushNotificationArrived:(NSDictionary *)message {
-    //custom launch notification handling here
-}
-
-- (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    NSString *alertText = richPushMessage.title;
-    [alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[self class] displayMessage:nil message:richPushMessage.messageID];
-    }];
-}
-
-- (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification {
-    //custom launch notification handling here
-}
-
-- (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[self class] displayMessage:nil message:richPushMessage.messageID];
+- (void)newMessageArrived:(NSDictionary *)message {
+    
+    NSString* alertText = [[message objectForKey: @"aps"] objectForKey: @"alert"];
+    
+    [self.alertHandler showNewMessageAlert:alertText];
 }
 
 - (void)quitInbox {
     
-    [[[UAInbox shared] messageList] removeObserver:messageListController];
+    [[[UAInbox shared] messageList] removeObserver:self.messageListController];
 
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController *)rootViewController popToRootViewControllerAnimated:NO];
+    if ([self.rootViewController isKindOfClass:[UINavigationController class]]) {
+        [(UINavigationController *)self.rootViewController popToRootViewControllerAnimated:NO];
     }
 	
     self.isVisible = NO;
@@ -190,6 +171,23 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 + (void)quitInbox {
     [[UAInboxUI shared] quitInbox];
+}
+
++ (void)loadLaunchMessage {
+	
+	// if pushhandler has a messageID load it
+    UAInboxPushHandler *pushHandler = [UAInbox shared].pushHandler;
+
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:pushHandler.viewingMessageID];
+    
+    if (!msg) {
+        return;
+    }
+            
+    [UAInboxUI displayMessage:nil message:pushHandler.viewingMessageID];
+    
+    pushHandler.viewingMessageID = nil;
+    pushHandler.hasLaunchMessage = NO;
 }
 
 + (void)land {

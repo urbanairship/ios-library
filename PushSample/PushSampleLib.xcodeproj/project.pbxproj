@@ -37,7 +37,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F42313B16C19A48004B52C1 /* libUAirship-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-1.5.0.a */; };
+		1F42313B16C19A48004B52C1 /* libUAirship-2.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.0.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -104,7 +104,7 @@
 		1FCBB548175A9F7F00F42F07 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
 		1FCBB549175A9F7F00F42F07 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
 		1FCBB54A175A9F7F00F42F07 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
-		1FCBB54C175A9F7F00F42F07 /* libUAirship-1.5.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-1.5.0.a */; };
+		1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.0.a */; };
 		1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
 		1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
@@ -339,7 +339,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F42313B16C19A48004B52C1 /* libUAirship-1.5.0.a in Frameworks */,
+				1F42313B16C19A48004B52C1 /* libUAirship-2.0.0.a in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
 				1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */,
@@ -362,7 +362,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FCBB568175AA20800F42F07 /* libKIF.a in Frameworks */,
-				1FCBB54C175A9F7F00F42F07 /* libUAirship-1.5.0.a in Frameworks */,
+				1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.0.a in Frameworks */,
 				1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */,
 				1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */,
 				1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */,
@@ -571,7 +571,7 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-1.5.0.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */,
 			);
 			name = Products;
@@ -820,10 +820,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-1.5.0.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-1.5.0.a";
+			path = "libUAirship-2.0.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1236,6 +1236,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALID_ARCHS = "armv6 armv7 i386 armv7s";
@@ -1269,6 +1270,7 @@
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
@@ -1281,6 +1283,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_STYLE = Debug;
+				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1302,6 +1305,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";
@@ -1314,6 +1318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_STYLE = Release;
+				CLANG_STATIC_ANALYZER_MODE = deep;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -1334,6 +1339,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 i386";

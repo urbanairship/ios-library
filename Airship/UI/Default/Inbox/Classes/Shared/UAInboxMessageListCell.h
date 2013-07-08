@@ -30,38 +30,32 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * The UITableViewCell subclass used by UAInboxMessageListController.
  */
-@interface UAInboxMessageListCell : UITableViewCell {
-    IBOutlet UILabel* title;
-    IBOutlet UILabel* dateView;
-    IBOutlet UIView* unreadIndicator;
-    IBOutlet UIImageView *checkmark;
-    IBOutlet UIView *selectedEditingBackgroundView;
-}
+@interface UAInboxMessageListCell : UITableViewCell
 
 /**
  *Displays the message date.
  */
-@property (nonatomic, retain) UILabel* dateView;
+@property (nonatomic, retain) IBOutlet UILabel* dateView;
 
 /**
  * Displays the message title.
  */
-@property (nonatomic, retain) UILabel* title;
+@property (nonatomic, retain) IBOutlet UILabel* title;
 
 /**
  * Indicates whether a message has previously been read.
  */
-@property (nonatomic, retain) UIView* unreadIndicator;
+@property (nonatomic, retain) IBOutlet UIView* unreadIndicator;
 
 /**
  * Checkmark image used in batch message selection
  */
-@property (nonatomic, retain) UIImageView *checkmark;
+@property (nonatomic, retain) IBOutlet UIImageView *checkmark;
 
 /**
  * Background view used when a cell is selected in editing mode.
  */
-@property (nonatomic, retain) UIView *selectedEditingBackgroundView;
+@property (nonatomic, retain) IBOutlet UIView *selectedEditingBackgroundView;
 
 /**
  * Set the UAInboxMessage associated with this cell.

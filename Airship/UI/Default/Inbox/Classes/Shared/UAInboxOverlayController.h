@@ -58,16 +58,6 @@
  */
 @interface UAInboxOverlayController : NSObject <UIWebViewDelegate>
 
-{
-    
-    UIViewController *parentViewController;
-    UIView *bgView;
-    UIView *bigPanelView;
-    UABeveledLoadingIndicator *loadingIndicator;
-    UIWebView *webView;
-    UAInboxMessage *message;
-}
-
 /**
  * The UIWebView used to display the message content.
  */

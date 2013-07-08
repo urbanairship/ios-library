@@ -28,13 +28,11 @@
 
 @implementation UAPushSettingsTokenViewController
 
-@synthesize emailButton;
-@synthesize tokenLabel;
-
 - (void)dealloc {
-    RELEASE_SAFELY(emailButton);
-    RELEASE_SAFELY(tokenLabel);
-    RELEASE_SAFELY(text);
+    self.cpyButton = nil;
+    self.emailButton = nil;
+    self.tokenLabel = nil;
+    self.text = nil;
     [super dealloc];
 }
 
@@ -43,10 +41,10 @@
 
     self.title = @"Device Token";
 
-    text = @"Your current device token. Test a push notification at "
+    self.text = @"Your current device token. Test a push notification at "
            @"https://go.urbanairship.com";
 
-    tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    self.tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -66,7 +64,7 @@
 
 - (CGFloat)tableView: (UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *) indexPath {
     UIFont *font = [UIFont systemFontOfSize:17];
-    CGFloat height = [text sizeWithFont:font
+    CGFloat height = [self.text sizeWithFont:font
                       constrainedToSize:CGSizeMake(280.0, 1500.0)
                           lineBreakMode:NSLineBreakByWordWrapping].height;
     return height + kCellPaddingHeight;
@@ -93,12 +91,12 @@
     UIFont *font = [UIFont systemFontOfSize: 17];
 
     UILabel* description = [[UILabel alloc] init];
-    description.text = text;
+    description.text = self.text;
     description.lineBreakMode = UILineBreakModeWordWrap;
     description.numberOfLines = 0;
     description.backgroundColor = [UIColor clearColor];
     [description setFont: font];
-    CGFloat height = [text sizeWithFont:font
+    CGFloat height = [self.text sizeWithFont:font
                       constrainedToSize:CGSizeMake(280.0, 800.0)
                           lineBreakMode:NSLineBreakByWordWrapping].height;
     [description setFrame: CGRectMake(0.0f, 10.0f, 320.0f, height)];

@@ -44,20 +44,12 @@ enum {
 
 @implementation UAPushSettingsAliasViewController
 
-@synthesize tableView;
-@synthesize aliasCell;
-@synthesize textCell;
-@synthesize textLabel;
-@synthesize aliasField;
-
 - (void)dealloc {
-	
-    RELEASE_SAFELY(tableView);
-    RELEASE_SAFELY(aliasCell);
-    RELEASE_SAFELY(textCell);
-    RELEASE_SAFELY(textLabel);
-    RELEASE_SAFELY(aliasField);
-	
+    self.tableView = nil;
+    self.aliasCell = nil;
+    self.textCell = nil;
+    self.textLabel = nil;
+    self.aliasField = nil;
     [super dealloc];
 }
 
@@ -66,10 +58,10 @@ enum {
 
     self.title = @"Device Alias";
     
-    aliasField.text = [UAPush shared].alias;
-    aliasField.clearsOnBeginEditing = YES;
-    aliasField.accessibilityLabel = @"Edit Alias";
-    textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
+    self.aliasField.text = [UAPush shared].alias;
+    self.aliasField.clearsOnBeginEditing = YES;
+    self.aliasField.accessibilityLabel = @"Edit Alias";
+    self.textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
                      @"the process of sending notifications.";
 }
 
@@ -88,7 +80,7 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [textLabel.text sizeWithFont:textLabel.font
+        CGFloat height = [self.textLabel.text sizeWithFont:self.textLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;
@@ -122,9 +114,9 @@ enum {
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == SectionAlias) {
-        return aliasCell;
+        return self.aliasCell;
     } else if (indexPath.section == SectionDesc) {
-        return textCell;
+        return self.textCell;
     }
     
     return nil;
@@ -140,7 +132,7 @@ enum {
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
     
-	NSString *newAlias = aliasField.text;
+	NSString *newAlias = self.aliasField.text;
 	
 	// Trim leading whitespace
 	NSRange range = [newAlias rangeOfString:@"^\\s*" options:NSRegularExpressionSearch];

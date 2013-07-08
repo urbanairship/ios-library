@@ -37,17 +37,7 @@
  * designated as the [UAInbox uiClass], launching the inbox will cause it
  * to be displayed in a modal view controller.
  */
-@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> {
-  @private
-    NSBundle *localizationBundle;
-	UAInboxAlertHandler *alertHandler;
-    UIViewController *rootViewController;
-    UAInboxMessageListController *messageListController;
-    UIViewController *inboxParentController;
-    BOOL useOverlay;
-    BOOL isVisible;
-}
-
+@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate> 
 /**
  * Set this property to YES if the class should display in-app messages
  * using UAInboxOverlayController, and NO if it should navigate to the

@@ -27,13 +27,12 @@
 #import <OCMock/OCMConstraint.h>
 #import <SenTestingKit/SenTestingKit.h>
 
-#import "UAAnalytics.h"
 #import "UAConfig.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
 #import "UALocationEvent.h"
 #import "UAAnalytics+Internal.h"
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UALocationTestUtils.h"
 
 /* This class involves lots of async calls to the web

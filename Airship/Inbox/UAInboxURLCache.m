@@ -68,12 +68,6 @@
 
 @implementation UAInboxURLCache
 
-@synthesize cacheDirectory;
-@synthesize resourceTypes;
-@synthesize metadata;
-@synthesize actualDiskCapacity;
-@synthesize queue;
-
 #pragma mark -
 #pragma mark NSURLCache methods
 - (id)initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity diskPath:(NSString *)path {
@@ -94,15 +88,15 @@
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(cacheDirectory);
-    RELEASE_SAFELY(resourceTypes);
-    RELEASE_SAFELY(metadata);
-    RELEASE_SAFELY(queue);
+    self.cacheDirectory = nil;
+    self.resourceTypes = nil;
+    self.metadata = nil;
+    self.queue = nil;
     [super dealloc];
 }
 
 - (NSUInteger)diskCapacity {
-    return actualDiskCapacity * 50;
+    return self.actualDiskCapacity * 50;
 }
 
 - (void)storeCachedResponse:(NSCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request {
@@ -117,7 +111,7 @@
         
         NSURL *url = request.URL;
         
-        //default to "text/html" if the server doesn't provide a content type
+        // default to "text/html" if the server doesn't provide a content type
         NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
         NSString *textEncoding = cachedResponse.response.textEncodingName;
         if (textEncoding) {
@@ -133,7 +127,7 @@
         [invocation setArgument:&contentType atIndex:4];
         
         NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithInvocation:invocation] autorelease];
-        [queue addOperation:io];
+        [self.queue addOperation:io];
 
     }
     
@@ -155,12 +149,12 @@
     
     NSCachedURLResponse* cachedResponse = nil;
     
-    //retrieve resource from cache or populate if needed
+    // retrieve resource from cache or populate if needed
     NSString *contentPath = [self getStoragePathForURL:request.URL];
     NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:request.URL];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
-        //retrieve it
+        // retrieve it
         NSData *content = [NSData dataWithContentsOfFile:contentPath];
         
         NSString *contentType = [NSString stringWithContentsOfFile:contentTypePath 
@@ -169,15 +163,22 @@
         
         NSString *textEncoding = nil;
         
-        //if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
-        //into separate arguments so UIWebView doesn't get confused
+        // if the content type expresses a charset (e.g. text/html; charset=utf8;) we need to break it up
+        // into separate arguments so UIWebView doesn't get confused
         NSArray *subTypes = [self mimeTypeAndCharsetForContentType:contentType];
-        contentType = [subTypes objectAtIndex:0];
+
+        if (subTypes.count > 0) {
+            contentType = [subTypes objectAtIndex:0];
+        } else {
+            // default to "text/html" if the server doesn't provide a content type
+            contentType = @"text/html";
+        }
+
         if(subTypes.count > 1) {
             textEncoding = [subTypes objectAtIndex:1];
         }
-        
-        //default to utf-8 when there isn't a content type for html
+
+        // default to utf-8 when there isn't a textEncoding for html content type
         if (!textEncoding && [@"text/html" isEqualToString:contentType]) {
             textEncoding = @"utf-8";
         }
@@ -198,10 +199,10 @@
         UALOG(@"MIME Type: %@ Encoding: %@", contentType, textEncoding);
         
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
-        @synchronized(metadata) {
-            [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+        @synchronized(self.metadata) {
+            [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
             NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(saveMetadata) object:nil] autorelease];
-            [queue addOperation:io];
+            [self.queue addOperation:io];
         }
     }
     return cachedResponse;
@@ -215,7 +216,7 @@
 - (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request {
     
     NSString *referer = [[request allHTTPHeaderFields] objectForKey:@"Referer"];
-    BOOL whitelisted = [resourceTypes containsObject:response.response.MIMEType];
+    BOOL whitelisted = [self.resourceTypes containsObject:response.response.MIMEType];
     NSString *host = request.URL.host;
     NSString  *airshipHost = [[NSURL URLWithString:[UAirship shared].config.deviceAPIURL] host];
     
@@ -226,7 +227,7 @@
 }
 
 - (NSString *)getStoragePathForHash:(NSString *)hash {
-    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, hash];
+    return [NSString stringWithFormat:@"%@/%@", self.cacheDirectory, hash];
 }
 
 - (NSString *)getStoragePathForURL:(NSURL *)url {    
@@ -259,19 +260,19 @@
         if (ok) {
             NSString *hash = [UAUtils md5:[url absoluteString]];
             
-            @synchronized(metadata) {
-                [[metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
-                [[metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+            @synchronized(self.metadata) {
+                [[self.metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
+                [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
                 
                 
-                NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+                NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
                 currentSize += content.length;
-                [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+                [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
                 
                 UALOG(@"Cache size: %d bytes", currentSize);
-                UALOG(@"Actual disk capacity: %d bytes", actualDiskCapacity);
+                UALOG(@"Actual disk capacity: %d bytes", self.actualDiskCapacity);
                 
-                if (currentSize > actualDiskCapacity) {
+                if (currentSize > self.actualDiskCapacity) {
                     [self purge];
                 }
                 
@@ -292,7 +293,11 @@
     
     NSString *contentSubType;
     NSString *charset;
-    
+
+    if (!contentType) {
+        return nil;
+    }
+
     if (range.location != NSNotFound) {
         contentSubType = [[[contentType substringToIndex:range.location] stringByReplacingOccurrencesOfString:@";" withString:@""]
                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -308,7 +313,7 @@
 //housekeeping
 
 - (NSString *)getMetadataPath {
-    return [NSString stringWithFormat:@"%@/%@", cacheDirectory, METADATA_NAME];
+    return [NSString stringWithFormat:@"%@/%@", self.cacheDirectory, METADATA_NAME];
 }
 
 - (NSMutableDictionary *)loadMetadata {
@@ -332,10 +337,10 @@
 
 - (void)saveMetadata {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    @synchronized(metadata) {
-        if (metadata) {
+    @synchronized(self.metadata) {
+        if (self.metadata) {
             NSString *metadataPath = [self getMetadataPath];
-            [metadata writeToFile:metadataPath atomically:YES];
+            [self.metadata writeToFile:metadataPath atomically:YES];
         }
     }
     [pool drain];
@@ -350,23 +355,23 @@
     [fileManager removeItemAtPath:contentPath error:NULL];
     [fileManager removeItemAtPath:contentTypePath error:NULL];
     
-    NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
-    NSUInteger contentSize = [[[metadata objectForKey:SIZES_KEY] objectForKey:hash] unsignedIntValue];
+    NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+    NSUInteger contentSize = [[[self.metadata objectForKey:SIZES_KEY] objectForKey:hash] unsignedIntValue];
     currentSize -= contentSize;
     
-    [metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+    [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
     
-    [[metadata objectForKey:SIZES_KEY] removeObjectForKey:hash];
-    [[metadata objectForKey:ACCESS_KEY] removeObjectForKey:hash];
+    [[self.metadata objectForKey:SIZES_KEY] removeObjectForKey:hash];
+    [[self.metadata objectForKey:ACCESS_KEY] removeObjectForKey:hash];
     
     return currentSize;
 }
 
 - (void)purge {
     UALOG(@"Purge");
-    NSUInteger currentSize = [[metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+    NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
     UALOG(@"Cache size before purge: %d bytes", currentSize);
-    if (currentSize <= actualDiskCapacity) {
+    if (currentSize <= self.actualDiskCapacity) {
         //nothing to do here
         return;
     } else {
@@ -375,7 +380,7 @@
         
         for (NSString *hash in sortedHashes) {
             currentSize = [self deleteCacheEntry:hash];
-            delta = currentSize - actualDiskCapacity;
+            delta = currentSize - self.actualDiskCapacity;
             if (delta <= 0) {
                 break;
             }

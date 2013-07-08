@@ -94,15 +94,17 @@
 - (void)handleBadgeUpdate:(NSInteger)badgeNumber;
 
 /**
- * Called when a push notification is received while the app is running in the foreground
- * @param notification basic information about the notification
+ * Called when a push notification is received while the app is running in the foreground.
+ *
+ * @param notification The notification dictionary.
  */
 - (void)receivedForegroundNotification:(NSDictionary *)notification;
 
 
 /**
  * Called when the app is started or resumed because a user opened a notification.
- * @param notification the push notification
+ *
+ * @param notification The notification dictionary.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 @end
@@ -118,10 +120,30 @@
  */
 @protocol UARegistrationObserver
 @optional
+
+/**
+ * Called when the device token is successfully registered with Urban Airship.
+ */
 - (void)registerDeviceTokenSucceeded;
+
+/**
+ * Called when the device token registration fails.
+ *
+ * @param request The failed request.
+ */
 - (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-- (void)unRegisterDeviceTokenSucceeded;
-- (void)unRegisterDeviceTokenFailed:(UAHTTPRequest *)request;
+
+/**
+ * Called when the device token is successfully deactivated with Urban Airship.
+ */
+- (void)unregisterDeviceTokenSucceeded;
+
+/**
+ * Called when the device token deactivation fails and cannot be retried.
+ *
+ * @param request The failed request.
+ */
+- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
 @end
 
 
@@ -139,13 +161,13 @@
 SINGLETON_INTERFACE(UAPush);
 
 ///---------------------------------------------------------------------------------------
-/// @name UAPush UI
+/// @name UAPush User Interface
 ///---------------------------------------------------------------------------------------
 
 
 /**
  * Use a custom UI implementation.
- * Replaces the default push UI, defined in UAPushUI, with
+ * Replaces the default push UI, defined in `UAPushUI`, with
  * a custom implementation.
  *
  * @see UAPushUIProtocol
@@ -173,14 +195,26 @@ SINGLETON_INTERFACE(UAPush);
 
 
 ///---------------------------------------------------------------------------------------
-/// @name UAPush
+/// @name Push Notifications
 ///---------------------------------------------------------------------------------------
 
-/** 
- * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
- * set, a default implementation is provided (UAPushNotificationHandler).
+/**
+ * Enables/disables push notifications on this device through Urban Airship. Defaults to `YES`.
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
+@property (nonatomic) BOOL pushEnabled;
+
+/** 
+ * Sets the default value for pushEnabled. The default is `YES`. After the pushEnabled
+ * value has been directly set, this value has no effect.
+ *
+ * @param enabled The default value for push enabled
+ */
++ (void)setDefaultPushEnabledValue:(BOOL)enabled;
+
+/**
+ * The device token for this device, as a hex string.
+ */
+@property (nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
  * Notification types this app will request from APNS. If push is enabled, changes to this value will
@@ -191,33 +225,10 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, assign) UIRemoteNotificationType notificationTypes;
 
 /**
- * Clean up when app is terminated. You should not ordinarily call this method as it is called
- * during [UAirship land].
+ * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
+ * set, a default implementation is provided (UAPushNotificationHandler).
  */
-+ (void)land;
-
-///---------------------------------------------------------------------------------------
-/// @name Push Notifications
-///---------------------------------------------------------------------------------------
-
-
-/**
- * Enables/disables push notifications on this device through Urban Airship. Defaults to `YES`.
- */
-@property (nonatomic) BOOL pushEnabled; /* getter = pushEnabled, setter = setPushEnabled: */
-
-
-/** 
- * Sets the default value for pushEnabled. The default is `YES`. After the pushEnabled
- * value has been directly set, this value has no effect.
- * @param enabled The default value for push enabled
- */
-+ (void)setDefaultPushEnabledValue:(BOOL)enabled;
-
-/**
- * The device token for this device, as a hex string.
- */
-@property (nonatomic, copy, readonly) NSString *deviceToken;
+@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
 
 
 ///---------------------------------------------------------------------------------------
@@ -226,9 +237,9 @@ SINGLETON_INTERFACE(UAPush);
 
 /**
  * Toggle the Urban Airship auto-badge feature. Defaults to `NO` If enabled, this will update the
- * badge number stored by UA every time the app is started or foregrounded.
+ * badge number stored by Urban Airship every time the app is started or foregrounded.
  */
-@property (nonatomic, assign) BOOL autobadgeEnabled; /* getter = autobadgeEnabled, setter = setAutobadgeEnabled: */
+@property (nonatomic, assign) BOOL autobadgeEnabled;
 
 /**
  * Sets the badge number on the device and on the Urban Airship server.
@@ -248,41 +259,45 @@ SINGLETON_INTERFACE(UAPush);
 ///---------------------------------------------------------------------------------------
  
 /** Alias for this device */
-@property (nonatomic, copy) NSString *alias; /* getter = alias, setter = setAlias: */
+@property (nonatomic, copy) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
 /// @name Tags
 ///---------------------------------------------------------------------------------------
 
 /** Tags for this device. */
-@property (nonatomic, copy) NSArray *tags; /* getter = tags, setter = setTags: */
+@property (nonatomic, copy) NSArray *tags;
 
 /**
- * Allows tag editing from device. Set this to `NO` to prevent the device from sending any tag
- * information to the server when using server side tagging. Defaults to `YES`.
+ * Allows setting tags from the device. Tags can be set from either the server or the device, but
+ * not both (without synchronizing the data), so use this flag to explicitly enable or disable
+ * the device-side flags.
+ * 
+ * Set this to `NO` to prevent the device from sending any tag information to the server when using
+ * server-side tagging. Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL deviceTagsEnabled;
 
 /**
  * Adds a tag to the list of tags for the device.
  * To update the server, make all of your changes, then call
- * `updateRegistration` to update the UA server.
- * 
+ * `updateRegistration` to update the Urban Airship server.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
  * @param tag Tag to be added
- * @warning When updating multiple 
- * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call the updateRegistration method. Batching these calls improves API and client performance.
  */
 - (void)addTagToCurrentDevice:(NSString *)tag;
 
 /**
  * Adds a group of tags to the current list of device tags. To update the server, make all of your
  * changes, then call `updateRegistration`.
- * 
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
  * @param tags Array of new tags
- * @warning When updating multiple 
- * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call the `updateRegistration` method. Batching these calls improves API and client performance.
  */
 
 - (void)addTagsToCurrentDevice:(NSArray *)tags;
@@ -290,22 +305,22 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Removes a tag from the current tag list. To update the server, make all of your changes, then call
  * `updateRegistration`.
- * 
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
+ *
  * @param tag Tag to be removed
- * @warning When updating multiple 
- * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call the `updateRegistration` method. Batching these calls improves API and client performance.
  */
 - (void)removeTagFromCurrentDevice:(NSString *)tag;
 
 /**
  * Removes a group of tags from a device. To update the server, make all of your changes, then call
- * `updateRegisration`.
+ * `updateRegistration`.
+ *
+ * @note When updating multiple server-side values (tags, alias, time zone, quiet time), set the
+ * values first, then call `updateRegistration`. Batching these calls improves performance.
  * 
  * @param tags Array of tags to be removed
- * @warning When updating multiple 
- * server side values (tags, alias, time zone, quiet time) set the values first, then
- * call updateRegistration. Batching these calls improves API and client performance.
  */
 - (void)removeTagsFromCurrentDevice:(NSArray *)tags;
 
@@ -333,7 +348,7 @@ SINGLETON_INTERFACE(UAPush);
  * after making changes to the quiet time with the `updateRegistration` call. 
  * Batching these calls improves API and client performance.
  * 
- * @warning *Important* The behavior of this method has changed in as of 1.3.0
+ * @warning The behavior of this method changed in 1.3.0
  * This method no longer automatically enables quiet time, and does not automatically update
  * the server. Please refer to `quietTimeEnabled` and `updateRegistration` methods for
  * more information
@@ -349,7 +364,6 @@ SINGLETON_INTERFACE(UAPush);
 /// @name Registration
 ///---------------------------------------------------------------------------------------
 
-
 /**
  * This registers the device token and all current associated Urban Airship custom
  * features that are currently set.
@@ -361,7 +375,7 @@ SINGLETON_INTERFACE(UAPush);
  * - quiet time
  * - autobadge
  * 
- * Add a UARegistrationObserver to UAPush to receive success and failure callbacks.
+ * Add a `UARegistrationObserver` to `UAPush` to receive success and failure callbacks.
  *
  * @param token The device token to register.
  */
@@ -376,7 +390,7 @@ SINGLETON_INTERFACE(UAPush);
 - (void)registerForRemoteNotificationTypes:(UIRemoteNotificationType)types;
 
 /**
- * Register the device for remote notifications using the types set in UAPush.notificationTypes (see Apple documentation for more
+ * Register the device for remote notifications using the types set in [UAPush notificationTypes] (see Apple documentation for more
  * detail).
  */
 - (void)registerForRemoteNotifications;
@@ -385,7 +399,7 @@ SINGLETON_INTERFACE(UAPush);
  * Registers or updates the current registration with an API call. If push notifications are
  * not enabled, this unregisters the device token.
  *
- * Register an implementation of UARegistrationObserver with UAPush to receive success and failure callbacks.
+ * Register an implementation of `UARegistrationObserver` with `UAPush` to receive success and failure callbacks.
  */
 - (void)updateRegistration;
 

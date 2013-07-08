@@ -60,14 +60,14 @@ NSString * const UAAnalyticsValueNone = @"NONE";
 #pragma mark -
 #pragma mark Initialization
 
-
-- (id)initWithLocationContext:(NSDictionary*)context {
+- (id)initWithLocationContext:(NSDictionary *)context {
     return [self initWithContext:context];
 }
 
-- (id)initWithLocation:(CLLocation*)location 
+- (id)initWithLocation:(CLLocation *)location 
               provider:(id<UALocationProviderProtocol>)provider 
-         andUpdateType:(UALocationEventUpdateType*)updateType {
+         andUpdateType:(UALocationEventUpdateType *)updateType {
+    
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:provider.provider forKey:UALocationEventProviderKey];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
@@ -83,15 +83,16 @@ NSString * const UAAnalyticsValueNone = @"NONE";
 
 - (id)initWithLocation:(CLLocation *)location
        locationManager:(CLLocationManager *)locationManager
-         andUpdateType:(UALocationEventUpdateType*)updateType {
+         andUpdateType:(UALocationEventUpdateType *)updateType {
+    
     NSMutableDictionary *context = [NSMutableDictionary dictionaryWithCapacity:10];
     [context setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [context setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     [self populateDictionary:context withLocationValues:location];
+    
     if (updateType == UALocationEventUpdateTypeChange) {
         [self setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:context];
-    }
-    else {
+    } else {
         [self populateDictionary:context withLocationManagerValues:locationManager];
     }
     return [self initWithLocationContext:context];
@@ -140,11 +141,11 @@ NSString * const UAAnalyticsValueNone = @"NONE";
 }
 
 
-- (NSString*)stringFromDoubleToSevenDigits:(double)doubleValue {
+- (NSString *)stringFromDoubleToSevenDigits:(double)doubleValue {
     return [NSString stringWithFormat:@"%.7f", doubleValue];
 }
 
-- (NSString*)stringAsIntFromDouble:(double)doubleValue {
+- (NSString *)stringAsIntFromDouble:(double)doubleValue {
     return [NSString stringWithFormat:@"%i", (int)doubleValue];
 }
 

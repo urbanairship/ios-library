@@ -547,11 +547,11 @@ static Class _uiClass;
                  // note that unregistration is no longer needed
                  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
                  UA_LDEBUG(@"Device token unregistered on Urban Airship successfully.");
-                 [self notifyObservers:@selector(unRegisterDeviceTokenSucceeded)];
+                 [self notifyObservers:@selector(unregisterDeviceTokenSucceeded)];
              }
              onFailure:^(UAHTTPRequest *request) {
                  [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-                 [self notifyObservers:@selector(unRegisterDeviceTokenFailed:)
+                 [self notifyObservers:@selector(unregisterDeviceTokenFailed:)
                             withObject:request];
              }
              forcefully:forcefully];

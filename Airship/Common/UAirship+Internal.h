@@ -29,16 +29,22 @@
 
 @interface UAirship()
 
+// Setters for public readonly-getters
 @property (nonatomic, retain) UABaseAppDelegateSurrogate *appDelegate;
+@property (nonatomic, retain) UALocationService *locationService;
+@property (nonatomic, assign) BOOL ready;
+@property (nonatomic, retain) UAConfig *config;
+@property (nonatomic, retain) UAAnalytics *analytics;
 
-/*
+
+/**
  * Should set this user agent up
- * [LIB-101] User agent string should be:
+ * User agent string should be:
  * App 1.0 (iPad; iPhone OS <version>; UALib <version>; <app key>; en_US)
  */
 - (void)configureUserAgent;
 
-/*
+/**
  * Handle app init. This should be called from NSNotification center
  * and will record a launch from notification and record the app init even
  * for analytics.
@@ -51,7 +57,7 @@
  */
 + (void)handleAppTerminationNotification:(NSNotification *)notification;
 
-/*
+/**
  * Perform teardown on the shared instance. This will automatically be called when an application
  * terminates.
  */
