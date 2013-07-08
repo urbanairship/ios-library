@@ -43,7 +43,9 @@
 
     self.text = @"Your current device token. Test a push notification at "
            @"https://go.urbanairship.com";
+}
 
+- (void)viewWillAppear:(BOOL)animated {
     self.tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
 }
 
