@@ -11,6 +11,11 @@ include the library in your app, you can download the latest ``libUAirship.zip``
 These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library as well as the
 samples.
 
+Resources
+----------
+- Urban Airship iOS Library Reference: http://docs.urbanairship.com/ios-lib
+- Getting started guide: http://docs.urbanairship.com/build/ios.html
+
 Working with the Library
 ------------------------
 
@@ -68,7 +73,8 @@ The AirshipConfig File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
-in your project and set the following values to the ones in your application at http://go.urbanairship.com
+in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To 
+view all the possible keys and values, visit http://docs.urbanairship.com/ios-lib/Classes/UAConfig.html
 
 You can also edit the file as plain-text:
 
