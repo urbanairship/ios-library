@@ -156,9 +156,6 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 - (void)cancel;
 
-//TODO: ensure that empty PUTs have a content-length header
-
-
 #pragma mark -
 #pragma mark NSURLConnectionDelegate
 
