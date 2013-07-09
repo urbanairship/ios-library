@@ -57,10 +57,10 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (id)init {
     if (self = [super init]) {
-		
+        
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
-		
+        
         self.useOverlay = NO;
         self.isVisible = NO;
         
@@ -80,18 +80,27 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     [self quitInbox];
 }
 
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
++ (void)displayInbox:(UIViewController *)parentViewController animated:(BOOL)animated {
     
     [[[UAInbox shared] messageList] addObserver:[UAInboxUI shared].messageListController];
-	
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
+    
+    if ([parentViewController isKindOfClass:[UINavigationController class]]) {
+        [(UINavigationController *)parentViewController popToRootViewControllerAnimated:NO];
     }
 
-	[UAInboxUI shared].isVisible = YES;
+    [UAInboxUI shared].isVisible = YES;
     
-    UALOG(@"present modal");
-    [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
+    UA_LDEBUG(@"Presenting Inbox Modal");
+    UIViewController *inboxViewController = [UAInboxUI shared].rootViewController;
+
+    // Optionally specify a custom modal transition
+    inboxViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
+    if ([parentViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) { // iOS5+
+        [parentViewController presentViewController:inboxViewController animated:animated completion:nil];
+    } else { //4.x
+        [parentViewController presentModalViewController:inboxViewController animated:animated];
+    }
 } 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
@@ -104,12 +113,12 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         }
         
         else {
-            UALOG(@"UI needs to be brought up!");
+            UALOG(@"Inbox UI needs to be visible before displaying a message. Displaying now.");
             // We're not inside the modal/navigationcontroller setup so lets start with the parent
             [UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
         }
-	}
-		
+    }
+        
     // For iPhone
     UINavigationController *navController = (UINavigationController *)[UAInboxUI shared].rootViewController;
     UAInboxMessageViewController *mvc;
@@ -121,7 +130,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     } 
     //otherwise, push over a new message view
     else {
-        mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
+        mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];            
         [mvc loadMessageForID:messageID];
         [navController pushViewController:mvc animated:YES];
     }
@@ -153,7 +162,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     if ([self.rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)self.rootViewController popToRootViewControllerAnimated:NO];
     }
-	
+    
     self.isVisible = NO;
     
     //added iOS 5 parent/presenting view getter

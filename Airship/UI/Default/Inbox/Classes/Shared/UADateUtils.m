@@ -28,7 +28,7 @@
 
 @implementation UADateUtils
 
-+(NSString *) formattedDateRelativeToNow:(NSDate *)date {
++ (NSString *)formattedDateRelativeToNow:(NSDate *)date {
 
     // shared locale object
     NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];

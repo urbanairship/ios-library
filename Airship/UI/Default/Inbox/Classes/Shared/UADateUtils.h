@@ -26,10 +26,8 @@
 #import <Foundation/Foundation.h>
 
 
-@interface UADateUtils : NSObject {
+@interface UADateUtils : NSObject
 
-}
-
-+(NSString *) formattedDateRelativeToNow:(NSDate *)date;
++ (NSString *)formattedDateRelativeToNow:(NSDate *)date;
 
 @end
