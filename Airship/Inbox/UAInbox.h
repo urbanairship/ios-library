@@ -49,7 +49,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @param viewController The parent view controller
  * @param animated YES to animate the transition
  */
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
++ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated;
 
 /**
  * Display the inbox UI and open a specific message.
@@ -57,7 +57,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @param viewController The parent view controller
  * @param messageID The ID for the message to display
  */
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString*)messageID;
 
 @end
 
@@ -133,8 +133,7 @@ SINGLETON_INTERFACE(UAInbox);
  * @param viewController The parent view controller
  * @param animated YES to animate the transition
  */
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-
++ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated;
 /**
  * Display the inbox UI and open a specific message.
  *
@@ -143,7 +142,7 @@ SINGLETON_INTERFACE(UAInbox);
  *
  * Calls [UAInboxUIProtocol displayMessage: message:] on the UI class.
  */
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID;
 
 /**
  * Tear down and clean up any resources. This method should be called when the inbox is no

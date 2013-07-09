@@ -94,8 +94,9 @@ static BOOL runiPhoneTargetOniPad = NO;
     [self quitInbox];
 }
 
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    
+
++ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated {
+
     [[UAInbox shared].messageList addObserver:[UAInboxNavUI shared].messageListController];
 
     if ([UAInboxNavUI shared].isVisible) {
@@ -132,8 +133,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 } 
 
-
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
++ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
 
     if(![UAInboxNavUI shared].isVisible) {
         
@@ -145,7 +145,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         else {
             UALOG(@"UI needs to be brought up!");
             viewController = viewController?:[UAInboxNavUI shared].inboxParentController;
-            [UAInboxNavUI displayInbox:viewController animated:NO];
+            [UAInboxNavUI displayInboxInParentViewController:viewController animated:NO];
         }
     }
 	
@@ -204,7 +204,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 - (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
     NSString *alertText = richPushMessage.title;
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
+        [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
     }];
 }
 
@@ -213,7 +213,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
+    [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
 }
 
 @end

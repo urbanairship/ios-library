@@ -116,15 +116,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.editItem = [[UIBarButtonItem alloc]
+    self.editItem = [[[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
                 target:self
-                action:@selector(editButtonPressed:)];
-    self.cancelItem = [[UIBarButtonItem alloc]
+                action:@selector(editButtonPressed:)] autorelease];
+    self.cancelItem = [[[UIBarButtonItem alloc]
                   initWithTitle:UA_INBOX_TR(@"UA_Cancel")
                   style:UIBarButtonItemStyleDone
                   target:self
-                  action:@selector(cancelButtonPressed:)];
+                  action:@selector(cancelButtonPressed:)] autorelease];
 
     self.navigationItem.rightBarButtonItem = self.editItem;
 
@@ -154,9 +154,9 @@
 
     UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithCustomView:self.deleteItem] autorelease];
     deleteButton.width = 130;
-    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
+    self.markAsReadButtonItem = [[[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
                                                 style:UIBarButtonItemStyleBordered
-                                               target:self action:@selector(batchUpdateButtonPressed:)];
+                                               target:self action:@selector(batchUpdateButtonPressed:)] autorelease];
     self.markAsReadButtonItem.width = 130;
 
     self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, self.markAsReadButtonItem, fixedSpace, nil];
@@ -468,7 +468,7 @@
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessage *message = [[UAInboxMessageList shared] messageAtIndex:indexPath.row];
-    [UAInbox displayMessage:self.navigationController message:message.messageID];
+    [UAInbox displayMessageInParentViewController:self.navigationController withMessageID:message.messageID];
 }
 
 #pragma mark -

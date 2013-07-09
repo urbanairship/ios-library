@@ -80,8 +80,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     [self quitInbox];
 }
 
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
-    
++ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [[[UAInbox shared] messageList] addObserver:[UAInboxUI shared].messageListController];
 	
     if ([viewController isKindOfClass:[UINavigationController class]]) {
@@ -94,8 +93,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
 } 
 
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
-
++ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
     if(![UAInboxUI shared].isVisible) {
         
         if ([UAInboxUI shared].useOverlay) {
@@ -106,7 +104,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         else {
             UALOG(@"UI needs to be brought up!");
             // We're not inside the modal/navigationcontroller setup so lets start with the parent
-            [UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
+            [UAInboxUI displayInboxInParentViewController:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
         }
 	}
 		
@@ -134,7 +132,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 - (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
     NSString *alertText = richPushMessage.title;
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
+        [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
     }];
 }
 
@@ -143,7 +141,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 }
 
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[UAInbox shared].uiClass displayMessage:nil message:richPushMessage.messageID];
+    [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
 }
 
 - (void)quitInbox {
