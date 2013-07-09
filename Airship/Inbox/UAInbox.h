@@ -46,18 +46,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Display the inbox UI.
  *
- * @param viewController The parent view controller
+ * @param parentViewController The parent view controller
  * @param animated YES to animate the transition
  */
-+ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated;
++ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
 
 /**
  * Display the inbox UI and open a specific message.
  *
- * @param viewController The parent view controller
  * @param messageID The ID for the message to display
+ * @param parentViewController The parent view controller
  */
-+ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString*)messageID;
++ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
 
 @end
 
@@ -130,19 +130,19 @@ SINGLETON_INTERFACE(UAInbox);
  *
  * Calls [UAInboxUIProtocol displayInbox: animated:] on the UI class.
  *
- * @param viewController The parent view controller
+ * @param parentViewController The parent view controller
  * @param animated YES to animate the transition
  */
-+ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated;
++ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
 /**
  * Display the inbox UI and open a specific message.
  *
- * @param viewController The parent view controller
  * @param messageID The ID for the message to display
+ * @param parentViewController The parent view controller
  *
  * Calls [UAInboxUIProtocol displayMessage: message:] on the UI class.
  */
-+ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID;
++ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
 
 /**
  * Tear down and clean up any resources. This method should be called when the inbox is no

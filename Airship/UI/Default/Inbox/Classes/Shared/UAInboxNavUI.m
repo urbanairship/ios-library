@@ -94,8 +94,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     [self quitInbox];
 }
 
-
-+ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated {
++ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated {
 
     [[UAInbox shared].messageList addObserver:[UAInboxNavUI shared].messageListController];
 
@@ -104,10 +103,10 @@ static BOOL runiPhoneTargetOniPad = NO;
         return;
     }
 
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
+    if ([parentViewController isKindOfClass:[UINavigationController class]]) {
         [UAInboxNavUI shared].isVisible = YES;
-        if (viewController) {
-            [UAInboxNavUI shared].inboxParentController = viewController;
+        if (parentViewController) {
+            [UAInboxNavUI shared].inboxParentController = parentViewController;
         }
         
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && !runiPhoneTargetOniPad) {
@@ -124,7 +123,7 @@ static BOOL runiPhoneTargetOniPad = NO;
                        permittedArrowDirections:UIPopoverArrowDirectionAny
                                        animated:animated];
         } else {
-            [UAInboxNavUI shared].navigationController = (UINavigationController *)viewController;
+            [UAInboxNavUI shared].navigationController = (UINavigationController *)parentViewController;
             [[UAInboxNavUI shared].navigationController pushViewController:[UAInboxNavUI shared].messageListController animated:animated];
         }
     } else {
@@ -133,7 +132,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 } 
 
-+ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
++ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController {
 
     if(![UAInboxNavUI shared].isVisible) {
         
@@ -144,16 +143,16 @@ static BOOL runiPhoneTargetOniPad = NO;
 
         else {
             UALOG(@"UI needs to be brought up!");
-            viewController = viewController?:[UAInboxNavUI shared].inboxParentController;
-            [UAInboxNavUI displayInboxInParentViewController:viewController animated:NO];
+            parentViewController = parentViewController?:[UAInboxNavUI shared].inboxParentController;
+            [UAInboxNavUI displayInboxInViewController:parentViewController animated:NO];
         }
     }
 	
     // If the message view is already open, just load the first message.
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
+    if ([parentViewController isKindOfClass:[UINavigationController class]]) {
 		
         // For iPhone
-        UINavigationController *navController = (UINavigationController *)viewController;
+        UINavigationController *navController = (UINavigationController *)parentViewController;
         
 		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
             [[UAInboxNavUI shared].messageViewController loadMessageForID:messageID];
@@ -204,7 +203,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 - (void)richPushMessageAvailable:(UAInboxMessage *)richPushMessage {
     NSString *alertText = richPushMessage.title;
     [self.alertHandler showNewMessageAlert:alertText withViewBlock:^{
-        [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
+        [[UAInbox shared].uiClass displayMessageWithID:richPushMessage.messageID inViewController:nil];
     }];
 }
 
@@ -213,7 +212,7 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)launchRichPushMessageAvailable:(UAInboxMessage *)richPushMessage {
-    [[UAInbox shared].uiClass displayMessageInParentViewController:nil withMessageID:richPushMessage.messageID];
+    [[UAInbox shared].uiClass displayMessageWithID:richPushMessage.messageID inViewController:nil];
 }
 
 @end

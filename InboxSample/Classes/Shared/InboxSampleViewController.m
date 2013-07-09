@@ -37,7 +37,7 @@
 @implementation InboxSampleViewController
 
 - (IBAction)mail:(id)sender {
-    [UAInbox displayInboxInParentViewController:self.navigationController animated:YES];
+    [UAInbox displayInboxInViewController:self.navigationController animated:YES];
 }
 
 - (IBAction)selectInboxStyle:(id)sender {

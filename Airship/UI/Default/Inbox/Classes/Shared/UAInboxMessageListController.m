@@ -456,7 +456,7 @@
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UAInboxMessage *message = [[UAInboxMessageList shared] messageAtIndex:indexPath.row];
-    [UAInbox displayMessageInParentViewController:self.navigationController withMessageID:message.messageID];
+    [UAInbox displayMessageWithID:message.messageID inViewController:self.navigationController];
 }
 
 #pragma mark -

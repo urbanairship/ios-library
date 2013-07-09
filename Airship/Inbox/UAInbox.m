@@ -72,18 +72,18 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Open API, enter/quit Inbox
 
-+ (void)displayInboxInParentViewController:(UIViewController *)viewController animated:(BOOL)animated {
++ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated {
     //if configured to use the inbox cache, swap it in here
     @synchronized(self) {
         if (g_sharedUAInbox.shouldUseInboxCache) {
             [NSURLCache setSharedURLCache:[UAInbox shared].inboxCache];
         }
     }
-    [[[UAInbox shared] uiClass] displayInboxInParentViewController:viewController animated:animated];
+    [[[UAInbox shared] uiClass] displayInboxInViewController:parentViewController animated:animated];
 }
 
-+ (void)displayMessageInParentViewController:(UIViewController *)viewController withMessageID:(NSString *)messageID {
-    [[[UAInbox shared] uiClass] displayMessageInParentViewController:viewController withMessageID:messageID];
++ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController {
+    [[UAInbox shared].uiClass displayMessageWithID:messageID inViewController:parentViewController];
 }
 
 
