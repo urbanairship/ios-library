@@ -45,43 +45,43 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 }
 
 - (UIViewController *)apnsSettingsViewController {
-    if (self.apnsSettingsViewController == nil) {
+    if (!_apnsSettingsViewController) {
         UIViewController *root = [[[UAPushSettingsViewController alloc]
                                    initWithNibName:@"UAPushSettingsView"
-                                   bundle:nil] autorelease];
-        self.apnsSettingsViewController = [[[UINavigationController alloc] initWithRootViewController:root] autorelease];
+                                            bundle:nil] autorelease];
+        _apnsSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
     }
-    return self.apnsSettingsViewController;
+    return _apnsSettingsViewController;
 }
 
 - (UIViewController *)tokenSettingsViewController {
-    if (self.tokenSettingsViewController == nil) {
+    if (!_tokenSettingsViewController) {
         UIViewController *root = [[[UAPushMoreSettingsViewController alloc]
                                    initWithNibName:@"UAPushMoreSettingsView"
-                                   bundle:nil] autorelease];
-        self.tokenSettingsViewController = [[[UINavigationController alloc] initWithRootViewController:root] autorelease];
+                                            bundle:nil] autorelease];
+        _tokenSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
     }
-    return self.tokenSettingsViewController;
+    return _tokenSettingsViewController;
 }
 
 + (void)openApnsSettings:(UIViewController *)viewController
-                   animated:(BOOL)animated {
-    [viewController presentModalViewController:[[UAPushUI shared] apnsSettingsViewController]
+                animated:(BOOL)animated {
+    [viewController presentModalViewController:[UAPushUI shared].apnsSettingsViewController
                                       animated:animated];
 }
 
 + (void)openTokenSettings:(UIViewController *)viewController
-                    animated:(BOOL)animated {
-    [viewController presentModalViewController:[[UAPushUI shared] tokenSettingsViewController]
+                 animated:(BOOL)animated {
+    [viewController presentModalViewController:[UAPushUI shared].tokenSettingsViewController
                                       animated:animated];
 }
 
 + (void)closeApnsSettingsAnimated:(BOOL)animated {
-    [[[UAPushUI shared] apnsSettingsViewController] dismissModalViewControllerAnimated:animated];
+    [[UAPushUI shared].apnsSettingsViewController dismissModalViewControllerAnimated:animated];
 }
 
 + (void)closeTokenSettingsAnimated:(BOOL)animated {
-    [[[UAPushUI shared] tokenSettingsViewController] dismissModalViewControllerAnimated:animated];
+    [[UAPushUI shared].tokenSettingsViewController dismissModalViewControllerAnimated:animated];
 }
 
 - (void)dealloc {

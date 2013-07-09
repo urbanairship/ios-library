@@ -68,7 +68,6 @@
 @property (nonatomic, assign) NSInteger maxBatchSize;
 @property (nonatomic, assign) NSInteger maxWait;
 @property (nonatomic, assign) NSInteger minBatchInterval;
-@property (nonatomic, assign) NSInteger sendInterval;
 @property (nonatomic, assign) NSInteger databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
