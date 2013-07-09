@@ -31,7 +31,7 @@
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet InboxSampleViewController *viewController;
-@property (nonatomic, retain) UINavigationController *navigationController;
+@property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
 
 - (void)failIfSimulator;
 
