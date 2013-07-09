@@ -11,6 +11,11 @@ include the library in your app, you can download the latest ``libUAirship.zip``
 These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library as well as the
 samples.
 
+Resources
+----------
+- Urban Airship iOS Library Reference: http://docs.urbanairship.com/ios-lib
+- Getting started guide: http://docs.urbanairship.com/build/ios.html
+
 Working with the Library
 ------------------------
 
@@ -52,7 +57,7 @@ The latest version of LLVM is the default compiler for all projects and the stat
      
 **Header search path**                          
 Ensure that your build target's header search path includes the Airship directory.
-             
+
 Quickstart
 ----------
 
@@ -68,23 +73,33 @@ The AirshipConfig File
 
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
-in your project and set the following values to the ones in your application at http://go.urbanairship.com
+in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To 
+view all the possible keys and values, visit http://docs.urbanairship.com/ios-lib/Classes/UAConfig.html
 
 You can also edit the file as plain-text:
 
-.. code:: js
+.. code:: xml
 
-    {
-        /* NOTE: DO NOT USE THE MASTER SECRET */
-        "inProduction" = NO; /* set to YES for production builds */
-        "developmentAppKey" = "Your development app key";
-        "developmentAppSecret" = "Your development app secret";
-        "productionAppKey" = "Your production app key";
-        "productionAppSecret" = "Your production app secret";
-    }
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>inProduction</key>
+      <false/>
+      <key>developmentAppKey</key>
+      <string>Your Development App Key</string>
+      <key>developmentAppSecret</key>
+      <string>Your Development App Secret</string>
+      <key>productionAppKey</key>
+      <string>Your Production App Key</string>
+      <key>productionAppSecret</key>
+      <string>Your Production App Secret</string>
+    </dict>
+    </plist>
 
-If you are using development builds and testing using the Apple sandbox set `APP_STORE_OR_AD_HOC_BUILD` to NO. For
-App Store and Ad-Hoc builds, set it to YES.
+If you are using development builds and testing using the Apple sandbox set `inProduction` to `false`. For
+App Store and Ad-Hoc builds, set it to `true`. You may also allow the library to auto-detect the production
+mode by setting `detectProvisioningMode` to `true`.
 
 Advanced users may add scripting or preprocessing logic to this .plist file to automate the switch from
 development to production keys based on the build type.
@@ -144,7 +159,7 @@ To enable push notifications, you will need to make several additions to your ap
         return YES;
     }
     
-To enable push:
+To enable push later on in your application:
 
 .. code:: obj-c
 

@@ -26,7 +26,7 @@
 #import "UABaseLocationProvider.h"
 
 /**
- * The UAStandardLocationProvider encapsulates the funcionality of the CLLocationManager running
+ * The UAStandardLocationProvider encapsulates the functionality of the CLLocationManager running
  * the standard location service. 
  */
 @interface UAStandardLocationProvider : UABaseLocationProvider 

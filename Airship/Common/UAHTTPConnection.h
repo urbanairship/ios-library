@@ -29,6 +29,9 @@
 typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
 typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
+/**
+ * Wraps NSURLRequest, to be used in conjunction with UAHTTPConnection.
+ */
 @interface UAHTTPRequest : NSObject {
 
 }
@@ -47,19 +50,47 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (readonly, retain, nonatomic) NSData *responseData;
 @property (readonly, retain, nonatomic) NSError *error;
 
+/**
+ * Create a request with the URL string.
+ * @param urlString The URL string.
+ */
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
+
+/**
+ * Create a request with the URL.
+ * @param url The URL.
+ */
 + (UAHTTPRequest *)requestWithURL:(NSURL *)url;
 
+/**
+ * UAHTTPRequest initializer taking a URL string.
+ * @param urlString The URL string.
+ */
 - (id)initWithURLString:(NSString *)urlString;
+
+/**
+ * UAHTTPRequest initializer taking a URL.
+ * @param url The URL.
+ */
 - (id)initWithURL:(NSURL *)url;
 
+/**
+ * Add a request header.
+ * @param header The header string to be added.
+ * @param value The value string to be added.
+ */
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value;
+
+/**
+ * Append data to the body.
+ * @param data The data to be added to the body.
+ */
 - (void)appendBodyData:(NSData *)data;
 
 @end
 
 /**
- *
+ * A wrapper for NSURLConnection implementing the NSURLConnectionDelegate protocol.
  */
 @interface UAHTTPConnection : NSObject <NSURLConnectionDelegate> {
 
@@ -76,7 +107,10 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
 @property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
-
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
@@ -84,19 +118,42 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
                                     success:(SEL)successSelector
                                     failure:(SEL)failureSelector;
 
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ * @param successBlock A UAHTTPConnectionSuccessBlock that will be called if the connection was successful.
+ * @param failureBlock A UAHTTPConnectionFailureBlock that will be called if the connection was unsuccessful.
+ *
+ */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                successBlock:(UAHTTPConnectionSuccessBlock)successBlock
-                               failureBlock:(UAHTTPConnectionSuccessBlock)failureBlock;
+                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
 
+/**
+ * Set the default user agent.
+ * @param userAgent The user agent string.
+ */
 + (void)setDefaultUserAgentString:(NSString *)userAgent;
 
+/**
+ * Initializer with the HTTP request.
+ * @param httpRequest An instance of UAHTTPRequest.
+ */
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest;
+
+/**
+ * Start the connection asynchronously.
+ */
 - (BOOL)start;
 
-//TODO: ensure that empty PUTs have a content-length header
-
-
+/**
+ * Start the connection synchronously
+ */
 - (BOOL)startSynchronous;
+
+/**
+ * Cancel the connection
+ */
 - (void)cancel;
 
 #pragma mark -

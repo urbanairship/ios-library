@@ -42,7 +42,7 @@
 extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 /**
- * The UALocationServiceDelegate receives location updates from any of the UALocationServices
+ * The UALocationServiceDelegate receives location updates from any of the UALocationServices.
  */
 @protocol UALocationServiceDelegate<NSObject>
 
@@ -53,7 +53,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 @optional
 
 /**
- * Updates the delegate when the location service generates an error
+ * Updates the delegate when the location service generates an error.
  *
  * @warning Two error conditions will stop the location service before
  * this method is called on the delegate. kCLErrorDenied && kCLErrorNetwork. All other
@@ -69,7 +69,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 - (void)locationService:(UALocationService *)service didFailWithError:(NSError *)error;
 
 /**
- * Updates the delegate when authorization status has changed
+ * Updates the delegate when authorization status has changed.
  *
  * @param service Location service reporting the change
  * @param status  The updated location authorization status
@@ -103,7 +103,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * The distance filter on the standard location provider
+ * The distance filter on the standard location provider.
  * @returns CLLocationDistance The current distance filter on the standard location provider
  */
 - (CLLocationDistance)standardLocationDistanceFilter;
@@ -115,13 +115,13 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 - (void)setStandardLocationDistanceFilter:(CLLocationDistance)distanceFilter;
 
 /**
- * The desired accuracy on the standard location provider
+ * The desired accuracy on the standard location provider.
  * @return CLLocationAccuracy The current desired accuracy
  */
 - (CLLocationAccuracy)standardLocationDesiredAccuracy;
 
 /**
- * Sets the standard location desired accuracy
+ * Sets the standard location desired accuracy.
  * @param desiredAccuracy The new desired accuracy
  */
 - (void)setStandardLocationDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
@@ -131,13 +131,14 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Current setting allowing UA location services
+ * Current setting allowing UA location services.
  * @return YES UA location services are allowed, and will start if authorized and enabled
  * @return NO UA location services are not allowed, and will not start, even if authorized and enabled
  */
 + (BOOL)airshipLocationServiceEnabled;
 
-/** The allows UA Location Services to report location
+/** 
+ * The allows UA Location Services to report location.
  *
  * @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  * if the system reports that location services are available and authorized. This setting will not
@@ -352,7 +353,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 ///---------------------------------------------------------------------------------------
 
 /**
- * Creates a UALocationEvent and enqueues it with the Analytics service
+ * Creates a UALocationEvent and enqueues it with the Analytics service.
  * @param location The location to be sent to the Urban Airship analytics service
  * @param provider The provider that generated the location. Data is pulled from the provider for analytics
  * @warning This must be called on the main thread. Not doing so will result in a crash
@@ -365,7 +366,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 /**
  * Time interval representing the amount of time that the single location service will
- * run while waiting for a location value that meets the desired accuracy
+ * run while waiting for a location value that meets the desired accuracy.
  * @return NSTimeInterval representing the current timeout value
  */
 - (NSTimeInterval)timeoutForSingleLocationService;
@@ -387,7 +388,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 /**
  * Sets the desiredAccuracy for the single location service. Used by the reportCurrentLocation: method
- * and the automatic foreground location
+ * and the automatic foreground location.
  * @param desiredAccuracy CLLocationAccuracy The new desiredAccuracy
  * @warning Setting this value to high (such as kCLLocationAccuracyBest) will result in timeouts
  * on every location service call in areas with poor GPS. This will result in degraded device battery life.

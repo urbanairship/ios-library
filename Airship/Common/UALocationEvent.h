@@ -51,7 +51,7 @@ extern NSString * const UAAnalyticsValueNone;
 
 /** 
  * A UALocationEvent captures all the necessary information for
- * UAAnalytics
+ * UAAnalytics.
  */
 @interface UALocationEvent : UAEvent
 
@@ -61,7 +61,7 @@ extern NSString * const UAAnalyticsValueNone;
 ///---------------------------------------------------------------------------------------
 
 /** 
- * Create a UALocationEvent
+ * Create a UALocationEvent.
  * @param context A dictionary populated with all required data
  * @return A UALocationEvent populated with appropriate values
  */
@@ -117,21 +117,21 @@ extern NSString * const UAAnalyticsValueNone;
 ///---------------------------------------------------------------------------------------
 
 /** 
- * Populates a dictionary with the appropriate data gathered from the CLLocation
+ * Populates a dictionary with the appropriate data gathered from the CLLocation.
  * @param dictionary The dictionary to populate with values
  * @param location Location to parse values from
  */
 - (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationValues:(CLLocation *)location;
 
 /** 
- * Populates a dictionary with the appropriate data gathered from the CLLocationManager
+ * Populates a dictionary with the appropriate data gathered from the CLLocationManager.
  * @param dictionary The dictionary to populate with values
  * @param locationManager The location manager to parse values from
  */
 - (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationManagerValues:(CLLocationManager *)locationManager;
 
 /** 
- * Populates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol
+ * Populates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol.
  * @param dictionary The dictionary to populate with values from the location provider
  * @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
  */
@@ -139,7 +139,7 @@ extern NSString * const UAAnalyticsValueNone;
 
 /** 
  * Populates a dictionary with the defaulf values for reporting a significant change event. The values currently default
- * to NONE, and are defined in the implementation file
+ * to NONE, and are defined in the implementation file.
  * @param context The dictionary to populate with values
 */
 - (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary *)context;

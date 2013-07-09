@@ -28,19 +28,29 @@
 
 @protocol UALocationProviderProtocol <NSObject>
 @required
-/// Required location manager for any location services
+/**
+ * Required location manager for any location services.
+ */
 @property (nonatomic, retain) CLLocationManager *locationManager;
 
-/// Distance Filter
+/**
+ * The distance filter.
+ */
 @property (nonatomic, assign) CLLocationDistance distanceFilter;
 
-/// Desired Accuracy
+/**
+ * The desired accuracy.
+ */
 @property (nonatomic, assign) CLLocationAccuracy desiredAccuracy;
 
-/// Current status of the location provider
+/**
+ * Current status of the location provider.
+ */
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;
 
-/// This is a required parameter on the CLLocationManager and is presented to the user for authentication
+/** 
+ * This is a required parameter on the CLLocationManager and is presented to the user for authentication.
+ */
 @property (nonatomic, copy) NSString *provider;
 
 /**
@@ -55,9 +65,13 @@
 - (NSString *)purpose;
 - (void)setPurpose:(NSString *)newPurpose;
 
-/// Starts updating location
+/**
+ * Starts updating location.
+ */
 - (void)startReportingLocation;
 
-/// Stops providing location updates
+/**
+ * Stops providing location updates.
+ */
 - (void)stopReportingLocation;
 @end

@@ -46,7 +46,7 @@
 - (id)initWithConfig:(UAConfig *)airshipConfig;
 
 /**
- * Triggers an analytics event
+ * Triggers an analytics event.
  * @param event The event to be triggered
  */
 - (void)addEvent:(UAEvent *)event;

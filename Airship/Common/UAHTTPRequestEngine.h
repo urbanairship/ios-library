@@ -39,7 +39,7 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
 /**
  * A generalized abstraction for running HTTP requests in an NSOperationQueue.
  * Retry logic is implicit, and functionally configurable using blocks. This class is intended
- * as a modular component for designing REST clients
+ * as a modular component for designing REST clients.
  */
 @interface UAHTTPRequestEngine : NSObject
 
@@ -49,7 +49,7 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
 - (id)init;
 
 /**
- * Initializer with argument for custom NSOperationQueue
+ * Initializer with argument for custom NSOperationQueue.
  * @param queue A custom NSOperationQueue
  */
 - (id)initWithQueue:(NSOperationQueue *)queue;

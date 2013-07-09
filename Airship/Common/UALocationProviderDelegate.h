@@ -34,7 +34,7 @@
 
 @required
 /**
- * Delegate call for authorization state changes iOS > 4.2 only
+ * Delegate call for authorization state changes iOS > 4.2 only.
  * @param locationProvider The location provider
  * @param locationManager The CLLocationManager object
  * @param status The new status
@@ -44,7 +44,7 @@
     didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 
 /**
- * Delegate is called when a UALocationServices object reports an error
+ * Delegate is called when a UALocationServices object reports an error.
  * @param locationProvider The location provider
  * @param locationManager  The CLLocationManager object
  * @param error The NSError thrown by the locationManager
