@@ -90,8 +90,8 @@ SINGLETON_INTERFACE(UAInboxNavUI);
 /// @name UAInboxUIProtocol Methods
 ///---------------------------------------------------------------------------------------
 + (void)quitInbox;
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated;
-+ (void)displayMessage:(UIViewController *)viewController message:(NSString*)messageID;
++ (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
++ (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAInboxPushHandlerDelegate Methods

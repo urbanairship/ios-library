@@ -75,12 +75,12 @@
     self.notificationAlert = nil;
 
     /* display a new alert */
-	self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
+	self.notificationAlert = [[[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
                                                         message:message
                                                        delegate:self
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                               otherButtonTitles:UA_INBOX_TR(@"UA_View"),
-                              nil];
+                              nil] autorelease];
     [self.notificationAlert show];
 
 }
