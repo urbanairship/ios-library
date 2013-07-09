@@ -76,7 +76,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         self.isVisible = NO;
         
         UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
-        mlc.title = @"Inbox";
+        
         mlc.navigationItem.leftBarButtonItem = 
             [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
         

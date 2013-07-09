@@ -35,11 +35,10 @@
 
 @interface UAInboxMessageListController()
 
-- (void)updateNavigationBadge;      // indicate title and unread count
+- (void)updateNavigationTitleText;      // indicate title and unread count
 - (void)refreshBatchUpdateButtons;  // indicate edit mode view
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath;
 - (void)createToolbarItems;
-- (void)createNavigationBadge;
 - (void)editButtonPressed:(id)sender;
 - (void)cancelButtonPressed:(id)sender;
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -51,16 +50,13 @@
 
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
-- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
+- (NSUInteger)countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
 @property (nonatomic, retain) IBOutlet UITableView *messageTable;
 @property (nonatomic, retain) IBOutlet UIView *loadingView;
 @property (nonatomic, retain) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
 @property (nonatomic, retain) IBOutlet UILabel *loadingLabel;
-@property (nonatomic, retain) IBOutlet UITabBarItem *tabbarItem;
-@property (nonatomic, retain) IBOutlet UITabBar *tabbar;
 @property (nonatomic, retain) NSMutableSet *setOfUnreadMessagesInSelection;
-@property (nonatomic, retain) UIView *badgeView;
 @property (nonatomic, retain) NSMutableSet *selectedIndexPathsForEditing;
 @property (nonatomic, retain) UABarButtonSegmentedControl *deleteItem;
 @property (nonatomic, retain) UIBarButtonItem *markAsReadButtonItem;
@@ -78,10 +74,7 @@
     self.loadingView = nil;
     self.loadingIndicator = nil;
     self.loadingLabel = nil;
-    self.tabbarItem = nil;
-    self.tabbar = nil;
     self.setOfUnreadMessagesInSelection = nil;
-    self.badgeView = nil;
     self.selectedIndexPathsForEditing = nil;
     self.deleteItem = nil;
 
@@ -129,7 +122,8 @@
     self.navigationItem.rightBarButtonItem = self.editItem;
 
     [self createToolbarItems];
-    [self createNavigationBadge];
+
+    [self updateNavigationTitleText];
 
     self.selectedIndexPathsForEditing = [[[NSMutableSet alloc] init] autorelease];
 }
@@ -173,16 +167,14 @@
     } else {
         [self coverUpEmptyListIfNeeded];
         [self tableReloadData];
-        [self updateNavigationBadge];
+        [self updateNavigationTitleText];
     }
     
     [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:animated];
-    [self.navigationController.navigationBar addSubview:self.badgeView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.badgeView removeFromSuperview];
 }
 
 - (void)viewDidUnload {
@@ -328,7 +320,7 @@
     }
 
     [self setEditing:NO animated:YES];
-    [self updateNavigationBadge];
+    [self updateNavigationTitleText];
 }
 
 - (void)batchUpdateButtonPressed:(id)sender {
@@ -488,7 +480,7 @@
     [self hideLoadingScreen];
     
     [self tableReloadData];
-    [self updateNavigationBadge];
+    [self updateNavigationTitleText];
 }
 
 - (void)inboxLoadFailed {
@@ -496,7 +488,7 @@
     [self hideLoadingScreen];
     
     [self tableReloadData];
-    [self updateNavigationBadge];
+    [self updateNavigationTitleText];
     
     if (self.shouldShowAlerts) {
         
@@ -566,66 +558,21 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
     cell.unreadIndicator.hidden = YES;
-    [self updateNavigationBadge];
+    [self updateNavigationTitleText];
 }
 
 #pragma mark -
-#pragma mark Navigation Bar Badge
+#pragma mark Navigation Title Unread Count Updates
 
-static float label_width = 0.0;
-- (void)createNavigationBadge {
-    // Create a label to test the size of the title string, so we can determine
-    // where to place the unread count badge.
-    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
 
-    UILabel *testLabel = [[[UILabel alloc] init] autorelease];
-
-    testLabel.text = self.title;
-    testLabel.font = [UIFont boldSystemFontOfSize:20];
-    [testLabel sizeToFit];
-    label_width = testLabel.frame.size.width;
-
-    self.badgeView = [[[UIView alloc] initWithFrame:CGRectMake(badgePosition, 4, 100, 34)] autorelease];
-    self.badgeView.backgroundColor = [UIColor clearColor];
-    self.badgeView.clipsToBounds = NO;
-
-    //TODO: MACRO-ize this properly
-    if ([self.tabbar respondsToSelector:@selector(setTintColor:)]) {
-        //if iOS5
-        [self.tabbar setTintColor:[UIColor clearColor]];
-
-        // if iOS5 or 6
-        if (self.tabbar.subviews.count > 1) {
-            [self.badgeView addSubview:[self.tabbar.subviews objectAtIndex:1]];
-        }
-    } else {
-        //if < iOS5
-        [self.badgeView addSubview:[((UIView *)[self.tabbar.subviews objectAtIndex:0]).subviews objectAtIndex:0]];
-    }
-
-    self.badgeView.hidden = YES;
-}
-
-- (void)updateNavigationBadge {
-    int count = [UAInbox shared].messageList.unreadCount;
-    NSString *unreadCount = [NSString stringWithFormat:@"%d", count];
-    float badgePosition = self.navigationController.navigationBar.frame.size.width/2 + label_width/2 - 33;
-
-    if (count < 0) {
-        count = 0;
-    }
-    
-    self.badgeView.hidden = (count==0);
-    self.tabbarItem.badgeValue = unreadCount;
-    self.badgeView.frame = CGRectMake(badgePosition + 5.3*([unreadCount length]-1),
-                                 self.badgeView.frame.origin.y,
-                                 self.badgeView.frame.size.width,
-                                 self.badgeView.frame.size.height);
+- (void)updateNavigationTitleText {
+    NSInteger count = [UAInbox shared].messageList.unreadCount;
+    self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Inbox_List_Title"), count];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
                                          duration:(NSTimeInterval)duration{
-    [self updateNavigationBadge];
+    [self updateNavigationTitleText];
 }
 
 
