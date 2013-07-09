@@ -113,7 +113,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         }
         
         else {
-            UALOG(@"UI needs to be brought up!");
+            UALOG(@"Inbox UI needs to be visible before displaying a message. Displaying now.");
             // We're not inside the modal/navigationcontroller setup so lets start with the parent
             [UAInboxUI displayInbox:[UAInboxUI shared].inboxParentController animated:NO]; // BUG?
         }
