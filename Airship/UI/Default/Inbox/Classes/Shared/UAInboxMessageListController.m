@@ -35,8 +35,8 @@
 
 @interface UAInboxMessageListController()
 
-- (void)updateNavigationTitleText;      // indicate title and unread count
-- (void)refreshBatchUpdateButtons;  // indicate edit mode view
+- (void)updateNavigationTitleText;// update nav controller title with unread count
+- (void)refreshBatchUpdateButtons;// indicate edit mode view
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath;
 - (void)createToolbarItems;
 - (void)editButtonPressed:(id)sender;
@@ -173,10 +173,6 @@
     [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:animated];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-}
-
 - (void)viewDidUnload {
     // Release any retained subviews of the main view.
     self.loadingIndicator = nil;
@@ -264,7 +260,7 @@
     
 }
 
-- (NSUInteger) countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set {
+- (NSUInteger)countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set {
     NSUInteger count = 0;
     BOOL isMarkedUnread = NO;
     for (NSIndexPath *path in set) {
@@ -472,7 +468,7 @@
 
 - (void)messageListLoaded {
 	
-	UALOG(@"got messageListLoaded");
+	UA_LDEBUG(@"UAInboxMessageListController messageListLoaded");
         
 	// TODO: add call to pushhandler here to get the messageid we should be viewing????
 	//[UAInboxUI displayMessage:viewingMessageID];
