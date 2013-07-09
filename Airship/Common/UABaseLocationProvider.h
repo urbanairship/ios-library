@@ -58,7 +58,9 @@
  */
 @property (nonatomic, assign) NSTimeInterval maximumElapsedTimeForCachedLocation;
 
-/// The distance filter one the locationManager
+/**
+ * The distance filter one the locationManager.
+ */
 - (CLLocationDistance)distanceFilter;
 
 /**
@@ -67,7 +69,9 @@
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
 
-/// The desired accuracy currently set on the locationManager
+/**
+ * The desired accuracy currently set on the locationManager.
+ */
 - (CLLocationAccuracy)desiredAccuracy;
 
 /**
@@ -116,7 +120,9 @@
  */
 @property (nonatomic, assign) UALocationProviderStatus serviceStatus;
 
-/// Provider type must be set by subclasses 
+/**
+ * Provider type must be set by subclasses
+ */
 @property (nonatomic, copy) UALocationServiceProviderType *provider;
 
 ///---------------------------------------------------------------------------------------

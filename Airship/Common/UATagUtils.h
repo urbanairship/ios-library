@@ -27,7 +27,7 @@
 
 /**
  * Autogenerate a set of tags with
- * the following flags
+ * the following flags.
  */
 typedef enum {
     UATagTypeTimeZone             = 1 << 0, /** Full Time Zone: "America/Los_Angeles" */
