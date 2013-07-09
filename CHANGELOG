@@ -10,8 +10,12 @@
 - The UA app key can now be automatically toggled between development and production based on the status
   of an app as indicated in the embedded .mobileprovision file.
 - Push conversion events are now automatically collected - no integration required.
-- Simplified the UAPushNotificationDelegate so that it provides callbacks when the app is launched
-  from a notification and when one is received while the app is already in the foreground.
+- Simplified the UAPushNotificationDelegate and UAInboxNotificationDelegate so that they provide callbacks
+  when the app is launched from a notification and when one is received while the app is already in the foreground.
+  The Inbox delegate protocol also provides methods for receiving callbacks when the a new or launch message is available
+  for viewing.
+- Renamed the UAInboxUIProtocol methods for clarity.
+- Removed fragile Inbox header badge in sample UI. Replaced with Mail.app style (%d) unread count.
 - Rich Push Inbox cache is now optional.
 - Removed In-App Purchase and Subscriptions.
 - Replaced ASIHTTPRequest with a wrapper around NSURLRequest/Connection
@@ -22,6 +26,8 @@
 - Improved header documentation (which feeds http://docs.urbanairship.com/ios-lib/).
 - Removed deprecated methods from UAPush. Direct access to the device token registration API can now
   be done directly with UADeviceAPIClient
+- UAUser now uses the same tags and aliases as the device token. The Urban Airship API and UI now provides
+  a mechanismm for addressing a rich push user by the device token, rather than the User ID.
 
 
 -------------------------
