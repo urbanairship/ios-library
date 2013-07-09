@@ -45,8 +45,9 @@ cp -R "${AIRSHIP_PATH}" "${DEST_PATH}"
 
 # Remove all non .h files from /Library and /Common
 # Remove all non UA_ items & dirs from Airship/External
-find "${DEST_PATH}/Airship/Library" \! -name "*.h" -type f -delete
 find "${DEST_PATH}/Airship/Common" \! -name "*.h" -type f -delete
+find "${DEST_PATH}/Airship/Push" \! -name "*.h" -type f -delete
+find "${DEST_PATH}/Airship/Inbox" \! -name "*.h" -type f -delete
 
 # Delete internal test headers
 rm -rf `find "${DEST_PATH}/Airship" -name "*+Internal.h" `
