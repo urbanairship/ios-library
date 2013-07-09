@@ -61,8 +61,3 @@ rm -rf "${DEST_PATH}/Airship/Test"
 rm "${DEST_PATH}/Airship/AppledocSettings.plist"
 
 find "${DEST_PATH}/Airship" -name "*.orig" -delete
-
-# Copy LICENSE, README and CHANGELOG
-cp "${ROOT_PATH}/CHANGELOG" "${DEST_PATH}/Airship"
-cp "${ROOT_PATH}/README.rst" "${DEST_PATH}/Airship"
-cp "${ROOT_PATH}/LICENSE" "${DEST_PATH}/Airship"

@@ -26,6 +26,7 @@
 
 SCRIPT_DIRECTORY=`dirname $0`
 OUTPUT_PATH=$SCRIPT_DIRECTORY/output
+ROOT_PATH=`dirname "${0}"`/../
 
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
@@ -41,8 +42,13 @@ mkdir -p $OUTPUT_PATH
 # Rename InboxSample to RichPushSample
 mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
 
+# Copy LICENSE, README and CHANGELOG
+cp "${ROOT_PATH}/CHANGELOG" "${OUTPUT_PATH}"
+cp "${ROOT_PATH}/README.rst" "${OUTPUT_PATH}"
+cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
+
 cd $OUTPUT_PATH
-for PACKAGE in RichPushSample PushSample Airship; do
+for PACKAGE in RichPushSample PushSample Airship LICENSE CHANGELOG README.rst; do
 	zip -r libUAirship-latest.zip $PACKAGE
 	zip -r "libUAirship-${VERSION}.zip" $PACKAGE
 done

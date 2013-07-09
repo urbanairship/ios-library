@@ -53,9 +53,4 @@ rm -rf `find ${TARGET_PATH} -name "xcuserdata" `
 # Delete the testing config plist
 rm -rf `find ${TARGET_PATH} -name "AirshipDevelopment.plist" `
 
-# Copy common change log, license, and readme
-cp "${ROOT_PATH}/CHANGELOG" $TARGET_PATH
-cp "${ROOT_PATH}/LICENSE" $TARGET_PATH
-cp "${ROOT_PATH}/README.rst" $TARGET_PATH
-
 mv -f $TARGET_PATH/AirshipConfig.plist.sample $TARGET_PATH/AirshipConfig.plist
