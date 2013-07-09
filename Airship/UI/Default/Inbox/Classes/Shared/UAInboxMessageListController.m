@@ -563,6 +563,11 @@
 
 - (void)updateNavigationTitleText {
     NSInteger count = [UAInbox shared].messageList.unreadCount;
+
+    if (count < 0) {
+        count = 0;
+    }
+
     self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Inbox_List_Title"), count];
 }
 
