@@ -42,10 +42,8 @@
 @implementation InboxSampleAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    self.navigationController = [[[UINavigationController alloc] init] autorelease];
-    [self.navigationController pushViewController:self.viewController animated:NO];
-    [self.window addSubview:self.navigationController.view];
+
+    [self.window setRootViewController:self.navigationController];
     [self.window makeKeyAndVisible];
 
     // Display a UIAlertView warning developers that push notifications do not work in the simulator

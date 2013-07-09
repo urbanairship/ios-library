@@ -80,18 +80,27 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     [self quitInbox];
 }
 
-+ (void)displayInbox:(UIViewController *)viewController animated:(BOOL)animated {
++ (void)displayInbox:(UIViewController *)parentViewController animated:(BOOL)animated {
     
     [[[UAInbox shared] messageList] addObserver:[UAInboxUI shared].messageListController];
 	
-    if ([viewController isKindOfClass:[UINavigationController class]]) {
-        [(UINavigationController *)viewController popToRootViewControllerAnimated:NO];
+    if ([parentViewController isKindOfClass:[UINavigationController class]]) {
+        [(UINavigationController *)parentViewController popToRootViewControllerAnimated:NO];
     }
 
 	[UAInboxUI shared].isVisible = YES;
     
-    UALOG(@"present modal");
-    [viewController presentModalViewController:[UAInboxUI shared].rootViewController animated:animated];
+    UA_LDEBUG(@"Presenting Inbox Modal");
+    UIViewController *inboxViewController = [UAInboxUI shared].rootViewController;
+
+    // Optionally specify a custom modal transition
+    inboxViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+
+    if ([parentViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) { // iOS5+
+        [parentViewController presentViewController:inboxViewController animated:animated completion:nil];
+    } else { //4.x
+        [parentViewController presentModalViewController:inboxViewController animated:animated];
+    }
 } 
 
 + (void)displayMessage:(UIViewController *)viewController message:(NSString *)messageID {
