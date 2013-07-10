@@ -146,7 +146,7 @@ static NSUInteger locationRowCount = 1;
 - (void)initCells {
     self.deviceTokenCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
     self.deviceTokenCell.textLabel.text = @"Device Token";
-    self.deviceTokenCell.accessibilityIdentifier = @"Device Token";
+    self.deviceTokenCell.accessibilityLabel = @"Device Token";
     self.deviceTokenCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     self.deviceTokenTypesCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
