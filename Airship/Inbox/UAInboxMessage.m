@@ -50,7 +50,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @implementation UAInboxMessage
 
 - (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
 
         message = [message dictionaryWithValuesForKeys:[[message keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
                 return ![obj isEqual:[NSNull null]];

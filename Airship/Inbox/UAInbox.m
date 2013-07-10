@@ -116,8 +116,8 @@ static Class _uiClass;
 #pragma mark Memory management
 
 - (id)init {
-    if (self = [super init]) {
-
+    self = [super init];
+    if (self) {
         // create the DB and clear out legacy info
         // prior to creating the new caches directory
         [UAInboxDBManager shared];

@@ -8,7 +8,8 @@
 @implementation UADelayOperation
 
 - (id)initWithDelayInSeconds:(NSInteger)seconds {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         [self addExecutionBlock:^{
             sleep(seconds);
         }];
