@@ -23,15 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAHTTPConnection.h"
+#import "UAHTTPRequest.h"
 
-@interface UAHTTPConnection()
+@interface UAHTTPRequest()
 
-@property (nonatomic, retain) UAHTTPRequest *request;
-@property (nonatomic, retain) NSHTTPURLResponse *urlResponse;
-@property (nonatomic, retain) NSMutableData *responseData;
-@property (nonatomic, retain) NSURLConnection *urlConnection;
-
-- (NSData *)gzipCompress:(NSData *)uncompressedData;
-
+@property (nonatomic, retain) NSHTTPURLResponse *response;
+@property (nonatomic, retain) NSData *responseData;
+@property (nonatomic, retain) NSError *error;
+@property (nonatomic, retain) NSURL *url;
 @end

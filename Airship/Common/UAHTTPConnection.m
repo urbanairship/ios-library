@@ -24,93 +24,17 @@
  */
 
 #import "UAHTTPConnection+Internal.h"
+#import "UAHTTPRequest+Internal.h"
+
 #import "UAGlobal.h"
 #import "UAInboxURLCache.h"
 #import "UA_Base64.h"
 #import <zlib.h>
 
 
-static NSString *defaultUserAgentString;
-
-
-@implementation UAHTTPRequest
-
-+ (UAHTTPRequest *)requestWithURL:(NSURL *)url {
-    return [[[UAHTTPRequest alloc] initWithURL:url] autorelease];
-}
-
-+ (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
-    return [[[UAHTTPRequest alloc] initWithURLString:urlString] autorelease];
-}
-
-- (id)initWithURL:(NSURL *)url {
-    if ((self = [super init])) {
-        self.url = url;
-        self.headers = [[[NSMutableDictionary alloc] init] autorelease];
-        
-        // Set Defaults
-        if (defaultUserAgentString) {
-            [self addRequestHeader:@"User-Agent" value:defaultUserAgentString];
-        }
-
-        self.HTTPMethod = @"GET";
-    }
-    return self;
-}
-
-
-- (id)initWithURLString:(NSString *)urlString {
-    return [self initWithURL:[NSURL URLWithString:urlString]];
-}
-
-- (void) dealloc {
-    self.url = nil;
-    self.HTTPMethod = nil;
-    self.headers = nil;
-    self.username = nil;
-    self.password = nil;
-    self.body = nil;
-    self.userInfo = nil;
-    self.responseData = nil;
-    self.response = nil;
-    self.error = nil;
-
-    [super dealloc];
-}
-
-- (void)addRequestHeader:(NSString *)header value:(NSString *)value {
-    [self.headers setValue:value forKey:header];
-}
-
-- (void)appendBodyData:(NSData *)data {
-    if (!self.body) {
-        self.body = [NSMutableData data];
-    }
-    [self.body appendData:data];
-}
-
-- (NSString *)responseString {
-    //TODO: cache?
-    return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
-}
-
-@end
-
-
-//----------------------------------------
-// UAHTTPConnection
-//----------------------------------------
-
-
-#pragma mark -
-#pragma mark UAHTTPConnection
 
 @implementation UAHTTPConnection
 
-+ (void)setDefaultUserAgentString:(NSString *)userAgent {
-    [defaultUserAgentString autorelease];
-    defaultUserAgentString = [userAgent copy];
-}
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
     return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
@@ -306,7 +230,6 @@ static NSString *defaultUserAgentString;
     }
 }
 
-#pragma mark -
 #pragma mark GZIP compression
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData {

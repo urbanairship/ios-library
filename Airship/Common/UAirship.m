@@ -284,7 +284,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
                            appName, appVersion, deviceModel, osName, osVersion, libVersion, self.config.appKey, locale];
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
-    [UAHTTPConnection setDefaultUserAgentString:userAgent];
+    [UAHTTPRequest setDefaultUserAgentString:userAgent];
 }
 
 @end
