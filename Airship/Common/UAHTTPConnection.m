@@ -277,6 +277,9 @@ static NSString *defaultUserAgentString;
         self.failureBlock(self.request);
     }
     
+    self.failureBlock = nil;
+    self.successBlock = nil;
+    
     [self release];
 }
 
@@ -292,6 +295,9 @@ static NSString *defaultUserAgentString;
     if (self.successBlock) {
         self.successBlock(self.request);
     }
+
+    self.failureBlock = nil;
+    self.successBlock = nil;
     
     [self release];
 }
