@@ -146,6 +146,8 @@
     self.connection = nil;
     self.isExecuting = NO;
     self.isFinished = YES;
+    self.failureBlock = nil;
+    self.successBlock = nil;
 }
 
 - (void)dealloc {
