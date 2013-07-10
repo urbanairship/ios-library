@@ -6,10 +6,10 @@
 
 @interface UAHTTPRequest()
 
-@property (retain, nonatomic) NSHTTPURLResponse *response;
-@property (retain, nonatomic) NSData *responseData;
-@property (retain, nonatomic) NSError *error;
-
+@property (nonatomic, retain) NSHTTPURLResponse *response;
+@property (nonatomic, retain) NSData *responseData;
+@property (nonatomic, retain) NSError *error;
+@property (nonatomic, retain) NSURL *url;
 @end
 
 #pragma mark -
@@ -21,7 +21,6 @@
 @property (nonatomic, retain) NSHTTPURLResponse *urlResponse;
 @property (nonatomic, retain) NSMutableData *responseData;
 @property (nonatomic, retain) NSURLConnection *urlConnection;
-
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData;
 

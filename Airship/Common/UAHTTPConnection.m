@@ -26,7 +26,6 @@
 #import "UAHTTPConnection+Internal.h"
 #import "UAGlobal.h"
 #import "UAInboxURLCache.h"
-
 #import "UA_Base64.h"
 #import <zlib.h>
 
@@ -46,13 +45,14 @@ static NSString *defaultUserAgentString;
 
 - (id)initWithURL:(NSURL *)url {
     if ((self = [super init])) {
-        _url = [url retain];
-        _headers = [[NSMutableDictionary alloc] init];
+        self.url = url;
+        self.headers = [[[NSMutableDictionary alloc] init] autorelease];
         
         // Set Defaults
         if (defaultUserAgentString) {
             [self addRequestHeader:@"User-Agent" value:defaultUserAgentString];
         }
+
         self.HTTPMethod = @"GET";
     }
     return self;
@@ -64,16 +64,16 @@ static NSString *defaultUserAgentString;
 }
 
 - (void) dealloc {
-    RELEASE_SAFELY(_url);
-    RELEASE_SAFELY(_HTTPMethod);
-    RELEASE_SAFELY(_headers);
-    RELEASE_SAFELY(_username);
-    RELEASE_SAFELY(_password);
-    RELEASE_SAFELY(_body);
-    RELEASE_SAFELY(_userInfo);
-    RELEASE_SAFELY(_responseData);
-    RELEASE_SAFELY(_response);
-    RELEASE_SAFELY(_error);
+    self.url = nil;
+    self.HTTPMethod = nil;
+    self.headers = nil;
+    self.username = nil;
+    self.password = nil;
+    self.body = nil;
+    self.userInfo = nil;
+    self.responseData = nil;
+    self.response = nil;
+    self.error = nil;
 
     [super dealloc];
 }

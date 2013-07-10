@@ -36,19 +36,19 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 
 }
 
-@property (readonly, nonatomic) NSURL *url;
-@property (copy, nonatomic) NSString *HTTPMethod;
-@property (readonly, nonatomic) NSDictionary *headers;
-@property (copy, nonatomic) NSString *username;
-@property (copy, nonatomic) NSString *password;
-@property (retain, nonatomic) NSMutableData *body;
-@property (assign, nonatomic) BOOL compressBody;
-@property (retain, nonatomic) id userInfo;
+@property (nonatomic, readonly, retain) NSURL *url;
+@property (nonatomic, retain) NSDictionary *headers;
+@property (nonatomic, copy) NSString *HTTPMethod;
+@property (nonatomic, copy) NSString *username;
+@property (nonatomic, copy) NSString *password;
+@property (nonatomic, retain) NSMutableData *body;
+@property (nonatomic, assign) BOOL compressBody;
+@property (nonatomic, retain) id userInfo;
 
-@property (readonly, retain, nonatomic) NSHTTPURLResponse *response;
-@property (readonly, nonatomic) NSString *responseString;
-@property (readonly, retain, nonatomic) NSData *responseData;
-@property (readonly, retain, nonatomic) NSError *error;
+@property (nonatomic, readonly, retain) NSHTTPURLResponse *response;
+@property (nonatomic, readonly, copy) NSString *responseString;
+@property (nonatomic, readonly, retain) NSData *responseData;
+@property (nonatomic, readonly, retain) NSError *error;
 
 /**
  * Create a request with the URL string.
