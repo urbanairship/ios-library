@@ -71,6 +71,10 @@ static NSString *defaultUserAgentString;
     RELEASE_SAFELY(_password);
     RELEASE_SAFELY(_body);
     RELEASE_SAFELY(_userInfo);
+    RELEASE_SAFELY(_responseData);
+    RELEASE_SAFELY(_response);
+    RELEASE_SAFELY(_error);
+
     [super dealloc];
 }
 
@@ -141,16 +145,18 @@ static NSString *defaultUserAgentString;
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest {
     self = [self init];
     if (self) {
-        _request = [httpRequest retain];
+        self.request = httpRequest;
     }
     return self;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(_request);
-    RELEASE_SAFELY(_urlConnection);
-    RELEASE_SAFELY(_urlResponse);
-    RELEASE_SAFELY(_responseData);
+    self.urlResponse = nil;
+    self.urlConnection = nil;
+    self.request = nil;
+    self.responseData = nil;
+    self.successBlock = nil;
+    self.failureBlock = nil;
     [super dealloc];
 }
 
