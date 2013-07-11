@@ -32,9 +32,7 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 /**
  * Wraps NSURLRequest, to be used in conjunction with UAHTTPConnection.
  */
-@interface UAHTTPRequest : NSObject {
-
-}
+@interface UAHTTPRequest : NSObject
 
 @property (nonatomic, readonly, retain) NSURL *url;
 @property (nonatomic, retain) NSDictionary *headers;

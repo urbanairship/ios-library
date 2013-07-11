@@ -73,7 +73,6 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelDebug
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
 
-// code block
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
