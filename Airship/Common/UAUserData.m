@@ -12,7 +12,8 @@
 @implementation UAUserData
 
 - (id)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.username = username;
         self.password = password;
         self.url = url;

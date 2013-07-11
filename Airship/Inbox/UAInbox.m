@@ -107,7 +107,8 @@ static Class _uiClass;
         [[g_sharedUAInbox uiClass]land];
         [UAInboxMessageList land];
         
-        RELEASE_SAFELY(g_sharedUAInbox);
+        [g_sharedUAInbox release];
+        g_sharedUAInbox = nil;
     }
 }
 
@@ -115,8 +116,8 @@ static Class _uiClass;
 #pragma mark Memory management
 
 - (id)init {
-    if (self = [super init]) {
-
+    self = [super init];
+    if (self) {
         // create the DB and clear out legacy info
         // prior to creating the new caches directory
         [UAInboxDBManager shared];

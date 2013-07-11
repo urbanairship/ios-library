@@ -321,7 +321,8 @@ static Class _uiClass;
     
     // not much teardown to do here, but implement anyway for the future
     if (g_sharedUAPush) {
-        RELEASE_SAFELY(g_sharedUAPush);
+        [g_sharedUAPush release];
+        g_sharedUAPush = nil;
     }
 }
 

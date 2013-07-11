@@ -67,7 +67,8 @@ static UAInboxMessageList *_messageList = nil;
         if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
             _messageList.client = nil;
         }
-        RELEASE_SAFELY(_messageList);
+        [_messageList release];
+        _messageList = nil;
     }
 }
 

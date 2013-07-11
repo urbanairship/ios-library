@@ -24,70 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-
-@class UAHTTPRequest;
-typedef void (^UAHTTPConnectionSuccessBlock)(UAHTTPRequest *request);
-typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
-
-/**
- * Wraps NSURLRequest, to be used in conjunction with UAHTTPConnection.
- */
-@interface UAHTTPRequest : NSObject {
-
-}
-
-@property (readonly, nonatomic) NSURL *url;
-@property (copy, nonatomic) NSString *HTTPMethod;
-@property (readonly, nonatomic) NSDictionary *headers;
-@property (copy, nonatomic) NSString *username;
-@property (copy, nonatomic) NSString *password;
-@property (retain, nonatomic) NSMutableData *body;
-@property (assign, nonatomic) BOOL compressBody;
-@property (retain, nonatomic) id userInfo;
-
-@property (readonly, retain, nonatomic) NSHTTPURLResponse *response;
-@property (readonly, nonatomic) NSString *responseString;
-@property (readonly, retain, nonatomic) NSData *responseData;
-@property (readonly, retain, nonatomic) NSError *error;
-
-/**
- * Create a request with the URL string.
- * @param urlString The URL string.
- */
-+ (UAHTTPRequest *)requestWithURLString:(NSString *)urlString;
-
-/**
- * Create a request with the URL.
- * @param url The URL.
- */
-+ (UAHTTPRequest *)requestWithURL:(NSURL *)url;
-
-/**
- * UAHTTPRequest initializer taking a URL string.
- * @param urlString The URL string.
- */
-- (id)initWithURLString:(NSString *)urlString;
-
-/**
- * UAHTTPRequest initializer taking a URL.
- * @param url The URL.
- */
-- (id)initWithURL:(NSURL *)url;
-
-/**
- * Add a request header.
- * @param header The header string to be added.
- * @param value The value string to be added.
- */
-- (void)addRequestHeader:(NSString *)header value:(NSString *)value;
-
-/**
- * Append data to the body.
- * @param data The data to be added to the body.
- */
-- (void)appendBodyData:(NSData *)data;
-
-@end
+#import "UAHTTPRequest.h"
 
 /**
  * A wrapper for NSURLConnection implementing the NSURLConnectionDelegate protocol.
@@ -128,12 +65,6 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                successBlock:(UAHTTPConnectionSuccessBlock)successBlock
                                failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
-
-/**
- * Set the default user agent.
- * @param userAgent The user agent string.
- */
-+ (void)setDefaultUserAgentString:(NSString *)userAgent;
 
 /**
  * Initializer with the HTTP request.

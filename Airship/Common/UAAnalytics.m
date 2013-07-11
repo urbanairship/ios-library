@@ -64,7 +64,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (id)initWithConfig:(UAConfig *)airshipConfig {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         //set server to default if not specified in options
         self.config = airshipConfig;
         

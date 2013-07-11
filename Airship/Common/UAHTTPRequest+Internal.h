@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,32 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "UAHTTPRequest.h"
 
-#import "UAGlobal.h"
+@interface UAHTTPRequest()
 
-@class UA_FMDatabase;
-@class UAInboxMessage;
-
-#define UA_FMDBLogError if ([self.db hadError]) { UALOG(@"Err %d: %@", [self.db lastErrorCode], [self.db lastErrorMessage]);}
-#define DB_NAME @"UAInbox.db"
-
-@interface UAInboxDBManager : NSObject {
-}
-
-@property (nonatomic, retain) UA_FMDatabase *db;
-
-SINGLETON_INTERFACE(UAInboxDBManager);
-
-- (void)createEditableCopyOfDatabaseIfNeeded;
-- (void)initDBIfNeeded;
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey;
-- (void)deleteMessages:(NSArray *)messages;
-- (void)updateMessageAsRead:(UAInboxMessage *)msg;
-- (void)updateMessagesAsRead:(NSArray *)messages;
-
-// Helper for development
-- (void)resetDB;
-
+@property (nonatomic, retain) NSHTTPURLResponse *response;
+@property (nonatomic, retain) NSData *responseData;
+@property (nonatomic, retain) NSError *error;
+@property (nonatomic, retain) NSURL *url;
 @end

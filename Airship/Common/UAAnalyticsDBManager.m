@@ -42,15 +42,16 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
         NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:DB_NAME];
         
-        db = [[UASQLite alloc] initWithDBPath:writableDBPath];
-        if (![db tableExists:@"analytics"]) {
-            [db executeUpdate:CREATE_TABLE_CMD];
+        self.db = [[[UASQLite alloc] initWithDBPath:writableDBPath] autorelease];
+        if (![self.db tableExists:@"analytics"]) {
+            [self.db executeUpdate:CREATE_TABLE_CMD];
         }
     });
 }
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         // Make sure and dispatch all of the database activity to the dbQueue. Failure to do so will result
         // in database corruption. 
         // dispatch_queue_create returns a queue with
@@ -64,9 +65,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
 - (void)dealloc {
     dispatch_sync(dbQueue, ^{
-        [db close];
+        [self.db close];
     });
-    RELEASE_SAFELY(db);
+    self.db = nil;
     dispatch_release(dbQueue);
     [super dealloc];
 }
@@ -74,8 +75,8 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 // Used for development
 - (void)resetDB {
     dispatch_sync(dbQueue, ^{
-        [db executeUpdate:@"DROP TABLE analytics"];
-        [db executeUpdate:CREATE_TABLE_CMD];
+        [self.db executeUpdate:@"DROP TABLE analytics"];
+        [self.db executeUpdate:CREATE_TABLE_CMD];
     });
 }
 
@@ -101,7 +102,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     NSString *sessionID = [session objectForKey:@"session_id"];
     
     dispatch_async(dbQueue, ^{
-        [db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
+        [self.db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
          [event getType],
          event.event_id,
          event.time,
@@ -117,7 +118,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (NSArray *)getEvents:(int)max {
     __block NSArray *result = nil;
     dispatch_sync(dbQueue, ^{
-        result = [db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInt:max]];
+        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInt:max]];
     });
     return result;
 }
@@ -125,25 +126,25 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (NSArray *)getEventByEventId:(NSString *)event_id {
     __block NSArray *result;
     dispatch_sync(dbQueue, ^{
-        result = [db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
+        result = [self.db executeQuery:@"SELECT * FROM analytics WHERE event_id = ?", event_id];
     });
     return result;
 }
 
 - (void)deleteEvent:(NSNumber *)eventId {
     dispatch_async(dbQueue, ^{
-        [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
+        [self.db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", eventId];
     });
 }
 
 - (void)deleteEvents:(NSArray *)events {
     dispatch_async(dbQueue, ^{
         NSDictionary *event = nil;
-        [db beginTransaction];
+        [self.db beginTransaction];
         for (event in events) {
-            [db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
+            [self.db executeUpdate:@"DELETE FROM analytics WHERE event_id = ?", [event objectForKey:@"event_id"]];
         }
-        [db commit];
+        [self.db commit];
     });
 
 }
@@ -157,7 +158,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         return;
     }
     dispatch_async(dbQueue, ^{
-        [db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
+        [self.db executeUpdate:@"DELETE FROM analytics WHERE session_id = ?", sessionId];
     });
 }
 
@@ -179,7 +180,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     
     __block NSArray *results = nil;
     dispatch_sync(dbQueue, ^{
-        results = [db executeQuery:@"SELECT COUNT(_id) count FROM analytics"];
+        results = [self.db executeQuery:@"SELECT COUNT(_id) count FROM analytics"];
     });
 
     if ([results count] <= 0) {
@@ -196,7 +197,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (NSInteger)sizeInBytes {
     __block NSArray *results = nil;
     dispatch_sync(dbQueue, ^{
-       results = [db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
+       results = [self.db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
     });
     if ([results count] <= 0) {
         return 0;
