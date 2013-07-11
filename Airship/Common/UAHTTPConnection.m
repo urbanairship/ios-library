@@ -24,89 +24,17 @@
  */
 
 #import "UAHTTPConnection+Internal.h"
+#import "UAHTTPRequest+Internal.h"
+
 #import "UAGlobal.h"
 #import "UAInboxURLCache.h"
-
 #import "UA_Base64.h"
 #import <zlib.h>
 
 
-static NSString *defaultUserAgentString;
-
-
-@implementation UAHTTPRequest
-
-+ (UAHTTPRequest *)requestWithURL:(NSURL *)url {
-    return [[[UAHTTPRequest alloc] initWithURL:url] autorelease];
-}
-
-+ (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
-    return [[[UAHTTPRequest alloc] initWithURLString:urlString] autorelease];
-}
-
-- (id)initWithURL:(NSURL *)url {
-    if ((self = [super init])) {
-        _url = [url retain];
-        _headers = [[NSMutableDictionary alloc] init];
-        
-        // Set Defaults
-        if (defaultUserAgentString) {
-            [self addRequestHeader:@"User-Agent" value:defaultUserAgentString];
-        }
-        self.HTTPMethod = @"GET";
-    }
-    return self;
-}
-
-
-- (id)initWithURLString:(NSString *)urlString {
-    return [self initWithURL:[NSURL URLWithString:urlString]];
-}
-
-- (void) dealloc {
-    RELEASE_SAFELY(_url);
-    RELEASE_SAFELY(_HTTPMethod);
-    RELEASE_SAFELY(_headers);
-    RELEASE_SAFELY(_username);
-    RELEASE_SAFELY(_password);
-    RELEASE_SAFELY(_body);
-    RELEASE_SAFELY(_userInfo);
-    [super dealloc];
-}
-
-- (void)addRequestHeader:(NSString *)header value:(NSString *)value {
-    [self.headers setValue:value forKey:header];
-}
-
-- (void)appendBodyData:(NSData *)data {
-    if (!self.body) {
-        self.body = [NSMutableData data];
-    }
-    [self.body appendData:data];
-}
-
-- (NSString *)responseString {
-    //TODO: cache?
-    return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
-}
-
-@end
-
-
-//----------------------------------------
-// UAHTTPConnection
-//----------------------------------------
-
-
-#pragma mark -
-#pragma mark UAHTTPConnection
 
 @implementation UAHTTPConnection
 
-+ (void)setDefaultUserAgentString:(NSString *)userAgent {
-    [defaultUserAgentString autorelease];
-    defaultUserAgentString = [userAgent copy];
-}
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
     return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
@@ -141,16 +69,18 @@ static NSString *defaultUserAgentString;
 - (id)initWithRequest:(UAHTTPRequest *)httpRequest {
     self = [self init];
     if (self) {
-        _request = [httpRequest retain];
+        self.request = httpRequest;
     }
     return self;
 }
 
 - (void)dealloc {
-    RELEASE_SAFELY(_request);
-    RELEASE_SAFELY(_urlConnection);
-    RELEASE_SAFELY(_urlResponse);
-    RELEASE_SAFELY(_responseData);
+    self.urlResponse = nil;
+    self.urlConnection = nil;
+    self.request = nil;
+    self.responseData = nil;
+    self.successBlock = nil;
+    self.failureBlock = nil;
     [super dealloc];
 }
 
@@ -271,6 +201,9 @@ static NSString *defaultUserAgentString;
         self.failureBlock(self.request);
     }
     
+    self.failureBlock = nil;
+    self.successBlock = nil;
+    
     [self release];
 }
 
@@ -286,6 +219,9 @@ static NSString *defaultUserAgentString;
     if (self.successBlock) {
         self.successBlock(self.request);
     }
+
+    self.failureBlock = nil;
+    self.successBlock = nil;
     
     [self release];
 }
@@ -300,7 +236,6 @@ static NSString *defaultUserAgentString;
     }
 }
 
-#pragma mark -
 #pragma mark GZIP compression
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData {

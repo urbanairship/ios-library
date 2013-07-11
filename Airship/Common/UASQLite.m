@@ -29,7 +29,8 @@
 @implementation UASQLite
 
 - (id)init {
-    if ((self = [super init])) {
+    self = [super init];
+    if (self) {
         self.busyRetryTimeout = 1;
         self.dbPath = nil;
         _db = nil;
@@ -39,7 +40,8 @@
 }
 
 - (id)initWithDBPath:(NSString *)aDBPath {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         [self open:aDBPath];
     }
 

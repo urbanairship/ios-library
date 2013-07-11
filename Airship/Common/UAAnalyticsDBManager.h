@@ -30,9 +30,10 @@
 @class UASQLite;
 
 @interface UAAnalyticsDBManager : NSObject {
-    UASQLite *db;
     dispatch_queue_t dbQueue;
 }
+
+@property (nonatomic, retain) UASQLite *db;
 
 SINGLETON_INTERFACE(UAAnalyticsDBManager);
 
