@@ -107,7 +107,8 @@ static Class _uiClass;
         [[g_sharedUAInbox uiClass]land];
         [UAInboxMessageList land];
         
-        RELEASE_SAFELY(g_sharedUAInbox);
+        [g_sharedUAInbox release];
+        g_sharedUAInbox = nil;
     }
 }
 

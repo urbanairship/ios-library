@@ -42,7 +42,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) lastObject];
         NSString *writableDBPath = [libraryPath stringByAppendingPathComponent:DB_NAME];
         
-        self.db = [[UASQLite alloc] initWithDBPath:writableDBPath];
+        self.db = [[[UASQLite alloc] initWithDBPath:writableDBPath] autorelease];
         if (![self.db tableExists:@"analytics"]) {
             [self.db executeUpdate:CREATE_TABLE_CMD];
         }

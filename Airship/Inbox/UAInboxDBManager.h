@@ -30,13 +30,13 @@
 @class UA_FMDatabase;
 @class UAInboxMessage;
 
-#define UA_FMDBLogError if ([db hadError]) { UALOG(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);}
+#define UA_FMDBLogError if ([self.db hadError]) { UALOG(@"Err %d: %@", [self.db lastErrorCode], [self.db lastErrorMessage]);}
 #define DB_NAME @"UAInbox.db"
 
 @interface UAInboxDBManager : NSObject {
-  @private
-    UA_FMDatabase *db;
 }
+
+@property (nonatomic, retain) UA_FMDatabase *db;
 
 SINGLETON_INTERFACE(UAInboxDBManager);
 
