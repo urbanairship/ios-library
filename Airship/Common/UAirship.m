@@ -97,7 +97,8 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 }
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.ready = NO;
     }
     return self;

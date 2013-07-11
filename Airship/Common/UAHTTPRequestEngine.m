@@ -11,7 +11,8 @@
 @implementation UAHTTPRequestEngine
 
 - (id)initWithQueue:(NSOperationQueue *)queue {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.queue = queue;
         self.queue.maxConcurrentOperationCount = self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
         self.initialDelayIntervalInSeconds = kUARequestEngineDefaultInitialDelayIntervalSeconds;

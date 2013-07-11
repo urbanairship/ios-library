@@ -43,7 +43,8 @@ static NSString *defaultUserAgentString;
 }
 
 - (id)initWithURL:(NSURL *)url {
-    if ((self = [super init])) {
+    self = [super init];
+    if (self) {
         self.url = url;
         self.headers = [[[NSMutableDictionary alloc] init] autorelease];
 

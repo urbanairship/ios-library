@@ -50,7 +50,8 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         // Make sure and dispatch all of the database activity to the dbQueue. Failure to do so will result
         // in database corruption. 
         // dispatch_queue_create returns a queue with
