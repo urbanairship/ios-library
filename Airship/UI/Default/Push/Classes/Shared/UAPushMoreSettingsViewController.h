@@ -34,11 +34,13 @@
 @property (nonatomic, retain) UITableViewCell *deviceTokenDisabledTypesCell;
 @property (nonatomic, retain) UITableViewCell *deviceTokenAliasCell;
 @property (nonatomic, retain) UITableViewCell *deviceTokenTagsCell;
+@property (nonatomic, retain) UITableViewCell *usernameCell;
 @property (nonatomic, retain) UITableViewCell *helpSoundsCell;
 @property (nonatomic, retain) UITableViewCell *helpLogCell;
 @property (nonatomic, retain) UIViewController *tokenViewController;
 @property (nonatomic, retain) UIViewController *aliasViewController;
 @property (nonatomic, retain) UIViewController *tagsViewController;
+@property (nonatomic, retain) UIViewController *userInfoViewController;
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
 @property (nonatomic, retain) UIImageView *footerImageView;
 @property (nonatomic, retain) UITableViewCell *locationCell;
