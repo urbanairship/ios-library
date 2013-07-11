@@ -118,8 +118,11 @@
 #pragma mark -
 #pragma mark UI Button Actions
 - (IBAction)copyDeviceToken {
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = [UAirship shared].deviceToken;
+    NSString *token = [UAirship shared].deviceToken;
+    if (token) {
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = token;
+    }
 }
 
 - (IBAction)emailDeviceToken {
