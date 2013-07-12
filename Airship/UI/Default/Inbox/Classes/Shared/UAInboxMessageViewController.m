@@ -290,7 +290,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Set the current message's sent date.
      */
-    NSString *messageSentDate = [NSString stringWithFormat:@"%@",self.message.messageSent];
+    NSDate *date = self.message.messageSent;
+    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+    NSString *messageSentDate = [dateFormatter stringFromDate:date];
     js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
 
     /*
