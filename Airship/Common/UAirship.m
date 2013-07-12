@@ -232,9 +232,9 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         return;
     }
 
-	// add app_exit event
+    // add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
-	
+
     //Land common classes
     [UAUser land];
     

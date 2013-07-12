@@ -65,12 +65,12 @@
 
 + (NSString *) UUID {
     //create a new UUID
-	CFUUIDRef uuidObj = CFUUIDCreate(nil);
+  CFUUIDRef uuidObj = CFUUIDCreate(nil);
     
-	//get the string representation of the UUID
+  //get the string representation of the UUID
     NSString *uuidString = (NSString*)CFUUIDCreateString(nil, uuidObj);
     CFRelease(uuidObj);
-	
+  
     return [uuidString autorelease];
 }
 
