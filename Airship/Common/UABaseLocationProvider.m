@@ -136,7 +136,6 @@
     
 /* iOS 4.2 or better */
 // This is the nuclear option. Subclasses should implement specific action
-// TODO: Send analytics event if location service is denied?
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     switch (status) {
         case kCLAuthorizationStatusAuthorized:

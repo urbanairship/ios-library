@@ -169,7 +169,6 @@ static UAInboxMessageList *_messageList = nil;
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             succeed();
             [self.messages removeObjectsInArray:updateMessageArray];
-            // TODO: add delete to sync
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
         }onFailure:^(UAHTTPRequest *request){

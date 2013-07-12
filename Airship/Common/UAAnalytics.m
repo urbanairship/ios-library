@@ -119,9 +119,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         };
 
         [self.queue addOperation:delayOperation];
-
-        // TODO: add a one time perform selector after delay for init analytics on cold start (app_open)
     }
+    
     return self;
 }
 

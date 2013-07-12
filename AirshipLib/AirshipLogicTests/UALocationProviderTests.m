@@ -86,8 +86,6 @@ static BOOL no = NO;
     [manager autorelease];
 }
 
-//TODO: add accuracy calculations here. 
-
 - (void)testLocationProviderDescription {
     UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] initWithDelegate:nil] autorelease];
     base.serviceStatus = UALocationProviderNotUpdating;

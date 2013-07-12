@@ -123,7 +123,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 #pragma mark -
 #pragma mark Load
 
-// TODO: better user state representation
 - (void)loadUser {
 
     if (self.creatingUser) {
