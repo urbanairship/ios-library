@@ -33,6 +33,8 @@
 		1FD26EBF13FB318700DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EBE13FB318700DBC45F /* libz.dylib */; };
 		1FE3959E177A25DC00388531 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE3959C177A25DC00388531 /* SampleAppDelegate.m */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		4921C0BA179085E500FE65BF /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4921C0B9179085E500FE65BF /* UAPushSettingsUserInfoViewController.m */; };
+		4921C0BD179085F600FE65BF /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4921C0BC179085F600FE65BF /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		636CB1EC128CF51900481EFC /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A0C124F251B00D49CD5 /* StoreKit.framework */; };
 		BB935DA5152B6081006E6A92 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB935DA4152B6081006E6A92 /* CoreLocation.framework */; };
@@ -109,6 +111,9 @@
 		1FE3959C177A25DC00388531 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FE3959D177A25DC00388531 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4921C0B8179085E500FE65BF /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
+		4921C0B9179085E500FE65BF /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
+		4921C0BC179085F600FE65BF /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
 		BB935DA4152B6081006E6A92 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationDemoAnnotation.h; sourceTree = "<group>"; };
 		BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationDemoAnnotation.m; sourceTree = "<group>"; };
@@ -245,6 +250,8 @@
 		1890BA051251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				4921C0B8179085E500FE65BF /* UAPushSettingsUserInfoViewController.h */,
+				4921C0B9179085E500FE65BF /* UAPushSettingsUserInfoViewController.m */,
 				BB935DA7152B60BD006E6A92 /* UALocationDemoAnnotation.h */,
 				BB935DA8152B60BD006E6A92 /* UALocationDemoAnnotation.m */,
 				BB935DA9152B60BD006E6A92 /* UALocationSettingsViewController.h */,
@@ -284,6 +291,7 @@
 		1890BA111251B5E900E6EBF1 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				4921C0BC179085F600FE65BF /* UAPushSettingsUserInfoView.xib */,
 				BB935DB2152B61DB006E6A92 /* UALocationSettingsViewController.xib */,
 				BB935DB3152B61DB006E6A92 /* UAMapPresentationViewController.xib */,
 				D5184E881315F33900A40CAC /* UAPushSettingsTagsViewController.xib */,
@@ -519,6 +527,7 @@
 				BB935DB4152B61DB006E6A92 /* UALocationSettingsViewController.xib in Resources */,
 				BB935DB5152B61DB006E6A92 /* UAMapPresentationViewController.xib in Resources */,
 				1F3CC4D0165C48AD008526E3 /* Default-568h@2x.png in Resources */,
+				4921C0BD179085F600FE65BF /* UAPushSettingsUserInfoView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,6 +569,7 @@
 				BB935DAE152B60BD006E6A92 /* UALocationSettingsViewController.m in Sources */,
 				BB935DAF152B60BD006E6A92 /* UAMapPresentationController.m in Sources */,
 				1FE3959E177A25DC00388531 /* SampleAppDelegate.m in Sources */,
+				4921C0BA179085E500FE65BF /* UAPushSettingsUserInfoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
