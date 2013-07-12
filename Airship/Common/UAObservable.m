@@ -26,33 +26,32 @@
 #import "UAirship.h"
 #import "UAObservable.h"
 
+@interface UAObservable()
+@property(nonatomic, retain) NSMutableSet *observers;
+@property(nonatomic, retain) NSLock *observerLock;
+@end
 
 @implementation UAObservable
 
 -(void)dealloc {
-    [observers release];
-    observers = nil;
-    [observerLock release];
-    observerLock = nil;
+    self.observers = nil;
+    self.observerLock = nil;
     [super dealloc];
 }
 
 -(id)init {
-    @synchronized(self) {
-        self = [super init];
-        if (self) {
-            observers = [[NSMutableSet alloc] init];
-            observerLock = [[NSLock alloc] init];
-        }
+    self = [super init];
+    if (self) {
+        self.observers = [[[NSMutableSet alloc] init] autorelease];
+        self.observerLock = [[[NSLock alloc] init] autorelease];
     }
     return self;
 }
 
 -(void)notifyObservers:(SEL)selector {
     @synchronized(self) {
-        NSSet* observer_copy = [observers copy];
-         //TODO, there has got to be a better way to avoid http://paste.pocoo.org/show/lNe6xjcgRjeDYOtl2jnX/
-        for (id observer in observer_copy) {
+        NSSet* observer_copy = [self.observers copy];
+        for (id observer in self.observers) {
             if([observer respondsToSelector: selector]) {
                 [observer performSelector: selector];
             }
@@ -63,7 +62,7 @@
 
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1 {
     @synchronized(self) {
-        NSSet* observer_copy = [observers copy];
+        NSSet* observer_copy = [self.observers copy];
         for (id observer in observer_copy) {
             if([observer respondsToSelector: selector]) {
                 [observer performSelector: selector withObject: arg1];
@@ -75,7 +74,7 @@
 
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2 {
     @synchronized(self) {
-        NSSet* observer_copy = [observers copy];
+        NSSet* observer_copy = [self.observers copy];
         for (id observer in observer_copy) {
             if([observer respondsToSelector: selector]) {
                 [observer performSelector: selector withObject: arg1 withObject: arg2];
@@ -88,24 +87,24 @@
 
 -(void)addObserver:(id)observer {
     @synchronized(self) {
-        [observers addObject: observer];
+        [self.observers addObject: observer];
     }
 }
 
 -(void)removeObserver:(id)observer {
     @synchronized(self) {
-        [observers removeObject: observer];
+        [self.observers removeObject: observer];
     }
 }
 
 -(void)removeObservers {
     @synchronized(self) {
-        [observers removeAllObjects];
+        [self.observers removeAllObjects];
     }
 }
 
 -(int)countObservers {
-    return [observers count];
+    return [self.observers count];
 }
 
 @end

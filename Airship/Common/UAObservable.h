@@ -25,10 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAObservable : NSObject {
-    NSMutableSet* observers;
-    NSLock* observerLock;
-}
+@interface UAObservable : NSObject 
 
 -(void)notifyObservers:(SEL)selector;
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1;
