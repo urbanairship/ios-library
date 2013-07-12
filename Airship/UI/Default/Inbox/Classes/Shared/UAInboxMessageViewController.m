@@ -267,7 +267,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Define and initialize our one global
      */
-    NSString* js = @"var UAirship = {};";
+    NSString *js = @"var UAirship = {};";
     
     /*
      * Set the device model.
@@ -284,8 +284,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     /*
      * Set the current message ID.
      */
-    NSString* messageID = self.message.messageID;
+    NSString *messageID = self.message.messageID;
     js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
+
+    /*
+     * Set the current message's sent date.
+     */
+    NSString *messageSentDate = [NSString stringWithFormat:@"%@",self.message.messageSent];
+    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
+
+    /*
+     * Set the current message's title.
+     */
+    NSString *messageTitle = self.message.title;
+    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
     
     /*
      * Define UAirship.handleCustomURL.
