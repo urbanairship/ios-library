@@ -30,7 +30,7 @@
 
 #import <Security/Security.h>
 
-static NSString* _cachedDeviceID = nil;
+static NSString *_cachedDeviceID = nil;
 
 @interface UAKeychainUtils()
 + (NSMutableDictionary *)searchDictionaryWithIdentifier:(NSString *)identifier;
@@ -50,20 +50,20 @@ static NSString* _cachedDeviceID = nil;
 
     //UALOG(@"Storing Username: %@ and Password: %@", username, password);
 
-    NSMutableDictionary *dictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
+    NSMutableDictionary *userDictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
     //set access permission - we use the keychain for it's stickiness, not security,
     //so the least permissive setting is acceptable here
-   [dictionary setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
+    [userDictionary setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
 
     //set username data
-    [dictionary setObject:username forKey:(id)kSecAttrAccount];
+    [userDictionary setObject:username forKey:(id)kSecAttrAccount];
 
     //set password data
     NSData *passwordData = [password dataUsingEncoding:NSUTF8StringEncoding];
-    [dictionary setObject:passwordData forKey:(id)kSecValueData];
+    [userDictionary setObject:passwordData forKey:(id)kSecValueData];
 
-    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)dictionary, NULL);
+    OSStatus status = SecItemAdd((__bridge CFDictionaryRef)userDictionary, NULL);
 
     if (status == errSecSuccess) {
         return YES;
@@ -72,7 +72,6 @@ static NSString* _cachedDeviceID = nil;
 }
 
 + (void)deleteKeychainValue:(NSString *)identifier {
-
     NSMutableDictionary *searchDictionary = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
     SecItemDelete((__bridge CFDictionaryRef)searchDictionary);
 }
@@ -102,7 +101,7 @@ static NSString* _cachedDeviceID = nil;
 
 + (NSString *)getPassword:(NSString *)identifier {
 
-    //Get password next
+    // Get password next
     NSMutableDictionary *passwordSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
     // Add search attributes
@@ -112,17 +111,14 @@ static NSString* _cachedDeviceID = nil;
     [passwordSearch setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
 
     CFDataRef passwordDataRef = nil;
-
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)passwordSearch,
                                           (CFTypeRef *)&passwordDataRef);
-
     NSData *passwordData = [(__bridge_transfer NSData *)passwordDataRef autorelease];
 
     NSString *password = nil;
     if (status == errSecSuccess) {
         if (passwordData) {
             password = [[[NSString alloc] initWithData:passwordData encoding:NSUTF8StringEncoding] autorelease];
-
             //UALOG(@"Loaded Password: %@",password);
         }
     }
@@ -139,13 +135,12 @@ static NSString* _cachedDeviceID = nil;
     // Add search return types
     [attributeSearch setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
 
-	
-	//Get username first
-    CFDictionaryRef result = nil;
+    // Get username first
+    CFDictionaryRef resultDataRef = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
-                                          (CFTypeRef *)&result);
+                                          (CFTypeRef *)&resultDataRef);
 
-    NSDictionary *resultDict = [(__bridge_transfer NSDictionary *)result autorelease];
+    NSDictionary *resultDict = [(__bridge_transfer NSDictionary *)resultDataRef autorelease];
 
 	NSString *username = nil;
 	if (status == errSecSuccess) {
@@ -184,7 +179,7 @@ static NSString* _cachedDeviceID = nil;
 
     NSMutableDictionary *keychainValues = [UAKeychainUtils searchDictionaryWithIdentifier:kUAKeychainDeviceIDKey];
 
-    //set access permission - we use the keychain for it's stickiness, not security,
+    //set access permission - we use the keychain for its stickiness, not security,
     //so the least permissive setting is acceptable here
     [keychainValues setObject:(id)kSecAttrAccessibleAlways forKey:(id)kSecAttrAccessible];
 
@@ -220,10 +215,10 @@ static NSString* _cachedDeviceID = nil;
     [deviceIDQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
     [deviceIDQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnAttributes];
 
-    CFDictionaryRef result = nil;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)deviceIDQuery, (CFTypeRef *)&result);
+    CFDictionaryRef resultDataRef = nil;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)deviceIDQuery, (CFTypeRef *)&resultDataRef);
 
-    NSDictionary *resultDict = [(__bridge_transfer NSDictionary *)result autorelease];
+    NSDictionary *resultDict = [(__bridge_transfer NSDictionary *)resultDataRef autorelease];
 
     NSString *deviceID = nil;
     NSString *modelName = nil;
@@ -231,7 +226,7 @@ static NSString* _cachedDeviceID = nil;
 
         UALOG(@"Retrieved device id info from keychain.");
 
-        if (result) {
+        if (resultDataRef) {
             //grab the deviceId and associated model name
             deviceID = [[[NSString alloc] initWithData:[resultDict valueForKey:(id)kSecValueData] encoding:NSUTF8StringEncoding] autorelease];
             modelName = [[[resultDict objectForKey:(id)kSecAttrAccount] mutableCopy] autorelease];
