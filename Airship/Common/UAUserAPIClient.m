@@ -15,7 +15,8 @@
 @implementation UAUserAPIClient
 
 - (id)init {
-    if (self = [super init] ) {
+    self = [super init];
+    if (self) {
         self.requestEngine= [[[UAHTTPRequestEngine alloc] init] autorelease];
     }
 
@@ -66,13 +67,13 @@
     NSDictionary *dict = @{@"device_tokens" :@{@"add" : @[deviceToken]}};
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-								 [UAirship shared].config.deviceAPIURL,
-								 @"/api/user/",
-								 username];
+                                 [UAirship shared].config.deviceAPIURL,
+                                 @"/api/user/",
+                                 username];
 
     NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
 
-	// Now do the user update, and pass out "master list" of deviceTokens back to the server
+    // Now do the user update, and pass out "master list" of deviceTokens back to the server
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];

@@ -21,7 +21,8 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
       withQuietTime:(NSDictionary *)quietTime
           withBadge:(NSNumber *)badge {
 
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.payloadDictionary = [NSMutableDictionary dictionary];
 
         if (alias) {

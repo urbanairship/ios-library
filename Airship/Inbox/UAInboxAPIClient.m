@@ -19,7 +19,8 @@
 @implementation UAInboxAPIClient
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.requestEngine = [[[UAHTTPRequestEngine alloc] init] autorelease];
     }
 

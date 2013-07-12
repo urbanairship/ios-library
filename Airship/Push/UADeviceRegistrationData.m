@@ -12,7 +12,8 @@
 @implementation UADeviceRegistrationData
 
 - (id)initWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         self.deviceToken = token;
         self.payload = payload;
         self.pushEnabled = enabled;

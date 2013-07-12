@@ -71,6 +71,9 @@
 		49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */; };
 		49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */; };
 		49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */; };
+		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
+		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
+		76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */; };
 		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
 		7BB679081429288D00B877DB /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB679071429288D00B877DB /* SenTestingKit.framework */; };
 		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
@@ -250,6 +253,9 @@
 		49D11C1017270C6E0058E7C3 /* UAHTTPRequestEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequestEngine.h; sourceTree = "<group>"; };
 		49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequestEngine.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		76792D0E178E12A10054F8AD /* UAHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequest.h; sourceTree = "<group>"; };
+		76792D0F178E12A10054F8AD /* UAHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequest.m; sourceTree = "<group>"; };
+		76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPRequest+Internal.h"; sourceTree = "<group>"; };
 		7B909D421429363300D0AB36 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7BB679061429288D00B877DB /* AirshipLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BB679071429288D00B877DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -597,6 +603,9 @@
 				49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */,
 				495048A51738812500F8B5BE /* UADelayOperation.h */,
 				495048A61738812500F8B5BE /* UADelayOperation.m */,
+				76792D0E178E12A10054F8AD /* UAHTTPRequest.h */,
+				76792D0F178E12A10054F8AD /* UAHTTPRequest.m */,
+				76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -808,6 +817,8 @@
 				1F610E0B17835C6700BCD96E /* UAConfig+Internal.h in Headers */,
 				1F610DF217835C3A00BCD96E /* UAInboxPushHandler.h in Headers */,
 				494BF70D1762789D00B25E12 /* UAUserData.h in Headers */,
+				76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */,
+				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -988,6 +999,7 @@
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
+				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1045,8 +1057,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "armv6 armv7 armv7s i386";
-				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
-				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Debug;
 		};
@@ -1078,8 +1088,6 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv6 armv7 armv7s i386";
-				WARNING_CFLAGS = "-Wno-idiomatic-parentheses";
-				"WARNING_CFLAGS[arch=*]" = "-Wno-idiomatic-parentheses";
 			};
 			name = Release;
 		};
@@ -1094,8 +1102,8 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1118,8 +1126,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				WARNING_CFLAGS = "";
-				"WARNING_CFLAGS[arch=*]" = "";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
@@ -1134,8 +1140,8 @@
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirshipLogicTests/AirshipLogicTests-Prefix.pch";
 				GCC_THUMB_SUPPORT = NO;
@@ -1154,8 +1160,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VALIDATE_PRODUCT = YES;
-				WARNING_CFLAGS = "";
-				"WARNING_CFLAGS[arch=*]" = "";
 				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
@@ -1173,8 +1177,8 @@
 					"\"$(SRCROOT)/../Airship/External\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

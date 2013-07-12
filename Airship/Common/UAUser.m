@@ -55,11 +55,11 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
     
-	// If the keychain username is present a user already exists, if not, save
-	if (storedUsername == nil) {
+    // If the keychain username is present a user already exists, if not, save
+    if (storedUsername == nil) {
         //Store un/pw
         [UAKeychainUtils createKeychainValueForUsername:defaultUsername withPassword:defaultPassword forIdentifier:[UAirship shared].config.appKey];
-	}
+    }
     
 }
 
@@ -154,17 +154,17 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 - (void)saveUserData {
         
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
-		
+
     if (!storedUsername) {
-		// No username object stored in the keychain for this app, so let's create it
-		// but only if we indeed have a username and password to store
-		if (self.username != nil && self.password != nil) {
-			[UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey];
-		} else {
+        // No username object stored in the keychain for this app, so let's create it
+        // but only if we indeed have a username and password to store
+        if (self.username != nil && self.password != nil) {
+            [UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey];
+        } else {
             UA_LINFO(@"Save failed: must have a username and password.");
             return;
         }
-	}
+    }
     
     //Update keychain with latest username and password
     [UAKeychainUtils updateKeychainValueForUsername:self.username
@@ -193,17 +193,17 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     }
     
     NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
-	NSString *storedPassword = [UAKeychainUtils getPassword:self.appKey];
-	
-	if (storedUsername == nil || storedPassword == nil) {
-		return NO;
-	}
-	
-	//check for empty values
-	if ([storedUsername isEqualToString:@""] || [storedPassword isEqualToString:@""]) {
-		return NO;
-	}
-	
+    NSString *storedPassword = [UAKeychainUtils getPassword:self.appKey];
+
+    if (storedUsername == nil || storedPassword == nil) {
+        return NO;
+    }
+
+    //check for empty values
+    if ([storedUsername isEqualToString:@""] || [storedPassword isEqualToString:@""]) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -258,7 +258,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 -(void)updateDefaultDeviceToken {
     if (![UAPush shared].deviceToken || ![self defaultUserCreated]){
-		UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
+        UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
         return;
     }
 

@@ -67,8 +67,8 @@ static BOOL runiPhoneTargetOniPad = NO;
 } 
 
 - (id)init {
-    if (self = [super init]) {
-		
+    self = [super init];
+    if (self) {
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
 		

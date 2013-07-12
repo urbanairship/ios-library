@@ -58,7 +58,9 @@
 - (id)initWithRequest:(UAHTTPRequest *)request
                onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
                onFailure:(UAHTTPConnectionFailureBlock)failureBlock {
-    if (self = [super init]) {
+
+    self = [super init];
+    if (self) {
         self.request = request;
         self.successBlock = successBlock;
         self.failureBlock = failureBlock;
@@ -146,6 +148,8 @@
     self.connection = nil;
     self.isExecuting = NO;
     self.isFinished = YES;
+    self.failureBlock = nil;
+    self.successBlock = nil;
 }
 
 - (void)dealloc {

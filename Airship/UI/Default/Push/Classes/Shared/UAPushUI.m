@@ -32,9 +32,8 @@
 SINGLETON_IMPLEMENTATION(UAPushUI)
 
 - (id)init {
-	
-    if (self = [super init]) {
-        
+    self = [super init];
+    if (self) {
         NSString *path = [[[NSBundle mainBundle] resourcePath]
                           stringByAppendingPathComponent:@"UAPushLocalization.bundle"];
         

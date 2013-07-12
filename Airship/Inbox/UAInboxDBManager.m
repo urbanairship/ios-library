@@ -35,7 +35,8 @@
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (id)init {
-    if (self = [super init]) {
+    self = [super init];
+    if (self) {
         [self createEditableCopyOfDatabaseIfNeeded];
         // We can always reset database before we launch it with db function
         //[self resetDB];
@@ -45,20 +46,20 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (void)dealloc {
-    [db close];
-    RELEASE_SAFELY(db);
+    [self.db close];
+    self.db = nil;
     [super dealloc];
 }
 
 - (void)resetDB {
-    [db executeUpdate:@"DROP TABLE messages"];
-    [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+    [self.db executeUpdate:@"DROP TABLE messages"];
+    [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
     UA_FMDBLogError
 }
 
 - (void)initDBIfNeeded {
-    if (![db tableExists:@"messages"]) {
-        [db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+    if (![self.db tableExists:@"messages"]) {
+        [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
         UA_FMDBLogError
     }
 }
@@ -68,8 +69,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
     NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
 
-    db = [[UA_FMDatabase databaseWithPath:dbPath] retain];
-    if (![db open]) {
+    self.db = [[[UA_FMDatabase databaseWithPath:dbPath] retain] autorelease];
+    if (![self.db open]) {
         UA_LDEBUG(@"Failed to open database.");
     }
 }
@@ -79,7 +80,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     UA_FMResultSet *rs;
     NSMutableArray *result = [NSMutableArray array];
     UAInboxMessage *msg;
-    rs = [db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appKey, userID];
+    rs = [self.db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appKey, userID];
     while ([rs next]) {
         msg = [[[UAInboxMessage alloc] init] autorelease];
         msg.messageID = [rs stringForColumn:@"id"];
@@ -114,10 +115,10 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    [db beginTransaction];
+    [self.db beginTransaction];
     for (UAInboxMessage *message in messages) {
         NSDictionary *extra = message.extra;
-        [db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
+        [self.db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
          message.messageID,
          message.title,
          message.messageBodyURL,
@@ -128,7 +129,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          userID,
          [[[UA_SBJsonWriter new] autorelease] stringWithObject:extra]];
     }
-    [db commit];
+    [self.db commit];
     UA_FMDBLogError
 }
 
@@ -140,14 +141,14 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     
     UA_LTRACE(@"Delete messages statement: %@", deleteStmt);
 
-    [db beginTransaction];
-    [db executeUpdate:deleteStmt];
-    [db commit];
+    [self.db beginTransaction];
+    [self.db executeUpdate:deleteStmt];
+    [self.db commit];
     UA_FMDBLogError
 }
 
 - (void)updateMessageAsRead:(UAInboxMessage *)msg {
-    [db executeUpdate:@"UPDATE messages SET unread = 0 WHERE id = ?", msg.messageID];
+    [self.db executeUpdate:@"UPDATE messages SET unread = 0 WHERE id = ?", msg.messageID];
     UA_FMDBLogError
 }
 
@@ -159,9 +160,9 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
     UA_LTRACE(@"Update messages as read statement: %@", updateStmt);
 
-    [db beginTransaction];
-    [db executeUpdate:updateStmt];
-    [db commit];
+    [self.db beginTransaction];
+    [self.db executeUpdate:updateStmt];
+    [self.db commit];
     UA_FMDBLogError
 }
 
