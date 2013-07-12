@@ -750,7 +750,6 @@
 				BBEFB0121507F3A400976645 /* Sources */,
 				BBEFB0131507F3A400976645 /* Frameworks */,
 				BBEFB0141507F3A400976645 /* Resources */,
-				BBEFB0151507F3A400976645 /* ShellScript */,
 				1FA9A6481684EB3D00258A01 /* ShellScript */,
 			);
 			buildRules = (
@@ -967,19 +966,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$SRCROOT/checkConfig.sh\"";
-		};
-		BBEFB0151507F3A400976645 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
