@@ -30,19 +30,17 @@
 /**
  * The UAKeychainUtils object provides an interface for keychain related methods.
  */
-@interface UAKeychainUtils : NSObject {
-	
-}
+@interface UAKeychainUtils : NSObject
 
 + (BOOL)createKeychainValueForUsername:(NSString *)username 
-						withPassword:(NSString *)password 
-						forIdentifier:(NSString *)identifier;
+                          withPassword:(NSString *)password 
+                         forIdentifier:(NSString *)identifier;
 
 + (void)deleteKeychainValue:(NSString *)identifier;
 
 + (BOOL)updateKeychainValueForUsername:(NSString *)username
-						withPassword:(NSString *)password
-						forIdentifier:(NSString *)identifier;
+                          withPassword:(NSString *)password
+                         forIdentifier:(NSString *)identifier;
 
 + (NSString *)getPassword:(NSString *)identifier;
 + (NSString *)getUsername:(NSString *)identifier;

@@ -32,17 +32,17 @@
 #define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
 
 // total size in bytes that a given event post is allowed to send.
-#define kMaxBatchSizeBytes 500*1024		// local max of 500KB
+#define kMaxBatchSizeBytes 500*1024      // local max of 500KB
 #define kMinBatchSizeBytes 1024          // local min of 1KB
 
 // maximum amount of time in seconds that events should queue for
-#define kMaxWaitSeconds 14*24*3600		// local max of 14 days
-#define kMinWaitSeconds 7*24*3600		// local min of 7 days
+#define kMaxWaitSeconds 14*24*3600      // local max of 14 days
+#define kMinWaitSeconds 7*24*3600       // local min of 7 days
 
 // The actual amount of time in seconds that elapse between event-server posts
 // TODO: Get with the analytics team and rename this header field
 #define kMinBatchIntervalSeconds 60        // local min of 60s
-#define kMaxBatchIntervalSeconds 7*24*3600	// local max of 7 days
+#define kMaxBatchIntervalSeconds 7*24*3600  // local max of 7 days
 
 // minimum amount of time between background location events
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
