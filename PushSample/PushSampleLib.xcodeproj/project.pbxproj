@@ -315,7 +315,6 @@
 		BBEFB01E1507F3A400976645 /* AirshipApplicationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipApplicationTests-Info.plist"; sourceTree = "<group>"; };
 		BBEFB0201507F3A400976645 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BBEFB0251507F3A400976645 /* AirshipApplicationTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipApplicationTests-Prefix.pch"; sourceTree = "<group>"; };
-		BBEFB02B1507F65700976645 /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Gcov_Fix.c; sourceTree = "<group>"; };
 		BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
@@ -678,7 +677,6 @@
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXGroup;
 			children = (
-				BBEFB02B1507F65700976645 /* Gcov_Fix.c */,
 				BBD52B821587E4CC00AE32FD /* JRSwizzle.m */,
 				BBEFB01D1507F3A400976645 /* Supporting Files */,
 				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,

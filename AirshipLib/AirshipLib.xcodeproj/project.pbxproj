@@ -300,7 +300,6 @@
 		BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAAnalytics+Internal.h"; sourceTree = "<group>"; };
 		BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CLLocationManager+Test.h"; sourceTree = "<group>"; };
 		BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CLLocationManager+Test.m"; sourceTree = "<group>"; };
-		BBB87D58150574DE00971CEC /* Gcov_Fix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Gcov_Fix.c; sourceTree = "<group>"; };
 		BBB87D59150574DE00971CEC /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
 		BBB87D5A150574DE00971CEC /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationProviderTests.m; sourceTree = "<group>"; };
@@ -622,7 +621,6 @@
 				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
 				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
 				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
-				BBB87D58150574DE00971CEC /* Gcov_Fix.c */,
 				BBB87D59150574DE00971CEC /* JRSwizzle.h */,
 				BBB87D5A150574DE00971CEC /* JRSwizzle.m */,
 				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
