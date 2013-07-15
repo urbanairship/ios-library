@@ -304,23 +304,23 @@
     return YES;// For safety, assume production unless the profile is explicitly set to development
 }
 
-- (void) setAnalyticsURL:(NSString *)analyticsURL {
+- (void)setAnalyticsURL:(NSString *)analyticsURL {
     //Any appending url starts with a beginning /, so make sure the base url does not
     if ([analyticsURL hasSuffix:@"/"]) {
         UA_LWARN(@"Analytics URL ends with a trailing slash, stripping ending slash.");
-        _analyticsURL = [analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)];
+        _analyticsURL = [[analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)] retain];
     } else {
-        _analyticsURL = analyticsURL;
+        _analyticsURL = [analyticsURL copy];
     }
 }
 
-- (void) setDeviceAPIURL:(NSString *)deviceAPIURL {
+- (void)setDeviceAPIURL:(NSString *)deviceAPIURL {
     //Any appending url starts with a beginning /, so make sure the base url does not
     if ([deviceAPIURL hasSuffix:@"/"]) {
         UA_LWARN(@"Device API URL ends with a trailing slash, stripping ending slash.");
-        _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
+        _deviceAPIURL = [[deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)] retain];
     } else {
-        _deviceAPIURL = deviceAPIURL;
+        _deviceAPIURL = [deviceAPIURL copy];
     }
 }
 #pragma mark -

@@ -218,7 +218,7 @@ static UAInboxMessageList *_messageList = nil;
 
 #pragma mark -
 #pragma mark set messages
-- (void) setMessages:(NSMutableArray *)messages {
+- (void)setMessages:(NSMutableArray *)messages {
     // Sort the messages by date
     if (messages.count > 0) {
         NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
@@ -227,7 +227,7 @@ static UAInboxMessageList *_messageList = nil;
         [messages sortUsingDescriptors:sortDescriptors];
     }
 
-    _messages = messages;
+    _messages = [messages retain];
 }
 
 
