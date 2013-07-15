@@ -217,6 +217,24 @@
 
 }
 
+- (void) testSetAnalyticsURL {
+    UAConfig *config =[[[UAConfig alloc] init] autorelease];
 
+    config.analyticsURL = @"http://some-other-url.com";
+    STAssertEqualObjects(@"http://some-other-url.com", config.analyticsURL, @"Analytics URL does not set correctly");
+    
+    config.analyticsURL = @"http://some-url.com/";
+    STAssertEqualObjects(@"http://some-url.com", config.analyticsURL, @"Analytics URL still contains trailing slash");
+}
+
+- (void) testSetDeviceAPIURL {
+    UAConfig *config =[[[UAConfig alloc] init] autorelease];
+
+    config.deviceAPIURL = @"http://some-other-url.com";
+    STAssertEqualObjects(@"http://some-other-url.com", config.deviceAPIURL, @"Device API URL does not set correctly");
+    
+    config.deviceAPIURL = @"http://some-url.com/";
+    STAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
+}
 
 @end
