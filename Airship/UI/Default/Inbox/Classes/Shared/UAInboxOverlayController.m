@@ -441,10 +441,10 @@ static NSMutableSet *overlayControllers = nil;
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) &&
              (([[url host] isEqualToString:@"phobos.apple.com"]) ||
               ([[url host] isEqualToString:@"itunes.apple.com"]))) {
-                 
-                 // TODO: set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
-                 
-                 return ![[UIApplication sharedApplication] openURL:url];
+
+                 // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
+                 NSString *stringURL = [NSString stringWithFormat:@"http://%@%@", url.host, url.path];
+                 return ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL]];
              }
     
     // send maps.google.com url or maps: to GoogleMaps.app
@@ -492,21 +492,37 @@ static NSMutableSet *overlayControllers = nil;
     
     // send tel: to Phone.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"tel"])) {
-        
-        // TODO: Phone number must not contain spaces or brackets. Spaces or plus signs OK. Can add come checks here.
-        
-        return ![[UIApplication sharedApplication] openURL:url];
+        if (![self isValidTelephoneUrl:url]) {
+            UA_LWARN(@"Number: %@ contains invalid characters.", url);
+        } else {
+            return ![[UIApplication sharedApplication] openURL:url];
+        }
     }
-    
+
     // send sms: to Messages.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"sms"])) {
-        return ![[UIApplication sharedApplication] openURL:url];
+        if (![self isValidTelephoneUrl:url]) {
+            UA_LWARN(@"Number: %@ contains invalid characters.", url);
+        } else {
+            return ![[UIApplication sharedApplication] openURL:url];
+        }
     }
     
     // load local file and http/https webpages in webview
     return YES;
 }
 
+- (BOOL)isValidTelephoneUrl:(NSURL *)url {
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^(tel|sms):(\\/\\/)?[0-9\\+\\-\\.]*$"
+                                                                           options:0
+                                                                             error:NULL];
+
+    NSUInteger matches = [regex numberOfMatchesInString:url.absoluteString
+                                                options:0
+                                                  range:NSMakeRange(0, url.absoluteString.length)];
+
+    return matches == 1;
+}
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self populateJavascriptEnvironment];

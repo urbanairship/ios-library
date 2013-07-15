@@ -467,11 +467,7 @@
 }
 
 - (void)messageListLoaded {
-	
 	UA_LDEBUG(@"UAInboxMessageListController messageListLoaded");
-        
-	// TODO: add call to pushhandler here to get the messageid we should be viewing????
-	//[UAInboxUI displayMessage:viewingMessageID];
 	
     [self hideLoadingScreen];
     
