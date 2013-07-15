@@ -232,17 +232,19 @@ enum {
          UALOG(@"Tag is an empty string.");
          return;
      }
-     
-     NSInteger index = [[UAPush shared].tags count];
-     // TODO: setup new tag update functionality here
-//     [[UAPush shared].tags insertObject:tag atIndex:index];
+
+     // Add a tag to the end of the existing set of tags
      NSMutableArray* tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
      [tagUpdate addObject:tag];
      [[UAPush shared] setTags:tagUpdate];
+
+     // Update the tableview
+     NSInteger index = [[UAPush shared].tags count] -1;
      NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
-     
-     [[UAPush shared] updateRegistration];//update server
+
+     // Update the registration
+     [[UAPush shared] updateRegistration];
  }
  
  - (void)cancelAddTag {

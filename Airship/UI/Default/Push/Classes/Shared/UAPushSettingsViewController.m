@@ -235,7 +235,7 @@ enum {
     
     if (date1 == nil || date2 == nil) {
         date1 = [formatter dateFromString:@"22:00"];//default start
-        date2 = [formatter dateFromString:@"07:00"];//default end //TODO: make defaults parameters
+        date2 = [formatter dateFromString:@"07:00"];//default end
     }
 
     [formatter setLocale:[NSLocale currentLocale]];
@@ -417,7 +417,7 @@ enum {
         [UAPush shared].quietTimeEnabled = NO;
         [[UAPush shared] updateRegistration];
     }
-    
+
 
 }
 
