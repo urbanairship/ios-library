@@ -153,15 +153,6 @@
               [newMessages addObject:tmp];
           }
 
-          if (newMessages.count > 0) {
-              NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                              ascending:NO] autorelease];
-
-              //TODO: this flow seems terribly backwards
-              NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
-              [newMessages sortUsingDescriptors:sortDescriptors];
-          }
-
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
           successBlock(newMessages, unread);
