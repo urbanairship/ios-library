@@ -305,7 +305,7 @@ static NSMutableSet *overlayControllers = nil;
     /*
      * Define and initialize our one global
      */
-    NSString* js = @"var UAirship = {};";
+    NSString *js = @"var UAirship = {};";
     
     /*
      * Set the device model.
@@ -322,9 +322,29 @@ static NSMutableSet *overlayControllers = nil;
     /*
      * Set the current message ID.
      */
-    NSString* messageID = self.message.messageID;
+    NSString *messageID = self.message.messageID;
     js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
-    
+
+    /*
+     * Set the current message's sent date.
+     */
+    NSDate *date = self.message.messageSent;
+    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+    NSString *messageSentDate = [dateFormatter stringFromDate:date];
+    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
+
+    /*
+     * Set the current message's title.
+     */
+    NSString *messageTitle = self.message.title;
+    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
+
     /*
      * Define UAirship.handleCustomURL.
      */
