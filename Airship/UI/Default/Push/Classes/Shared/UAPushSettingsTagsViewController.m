@@ -193,14 +193,20 @@ enum {
 #define kCellPaddingHeight 10
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *text;
+    
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [self.textLabel.text sizeWithFont:self.textLabel.font
-                          constrainedToSize:CGSizeMake(240, 1500)
-                              lineBreakMode:NSLineBreakByWordWrapping].height;
-        return height + kCellPaddingHeight * 2;
+        text = self.textLabel.text;
     } else {
-        return 44;
+        text = [[UAPush shared].tags objectAtIndex:indexPath.row];
     }
+    
+    CGFloat height = [text sizeWithFont:self.textLabel.font
+                                     constrainedToSize:CGSizeMake(240, 1500)
+                                         lineBreakMode:NSLineBreakByWordWrapping].height;
+    
+    return height + kCellPaddingHeight * 2;
+
 }
 
 #pragma mark -
