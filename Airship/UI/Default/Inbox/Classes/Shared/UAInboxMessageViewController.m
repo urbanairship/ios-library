@@ -302,7 +302,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
 
     /*
-     * Set the current message's sent date (unix epoch in milliseconds).
+     * Set the current message's sent date (unix epoch time in milliseconds).
      */
     NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970]];
     js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=\"%@\";", messageSentDateMS];
