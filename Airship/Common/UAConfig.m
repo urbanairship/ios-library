@@ -177,6 +177,10 @@
         valid = NO;
     }
 
+    if (self.inProduction && self.clearKeychain) {
+        UA_LERR(@"This application is in PRODUCTION and set to clear the keychain with a debug flag. ARE YOU SURE YOU WANT TO DO THIS?");
+    }
+
     return valid;
 }
 
