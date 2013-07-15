@@ -131,7 +131,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
     if (index >= 0 && index < count) {
-        self.title = [NSString stringWithFormat: @"%d %@ %d", index+1, UA_INBOX_TR(@"UA_Of"), count];
+        self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Message_Fraction"), index+1, count];
     } else {
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
         self.statusBar.hidden = YES;
