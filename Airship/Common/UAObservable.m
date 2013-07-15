@@ -28,14 +28,12 @@
 
 @interface UAObservable()
 @property(nonatomic, retain) NSMutableSet *observers;
-@property(nonatomic, retain) NSLock *observerLock;
 @end
 
 @implementation UAObservable
 
 -(void)dealloc {
     self.observers = nil;
-    self.observerLock = nil;
     [super dealloc];
 }
 
@@ -43,7 +41,6 @@
     self = [super init];
     if (self) {
         self.observers = [[[NSMutableSet alloc] init] autorelease];
-        self.observerLock = [[[NSLock alloc] init] autorelease];
     }
     return self;
 }
