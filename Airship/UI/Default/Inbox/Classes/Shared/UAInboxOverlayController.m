@@ -326,7 +326,7 @@ static NSMutableSet *overlayControllers = nil;
     js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
 
     /*
-     * Set the current message's sent date.
+     * Set the current message's sent date (GMT).
      */
     NSDate *date = self.message.messageSent;
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -338,6 +338,12 @@ static NSMutableSet *overlayControllers = nil;
 
     NSString *messageSentDate = [dateFormatter stringFromDate:date];
     js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
+
+    /*
+     * Set the current message's sent date (unix epoch time in milliseconds).
+     */
+    NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970] * 1000];
+    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=\"%@\";", messageSentDateMS];
 
     /*
      * Set the current message's title.
