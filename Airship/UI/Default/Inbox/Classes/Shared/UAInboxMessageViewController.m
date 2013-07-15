@@ -357,7 +357,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     if (self.shouldShowAlerts) {
         
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
                                                             message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
                                                            delegate:self
                                                   cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
