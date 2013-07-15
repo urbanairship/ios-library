@@ -142,8 +142,9 @@
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
           UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-          NSDictionary *jsonResponse = [parser objectWithString:request.responseString];
-          UA_LTRACE(@"Retrieved message list respose: %@", request.responseString);
+          NSString *responseString = request.responseString;
+          NSDictionary *jsonResponse = [parser objectWithString:responseString];
+          UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];

@@ -90,7 +90,7 @@ static NSString *defaultUserAgentString;
 }
 
 - (NSString *)responseString {
-    //TODO: cache?
+    //This value should not be cached because the responseData is mutable.
     return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
 }
 
