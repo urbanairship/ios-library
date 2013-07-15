@@ -24,28 +24,17 @@
  */
 
 #import <UIKit/UIKit.h>
-#import <CoreLocation/CoreLocation.h>
-#import "UAPush.h"
+#import <MessageUI/MessageUI.h>
 
-@interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver>
+@interface UAPushSettingsUserInfoViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate>
 
-@property (nonatomic, retain) UITableViewCell *deviceTokenCell;
-@property (nonatomic, retain) UITableViewCell *deviceTokenTypesCell;
-@property (nonatomic, retain) UITableViewCell *deviceTokenDisabledTypesCell;
-@property (nonatomic, retain) UITableViewCell *deviceTokenAliasCell;
-@property (nonatomic, retain) UITableViewCell *deviceTokenTagsCell;
-@property (nonatomic, retain) UITableViewCell *usernameCell;
-@property (nonatomic, retain) UITableViewCell *helpSoundsCell;
-@property (nonatomic, retain) UITableViewCell *helpLogCell;
-@property (nonatomic, retain) UIViewController *tokenViewController;
-@property (nonatomic, retain) UIViewController *aliasViewController;
-@property (nonatomic, retain) UIViewController *tagsViewController;
-@property (nonatomic, retain) UIViewController *userInfoViewController;
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
-@property (nonatomic, retain) UIImageView *footerImageView;
-@property (nonatomic, retain) UITableViewCell *locationCell;
+@property (nonatomic, copy) NSString *text;
+//note: naming this property copyButton will confuse cocoa's getter naming conventions with respect to memory management
+@property (nonatomic, retain) IBOutlet UIButton *cpyButton;
+@property (nonatomic, retain) IBOutlet UIButton *emailButton;
+@property (nonatomic, retain) IBOutlet UILabel *usernameLabel;
 
-- (void)initCells;
-- (void)updateCellValues;
+- (IBAction)copyUsername;
+- (IBAction)emailUsername;
 
 @end

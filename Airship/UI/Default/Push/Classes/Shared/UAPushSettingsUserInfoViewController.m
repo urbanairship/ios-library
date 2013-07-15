@@ -23,20 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPushSettingsTokenViewController.h"
-#import "UAirship.h"
+#import "UAPushSettingsUserInfoViewController.h"
+#import "UAUser.h"
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < 60000
 // This is available in iOS 6.0 and later, define it for older versions
 #define NSLineBreakByWordWrapping 0
 #endif
 
-@implementation UAPushSettingsTokenViewController
+@implementation UAPushSettingsUserInfoViewController
 
 - (void)dealloc {
     self.cpyButton = nil;
     self.emailButton = nil;
-    self.tokenLabel = nil;
+    self.usernameLabel = nil;
     self.text = nil;
     [super dealloc];
 }
@@ -44,14 +44,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.title = @"Device Token";
+    self.title = @"Username";
 
-    self.text = @"Your current device token. Test a push notification at "
-           @"https://go.urbanairship.com";
+    self.text = @"Your current username. Test a rich push notification at "
+    @"https://go.urbanairship.com";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    self.usernameLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -61,7 +61,7 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
     self.emailButton = nil;
-    self.tokenLabel = nil;
+    self.usernameLabel = nil;
 }
 
 #pragma mark -
@@ -72,8 +72,8 @@
 - (CGFloat)tableView: (UITableView *) tableView heightForRowAtIndexPath:(NSIndexPath *) indexPath {
     UIFont *font = [UIFont systemFontOfSize:17];
     CGFloat height = [self.text sizeWithFont:font
-                      constrainedToSize:CGSizeMake(280.0, 1500.0)
-                          lineBreakMode:NSLineBreakByWordWrapping].height;
+                           constrainedToSize:CGSizeMake(280.0, 1500.0)
+                               lineBreakMode:NSLineBreakByWordWrapping].height;
     return height + kCellPaddingHeight;
 }
 
@@ -94,7 +94,7 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                        reuseIdentifier:@"description-cell"] autorelease];
     }
-    
+
     UIFont *font = [UIFont systemFontOfSize: 17];
 
     UILabel* description = [[UILabel alloc] init];
@@ -104,8 +104,8 @@
     description.backgroundColor = [UIColor clearColor];
     [description setFont: font];
     CGFloat height = [self.text sizeWithFont:font
-                      constrainedToSize:CGSizeMake(280.0, 800.0)
-                          lineBreakMode:NSLineBreakByWordWrapping].height;
+                           constrainedToSize:CGSizeMake(280.0, 800.0)
+                               lineBreakMode:NSLineBreakByWordWrapping].height;
     [description setFrame: CGRectMake(0.0f, 10.0f, 320.0f, height)];
     [description setBounds: CGRectMake(0.20f, 0.0f, 290.0f, height)];
     [description setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
@@ -122,32 +122,32 @@
 
 #pragma mark -
 #pragma mark UI Button Actions
-- (IBAction)copyDeviceToken {
-    NSString *token = [UAirship shared].deviceToken;
-    if (token) {
+- (IBAction)copyUsername {
+    NSString *username = [UAUser defaultUser].username;
+    if (username) {
         UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-        pasteboard.string = token;
+        pasteboard.string = username;
     }
 }
 
-- (IBAction)emailDeviceToken {
+- (IBAction)emailUsername {
 
     if ([MFMailComposeViewController canSendMail]) {
 		MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
 		mfViewController.mailComposeDelegate = self;
-        
-        
-        
-        NSString *messageBody = [NSString stringWithFormat:@"Your device token is %@\n\nSend a test push at http://go.urbanairship.com", [UAirship shared].deviceToken];
-        
-        [mfViewController setSubject:@"Device Token"];
+
+
+
+        NSString *messageBody = [NSString stringWithFormat:@"Your username is %@\n\nSend a test rich push at http://go.urbanairship.com", [UAUser defaultUser].username];
+
+        [mfViewController setSubject:@"Username"];
         [mfViewController setMessageBody:messageBody isHTML:NO];
-		
+
 		[self presentModalViewController:mfViewController animated:YES];
 		[mfViewController release];
 	}else {
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
-		
+
 		[alert show];
 		[alert release];
 	}
@@ -158,7 +158,7 @@
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message Status" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-	
+
 	switch (result) {
 		case MFMailComposeResultCancelled:
 			//alert.message = @"Canceled";
@@ -175,11 +175,11 @@
 			break;
 		default:
 			//alert.message = @"Message Not Sent";
-        break;	
+            break;
     }
-    
+
 	[self dismissModalViewControllerAnimated:YES];
-	
+
 
 	[alert release];
 }

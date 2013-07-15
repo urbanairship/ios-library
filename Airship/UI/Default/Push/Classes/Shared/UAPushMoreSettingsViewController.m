@@ -31,13 +31,16 @@
 #import "UAPushSettingsAliasViewController.h"
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsSoundsViewController.h"
+#import "UAPushSettingsUserInfoViewController.h"
 #import "UALocationSettingsViewController.h"
+#import "UAUser.h"
 
 enum {
     SectionDeviceToken = 0,
-    SectionHelp        = 1,
-    SectionLocation    = 2,
-    SectionCount       = 3
+    SectionUser        = 1,
+    SectionHelp        = 2,
+    SectionLocation    = 3,
+    SectionCount       = 4
 };
 
 enum {
@@ -55,6 +58,7 @@ enum {
 };
 
 static NSUInteger locationRowCount = 1;
+static NSUInteger userRowCount = 1;
 
 @implementation UAPushMoreSettingsViewController
 
@@ -67,6 +71,9 @@ static NSUInteger locationRowCount = 1;
     self.deviceTokenDisabledTypesCell = nil;
     self.deviceTokenAliasCell = nil;
     self.deviceTokenTagsCell = nil;
+
+    self.usernameCell = nil;
+    
     self.helpSoundsCell = nil;
     self.helpLogCell = nil;
     
@@ -76,6 +83,7 @@ static NSUInteger locationRowCount = 1;
     self.tokenViewController = nil;
     self.aliasViewController = nil;
     self.tagsViewController = nil;
+    self.userInfoViewController = nil;
     self.locationCell = nil;
     
     [super dealloc];
@@ -165,6 +173,17 @@ static NSUInteger locationRowCount = 1;
     self.deviceTokenTagsCell.accessibilityLabel = @"Tags";
     self.deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
+    self.usernameCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil] autorelease];
+    self.usernameCell.textLabel.text = @"Username";
+    self.usernameCell.accessibilityLabel = @"Username";
+    self.usernameCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+    //if the user is still being created, update the cell once that is complete.
+    [[UAUser defaultUser] onceCreated:^{
+        [self updateCellValues];
+        [self.usernameCell setNeedsLayout];
+    }];
+
     self.helpSoundsCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
     self.helpSoundsCell.textLabel.text = @"Notification Sounds";
     self.helpSoundsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -198,6 +217,8 @@ static NSUInteger locationRowCount = 1;
             return HelpSectionRowCount;
         case SectionLocation:
             return locationRowCount;
+        case SectionUser:
+            return userRowCount;
         default:
             break;
     }
@@ -213,6 +234,8 @@ static NSUInteger locationRowCount = 1;
             return @"Bundle Info";
         case SectionLocation:
             return @"Location";
+        case SectionUser:
+            return @"User Info";
         default:
             break;
     }
@@ -243,6 +266,8 @@ static NSUInteger locationRowCount = 1;
                 break;
         }
         
+    } else if (indexPath.section == SectionUser) {
+        cell = self.usernameCell ;
     } else if (indexPath.section == SectionHelp) {
 
         if (indexPath.row == HelpSectionSounds) {
@@ -253,6 +278,9 @@ static NSUInteger locationRowCount = 1;
         cell = self.locationCell;
     }
 
+    if (!cell) {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
+    }
     return cell;
 }
 
@@ -288,6 +316,11 @@ static NSUInteger locationRowCount = 1;
         } else {
             [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
+    } else if (indexPath.section == SectionUser) {
+        if (!self.userInfoViewController ) {
+            self.userInfoViewController = [[[UAPushSettingsUserInfoViewController alloc] initWithNibName:@"UAPushSettingsUserInfoView" bundle:nil] autorelease];
+        }
+        [self.navigationController pushViewController:self.userInfoViewController animated:YES];
     } else if (indexPath.section == SectionHelp) {
         if (indexPath.row == HelpSectionSounds) {
             UAPushSettingsSoundsViewController *soundsViewController = [[[UAPushSettingsSoundsViewController alloc] 
@@ -340,6 +373,8 @@ static NSUInteger locationRowCount = 1;
     } else {
         self.deviceTokenTagsCell.detailTextLabel.text = @"None";
     }
+
+    self.usernameCell.detailTextLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 
 @end
