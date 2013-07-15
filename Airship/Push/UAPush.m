@@ -448,33 +448,7 @@ static Class _uiClass;
     
 }
 
-+ (NSString *)pushTypeString:(UIRemoteNotificationType)types {
-    
-    //TODO: Localize
-    
-    //UIRemoteNotificationType types = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    
-    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
 
-    //Use the same order as the Settings->Notifications panel
-    if (types & UIRemoteNotificationTypeBadge) {
-        [typeArray addObject:@"Badges"];
-    }
-    
-    if (types & UIRemoteNotificationTypeAlert) {
-        [typeArray addObject:@"Alerts"];
-    }
-    
-    if (types & UIRemoteNotificationTypeSound) {
-        [typeArray addObject:@"Sounds"];
-    }
-    
-    if ([typeArray count] > 0) {
-        return [typeArray componentsJoinedByString:@", "];
-    }
-    
-    return @"None";
-}
 
 #pragma mark -
 #pragma mark UIApplication State Observation
