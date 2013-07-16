@@ -35,32 +35,22 @@ xcode_setting() {
 }
 
 SRCROOT=$(xcode_setting "SRCROOT")
-EXECUTABLE_NAME=$(xcode_setting "EXECUTABLE_NAME")
 EXECUTABLE_EXTENSION=$(xcode_setting "EXECUTABLE_EXTENSION")
 EXECUTABLE_PREFIX=$(xcode_setting "EXECUTABLE_PREFIX")
 PRODUCT_NAME=$(xcode_setting "PRODUCT_NAME")
-
-#TODO: remove these - we should be using a src binary variable instead
-CONFIGURATION="Release"
 BINARY_DIR="$SRCROOT/distribution_binaries"
 
 lib_name="${EXECUTABLE_PREFIX}${PRODUCT_NAME}.${EXECUTABLE_EXTENSION}"
 lib_base_name="$(echo $lib_name | awk -F '-' '{print $1}')"
 dest_lib_root="${SRCROOT}/../Airship"
-dest_package_root="${SRCROOT}/../${CONFIGURATION}/Airship"
 
-#TODO: remove old libraries
+# Remove old libraries
 echo "remove old library $lib_base_name*.${EXECUTABLE_EXTENSION}"
 find "$dest_lib_root" -d 1 -name "$lib_base_name*.${EXECUTABLE_EXTENSION}" -exec rm {} \;
 
 # Copies the lib to the Airship folder for sample projects to use (not for packaging)
 echo "copy *.$EXECUTABLE_EXTENSION from ${BINARY_DIR} to $dest_lib_root"
 cp "${BINARY_DIR}"/*.$EXECUTABLE_EXTENSION "$dest_lib_root"
-
-# Copies the lib to the package root
-#TODO: don't do this - the package script will do this for us
-#echo "copy $lib_name from ${SYMROOT} to $dest_package_root"
-#cp "${SYMROOT}/$lib_name" "$dest_package_root"
 
 for sample_prj_root in "${SRCROOT}"/../*Sample
 do
