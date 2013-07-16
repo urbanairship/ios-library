@@ -131,7 +131,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     int index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
     if (index >= 0 && index < count) {
-        self.title = [NSString stringWithFormat: @"%d %@ %d", index+1, UA_INBOX_TR(@"UA_Of"), count];
+        self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Message_Fraction"), index+1, count];
     } else {
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
         self.statusBar.hidden = YES;
@@ -373,7 +373,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     if (self.shouldShowAlerts) {
         
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
                                                             message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
                                                            delegate:self
                                                   cancelButtonTitle:UA_INBOX_TR(@"UA_OK")

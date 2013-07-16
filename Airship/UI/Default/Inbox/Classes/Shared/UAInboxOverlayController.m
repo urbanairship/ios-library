@@ -545,7 +545,7 @@ static NSMutableSet *overlayControllers = nil;
     if (error.code == NSURLErrorCancelled)
         return;
     UALOG(@"Failed to load message: %@", error);
-    UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Ooops")
+    UIAlertView *someError = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
                                                         message:UA_INBOX_TR(@"UA_Error_Fetching_Message")
                                                        delegate:self
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")

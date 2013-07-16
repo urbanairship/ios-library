@@ -210,6 +210,7 @@ enum {
     }
     
     self.pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
+    self.airshipLocationEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Location_Enabled_Label");
     self.quietTimeLabel.text = UA_PU_TR(@"UA_Push_Settings_Quiet_Time_Label");
     
     self.fromCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:nil] autorelease];
