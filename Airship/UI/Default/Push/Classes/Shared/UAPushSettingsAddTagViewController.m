@@ -81,20 +81,21 @@ enum TagSections {
 #pragma mark -
 #pragma mark UITableViewDelegate
 
-//#define kCellPaddingHeight 10
+#define kCellPaddingHeight 11
 
-// TODO: text?
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    
-    switch (indexPath.section) {
-        case TagSectionPreset:
-        case TagSectionCustom:
-            return 44;
-        default:
-            break;
+    NSString *text;
+    if (indexPath.section == TagSectionCustom) {
+        text = @"Custom Tag";
+    } else {
+        text = [self.presetTags objectAtIndex:indexPath.row];
     }
-    return 0;
+
+    CGFloat height = [text sizeWithFont:self.tagField.font
+                      constrainedToSize:CGSizeMake(240, 1500)
+                          lineBreakMode:NSLineBreakByWordWrapping].height;
+
+    return height + kCellPaddingHeight * 2;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

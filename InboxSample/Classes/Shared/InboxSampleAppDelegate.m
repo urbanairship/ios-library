@@ -76,8 +76,6 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
     
-    //TODO: think about clean up / dealloc for multiple UI classes
-
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;
