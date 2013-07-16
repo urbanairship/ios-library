@@ -31,19 +31,15 @@
 #import "UALocationEvent.h"
 #import "UALocationCommonValues.h"
 #import "UAirship.h"
-#import "UAAnalytics.h"
+#import "UAAnalytics+Internal.h"
 #import "UALocationTestUtils.h"
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
-
-
 
 @interface UALocationEventApplicationTests : SenTestCase {
     CLLocation *location;
 }
 @end
-// TODO: Check on whether the session_id is actually going up if you take it out of the 
-// payload
 
 /**
  *  The context includes all the data necessary for a 
@@ -89,9 +85,8 @@
     STAssertTrue((UALocationEventUpdateTypeSingle == [data valueForKey:UALocationEventUpdateTypeKey]) ,nil);
     STAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey], nil);
     STAssertTrue((UALocationServiceProviderUnknown == [data valueForKey:UALocationEventProviderKey]), nil);
-
+    STAssertEqualObjects([[UAirship shared].analytics.session valueForKey:@"session_id"], [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be set.");
 }
-
 
 - (void)testInitWithProvider {
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
@@ -101,13 +96,12 @@
     STAssertEqualsWithAccuracy(location.coordinate.longitude, [[data valueForKey:UALocationEventLongitudeKey] doubleValue],0.000001, nil);
     STAssertEquals(location.horizontalAccuracy, [[data valueForKey:UALocationEventHorizontalAccuracyKey] doubleValue], nil);
     STAssertEquals(location.verticalAccuracy, [[data valueForKey:UALocationEventVerticalAccuracyKey] doubleValue], nil);
-    //TODO: add tests after the UALocationService pass through is completed
     STAssertEquals(standard.desiredAccuracy, [[data valueForKey:UALocationEventDesiredAccuracyKey] doubleValue],nil);
     STAssertEquals(standard.distanceFilter, [[data valueForKey:UALocationEventDistanceFilterKey] doubleValue] ,nil);
     STAssertTrue((UALocationEventUpdateTypeContinuous == [data valueForKey:UALocationEventUpdateTypeKey]) ,nil);
     STAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey], nil);
     STAssertTrue((UALocationServiceProviderGps == [data valueForKey:UALocationEventProviderKey]), nil);
-    
+    STAssertEqualObjects([[UAirship shared].analytics.session valueForKey:@"session_id"], [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be set.");
 }
 
 - (void)testInitWithSigChangeProviderSetsDistanceFilterDesiredAccuracyNone {
@@ -115,6 +109,18 @@
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:location provider:sigChange andUpdateType:UALocationEventUpdateTypeChange];
     STAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDesiredAccuracyKey], @"desiredAccuracy should be UADesiredAccuracyValueNone");
     STAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDistanceFilterKey], @"distanceFilter should be UADistanceFilterValueNone");
+}
+
+- (void)testInitWhenAnalyticsInBackground {
+    [[UAirship shared].analytics enterBackground];
+    
+    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
+    UALocationEvent *event = [UALocationEvent locationEventWithLocation:location provider:standard andUpdateType:UALocationEventUpdateTypeContinuous];
+
+    STAssertEqualObjects(@"", [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be empty.");
+
+    //Bring the analytics back into the foreground
+    [[UAirship shared].analytics enterForeground];
 }
 
 
