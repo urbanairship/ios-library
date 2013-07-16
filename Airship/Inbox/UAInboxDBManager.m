@@ -30,6 +30,8 @@
 
 #import "UA_SBJSON.h"
 
+#import "UAUtils.h"
+
 @implementation UAInboxDBManager
 
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
@@ -89,14 +91,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         msg.unread = [rs intForColumn:@"unread"]==1? YES: NO;
 
         NSString *dateString = [rs stringForColumn:@"sent_time"]; //2010-04-16 16:32:50
-        NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-		NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-		[dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-		[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        msg.messageSent = [dateFormatter dateFromString:dateString];
-        [dateFormatter release];
+        msg.messageSent = [[UAUtils dateFormatter] dateFromString:dateString];
 
         msg.title = [rs stringForColumn:@"title"];
         
@@ -109,12 +104,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey {
 
-    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-	NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-	[dateFormatter setLocale:enUSPOSIXLocale];
-    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-	[dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [self.db beginTransaction];
     for (UAInboxMessage *message in messages) {
         NSDictionary *extra = message.extra;
@@ -122,7 +111,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          message.messageID,
          message.title,
          message.messageBodyURL,
-         [dateFormatter stringFromDate:message.messageSent],
+         [[UAUtils dateFormatter] stringFromDate:message.messageSent],
          [NSNumber numberWithInt:(message.unread?1:0)],
          message.messageURL,
          appKey,

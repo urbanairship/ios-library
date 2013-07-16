@@ -329,14 +329,7 @@ static NSMutableSet *overlayControllers = nil;
      * Set the current message's sent date (GMT).
      */
     NSDate *date = self.message.messageSent;
-    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-    [dateFormatter setLocale:enUSPOSIXLocale];
-    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-
-    NSString *messageSentDate = [dateFormatter stringFromDate:date];
+    NSString *messageSentDate = [[UAUtils dateFormatter] stringFromDate:date];
     js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
 
     /*

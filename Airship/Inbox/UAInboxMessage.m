@@ -70,13 +70,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.unread = [[message objectForKey: @"unread"] intValue] ? YES : NO;
 
         NSString *dateString = [message objectForKey: @"message_sent"];
-        NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-        NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
-        [dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-        self.messageSent = [dateFormatter dateFromString:dateString];
+        self.messageSent = [[UAUtils dateFormatter] dateFromString:dateString];
 
         self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }
