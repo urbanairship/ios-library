@@ -181,7 +181,6 @@
         UA_LERR(@"This application is in PRODUCTION and set to clear the keychain with a debug flag. ARE YOU SURE YOU WANT TO DO THIS?");
     }
 
-    //TODO: analytics and airship URL must (not?) end in trailing slash? (auto-strip earlier)
     return valid;
 }
 
@@ -305,6 +304,25 @@
     return YES;// For safety, assume production unless the profile is explicitly set to development
 }
 
+- (void)setAnalyticsURL:(NSString *)analyticsURL {
+    //Any appending url starts with a beginning /, so make sure the base url does not
+    if ([analyticsURL hasSuffix:@"/"]) {
+        UA_LWARN(@"Analytics URL ends with a trailing slash, stripping ending slash.");
+        _analyticsURL = [[analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)] retain];
+    } else {
+        _analyticsURL = [analyticsURL copy];
+    }
+}
+
+- (void)setDeviceAPIURL:(NSString *)deviceAPIURL {
+    //Any appending url starts with a beginning /, so make sure the base url does not
+    if ([deviceAPIURL hasSuffix:@"/"]) {
+        UA_LWARN(@"Device API URL ends with a trailing slash, stripping ending slash.");
+        _deviceAPIURL = [[deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)] retain];
+    } else {
+        _deviceAPIURL = [deviceAPIURL copy];
+    }
+}
 #pragma mark -
 #pragma KVC Overrides
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {

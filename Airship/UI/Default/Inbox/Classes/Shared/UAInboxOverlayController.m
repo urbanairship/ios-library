@@ -447,10 +447,10 @@ static NSMutableSet *overlayControllers = nil;
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) &&
              (([[url host] isEqualToString:@"phobos.apple.com"]) ||
               ([[url host] isEqualToString:@"itunes.apple.com"]))) {
-                 
-                 // TODO: set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
-                 
-                 return ![[UIApplication sharedApplication] openURL:url];
+
+                 // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
+                 NSString *stringURL = [NSString stringWithFormat:@"http://%@%@", url.host, url.path];
+                 return ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL]];
              }
     
     // send maps.google.com url or maps: to GoogleMaps.app
@@ -498,21 +498,30 @@ static NSMutableSet *overlayControllers = nil;
     
     // send tel: to Phone.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"tel"])) {
-        
-        // TODO: Phone number must not contain spaces or brackets. Spaces or plus signs OK. Can add come checks here.
-        
-        return ![[UIApplication sharedApplication] openURL:url];
+        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
+        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
     }
-    
+
     // send sms: to Messages.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"sms"])) {
-        return ![[UIApplication sharedApplication] openURL:url];
+        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
+        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
     }
-    
+
     // load local file and http/https webpages in webview
     return YES;
 }
 
+- (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
+
+    NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
+    NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
+
+    NSString *scheme = [decodedUrlString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
+
+    return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
+}
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self populateJavascriptEnvironment];

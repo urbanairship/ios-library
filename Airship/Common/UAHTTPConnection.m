@@ -174,7 +174,6 @@
 }
 
 - (void)cancel {
-    // TODO: moar?
     [self.urlConnection cancel];
 }
 
@@ -226,7 +225,6 @@
     [self release];
 }
 
-//TODO: fix UAInboxURLCache and its usage logic so that this is not something we need to worry about
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection
                   willCacheResponse:(NSCachedURLResponse *)cachedResponse {
     if ([[NSURLCache sharedURLCache] isKindOfClass:[UAInboxURLCache class]]) {

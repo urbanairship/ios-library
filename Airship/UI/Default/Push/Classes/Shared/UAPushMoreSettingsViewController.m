@@ -361,10 +361,10 @@ static NSUInteger userRowCount = 1;
 - (void)updateCellValues {
     
     self.deviceTokenCell.detailTextLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
-    self.deviceTokenTypesCell.detailTextLabel.text = [UAPush pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
+    self.deviceTokenTypesCell.detailTextLabel.text = [self pushTypeString:[[UIApplication sharedApplication] enabledRemoteNotificationTypes]];
     
     UIRemoteNotificationType disabledTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes] ^ [UAPush shared].notificationTypes;
-    self.deviceTokenDisabledTypesCell.detailTextLabel.text = [UAPush pushTypeString:disabledTypes];
+    self.deviceTokenDisabledTypesCell.detailTextLabel.text = [self pushTypeString:disabledTypes];
     
     self.deviceTokenAliasCell.detailTextLabel.text = [UAPush shared].alias ? [UAPush shared].alias : @"Not Set";
     
@@ -375,6 +375,29 @@ static NSUInteger userRowCount = 1;
     }
 
     self.usernameCell.detailTextLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
+}
+
+- (NSString *)pushTypeString:(UIRemoteNotificationType)types {
+    NSMutableArray *typeArray = [NSMutableArray arrayWithCapacity:3];
+
+    //Use the same order as the Settings->Notifications panel
+    if (types & UIRemoteNotificationTypeBadge) {
+        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Badges")];
+    }
+
+    if (types & UIRemoteNotificationTypeAlert) {
+        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Alerts")];
+    }
+
+    if (types & UIRemoteNotificationTypeSound) {
+        [typeArray addObject:UA_PU_TR(@"UA_Notification_Type_Sounds")];
+    }
+
+    if ([typeArray count] > 0) {
+        return [typeArray componentsJoinedByString:@", "];
+    }
+
+    return UA_PU_TR(@"None");
 }
 
 @end

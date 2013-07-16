@@ -416,18 +416,4 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
-
-///---------------------------------------------------------------------------------------
-/// @name Push Notification UI Methods
-///---------------------------------------------------------------------------------------
-
-/*
- * Returns a human-readable (English-language), comma-separated list of the push notification types.
- *
- * @param types The notification types to include in the list.
- *
- * @return A stringified list of the types.
- */
-+ (NSString *)pushTypeString:(UIRemoteNotificationType)types;
-
 @end

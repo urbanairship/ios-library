@@ -118,14 +118,13 @@ static UAInboxMessageList *_messageList = nil;
     self.isRetrieving = YES;
 
     [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
-
         self.isRetrieving = NO;
-
+        
         [[UAInboxDBManager shared] deleteMessages:self.messages];
-        [[UAInboxDBManager shared] addMessages:newMessages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
         self.messages = newMessages;
-
         self.unreadCount = unread;
+
+        [[UAInboxDBManager shared] addMessages:self.messages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
@@ -169,7 +168,6 @@ static UAInboxMessageList *_messageList = nil;
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             succeed();
             [self.messages removeObjectsInArray:updateMessageArray];
-            // TODO: add delete to sync
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
         }onFailure:^(UAHTTPRequest *request){
@@ -217,5 +215,20 @@ static UAInboxMessageList *_messageList = nil;
 - (int)indexOfMessage:(UAInboxMessage *)message {
     return [self.messages indexOfObject:message];
 }
+
+#pragma mark -
+#pragma mark set messages
+- (void)setMessages:(NSMutableArray *)messages {
+    // Sort the messages by date
+    if (messages.count > 0) {
+        NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
+                                                                        ascending:NO] autorelease];
+        NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
+        [messages sortUsingDescriptors:sortDescriptors];
+    }
+
+    _messages = [messages retain];
+}
+
 
 @end

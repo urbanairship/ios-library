@@ -40,7 +40,6 @@
 #define kMinWaitSeconds 7*24*3600       // local min of 7 days
 
 // The actual amount of time in seconds that elapse between event-server posts
-// TODO: Get with the analytics team and rename this header field
 #define kMinBatchIntervalSeconds 60        // local min of 60s
 #define kMaxBatchIntervalSeconds 7*24*3600  // local max of 7 days
 

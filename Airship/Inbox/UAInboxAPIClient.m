@@ -142,23 +142,15 @@
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
           UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-          NSDictionary *jsonResponse = [parser objectWithString:request.responseString];
-          UA_LTRACE(@"Retrieved message list respose: %@", request.responseString);
+          NSString *responseString = request.responseString;
+          NSDictionary *jsonResponse = [parser objectWithString:responseString];
+          UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
               UAInboxMessage *tmp = [[[UAInboxMessage alloc] initWithDict:message inbox:[UAInbox shared].messageList] autorelease];
               [newMessages addObject:tmp];
-          }
-
-          if (newMessages.count > 0) {
-              NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                              ascending:NO] autorelease];
-
-              //TODO: this flow seems terribly backwards
-              NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
-              [newMessages sortUsingDescriptors:sortDescriptors];
           }
 
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];

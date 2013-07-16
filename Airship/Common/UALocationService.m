@@ -692,7 +692,6 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
 
 - (NSError *)locationTimeoutError {
-    // TODO: This needs to be setup in the localization bundle
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:@"The location service timed out before receiving a location that meets accuracy requirements" forKey:NSLocalizedDescriptionKey];
     if (self.bestAvailableSingleLocation) {
         [userInfo setObject:self.bestAvailableSingleLocation forKey:UALocationServiceBestAvailableSingleLocationKey];
