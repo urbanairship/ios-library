@@ -242,36 +242,29 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // send tel: to Phone.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"tel"])) {
-        if (![self isValidTelephoneUrl:url]) {
-            UA_LWARN(@"Number: %@ contains invalid characters.", url);
-        } else {
-            return ![[UIApplication sharedApplication] openURL:url];
-        }
+        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
+        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
     }
 
     // send sms: to Messages.app
     else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"sms"])) {
-        if (![self isValidTelephoneUrl:url]) {
-            UA_LWARN(@"Number: %@ contains invalid characters.", url);
-        } else {
-            return ![[UIApplication sharedApplication] openURL:url];
-        }
+        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
+        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
     }
 
     // load local file and http/https webpages in webview
     return YES;
 }
 
-- (BOOL)isValidTelephoneUrl:(NSURL *)url {
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^(tel|sms):(\\/\\/)?[0-9\\+\\-\\.]*$"
-                                                                           options:0
-                                                                             error:NULL];
-    
-    NSUInteger matches = [regex numberOfMatchesInString:url.absoluteString
-                                                options:0
-                                                  range:NSMakeRange(0, url.absoluteString.length)];
+- (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
 
-    return matches == 1;
+    NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
+    NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
+
+    NSString *scheme = [decodedUrlString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
+    
+    return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
 }
 
 - (void)populateJavascriptEnvironment {
