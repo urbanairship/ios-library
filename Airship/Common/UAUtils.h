@@ -102,7 +102,7 @@
 /// @name Date Formatting
 ///---------------------------------------------------------------------------------------
 
-/*
+/**
  * Creates a dateFormatter with the following attributes:
  * locale set to 'en_US_POSIX', timestyle set to 'NSDATEFormatterFullStyle',
  * date format set to 'yyyy-MM-dd HH:mm:ss' and time zone to GMT.
