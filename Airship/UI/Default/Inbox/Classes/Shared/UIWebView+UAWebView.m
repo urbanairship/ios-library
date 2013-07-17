@@ -89,7 +89,7 @@
     [self stringByEvaluatingJavaScriptFromString:js];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
 
     switch (toInterfaceOrientation) {
         case UIDeviceOrientationPortrait:

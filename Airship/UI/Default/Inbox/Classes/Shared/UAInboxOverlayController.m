@@ -267,11 +267,6 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-- (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
-    
-
-}
-
 - (void)orientationChanged:(NSNotification *)notification {
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation

@@ -71,7 +71,7 @@
 
 - (void)messageListLoaded {
 
-    //only take action is there's a new message
+    //only take action if there's a new message
     if(self.viewingMessageID) {
 
         UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
