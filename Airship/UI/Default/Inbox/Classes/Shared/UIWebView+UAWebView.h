@@ -30,5 +30,6 @@
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
+- (void)injectViewportFix;
 
 @end

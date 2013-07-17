@@ -31,6 +31,11 @@
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message {
 
+    // This will inject the current device orientation
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
+
     /*
      * Define and initialize our one global
      */
@@ -102,6 +107,15 @@
         default:
             break;
     }
+}
+
+- (void)injectViewportFix {
+    NSString *js = @"var metaTag = document.createElement('meta');"
+    "metaTag.name = 'viewport';"
+    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
+    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
+
+    [self stringByEvaluatingJavaScriptFromString:js];
 }
 
 @end

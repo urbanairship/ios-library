@@ -269,27 +269,19 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)onRotationChange:(UIInterfaceOrientation)toInterfaceOrientation {
     
-    if(![self.parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
-        return;
-    }
 
-    // This will inject the current device orientation
-    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
-    [self onRotationChange:(UIInterfaceOrientation)[UIDevice currentDevice].orientation];
-}
-
-- (void)injectViewportFix {
-    NSString *js = @"var metaTag = document.createElement('meta');"
-    "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
-    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
     
-    [self.webView stringByEvaluatingJavaScriptFromString:js];
+    if(![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
+        return;
+    }
+
+    // This will inject the current device orientation
+    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 /**
@@ -446,6 +438,7 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self.webView populateJavascriptEnvironment:self.message];
+    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
@@ -456,7 +449,7 @@ static NSMutableSet *overlayControllers = nil;
         [self.message markAsRead];
     }
 
-    [self injectViewportFix];
+    [self.webView injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {

@@ -249,26 +249,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
 }
 
-- (void)injectViewportFix {
-    NSString *js = @"var metaTag = document.createElement('meta');"
-    "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
-    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
-    
-    [self.webView stringByEvaluatingJavaScriptFromString:js];
-}
-
 - (void)webViewDidStartLoad:(UIWebView *)wv {
     [self.statusBar setHidden: NO];
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
     
     [self.webView populateJavascriptEnvironment:self.message];
-
-    // This will inject the current device orientation
-    // Note that face up and face down orientations will be ignored as this
-    // casts a device orientation to an interface orientation
-    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
@@ -280,7 +266,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         [self.message markAsRead];
     }
     
-    [self injectViewportFix];
+    [self.webView injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
