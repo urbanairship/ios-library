@@ -29,7 +29,7 @@
 
 @implementation UIWebView (UAWebView)
 
-- (void)populateJavascriptEnvironment:(UIWebView *)wv :(UAInboxMessage *)message {
+- (void)populateJavascriptEnvironment:(UAInboxMessage *)message {
 
     /*
      * Define and initialize our one global
@@ -81,7 +81,7 @@
     /*
      * Execute the JS we just constructed.
      */
-    [wv stringByEvaluatingJavaScriptFromString:js];
+    [self stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{

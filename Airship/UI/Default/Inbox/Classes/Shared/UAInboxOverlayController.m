@@ -445,7 +445,7 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self.webView populateJavascriptEnvironment:wv :self.message];
+    [self.webView populateJavascriptEnvironment:self.message];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {

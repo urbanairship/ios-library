@@ -263,7 +263,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
     
-    [self.webView populateJavascriptEnvironment:wv :self.message];
+    [self.webView populateJavascriptEnvironment:self.message];
 
     // This will inject the current device orientation
     // Note that face up and face down orientations will be ignored as this
