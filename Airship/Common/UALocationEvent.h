@@ -39,6 +39,7 @@ extern UALocationEventAnalyticsKey * const UALocationEventProviderKey;
 extern UALocationEventAnalyticsKey * const UALocationEventDistanceFilterKey;
 extern UALocationEventAnalyticsKey * const UALocationEventHorizontalAccuracyKey;
 extern UALocationEventAnalyticsKey * const UALocationEventVerticalAccuracyKey;
+extern UALocationEventAnalyticsKey * const UALocationEventSessionIDKey;
 
 typedef NSString UALocationEventUpdateType;
 extern UALocationEventUpdateType * const UALocationEventAnalyticsType;
