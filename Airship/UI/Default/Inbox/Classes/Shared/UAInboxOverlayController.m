@@ -52,6 +52,8 @@
 #import "UAInboxUI.h"
 #import "UAUtils.h"
 
+#import "UIWebView+UAWebView.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 #define kShadeViewTag 1000
@@ -270,89 +272,15 @@ static NSMutableSet *overlayControllers = nil;
     if(![self.parentViewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation]) {
         return;
     }
-    
-    switch (toInterfaceOrientation) {
-        case UIDeviceOrientationPortrait:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
-            break;
-        default:
-            break;
-    }
+
+    // This will inject the current device orientation
+    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
     [self onRotationChange:(UIInterfaceOrientation)[UIDevice currentDevice].orientation];
-}
-
-- (void)populateJavascriptEnvironment {
-    
-    // This will inject the current device orientation
-    // Note that face up and face down orientations will be ignored as this
-    // casts a device orientation to an interface orientation
-    [self onRotationChange:(UIInterfaceOrientation)[UIDevice currentDevice].orientation];
-    
-    /*
-     * Define and initialize our one global
-     */
-    NSString *js = @"var UAirship = {};";
-    
-    /*
-     * Set the device model.
-     */
-    NSString *model = [UIDevice currentDevice].model;
-    js = [js stringByAppendingFormat:@"UAirship.devicemodel=\"%@\";", model];
-    
-    /*
-     * Set the UA user ID.
-     */
-    NSString *userID = [UAUser defaultUser].username;
-    js = [js stringByAppendingFormat:@"UAirship.userID=\"%@\";", userID];
-    
-    /*
-     * Set the current message ID.
-     */
-    NSString *messageID = self.message.messageID;
-    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
-
-    /*
-     * Set the current message's sent date (GMT).
-     */
-    NSDate *date = self.message.messageSent;
-    NSString *messageSentDate = [[UAUtils dateFormatter] stringFromDate:date];
-    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
-
-    /*
-     * Set the current message's sent date (unix epoch time in milliseconds).
-     */
-    NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970] * 1000];
-    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=%@;", messageSentDateMS];
-
-    /*
-     * Set the current message's title.
-     */
-    NSString *messageTitle = self.message.title;
-    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
-
-    /*
-     * Define UAirship.handleCustomURL.
-     */
-    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
-    
-    /*
-     * Execute the JS we just constructed.
-     */
-    [self.webView stringByEvaluatingJavaScriptFromString:js];
 }
 
 - (void)injectViewportFix {
@@ -517,7 +445,7 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self populateJavascriptEnvironment];
+    [self.webView populateJavascriptEnvironment:wv :self.message];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {

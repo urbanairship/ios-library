@@ -48,6 +48,7 @@
 #import <Foundation/Foundation.h>
 #import "UAInboxMessage.h"
 #import "UABeveledLoadingIndicator.h"
+#import "UIWebView+UAWebView.h"
 
 /**
  * This class provides an overlay window that can be popped over
