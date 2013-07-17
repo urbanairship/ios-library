@@ -91,7 +91,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         msg.unread = [rs intForColumn:@"unread"]==1? YES: NO;
 
         NSString *dateString = [rs stringForColumn:@"sent_time"]; //2010-04-16 16:32:50
-        msg.messageSent = [[UAUtils dateFormatter] dateFromString:dateString];
+        msg.messageSent = [[UAUtils dateFormatterUTC] dateFromString:dateString];
 
         msg.title = [rs stringForColumn:@"title"];
         
@@ -111,7 +111,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          message.messageID,
          message.title,
          message.messageBodyURL,
-         [[UAUtils dateFormatter] stringFromDate:message.messageSent],
+         [[UAUtils dateFormatterUTC] stringFromDate:message.messageSent],
          [NSNumber numberWithInt:(message.unread?1:0)],
          message.messageURL,
          appKey,

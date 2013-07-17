@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxUI.h"
 #import "UAInboxMessageList.h"
 
-#import "UIWebView+UAWebView.h"
+#import "UIWebView+Additions.h"
 
 #import "UAUtils.h"
 

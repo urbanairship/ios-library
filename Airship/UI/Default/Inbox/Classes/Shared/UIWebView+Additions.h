@@ -26,7 +26,7 @@
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
 
-@interface UIWebView (UAWebView)
+@interface UIWebView (Additions)
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;

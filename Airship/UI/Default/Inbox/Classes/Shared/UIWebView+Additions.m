@@ -23,11 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UIWebView+UAWebView.h"
+#import "UIWebView+Additions.h"
 #import "UAUser.h"
 #import "UAUtils.h"
 
-@implementation UIWebView (UAWebView)
+@implementation UIWebView (Additions)
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message {
 
@@ -63,7 +63,7 @@
      * Set the current message's sent date (GMT).
      */
     NSDate *date = message.messageSent;
-    NSString *messageSentDate = [[UAUtils dateFormatter] stringFromDate:date];
+    NSString *messageSentDate = [[UAUtils dateFormatterUTC] stringFromDate:date];
     js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
 
     /*

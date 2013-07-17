@@ -208,7 +208,7 @@
     return authString;
 }
 
-+ (NSDateFormatter *)dateFormatter {
++ (NSDateFormatter *)dateFormatterUTC {
     NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
     [dateFormatter setLocale:enUSPOSIXLocale];

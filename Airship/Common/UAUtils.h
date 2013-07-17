@@ -105,10 +105,10 @@
 /**
  * Creates a dateFormatter with the following attributes:
  * locale set to 'en_US_POSIX', timestyle set to 'NSDATEFormatterFullStyle',
- * date format set to 'yyyy-MM-dd HH:mm:ss' and time zone to GMT.
+ * date format set to 'yyyy-MM-dd HH:mm:ss' (UTC).
  *
  * @return A DateFormatter with the default attributes.
  */
-+ (NSDateFormatter *)dateFormatter;
++ (NSDateFormatter *)dateFormatterUTC;
 
 @end
