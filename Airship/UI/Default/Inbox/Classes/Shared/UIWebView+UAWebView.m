@@ -31,11 +31,6 @@
 
 - (void)populateJavascriptEnvironment:(UIWebView *)wv :(UAInboxMessage *)message {
 
-    // This will inject the current device orientation
-    // Note that face up and face down orientations will be ignored as this
-    // casts a device orientation to an interface orientation
-    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0 webView:wv];
-
     /*
      * Define and initialize our one global
      */
@@ -89,19 +84,20 @@
     [wv stringByEvaluatingJavaScriptFromString:js];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration webView:(UIWebView *)wv{
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation{
+
     switch (toInterfaceOrientation) {
         case UIDeviceOrientationPortrait:
-            [wv stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
+            [self stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeLeft:
-            [wv stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
+            [self stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationLandscapeRight:
-            [wv stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
+            [self stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
             break;
         case UIDeviceOrientationPortraitUpsideDown:
-            [wv stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
+            [self stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
             break;
         default:
             break;

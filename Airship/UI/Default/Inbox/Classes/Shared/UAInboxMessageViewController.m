@@ -264,6 +264,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     self.statusBarTitle.text = self.message.title;
     
     [self.webView populateJavascriptEnvironment:wv :self.message];
+
+    // This will inject the current device orientation
+    // Note that face up and face down orientations will be ignored as this
+    // casts a device orientation to an interface orientation
+    [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {

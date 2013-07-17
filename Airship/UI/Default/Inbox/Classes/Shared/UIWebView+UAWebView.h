@@ -29,6 +29,6 @@
 @interface UIWebView (UAWebView)
 
 - (void)populateJavascriptEnvironment:(UIWebView *)wv :(UAInboxMessage *)message;
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration webView:(UIWebView *)wv;
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 
 @end
