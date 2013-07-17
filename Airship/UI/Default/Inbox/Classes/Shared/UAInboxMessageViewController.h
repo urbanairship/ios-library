@@ -23,8 +23,9 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import <UIKit/UIKit.h>
+//#import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
+#import "UIWebView+UAWebView.h"
 
 
 /**
@@ -36,12 +37,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * The UIWebView used to display the message content.
  */
-@property (nonatomic, retain) IBOutlet UIWebView* webView;
+@property (nonatomic, retain) IBOutlet UIWebView *webView;
 
 /**
  * The UAInboxMessage being displayed.
  */
-@property (nonatomic, retain) UAInboxMessage* message;
+@property (nonatomic, retain) UAInboxMessage *message;
 
 /**
  * Set this property to YES is the class should show alert dialogs in erroneous

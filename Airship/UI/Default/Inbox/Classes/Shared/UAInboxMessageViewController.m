@@ -28,6 +28,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxUI.h"
 #import "UAInboxMessageList.h"
 
+#import "UIWebView+UAWebView.h"
+
 #import "UAUtils.h"
 
 #define kMessageUp 0
@@ -102,26 +104,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
 }
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    switch (toInterfaceOrientation) {
-        case UIDeviceOrientationPortrait:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeLeft:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationLandscapeRight:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();"];
-            break;
-        case UIDeviceOrientationPortraitUpsideDown:
-            [self.webView stringByEvaluatingJavaScriptFromString:@"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();"];
-            break;
-        default:
-            break;
-    }
-}
-
 
 #pragma mark -
 #pragma mark UI
@@ -267,66 +249,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
 }
 
-- (void)populateJavascriptEnvironment {
-    
-    // This will inject the current device orientation
-    // Note that face up and face down orientations will be ignored as this
-    // casts a device orientation to an interface orientation
-    [self willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation] duration:0];
-    
-    /*
-     * Define and initialize our one global
-     */
-    NSString *js = @"var UAirship = {};";
-    
-    /*
-     * Set the device model.
-     */
-    NSString *model = [UIDevice currentDevice].model;
-    js = [js stringByAppendingFormat:@"UAirship.devicemodel=\"%@\";", model];
-    
-    /*
-     * Set the UA user ID.
-     */
-    NSString *userID = [UAUser defaultUser].username;
-    js = [js stringByAppendingFormat:@"UAirship.userID=\"%@\";", userID];
-    
-    /*
-     * Set the current message ID.
-     */
-    NSString *messageID = self.message.messageID;
-    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
-
-    /*
-     * Set the current message's sent date (GMT).
-     */
-    NSDate *date = self.message.messageSent;
-    NSString *messageSentDate = [[UAUtils dateFormatter] stringFromDate:date];
-    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
-
-    /*
-     * Set the current message's sent date (unix epoch time in milliseconds).
-     */
-    NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970] * 1000];
-    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=%@;", messageSentDateMS];
-
-    /*
-     * Set the current message's title.
-     */
-    NSString *messageTitle = self.message.title;
-    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
-    
-    /*
-     * Define UAirship.handleCustomURL.
-     */
-    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
-    
-    /*
-     * Execute the JS we just constructed.
-     */
-    [self.webView stringByEvaluatingJavaScriptFromString:js];
-}
-
 - (void)injectViewportFix {
     NSString *js = @"var metaTag = document.createElement('meta');"
     "metaTag.name = 'viewport';"
@@ -341,7 +263,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
     
-    [self populateJavascriptEnvironment];
+    [self.webView populateJavascriptEnvironment:wv :self.message];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
