@@ -58,10 +58,10 @@ static UAInboxMessageList *_messageList = nil;
 - (void)dealloc {
     self.messages = nil;
     self.client = nil;
-    if (self.userCreatedObserver) {
-       [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-        self.userCreatedObserver = nil;
-    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+    self.userCreatedObserver = nil;
+
     [super dealloc];
 }
 
