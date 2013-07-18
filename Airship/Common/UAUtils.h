@@ -103,12 +103,12 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Creates a dateFormatter with the following attributes:
+ * Creates an ISO dateFormatter (UTC) with the following attributes:
  * locale set to 'en_US_POSIX', timestyle set to 'NSDATEFormatterFullStyle',
- * date format set to 'yyyy-MM-dd HH:mm:ss' (UTC).
+ * date format set to 'yyyy-MM-dd HH:mm:ss'.
  *
  * @return A DateFormatter with the default attributes.
  */
-+ (NSDateFormatter *)dateFormatterUTC;
++ (NSDateFormatter *)ISODateFormatterUTC;
 
 @end

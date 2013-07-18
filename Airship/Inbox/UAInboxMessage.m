@@ -70,7 +70,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.unread = [[message objectForKey: @"unread"] intValue] ? YES : NO;
 
         NSString *dateString = [message objectForKey: @"message_sent"];
-        self.messageSent = [[UAUtils dateFormatterUTC] dateFromString:dateString];
+        self.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
 
         self.client = [[[UAInboxAPIClient alloc] init] autorelease];
     }

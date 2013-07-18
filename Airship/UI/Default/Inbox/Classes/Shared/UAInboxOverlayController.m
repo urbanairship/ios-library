@@ -52,7 +52,7 @@
 #import "UAInboxUI.h"
 #import "UAUtils.h"
 
-#import "UIWebView+Additions.h"
+#import "UIWebView+UAAdditions.h"
 
 #import <QuartzCore/QuartzCore.h>
 
