@@ -35,11 +35,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> 
 
 /**
- * The UIWebView used to display the message content.
- */
-@property (nonatomic, retain) IBOutlet UIWebView *webView;
-
-/**
  * The UAInboxMessage being displayed.
  */
 @property (nonatomic, retain) UAInboxMessage *message;

@@ -44,7 +44,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) IBOutlet UIView *statusBar;
 @property (nonatomic, retain) IBOutlet UILabel *statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl *messageNav;
-
+/**
+ * The UIWebView used to display the message content.
+ */
+@property (nonatomic, retain) UIWebView *webView;
 @end
 
 @implementation UAInboxMessageViewController
@@ -54,6 +57,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)dealloc {
     [[UAInbox shared].messageList removeObserver:self];
     self.message = nil;
+    self.webView.delegate = nil;
     self.webView = nil;
     self.activity = nil;
     self.statusBar = nil;
@@ -86,7 +90,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.navigationItem.rightBarButtonItem = segmentBarItem;
         [segmentBarItem release];
 
-        [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
         
         self.shouldShowAlerts = YES;
     }
@@ -96,6 +99,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)viewDidLoad {
     int index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
 
     // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
     [self loadMessageAtIndex:index];
@@ -134,6 +138,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageAtIndex:(int)index {
+    [self.webView stopLoading];
+    [self.webView removeFromSuperview];
+    self.webView.delegate = nil;
+
+    self.webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
+    self.webView.delegate = self;
+    [self.view insertSubview:self.webView belowSubview:self.statusBar];
+
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
@@ -148,10 +160,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     NSString *auth = [UAUtils userAuthHeaderString];
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-    
-    [self.webView stopLoading];
+
     [self.webView loadRequest:requestObj];
 }
+
 
 #pragma mark UIWebViewDelegate
 
