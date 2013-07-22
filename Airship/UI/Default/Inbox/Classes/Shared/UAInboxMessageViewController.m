@@ -44,7 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) IBOutlet UIView *statusBar;
 @property (nonatomic, retain) IBOutlet UILabel *statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl *messageNav;
-
+@property (nonatomic, retain) UIWebView *webView;
 @end
 
 @implementation UAInboxMessageViewController
@@ -86,7 +86,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.navigationItem.rightBarButtonItem = segmentBarItem;
         [segmentBarItem release];
 
-        [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
         
         self.shouldShowAlerts = YES;
     }
@@ -134,6 +133,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageAtIndex:(int)index {
+    if (self.webView) {
+        [self.webView stopLoading];
+        [self.webView removeFromSuperview];
+    }
+
+    self.webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
+    self.webView.delegate = self;
+
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
@@ -148,10 +155,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
     NSString *auth = [UAUtils userAuthHeaderString];
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-    
-    [self.webView stopLoading];
+
     [self.webView loadRequest:requestObj];
 }
+
 
 #pragma mark UIWebViewDelegate
 
@@ -267,6 +274,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     
     [self.webView injectViewportFix];
+    [self.view addSubview:self.webView];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
