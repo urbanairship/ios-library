@@ -98,4 +98,17 @@
 
 + (NSString *)getReadableFileSizeFromBytes:(double)bytes;
 
+///---------------------------------------------------------------------------------------
+/// @name Date Formatting
+///---------------------------------------------------------------------------------------
+
+/**
+ * Creates an ISO dateFormatter (UTC) with the following attributes:
+ * locale set to 'en_US_POSIX', timestyle set to 'NSDATEFormatterFullStyle',
+ * date format set to 'yyyy-MM-dd HH:mm:ss'.
+ *
+ * @return A DateFormatter with the default attributes.
+ */
++ (NSDateFormatter *)ISODateFormatterUTC;
+
 @end

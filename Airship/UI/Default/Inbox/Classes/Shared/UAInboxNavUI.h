@@ -40,7 +40,7 @@
 @class UAInboxAlertProtocol;
 
 /**
- * This class is an alternative rich push UI impelementation.  When it is
+ * This class is an alternative rich push UI implementation.  When it is
  * designated as the [UAInbox uiClass], launching the inbox will cause it
  * to be displayed in either a navigation controller (in the iPhone UI idiom)
  * or a popover controller (in the iPad UI idiom).

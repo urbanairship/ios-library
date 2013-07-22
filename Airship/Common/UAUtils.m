@@ -208,4 +208,15 @@
     return authString;
 }
 
++ (NSDateFormatter *)ISODateFormatterUTC {
+    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [dateFormatter setLocale:enUSPOSIXLocale];
+    [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+    return dateFormatter;
+}
+
 @end
