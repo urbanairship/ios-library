@@ -34,7 +34,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> 
 
-
 /**
  * The UAInboxMessage being displayed.
  */

@@ -140,6 +140,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)dealloc {
     self.message = nil;
     self.webView = nil;
+    self.webView.delegate = nil;
     self.parentViewController = nil;
     self.loadingIndicator = nil;
     self.bgView = nil;

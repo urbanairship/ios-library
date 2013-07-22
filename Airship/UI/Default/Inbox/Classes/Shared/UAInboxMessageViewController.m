@@ -55,6 +55,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [[UAInbox shared].messageList removeObserver:self];
     self.message = nil;
     self.webView = nil;
+    self.webView.delegate = nil;
     self.activity = nil;
     self.statusBar = nil;
     self.statusBarTitle = nil;
@@ -133,13 +134,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageAtIndex:(int)index {
-    if (self.webView) {
-        [self.webView stopLoading];
-        [self.webView removeFromSuperview];
-    }
+    [self.webView stopLoading];
+    [self.webView removeFromSuperview];
 
     self.webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
     self.webView.delegate = self;
+    [self.view insertSubview:self.webView belowSubview:self.statusBar];
 
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
@@ -274,7 +274,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
     
     [self.webView injectViewportFix];
-    [self.view addSubview:self.webView];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
