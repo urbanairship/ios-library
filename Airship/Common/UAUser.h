@@ -49,13 +49,6 @@ extern NSString * const UAUserCreatedNotification;
 - (BOOL)defaultUserCreated;
 
 /**
- * Convenience method that schedules a block to be executed once the user has been created.
- *
- * @param onCreateBlock The block scheduled to be executed.
- */
-- (void)onceCreated:(void(^)())onCreateBlock;
-
-/**
  * Loads the user from disk if available, otherwise creates the user (asynchronously) from scratch.
  */
 - (void)initializeUser;

@@ -45,8 +45,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @property(nonatomic, retain) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
-
-
+@property(nonatomic, retain) id userCreatedObserver;
 
 @end
 
@@ -59,6 +58,10 @@ static UAInboxMessageList *_messageList = nil;
 - (void)dealloc {
     self.messages = nil;
     self.client = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+    self.userCreatedObserver = nil;
+
     [super dealloc];
 }
 
@@ -104,9 +107,15 @@ static UAInboxMessageList *_messageList = nil;
     
     if (![[UAUser defaultUser] defaultUserCreated]) {
         UA_LDEBUG("Postponing retrieving message list once the user is created.");
-        [[UAUser defaultUser] onceCreated:^{
+        self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
+            //load the message list once the user has been created
             [self retrieveMessageList];
+
+            //unregister and deallocate observer
+            [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+            self.userCreatedObserver = nil;
         }];
+        
         return;
     }
 

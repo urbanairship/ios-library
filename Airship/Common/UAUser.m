@@ -206,16 +206,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     return YES;
 }
 
-- (void)onceCreated:(void(^)())onCreateBlock {
-    __block id observer = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification
-                                                                            object:nil
-                                                                             queue:nil
-                                                                        usingBlock:^(NSNotification *note) {
-        onCreateBlock();
-        [[NSNotificationCenter defaultCenter] removeObserver:observer name:UAUserCreatedNotification object:nil];
-    }];
-}
-
 - (void)createDefaultUser {
     if ([self defaultUserCreated]) {
         return;
