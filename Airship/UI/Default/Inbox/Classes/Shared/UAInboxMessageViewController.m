@@ -96,6 +96,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)viewDidLoad {
     int index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
 
     // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
     [self loadMessageAtIndex:index];

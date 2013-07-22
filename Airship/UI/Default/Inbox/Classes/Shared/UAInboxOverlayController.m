@@ -109,6 +109,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
         self.webView.delegate = self;
+        [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
         
         //hack to hide the ugly webview gradient
         for (UIView* subView in [self.webView subviews]) {
