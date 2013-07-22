@@ -44,6 +44,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, retain) IBOutlet UIView *statusBar;
 @property (nonatomic, retain) IBOutlet UILabel *statusBarTitle;
 @property (nonatomic, retain) UISegmentedControl *messageNav;
+/**
+ * The UIWebView used to display the message content.
+ */
 @property (nonatomic, retain) UIWebView *webView;
 @end
 
