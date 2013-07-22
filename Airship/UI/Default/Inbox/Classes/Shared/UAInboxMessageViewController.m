@@ -54,8 +54,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)dealloc {
     [[UAInbox shared].messageList removeObserver:self];
     self.message = nil;
-    self.webView = nil;
     self.webView.delegate = nil;
+    self.webView = nil;
     self.activity = nil;
     self.statusBar = nil;
     self.statusBarTitle = nil;
@@ -136,6 +136,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)loadMessageAtIndex:(int)index {
     [self.webView stopLoading];
     [self.webView removeFromSuperview];
+    self.webView.delegate = nil;
 
     self.webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
     self.webView.delegate = self;
