@@ -29,7 +29,7 @@
 - UAUser now uses the same tags and aliases as the device token
 - The Urban Airship API and UI now provides a mechanismm for addressing a rich push user by the
   device token, rather than the User ID
-- User ID is now displayed in the InboxSample application
+- User ID is now displayed in the PushSample application
 - Updated localization bundle strings
 - Removed outdated library macros
 
