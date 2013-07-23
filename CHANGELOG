@@ -1,8 +1,8 @@
 -------------------------
-2.0.0 - July 2013
+2.0.0 - July 23, 2013
 -------------------------
 - Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
-  options are available and can be set directly on the object (or through the AirshipConfig.plist)
+  options are available and can be set directly on the object (or through the AirshipConfig.plist).
 - New AirshipConfig.plist format. The new key names match the property names on UAConfig, though the old
   keys are still valid.
 - Added an auto-integration feature. By default, it is no longer necessary to add remote notification
@@ -11,24 +11,29 @@
   of an app as indicated in the embedded .mobileprovision file.
 - Push conversion events are now automatically collected - no integration required.
 - Simplified the UAPushNotificationDelegate and UAInboxNotificationDelegate so that they provide callbacks
-  when the app is launched from a notification and when one is received while the app is already in the foreground.
-  The Inbox delegate protocol also provides methods for receiving callbacks when the a new or launch message is available
+  when the app is launched from a notification and when one is received while the app is already in the foreground
+  The Inbox delegate protocol also provides methods for receiving callbacks when a new or launch message is available
   for viewing.
 - Renamed the UAInboxUIProtocol methods for clarity.
-- Removed fragile Inbox header badge in sample UI. Replaced with Mail.app style (%d) unread count.
+- Removed fragile Inbox header badge in sample UI, and replaced with Mail.app style (%d) unread count.
 - Rich Push Inbox cache is now optional.
 - Removed In-App Purchase and Subscriptions.
-- Replaced ASIHTTPRequest with a wrapper around NSURLRequest/Connection
-- Added KIF (functional) tests to PushSample (available in our GitHub repo)
+- Replaced ASIHTTPRequest with a wrapper around NSURLRequest/Connection.
+- Added KIF (functional) tests to PushSample (available in our GitHub repo).
 - Reports data now includes the Olson/IANA timezone and Locale. This will enable future reports and push
   segmentation features.
 - Updated much of the code with more modern Obj-C features.
 - Improved header documentation (which feeds http://docs.urbanairship.com/ios-lib/).
-- Removed deprecated methods from UAPush. Direct access to the device token registration API can now
-  be done directly with UADeviceAPIClient
-- UAUser now uses the same tags and aliases as the device token. The Urban Airship API and UI now provides
-  a mechanismm for addressing a rich push user by the device token, rather than the User ID.
-
+- Removed deprecated methods from UAPush.
+- Direct access to the device token registration API can now be done directly with UADeviceAPIClient.
+- UAUser now uses the same tags and aliases as the device token.
+- The Urban Airship API and UI now provides a mechanismm for addressing a rich push user by the
+  device token, rather than the User ID.
+- User ID is now displayed in the PushSample application.
+- Updated localization bundle strings.
+- Removed outdated library macros.
+- Added built-in variables for JavaScript embedded in rich push messages: UAirship.messageSentDate,
+  UAirship.messageSentDateMS, and UAirship.messageTitle.
 
 -------------------------
 1.4.0 - Feb 7, 2013
