@@ -190,8 +190,6 @@ static NSUInteger userRowCount = 1;
             [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
             self.userCreatedObserver = nil;
         }];
-
-        return;
     }
 
     self.helpSoundsCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
