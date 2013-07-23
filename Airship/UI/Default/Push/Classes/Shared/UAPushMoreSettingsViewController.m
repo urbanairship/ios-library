@@ -85,6 +85,9 @@ static NSUInteger userRowCount = 1;
     self.tagsViewController = nil;
     self.userInfoViewController = nil;
     self.locationCell = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+    self.userCreatedObserver = nil;
     
     [super dealloc];
 }
@@ -179,10 +182,15 @@ static NSUInteger userRowCount = 1;
     self.usernameCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     //if the user is still being created, update the cell once that is complete.
-    [[UAUser defaultUser] onceCreated:^{
-        [self updateCellValues];
-        [self.usernameCell setNeedsLayout];
-    }];
+    if (![[UAUser defaultUser] defaultUserCreated]) {
+        self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
+            [self updateCellValues];
+            [self.usernameCell setNeedsLayout];
+
+            [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+            self.userCreatedObserver = nil;
+        }];
+    }
 
     self.helpSoundsCell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
     self.helpSoundsCell.textLabel.text = @"Notification Sounds";
