@@ -50,7 +50,9 @@ cp "${ROOT_PATH}/LICENSE" "${OUTPUT_PATH}"
 cd $OUTPUT_PATH
 for PACKAGE in RichPushSample PushSample Airship LICENSE CHANGELOG README.rst; do
 	zip -r libUAirship-latest.zip $PACKAGE
-	zip -r "libUAirship-${VERSION}.zip" $PACKAGE
 done
 cd -
+
+# Create a versioned zip file
+cp $OUTPUT_PATH/libUAirship-latest.zip $OUTPUT_PATH/libUAirship-$VERSION.zip
 
