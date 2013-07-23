@@ -44,6 +44,7 @@
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
 @property (nonatomic, retain) UIImageView *footerImageView;
 @property (nonatomic, retain) UITableViewCell *locationCell;
+@property (nonatomic, retain) id userCreatedObserver;
 
 - (void)initCells;
 - (void)updateCellValues;
