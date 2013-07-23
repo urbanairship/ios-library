@@ -1,5 +1,5 @@
 -------------------------
-2.0.0 - July 2013
+2.0.0 - July 23, 2013
 -------------------------
 - Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
   options are available and can be set directly on the object (or through the AirshipConfig.plist)
