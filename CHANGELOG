@@ -32,6 +32,8 @@
 - User ID is now displayed in the InboxSample application
 - Updated localization bundle strings
 - Removed outdated library macros
+- Added built-in variables for JavaScript embedded in rich push messages: UAirship.messageSentDate,
+  UAirship.messageSentDateMS, and UAirship.messageTitle
 
 -------------------------
 1.4.0 - Feb 7, 2013
