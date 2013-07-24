@@ -107,12 +107,12 @@
         UALOG(@"storeCachedResponse: %@", cachedResponse);
         UALOG(@"MIME type: %@ Encoding: %@", cachedResponse.response.MIMEType, cachedResponse.response.textEncodingName);
         
-        NSData *content = cachedResponse.data;
+        __unsafe_unretained NSData *content = cachedResponse.data;
         
-        NSURL *url = request.URL;
+        __unsafe_unretained NSURL *url = request.URL;
         
         // default to "text/html" if the server doesn't provide a content type
-        NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
+        __unsafe_unretained NSString *contentType = cachedResponse.response.MIMEType?:@"text/html";
         NSString *textEncoding = cachedResponse.response.textEncodingName;
         if (textEncoding) {
             contentType = [NSString stringWithFormat:@"%@; charset=%@", contentType, textEncoding];
@@ -139,7 +139,7 @@
 
 - (NSCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request {
     
-    NSCachedURLResponse* cachedResponse = nil;
+    NSCachedURLResponse *cachedResponse = nil;
     
     // retrieve resource from cache or populate if needed
     NSString *contentPath = [self getStoragePathForURL:request.URL];
@@ -182,11 +182,9 @@
                                    autorelease];
         
 
-        cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
-                                                                  data:content];
+        cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:response
+                                                                  data:content] autorelease];
 
-        // Conditional fix for bug that crashes devices running 4.1 or lower.
-        [cachedResponse autorelease];
         UALOG(@"Uncaching request %@", request);
         UALOG(@"MIME Type: %@ Encoding: %@", contentType, textEncoding);
         

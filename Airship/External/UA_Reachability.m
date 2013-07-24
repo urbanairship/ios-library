@@ -86,13 +86,13 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 {
 	#pragma unused (target, flags)
 	NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
-	NSCAssert([(NSObject*) info isKindOfClass: [Reachability class]], @"info was wrong class in ReachabilityCallback");
+	NSCAssert([(__bridge NSObject*) info isKindOfClass: [Reachability class]], @"info was wrong class in ReachabilityCallback");
 
 	//We're on the main RunLoop, so an NSAutoreleasePool is not necessary, but is added defensively
 	// in case someon uses the Reachablity object in a different thread.
 	NSAutoreleasePool* myPool = [[NSAutoreleasePool alloc] init];
 	
-	Reachability* noteObject = (Reachability*) info;
+	Reachability* noteObject = (__bridge Reachability*) info;
 	// Post a notification to notify the client that the network reachability changed.
 	[[NSNotificationCenter defaultCenter] postNotificationName: kUA_ReachabilityChangedNotification object: noteObject];
 	

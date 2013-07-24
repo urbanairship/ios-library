@@ -162,11 +162,11 @@
         return NO;
     }
 
+    NSHTTPURLResponse *response = nil;
     NSError *error = nil;
+    self.responseData = [[[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error] mutableCopy] autorelease];
 
-    self.responseData = [[[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&_urlResponse error:&error] mutableCopy] autorelease];
-
-    self.request.response = self.urlResponse;
+    self.request.response = self.urlResponse = response;
     self.request.responseData = self.responseData;
     self.request.error = error;
 
