@@ -59,7 +59,10 @@
 }
 
 - (void)tearDown {
-    RELEASE(_analytics);
+
+    [_analytics release];
+    _analytics = nil;
+
 }
 
 - (void)testLastSendTimeGetSetMethods {
@@ -75,8 +78,10 @@
 }
 
 - (void)testHandleNotification {
+
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
+
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -97,7 +102,7 @@
     [[mockAnalytics expect] invalidateBackgroundTask];
     
     //set up event capture
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -119,7 +124,7 @@
     __block int foregroundCount = 0;
     __block int activeCount = 0;
     __block int eventCount = 0;
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         
         [invocation getArgument:&arg atIndex:2];
@@ -169,7 +174,7 @@
     __block NSString *eventPushId = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
         
-        id arg = nil;
+        id __unsafe_unretained arg = nil;
         [invocation getArgument:&arg atIndex:2];
         if ([arg isKindOfClass:[UAEventAppActive class]]) {
             activeCount++;
@@ -216,7 +221,7 @@
 - (void)testEnterBackground {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
     [[mockAnalytics expect] send];
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -242,7 +247,7 @@
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
     
     //set up event capture
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -256,8 +261,10 @@
 }
 
 - (void)testWillResignActive {
+
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    __block id arg = nil;
+    __block __unsafe_unretained id arg = nil;
+
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         [invocation getArgument:&arg atIndex:2];
     };
@@ -312,10 +319,11 @@
 }
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
+
     _analytics.config.analyticsURL = @"cats";
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-
     [[[mockDBManger stub] andReturnValue:@5] eventCount];
+
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
