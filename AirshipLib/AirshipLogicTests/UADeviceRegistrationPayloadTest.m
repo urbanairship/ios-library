@@ -45,7 +45,7 @@
 - (NSDate *)dateWithHour:(NSInteger)hour withMinute:(NSInteger)minute {
     
     NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-    NSDateComponents *components = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] autorelease];
+    NSDateComponents *components = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
 
     components.hour = hour;
     components.minute = minute;
