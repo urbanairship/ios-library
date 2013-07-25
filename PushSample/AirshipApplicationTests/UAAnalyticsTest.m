@@ -299,22 +299,21 @@
     STAssertFalse([analytics shouldSendAnalytics], nil);
     analytics.config.analyticsEnabled = YES;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    NSInteger zero = 0;
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(zero)] eventCount];
+
+    [[[mockDBManger stub] andReturnValue:@0] eventCount];
     STAssertFalse([analytics shouldSendAnalytics], nil);
     analytics.databaseSize = 0;
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    NSInteger five = 5;
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(five)] eventCount];
+
+    [[[mockDBManger stub] andReturnValue:@5] eventCount];
     STAssertFalse([analytics shouldSendAnalytics], nil);
 }
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
     analytics.config.analyticsURL = @"cats";
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    NSInteger five = 5;
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE(five)] eventCount];
+
+    [[[mockDBManger stub] andReturnValue:@5] eventCount];
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
@@ -336,8 +335,8 @@
     id mockQueue = [OCMockObject niceMockForClass:[NSOperationQueue class]];
     analytics.queue = mockQueue;
     [[mockQueue expect] addOperation:[OCMArg any]];
-    BOOL yes = YES;
-    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(yes)] shouldSendAnalytics];
+
+    [[[mockAnalytics stub] andReturnValue:@YES] shouldSendAnalytics];
     NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [analytics send];

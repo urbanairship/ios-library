@@ -61,8 +61,6 @@
 {
     UALocationService *locationService;
     id mockLocationService; //[OCMockObject partialMockForObject:locationService]
-    BOOL yes; // use for OCMockValue(val)
-    BOOL no; // use for OCMockValue(val)
 }
 - (void)swizzleCLLocationClassMethod:(SEL)oneSelector withMethod:(SEL)anotherSelector;
 - (void)swizzleUALocationServiceClassMethod:(SEL)oneMethod withMethod:(SEL)anotherMethod;
@@ -79,10 +77,10 @@
 #pragma mark Setup Teardown
 
 - (void)setUp {
-    // Only works on the first pass, values will change when accessed. When fresh values are needed in 
+
+    // Only works on the first pass, values will change when accessed. When fresh values are needed in
     // user defaults call the setTestValuesInNSUserDefaults method
-    yes = YES;
-    no = NO;
+
     locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];
     mockLocationService = [[OCMockObject partialMockForObject:locationService] retain];
 }
@@ -168,7 +166,7 @@
 - (void)testCachedLocation {
     id mockLocation = [OCMockObject niceMockForClass:[CLLocationManager class]];
     locationService.standardLocationProvider.locationManager = mockLocation;
-    [[mockLocation expect] location];
+    [(CLLocationManager *)[mockLocation expect] location];
     [locationService location];
     [mockLocation verify];
 }
@@ -332,7 +330,7 @@
 }
 
 - (void)testForcePromptLocation {
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
     id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     [[mockProvider expect] startReportingLocation];
     locationService.promptUserForLocationServices = YES;
@@ -364,7 +362,7 @@
     STAssertEqualObjects(locationService, locationService.singleLocationProvider.delegate, nil);
     // Nil the delegate, it should be reset when the service is started
     locationService.singleLocationProvider.delegate = nil;
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
     [[mockProvider expect] startReportingLocation];
     [locationService reportCurrentLocation];
     STAssertEqualObjects(locationService, locationService.singleLocationProvider.delegate, nil);
@@ -375,7 +373,7 @@
 
 - (void)testReportCurrentLocationWontStartUnauthorized {
     locationService.singleLocationProvider = nil;
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
     [locationService reportCurrentLocation];
     [mockLocationService verify];
     //This depends on the lazy loading working correctly
@@ -385,7 +383,7 @@
 /* Tests that the single location service won't start when already updating */
 - (void)testAcquireSingleLocationWontStartWhenUpdating {
     // Make sure location services are authorized
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(no)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
     id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     UALocationProviderStatus updating = UALocationProviderUpdating;
     [[[mockProvider stub] andReturnValue:OCMOCK_VALUE(updating)] serviceStatus];
@@ -561,8 +559,8 @@
 
 - (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
     locationService.backgroundLocationServiceEnabled = NO;
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
-    [[[mockLocationService expect] andReturnValue:OCMOCK_VALUE(yes)] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
     [locationService startReportingStandardLocation];
     [locationService startReportingSignificantLocationChanges];
     [[[mockLocationService expect] andForwardToRealObject] stopReportingStandardLocation];

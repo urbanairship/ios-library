@@ -22,6 +22,7 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <CoreLocation/CoreLocation.h>
 
 #define kTestLatPDX 45.525352839897
@@ -37,8 +38,9 @@
 @interface UALocationTestUtils : NSObject
 
 /** Creates and returns a location with the above values */
-+ (CLLocation*)testLocationPDX;
-+ (CLLocation*)testLocationSFO;
++ (CLLocation *)testLocationPDX;
++ (CLLocation *)testLocationSFO;
+
 /** Creates and returns a location manager with the above values */
-+ (CLLocationManager*)testLocationManager;
++ (CLLocationManager *)testLocationManager;
 @end
