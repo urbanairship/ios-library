@@ -48,7 +48,7 @@
     NSDate *timeout;
 }
 
-- (void)peformInvocationInBackground:(NSInvocation*)invocation;
+- (void)peformInvocationInBackground:(NSInvocation *)invocation;
 @end
 
 
@@ -89,8 +89,9 @@
     UALocationService *service = [[[UALocationService alloc] init] autorelease];
     service.standardLocationProvider = standard;
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
+
     // Setup object to get parsed out of method call
-    __block UALocationEvent* event;
+    __block UALocationEvent *event = nil;
     // Capture the args passed to the mock in a block
     void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
     {
@@ -99,6 +100,7 @@
     };
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
     [service reportLocationToAnalytics:PDX fromProvider:standard];
+
     BOOL compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeContinuous;
     STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeContinuous for standardLocationProvider");
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
