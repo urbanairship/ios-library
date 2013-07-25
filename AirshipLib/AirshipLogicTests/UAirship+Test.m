@@ -14,7 +14,7 @@ static id mockAirship = nil;
     mockAirship = nil;
 }
 
-+(id)shared {
++ (id)shared {
     return mockAirship;
 }
 

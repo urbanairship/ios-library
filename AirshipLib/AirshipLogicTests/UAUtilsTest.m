@@ -28,97 +28,94 @@
 
 @implementation UAUtilsTest
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     
     // Set-up code here.
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     // Tear-down code here.
     
     [super tearDown];
 }
 
-- (void)testUrlEncoding
-{
+- (void)testUrlEncoding {
     /*
      * Should not encode simple strings
      */
     
-    NSString* simple = @"simple";
+    NSString *simple = @"simple";
     STAssertEqualObjects(simple, [UAUtils urlEncodedStringWithString:simple encoding:NSUTF8StringEncoding], @"simple test failed");
     
     /*
      * Should encode other characters
      */
     
-    NSString* space = @"d e f";
+    NSString *space = @"d e f";
     STAssertEqualObjects(@"d%20e%20f", [UAUtils urlEncodedStringWithString:space encoding:NSUTF8StringEncoding], @"space test failed");
     
-    NSString* bang = @"go!";
+    NSString *bang = @"go!";
     STAssertEqualObjects(@"go%21", [UAUtils urlEncodedStringWithString:bang encoding:NSUTF8StringEncoding], @"! test failed");
     
-    NSString* quote = @"\"yes\"";
+    NSString *quote = @"\"yes\"";
     STAssertEqualObjects(@"%22yes%22", [UAUtils urlEncodedStringWithString:quote encoding:NSUTF8StringEncoding], @"\" test failed");
     
-    NSString* pound = @"xy#z";
+    NSString *pound = @"xy#z";
     STAssertEqualObjects(@"xy%23z", [UAUtils urlEncodedStringWithString:pound encoding:NSUTF8StringEncoding], @"\" test failed");
     
-    NSString* dollar = @"$100";
+    NSString *dollar = @"$100";
     STAssertEqualObjects(@"%24100", [UAUtils urlEncodedStringWithString:dollar encoding:NSUTF8StringEncoding], @"\" test failed");
     
-    NSString* percent = @"ab%c";
+    NSString *percent = @"ab%c";
     STAssertEqualObjects(@"ab%25c", [UAUtils urlEncodedStringWithString:percent encoding:NSUTF8StringEncoding], @"% test failed");
     
-    NSString* ampersand = @"b&w";
+    NSString *ampersand = @"b&w";
     STAssertEqualObjects(@"b%26w", [UAUtils urlEncodedStringWithString:ampersand encoding:NSUTF8StringEncoding], @"& test failed");
     
-    NSString* apostrophe = @"I'd";
+    NSString *apostrophe = @"I'd";
     STAssertEqualObjects(@"I%27d", [UAUtils urlEncodedStringWithString:apostrophe encoding:NSUTF8StringEncoding], @"' test failed");
     
-    NSString* openParen = @"(qrs";
+    NSString *openParen = @"(qrs";
     STAssertEqualObjects(@"%28qrs", [UAUtils urlEncodedStringWithString:openParen encoding:NSUTF8StringEncoding], @"( test failed");
     
-    NSString* closeParen = @"tuv)";
+    NSString *closeParen = @"tuv)";
     STAssertEqualObjects(@"tuv%29", [UAUtils urlEncodedStringWithString:closeParen encoding:NSUTF8StringEncoding], @") test failed");
     
-    NSString* asterisk = @"sh*t";
+    NSString *asterisk = @"sh*t";
     STAssertEqualObjects(@"sh%2At", [UAUtils urlEncodedStringWithString:asterisk encoding:NSUTF8StringEncoding], @"* test failed");
     
-    NSString* plus = @"2+2";
+    NSString *plus = @"2+2";
     STAssertEqualObjects(@"2%2B2", [UAUtils urlEncodedStringWithString:plus encoding:NSUTF8StringEncoding], @"+ test failed");
     
-    NSString* comma = @"x,y";
+    NSString *comma = @"x,y";
     STAssertEqualObjects(@"x%2Cy", [UAUtils urlEncodedStringWithString:comma encoding:NSUTF8StringEncoding], @", test failed");
     
-    NSString* slash = @"x/y";
+    NSString *slash = @"x/y";
     STAssertEqualObjects(@"x%2Fy", [UAUtils urlEncodedStringWithString:slash encoding:NSUTF8StringEncoding], @"/ test failed");
     
-    NSString* colon = @"4:00";
+    NSString *colon = @"4:00";
     STAssertEqualObjects(@"4%3A00", [UAUtils urlEncodedStringWithString:colon encoding:NSUTF8StringEncoding], @": test failed");
     
-    NSString* semicolon = @"q;u";
+    NSString *semicolon = @"q;u";
     STAssertEqualObjects(@"q%3Bu", [UAUtils urlEncodedStringWithString:semicolon encoding:NSUTF8StringEncoding], @"; test failed");
     
-    NSString* equal = @"5=6";
+    NSString *equal = @"5=6";
     STAssertEqualObjects(@"5%3D6", [UAUtils urlEncodedStringWithString:equal encoding:NSUTF8StringEncoding], @"= test failed");
     
-    NSString* question = @"who?";
+    NSString *question = @"who?";
     STAssertEqualObjects(@"who%3F", [UAUtils urlEncodedStringWithString:question encoding:NSUTF8StringEncoding], @"? test failed");
     
-    NSString* at = @"a@b";
+    NSString *at = @"a@b";
     STAssertEqualObjects(@"a%40b", [UAUtils urlEncodedStringWithString:at encoding:NSUTF8StringEncoding], @"@ test failed");
     
-    NSString* leftBracket = @"[a";
+    NSString *leftBracket = @"[a";
     STAssertEqualObjects(@"%5Ba", [UAUtils urlEncodedStringWithString:leftBracket encoding:NSUTF8StringEncoding], @"[ test failed");
     
-    NSString* rightBracket = @"z]";
+    NSString *rightBracket = @"z]";
     STAssertEqualObjects(@"z%5D", [UAUtils urlEncodedStringWithString:rightBracket encoding:NSUTF8StringEncoding], @"] test failed");
     
-    NSString* underscore = @"a_tag";
+    NSString *underscore = @"a_tag";
     STAssertEqualObjects(@"a_tag", [UAUtils urlEncodedStringWithString:underscore encoding:NSUTF8StringEncoding], @"_ test failed");
 }
 

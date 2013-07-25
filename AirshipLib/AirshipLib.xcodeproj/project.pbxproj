@@ -559,6 +559,15 @@
 			name = Util;
 			sourceTree = "<group>";
 		};
+		1FF8221017A1D0B60092F812 /* JRSwizzle */ = {
+			isa = PBXGroup;
+			children = (
+				BBB87D59150574DE00971CEC /* JRSwizzle.h */,
+				BBB87D5A150574DE00971CEC /* JRSwizzle.m */,
+			);
+			name = JRSwizzle;
+			sourceTree = "<group>";
+		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -618,26 +627,25 @@
 			isa = PBXGroup;
 			children = (
 				CC85FD141773A0CB0074674F /* Analytics */,
-				495048AF173AD3CA00F8B5BE /* PushLib */,
+				7BB679661429357100B877DB /* Frameworks */,
 				4950489E1738590D00F8B5BE /* HTTP */,
-				494BF70F17628B1800B25E12 /* UAirship+Test.h */,
-				494BF71017628B1900B25E12 /* UAirship+Test.m */,
-				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
-				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
+				1FF8221017A1D0B60092F812 /* JRSwizzle */,
+				495048AF173AD3CA00F8B5BE /* PushLib */,
+				7BB6790D1429288D00B877DB /* Supporting Files */,
 				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
 				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
-				BBB87D59150574DE00971CEC /* JRSwizzle.h */,
-				BBB87D5A150574DE00971CEC /* JRSwizzle.m */,
+				1F675944175682DF00C062E0 /* UAConfigTest.h */,
+				1F675945175682DF00C062E0 /* UAConfigTest.m */,
+				494BF70F17628B1800B25E12 /* UAirship+Test.h */,
+				494BF71017628B1900B25E12 /* UAirship+Test.m */,
 				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
 				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
+				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
+				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
 				494BF701176277E000B25E12 /* UAUserTest.h */,
 				494BF702176277E000B25E12 /* UAUserTest.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
-				7BB679661429357100B877DB /* Frameworks */,
-				7BB6790D1429288D00B877DB /* Supporting Files */,
-				1F675944175682DF00C062E0 /* UAConfigTest.h */,
-				1F675945175682DF00C062E0 /* UAConfigTest.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";

@@ -123,7 +123,7 @@
     STAssertNil(regexError, nil);
 
     NSUInteger match = [regex numberOfMatchesInString:target options:0 range:NSMakeRange(0, target.length)];
-    return match >= 1 ? YES:NO;
+    return (match >= 1);
 }
 
 - (void)testStandardInitWithDelegate {
@@ -143,7 +143,7 @@
 }
 
 - (void)testCLLocationManagerSetter {
-    UABaseLocationProvider * provider = [[[UABaseLocationProvider alloc] init] autorelease];
+    UABaseLocationProvider *provider = [[[UABaseLocationProvider alloc] init] autorelease];
     CLLocationManager *locationManager = [[[CLLocationManager alloc] init] autorelease];
     provider.locationManager = locationManager;
 
@@ -154,7 +154,7 @@
 }
 
 - (void)testUABaseProviderCLLocationManagerGetSetMethods {
-    UABaseLocationProvider* base = [[[UABaseLocationProvider alloc] init] autorelease];
+    UABaseLocationProvider *base = [[[UABaseLocationProvider alloc] init] autorelease];
     base.distanceFilter = 5.0;
     base.desiredAccuracy = 5.0;
 
@@ -237,9 +237,9 @@
     [[[mockForStandard  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
                                                                                         from:self.testLocationSFO];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
-                                                      withLocationManager:standard.locationManager
-                                                        didUpdateLocation:self.testLocationPDX
-                                                             fromLocation:self.testLocationSFO];
+                                                       withLocationManager:standard.locationManager
+                                                         didUpdateLocation:self.testLocationPDX
+                                                              fromLocation:self.testLocationSFO];
 
     // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
     [standard.locationManager.delegate locationManager:standard.locationManager
