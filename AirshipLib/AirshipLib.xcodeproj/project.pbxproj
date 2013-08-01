@@ -1131,7 +1131,7 @@
 					"../Airship/**",
 				);
 				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
@@ -1164,7 +1164,7 @@
 					"../Airship/**",
 				);
 				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
@@ -1197,7 +1197,7 @@
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = (
 					"-DUADEBUG",
@@ -1230,7 +1230,7 @@
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
@@ -1296,7 +1296,7 @@
 				GCC_PREFIX_HEADER = AirshipLib_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = (
 					"-DUADEBUG",
@@ -1339,7 +1339,7 @@
 					"../Airship/**",
 				);
 				INFOPLIST_FILE = "AirshipLogicTests/AirshipLogicTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",

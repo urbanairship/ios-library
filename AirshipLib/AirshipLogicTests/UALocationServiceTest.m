@@ -697,7 +697,6 @@
     [[mockDelegate expect] locationService:_locationService didFailWithError:error];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didFailWithError:error];
     [mockDelegate verify];
-    STAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UADeprecatedLocationAuthorizationKey], @"deprecated key should return NO");
 }
 
 - (void)testUpdateToNewLocation {
@@ -762,32 +761,6 @@
 
     STAssertNil(locationServicesSizzleError, @"Error unsizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
     STAssertNil(authorizationStatusSwizzleError, @"Error unswizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
-}
-
-#pragma mark -
-#pragma mark Deprecated Location Methods
-
-
-- (void)testdeprecatedLocationAuthorization {
-    STAssertFalse([UALocationService useDeprecatedMethods], nil);
-
-    [self swizzleUALocationServiceClassMethod:@selector(useDeprecatedMethods) withMethod:@selector(returnYES)];
-    // The above swizzle should force code execution throgh the deprecated methods.
-    STAssertEquals([UALocationService locationServicesEnabled],
-                   [CLLocationManager locationServicesEnabled],
-                   @"This should call the class and instance method of CLLocationManager, should be equal");
-
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UADeprecatedLocationAuthorizationKey];
-    STAssertTrue([UALocationService locationServiceAuthorized], @"This should be YES, it's read out of NSUserDefaults");
-
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UADeprecatedLocationAuthorizationKey];
-    STAssertFalse([UALocationService locationServiceAuthorized], @"Thir should report NO, read out of NSUserDefaults");
-
-    // On first run of the app, this key should be nil, and we want a value of authorized for that since the user 
-    // has not been asked about location
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UADeprecatedLocationAuthorizationKey];
-    STAssertTrue([UALocationService locationServiceAuthorized], nil);
-    [self swizzleUALocationServiceClassMethod:@selector(returnYES) withMethod:@selector(useDeprecatedMethods)];
 }
 
 @end

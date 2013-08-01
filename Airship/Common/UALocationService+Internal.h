@@ -134,12 +134,6 @@
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider;
 
 /**
- * deprecated LOCATION SUPPORT
- * Use deprecated location calls
- */
-+ (BOOL)useDeprecatedMethods;
-
-/**
  * Standard location location update
  */
 - (void)standardLocationDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation;
