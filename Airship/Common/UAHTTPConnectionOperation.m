@@ -102,7 +102,6 @@
 
 - (void)cancelConnectionOnMainThread {
     [self.connection cancel];
-    [self finish];
 }
 
 - (void)cancel {
@@ -118,13 +117,22 @@
 - (void)startConnectionOnMainThread {
 
     UAHTTPConnectionSuccessBlock onConnectionSuccess = ^(UAHTTPRequest *request) {
-        self.successBlock(request);
-        [self finish];
+        if (self.successBlock) {
+            self.successBlock(request);
+        }
+
+        if (!self.isFinished) {
+            [self finish];
+        }
     };
 
     UAHTTPConnectionFailureBlock onConnectionFailure = ^(UAHTTPRequest *request) {
-        self.failureBlock(request);
-        [self finish];
+        if (self.failureBlock) {
+            self.failureBlock(request);
+        }
+        if (!self.isFinished) {
+            [self finish];
+        }
     };
 
     self.connection = [UAHTTPConnection connectionWithRequest:self.request successBlock:onConnectionSuccess failureBlock:onConnectionFailure];
@@ -134,8 +142,9 @@
 - (void)start {
     //synchronize change to the isExecuting KVO value
     @synchronized(self) {
-        //we may have already been cancelled at this point, in which case do nothing
+        //we may have already been cancelled at this point, in which case finish and retrun
         if (self.isCancelled) {
+            [self finish];
             return;
         }
         self.isExecuting = YES;
@@ -144,12 +153,16 @@
     [self performSelectorOnMainThread:@selector(startConnectionOnMainThread) withObject:nil waitUntilDone:NO];
 }
 
-- (void)finish {
+- (void)cleanup {
     self.connection = nil;
-    self.isExecuting = NO;
-    self.isFinished = YES;
     self.failureBlock = nil;
     self.successBlock = nil;
+}
+
+- (void)finish {
+    [self cleanup];
+    self.isExecuting = NO;
+    self.isFinished = YES;
 }
 
 - (void)dealloc {

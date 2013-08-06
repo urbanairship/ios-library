@@ -3,6 +3,7 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UAHTTPConnection+Test.h"
 #import "UAHTTPConnection+Test.h" 
+#import "UADelayOperation.h"
 
 @interface UAHTTPConnectionOperationTest()
 @property(nonatomic, retain) UAHTTPConnectionOperation *operation;
@@ -101,6 +102,28 @@
 
     STAssertEquals(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     STAssertEquals(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
+}
+
+- (void)testQueueCancel {
+    //create a serial queue
+    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
+    queue.maxConcurrentOperationCount = 1;
+
+    //add a long running delay in front of our http connection operation
+    UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:25];
+    [queue addOperation:delayOperation];
+    [queue addOperation:self.operation];
+
+    //give the queue a little time to spin things up
+    sleep(1);
+
+    [queue cancelAllOperations];
+
+    //give the queue a little time to wind things down
+    sleep(1);
+
+    //we should have an operation count of zero
+    STAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
 }
 
 - (void)testInFlightCancel {
