@@ -31,7 +31,7 @@
 
 - (void)cancel {
     [super cancel];
-    [self done];
+    dispatch_semaphore_signal(self.semaphore);
 }
 
 - (void)dealloc {
