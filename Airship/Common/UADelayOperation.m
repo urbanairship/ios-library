@@ -25,10 +25,6 @@
     return self;
 }
 
-- (void)done {
-    dispatch_semaphore_signal(self.semaphore);
-}
-
 - (void)cancel {
     [super cancel];
     dispatch_semaphore_signal(self.semaphore);
