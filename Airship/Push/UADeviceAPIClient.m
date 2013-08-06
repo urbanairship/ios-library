@@ -101,12 +101,20 @@
              //clear the pending cache,  update last successful cache
              self.pendingRegistration = nil;
              self.lastSuccessfulRegistration = registrationData;
-             successBlock();
+             if (successBlock) {
+                 successBlock();
+             } else {
+                 UA_LERR(@"missing successBlock");
+             }
          }
          onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
              //clear the pending cache
              self.pendingRegistration = nil;
-             failureBlock(request);
+             if (failureBlock) {
+                 failureBlock(request);
+             } else {
+                 UA_LERR(@"missing failureBlock");
+             }
          }];
     } else {
         UA_LDEBUG(@"Ignoring duplicate request.");

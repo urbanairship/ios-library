@@ -66,21 +66,46 @@
 
     //Determines whether a retry is desireable and does so accordingly. Otherwise, fail.
     void (^retryIfNecessary)(UAHTTPRequest *request) = ^(UAHTTPRequest *request) {
-        if (retryWhereBlock(request) || request.error) {
+        BOOL shouldRetry = NO;
+        if (retryWhereBlock) {
+            if (retryWhereBlock(request)) {
+                shouldRetry = YES;
+            }
+        } else {
+            UA_LERR(@"missing retryWhereBlock");
+        }
+
+        if (request.error) {
+            shouldRetry = YES;
+        }
+
+        if (shouldRetry) {
             retry(request);
         } else {
-            failureBlock(request, delay);
+            if (failureBlock) {
+                failureBlock(request, delay);
+            } else {
+                UA_LERR(@"missing successBlock");
+            }
         }
     };
 
     UAHTTPConnectionSuccessBlock onConnectionSuccess = ^(UAHTTPRequest *request) {
-        //Does this connection success meet our specified requirements?
-        if (succeedWhereBlock(request)) {
-            //if so, we're done
-            successBlock(request, delay);
+        if (succeedWhereBlock) {
+            //Does this connection success meet our specified requirements?
+            if (succeedWhereBlock(request)) {
+                //if so, we're done
+                if (successBlock ) {
+                    successBlock(request, delay);
+                } else {
+                    UA_LERR(@"missing successBlock");
+                }
+            } else {
+                //otherwise, retry if applicable
+                retryIfNecessary(request);
+            }
         } else {
-            //otherwise, retry if applicable
-            retryIfNecessary(request);
+            UA_LERR(@"missing succeedWhereBlock");
         }
     };
 
