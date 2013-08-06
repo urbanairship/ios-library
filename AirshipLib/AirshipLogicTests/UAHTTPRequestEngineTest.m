@@ -120,7 +120,7 @@
          tries++;
          return result;
      }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-         STFail(@"this hould not happen");
+         STFail(@"this should not happen");
          [self done];
      }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          STAssertEquals(lastDelay, self.engine.maxDelayIntervalInSeconds, @"at this point, we should have clipped at the max delay interval");
