@@ -1,4 +1,9 @@
 -------------------------
+2.0.1 - August 7, 2013
+-------------------------
+- Fixed a bug in UAHTTPConnectionOperation causing intermittent crashes
+  during push registration.
+-------------------------
 2.0.0 - July 23, 2013
 -------------------------
 - Replaced the NSDictionary passed to takeOff with a UAConfig model object. More configuration
