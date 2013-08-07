@@ -123,9 +123,17 @@
      } retryWhere:^(UAHTTPRequest *request){
         return NO;
      } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-        successBlock();
+         if (successBlock) {
+             successBlock();
+         } else {
+             UA_LERR(@"missing successBlock");
+         }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
-        failureBlock(request);
+         if (failureBlock) {
+            failureBlock(request);
+         } else {
+             UA_LERR(@"missing failureBlock");
+         }
      }];
 }
 
@@ -155,9 +163,17 @@
 
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
-          successBlock(newMessages, unread);
+          if (successBlock) {
+             successBlock(newMessages, unread);
+          } else {
+              UA_LERR(@"missing successBlock");
+          }
       } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
-          failureBlock(request);
+          if (failureBlock) {
+              failureBlock(request);
+          } else {
+              UA_LERR(@"missing failureBlock");
+          }
       }];
 }
 
@@ -174,9 +190,17 @@
      } retryWhere:^(UAHTTPRequest *request){
          return NO;
      } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         successBlock();
+         if (successBlock) {
+             successBlock();
+         } else {
+             UA_LERR(@"missing successBlock");
+         }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         failureBlock(request);
+         if (failureBlock) {
+             failureBlock(request);
+         } else {
+             UA_LERR(@"missing failureBlock");
+         }
      }];
 }
 
@@ -193,9 +217,17 @@
      } retryWhere:^(UAHTTPRequest *request){
          return NO;
      } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         successBlock();
+         if (successBlock) {
+            successBlock();
+         } else {
+             UA_LERR(@"missing successBlock");
+         }
      } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay){
-         failureBlock(request);
+         if (failureBlock) {
+             failureBlock(request);
+         } else {
+             UA_LERR(@"missing failureBlock");
+         }
      }];
 }
 

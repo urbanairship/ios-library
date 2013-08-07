@@ -116,10 +116,17 @@
 
         UAUserData *data = [UAUserData dataWithUsername:username password:password url:url];
 
-        successBlock(data, deviceToken);
-        
+        if (successBlock) {
+            successBlock(data, deviceToken);
+        } else {
+            UA_LERR(@"missing successBlock");
+        }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        failureBlock(request);
+        if (failureBlock) {
+            failureBlock(request);
+        } else {
+            UA_LERR(@"missing failureBlock");
+        }
     }];
 }
 
@@ -155,7 +162,11 @@
         NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
         NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
 
-        successBlock(successfullyUploadedDeviceToken);
+        if (successBlock) {
+            successBlock(successfullyUploadedDeviceToken);
+        } else {
+            UA_LERR(@"missing successBlock");
+        }
         
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         if (request.response) {
@@ -165,7 +176,11 @@
         } else {
             UA_LDEBUG(@"Update request failed");
         }
-        failureBlock(request);
+        if (failureBlock) {
+            failureBlock(request);
+        } else {
+            UA_LERR(@"missing failureBlock");
+        }
     }];
 }
 
