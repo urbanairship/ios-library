@@ -63,8 +63,12 @@
 }
 
 - (void)tearDown {
-    RELEASE(_locationService);
-    RELEASE(_timeout);
+
+    [_locationService release];
+    _locationService = nil;
+    
+    [_timeout release];
+    _timeout = nil;
 }
 
 #pragma mark -
@@ -92,7 +96,8 @@
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
 
     // Setup object to get parsed out of method call
-    __block UALocationEvent *event = nil;
+    __block __unsafe_unretained UALocationEvent *event = nil;
+
     // Capture the args passed to the mock in a block
     void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
     {
@@ -141,7 +146,9 @@
 - (void)testSendLocationWithLocationManger {
     _locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
-    __block UALocationEvent *event = nil;
+    
+    __block __unsafe_unretained UALocationEvent *event = nil;
+
     // Capture the args passed to the mock in a block
     void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
     {

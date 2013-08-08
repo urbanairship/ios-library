@@ -125,20 +125,6 @@ return g_shared##CLASSNAME;                                                     
 {                                                                                           \
 return self;                                                                                \
 }                                                                                           \
-\
-- (id)retain                                                                                \
-{                                                                                           \
-return self;                                                                                \
-}                                                                                           \
-\
-- (oneway void)release                                                                      \
-{                                                                                           \
-}                                                                                           \
-\
-- (id)autorelease                                                                           \
-{                                                                                           \
-return self;                                                                                \
-}
 
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_1

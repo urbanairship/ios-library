@@ -65,7 +65,10 @@
 }
 
 - (void)tearDown {
-    RELEASE(_location);
+
+    [_location release];
+    _location = nil;
+
 }
 
 - (void)testInitWithLocationManager {
