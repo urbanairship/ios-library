@@ -168,6 +168,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
     // Set up analytics
     _sharedAirship.analytics = [[[UAAnalytics alloc] initWithConfig:_sharedAirship.config] autorelease];
+    [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
     /*
      * Handle Debug Options

@@ -444,7 +444,7 @@
     _locationService.dateOfLastLocation = [NSDate date];
     _locationService.automaticLocationOnForegroundEnabled = YES;
     [[_mockLocationService reject] reportCurrentLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
 }
 
 // Only test that that the method call is made to start the service
@@ -453,7 +453,7 @@
     _locationService.dateOfLastLocation = [NSDate date];
     _locationService.automaticLocationOnForegroundEnabled = YES;  
     [[_mockLocationService expect] reportCurrentLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
     [_mockLocationService verify]; 
 }
 
@@ -550,7 +550,7 @@
     // Setup a date over 120.0 seconds ago
     NSDate *dateOver120 = [[[NSDate alloc] initWithTimeInterval:-121.0 sinceDate:[NSDate date]] autorelease];
     _locationService.dateOfLastLocation = dateOver120;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
     [_mockLocationService verify];
 }
 
@@ -559,10 +559,10 @@
     [[_mockLocationService reject] reportCurrentLocation];
 
     // If there is another call to acquireSingleLocaitonAndUpload, this will fail
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
     _locationService.dateOfLastLocation = [NSDate date];
     [[_mockLocationService reject] reportCurrentLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]]; 
+    [_locationService appWillEnterForeground];
 
     UALocationService *localService = [[[UALocationService alloc] initWithPurpose:@"test"] autorelease];
     id localMockService = [OCMockObject partialMockForObject:localService];
@@ -571,7 +571,7 @@
     // setup a date for the current time
     localService.dateOfLastLocation = [NSDate date];
     [[localMockService reject] reportCurrentLocation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
 }
 
 - (void)testShouldPerformAutoLocationUpdate {
@@ -604,7 +604,7 @@
 
     [[[_mockLocationService expect] andForwardToRealObject] stopReportingStandardLocation];
     [[[_mockLocationService expect] andForwardToRealObject] stopReportingSignificantLocationChanges];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appDidEnterBackground];
     [_mockLocationService verify];
 }
 
@@ -613,7 +613,7 @@
     [[_mockLocationService reject] stopReportingStandardLocation];
     [[_mockLocationService reject] stopReportingSignificantLocationChanges];
     [[[_mockLocationService expect] andForwardToRealObject] appDidEnterBackground];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appDidEnterBackground];
     [_mockLocationService verify];
     STAssertFalse([UALocationService boolForLocationServiceKey:@"standardLocationServiceStatusRestart"], nil);
     STAssertFalse([UALocationService boolForLocationServiceKey:@"significantChangeServiceStatusRestart"], nil);
@@ -625,7 +625,7 @@
     [[_mockLocationService reject] startReportingStandardLocation];
     [[_mockLocationService reject] startReportingSignificantLocationChanges];
     [[[_mockLocationService expect] andForwardToRealObject] appWillEnterForeground];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
     [_mockLocationService verify];
     
 }
@@ -640,12 +640,12 @@
     // Setup booleans as if location services were started previously
     _locationService.shouldStartReportingStandardLocation = YES;
     _locationService.shouldStartReportingSignificantChange = YES;
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appDidEnterBackground];
 
     // Setup proper expectations for app foreground
     [[[_mockLocationService expect] andForwardToRealObject] startReportingStandardLocation];
     [[[_mockLocationService expect] andForwardToRealObject] startReportingSignificantLocationChanges];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];;
     [_mockLocationService verify];
 
     // Check that distanceFilter and desiredAccuracy match whatever is in NSUserDefaults at this point
@@ -664,13 +664,13 @@
     _locationService.significantChangeProvider = [UASignificantChangeProvider providerWithDelegate:_locationService];
     _locationService.significantChangeProvider.serviceStatus = UALocationProviderNotUpdating;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appDidEnterBackground];
     STAssertFalse(_locationService.shouldStartReportingStandardLocation , nil);
     STAssertFalse(_locationService.shouldStartReportingSignificantChange , nil);
 
     [[_mockLocationService reject] startReportingStandardLocation];
     [[_mockLocationService reject] startReportingSignificantLocationChanges];
-    [[NSNotificationCenter defaultCenter] postNotificationName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    [_locationService appWillEnterForeground];
 
     [_mockLocationService verify];
 }

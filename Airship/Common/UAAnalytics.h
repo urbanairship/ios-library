@@ -46,6 +46,12 @@
 - (id)initWithConfig:(UAConfig *)airshipConfig;
 
 /**
+ * Delays the next analytics send
+ * @param time The number of seconds to delay the send opertation.
+ */
+- (void)delayNextSend:(NSTimeInterval)time;
+
+/**
  * Triggers an analytics event.
  * @param event The event to be triggered
  */
