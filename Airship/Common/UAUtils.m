@@ -130,10 +130,13 @@
      * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
      */
 
-    CFStringRef result = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, NULL, (CFStringRef)@"!*'\"();:@&=+$,/?%#[] ", CFStringConvertNSStringEncodingToEncoding(encoding));
+    CFStringRef result = CFURLCreateStringByAddingPercentEscapes(NULL,
+                                                                 (CFStringRef)string,
+                                                                 NULL, (CFStringRef)@"!*'\"();:@&=+$,/?%#[] ",
+                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
     
     /* autoreleased string */
-    NSString* value = [NSString stringWithString:(NSString*)CFBridgingRelease(result)];
+    NSString *value = [NSString stringWithString:(NSString*)CFBridgingRelease(result)];
     
     return value;
 }
