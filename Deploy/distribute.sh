@@ -35,9 +35,9 @@ VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT
 rm -rf $OUTPUT_PATH
 mkdir -p $OUTPUT_PATH
 
+./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../InboxSample $OUTPUT_PATH
 ./$SCRIPT_DIRECTORY/package_sample.sh $SCRIPT_DIRECTORY/../PushSample $OUTPUT_PATH
-./$SCRIPT_DIRECTORY/package_airshiplib.sh $OUTPUT_PATH
 
 # Rename InboxSample to RichPushSample
 mv "${OUTPUT_PATH}/InboxSample" "${OUTPUT_PATH}/RichPushSample"
