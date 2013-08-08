@@ -38,7 +38,6 @@ extern UAPushSettingsKey *const UAPushBadgeSettingsKey;
 extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
 extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
 extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
-extern UAPushSettingsKey *const UAPushDeviceTokenDeprecatedSettingsKey;
 extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
 extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 

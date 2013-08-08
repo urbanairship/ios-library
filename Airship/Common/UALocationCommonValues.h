@@ -51,7 +51,6 @@ extern UALocationServiceNSDefaultsKey * const UAStandardLocationDistanceFilterKe
 extern UALocationServiceNSDefaultsKey * const UAStandardLocationDesiredAccuracyKey;
 extern UALocationServiceNSDefaultsKey * const UASingleLocationDesiredAccuracyKey;
 extern UALocationServiceNSDefaultsKey * const UASingleLocationTimeoutKey;
-extern UALocationServiceNSDefaultsKey * const UADeprecatedLocationAuthorizationKey;
 
 typedef NSString UALocationServiceErrorDomain;
 extern UALocationServiceErrorDomain * const UALocationServiceTimeoutError;

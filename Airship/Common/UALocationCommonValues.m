@@ -40,7 +40,6 @@ UALocationServiceNSDefaultsKey *const UAStandardLocationDistanceFilterKey = @"UA
 UALocationServiceNSDefaultsKey *const UAStandardLocationDesiredAccuracyKey = @"UALocationServiceStandardLocationDesiredAccuracy";
 UALocationServiceNSDefaultsKey *const UASingleLocationDesiredAccuracyKey = @"UALocationServiceSingleLocationDesiredAccuracy";
 UALocationServiceNSDefaultsKey *const UASingleLocationTimeoutKey = @"UALocationServiceSingleLocationTimeout";
-UALocationServiceNSDefaultsKey *const UADeprecatedLocationAuthorizationKey = @"UALocationServiceUseDeprecatedAuthorizationStatus";
 
 #pragma mark -
 #pragma mark UALocationServiceErrors

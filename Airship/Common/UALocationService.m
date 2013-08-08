@@ -238,14 +238,13 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 
 - (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
-     withLocationManager:(CLLocationManager*)locationManager 
-        didFailWithError:(NSError*)error {
+     withLocationManager:(CLLocationManager *)locationManager
+        didFailWithError:(NSError *)error {
+
     UALOG(@"Location service did fail with error %@", error.description);
+
     // There is different logic for the single location service, since it could be a background
     // task
-    if (error.code == kCLErrorDenied) {
-        [UALocationService setBool:NO forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
-    }
     if (locationProvider == self.singleLocationProvider) {
         [self stopSingleLocationWithError:error];
         return;
@@ -636,32 +635,16 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 + (BOOL)locationServiceAuthorized {
-    if ([UALocationService useDeprecatedMethods]){
-        UALOG(@"Using deprecated authorization methods");
-        NSNumber *deprecatedAuthorization = [UALocationService objectForLocationServiceKey:UADeprecatedLocationAuthorizationKey];
-        // If this is nil, that means an intial value has never been set. Setting the default value of YES allows
-        // location services to start on iOS < 4.2 without setting the force prompt flag to YES.
-        if (!deprecatedAuthorization) {
-            [UALocationService setBool:YES forLocationServiceKey:UADeprecatedLocationAuthorizationKey];
+    switch ([CLLocationManager authorizationStatus]) {
+        case kCLAuthorizationStatusNotDetermined:
+        case kCLAuthorizationStatusAuthorized:
             return YES;
-        }
-        else {
-            return [deprecatedAuthorization boolValue];
-        }
-    }
-    else {
-        CLAuthorizationStatus authorization = [CLLocationManager authorizationStatus];
-        switch (authorization) {
-            case kCLAuthorizationStatusNotDetermined:
-            case kCLAuthorizationStatusAuthorized:
-                return YES;
-            case kCLAuthorizationStatusDenied:
-            case kCLAuthorizationStatusRestricted:
-                return NO;
-            default:
-                UALOG(@"Unexpected value for authorization");
-                return NO;
-        }
+        case kCLAuthorizationStatusDenied:
+        case kCLAuthorizationStatusRestricted:
+            return NO;
+        default:
+            UALOG(@"Unexpected value for authorization");
+            return NO;
     }
 }
 
@@ -672,24 +655,10 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     return !(enabled && authorized);
 }
 
-+ (BOOL)useDeprecatedMethods {
-    return ![CLLocationManager respondsToSelector:@selector(authorizationStatus)];
-}
-
-// This method uses a known deprecated method, should be removed in the future. 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 + (BOOL)locationServicesEnabled {
-    if ([UALocationService useDeprecatedMethods]) {
-        // deprecated method call, calling CLLocationManager instance for authorization
-        CLLocationManager *deprecatedAuthorization = [[[CLLocationManager alloc] init] autorelease];
-        BOOL enabled = [deprecatedAuthorization locationServicesEnabled];
-        return enabled;
-    }
-    else {
-        return [CLLocationManager locationServicesEnabled];
-    }
+    // TODO: remove wrapper?
+    return [CLLocationManager locationServicesEnabled];
 }
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
 
 - (NSError *)locationTimeoutError {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithObject:@"The location service timed out before receiving a location that meets accuracy requirements" forKey:NSLocalizedDescriptionKey];
