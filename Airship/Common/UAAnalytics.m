@@ -111,17 +111,19 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         self.queue = [[[NSOperationQueue alloc] init] autorelease];
         self.queue.maxConcurrentOperationCount = 1;
-
-        //call send after waiting for the first batch upload interval
-        UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:UAAnalyticsFirstBatchUploadInterval];
-        delayOperation.completionBlock = ^{
-            [self send];
-        };
-
-        [self.queue addOperation:delayOperation];
     }
     
     return self;
+}
+
+- (void) delayNextSend:(NSTimeInterval)time {
+    //call send after waiting for the first batch upload interval
+    UADelayOperation *delayOperation = [UADelayOperation operationWithDelayInSeconds:UAAnalyticsFirstBatchUploadInterval];
+    delayOperation.completionBlock = ^{
+        [self send];
+    };
+
+    [self.queue addOperation:delayOperation];
 }
 
 - (void)initSession {

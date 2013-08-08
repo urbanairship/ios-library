@@ -46,10 +46,6 @@
 // minimum amount of time between background location events
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
 
-// Offset time for use when the app init. This is the time between object
-// creation and first upload. Subsequent uploads are defined by
-// X_UA_MIN_BATCH_INTERVAL
-#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
 #define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
 #define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
