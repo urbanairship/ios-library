@@ -82,8 +82,6 @@ static Class _uiClass;
 
 + (void)quitInbox {
     [[[UAInbox shared] uiClass] quitInbox];
-    //swap out the inbox cache if it's currently in place
-    //(the value of shouldUseInboxCache may have changed, but we'll want to swap it out regardles
 }
 
 + (void)land {
@@ -122,10 +120,6 @@ static Class _uiClass;
 - (id)init {
     self = [super init];
     if (self) {
-        // create the DB and clear out legacy info
-        // prior to creating the new caches directory
-        [UAInboxDBManager shared];
-        
         self.messageList = [UAInboxMessageList shared];
         
         [self.messageList retrieveMessageList];
