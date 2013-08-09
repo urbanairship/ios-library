@@ -27,7 +27,7 @@
 #import "UA_FMDatabase.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 
 @implementation UAInboxDBManager

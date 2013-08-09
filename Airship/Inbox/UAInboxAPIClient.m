@@ -8,7 +8,7 @@
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 @interface UAInboxAPIClient()
 
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;

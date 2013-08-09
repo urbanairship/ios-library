@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
-@interface NSJSONSerialization (UAirship)
+@interface NSJSONSerialization (UAAdditions)
 + (NSString *)stringWithObject:(id)jsonObject;
 + (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt;
-+ (id) objectWithString:(NSString *)jsonString;
++ (id)objectWithString:(NSString *)jsonString;
 @end

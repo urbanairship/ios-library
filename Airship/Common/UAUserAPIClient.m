@@ -5,7 +5,7 @@
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
 #import "UAPush.h"
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 @interface UAUserAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;

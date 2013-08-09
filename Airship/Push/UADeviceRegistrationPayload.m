@@ -1,6 +1,6 @@
 
 #import "UADeviceRegistrationPayload.h"
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 UAPushJSONKey UAPushMultipleTagsJSONKey = @"tags";
 UAPushJSONKey UAPushSingleTagJSONKey = @"tag";

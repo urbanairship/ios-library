@@ -40,7 +40,7 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 #import "UAInboxUtils.h"
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 

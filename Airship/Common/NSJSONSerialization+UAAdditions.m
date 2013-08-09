@@ -1,6 +1,6 @@
-#import "NSJSONSerialization+UAirship.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
-@implementation NSJSONSerialization (UAirship)
+@implementation NSJSONSerialization (UAAdditions)
 
 
 + (NSString *)stringWithObject:(id)jsonObject {
