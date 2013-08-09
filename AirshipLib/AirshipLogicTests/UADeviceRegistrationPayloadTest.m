@@ -10,15 +10,15 @@
 #import "UA_SBJSON.h"
 
 @interface UADeviceRegistrationPayloadTest()
-@property(nonatomic, retain) UADeviceRegistrationPayload *payload;
-@property(nonatomic, retain) UADeviceRegistrationPayload *emptyPayload;
+@property(nonatomic, strong) UADeviceRegistrationPayload *payload;
+@property(nonatomic, strong) UADeviceRegistrationPayload *emptyPayload;
 @property(nonatomic, copy) NSString *alias;
-@property(nonatomic, retain) NSArray *tags;
-@property(nonatomic, retain) NSMutableDictionary *quietTime;
-@property(nonatomic, retain) NSDate *startDate;
-@property(nonatomic, retain) NSDate *endDate;
+@property(nonatomic, strong) NSArray *tags;
+@property(nonatomic, strong) NSMutableDictionary *quietTime;
+@property(nonatomic, strong) NSDate *startDate;
+@property(nonatomic, strong) NSDate *endDate;
 @property(nonatomic, copy) NSString *timeZone;
-@property(nonatomic, retain) NSNumber *badge;
+@property(nonatomic, strong) NSNumber *badge;
 @end
 
 @implementation UADeviceRegistrationPayloadTest
@@ -27,7 +27,7 @@
 //or at least separating the building of the dictionary from setting UAPush property state.
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
    
-    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
                          [cal components:NSHourCalendarUnit fromDate:startDate].hour,
                          [cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
@@ -44,7 +44,7 @@
 
 - (NSDate *)dateWithHour:(NSInteger)hour withMinute:(NSInteger)minute {
     
-    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
 
     components.hour = hour;
@@ -116,16 +116,16 @@
 }
 
 - (void)testAsJSONString {
-    UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
+    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
     [self verifyDictionary:[parser objectWithString:[self.payload asJSONString]]];
     [self verifyEmptyDictionary:[parser objectWithString:[self.emptyPayload asJSONString]]];
 }
 
 - (void)testAsJSONData {
-    UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-    NSString *jsonString = [[[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+    NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
     [self verifyDictionary:[parser objectWithString:jsonString]];
-    NSString *emptyJSONString = [[[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    NSString *emptyJSONString = [[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding];
     [self verifyEmptyDictionary:[parser objectWithString:emptyJSONString]];
 }
 

@@ -7,10 +7,10 @@
 #import <OCMock/OCMock.h>
 
 @interface UAHTTPRequestEngineTest()
-@property(nonatomic, retain) UAHTTPRequestEngine *engine;
-@property(nonatomic, retain) UAHTTPRequest *request;
-@property(nonatomic, retain) NSOperationQueue *queue;
-@property(nonatomic, retain) id mockQueue;
+@property(nonatomic, strong) UAHTTPRequestEngine *engine;
+@property(nonatomic, strong) UAHTTPRequest *request;
+@property(nonatomic, strong) NSOperationQueue *queue;
+@property(nonatomic, strong) id mockQueue;
 @property(nonatomic, assign) dispatch_semaphore_t semaphore;
 @end
 
@@ -48,11 +48,11 @@
 
     [UAHTTPConnection swizzle];
 
-    self.queue = [[[NSOperationQueue alloc] init] autorelease];
+    self.queue = [[NSOperationQueue alloc] init];
     self.mockQueue = [OCMockObject partialMockForObject:self.queue];
     [[[self.mockQueue stub] andCall:@selector(fakeAddOperation:) onObject:self] addOperation:[OCMArg any]];
 
-    self.engine = [[[UAHTTPRequestEngine alloc] initWithQueue:self.mockQueue] autorelease];
+    self.engine = [[UAHTTPRequestEngine alloc] initWithQueue:self.mockQueue];
     self.request = [UAHTTPRequest requestWithURLString:@"http://jkhadfskhjladfsjklhdfas.com"];
 
 }
