@@ -160,29 +160,4 @@ SINGLETON_INTERFACE(UAInbox);
  */
 @property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
 
-///---------------------------------------------------------------------------------------
-/// @name URL Caches
-///---------------------------------------------------------------------------------------
-
-/**
- * Determines whether the contents of Rich Push messges should be cached
- * using the custom Inbox-specific URL cache. If set to YES, message contents will be
- * aggressively persisted to disk and available for offline viewing.
- *
- * Defaults to YES.
- */
-@property(nonatomic, assign) BOOL shouldUseInboxCache;
-
-/**
- * The default URL Cache ([NSURLCache sharedURLCache]).
- * This is saved prior to switching the URL Cache to the inboxCache.
- */
-@property(retain) NSURLCache *clientCache;
-
-/**
- * An Inbox-specific URL cache used to cache the contents of 
- * Rich Push messages for offline viewing.
- */
-@property(retain) NSURLCache *inboxCache;
-
 @end

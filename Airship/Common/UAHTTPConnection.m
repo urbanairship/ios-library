@@ -27,7 +27,6 @@
 #import "UAHTTPRequest+Internal.h"
 
 #import "UAGlobal.h"
-#import "UAInboxURLCache.h"
 #import "UA_Base64.h"
 #import <zlib.h>
 
@@ -223,15 +222,6 @@
     self.successBlock = nil;
     
     [self release];
-}
-
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection
-                  willCacheResponse:(NSCachedURLResponse *)cachedResponse {
-    if ([[NSURLCache sharedURLCache] isKindOfClass:[UAInboxURLCache class]]) {
-        return nil;
-    } else {
-        return cachedResponse;
-    }
 }
 
 #pragma mark GZIP compression
