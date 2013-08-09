@@ -85,13 +85,13 @@
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, retain) NSString *viewingMessageID;
+@property (nonatomic, strong) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,
  * as an object conforming to the UAInboxPushHandlerDelegate protocol.
  * NOTE: The delegate is not retained.
  */
-@property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate;
+@property (nonatomic, weak) id <UAInboxPushHandlerDelegate> delegate;
 
 @end

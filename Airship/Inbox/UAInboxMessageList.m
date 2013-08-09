@@ -43,9 +43,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadSavedMessages;
 
-@property(nonatomic, retain) UAInboxAPIClient *client;
+@property(nonatomic, strong) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
-@property(nonatomic, retain) id userCreatedObserver;
+@property(nonatomic, strong) id userCreatedObserver;
 
 @end
 
@@ -57,12 +57,9 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
     self.messages = nil;
-    self.client = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-    self.userCreatedObserver = nil;
 
-    [super dealloc];
 }
 
 + (void)land {
@@ -70,7 +67,6 @@ static UAInboxMessageList *_messageList = nil;
         if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
             _messageList.client = nil;
         }
-        [_messageList release];
         _messageList = nil;
     }
 }
@@ -83,7 +79,7 @@ static UAInboxMessageList *_messageList = nil;
             _messageList.unreadCount = -1;
             _messageList.isBatchUpdating = NO;
 
-            _messageList.client = [[[UAInboxAPIClient alloc] init] autorelease];
+            _messageList.client = [[UAInboxAPIClient alloc] init];
         }
     }
     
@@ -99,7 +95,7 @@ static UAInboxMessageList *_messageList = nil;
         msg.inbox = self;
     }
 
-    self.messages = [[[NSMutableArray alloc] initWithArray:savedMessages] autorelease];
+    self.messages = [[NSMutableArray alloc] initWithArray:savedMessages];
     UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
 }
 
@@ -230,13 +226,13 @@ static UAInboxMessageList *_messageList = nil;
 - (void)setMessages:(NSMutableArray *)messages {
     // Sort the messages by date
     if (messages.count > 0) {
-        NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:NO] autorelease];
+        NSSortDescriptor* dateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent"
+                                                                        ascending:NO];
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [messages sortUsingDescriptors:sortDescriptors];
     }
 
-    _messages = [messages retain];
+    _messages = messages;
 }
 
 

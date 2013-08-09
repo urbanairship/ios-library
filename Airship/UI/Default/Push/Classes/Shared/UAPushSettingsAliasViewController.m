@@ -49,14 +49,6 @@ enum {
 
 @implementation UAPushSettingsAliasViewController
 
-- (void)dealloc {
-    self.tableView = nil;
-    self.aliasCell = nil;
-    self.textCell = nil;
-    self.textLabel = nil;
-    self.aliasField = nil;
-    [super dealloc];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];

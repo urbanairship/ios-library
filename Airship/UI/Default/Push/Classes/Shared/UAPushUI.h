@@ -34,9 +34,9 @@
 
 @interface UAPushUI : NSObject<UAPushUIProtocol>
 
-@property (nonatomic, retain) UIViewController *apnsSettingsViewController;
-@property (nonatomic, retain) UIViewController *tokenSettingsViewController;
-@property (nonatomic, retain) NSBundle *localizationBundle;
+@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
+@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
+@property (nonatomic, strong) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAPushUI)
 

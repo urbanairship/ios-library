@@ -40,7 +40,6 @@
                                           cancelButtonTitle: @"OK"
                                           otherButtonTitles: nil];
 	[alert show];
-	[alert release];
 }
 
 - (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict {
@@ -59,7 +58,6 @@
                                           cancelButtonTitle: @"OK"
                                           otherButtonTitles: nil];
 	[alert show];
-	[alert release];
 }
 
 - (void)playNotificationSound:(NSString *)sound {
@@ -78,7 +76,7 @@
                                                          ofType:[sound pathExtension]];
         if (path) {
             UALOG(@"Received a foreground alert with a sound: %@", sound);
-            AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:path], &soundID);
+            AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:path], &soundID);
             AudioServicesPlayAlertSound(soundID);
         } else {
             UALOG(@"Received an alert with a sound that cannot be found the application bundle: %@", sound);

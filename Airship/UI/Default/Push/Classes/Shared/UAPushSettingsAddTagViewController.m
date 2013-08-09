@@ -41,15 +41,6 @@ enum TagSections {
 
 @implementation UAPushSettingsAddTagViewController
 
-- (void)dealloc {
-    self.cancelButton = nil;
-    self.saveButton = nil;
-    self.tableView = nil;
-    self.tagCell = nil;
-    self.tagField = nil;
-    self.presetTags = nil;
-    [super dealloc];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -65,12 +56,12 @@ enum TagSections {
     
     //Create an add button in the nav bar
     if (self.cancelButton == nil) {
-        self.cancelButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)] autorelease];
+        self.cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
     }
     self.navigationItem.leftBarButtonItem = self.cancelButton;
     
     if (self.saveButton == nil) {
-        self.saveButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)] autorelease];
+        self.saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(save:)];
     }
     self.navigationItem.rightBarButtonItem = self.saveButton;
 }
@@ -159,7 +150,7 @@ enum TagSections {
             
             cell = [self.tableView dequeueReusableCellWithIdentifier:CellIdentifier];
             if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             }
             
             // Configure the cell...

@@ -30,15 +30,14 @@ static NSString *defaultUserAgentString;
 @implementation UAHTTPRequest
 
 + (UAHTTPRequest *)requestWithURL:(NSURL *)url {
-    return [[[UAHTTPRequest alloc] initWithURL:url] autorelease];
+    return [[UAHTTPRequest alloc] initWithURL:url];
 }
 
 + (UAHTTPRequest *)requestWithURLString:(NSString *)urlString {
-    return [[[UAHTTPRequest alloc] initWithURLString:urlString] autorelease];
+    return [[UAHTTPRequest alloc] initWithURLString:urlString];
 }
 
 + (void)setDefaultUserAgentString:(NSString *)userAgent {
-    [defaultUserAgentString autorelease];
     defaultUserAgentString = [userAgent copy];
 }
 
@@ -46,7 +45,7 @@ static NSString *defaultUserAgentString;
     self = [super init];
     if (self) {
         self.url = url;
-        self.headers = [[[NSMutableDictionary alloc] init] autorelease];
+        self.headers = [[NSMutableDictionary alloc] init];
 
         // Set Defaults
         if (defaultUserAgentString) {
@@ -63,20 +62,6 @@ static NSString *defaultUserAgentString;
     return [self initWithURL:[NSURL URLWithString:urlString]];
 }
 
-- (void) dealloc {
-    self.url = nil;
-    self.HTTPMethod = nil;
-    self.headers = nil;
-    self.username = nil;
-    self.password = nil;
-    self.body = nil;
-    self.userInfo = nil;
-    self.responseData = nil;
-    self.response = nil;
-    self.error = nil;
-
-    [super dealloc];
-}
 
 - (void)addRequestHeader:(NSString *)header value:(NSString *)value {
     [self.headers setValue:value forKey:header];
@@ -91,7 +76,7 @@ static NSString *defaultUserAgentString;
 
 - (NSString *)responseString {
     //This value should not be cached because the responseData is mutable.
-    return [[[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding] autorelease];
+    return [[NSString alloc] initWithData:self.responseData encoding:NSUTF8StringEncoding];
 }
 
 @end

@@ -41,11 +41,11 @@
  * The surrogate delegate. This delegate will receive all messages initially destined for
  * the original app delegate (defaultAppDelegate).
  */
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *surrogateDelegate;
+@property(nonatomic, strong) NSObject<UIApplicationDelegate> *surrogateDelegate;
 
 /**
  * The original app delegate.
  */
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *defaultAppDelegate;
+@property(nonatomic, strong) NSObject<UIApplicationDelegate> *defaultAppDelegate;
 
 @end

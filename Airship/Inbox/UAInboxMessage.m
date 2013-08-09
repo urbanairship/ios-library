@@ -40,7 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @interface UAInboxMessage()
 
-@property(nonatomic, retain) UAInboxAPIClient *client;
+@property(nonatomic, strong) UAInboxAPIClient *client;
 
 @end
 
@@ -72,23 +72,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         NSString *dateString = [message objectForKey: @"message_sent"];
         self.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
 
-        self.client = [[[UAInboxAPIClient alloc] init] autorelease];
+        self.client = [[UAInboxAPIClient alloc] init];
     }
 
     return self;
 }
 
-- (void)dealloc {
-    self.messageID = nil;
-    self.messageBodyURL = nil;
-    self.messageURL = nil;
-    self.contentType = nil;
-    self.messageSent = nil;
-    self.title = nil;
-    self.extra = nil;
-    self.client = nil;
-    [super dealloc];
-}
 
 
 #pragma mark -

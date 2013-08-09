@@ -33,11 +33,11 @@
 
 }
 
-@property (nonatomic, retain, readonly) NSURLConnection *urlConnection;
-@property (nonatomic, retain, readonly) UAHTTPRequest *request;
+@property (nonatomic, strong, readonly) NSURLConnection *urlConnection;
+@property (nonatomic, strong, readonly) UAHTTPRequest *request;
 
 
-@property (assign, nonatomic) id delegate;
+@property (weak, nonatomic) id delegate;
 @property (nonatomic, assign) SEL successSelector;
 @property (nonatomic, assign) SEL failureSelector;
 

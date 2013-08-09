@@ -36,7 +36,6 @@
     self.locationManager.delegate = nil;
     
     // Super class deallocates location manager
-    [super dealloc];
 }
 
 - (id)init {
@@ -90,6 +89,6 @@
 }
  
 + (UAStandardLocationProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)serviceDelegateOrNil {
-    return [[[UAStandardLocationProvider alloc] initWithDelegate:serviceDelegateOrNil] autorelease];
+    return [[UAStandardLocationProvider alloc] initWithDelegate:serviceDelegateOrNil];
 }
 @end

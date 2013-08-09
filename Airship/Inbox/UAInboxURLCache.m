@@ -60,8 +60,8 @@
 - (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType;
 - (BOOL)shouldStoreCachedResponse:(NSCachedURLResponse *)response forRequest:(NSURLRequest *)request;
 
-@property(nonatomic, retain) NSMutableDictionary *metadata;
-@property(nonatomic, retain) NSOperationQueue *queue;
+@property(nonatomic, strong) NSMutableDictionary *metadata;
+@property(nonatomic, strong) NSOperationQueue *queue;
 
 
 @end
@@ -80,20 +80,13 @@
         
         self.metadata = [self loadMetadata];
         
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
         
     }
     return self;
 }
 
-- (void)dealloc {
-    self.cacheDirectory = nil;
-    self.resourceTypes = nil;
-    self.metadata = nil;
-    self.queue = nil;
-    [super dealloc];
-}
 
 - (NSUInteger)diskCapacity {
     return self.actualDiskCapacity * 50;
@@ -126,7 +119,7 @@
         [invocation setArgument:&url atIndex:3];
         [invocation setArgument:&contentType atIndex:4];
         
-        NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithInvocation:invocation] autorelease];
+        NSInvocationOperation *io = [[NSInvocationOperation alloc] initWithInvocation:invocation];
         [self.queue addOperation:io];
 
     }
@@ -175,15 +168,14 @@
             textEncoding = @"utf-8";
         }
         
-        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:request.URL
+        NSURLResponse *response = [[NSURLResponse alloc] initWithURL:request.URL
                                                              MIMEType:contentType
                                                 expectedContentLength:[content length]
-                                                     textEncodingName:textEncoding]
-                                   autorelease];
+                                                     textEncodingName:textEncoding];
         
 
-        cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:response
-                                                                  data:content] autorelease];
+        cachedResponse = [[NSCachedURLResponse alloc] initWithResponse:response
+                                                                  data:content];
 
         UALOG(@"Uncaching request %@", request);
         UALOG(@"MIME Type: %@ Encoding: %@", contentType, textEncoding);
@@ -191,7 +183,7 @@
         NSString *hash = [UAUtils md5:[request.URL absoluteString]];
         @synchronized(self.metadata) {
             [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
-            NSInvocationOperation *io = [[[NSInvocationOperation alloc] initWithTarget:self selector:@selector(saveMetadata) object:nil] autorelease];
+            NSInvocationOperation *io = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(saveMetadata) object:nil];
             [self.queue addOperation:io];
         }
     }
@@ -232,47 +224,47 @@
 
 
 - (void)storeContent:(NSData *)content withURL:(NSURL *)url contentType:(NSString *)contentType {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
     
-    NSString *contentPath = [self getStoragePathForURL:url];
-    NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
-        UALOG(@"File exists %@", contentPath);
-    }
-    
-    else {
-        BOOL ok = [content writeToFile:contentPath atomically:YES];
-        UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
+        NSString *contentPath = [self getStoragePathForURL:url];
+        NSString *contentTypePath = [self getStoragePathForContentTypeWithURL:url];
         
-        if (ok) {
-            NSString *hash = [UAUtils md5:[url absoluteString]];
-            
-            @synchronized(self.metadata) {
-                [[self.metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
-                [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
-                
-                
-                NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
-                currentSize += content.length;
-                [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
-                
-                UALOG(@"Cache size: %d bytes", currentSize);
-                UALOG(@"Actual disk capacity: %d bytes", self.actualDiskCapacity);
-                
-                if (currentSize > self.actualDiskCapacity) {
-                    [self purge];
-                }
-                
-                [self saveMetadata];
-            }
+        if ([[NSFileManager defaultManager] fileExistsAtPath:contentPath]) {
+            UALOG(@"File exists %@", contentPath);
         }
         
-        ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-        UALOG(@"Caching %@ at %@: %@", contentType, contentTypePath, ok?@"OK":@"FAILED");
-    }
+        else {
+            BOOL ok = [content writeToFile:contentPath atomically:YES];
+            UALOG(@"Caching %@ at %@: %@", [url absoluteString], contentPath, ok?@"OK":@"FAILED");
+            
+            if (ok) {
+                NSString *hash = [UAUtils md5:[url absoluteString]];
+                
+                @synchronized(self.metadata) {
+                    [[self.metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
+                    [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
+                    
+                    
+                    NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
+                    currentSize += content.length;
+                    [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+                    
+                    UALOG(@"Cache size: %d bytes", currentSize);
+                    UALOG(@"Actual disk capacity: %d bytes", self.actualDiskCapacity);
+                    
+                    if (currentSize > self.actualDiskCapacity) {
+                        [self purge];
+                    }
+                    
+                    [self saveMetadata];
+                }
+            }
+            
+            ok = [contentType writeToFile:contentTypePath atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+            UALOG(@"Caching %@ at %@: %@", contentType, contentTypePath, ok?@"OK":@"FAILED");
+        }
     
-    [pool drain];
+    }
 }
 
 - (NSArray *)mimeTypeAndCharsetForContentType:(NSString *)contentType {
@@ -324,14 +316,14 @@
 }
 
 - (void)saveMetadata {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    @synchronized(self.metadata) {
-        if (self.metadata) {
-            NSString *metadataPath = [self getMetadataPath];
-            [self.metadata writeToFile:metadataPath atomically:YES];
+    @autoreleasepool {
+        @synchronized(self.metadata) {
+            if (self.metadata) {
+                NSString *metadataPath = [self getMetadataPath];
+                [self.metadata writeToFile:metadataPath atomically:YES];
+            }
         }
     }
-    [pool drain];
 }
 
 - (NSUInteger)deleteCacheEntry:(NSString *)hash {
@@ -339,7 +331,7 @@
     NSString *contentPath = [self getStoragePathForHash:hash];
     NSString *contentTypePath = [self getStoragePathForContentTypeWithHash:hash];
     
-    NSFileManager *fileManager = [[[NSFileManager alloc] init] autorelease];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
     [fileManager removeItemAtPath:contentPath error:NULL];
     [fileManager removeItemAtPath:contentTypePath error:NULL];
     

@@ -33,7 +33,6 @@
     self.delegate = nil;
     [self.locationManager stopMonitoringSignificantLocationChanges];
     self.locationManager.delegate = nil;
-    [super dealloc];
 }
 
 - (id)init {
@@ -91,6 +90,6 @@
 }
 
 + (UASignificantChangeProvider *)providerWithDelegate:(id<UALocationProviderDelegate>)delegateOrNil {
-    return [[[UASignificantChangeProvider alloc] initWithDelegate:delegateOrNil] autorelease];
+    return [[UASignificantChangeProvider alloc] initWithDelegate:delegateOrNil];
 }
 @end

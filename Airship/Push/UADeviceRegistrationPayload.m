@@ -10,7 +10,7 @@ UAPushJSONKey UAPushTimeZoneJSONKey = @"tz";
 UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 
 @interface UADeviceRegistrationPayload()
-@property(nonatomic, retain) NSDictionary *payloadDictionary;
+@property(nonatomic, strong) NSDictionary *payloadDictionary;
 @end
 
 @implementation UADeviceRegistrationPayload
@@ -55,19 +55,19 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
          withQuietTime:(NSDictionary *)quietTime
              withBadge:(NSNumber *)badge {
 
-    return [[[UADeviceRegistrationPayload alloc] initWithAlias:alias
+    return [[UADeviceRegistrationPayload alloc] initWithAlias:alias
                                                      withTags:tags
                                                  withTimeZone:timeZone
                                                 withQuietTime:quietTime
-                                                    withBadge:badge] autorelease];
+                                                    withBadge:badge];
 }
 
 - (NSDictionary *)asDictionary {
-    return [[self.payloadDictionary copy] autorelease];
+    return [self.payloadDictionary copy];
 }
 
 - (NSString *)asJSONString {
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     return [writer stringWithObject:self.payloadDictionary];
 }
 
@@ -75,9 +75,5 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
     return [[self asJSONString]dataUsingEncoding:NSUTF8StringEncoding];
 }
 
-- (void)dealloc {
-    self.payloadDictionary = nil;
-    [super dealloc];
-}
 
 @end

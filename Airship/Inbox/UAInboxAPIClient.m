@@ -12,7 +12,7 @@
 
 @interface UAInboxAPIClient()
 
-@property(nonatomic, retain) UAHTTPRequestEngine *requestEngine;
+@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end
 
@@ -21,16 +21,12 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.requestEngine = [[[UAHTTPRequestEngine alloc] init] autorelease];
+        self.requestEngine = [[UAHTTPRequestEngine alloc] init];
     }
 
     return self;
 }
 
-- (void)dealloc {
-    self.requestEngine = nil;
-    [super dealloc];
-}
 
 - (UAHTTPRequest *)requestToMarkMessageRead:(UAInboxMessage *)message {
     NSString *urlString = [NSString stringWithFormat: @"%@%@", message.messageURL, @"read/"];
@@ -67,7 +63,7 @@
 
     data = @{@"delete" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     NSString* body = [writer stringWithObject:data];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
@@ -96,7 +92,7 @@
 
     data = @{@"mark_as_read" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     NSString* body = [writer stringWithObject:data];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
@@ -149,7 +145,7 @@
       } retryWhere:^(UAHTTPRequest *request){
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-          UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
+          UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
           NSString *responseString = request.responseString;
           NSDictionary *jsonResponse = [parser objectWithString:responseString];
           UA_LTRACE(@"Retrieved message list respose: %@", responseString);
@@ -157,7 +153,7 @@
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-              UAInboxMessage *tmp = [[[UAInboxMessage alloc] initWithDict:message inbox:[UAInbox shared].messageList] autorelease];
+              UAInboxMessage *tmp = [[UAInboxMessage alloc] initWithDict:message inbox:[UAInbox shared].messageList];
               [newMessages addObject:tmp];
           }
 

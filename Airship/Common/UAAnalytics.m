@@ -54,13 +54,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     [self.queue cancelAllOperations];
     
-    self.queue = nil;
-    self.packageVersion = nil;
-    self.notificationUserInfo = nil;
-    self.session = nil;
-    self.config = nil;
     
-    [super dealloc];
 }
 
 - (id)initWithConfig:(UAConfig *)airshipConfig {
@@ -109,7 +103,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self initSession];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
     }
     
@@ -570,13 +564,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             
             if (errString) {
                 UA_LTRACE("Deserialization Error: %@", errString);
-                [errString release];//must be relased by caller per docs
+                //must be relased by caller per docs
             }
         }
         
         // Always include a data entry, even if it is empty
         if (!eventData) {
-            eventData = [[[NSMutableDictionary alloc] init] autorelease];
+            eventData = [[NSMutableDictionary alloc] init];
         }
         
         [eventData setValue:[event objectForKey:@"session_id"] forKey:@"session_id"];
@@ -610,7 +604,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
     
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] autorelease];
+    UA_SBJsonWriter *writer = [UA_SBJsonWriter alloc];
     
     writer.humanReadable = NO;//strip whitespace
     [analyticsRequest appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];

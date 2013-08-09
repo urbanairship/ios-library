@@ -4,7 +4,7 @@
 @interface UADeviceRegistrationData()
 
 @property(nonatomic, copy) NSString *deviceToken;
-@property(nonatomic, retain) UADeviceRegistrationPayload *payload;
+@property(nonatomic, strong) UADeviceRegistrationPayload *payload;
 @property(nonatomic, assign) BOOL pushEnabled;
 
 @end
@@ -22,14 +22,9 @@
 }
 
 + (id)dataWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled {
-    return [[[UADeviceRegistrationData alloc] initWithDeviceToken:token withPayload:payload pushEnabled:enabled] autorelease];
+    return [[UADeviceRegistrationData alloc] initWithDeviceToken:token withPayload:payload pushEnabled:enabled];
 }
 
-- (void)dealloc {
-    self.deviceToken = nil;
-    self.payload = nil;
-    [super dealloc];
-}
 
 #pragma mark - 
 #pragma mark - NSObject overrides

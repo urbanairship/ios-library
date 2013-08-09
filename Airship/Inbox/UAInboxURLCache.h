@@ -27,8 +27,8 @@
 
 @interface UAInboxURLCache : NSURLCache
 
-@property(nonatomic, retain) NSString *cacheDirectory;
-@property(nonatomic, retain) NSArray *resourceTypes;
+@property(nonatomic, strong) NSString *cacheDirectory;
+@property(nonatomic, strong) NSArray *resourceTypes;
 
 /**
  * The actual disk capacity of this cache.

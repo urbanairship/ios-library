@@ -56,7 +56,7 @@ enum {
     
     //Create an add button in the nav bar
     if (self.addButton == nil) {
-        self.addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)] autorelease];
+        self.addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItem:)];
     }
     self.navigationItem.rightBarButtonItem = self.addButton;
     
@@ -120,7 +120,7 @@ enum {
             
             cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
             if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             }
             
             // Configure the cell...
@@ -215,13 +215,12 @@ enum {
 - (void)addItem:(id)sender {
     
     if (!self.addTagController) {
-        self.addTagController = [[[UAPushSettingsAddTagViewController alloc] init] autorelease];
+        self.addTagController = [[UAPushSettingsAddTagViewController alloc] init];
         self.addTagController.tagDelegate = self;
     }
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.addTagController];
     [[self navigationController] presentModalViewController:navigationController animated:YES];
-    [navigationController release];
 }
 
 
@@ -283,12 +282,7 @@ enum {
 
 
 - (void)dealloc {    
-    self.addButton = nil;
-    self.textCell = nil;
-    self.textLabel = nil;
     self.addTagController.tagDelegate = nil;
-    self.addTagController = nil;    
-    [super dealloc];
 }
 
 

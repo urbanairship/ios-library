@@ -64,10 +64,8 @@
 
 - (void)tearDown {
 
-    [_locationService release];
     _locationService = nil;
     
-    [_timeout release];
     _timeout = nil;
 }
 
@@ -75,7 +73,7 @@
 #pragma mark Support Methods
 
 - (BOOL)compareDoubleAsString:(NSString*)stringDouble toDouble:(double)doubleValue {
-    NSNumberFormatter *formatter = [[[NSNumberFormatter alloc] init] autorelease];
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
 
     NSNumber *numberFromString = [formatter numberFromString:stringDouble];
@@ -90,8 +88,8 @@
 
 - (void)testUALocationEventUpdateType {
     CLLocation *PDX = [UALocationTestUtils testLocationPDX];
-    UAStandardLocationProvider *standard = [[[UAStandardLocationProvider alloc] init] autorelease];
-    UALocationService *service = [[[UALocationService alloc] init] autorelease];
+    UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] init];
+    UALocationService *service = [[UALocationService alloc] init];
     service.standardLocationProvider = standard;
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
 
@@ -112,7 +110,7 @@
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
     STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
 
-    UASignificantChangeProvider *sigChange = [[[UASignificantChangeProvider alloc] init] autorelease];
+    UASignificantChangeProvider *sigChange = [[UASignificantChangeProvider alloc] init];
     service.significantChangeProvider = sigChange;
     [service reportLocationToAnalytics:PDX fromProvider:sigChange];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeChange;
@@ -121,7 +119,7 @@
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderNetwork;
     STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderNetwork");
 
-    UAStandardLocationProvider *single = [[[UAStandardLocationProvider alloc] init] autorelease];
+    UAStandardLocationProvider *single = [[UAStandardLocationProvider alloc] init];
     service.singleLocationProvider = single;
     [service reportLocationToAnalytics:PDX fromProvider:single];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeSingle;
@@ -133,7 +131,7 @@
 }
 
 - (void)testUALocationServiceSendsLocationToAnalytics {
-    UALocationService *service = [[[UALocationService alloc] init] autorelease];
+    UALocationService *service = [[UALocationService alloc] init];
     CLLocation *PDX = [UALocationTestUtils testLocationPDX];
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
     [[mockAnalytics expect] addEvent:[OCMArg any]];
@@ -156,7 +154,7 @@
         NSLog(@"EVENT DATA %@", event.data);
     };
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
-    CLLocationManager *manager = [[[CLLocationManager alloc] init] autorelease];
+    CLLocationManager *manager = [[CLLocationManager alloc] init];
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     UALocationEventUpdateType *type = UALocationEventUpdateTypeSingle;
     [_locationService reportLocation:pdx fromLocationManager:manager withUpdateType:type];
@@ -275,9 +273,9 @@
 }
                                                                             
 - (void)peformInvocationInBackground:(NSInvocation *)invocation {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [invocation invoke];
-    [pool drain];
+    @autoreleasepool {
+        [invocation invoke];
+    }
 }
 
 - (void)testSignificantChangeNotifiesDelegate {

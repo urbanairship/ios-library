@@ -34,7 +34,7 @@
                                                horizontalAccuracy:kTestHorizontalAccuracy
                                                  verticalAccuracy:kTestVerticalAccuracy
                                                         timestamp:[NSDate date]];
-    return [location autorelease];
+    return location;
 }
 
 + (CLLocation *)testLocationSFO {
@@ -44,7 +44,7 @@
                                                horizontalAccuracy:kTestHorizontalAccuracy
                                                  verticalAccuracy:kTestVerticalAccuracy
                                                         timestamp:[NSDate date]];
-    return [location autorelease];                            
+    return location;                            
 }
 
 
@@ -52,6 +52,6 @@
     CLLocationManager *manager = [[CLLocationManager alloc] init];
     manager.desiredAccuracy = kTestDesiredAccuracy;
     manager.distanceFilter = kTestDistanceFilter;
-    return [manager autorelease];
+    return manager;
 }
 @end

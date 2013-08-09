@@ -30,11 +30,11 @@
 @interface UAirship()
 
 // Setters for public readonly-getters
-@property (nonatomic, retain) UABaseAppDelegateSurrogate *appDelegate;
-@property (nonatomic, retain) UALocationService *locationService;
+@property (nonatomic, strong) UABaseAppDelegateSurrogate *appDelegate;
+@property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, assign) BOOL ready;
-@property (nonatomic, retain) UAConfig *config;
-@property (nonatomic, retain) UAAnalytics *analytics;
+@property (nonatomic, strong) UAConfig *config;
+@property (nonatomic, strong) UAAnalytics *analytics;
 
 
 /**
