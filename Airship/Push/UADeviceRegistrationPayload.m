@@ -1,6 +1,6 @@
 
 #import "UADeviceRegistrationPayload.h"
-#import "UA_SBJsonWriter.h"
+#import "NSJSONSerialization+UAirship.h"
 
 UAPushJSONKey UAPushMultipleTagsJSONKey = @"tags";
 UAPushJSONKey UAPushSingleTagJSONKey = @"tag";
@@ -67,12 +67,18 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 }
 
 - (NSString *)asJSONString {
+<<<<<<< HEAD
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     return [writer stringWithObject:self.payloadDictionary];
+=======
+    return [NSJSONSerialization stringWithObject:self.payloadDictionary];
+>>>>>>> Remove SBJson
 }
 
 - (NSData *)asJSONData {
-    return [[self asJSONString]dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization dataWithJSONObject:self.payloadDictionary
+                                           options:NSJSONWritingPrettyPrinted
+                                             error:nil];
 }
 
 

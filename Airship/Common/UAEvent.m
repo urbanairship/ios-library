@@ -29,7 +29,6 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "UA_Reachability.h"
-#import "UA_SBJsonWriter.h"
 #import "UAInboxUtils.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
@@ -84,11 +83,10 @@
     [eventDictionary setObject:self.event_id forKey:@"event_id"];
     [eventDictionary setObject:self.data forKey:@"data"];
     
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    writer.humanReadable = NO;//strip whitespace
-    
-    NSString *jsonString = [writer stringWithObject:eventDictionary];
-    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
+                                                        options:0
+                                                          error:nil];
     
     UA_LDEBUG(@"Estimated event size: %d", [jsonData length]);
     

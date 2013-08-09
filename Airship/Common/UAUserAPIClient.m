@@ -5,8 +5,7 @@
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
 #import "UAPush.h"
-#import "UA_SBJsonWriter.h"
-#import "UA_SBJsonParser.h"
+#import "NSJSONSerialization+UAirship.h"
 
 @interface UAUserAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -47,8 +46,12 @@
     NSDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
 
 
+<<<<<<< HEAD
     UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     NSString *body = [writer stringWithObject:data];
+=======
+    NSString *body = [NSJSONSerialization stringWithObject:data];
+>>>>>>> Remove SBJson
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
@@ -74,8 +77,12 @@
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
 
+<<<<<<< HEAD
     UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
     NSString *body = [writer stringWithObject:dict];
+=======
+    NSString *body = [NSJSONSerialization stringWithObject:dict];
+>>>>>>> Remove SBJson
 
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -103,8 +110,12 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)(status >= 500 && status <= 599);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+<<<<<<< HEAD
         UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
         NSDictionary *result = [parser objectWithString:request.responseString];
+=======
+        NSDictionary *result = [NSJSONSerialization objectWithString:request.responseString];
+>>>>>>> Remove SBJson
 
         NSString *username = [result objectForKey:@"user_id"];
         NSString *password = [result objectForKey:@"password"];
@@ -151,10 +162,15 @@
 
         UA_LTRACE(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
 
+<<<<<<< HEAD
         NSString *rawJson = [[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding];
         UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+=======
+        NSString *rawJson = [[[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding] autorelease];
+
+>>>>>>> Remove SBJson
         // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
-        NSDictionary *postBody = [parser objectWithString:rawJson];
+        NSDictionary *postBody = [NSJSONSerialization objectWithString:rawJson];
         NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
         NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
 

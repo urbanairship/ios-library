@@ -28,7 +28,6 @@
 
 #import "UAAnalytics+Internal.h"
 
-#import "UA_SBJSON.h"
 #import "UA_Reachability.h"
 
 #import "UAirship.h"
@@ -41,6 +40,7 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 #import "UAInboxUtils.h"
+#import "NSJSONSerialization+UAirship.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -602,16 +602,14 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
+
+    [analyticsRequest appendBodyData:[NSJSONSerialization dataWithJSONObject:events
+                                                                     options:0
+                                                                       error:nil]];
     
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter alloc];
-    
-    writer.humanReadable = NO;//strip whitespace
-    [analyticsRequest appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    writer.humanReadable = YES; //turn on formatting for debugging
     UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [analyticsRequest.headers descriptionWithLocale:nil indent:1]);
-    UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    UA_LTRACE(@"Sending analytics body: %@", [NSJSONSerialization stringWithObject:events options:NSJSONWritingPrettyPrinted]);
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LDEBUG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
