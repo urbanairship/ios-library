@@ -6,8 +6,8 @@
 
 #import "UADeviceRegistrationPayloadTest.h"
 #import "UADeviceRegistrationPayload.h"
+#import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
-#import "UA_SBJSON.h"
 
 @interface UADeviceRegistrationPayloadTest()
 @property(nonatomic, strong) UADeviceRegistrationPayload *payload;
@@ -116,17 +116,15 @@
 }
 
 - (void)testAsJSONString {
-    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
-    [self verifyDictionary:[parser objectWithString:[self.payload asJSONString]]];
-    [self verifyEmptyDictionary:[parser objectWithString:[self.emptyPayload asJSONString]]];
+    [self verifyDictionary:[NSJSONSerialization objectWithString:[self.payload asJSONString]]];
+    [self verifyEmptyDictionary:[NSJSONSerialization objectWithString:[self.emptyPayload asJSONString]]];
 }
 
 - (void)testAsJSONData {
-    UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
-    NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
-    [self verifyDictionary:[parser objectWithString:jsonString]];
-    NSString *emptyJSONString = [[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding];
-    [self verifyEmptyDictionary:[parser objectWithString:emptyJSONString]];
+    NSString *jsonString = [[[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    [self verifyDictionary:[NSJSONSerialization objectWithString:jsonString]];
+    NSString *emptyJSONString = [[[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    [self verifyEmptyDictionary:[NSJSONSerialization objectWithString:emptyJSONString]];
 }
 
 @end
