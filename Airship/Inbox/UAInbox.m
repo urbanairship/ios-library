@@ -100,6 +100,22 @@ static Class _uiClass;
     }
 }
 
+- (void)deleteInboxCache{
+    NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+    NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAInboxCache"];
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    if ([fm fileExistsAtPath:diskCachePath]) {
+        NSError *error = nil;
+        [fm removeItemAtPath:diskCachePath error:&error];
+        if (error) {
+            UA_LINFO(@"error deleting inbox cache: %@", error.description);
+        }
+    }
+}
+
 #pragma mark -
 #pragma mark Memory management
 
@@ -123,6 +139,7 @@ static Class _uiClass;
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
 
+        [self deleteInboxCache];
     }
 
     return self;
