@@ -39,7 +39,7 @@
 
     NSString *jsonString = [NSJSONSerialization stringWithObject:dictionary];
 
-    STAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produceses unexepected json strings");
+    STAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produces unexpected json strings");
 }
 
 - (void)testStringWithNilObject {
@@ -51,7 +51,7 @@
     NSDictionary *jsonDictionary = [NSJSONSerialization objectWithString:jsonString];
 
     NSDictionary *expectedDictonary =@{@"stringKey":@"stringValue", @"intKey": @1};
-    STAssertEqualObjects(expectedDictonary, jsonDictionary, @"objectWithString produceses unexepected json dictionaries");
+    STAssertEqualObjects(expectedDictonary, jsonDictionary, @"objectWithString produces unexpected json dictionaries");
 }
 
 - (void)testobjectWithInvalidString {
