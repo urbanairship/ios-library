@@ -146,9 +146,9 @@
 }
 
 - (void)testAsJSONData {
-    NSString *jsonString = [[[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
     [self verifyDictionary:[NSJSONSerialization objectWithString:jsonString]];
-    NSString *emptyJSONString = [[[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
+    NSString *emptyJSONString = [[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding];
     [self verifyEmptyDictionary:[NSJSONSerialization objectWithString:emptyJSONString]];
 }
 
