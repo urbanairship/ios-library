@@ -26,7 +26,24 @@
 #import <Foundation/Foundation.h>
 
 @interface NSJSONSerialization (UAAdditions)
+
+/**
+ * Converts a NSDictionary to a JSON formatted NSString
+ * @param jsonObject NSDictionary to convert 
+ */
 + (NSString *)stringWithObject:(id)jsonObject;
+
+/**
+ * Converts a NSDictionary to a JSON formatted NSString
+ * @param jsonObject NSDictionary to convert
+ * @param opt NSJSONWritingOptions options
+ */
 + (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt;
+
+/**
+ * Converts a JSON NSString to a NSDictionary
+ * @param jsonString the JSON NSSTring to convert
+ */
 + (id)objectWithString:(NSString *)jsonString;
+
 @end
