@@ -98,6 +98,7 @@ static Class _uiClass;
     }
 }
 
+//note: this is for deleting the UAInboxCache from disk, which is no longer in use.
 - (void)deleteInboxCache{
     NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *cacheDirectory = [cachePaths objectAtIndex:0];
@@ -133,6 +134,7 @@ static Class _uiClass;
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
 
+        //delete legacy UAInboxCache if present
         [self deleteInboxCache];
     }
 
