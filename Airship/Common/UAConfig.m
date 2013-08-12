@@ -32,18 +32,12 @@
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
-    self.developmentAppKey = nil;
-    self.developmentAppSecret = nil;
     
-    self.productionAppKey = nil;
-    self.productionAppSecret = nil;
     
     self.deviceAPIURL = nil;
     self.analyticsURL = nil;
 
-    self.profilePath = nil;
 
-    [super dealloc];
 }
 
 - (id)init {
@@ -107,11 +101,11 @@
 }
 
 + (UAConfig *)configWithContentsOfFile:(NSString *)path {
-    UAConfig *config = [[[UAConfig alloc] init] autorelease];
+    UAConfig *config = [[UAConfig alloc] init];
 
     //copy from dictionary plist
 
-    NSDictionary *configDict = [[[NSDictionary alloc] initWithContentsOfFile:path] autorelease];
+    NSDictionary *configDict = [[NSDictionary alloc] initWithContentsOfFile:path];
 
     NSDictionary *normalizedDictionary = [UAConfig normalizeDictionary:configDict];
 
@@ -263,7 +257,7 @@
     }
 
     NSDictionary *plistDict = nil;
-    NSScanner *scanner = [[[NSScanner alloc] initWithString:embeddedProfile] autorelease];
+    NSScanner *scanner = [[NSScanner alloc] initWithString:embeddedProfile];
 
     if ([scanner scanUpToString:@"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" intoString:nil]) {
         NSString *plistString = nil;
@@ -308,7 +302,7 @@
     //Any appending url starts with a beginning /, so make sure the base url does not
     if ([analyticsURL hasSuffix:@"/"]) {
         UA_LWARN(@"Analytics URL ends with a trailing slash, stripping ending slash.");
-        _analyticsURL = [[analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)] retain];
+        _analyticsURL = [analyticsURL substringWithRange:NSMakeRange(0, [analyticsURL length] - 1)];
     } else {
         _analyticsURL = [analyticsURL copy];
     }
@@ -318,7 +312,7 @@
     //Any appending url starts with a beginning /, so make sure the base url does not
     if ([deviceAPIURL hasSuffix:@"/"]) {
         UA_LWARN(@"Device API URL ends with a trailing slash, stripping ending slash.");
-        _deviceAPIURL = [[deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)] retain];
+        _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
     } else {
         _deviceAPIURL = [deviceAPIURL copy];
     }

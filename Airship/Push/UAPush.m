@@ -69,10 +69,7 @@ static Class _uiClass;
 }
 
 -(void)dealloc {
-    self.defaultPushHandler = nil;
-    self.deviceAPIClient = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 - (id)init {
@@ -80,7 +77,7 @@ static Class _uiClass;
     if (self) {
         //init with default delegate implementation
         // released when replaced
-        self.defaultPushHandler = [[[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init] autorelease];
+        self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.delegate = _defaultPushHandler;
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(applicationDidBecomeActive) 
@@ -92,7 +89,7 @@ static Class _uiClass;
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
         
-        self.deviceAPIClient = [[[UADeviceAPIClient alloc] init] autorelease];
+        self.deviceAPIClient = [[UADeviceAPIClient alloc] init];
         self.deviceTagsEnabled = YES;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
@@ -293,7 +290,7 @@ static Class _uiClass;
         timezone = [self defaultTimeZoneForQuietTime];
     }
 
-    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
                               [cal components:NSHourCalendarUnit fromDate:from].hour,
@@ -320,7 +317,6 @@ static Class _uiClass;
     
     // not much teardown to do here, but implement anyway for the future
     if (g_sharedUAPush) {
-        [g_sharedUAPush release];
         g_sharedUAPush = nil;
     }
 }

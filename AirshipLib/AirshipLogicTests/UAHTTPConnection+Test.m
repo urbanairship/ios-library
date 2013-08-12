@@ -32,7 +32,6 @@ static BOOL _succeed = YES;
 
 - (BOOL)startWithoutIO {
     //we need to retain ourselves here, since the failure selector below releases
-    [self retain];
     if (_succeed) {
         [self sendSuccess];
     } else {

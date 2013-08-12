@@ -36,10 +36,6 @@
 
 @implementation UAInboxPushHandler
 
-- (void)dealloc {
-    self.viewingMessageID = nil;
-    [super dealloc];
-}
 
 + (BOOL)isApplicationActive {
     return ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);

@@ -50,7 +50,7 @@
  * the side effect of assigning this class as the delegate of the
  * new CLLocationManager
  */
-@property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 /**
  * In certain cases, cached values are immediately returned when starting a location service.
@@ -108,7 +108,7 @@
 
 
 /// Delegate that receives location updates 
-@property (nonatomic, assign) id<UALocationProviderDelegate> delegate;
+@property (nonatomic, weak) id<UALocationProviderDelegate> delegate;
 
 /** 
  * Status of the location service.

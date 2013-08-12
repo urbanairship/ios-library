@@ -32,22 +32,14 @@
 #import "UAKeychainUtils.h"
 
 @interface UAAnalyticsTest()
-@property(nonatomic, retain) UAAnalytics *analytics;
-@property(nonatomic, retain) id mockedKeychainClass;
-@property(nonatomic, retain) id mockLocaleClass;
-@property(nonatomic, retain) id mockTimeZoneClass;
+@property(nonatomic, strong) UAAnalytics *analytics;
+@property(nonatomic, strong) id mockedKeychainClass;
+@property(nonatomic, strong) id mockLocaleClass;
+@property(nonatomic, strong) id mockTimeZoneClass;
 @end
 
 @implementation UAAnalyticsTest
 
-- (void)dealloc {
-    self.mockedKeychainClass = nil;
-    self.mockLocaleClass = nil;
-    self.mockTimeZoneClass = nil;
-    self.analytics = nil;
-
-    [super dealloc];
-}
 
 - (void)setUp {
     [super setUp];
@@ -58,8 +50,8 @@
     self.mockLocaleClass = [OCMockObject mockForClass:[NSLocale class]];
     self.mockTimeZoneClass = [OCMockObject mockForClass:[NSTimeZone class]];
 
-    UAConfig *config = [[[UAConfig alloc] init] autorelease];
-    self.analytics = [[[UAAnalytics alloc] initWithConfig:config] autorelease];
+    UAConfig *config = [[UAConfig alloc] init];
+    self.analytics = [[UAAnalytics alloc] initWithConfig:config];
  }
 
 - (void)tearDown {
@@ -251,24 +243,24 @@
 }
 
 - (void)setCurrentLocale:(NSString*)localeCode {
-    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:localeCode] autorelease];
+    NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeCode];
 
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
 - (void)setTimeZone:(NSString*)name {
-    NSTimeZone *timeZone = [[[NSTimeZone alloc] initWithName:name] autorelease];
+    NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:name];
     
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];
 }
 
 -(NSMutableDictionary *) createValidEvent {
-    return [[@{@"event_id": @"some-event-id",
+    return [@{@"event_id": @"some-event-id",
              @"data": [NSMutableData dataWithCapacity:1],
              @"session_id": @"some-session-id",
              @"type": @"base",
              @"time":[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]],
-             @"event_size":@"40"} mutableCopy] autorelease];
+             @"event_size":@"40"} mutableCopy];
 }
 
 @end

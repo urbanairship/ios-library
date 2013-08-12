@@ -27,10 +27,10 @@
 
 @interface UAHTTPConnection()
 
-@property (nonatomic, retain) UAHTTPRequest *request;
-@property (nonatomic, retain) NSHTTPURLResponse *urlResponse;
-@property (nonatomic, retain) NSMutableData *responseData;
-@property (nonatomic, retain) NSURLConnection *urlConnection;
+@property (nonatomic, strong) UAHTTPRequest *request;
+@property (nonatomic, strong) NSHTTPURLResponse *urlResponse;
+@property (nonatomic, strong) NSMutableData *responseData;
+@property (nonatomic, strong) NSURLConnection *urlConnection;
 
 - (NSData *)gzipCompress:(NSData *)uncompressedData;
 

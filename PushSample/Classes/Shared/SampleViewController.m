@@ -49,12 +49,6 @@
     [UAPush useCustomUI:[UAPushUI class]];
 }
 
-- (void)dealloc {
-    self.version = nil;
-    self.settingsButton = nil;
-    self.tokenButton = nil;
-    [super dealloc];
-}
 
 
 @end

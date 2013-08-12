@@ -28,10 +28,10 @@
 
 @interface UAPushSettingsTagsViewController : UITableViewController<UAPushSettingsAddTagDelegate>
 
-@property (nonatomic, retain) UAPushSettingsAddTagViewController *addTagController;
-@property (nonatomic, retain) UIBarButtonItem *addButton;
-@property (nonatomic, retain) IBOutlet UITableViewCell *textCell;
-@property (nonatomic, retain) IBOutlet UILabel *textLabel;
+@property (nonatomic, strong) UAPushSettingsAddTagViewController *addTagController;
+@property (nonatomic, strong) UIBarButtonItem *addButton;
+@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, strong) IBOutlet UILabel *textLabel;
 
 - (void)addItem:(id)sender;
 

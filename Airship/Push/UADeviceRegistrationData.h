@@ -57,7 +57,7 @@
 /**
  * The request payload as an NSDictionary.
  */
-@property(nonatomic, retain, readonly) UADeviceRegistrationPayload *payload;
+@property(nonatomic, strong, readonly) UADeviceRegistrationPayload *payload;
 /**
  * Indicates whether push was enabled at the time the object was constructed.
  */

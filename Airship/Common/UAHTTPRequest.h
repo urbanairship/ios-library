@@ -34,19 +34,19 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 @interface UAHTTPRequest : NSObject
 
-@property (nonatomic, readonly, retain) NSURL *url;
-@property (nonatomic, retain) NSDictionary *headers;
+@property (nonatomic, readonly, strong) NSURL *url;
+@property (nonatomic, strong) NSDictionary *headers;
 @property (nonatomic, copy) NSString *HTTPMethod;
 @property (nonatomic, copy) NSString *username;
 @property (nonatomic, copy) NSString *password;
-@property (nonatomic, retain) NSMutableData *body;
+@property (nonatomic, strong) NSMutableData *body;
 @property (nonatomic, assign) BOOL compressBody;
-@property (nonatomic, retain) id userInfo;
+@property (nonatomic, strong) id userInfo;
 
-@property (nonatomic, readonly, retain) NSHTTPURLResponse *response;
+@property (nonatomic, readonly, strong) NSHTTPURLResponse *response;
 @property (nonatomic, readonly, copy) NSString *responseString;
-@property (nonatomic, readonly, retain) NSData *responseData;
-@property (nonatomic, readonly, retain) NSError *error;
+@property (nonatomic, readonly, strong) NSData *responseData;
+@property (nonatomic, readonly, strong) NSError *error;
 
 /**
  * Create a request with the URL string.

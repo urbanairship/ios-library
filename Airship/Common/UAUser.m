@@ -63,13 +63,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
 }
 
-- (void)dealloc {
-    self.username = nil;
-    self.password = nil;
-    self.url = nil;
-    self.apiClient = nil;
-    [super dealloc];
-}
 
 + (void)land {
 
@@ -83,7 +76,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     self = [super init];
     if (self) {
         // init
-        self.apiClient = [[[UAUserAPIClient alloc] init] autorelease];
+        self.apiClient = [[UAUserAPIClient alloc] init];
         self.appKey = [UAirship shared].config.appKey;
     }
     

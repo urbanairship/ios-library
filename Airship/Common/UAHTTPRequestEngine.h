@@ -112,7 +112,7 @@ typedef void (^UAHTTPRequestEngineFailureBlock)(UAHTTPRequest *request, NSUInteg
 /**
  * The operation queue used for running registrations.
  */
-@property(nonatomic, readonly, retain) NSOperationQueue *queue;
+@property(nonatomic, readonly, strong) NSOperationQueue *queue;
 
 
 @end

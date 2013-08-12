@@ -152,15 +152,15 @@ NSString * const UAAnalyticsValueNone = @"NONE";
 + (UALocationEvent*)locationEventWithLocation:(CLLocation *)location 
                                      provider:(id<UALocationProviderProtocol>)provider 
                                 andUpdateType:(UALocationEventUpdateType *)updateType {
-    return [[[UALocationEvent alloc] initWithLocation:location provider:provider andUpdateType:updateType] autorelease];
+    return [[UALocationEvent alloc] initWithLocation:location provider:provider andUpdateType:updateType];
 }
 
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)loction 
                              locationManager:(CLLocationManager *)locationManager 
                                 andUpdateType:(UALocationEventUpdateType*)updateType {
-    return [[[UALocationEvent alloc] initWithLocation:loction 
+    return [[UALocationEvent alloc] initWithLocation:loction 
                                       locationManager:locationManager 
-                                        andUpdateType:updateType] autorelease];  
+                                        andUpdateType:updateType];  
 }
 
 

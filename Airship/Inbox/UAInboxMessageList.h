@@ -106,7 +106,7 @@ typedef enum {
 /**
  * The list of messages on disk as an NSMutableArray.
  */
-@property(nonatomic, retain) NSMutableArray *messages;
+@property(nonatomic, strong) NSMutableArray *messages;
 
 /**
  * The number of messages that are currently unread or -1

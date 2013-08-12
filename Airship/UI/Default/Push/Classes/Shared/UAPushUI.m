@@ -45,9 +45,9 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 
 - (UIViewController *)apnsSettingsViewController {
     if (!_apnsSettingsViewController) {
-        UIViewController *root = [[[UAPushSettingsViewController alloc]
+        UIViewController *root = [[UAPushSettingsViewController alloc]
                                    initWithNibName:@"UAPushSettingsView"
-                                            bundle:nil] autorelease];
+                                            bundle:nil];
         _apnsSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
     }
     return _apnsSettingsViewController;
@@ -55,9 +55,9 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 
 - (UIViewController *)tokenSettingsViewController {
     if (!_tokenSettingsViewController) {
-        UIViewController *root = [[[UAPushMoreSettingsViewController alloc]
+        UIViewController *root = [[UAPushMoreSettingsViewController alloc]
                                    initWithNibName:@"UAPushMoreSettingsView"
-                                            bundle:nil] autorelease];
+                                            bundle:nil];
         _tokenSettingsViewController = [[UINavigationController alloc] initWithRootViewController:root];
     }
     return _tokenSettingsViewController;
@@ -83,11 +83,5 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
     [[UAPushUI shared].tokenSettingsViewController dismissModalViewControllerAnimated:animated];
 }
 
-- (void)dealloc {
-    self.localizationBundle = nil;
-    self.apnsSettingsViewController = nil;
-    self.tokenSettingsViewController = nil;
-    [super dealloc];
-}
 
 @end

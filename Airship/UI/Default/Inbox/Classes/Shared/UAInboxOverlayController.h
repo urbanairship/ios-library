@@ -62,12 +62,12 @@
 /**
  * The UIWebView used to display the message content.
  */
-@property(nonatomic, retain) UIWebView *webView;
+@property(nonatomic, strong) UIWebView *webView;
 
 /**
  * The UAInboxMessage being displayed.
  */
-@property(nonatomic, retain) UAInboxMessage *message;
+@property(nonatomic, strong) UAInboxMessage *message;
 
 /**
  * Convenience constructor.

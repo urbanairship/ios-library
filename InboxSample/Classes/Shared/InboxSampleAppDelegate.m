@@ -36,7 +36,7 @@
 #import "UAInboxMessageList.h"
 
 @interface InboxSampleAppDelegate()
-@property (nonatomic, retain) UAInboxDefaultJSDelegate *jsDelegate;
+@property (nonatomic, strong) UAInboxDefaultJSDelegate *jsDelegate;
 @end
 
 @implementation InboxSampleAppDelegate
@@ -64,7 +64,7 @@
     [UAInbox shared].pushHandler.delegate = [UAInboxUI shared];
 
     // Optional: Delegate for JavaScript callback
-    self.jsDelegate = [[[UAInboxDefaultJSDelegate alloc] init] autorelease];
+    self.jsDelegate = [[UAInboxDefaultJSDelegate alloc] init];
     [UAInbox shared].jsDelegate = self.jsDelegate;
     
     // For modal UI:
@@ -93,12 +93,7 @@
 - (void)dealloc {
     [UAInbox shared].jsDelegate = nil;
     
-    self.jsDelegate = nil;
-    self.viewController = nil;
-    self.navigationController = nil;
-    self.window = nil;
     
-    [super dealloc];
 }
 
 - (void)failIfSimulator {
@@ -110,7 +105,6 @@
                                                   otherButtonTitles:nil];
 
         [someError show];
-        [someError release];
     }
 }
 

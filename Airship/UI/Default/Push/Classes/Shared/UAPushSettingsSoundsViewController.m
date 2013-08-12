@@ -62,7 +62,7 @@ enum {
         NSArray *wavFiles = [[NSBundle mainBundle] pathsForResourcesOfType:@"wav" inDirectory:nil];
 
                               
-        self.soundList = [[[NSMutableArray alloc] init] autorelease];
+        self.soundList = [[NSMutableArray alloc] init];
         [self.soundList addObjectsFromArray:aiffFiles];
         [self.soundList addObjectsFromArray:cafFiles];
         [self.soundList addObjectsFromArray:wavFiles];
@@ -116,7 +116,7 @@ enum {
             
             cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
             if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
             }
             
             // Configure the cell...
@@ -137,7 +137,7 @@ enum {
 
     if (indexPath.section == SectionSounds) {
         SystemSoundID soundID;
-        AudioServicesCreateSystemSoundID((CFURLRef)[NSURL fileURLWithPath:[self.soundList objectAtIndex:indexPath.row]], &soundID);
+        AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:[self.soundList objectAtIndex:indexPath.row]], &soundID);
         AudioServicesPlayAlertSound(soundID);
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -177,12 +177,6 @@ enum {
 }
 
 
-- (void)dealloc {
-    self.textCell = nil;
-    self.textLabel = nil;
-    self.soundList = nil;
-    [super dealloc];
-}
 
 
 @end

@@ -228,7 +228,7 @@ SINGLETON_INTERFACE(UAPush);
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
+@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate;
 
 
 ///---------------------------------------------------------------------------------------
@@ -336,7 +336,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Time Zone for quiet time.
  */
-@property (nonatomic, retain) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
+@property (nonatomic, strong) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
 
 /**
  * Enables/Disables quiet time

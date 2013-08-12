@@ -13,9 +13,9 @@
 
 @interface UADeviceAPIClient()
 
-@property(nonatomic, retain) UAHTTPRequestEngine *requestEngine;
-@property(nonatomic, retain) UADeviceRegistrationData *lastSuccessfulRegistration;
-@property(nonatomic, retain) UADeviceRegistrationData *pendingRegistration;
+@property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
+@property(nonatomic, strong) UADeviceRegistrationData *lastSuccessfulRegistration;
+@property(nonatomic, strong) UADeviceRegistrationData *pendingRegistration;
 
 @end
 
@@ -25,7 +25,7 @@
     self = [super init];
     if (self) {
         self.shouldRetryOnConnectionError = YES;
-        self.requestEngine = [[[UAHTTPRequestEngine alloc] init] autorelease];
+        self.requestEngine = [[UAHTTPRequestEngine alloc] init];
         self.requestEngine.initialDelayIntervalInSeconds = kUAPushRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAPushRetryTimeMaxDelay;
         self.requestEngine.backoffFactor = kUAPushRetryTimeMultiplier;
@@ -181,11 +181,5 @@
     [self unregisterWithData:registrationData onSuccess:successBlock onFailure:failureBlock forcefully:NO];
 }
 
-- (void)dealloc {
-    self.requestEngine = nil;
-    self.lastSuccessfulRegistration = nil;
-    self.pendingRegistration = nil;
-    [super dealloc];
-}
 
 @end

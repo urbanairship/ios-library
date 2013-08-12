@@ -23,14 +23,8 @@
 }
 
 + (id)dataWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url {
-    return [[[UAUserData alloc] initWithUsername:username password:password url:url] autorelease];
+    return [[UAUserData alloc] initWithUsername:username password:password url:url];
 }
 
-- (void)dealloc {
-    self.username = nil;
-    self.password = nil;
-    self.url = nil;
-    [super dealloc];
-}
 
 @end

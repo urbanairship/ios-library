@@ -34,9 +34,9 @@
 
 @interface UAInboxUI ()
 
-@property (nonatomic, retain) UIViewController *rootViewController;
-@property (nonatomic, retain) UAInboxMessageListController *messageListController;
-@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+@property (nonatomic, strong) UIViewController *rootViewController;
+@property (nonatomic, strong) UAInboxMessageListController *messageListController;
+@property (nonatomic, strong) UAInboxAlertHandler *alertHandler;
 @property (nonatomic, assign) BOOL isVisible;
 
 - (void)quitInbox;
@@ -47,13 +47,6 @@
 
 SINGLETON_IMPLEMENTATION(UAInboxUI)
 
-- (void)dealloc {
-    self.localizationBundle = nil;
-    self.alertHandler = nil;
-    self.rootViewController = nil;
-    self.inboxParentController = nil;
-    [super dealloc];
-} 
 
 - (id)init {
     self = [super init];
@@ -64,13 +57,13 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
         self.useOverlay = NO;
         self.isVisible = NO;
         
-        self.messageListController = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
+        self.messageListController = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
         self.messageListController.title = @"Inbox";
-        self.messageListController.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
+        self.messageListController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)];
         
-        self.rootViewController = [[[UINavigationController alloc] initWithRootViewController:self.messageListController] autorelease];
+        self.rootViewController = [[UINavigationController alloc] initWithRootViewController:self.messageListController];
         
-        self.alertHandler = [[[UAInboxAlertHandler alloc] init] autorelease];
+        self.alertHandler = [[UAInboxAlertHandler alloc] init];
     }
     
     return self;
@@ -128,7 +121,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     } 
     //otherwise, push over a new message view
     else {
-        mvc = [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];            
+        mvc = [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];            
         [mvc loadMessageForID:messageID];
         [navController pushViewController:mvc animated:YES];
     }

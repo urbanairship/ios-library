@@ -27,8 +27,8 @@
 
 @interface UAHTTPRequest()
 
-@property (nonatomic, retain) NSHTTPURLResponse *response;
-@property (nonatomic, retain) NSData *responseData;
-@property (nonatomic, retain) NSError *error;
-@property (nonatomic, retain) NSURL *url;
+@property (nonatomic, strong) NSHTTPURLResponse *response;
+@property (nonatomic, strong) NSData *responseData;
+@property (nonatomic, strong) NSError *error;
+@property (nonatomic, strong) NSURL *url;
 @end

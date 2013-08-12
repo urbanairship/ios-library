@@ -150,15 +150,15 @@ SINGLETON_INTERFACE(UAInbox);
  */
 + (void)land;
 
-@property (nonatomic, assign) UAInboxMessageList *messageList;
-@property (nonatomic, retain) UAInboxPushHandler *pushHandler;
+@property (nonatomic, weak) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxPushHandler *pushHandler;
 
 /**
  * The Javascript delegate.
  * 
  * NOTE: this delegate is not retained.
  */
-@property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
+@property (nonatomic, weak) id<UAInboxJavaScriptDelegate> jsDelegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name URL Caches
@@ -177,12 +177,12 @@ SINGLETON_INTERFACE(UAInbox);
  * The default URL Cache ([NSURLCache sharedURLCache]).
  * This is saved prior to switching the URL Cache to the inboxCache.
  */
-@property(retain) NSURLCache *clientCache;
+@property(strong) NSURLCache *clientCache;
 
 /**
  * An Inbox-specific URL cache used to cache the contents of 
  * Rich Push messages for offline viewing.
  */
-@property(retain) NSURLCache *inboxCache;
+@property(strong) NSURLCache *inboxCache;
 
 @end

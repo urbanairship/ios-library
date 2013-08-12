@@ -294,9 +294,9 @@ NSString* UA_base64EncodedStringFromData(NSData* data)
 {
     size_t outputLength = 0;
     char *outputBuffer = UA_NewBase64Encode([data bytes], [data length], true, &outputLength);
-    NSString *result = [[[NSString alloc] initWithBytes:outputBuffer 
+    NSString *result = [[NSString alloc] initWithBytes:outputBuffer 
                                                  length:outputLength 
-                                               encoding:NSASCIIStringEncoding] autorelease];
+                                               encoding:NSASCIIStringEncoding];
     free(outputBuffer);
     return result;
 }

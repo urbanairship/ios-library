@@ -43,15 +43,12 @@
 
 - (void)dealloc {
     self.locationManager.delegate = nil;
-    self.locationManager = nil;
-    self.provider = nil;
-    [super dealloc];
 }
 
 - (id)init {
     self = [super init];
     if (self){
-        self.locationManager = [[[CLLocationManager alloc] init] autorelease];
+        self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
         self.provider = UALocationServiceProviderUnknown;
         self.serviceStatus = UALocationProviderNotUpdating;
@@ -81,8 +78,7 @@
 #pragma mark CLLocationManager Accessors
 
 - (void)setLocationManager:(CLLocationManager *)locationManager {
-    [_locationManager autorelease];
-    _locationManager = [locationManager retain];
+    _locationManager = locationManager;
     _locationManager.delegate = self;
     self.serviceStatus = UALocationProviderNotUpdating;
 }

@@ -37,7 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * The UAInboxMessage being displayed.
  */
-@property (nonatomic, retain) UAInboxMessage *message;
+@property (nonatomic, strong) UAInboxMessage *message;
 
 /**
  * Set this property to YES is the class should show alert dialogs in erroneous
