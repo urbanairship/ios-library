@@ -36,10 +36,14 @@
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey {
+- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appID {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
     [request setEntity:entity];
+
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appID == %@ AND userID == %@", appID, userID];
+    [request setPredicate:predicate];
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
@@ -55,7 +59,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return mutableFetchResults ?: [NSMutableArray array];
 }
 
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey {
+- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appID {
     UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
 
 
@@ -67,14 +71,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.contentType = [dict objectForKey:@"content_type"];
     message.title = [dict objectForKey: @"title"];
     message.extra = [dict objectForKey: @"extra"];
-
     message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
     message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
-
-    message.unread = [[dict objectForKey: @"unread"] intValue] ? YES : NO;
-
-    NSString *dateString = [dict objectForKey: @"message_sent"];
-    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
+    message.unread = [[dict objectForKey: @"unread"] boolValue] ? YES : NO;
+    message.appID = appID;
+    message.userID = userID;
+    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
 
     [self saveContext];
     
@@ -147,14 +149,14 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [_managedObjectModel setEntities:@[inboxEntity]];
 
     NSMutableArray *inboxProperties = [NSMutableArray array];
-    [inboxProperties addObject:[self createAttributeDescription:@"appId" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"appID" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"userId" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"userID" withType:NSStringAttributeType setOptional:true]];
 
     NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
     [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];

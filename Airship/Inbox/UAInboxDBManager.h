@@ -55,10 +55,18 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  *
  * @return A message, populated with data from the message dictionary.
  */
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
+- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appID;
 
 
+/**
+ * Deletes a list of messages from the database
+ * @param messages NSArray of UAInboxMessages to be deleted 
+ */
 - (void)deleteMessages:(NSArray *)messages;
+
+/**
+ * Saves any changes to the database
+ */
 - (void)saveContext;
 
 @end
