@@ -67,12 +67,7 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 }
 
 - (NSString *)asJSONString {
-<<<<<<< HEAD
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    return [writer stringWithObject:self.payloadDictionary];
-=======
     return [NSJSONSerialization stringWithObject:self.payloadDictionary];
->>>>>>> Remove SBJson
 }
 
 - (NSData *)asJSONData {

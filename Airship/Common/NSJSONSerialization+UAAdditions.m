@@ -37,7 +37,7 @@
                                                    options:opt
                                                      error:nil];
 
-    return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 + (id)objectWithString:(NSString *)jsonString {
