@@ -564,7 +564,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             
             if (errString) {
                 UA_LTRACE("Deserialization Error: %@", errString);
-                //must be relased by caller per docs
             }
         }
         

@@ -89,7 +89,6 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
-        //must be relased by caller per docs
     }
     
     //insert an empty string if there isn't any event data
