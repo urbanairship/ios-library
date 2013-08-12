@@ -33,6 +33,10 @@
 }
 
 + (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt {
+    if (!jsonObject) {
+        return nil;
+        
+    }
     NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject
                                                    options:opt
                                                      error:nil];
@@ -41,6 +45,9 @@
 }
 
 + (id)objectWithString:(NSString *)jsonString {
+    if (!jsonString) {
+        return nil;
+    }
     return [NSJSONSerialization JSONObjectWithData: [jsonString dataUsingEncoding:NSUTF8StringEncoding]
                                            options: NSJSONReadingMutableContainers
                                              error: nil];

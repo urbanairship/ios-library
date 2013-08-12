@@ -28,21 +28,24 @@
 @interface NSJSONSerialization (UAAdditions)
 
 /**
- * Converts a NSDictionary to a JSON formatted NSString
- * @param jsonObject NSDictionary to convert 
+ * Converts a Foundation object to a JSON formatted NSString
+ * @param jsonObject Foundation object to convert 
+ * @return NSString formatted as JSON, or nil if an error occurs
  */
 + (NSString *)stringWithObject:(id)jsonObject;
 
 /**
- * Converts a NSDictionary to a JSON formatted NSString
- * @param jsonObject NSDictionary to convert
+ * Converts a Foundation object to a JSON formatted NSString
+ * @param jsonObject Foundation object to convert
  * @param opt NSJSONWritingOptions options
+ * @return NSString formatted as JSON, or nil if an error occurs
  */
 + (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt;
 
 /**
- * Converts a JSON NSString to a NSDictionary
- * @param jsonString the JSON NSSTring to convert
+ * Create a Foundation object from JSON string
+ * @param jsonString the JSON NSString to convert
+ * @return A Foundation object, or nil if an error occurs.
  */
 + (id)objectWithString:(NSString *)jsonString;
 

@@ -42,12 +42,25 @@
     STAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produceses unexepected json strings");
 }
 
+- (void)testStringWithNilObject {
+    STAssertNil([NSJSONSerialization stringWithObject:nil], @"stringWithObject should return nil if the object is nil");
+}
+
 - (void)testobjectWithString {
     NSString *jsonString = @"{\"stringKey\":\"stringValue\",\"intKey\":1}";
     NSDictionary *jsonDictionary = [NSJSONSerialization objectWithString:jsonString];
 
     NSDictionary *expectedDictonary =@{@"stringKey":@"stringValue", @"intKey": @1};
     STAssertEqualObjects(expectedDictonary, jsonDictionary, @"objectWithString produceses unexepected json dictionaries");
+}
+
+- (void)testobjectWithInvalidString {
+    NSString *jsonString = @"some invalid json string";
+    STAssertNil([NSJSONSerialization objectWithString:jsonString], @"objectWithString should return nil for invalid json strings");
+}
+
+- (void)testobjectWithNilStringRaises {
+   STAssertNil([NSJSONSerialization objectWithString:nil], @"objectWithString should return nil for invalid json strings");
 }
 
 
