@@ -128,8 +128,6 @@ static UAInboxMessageList *_messageList = nil;
         self.messages = newMessages;
         self.unreadCount = unread;
 
-        [[UAInboxDBManager shared] addMessages:self.messages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
-
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
     } onFailure:^(UAHTTPRequest *request){
@@ -183,7 +181,12 @@ static UAInboxMessageList *_messageList = nil;
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             succeed();
-            [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+            
+            for (UAInboxMessage *message in updateMessageArray) {
+                message.unread = false;
+            }
+            
+            [[UAInboxDBManager shared] saveContext];
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
         }onFailure:^(UAHTTPRequest *request){
             fail(request);

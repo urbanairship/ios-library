@@ -23,42 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "UAJSONValueTransformer.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
-#import "UAGlobal.h"
+@implementation UAJSONValueTransformer
 
-@class UA_FMDatabase;
-@class UAInboxMessage;
-
-#define UA_FMDBLogError if ([self.db hadError]) { UALOG(@"Err %d: %@", [self.db lastErrorCode], [self.db lastErrorMessage]);}
-#define DB_NAME @"UAInbox.db"
-
-@interface UAInboxDBManager : NSObject {
++ (Class)transformedValueClass {
+	return [NSData class];
 }
 
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
++ (BOOL)allowsReverseTransformation {
+	return YES;
+}
 
-SINGLETON_INTERFACE(UAInboxDBManager);
+- (id)transformedValue:(NSDictionary *)value {
+	return [NSJSONSerialization dataWithJSONObject:value
+                                           options:NSJSONWritingPrettyPrinted
+                                             error:nil];
+}
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
-
-
-/**
- * Adds a new message.
- *
- * @param message A dictionary with keys and values conforming to the
- * Urban Airship JSON API for retrieving inbox messages.
- * @param userID the userID of the message.
- * @param appID the appID of the message.
- *
- * @return A message, populated with data from the message dictionary.
- */
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
-
-
-- (void)deleteMessages:(NSArray *)messages;
-- (void)saveContext;
-
+- (id)reverseTransformedValue:(id)value {
+    return [NSJSONSerialization JSONObjectWithData: value
+                                           options: NSJSONReadingMutableContainers
+                                             error: nil];
+}
 @end

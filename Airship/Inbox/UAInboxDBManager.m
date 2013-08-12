@@ -28,128 +28,186 @@
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import <CoreData/CoreData.h>
 
 
 @implementation UAInboxDBManager
 
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
-- (id)init {
-    self = [super init];
-    if (self) {
-        [self createEditableCopyOfDatabaseIfNeeded];
-        // We can always reset database before we launch it with db function
-        //[self resetDB];
-        [self initDBIfNeeded];
-    }
-    return self;
-}
-
-- (void)dealloc {
-    [self.db close];
-}
-
-- (void)resetDB {
-    [self.db executeUpdate:@"DROP TABLE messages"];
-    [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
-    UA_FMDBLogError
-}
-
-- (void)initDBIfNeeded {
-    if (![self.db tableExists:@"messages"]) {
-        [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
-        UA_FMDBLogError
-    }
-}
-
-- (void)createEditableCopyOfDatabaseIfNeeded {
-    NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
-    NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
-    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
-
-    self.db = [UA_FMDatabase databaseWithPath:dbPath];
-    if (![self.db open]) {
-        UA_LDEBUG(@"Failed to open database.");
-    }
-}
 
 - (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
 
-    UA_FMResultSet *rs;
-    NSMutableArray *result = [NSMutableArray array];
-    UAInboxMessage *msg;
-    rs = [self.db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appKey, userID];
-    while ([rs next]) {
-        msg = [[UAInboxMessage alloc] init];
-        msg.messageID = [rs stringForColumn:@"id"];
-        msg.messageBodyURL = [NSURL URLWithString:[rs stringForColumn:@"body_url"]];
-        msg.messageURL = [NSURL URLWithString:[rs stringForColumn:@"url"]];
-        msg.unread = [rs intForColumn:@"unread"]==1? YES: NO;
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
+    NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+    [request setSortDescriptors:sortDescriptors];
 
-        NSString *dateString = [rs stringForColumn:@"sent_time"]; //2010-04-16 16:32:50
-        msg.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
-
-        msg.title = [rs stringForColumn:@"title"];
-        
-        msg.extra = [NSJSONSerialization objectWithString:[rs stringForColumn:@"extra"]];
-        
-        [result addObject: msg];
+    NSError *error = nil;
+    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    if (mutableFetchResults == nil) {
+        // Handle the error.
+        UALOG(@"No results!");
     }
-    return result;
+
+    return mutableFetchResults ?: [NSMutableArray array];
 }
 
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey {
+- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey {
+    UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
 
-    [self.db beginTransaction];
-    for (UAInboxMessage *message in messages) {
-        NSDictionary *extra = message.extra;
-        [self.db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
-         message.messageID,
-         message.title,
-         message.messageBodyURL,
-         [[UAUtils ISODateFormatterUTC] stringFromDate:message.messageSent],
-         [NSNumber numberWithInt:(message.unread?1:0)],
-         message.messageURL,
-         appKey,
-         userID,
-         [NSJSONSerialization stringWithObject:extra]];
-    }
+
+    dict = [dict dictionaryWithValuesForKeys:[[dict keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+        return ![obj isEqual:[NSNull null]];
+    }] allObjects]];
+
+    message.messageID = [dict objectForKey: @"message_id"];
+    message.contentType = [dict objectForKey:@"content_type"];
+    message.title = [dict objectForKey: @"title"];
+    message.extra = [dict objectForKey: @"extra"];
+
+    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
+    message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
+
+    message.unread = [[dict objectForKey: @"unread"] intValue] ? YES : NO;
+
+    NSString *dateString = [dict objectForKey: @"message_sent"];
+    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
+
+    [self saveContext];
     
-    [self.db commit];
-    UA_FMDBLogError
+    return message;
 }
+
 
 - (void)deleteMessages:(NSArray *)messages {
-    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
-    NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
-    NSString *deleteStmt = [NSString stringWithFormat:
-                            @"DELETE FROM messages WHERE id IN (%@)", idsString];
-    
-    UA_LTRACE(@"Delete messages statement: %@", deleteStmt);
+    for (UAInboxMessage *persistedMessageToDelete in messages) {
+        UALOG(@"Deleting: %@",persistedMessageToDelete.messageID);
+        [self.managedObjectContext deleteObject:persistedMessageToDelete];
+    }
 
-    [self.db beginTransaction];
-    [self.db executeUpdate:deleteStmt];
-    [self.db commit];
-    UA_FMDBLogError
+    [self saveContext];
 }
 
-- (void)updateMessageAsRead:(UAInboxMessage *)msg {
-    [self.db executeUpdate:@"UPDATE messages SET unread = 0 WHERE id = ?", msg.messageID];
-    UA_FMDBLogError
+- (void)saveContext {
+    NSError *error = nil;
+    NSManagedObjectContext *context = self.managedObjectContext;
+    if (context != nil)
+    {
+        UALOG(@"Saving inbox changes");
+
+        if ([context hasChanges] && ![context save:&error])
+        {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+    }
 }
 
-- (void)updateMessagesAsRead:(NSArray *)messages {
-    NSArray *messageIDs = [messages valueForKeyPath:@"messageID"];
-    NSString *idsString = [NSString stringWithFormat:@"'%@'", [messageIDs componentsJoinedByString:@"', '"]];
-    NSString *updateStmt = [NSString stringWithFormat:
-                            @"UPDATE messages SET unread = 0 WHERE id IN (%@)", idsString];
 
-    UA_LTRACE(@"Update messages as read statement: %@", updateStmt);
+/**
+ Returns the managed object context for the application.
+ If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
+ */
+- (NSManagedObjectContext *)managedObjectContext {
+    UALOG(@"Managed Object Context");
 
-    [self.db beginTransaction];
-    [self.db executeUpdate:updateStmt];
-    [self.db commit];
-    UA_FMDBLogError
+    if (_managedObjectContext != nil) {
+        return _managedObjectContext;
+    }
+
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil) {
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    return _managedObjectContext;
+}
+
+/**
+ Returns the managed object model for the application.
+ If the model doesn't already exist, it is created from the application's model.
+ */
+- (NSManagedObjectModel *)managedObjectModel {
+    if (_managedObjectModel != nil) {
+        return _managedObjectModel;
+    }
+
+    _managedObjectModel = [[NSManagedObjectModel alloc] init];
+    NSEntityDescription *inboxEntity = [[NSEntityDescription alloc] init];
+    [inboxEntity setName:@"UAInboxMessage"];
+    [inboxEntity setManagedObjectClassName:@"UAInboxMessage"];
+    [_managedObjectModel setEntities:@[inboxEntity]];
+
+    NSMutableArray *inboxProperties = [NSMutableArray array];
+    [inboxProperties addObject:[self createAttributeDescription:@"appId" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"userId" withType:NSStringAttributeType setOptional:true]];
+
+    NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
+    [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
+    [inboxProperties addObject:extraDescription];
+
+    [inboxEntity setProperties:inboxProperties];
+
+    return _managedObjectModel;
+}
+
+
+- (NSAttributeDescription *) createAttributeDescription:(NSString *)name
+                                               withType:(NSAttributeType)attributeType
+                                            setOptional:(BOOL)isOptional {
+
+    NSAttributeDescription *attribute= [[NSAttributeDescription alloc] init];
+    [attribute setName:name];
+    [attribute setAttributeType:attributeType];
+    [attribute setOptional:isOptional];
+
+    return attribute;
+}
+
+
+/**
+ Returns the persistent store coordinator for the application.
+ If the coordinator doesn't already exist, it is created and the application's store added to it.
+ */
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+    if (_persistentStoreCoordinator != nil) {
+        return _persistentStoreCoordinator;
+    }
+
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"MessagesModel.sqlite"];
+
+    NSError *error = nil;
+    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+        [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
+        [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
+    }
+
+    return _persistentStoreCoordinator;
+}
+
+
+#pragma mark - Application's Documents directory
+
+/**
+ Returns the URL to the application's Documents directory.
+ */
+- (NSURL *)applicationDocumentsDirectory {
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 @end

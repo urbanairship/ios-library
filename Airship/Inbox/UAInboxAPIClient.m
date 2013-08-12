@@ -9,6 +9,8 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAInboxDBManager.h"
+
 @interface UAInboxAPIClient()
 
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -149,7 +151,13 @@
           // Convert dictionary to objects for convenience
           NSMutableArray *newMessages = [NSMutableArray array];
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-              UAInboxMessage *tmp = [[UAInboxMessage alloc] initWithDict:message inbox:[UAInbox shared].messageList];
+              
+              UAInboxMessage *tmp = [[UAInboxDBManager shared] addMessageFromDict:message
+                                                                          forUser:[UAUser defaultUser].username
+                                                                              app:[UAirship shared].config.appKey];
+
+              tmp.inbox = [UAInbox shared].messageList;
+
               [newMessages addObject:tmp];
           }
 
