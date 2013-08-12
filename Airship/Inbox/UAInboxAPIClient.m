@@ -8,8 +8,7 @@
 #import "UAConfig.h"
 #import "UAUser.h"
 #import "UAUtils.h"
-#import "UA_SBJSON.h"
-
+#import "NSJSONSerialization+UAAdditions.h"
 @interface UAInboxAPIClient()
 
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -63,8 +62,7 @@
 
     data = @{@"delete" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    NSString* body = [writer stringWithObject:data];
+    NSString* body = [NSJSONSerialization stringWithObject:data];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
                                                         method:@"POST"];
@@ -92,8 +90,7 @@
 
     data = @{@"mark_as_read" : updateMessageURLs};
 
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    NSString* body = [writer stringWithObject:data];
+    NSString* body = [NSJSONSerialization stringWithObject:data];
 
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:requestUrl
                                                         method:@"POST"];
@@ -145,9 +142,8 @@
       } retryWhere:^(UAHTTPRequest *request){
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
-          UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
           NSString *responseString = request.responseString;
-          NSDictionary *jsonResponse = [parser objectWithString:responseString];
+          NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
           UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
           // Convert dictionary to objects for convenience

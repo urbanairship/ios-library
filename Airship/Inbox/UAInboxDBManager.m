@@ -25,12 +25,10 @@
 
 #import "UAInboxDBManager.h"
 #import "UA_FMDatabase.h"
-
 #import "UAInboxMessage.h"
-
-#import "UA_SBJSON.h"
-
 #import "UAUtils.h"
+#import "NSJSONSerialization+UAAdditions.h"
+
 
 @implementation UAInboxDBManager
 
@@ -93,7 +91,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
         msg.title = [rs stringForColumn:@"title"];
         
-        msg.extra = [[UA_SBJsonParser new] objectWithString:[rs stringForColumn:@"extra"]];
+        msg.extra = [NSJSONSerialization objectWithString:[rs stringForColumn:@"extra"]];
         
         [result addObject: msg];
     }
@@ -114,8 +112,9 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          message.messageURL,
          appKey,
          userID,
-         [[UA_SBJsonWriter new] stringWithObject:extra]];
+         [NSJSONSerialization stringWithObject:extra]];
     }
+    
     [self.db commit];
     UA_FMDBLogError
 }

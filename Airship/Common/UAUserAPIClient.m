@@ -5,8 +5,7 @@
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
 #import "UAPush.h"
-#import "UA_SBJsonWriter.h"
-#import "UA_SBJsonParser.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 @interface UAUserAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -47,9 +46,7 @@
     NSDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
 
 
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    NSString *body = [writer stringWithObject:data];
-
+    NSString *body = [NSJSONSerialization stringWithObject:data];
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
@@ -74,9 +71,7 @@
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
 
-    UA_SBJsonWriter *writer = [UA_SBJsonWriter new];
-    NSString *body = [writer stringWithObject:dict];
-
+    NSString *body = [NSJSONSerialization stringWithObject:dict];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
     UA_LTRACE(@"Request to update user with content: %@", body);
@@ -103,8 +98,8 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)(status >= 500 && status <= 599);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
-        NSDictionary *result = [parser objectWithString:request.responseString];
+
+        NSDictionary *result = [NSJSONSerialization objectWithString:request.responseString];
 
         NSString *username = [result objectForKey:@"user_id"];
         NSString *password = [result objectForKey:@"password"];
@@ -152,9 +147,9 @@
         UA_LTRACE(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
 
         NSString *rawJson = [[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding];
-        UA_SBJsonParser *parser = [[UA_SBJsonParser alloc] init];
+
         // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
-        NSDictionary *postBody = [parser objectWithString:rawJson];
+        NSDictionary *postBody = [NSJSONSerialization objectWithString:rawJson];
         NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
         NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
 

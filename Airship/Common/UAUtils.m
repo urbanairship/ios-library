@@ -29,7 +29,6 @@
 #import <CommonCrypto/CommonDigest.h>
 
 // UA external libraries
-#import "UA_SBJSON.h"
 #import "UA_Base64.h"
 #import "UAHTTPConnection.h"
 

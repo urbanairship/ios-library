@@ -34,7 +34,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
-#import "UA_SBJSON.h"
 
 /*
  * Private methods

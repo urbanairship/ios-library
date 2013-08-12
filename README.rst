@@ -250,7 +250,6 @@ Core Library
 Third party Package  License   Copyright / Creator 
 ===================  ========  ======================================================
 fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
-SBJSON               MIT       Copyright (C) 2007-2010 Stig Brautaset.
 Base64               BSD       Copyright 2009-2010 Matt Gallagher.
 Reachability         BSD       Copyright (C) 2010 Apple Inc.
 ===================  ========  ======================================================

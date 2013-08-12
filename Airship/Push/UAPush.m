@@ -35,8 +35,6 @@
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 
-#import "UA_SBJsonWriter.h"
-
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
 UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
