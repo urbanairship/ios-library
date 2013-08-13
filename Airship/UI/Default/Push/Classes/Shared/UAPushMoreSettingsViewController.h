@@ -27,7 +27,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UAPush.h"
 
-@interface UAPushMoreSettingsViewController : UIViewController <UARegistrationObserver>
+@interface UAPushMoreSettingsViewController : UIViewController
 
 @property (nonatomic, strong) UITableViewCell *deviceTokenCell;
 @property (nonatomic, strong) UITableViewCell *deviceTokenTypesCell;
