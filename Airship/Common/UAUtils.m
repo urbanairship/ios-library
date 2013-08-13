@@ -29,7 +29,6 @@
 #import <CommonCrypto/CommonDigest.h>
 
 // UA external libraries
-#import "UA_SBJSON.h"
 #import "UA_Base64.h"
 #import "UAHTTPConnection.h"
 
@@ -68,10 +67,10 @@
   CFUUIDRef uuidObj = CFUUIDCreate(nil);
     
   //get the string representation of the UUID
-    NSString *uuidString = (NSString*)CFUUIDCreateString(nil, uuidObj);
+    NSString *uuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(nil, uuidObj));
     CFRelease(uuidObj);
   
-    return [uuidString autorelease];
+    return uuidString;
 }
 
 + (NSString *)deviceModelName {
@@ -211,8 +210,8 @@
 }
 
 + (NSDateFormatter *)ISODateFormatterUTC {
-    NSDateFormatter* dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
-    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
     [dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];

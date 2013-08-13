@@ -29,12 +29,12 @@
 @class UALocationService;
 @interface UAMapPresentationController : UIViewController <MKMapViewDelegate>
 
-@property (nonatomic, retain) UALocationService *locationService;
+@property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, copy) NSMutableArray *locations;
-@property (nonatomic, retain) IBOutlet MKMapView *mapView;
-@property (nonatomic, retain) NSMutableArray *annotations;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *rightButton;
-@property (nonatomic, retain) id <MKAnnotation> lastUserAnnotation;
+@property (nonatomic, strong) IBOutlet MKMapView *mapView;
+@property (nonatomic, strong) NSMutableArray *annotations;
+@property (nonatomic, strong) IBOutlet UIBarButtonItem *rightButton;
+@property (nonatomic, strong) id <MKAnnotation> lastUserAnnotation;
 
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;
 - (void)convertLocationsToAnnotations;

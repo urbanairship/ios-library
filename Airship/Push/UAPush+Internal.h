@@ -54,7 +54,7 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 /**
  * Default push handler.
  */
-@property (nonatomic, retain) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
+@property (nonatomic, strong) NSObject <UAPushNotificationDelegate> *defaultPushHandler;
 
 /**
  * Device token as a string.
@@ -70,7 +70,7 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 /**
  * The client for the Urban Airship device registration API.
  */
-@property (nonatomic, retain) UADeviceAPIClient *deviceAPIClient;
+@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 
 /**
  * Get the local time zone, considered the default.

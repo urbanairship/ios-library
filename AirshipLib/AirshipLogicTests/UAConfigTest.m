@@ -45,7 +45,7 @@
 - (void)testUnknownKeyHandling {
     // ensure that unknown values don't crash the app with an unkown key exception
 
-    UAConfig *config =[[[UAConfig alloc] init] autorelease];
+    UAConfig *config =[[UAConfig alloc] init];
     STAssertNoThrow([config setValue:@"someValue" forKey:@"thisKeyDoesNotExist"], @"Invalid key incorrectly throws an exception.");
 }
 
@@ -67,19 +67,19 @@
 
     // Ensure that the simulator falls back to the inProduction flag as it was set
 
-    UAConfig *configInProduction =[[[UAConfig alloc] init] autorelease];
+    UAConfig *configInProduction =[[UAConfig alloc] init];
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
     STAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 
-    UAConfig *configInDevelopment =[[[UAConfig alloc] init] autorelease];
+    UAConfig *configInDevelopment =[[UAConfig alloc] init];
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
     STAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
 - (void)testProductionFlag {
-    UAConfig *config = [[[UAConfig alloc] init] autorelease];
+    UAConfig *config = [[UAConfig alloc] init];
 
     // initialize with a custom profile path that is accessible from this test environment
     config.profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"production-embedded" ofType:@"mobileprovision"];
@@ -218,7 +218,7 @@
 }
 
 - (void) testSetAnalyticsURL {
-    UAConfig *config =[[[UAConfig alloc] init] autorelease];
+    UAConfig *config =[[UAConfig alloc] init];
 
     config.analyticsURL = @"http://some-other-url.com";
     STAssertEqualObjects(@"http://some-other-url.com", config.analyticsURL, @"Analytics URL does not set correctly");
@@ -228,7 +228,7 @@
 }
 
 - (void) testSetDeviceAPIURL {
-    UAConfig *config =[[[UAConfig alloc] init] autorelease];
+    UAConfig *config =[[UAConfig alloc] init];
 
     config.deviceAPIURL = @"http://some-other-url.com";
     STAssertEqualObjects(@"http://some-other-url.com", config.deviceAPIURL, @"Device API URL does not set correctly");

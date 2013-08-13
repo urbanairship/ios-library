@@ -61,18 +61,17 @@
 @implementation UALocationEventApplicationTests
 
 - (void)setUp {
-    _location = [[UALocationTestUtils testLocationPDX] retain];
+    _location = [UALocationTestUtils testLocationPDX];
 }
 
 - (void)tearDown {
 
-    [_location release];
     _location = nil;
 
 }
 
 - (void)testInitWithLocationManager {
-    CLLocationManager *locationManager = [[[CLLocationManager alloc] init] autorelease];
+    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:_location 
                                                         locationManager:locationManager 
                                                           andUpdateType:UALocationEventUpdateTypeSingle];

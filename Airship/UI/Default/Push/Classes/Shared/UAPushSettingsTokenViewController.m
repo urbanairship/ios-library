@@ -33,13 +33,6 @@
 
 @implementation UAPushSettingsTokenViewController
 
-- (void)dealloc {
-    self.cpyButton = nil;
-    self.emailButton = nil;
-    self.tokenLabel = nil;
-    self.text = nil;
-    [super dealloc];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -91,8 +84,8 @@
 
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"description-cell"];
     if (!cell) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                       reuseIdentifier:@"description-cell"] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                       reuseIdentifier:@"description-cell"];
     }
     
     UIFont *font = [UIFont systemFontOfSize: 17];
@@ -114,8 +107,6 @@
     [cell setSelectionStyle: UITableViewCellSelectionStyleNone];
     [cell setBackgroundView: bgImageView];
 
-    [description release];
-    [bgImageView release];
 
     return cell;
 }
@@ -144,12 +135,10 @@
         [mfViewController setMessageBody:messageBody isHTML:NO];
 		
 		[self presentModalViewController:mfViewController animated:YES];
-		[mfViewController release];
 	}else {
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
 		
 		[alert show];
-		[alert release];
 	}
 }
 
@@ -181,7 +170,6 @@
 	[self dismissModalViewControllerAnimated:YES];
 	
 
-	[alert release];
 }
 
 @end

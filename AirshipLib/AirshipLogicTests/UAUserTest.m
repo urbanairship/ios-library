@@ -6,7 +6,7 @@
 #import <OCMock/OCMConstraint.h>
 
 @interface UAUserTest()
-@property(nonatomic, retain) UAUser *user;
+@property(nonatomic, strong) UAUser *user;
 @end
 
 @implementation UAUserTest

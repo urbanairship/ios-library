@@ -1,4 +1,29 @@
 
+/*
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #define kUADeviceRegistrationPayloadTestStartHour 1
 #define kUADeviceRegistrationPayloadTestStartMinute 30
 #define kUADeviceRegistrationPayloadTestEndHour 3
@@ -6,19 +31,19 @@
 
 #import "UADeviceRegistrationPayloadTest.h"
 #import "UADeviceRegistrationPayload.h"
+#import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush+Internal.h"
-#import "UA_SBJSON.h"
 
 @interface UADeviceRegistrationPayloadTest()
-@property(nonatomic, retain) UADeviceRegistrationPayload *payload;
-@property(nonatomic, retain) UADeviceRegistrationPayload *emptyPayload;
+@property(nonatomic, strong) UADeviceRegistrationPayload *payload;
+@property(nonatomic, strong) UADeviceRegistrationPayload *emptyPayload;
 @property(nonatomic, copy) NSString *alias;
-@property(nonatomic, retain) NSArray *tags;
-@property(nonatomic, retain) NSMutableDictionary *quietTime;
-@property(nonatomic, retain) NSDate *startDate;
-@property(nonatomic, retain) NSDate *endDate;
+@property(nonatomic, strong) NSArray *tags;
+@property(nonatomic, strong) NSMutableDictionary *quietTime;
+@property(nonatomic, strong) NSDate *startDate;
+@property(nonatomic, strong) NSDate *endDate;
 @property(nonatomic, copy) NSString *timeZone;
-@property(nonatomic, retain) NSNumber *badge;
+@property(nonatomic, strong) NSNumber *badge;
 @end
 
 @implementation UADeviceRegistrationPayloadTest
@@ -27,7 +52,7 @@
 //or at least separating the building of the dictionary from setting UAPush property state.
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
    
-    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
                          [cal components:NSHourCalendarUnit fromDate:startDate].hour,
                          [cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
@@ -44,7 +69,7 @@
 
 - (NSDate *)dateWithHour:(NSInteger)hour withMinute:(NSInteger)minute {
     
-    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *components = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
 
     components.hour = hour;
@@ -116,17 +141,15 @@
 }
 
 - (void)testAsJSONString {
-    UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-    [self verifyDictionary:[parser objectWithString:[self.payload asJSONString]]];
-    [self verifyEmptyDictionary:[parser objectWithString:[self.emptyPayload asJSONString]]];
+    [self verifyDictionary:[NSJSONSerialization objectWithString:[self.payload asJSONString]]];
+    [self verifyEmptyDictionary:[NSJSONSerialization objectWithString:[self.emptyPayload asJSONString]]];
 }
 
 - (void)testAsJSONData {
-    UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
-    NSString *jsonString = [[[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
-    [self verifyDictionary:[parser objectWithString:jsonString]];
-    NSString *emptyJSONString = [[[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding] autorelease];
-    [self verifyEmptyDictionary:[parser objectWithString:emptyJSONString]];
+    NSString *jsonString = [[NSString alloc] initWithData:[self.payload asJSONData] encoding:NSUTF8StringEncoding];
+    [self verifyDictionary:[NSJSONSerialization objectWithString:jsonString]];
+    NSString *emptyJSONString = [[NSString alloc] initWithData:[self.emptyPayload asJSONData] encoding:NSUTF8StringEncoding];
+    [self verifyEmptyDictionary:[NSJSONSerialization objectWithString:emptyJSONString]];
 }
 
 @end

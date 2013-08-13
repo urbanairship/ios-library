@@ -32,10 +32,10 @@
  */
 @interface UAAnalytics : NSObject
 
-@property (nonatomic, retain, readonly) NSMutableDictionary *session;
+@property (nonatomic, strong, readonly) NSMutableDictionary *session;
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
+@property (nonatomic, strong, readonly) NSDictionary *notificationUserInfo;
 
 
 

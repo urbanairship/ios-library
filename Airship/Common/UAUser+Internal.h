@@ -43,7 +43,7 @@
 - (void)cancelListeningForDeviceToken;
 - (void)updateDefaultDeviceToken;
 
-@property(nonatomic, retain) UAUserAPIClient *apiClient;
+@property(nonatomic, strong) UAUserAPIClient *apiClient;
 @property(nonatomic, assign) BOOL initialized;
 @property(nonatomic, copy) NSString *username;
 @property(nonatomic, copy) NSString *password;

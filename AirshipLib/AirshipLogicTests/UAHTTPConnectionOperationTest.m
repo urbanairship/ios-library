@@ -6,7 +6,7 @@
 #import "UADelayOperation.h"
 
 @interface UAHTTPConnectionOperationTest()
-@property(nonatomic, retain) UAHTTPConnectionOperation *operation;
+@property(nonatomic, strong) UAHTTPConnectionOperation *operation;
 @property(nonatomic, assign) dispatch_semaphore_t semaphore;
 @end
 
@@ -106,7 +106,7 @@
 
 - (void)testQueueCancel {
     //create a serial queue
-    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
 
     //add a long running delay in front of our http connection operation

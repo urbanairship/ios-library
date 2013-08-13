@@ -23,38 +23,35 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAPush.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
-#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
+@implementation NSJSONSerialization (UAAdditions)
 
-/**
- * The default implementation provided in the library's sample UI distribution.
- */
 
-@interface UAPushUI : NSObject<UAPushUIProtocol>
++ (NSString *)stringWithObject:(id)jsonObject {
+    return [NSJSONSerialization stringWithObject:jsonObject options:0];
+}
 
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
-@property (nonatomic, strong) NSBundle *localizationBundle;
++ (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt {
+    if (!jsonObject) {
+        return nil;
+        
+    }
+    NSData *data = [NSJSONSerialization dataWithJSONObject:jsonObject
+                                                   options:opt
+                                                     error:nil];
 
-SINGLETON_INTERFACE(UAPushUI)
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+}
 
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
++ (id)objectWithString:(NSString *)jsonString {
+    if (!jsonString) {
+        return nil;
+    }
+    return [NSJSONSerialization JSONObjectWithData: [jsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                           options: NSJSONReadingMutableContainers
+                                             error: nil];
+}
 
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
 
 @end

@@ -25,12 +25,10 @@
 
 #import "UAInboxDBManager.h"
 #import "UA_FMDatabase.h"
-
 #import "UAInboxMessage.h"
-
-#import "UA_SBJSON.h"
-
 #import "UAUtils.h"
+#import "NSJSONSerialization+UAAdditions.h"
+
 
 @implementation UAInboxDBManager
 
@@ -49,8 +47,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)dealloc {
     [self.db close];
-    self.db = nil;
-    [super dealloc];
 }
 
 - (void)resetDB {
@@ -71,7 +67,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
     NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:DB_NAME];
 
-    self.db = [[[UA_FMDatabase databaseWithPath:dbPath] retain] autorelease];
+    self.db = [UA_FMDatabase databaseWithPath:dbPath];
     if (![self.db open]) {
         UA_LDEBUG(@"Failed to open database.");
     }
@@ -84,7 +80,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     UAInboxMessage *msg;
     rs = [self.db executeQuery:@"SELECT * FROM messages WHERE app_id = ? and user_id = ? order by sent_time desc", appKey, userID];
     while ([rs next]) {
-        msg = [[[UAInboxMessage alloc] init] autorelease];
+        msg = [[UAInboxMessage alloc] init];
         msg.messageID = [rs stringForColumn:@"id"];
         msg.messageBodyURL = [NSURL URLWithString:[rs stringForColumn:@"body_url"]];
         msg.messageURL = [NSURL URLWithString:[rs stringForColumn:@"url"]];
@@ -95,7 +91,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
         msg.title = [rs stringForColumn:@"title"];
         
-        msg.extra = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"extra"]];
+        msg.extra = [NSJSONSerialization objectWithString:[rs stringForColumn:@"extra"]];
         
         [result addObject: msg];
     }
@@ -116,8 +112,9 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          message.messageURL,
          appKey,
          userID,
-         [[[UA_SBJsonWriter new] autorelease] stringWithObject:extra]];
+         [NSJSONSerialization stringWithObject:extra]];
     }
+    
     [self.db commit];
     UA_FMDBLogError
 }

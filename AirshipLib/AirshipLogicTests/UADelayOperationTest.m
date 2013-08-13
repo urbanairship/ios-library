@@ -3,14 +3,14 @@
 #import "UADelayOperation.h"
 
 @interface UADelayOperationTest()
-@property(nonatomic, retain) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *queue;
 @end
 
 @implementation UADelayOperationTest
 
 - (void)setUp {
     [super setUp];
-    self.queue = [[[NSOperationQueue alloc] init] autorelease];
+    self.queue = [[NSOperationQueue alloc] init];
     self.queue.maxConcurrentOperationCount = 1;
 }
 

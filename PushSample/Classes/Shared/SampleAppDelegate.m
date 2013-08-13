@@ -32,11 +32,6 @@
 
 @implementation SampleAppDelegate
 
-- (void)dealloc {
-    self.controller = nil;
-    self.window = nil;
-    [super dealloc];
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
@@ -109,11 +104,11 @@
 
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
-        UIAlertView *someError = [[[UIAlertView alloc] initWithTitle:@"Notice"
+        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
                                                             message:@"You will not be able to receive push notifications in the simulator."
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil] autorelease];
+                                                  otherButtonTitles:nil];
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.

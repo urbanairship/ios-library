@@ -33,7 +33,7 @@
     dispatch_queue_t dbQueue;
 }
 
-@property (nonatomic, retain) UASQLite *db;
+@property (nonatomic, strong) UASQLite *db;
 
 SINGLETON_INTERFACE(UAAnalyticsDBManager);
 

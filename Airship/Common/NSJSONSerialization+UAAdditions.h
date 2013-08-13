@@ -24,37 +24,29 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAPush.h"
 
-#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
-
-/**
- * The default implementation provided in the library's sample UI distribution.
- */
-
-@interface UAPushUI : NSObject<UAPushUIProtocol>
-
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
-@property (nonatomic, strong) NSBundle *localizationBundle;
-
-SINGLETON_INTERFACE(UAPushUI)
+@interface NSJSONSerialization (UAAdditions)
 
 /**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
+ * Converts a Foundation object to a JSON formatted NSString
+ * @param jsonObject Foundation object to convert 
+ * @return NSString formatted as JSON, or nil if an error occurs
  */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
++ (NSString *)stringWithObject:(id)jsonObject;
 
 /**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
+ * Converts a Foundation object to a JSON formatted NSString
+ * @param jsonObject Foundation object to convert
+ * @param opt NSJSONWritingOptions options
+ * @return NSString formatted as JSON, or nil if an error occurs
  */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
++ (NSString *)stringWithObject:(id)jsonObject options:(NSJSONWritingOptions)opt;
+
+/**
+ * Create a Foundation object from JSON string
+ * @param jsonString the JSON NSString to convert
+ * @return A Foundation object, or nil if an error occurs.
+ */
++ (id)objectWithString:(NSString *)jsonString;
 
 @end

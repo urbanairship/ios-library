@@ -41,8 +41,8 @@
 
 // Override property declarations for implementation and testing
 //
-@property (nonatomic, retain) CLLocation *lastReportedLocation;
-@property (nonatomic, retain) NSDate *dateOfLastLocation;
+@property (nonatomic, strong) CLLocation *lastReportedLocation;
+@property (nonatomic, strong) NSDate *dateOfLastLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingStandardLocation;
 @property (nonatomic, assign) BOOL shouldStartReportingSignificantChange;
 
@@ -51,7 +51,7 @@
  * the single location service times out before acquiring a location that meets
  * accuracy requirements setup in desiredAccuracy
  */
-@property (nonatomic, retain) CLLocation *bestAvailableSingleLocation;
+@property (nonatomic, strong) CLLocation *bestAvailableSingleLocation;
 
 /**
  * Background identifier for the singleLocationService

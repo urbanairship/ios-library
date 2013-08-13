@@ -4,7 +4,7 @@
 @implementation UA_FMDatabase
 
 + (id)databaseWithPath:(NSString*)aPath {
-    return [[[self alloc] initWithPath:aPath] autorelease];
+    return [[self alloc] initWithPath:aPath];
 }
 
 - (id)initWithPath:(NSString*)aPath {
@@ -24,10 +24,7 @@
 - (void)dealloc {
 	[self close];
     
-    [cachedStatements release];
-    [databasePath release];
 	
-    [super dealloc];
 }
 
 + (NSString*) sqliteLibVersion {
@@ -118,7 +115,6 @@
     if (query) {
         [statement setQuery:query];
         [cachedStatements setValue:statement forKey:query];
-        [query release];
     }
 }
 
@@ -347,7 +343,7 @@
         return nil;
     }
     
-    [statement retain]; // to balance the release below
+     // to balance the release below
     
     if (!statement) {
         statement = [[UA_FMStatement alloc] init];
@@ -364,7 +360,6 @@
     
     statement.useCount = statement.useCount + 1;
     
-    [statement release];    
     
     [self setInUse:NO];
     
@@ -531,7 +526,6 @@
         
         [self setCachedStatement:cachedStmt forQuery:sql];
         
-        [cachedStmt release];
     }
     
     if (cachedStmt) {
@@ -680,8 +674,7 @@
 
 - (void)setCachedStatements:(NSMutableDictionary *)value {
     if (cachedStatements != value) {
-        [cachedStatements release];
-        cachedStatements = [value retain];
+        cachedStatements = value;
     }
 }
 
@@ -804,8 +797,6 @@ return ret;
 
 - (void)dealloc {
 	[self close];
-    [query release];
-	[super dealloc];
 }
 
 
@@ -836,8 +827,7 @@ return ret;
 
 - (void)setQuery:(NSString *)value {
     if (query != value) {
-        [query release];
-        query = [value retain];
+        query = value;
     }
 }
 

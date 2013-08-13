@@ -34,7 +34,7 @@
 /**
  * The request to be executed.
  */
-@property(nonatomic, retain) UAHTTPRequest *request;
+@property(nonatomic, strong) UAHTTPRequest *request;
 
 /**
  * The UAHTTPConnectionSuccessBlock to be executed if the connection is successful.
@@ -49,7 +49,7 @@
 /**
  * The actual HTTP connection, created and run once the operation begins execution.
  */
-@property(nonatomic, retain) UAHTTPConnection *connection;
+@property(nonatomic, strong) UAHTTPConnection *connection;
 
 @end
 
@@ -77,9 +77,9 @@
                  onSuccess:(UAHTTPConnectionSuccessBlock)successBlock
                  onFailure:(UAHTTPConnectionFailureBlock)failureBlock {
 
-    return [[[UAHTTPConnectionOperation alloc] initWithRequest:request
+    return [[UAHTTPConnectionOperation alloc] initWithRequest:request
                                                      onSuccess:successBlock
-                                                     onFailure:failureBlock] autorelease];
+                                                     onFailure:failureBlock];
 }
 
 - (void)setIsExecuting:(BOOL)isExecuting {
@@ -167,11 +167,6 @@
 
 - (void)dealloc {
     [self.connection cancel];
-    self.connection = nil;
-    self.request = nil;
-    self.successBlock = nil;
-    self.failureBlock = nil;
-    [super dealloc];
 }
 
 @end

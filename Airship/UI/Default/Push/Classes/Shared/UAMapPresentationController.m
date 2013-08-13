@@ -33,15 +33,6 @@
 #pragma mark -
 #pragma mark Memory
 
-- (void) dealloc {
-    self.locationService = nil;
-    self.locations = nil;
-    self.annotations = nil;
-    self.lastUserAnnotation = nil;
-    self.mapView = nil;
-    self.rightButton = nil;
-    [super dealloc];
-}
 
 
 #pragma mark -
@@ -138,7 +129,7 @@
     MKPinAnnotationView *pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:nil];
     pinView.pinColor = MKPinAnnotationColorPurple;
     pinView.animatesDrop = YES;
-    return [pinView autorelease];
+    return pinView;
 }
 
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {

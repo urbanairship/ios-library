@@ -48,9 +48,9 @@
 /**
  * The parent view controller the inbox will be launched from.
  */
-@property (nonatomic, retain) UIViewController *inboxParentController;
+@property (nonatomic, strong) UIViewController *inboxParentController;
 
-@property (nonatomic, retain) NSBundle *localizationBundle;
+@property (nonatomic, strong) NSBundle *localizationBundle;
 
 SINGLETON_INTERFACE(UAInboxUI);
 

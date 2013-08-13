@@ -36,7 +36,7 @@
 @interface UAInboxDBManager : NSObject {
 }
 
-@property (nonatomic, retain) UA_FMDatabase *db;
+@property (nonatomic, strong) UA_FMDatabase *db;
 
 SINGLETON_INTERFACE(UAInboxDBManager);
 

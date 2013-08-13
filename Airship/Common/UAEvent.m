@@ -29,8 +29,8 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "UA_Reachability.h"
-#import "UA_SBJsonWriter.h"
 #import "UAInboxUtils.h"
+#import "UAPush.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -39,7 +39,7 @@
 
 @property (nonatomic, copy) NSString *time;
 @property (nonatomic, copy) NSString *event_id;
-@property (nonatomic, retain) NSMutableDictionary *data;
+@property (nonatomic, strong) NSMutableDictionary *data;
 
 @end
 
@@ -57,7 +57,7 @@
 
 + (id)event {
     id obj = [[self alloc] init];
-    return [obj autorelease];
+    return obj;
 }
 
 - (id)initWithContext:(NSDictionary *)context {
@@ -70,7 +70,7 @@
 
 + (id)eventWithContext:(NSDictionary *)context {
     id obj = [[self alloc] initWithContext:context];
-    return [obj autorelease];
+    return obj;
 }
 
 - (NSString*)getType {
@@ -84,11 +84,10 @@
     [eventDictionary setObject:self.event_id forKey:@"event_id"];
     [eventDictionary setObject:self.data forKey:@"data"];
     
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
-    writer.humanReadable = NO;//strip whitespace
-    
-    NSString *jsonString = [writer stringWithObject:eventDictionary];
-    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventDictionary
+                                                        options:0
+                                                          error:nil];
     
     UA_LDEBUG(@"Estimated event size: %d", [jsonData length]);
     
@@ -120,12 +119,6 @@
     [self gatherIndividualData:context];
 }
 
-- (void)dealloc {
-    self.event_id = nil;
-    self.time = nil;
-    self.data = nil;
-    [super dealloc];
-}
 
 @end
 
@@ -142,7 +135,7 @@
     [self addDataFromSessionWithKey:@"launched_from_rich_push_id" forKey:@"rich_push_id"];
     [self addDataFromSessionForKey:@"foreground"];
     
-    CTTelephonyNetworkInfo *netInfo = [[[CTTelephonyNetworkInfo alloc] init] autorelease];
+    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
     CTCarrier *carrier = netInfo.subscriberCellularProvider;
 
     [self addDataWithValue:carrier.carrierName forKey:@"carrier"];
@@ -242,7 +235,7 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    [self addDataWithValue:[UAirship shared].deviceToken forKey:@"device_token"];
+    [self addDataWithValue:[UAPush shared].deviceToken forKey:@"device_token"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
 }
 

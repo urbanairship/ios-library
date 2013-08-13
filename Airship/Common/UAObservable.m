@@ -27,20 +27,16 @@
 #import "UAObservable.h"
 
 @interface UAObservable()
-@property(nonatomic, retain) NSMutableSet *observers;
+@property(nonatomic, strong) NSMutableSet *observers;
 @end
 
 @implementation UAObservable
 
--(void)dealloc {
-    self.observers = nil;
-    [super dealloc];
-}
 
 -(id)init {
     self = [super init];
     if (self) {
-        self.observers = [[[NSMutableSet alloc] init] autorelease];
+        self.observers = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -53,7 +49,6 @@
                 [observer performSelector: selector];
             }
         }
-        [observer_copy release];
     }
 }
 
@@ -65,7 +60,6 @@
                 [observer performSelector: selector withObject: arg1];
             }
         }
-        [observer_copy release];
     }
 }
 
@@ -77,7 +71,6 @@
                 [observer performSelector: selector withObject: arg1 withObject: arg2];
             }
         }
-        [observer_copy release];
     }
 }
 

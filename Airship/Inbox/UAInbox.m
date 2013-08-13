@@ -107,7 +107,6 @@ static Class _uiClass;
         [[g_sharedUAInbox uiClass]land];
         [UAInboxMessageList land];
         
-        [g_sharedUAInbox release];
         g_sharedUAInbox = nil;
     }
 }
@@ -132,7 +131,7 @@ static Class _uiClass;
         
         [self.messageList retrieveMessageList];
 		
-		self.pushHandler = [[[UAInboxPushHandler alloc] init] autorelease];
+		self.pushHandler = [[UAInboxPushHandler alloc] init];
 
         [self.messageList addObserver:self.pushHandler];
 
@@ -157,9 +156,9 @@ static Class _uiClass;
                               withIntermediateDirectories:YES
                                                attributes:nil error:&error];
 
-    self.inboxCache = [[[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
+    self.inboxCache = [[UAInboxURLCache alloc] initWithMemoryCapacity:1024*1024
                                                           diskCapacity:10*1024*1024
-                                                              diskPath:diskCachePath] autorelease];
+                                                              diskPath:diskCachePath];
 }
 
 - (void)setShouldUseInboxCache:(BOOL)shouldUseInboxCache {
@@ -181,11 +180,7 @@ static Class _uiClass;
     [self.messageList removeObserver:self.pushHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    self.clientCache = nil;
-    self.inboxCache = nil;
-    self.pushHandler = nil;
 
-    [super dealloc];
 }
 
 @end
