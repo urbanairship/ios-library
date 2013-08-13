@@ -30,6 +30,7 @@
 #import <CoreData/CoreData.h>
 #import "UAirship.h"
 #import "UAConfig.h"
+#include <sys/xattr.h>
 
 @interface UAInboxDBManager()
 @property(nonatomic, strong)NSURL *storeURL;
@@ -240,13 +241,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     // Create the store directory if it doesnt exist
     if (![fm fileExistsAtPath:[directoryURL path]]) {
         NSError *error = nil;
-
         if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
             UA_LERR(@"Error creating inbox direcotory %@: %@", [directoryURL lastPathComponent], error);
-        }
-
-        if (![directoryURL setResourceValue:[NSNumber numberWithBool: YES] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
-            NSLog(@"Error excluding %@ from backup %@", [directoryURL lastPathComponent], error);
+        } else {
+            u_int8_t b = 1;
+            setxattr([[directoryURL path] fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
         }
     }
 
