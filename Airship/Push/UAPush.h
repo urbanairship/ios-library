@@ -109,6 +109,44 @@
 - (void)launchedFromNotification:(NSDictionary *)notification;
 @end
 
+//---------------------------------------------------------------------------------------
+// UARegistrationDelegate Protocol
+//---------------------------------------------------------------------------------------
+
+/**
+ * Implement this protocol and add as a [UAPush registrationDelegate] to receive
+ * device token registration success and failure callbacks.
+ *
+ */
+@protocol UARegistrationDelegate<NSObject>
+@optional
+
+/**
+ * Called when the device token is successfully registered with Urban Airship.
+ */
+- (void)registerDeviceTokenSucceeded;
+
+/**
+ * Called when the device token registration fails.
+ *
+ * @param request The failed request.
+ */
+- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
+
+/**
+ * Called when the device token is successfully deactivated with Urban Airship.
+ */
+- (void)unregisterDeviceTokenSucceeded;
+
+/**
+ * Called when the device token deactivation fails and cannot be retried.
+ *
+ * @param request The failed request.
+ */
+- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
+@end
+
+
 
 //---------------------------------------------------------------------------------------
 // UARegistrationObserver Protocol
@@ -117,7 +155,10 @@
 /**
  * Implement this protocol and register with the UAPush shared instance to receive
  * device token registration success and failure callbacks.
+ *
+ * This protocol is deprecated. New applications should use the `UARegistrationDelegate` protocol.
  */
+__attribute__((deprecated))
 @protocol UARegistrationObserver
 @optional
 
@@ -228,7 +269,20 @@ SINGLETON_INTERFACE(UAPush);
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate;
+@property (nonatomic, assign) id<UAPushNotificationDelegate> pushNotificationDelegate;
+
+/**
+ * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
+ * set, a default implementation is provided (UAPushNotificationHandler).
+ *
+ * Note: this property is deprecated. New applications should use the [UAPush pushNotificationDelegate] property.
+ */
+@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate __attribute__((deprecated));
+
+/**
+ * Set a delegate that implements the UARegistrationDelegate protocol.
+ */
+@property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
 
 
 ///---------------------------------------------------------------------------------------
@@ -375,7 +429,7 @@ SINGLETON_INTERFACE(UAPush);
  * - quiet time
  * - autobadge
  * 
- * Add a `UARegistrationObserver` to `UAPush` to receive success and failure callbacks.
+ * Add a `UARegistrationDelegate` to `UAPush` to received success and failure callbacks.
  *
  * @param token The device token to register.
  */
@@ -399,7 +453,7 @@ SINGLETON_INTERFACE(UAPush);
  * Registers or updates the current registration with an API call. If push notifications are
  * not enabled, this unregisters the device token.
  *
- * Register an implementation of `UARegistrationObserver` with `UAPush` to receive success and failure callbacks.
+ * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
  */
 - (void)updateRegistration;
 
