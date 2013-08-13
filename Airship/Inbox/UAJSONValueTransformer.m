@@ -29,15 +29,15 @@
 @implementation UAJSONValueTransformer
 
 + (Class)transformedValueClass {
-	return [NSData class];
+    return [NSData class];
 }
 
 + (BOOL)allowsReverseTransformation {
-	return YES;
+    return YES;
 }
 
 - (id)transformedValue:(NSDictionary *)value {
-	return [NSJSONSerialization dataWithJSONObject:value
+    return [NSJSONSerialization dataWithJSONObject:value
                                            options:NSJSONWritingPrettyPrinted
                                              error:nil];
 }
@@ -47,4 +47,5 @@
                                            options: NSJSONReadingMutableContainers
                                              error: nil];
 }
+
 @end
