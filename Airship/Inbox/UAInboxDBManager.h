@@ -42,7 +42,7 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 /**
  * Adds a new message.
  *
- * @param message A dictionary with keys and values conforming to the
+ * @param dict A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
  * @param userID The messages userID
  * @param appID The messages UAirship appKey
@@ -51,6 +51,18 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  */
 - (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
 
+
+/**
+ * Updates an existing message.
+ *
+ * @param dict A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ * @param userID The messages userID
+ * @param appID The messages UAirship appKey
+ *
+ * @return YES if the message was updated, NO otherwise.
+ */
+-(BOOL)updateMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
 
 /**
  * Deletes a list of messages from the database

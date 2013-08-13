@@ -148,23 +148,26 @@
           NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
           UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
-          // Convert dictionary to objects for convenience
-          NSMutableArray *newMessages = [NSMutableArray array];
+          NSString *userID = [UAUser defaultUser].username;
+          NSString *appKey = [UAirship shared].config.appKey;
+          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
+          
+          // Convert dictionary to objects for convenience          
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-              
-              UAInboxMessage *tmp = [[UAInboxDBManager shared] addMessageFromDict:message
-                                                                          forUser:[UAUser defaultUser].username
-                                                                              app:[UAirship shared].config.appKey];
 
-              tmp.inbox = [UAInbox shared].messageList;
+              if (![inboxDBManager updateMessageFromDict:message forUser:userID app:appKey]) {
+                  UAInboxMessage *tmp = [[UAInboxDBManager shared] addMessageFromDict:message
+                                                                              forUser:[UAUser defaultUser].username
+                                                                                  app:[UAirship shared].config.appKey];
 
-              [newMessages addObject:tmp];
+                  tmp.inbox = [UAInbox shared].messageList;
+              }
           }
 
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
           if (successBlock) {
-             successBlock(newMessages, unread);
+             successBlock([inboxDBManager getMessagesForUser:userID app:appKey], unread);
           } else {
               UA_LERR(@"missing successBlock");
           }

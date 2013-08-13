@@ -82,22 +82,34 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         return ![obj isEqual:[NSNull null]];
     }] allObjects]];
 
-    message.messageID = [dict objectForKey: @"message_id"];
-    message.contentType = [dict objectForKey:@"content_type"];
-    message.title = [dict objectForKey: @"title"];
-    message.extra = [dict objectForKey: @"extra"];
-    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
-    message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
-    message.unread = [[dict objectForKey: @"unread"] boolValue];
+    [self updateUAInboxMessage:message withDictionary:dict];
     message.appKey = appKey;
     message.userID = userID;
-    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
 
     [self saveContext];
     
     return message;
 }
 
+-(BOOL)updateMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appKey == %@ AND userID == %@ AND messageID == %@", appKey, userID, [dict objectForKey: @"message_id"]];
+    [request setPredicate:predicate];
+
+    NSError *error = nil;
+    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+    if (!mutableFetchResults || !mutableFetchResults.count) {
+        return NO;
+    }
+
+    UAInboxMessage *message = (UAInboxMessage *)[mutableFetchResults lastObject];
+    [self updateUAInboxMessage:message withDictionary:dict];
+    return YES;
+}
 
 - (void)deleteMessages:(NSArray *)messages {
     for (UAInboxMessage *persistedMessageToDelete in messages) {
@@ -111,7 +123,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (void)saveContext {
     NSError *error = nil;
     NSManagedObjectContext *context = self.managedObjectContext;
-    if (context != nil) {
+    if (context) {
         UALOG(@"Saving inbox changes");
 
         if ([context hasChanges] && ![context save:&error]) {
@@ -126,9 +138,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
 - (NSManagedObjectContext *)managedObjectContext {
-    UALOG(@"Managed Object Context");
-
-    if (_managedObjectContext != nil) {
+    if (_managedObjectContext) {
         return _managedObjectContext;
     }
 
@@ -145,7 +155,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
  If the model doesn't already exist, it is created from the application's model.
  */
 - (NSManagedObjectModel *)managedObjectModel {
-    if (_managedObjectModel != nil) {
+    if (_managedObjectModel) {
         return _managedObjectModel;
     }
 
@@ -187,7 +197,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-    if (_persistentStoreCoordinator != nil) {
+    if (_persistentStoreCoordinator) {
         return _persistentStoreCoordinator;
     }
     
@@ -202,6 +212,17 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 
     return _persistentStoreCoordinator;
+}
+
+- (void)updateUAInboxMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dict {
+    message.messageID = [dict objectForKey: @"message_id"];
+    message.contentType = [dict objectForKey:@"content_type"];
+    message.title = [dict objectForKey: @"title"];
+    message.extra = [dict objectForKey: @"extra"];
+    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
+    message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
+    message.unread = [[dict objectForKey: @"unread"] boolValue];
+    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
 }
 
 @end
