@@ -50,7 +50,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
         NSString *dbName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
         self.storeURL = [libraryDirectoryURL URLByAppendingPathComponent:dbName];
+
+        // Try to delete the old db if exists
+        [[NSFileManager defaultManager] removeItemAtURL:[libraryDirectoryURL URLByAppendingPathComponent:OLD_DB_NAME] error:nil];
     }
+    
     return self;
 }
 
@@ -89,7 +93,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return message;
 }
 
--(BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
+- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
                                               inManagedObjectContext:self.managedObjectContext];
@@ -221,5 +225,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.unread = [[dict objectForKey: @"unread"] boolValue];
     message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
 }
+
 
 @end
