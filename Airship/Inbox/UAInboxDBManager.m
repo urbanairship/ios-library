@@ -45,14 +45,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (id)init {
     self = [super init];
     if (self) {
-        NSURL *libraryDirectoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory
-                                                                            inDomains:NSUserDomainMask] lastObject]; 
+        NSString  *databaseName = [[UAirship shared].config.appKey stringByAppendingString:@".sqlite"];
+        self.storeURL = [[self getStoreDirectoryURL] URLByAppendingPathComponent:databaseName];
 
-        NSString *dbName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
-        self.storeURL = [libraryDirectoryURL URLByAppendingPathComponent:dbName];
-
-        // Try to delete the old db if exists
-        [[NSFileManager defaultManager] removeItemAtURL:[libraryDirectoryURL URLByAppendingPathComponent:OLD_DB_NAME] error:nil];
+        // Delete the old directory if it exists
+        [self deleteOldDatabaseIfExists];
     }
     
     return self;
@@ -127,8 +124,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSError *error = nil;
     NSManagedObjectContext *context = self.managedObjectContext;
     if (context) {
-        UALOG(@"Saving inbox changes");
-
         if ([context hasChanges] && ![context save:&error]) {
             UA_LERR(@"Unresolved error %@, %@", error, [error userInfo]);
         }
@@ -224,6 +219,38 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
     message.unread = [[dict objectForKey: @"unread"] boolValue];
     message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
+}
+
+- (void)deleteOldDatabaseIfExists {
+    NSArray *libraryDirectories = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = [libraryDirectories objectAtIndex:0];
+    NSString *dbPath = [libraryDirectory stringByAppendingPathComponent:OLD_DB_NAME];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:dbPath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:dbPath error:nil];
+    }
+}
+
+- (NSURL *) getStoreDirectoryURL {
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: @"UAInbox"];
+
+    // Create the store directory if it doesnt exist
+    if (![fm fileExistsAtPath:[directoryURL path]]) {
+        NSError *error = nil;
+
+        if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
+            UA_LERR(@"Error creating inbox direcotory %@: %@", [directoryURL lastPathComponent], error);
+        }
+
+        if (![directoryURL setResourceValue:[NSNumber numberWithBool: YES] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+            NSLog(@"Error excluding %@ from backup %@", [directoryURL lastPathComponent], error);
+        }
+    }
+
+    return directoryURL;
 }
 
 
