@@ -28,6 +28,8 @@
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import <CoreData/CoreData.h>
+#import "UAirship.h"
+#import "UAConfig.h"
 
 @interface UAInboxDBManager()
 @property(nonatomic, strong)NSURL *storeURL;
@@ -46,68 +48,65 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         NSURL *libraryDirectoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory
                                                                             inDomains:NSUserDomainMask] lastObject]; 
 
-        self.storeURL = [libraryDirectoryURL URLByAppendingPathComponent:CORE_DATA_STORE_NAME];
+        NSString *dbName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
+        self.storeURL = [libraryDirectoryURL URLByAppendingPathComponent:dbName];
     }
     return self;
 }
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey {
+- (NSArray *)getMessages {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
+                                              inManagedObjectContext:self.managedObjectContext];
     [request setEntity:entity];
-
-
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appKey == %@ AND userID == %@", appKey, userID];
-    [request setPredicate:predicate];
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
     NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
     [request setSortDescriptors:sortDescriptors];
 
     NSError *error = nil;
-    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-    if (mutableFetchResults == nil) {
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    if (results == nil) {
         // Handle the error.
         UALOG(@"No results!");
     }
 
-    return mutableFetchResults ?: [NSMutableArray array];
+    return results ?: [NSArray array];
 }
 
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey {
-    UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
+- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary {
+    UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage"
+                                                                              inManagedObjectContext:self.managedObjectContext];
 
-
-    dict = [dict dictionaryWithValuesForKeys:[[dict keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
+    dictionary = [dictionary dictionaryWithValuesForKeys:[[dictionary keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
         return ![obj isEqual:[NSNull null]];
     }] allObjects]];
 
-    [self updateUAInboxMessage:message withDictionary:dict];
-    message.appKey = appKey;
-    message.userID = userID;
+    [self updateMessage:message withDictionary:dictionary];
 
     [self saveContext];
     
     return message;
 }
 
--(BOOL)updateMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey{
+-(BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
+                                              inManagedObjectContext:self.managedObjectContext];
     [request setEntity:entity];
 
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appKey == %@ AND userID == %@ AND messageID == %@", appKey, userID, [dict objectForKey: @"message_id"]];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageID == %@", [dictionary objectForKey: @"message_id"]];
     [request setPredicate:predicate];
 
     NSError *error = nil;
-    NSMutableArray *mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-    if (!mutableFetchResults || !mutableFetchResults.count) {
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    if (!results || !results.count) {
         return NO;
     }
 
-    UAInboxMessage *message = (UAInboxMessage *)[mutableFetchResults lastObject];
-    [self updateUAInboxMessage:message withDictionary:dict];
+    UAInboxMessage *message = (UAInboxMessage *)[results lastObject];
+    [self updateMessage:message withDictionary:dictionary];
     return YES;
 }
 
@@ -166,14 +165,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [_managedObjectModel setEntities:@[inboxEntity]];
 
     NSMutableArray *inboxProperties = [NSMutableArray array];
-    [inboxProperties addObject:[self createAttributeDescription:@"appKey" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
-    [inboxProperties addObject:[self createAttributeDescription:@"userID" withType:NSStringAttributeType setOptional:true]];
 
     NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
     [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
@@ -214,7 +211,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return _persistentStoreCoordinator;
 }
 
-- (void)updateUAInboxMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dict {
+- (void)updateMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dict {
     message.messageID = [dict objectForKey: @"message_id"];
     message.contentType = [dict objectForKey:@"content_type"];
     message.title = [dict objectForKey: @"title"];

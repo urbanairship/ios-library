@@ -88,8 +88,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username
-                                                                              app:[UAirship shared].config.appKey];
+    NSMutableArray *savedMessages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }

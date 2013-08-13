@@ -29,18 +29,22 @@
 
 @class UAInboxMessage;
 
-#define DB_NAME @"UAInbox.db"
-#define CORE_DATA_STORE_NAME @"UAInbox.sqlite"
+#define OLD_DB_NAME @"UAInbox.db"
+#define CORE_DATA_STORE_NAME @"UAInbox-%@.sqlite"
 
 @interface UAInboxDBManager : NSObject {
 }
 
 SINGLETON_INTERFACE(UAInboxDBManager);
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
+/**
+ * Gets the current users messages.
+ * @return NSArray of UAInboxMessages
+ */
+- (NSArray *)getMessages;
 
 /**
- * Adds a new message.
+ * Adds a message inbox.
  *
  * @param dict A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
@@ -49,20 +53,18 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  *
  * @return A message, populated with data from the message dictionary.
  */
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
+- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary;
 
 
 /**
- * Updates an existing message.
+ * Updates an existing message in the inbox.
  *
  * @param dict A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- * @param userID The messages userID
- * @param appID The messages UAirship appKey
  *
  * @return YES if the message was updated, NO otherwise.
  */
--(BOOL)updateMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
+- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary;
 
 /**
  * Deletes a list of messages from the database
