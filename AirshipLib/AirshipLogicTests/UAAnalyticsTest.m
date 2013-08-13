@@ -92,7 +92,7 @@
 }
 
 - (void)testRequestEmptyPushAddressHeader {
-    [UAPush shared].deviceToken = NULL;
+    [UAPush shared].deviceToken = nil;
     NSDictionary *headers = [self.analytics analyticsRequest].headers;
     STAssertNil([headers objectForKey:@"X-UA-Push-Address"], @"Device token should be null in event headers");
 }
