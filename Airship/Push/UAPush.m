@@ -76,7 +76,7 @@ static Class _uiClass;
         //init with default delegate implementation
         // released when replaced
         self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
-        self.delegate = _defaultPushHandler;
+        self.pushNotificationDelegate = _defaultPushHandler;
         [[NSNotificationCenter defaultCenter] addObserver:self 
                                                  selector:@selector(applicationDidBecomeActive) 
                                                      name:UIApplicationDidBecomeActiveNotification 
@@ -197,6 +197,13 @@ static Class _uiClass;
     return [NSTimeZone localTimeZone];
 }
 
+- (id<UAPushNotificationDelegate>)getDelegate {
+    return self.pushNotificationDelegate;
+}
+
+- (void)setDelegate:(id<UAPushNotificationDelegate>)delegate {
+    self.pushNotificationDelegate = delegate;
+}
 
 #pragma mark -
 #pragma mark Private methods
@@ -385,8 +392,8 @@ static Class _uiClass;
     if (state != UIApplicationStateActive) {
         UA_LTRACE(@"Received a notification for an inactive application state.");
         
-        if ([self.delegate respondsToSelector:@selector(launchedFromNotification:)])
-            [self.delegate launchedFromNotification:notification];
+        if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)])
+            [self.pushNotificationDelegate launchedFromNotification:notification];
         return;
     }
 
@@ -402,15 +409,15 @@ static Class _uiClass;
 		if ([[apsDict allKeys] containsObject:@"alert"]) {
 
 			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]] &&
-                [self.delegate respondsToSelector:@selector(displayNotificationAlert:)]) {
+                [self.pushNotificationDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
                 
 				// The alert is a single string message so we can display it
-                [self.delegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.pushNotificationDelegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
 
-			} else if ([self.delegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
+			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 				// The alert is a a dictionary with more localization details
 				// This should be customized to fit your message details or usage scenario 
-                [self.delegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.pushNotificationDelegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
 			}
 
 		}
@@ -421,22 +428,22 @@ static Class _uiClass;
             
 			if (self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-			} else if ([self.delegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-				[self.delegate handleBadgeUpdate:[badgeNumber intValue]];
+			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
+				[self.pushNotificationDelegate handleBadgeUpdate:[badgeNumber intValue]];
 			}
         }
 		
         //sound
 		NSString *soundName = [apsDict valueForKey:@"sound"];
-		if (soundName && [self.delegate respondsToSelector:@selector(playNotificationSound:)]) {
-			[self.delegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+		if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
+			[self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
 		}
         
 	}//aps
 
 	// 
-	if([self.delegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-		[self.delegate receivedForegroundNotification:notification];
+	if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
+		[self.pushNotificationDelegate receivedForegroundNotification:notification];
     }
     
 }
@@ -486,15 +493,23 @@ static Class _uiClass;
             return;
         }
 
+        //note: we are performing both observer and delegate callbacks here as long as the
+        //registration observer protocol remains in deprecation.
         [self.deviceAPIClient
          registerWithData:[self registrationData]
          onSuccess:^{
              UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
              [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
+             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
+                 [self.registrationDelegate registerDeviceTokenSucceeded];
+             }
          }
          onFailure:^(UAHTTPRequest *request) {
              [self notifyObservers:@selector(registerDeviceTokenFailed:)
                         withObject:request];
+             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenFailed:)]) {
+                 [self.registrationDelegate registerDeviceTokenFailed:request];
+             }
          }
          forcefully:forcefully];
     }
@@ -516,11 +531,17 @@ static Class _uiClass;
                  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
                  UA_LDEBUG(@"Device token unregistered on Urban Airship successfully.");
                  [self notifyObservers:@selector(unregisterDeviceTokenSucceeded)];
+                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenSucceeded)]) {
+                     [self.registrationDelegate unregisterDeviceTokenSucceeded];
+                 }
              }
              onFailure:^(UAHTTPRequest *request) {
                  [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
                  [self notifyObservers:@selector(unregisterDeviceTokenFailed:)
                             withObject:request];
+                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenFailed:)]) {
+                     [self.registrationDelegate unregisterDeviceTokenFailed:request];
+                 }
              }
              forcefully:forcefully];
         }

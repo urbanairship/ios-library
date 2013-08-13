@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
+__attribute__((deprecated))
 @interface UAObservable : NSObject 
 
 -(void)notifyObservers:(SEL)selector;
