@@ -24,25 +24,40 @@
  */
 
 #import "UAInboxDBManager.h"
-#import "UA_FMDatabase.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import <CoreData/CoreData.h>
 
+@interface UAInboxDBManager()
+@property(nonatomic, strong)NSURL *storeURL;
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@end
 
 @implementation UAInboxDBManager
 
 SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        NSURL *libraryDirectoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory
+                                                                            inDomains:NSUserDomainMask] lastObject]; 
 
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appID {
+        self.storeURL = [libraryDirectoryURL URLByAppendingPathComponent:CORE_DATA_STORE_NAME];
+    }
+    return self;
+}
+
+- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
     [request setEntity:entity];
 
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appID == %@ AND userID == %@", appID, userID];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"appKey == %@ AND userID == %@", appKey, userID];
     [request setPredicate:predicate];
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent" ascending:NO];
@@ -59,7 +74,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return mutableFetchResults ?: [NSMutableArray array];
 }
 
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appID {
+- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey {
     UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage" inManagedObjectContext:self.managedObjectContext];
 
 
@@ -73,8 +88,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.extra = [dict objectForKey: @"extra"];
     message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
     message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
-    message.unread = [[dict objectForKey: @"unread"] boolValue] ? YES : NO;
-    message.appID = appID;
+    message.unread = [[dict objectForKey: @"unread"] boolValue];
+    message.appKey = appKey;
     message.userID = userID;
     message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
 
@@ -96,19 +111,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (void)saveContext {
     NSError *error = nil;
     NSManagedObjectContext *context = self.managedObjectContext;
-    if (context != nil)
-    {
+    if (context != nil) {
         UALOG(@"Saving inbox changes");
 
-        if ([context hasChanges] && ![context save:&error])
-        {
-            /*
-             Replace this implementation with code to handle the error appropriately.
-
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
+        if ([context hasChanges] && ![context save:&error]) {
+            UA_LERR(@"Unresolved error %@, %@", error, [error userInfo]);
         }
     }
 }
@@ -149,7 +156,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [_managedObjectModel setEntities:@[inboxEntity]];
 
     NSMutableArray *inboxProperties = [NSMutableArray array];
-    [inboxProperties addObject:[self createAttributeDescription:@"appID" withType:NSStringAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"appKey" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageBodyURL" withType:NSTransformableAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageID" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageSent" withType:NSDateAttributeType setOptional:true]];
@@ -167,7 +174,6 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return _managedObjectModel;
 }
 
-
 - (NSAttributeDescription *) createAttributeDescription:(NSString *)name
                                                withType:(NSAttributeType)attributeType
                                             setOptional:(BOOL)isOptional {
@@ -180,36 +186,22 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return attribute;
 }
 
-
-/**
- Returns the persistent store coordinator for the application.
- If the coordinator doesn't already exist, it is created and the application's store added to it.
- */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     if (_persistentStoreCoordinator != nil) {
         return _persistentStoreCoordinator;
     }
-
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"MessagesModel.sqlite"];
-
+    
     NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
-        [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error]) {
+
+        UA_LERR(@"Error adding persistent store: %@, %@", error, [error userInfo]);
+        
+        [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:nil];
+        [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:self.storeURL options:nil error:&error];
     }
 
     return _persistentStoreCoordinator;
-}
-
-
-#pragma mark - Application's Documents directory
-
-/**
- Returns the URL to the application's Documents directory.
- */
-- (NSURL *)applicationDocumentsDirectory {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 @end

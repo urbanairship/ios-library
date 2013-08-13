@@ -27,35 +27,29 @@
 
 #import "UAGlobal.h"
 
-@class UA_FMDatabase;
 @class UAInboxMessage;
 
-#define UA_FMDBLogError if ([self.db hadError]) { UALOG(@"Err %d: %@", [self.db lastErrorCode], [self.db lastErrorMessage]);}
 #define DB_NAME @"UAInbox.db"
+#define CORE_DATA_STORE_NAME @"UAInbox.sqlite"
 
 @interface UAInboxDBManager : NSObject {
 }
 
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
 SINGLETON_INTERFACE(UAInboxDBManager);
 
 - (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
-
 
 /**
  * Adds a new message.
  *
  * @param message A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- * @param userID the userID of the message.
- * @param appID the appID of the message.
+ * @param userID The messages userID
+ * @param appID The messages UAirship appKey
  *
  * @return A message, populated with data from the message dictionary.
  */
-- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appID;
+- (UAInboxMessage *)addMessageFromDict:(NSDictionary *)dict forUser:(NSString *)userID app:(NSString *)appKey;
 
 
 /**

@@ -52,7 +52,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @dynamic messageSent;
 @dynamic unread;
 @dynamic messageURL;
-@dynamic appID;
+@dynamic appKey;
 @dynamic userID;
 @dynamic messageID;
 @dynamic extra;

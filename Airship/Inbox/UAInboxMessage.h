@@ -89,10 +89,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** The message title */
 @property (nonatomic, strong) NSString *title;
 
-@property (nonatomic, strong) NSString *appID;
+/** UAirship app key */
+@property (nonatomic, strong) NSString *appKey;
 
+/** UAirship user ID */
 @property (nonatomic, strong) NSString *userID;
-
 
 /**
  * The message's extra dictionary. This dictionary can be populated

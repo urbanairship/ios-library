@@ -123,8 +123,7 @@ static UAInboxMessageList *_messageList = nil;
 
     [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
         self.isRetrieving = NO;
-        
-        [[UAInboxDBManager shared] deleteMessages:self.messages];
+
         self.messages = newMessages;
         self.unreadCount = unread;
 
@@ -183,7 +182,7 @@ static UAInboxMessageList *_messageList = nil;
             succeed();
             
             for (UAInboxMessage *message in updateMessageArray) {
-                message.unread = false;
+                message.unread = NO;
             }
             
             [[UAInboxDBManager shared] saveContext];
