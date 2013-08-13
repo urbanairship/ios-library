@@ -269,7 +269,7 @@ SINGLETON_INTERFACE(UAPush);
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> pushNotificationDelegate;
+@property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
@@ -277,13 +277,12 @@ SINGLETON_INTERFACE(UAPush);
  *
  * Note: this property is deprecated. New applications should use the [UAPush pushNotificationDelegate] property.
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate __attribute__((deprecated));
+@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated));
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
 @property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
