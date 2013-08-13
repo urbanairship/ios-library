@@ -114,21 +114,21 @@
     return (match >= 1);
 }
 
-//- (void)testStandardInitWithDelegate {
-//    id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
-//    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:mockUALocationService];
-//    STAssertNotNil(standard, nil);
-//    STAssertEquals(standard.provider, UALocationServiceProviderGps, @"provider should be GPS");
-//    STAssertEqualObjects(mockUALocationService, standard.delegate, nil);
-//}
+- (void)testStandardInitWithDelegate {
+    id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
+    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:mockUALocationService];
+    STAssertNotNil(standard, nil);
+    STAssertEquals(standard.provider, UALocationServiceProviderGps, @"provider should be GPS");
+    STAssertEqualObjects(mockUALocationService, standard.delegate, nil);
+}
 
-//- (void)testSignificantChangeInitWithDelegate {
-//    id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
-//    UASignificantChangeProvider *delegate = [UASignificantChangeProvider providerWithDelegate:mockUALocationService];
-//    STAssertNotNil(delegate, nil);
-//    STAssertEquals(delegate.provider, UALocationServiceProviderNetwork, @"provider should be NETWORK");
-//    STAssertEqualObjects(mockUALocationService, delegate.delegate, nil);
-//}
+- (void)testSignificantChangeInitWithDelegate {
+    id mockUALocationService = [OCMockObject mockForProtocol:@protocol(UALocationProviderDelegate)];
+    UASignificantChangeProvider *delegate = [UASignificantChangeProvider providerWithDelegate:mockUALocationService];
+    STAssertNotNil(delegate, nil);
+    STAssertEquals(delegate.provider, UALocationServiceProviderNetwork, @"provider should be NETWORK");
+    STAssertEqualObjects(mockUALocationService, delegate.delegate, nil);
+}
 
 - (void)testCLLocationManagerSetter {
     UABaseLocationProvider *provider = [[UABaseLocationProvider alloc] init];
@@ -197,62 +197,62 @@
 #pragma mark -
 #pragma mark Delegate Callbacks To UALocationService
 
-//- (void)testBaseDelegateCallbackForLocation {
-//    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockForBase = [OCMockObject partialMockForObject:base];
-//
-//    [[[mockForBase  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX from:self.testLocationSFO];
-//    [[(OCMockObject *)self.mockUALocationService expect] locationProvider:base
-//                                                      withLocationManager:base.locationManager
-//                                                        didUpdateLocation:self.testLocationPDX
-//                                                             fromLocation:self.testLocationSFO];
-//
-//    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
-//    [base.locationManager.delegate locationManager:base.locationManager
-//                               didUpdateToLocation:self.testLocationPDX
-//                                      fromLocation:self.testLocationSFO];
-//
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockForBase verify];
-//}
+- (void)testBaseDelegateCallbackForLocation {
+    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockForBase = [OCMockObject partialMockForObject:base];
 
-//- (void)testStandardDelegateCallbackForLocation {
-//    UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockForStandard = [OCMockObject partialMockForObject:standard];
-//    
-//    //- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)oldLocation to:(CLLocation*)newLocation
-//    [[[mockForStandard  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
-//                                                                                        from:self.testLocationSFO];
-//    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
-//                                                       withLocationManager:standard.locationManager
-//                                                         didUpdateLocation:self.testLocationPDX
-//                                                              fromLocation:self.testLocationSFO];
-//
-//    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
-//    [standard.locationManager.delegate locationManager:standard.locationManager
-//                                   didUpdateToLocation:self.testLocationPDX
-//                                          fromLocation:self.testLocationSFO];
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockForStandard verify];
-//}
-//
-//- (void)testSignificantChangeCallbackForLocation {
-//    UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockForSignificant = [OCMockObject partialMockForObject:significant];
-//
-//    [[[mockForSignificant  expect] andReturnValue:@YES]locationChangeMeetsAccuracyRequirements:self.testLocationPDX
-//                                                                                          from:self.testLocationSFO];
-//    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
-//                                                       withLocationManager:significant.locationManager
-//                                                         didUpdateLocation:self.testLocationPDX
-//                                                              fromLocation:self.testLocationSFO];
-//    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
-//    [significant.locationManager.delegate locationManager:significant.locationManager
-//                                      didUpdateToLocation:self.testLocationPDX
-//                                             fromLocation:self.testLocationSFO];
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockForSignificant verify];
-//}
+    [[[mockForBase  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX from:self.testLocationSFO];
+    [[(OCMockObject *)self.mockUALocationService expect] locationProvider:base
+                                                      withLocationManager:base.locationManager
+                                                        didUpdateLocation:self.testLocationPDX
+                                                             fromLocation:self.testLocationSFO];
+
+    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+    [base.locationManager.delegate locationManager:base.locationManager
+                               didUpdateToLocation:self.testLocationPDX
+                                      fromLocation:self.testLocationSFO];
+
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockForBase verify];
+}
+
+- (void)testStandardDelegateCallbackForLocation {
+    UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockForStandard = [OCMockObject partialMockForObject:standard];
+    
+    //- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)oldLocation to:(CLLocation*)newLocation
+    [[[mockForStandard  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
+                                                                                        from:self.testLocationSFO];
+    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
+                                                       withLocationManager:standard.locationManager
+                                                         didUpdateLocation:self.testLocationPDX
+                                                              fromLocation:self.testLocationSFO];
+
+    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+    [standard.locationManager.delegate locationManager:standard.locationManager
+                                   didUpdateToLocation:self.testLocationPDX
+                                          fromLocation:self.testLocationSFO];
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockForStandard verify];
+}
+
+- (void)testSignificantChangeCallbackForLocation {
+    UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockForSignificant = [OCMockObject partialMockForObject:significant];
+
+    [[[mockForSignificant  expect] andReturnValue:@YES]locationChangeMeetsAccuracyRequirements:self.testLocationPDX
+                                                                                          from:self.testLocationSFO];
+    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
+                                                       withLocationManager:significant.locationManager
+                                                         didUpdateLocation:self.testLocationPDX
+                                                              fromLocation:self.testLocationSFO];
+    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+    [significant.locationManager.delegate locationManager:significant.locationManager
+                                      didUpdateToLocation:self.testLocationPDX
+                                             fromLocation:self.testLocationSFO];
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockForSignificant verify];
+}
 
 #pragma mark -
 #pragma mark CLLocationManager Authorization Changes
@@ -278,10 +278,10 @@
     [[mockLocationManager reject] stopUpdatingHeading];
     [[mockLocationManager reject] stopUpdatingLocation];
     [[mockLocationManager reject] stopMonitoringSignificantLocationChanges];
-//    [base.locationManager.delegate locationManager:base.locationManager
-//                      didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-//    [base.locationManager.delegate locationManager:base.locationManager
-//                      didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    [base.locationManager.delegate locationManager:base.locationManager
+                      didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [base.locationManager.delegate locationManager:base.locationManager
+                      didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
 }
 
 - (void)testAuthorizationChangedStandardDelegateResponse {
@@ -298,11 +298,11 @@
                           didChangeAuthorizationStatus:kCLAuthorizationStatusRestricted];
     [mockLocationManager verify];
 
-//    [[mockLocationManager reject] stopUpdatingLocation];
-//    [standard.locationManager.delegate locationManager:standard.locationManager
-//                          didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-//    [standard.locationManager.delegate locationManager:standard.locationManager
-//                          didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    [[mockLocationManager reject] stopUpdatingLocation];
+    [standard.locationManager.delegate locationManager:standard.locationManager
+                          didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [standard.locationManager.delegate locationManager:standard.locationManager
+                          didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
 
 }
 
@@ -320,30 +320,30 @@
                              didChangeAuthorizationStatus:kCLAuthorizationStatusRestricted];
     [mockLocationManager verify];
 
-//    [[mockLocationManager reject] stopMonitoringSignificantLocationChanges];
-//    [significant.locationManager.delegate locationManager:significant.locationManager
-//                             didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-//    [significant.locationManager.delegate locationManager:significant.locationManager
-//                             didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
+    [[mockLocationManager reject] stopMonitoringSignificantLocationChanges];
+    [significant.locationManager.delegate locationManager:significant.locationManager
+                             didChangeAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
+    [significant.locationManager.delegate locationManager:significant.locationManager
+                             didChangeAuthorizationStatus:kCLAuthorizationStatusAuthorized];
 }
 
 
 #pragma mark -
 #pragma mark CLLocationManager didFailWithError
 
-//- (void)testDidFailWithErrorNonShutdown {
-//    NSError *testError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-//    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockBase = [OCMockObject partialMockForObject:base];
-//
-//    [[[mockBase expect] andForwardToRealObject] locationManager:base.locationManager didFailWithError:testError];
-//    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:base
-//                                                      withLocationManager:base.locationManager
-//                                                         didFailWithError:testError];
-//    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:testError];
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockBase verify];
-//}
+- (void)testDidFailWithErrorNonShutdown {
+    NSError *testError = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockBase = [OCMockObject partialMockForObject:base];
+
+    [[[mockBase expect] andForwardToRealObject] locationManager:base.locationManager didFailWithError:testError];
+    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:base
+                                                      withLocationManager:base.locationManager
+                                                         didFailWithError:testError];
+    [base.locationManager.delegate locationManager:base.locationManager didFailWithError:testError];
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockBase verify];
+}
 
 // Test the two cases where UABaseLocationProvider needs to shutdown
 - (void)testDidFailWithErrorShutdown {
@@ -362,33 +362,33 @@
     
 }
 
-//- (void)testDidFailWithErrorStandard {
-//    UABaseLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockStandard = [OCMockObject partialMockForObject:standard];
-//    NSError *test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-//
-//    [[[mockStandard expect] andForwardToRealObject] locationManager:standard.locationManager didFailWithError:test];
-//    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
-//                                                       withLocationManager:standard.locationManager
-//                                                          didFailWithError:test];
-//    [standard.locationManager.delegate locationManager:standard.locationManager didFailWithError:test];
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockStandard verify];    
-//}
-//
-//- (void)testDidFailWithErrorSignificant {
-//    UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
-//    id mockSignificant = [OCMockObject partialMockForObject:significant];
-//    NSError* test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-//    [[[mockSignificant expect] andForwardToRealObject] locationManager:significant.locationManager didFailWithError:test];
-//    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
-//                                                       withLocationManager:significant.locationManager
-//                                                          didFailWithError:test];
-//
-//    [significant.locationManager.delegate locationManager:significant.locationManager didFailWithError:test];
-//    [(OCMockObject *)self.mockUALocationService verify];
-//    [mockSignificant verify];
-//}
+- (void)testDidFailWithErrorStandard {
+    UABaseLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockStandard = [OCMockObject partialMockForObject:standard];
+    NSError *test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+
+    [[[mockStandard expect] andForwardToRealObject] locationManager:standard.locationManager didFailWithError:test];
+    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
+                                                       withLocationManager:standard.locationManager
+                                                          didFailWithError:test];
+    [standard.locationManager.delegate locationManager:standard.locationManager didFailWithError:test];
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockStandard verify];    
+}
+
+- (void)testDidFailWithErrorSignificant {
+    UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
+    id mockSignificant = [OCMockObject partialMockForObject:significant];
+    NSError* test = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
+    [[[mockSignificant expect] andForwardToRealObject] locationManager:significant.locationManager didFailWithError:test];
+    [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
+                                                       withLocationManager:significant.locationManager
+                                                          didFailWithError:test];
+
+    [significant.locationManager.delegate locationManager:significant.locationManager didFailWithError:test];
+    [(OCMockObject *)self.mockUALocationService verify];
+    [mockSignificant verify];
+}
 
 #pragma mark -
 #pragma mark Start/Stop Providing location
