@@ -38,7 +38,9 @@
 SINGLETON_INTERFACE(UAInboxDBManager);
 
 /**
- * Gets the current users messages.
+ * Gets the current users messages, sorted descending 
+ * by the messageSent time.
+ *
  * @return NSArray of UAInboxMessages
  */
 - (NSArray *)getMessages;
