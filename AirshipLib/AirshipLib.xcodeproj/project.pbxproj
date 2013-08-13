@@ -386,7 +386,6 @@
 		0867D691FE84028FC02AAC07 /* AirshipLib */ = {
 			isa = PBXGroup;
 			children = (
-				CC523FC217BA8AC200233005 /* CoreData.framework */,
 				D9FD1A13122DB77000522B4E /* Airship */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				7BB6790C1429288D00B877DB /* AirshipLogicTests */,
@@ -400,6 +399,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC523FC217BA8AC200233005 /* CoreData.framework */,
 				BBB87E5015057EEA00971CEC /* libOCMock.a */,
 				D51846AC1300B8C200A40CAC /* CFNetwork.framework */,
 				D51846B11300B8D900A40CAC /* Security.framework */,

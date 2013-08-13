@@ -293,7 +293,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				CC523FAB17B9856900233005 /* CoreData.framework */,
 				B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */,
 				D9FFC6EC124BFD3700E8BD30 /* Airship */,
 				18A27C81125EDD6E0045D75B /* Classes */,
@@ -330,6 +329,7 @@
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC523FAB17B9856900233005 /* CoreData.framework */,
 				49E001A8154F63F3009305B7 /* CoreLocation.framework */,
 				0D5F511011744AF5004AE48F /* MobileCoreServices.framework */,
 				9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */,
