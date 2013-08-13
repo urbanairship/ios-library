@@ -6,7 +6,7 @@
  
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
@@ -30,6 +30,7 @@
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAKeychainUtils.h"
+#import "UAPush+Internal.h"
 
 @interface UAAnalyticsTest()
 @property(nonatomic, strong) UAAnalytics *analytics;
@@ -88,6 +89,19 @@
     STAssertEqualObjects([headers objectForKey:@"X-UA-Locale-Language"], @"de", @"Wrong local language code in event headers");
     STAssertNil([headers objectForKey:@"X-UA-Locale-Country"], @"Wrong local country code in event headers");
     STAssertNil([headers objectForKey:@"X-UA-Locale-Variant"], @"Wrong local variant in event headers");
+}
+
+- (void)testRequestEmptyPushAddressHeader {
+    [UAPush shared].deviceToken = nil;
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    STAssertNil([headers objectForKey:@"X-UA-Push-Address"], @"Device token should be null in event headers");
+}
+
+- (void)testRequestPushAddressHeader {
+    NSString *deviceTokenString = @"123456789012345678901234567890";
+    [UAPush shared].deviceToken = deviceTokenString;
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    STAssertEqualObjects([headers objectForKey:@"X-UA-Push-Address"], deviceTokenString, @"Wrong device token in event headers");
 }
 
 - (void)restoreSavedUploadEventSettingsEmptyUserDefaults {
@@ -242,13 +256,14 @@
     }
 }
 
-- (void)setCurrentLocale:(NSString*)localeCode {
+
+- (void)setCurrentLocale:(NSString *)localeCode {
     NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:localeCode];
 
     [[[self.mockLocaleClass stub] andReturn:locale] currentLocale];
 }
 
-- (void)setTimeZone:(NSString*)name {
+- (void)setTimeZone:(NSString *)name {
     NSTimeZone *timeZone = [[NSTimeZone alloc] initWithName:name];
     
     [[[self.mockTimeZoneClass stub] andReturn:timeZone] defaultTimeZone];

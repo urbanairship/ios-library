@@ -41,6 +41,7 @@
 #import "UADelayOperation.h"
 #import "UAInboxUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAPush.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -492,6 +493,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Language" value:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode]];
     [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale currentLocale] objectForKey: NSLocaleCountryCode]];
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale currentLocale] objectForKey: NSLocaleVariantCode]];
+    [request addRequestHeader:@"X-UA-Push-Address" value:[UAPush shared].deviceToken];
 
     return request;
 }

@@ -30,6 +30,7 @@
 #import "UAUtils.h"
 #import "UA_Reachability.h"
 #import "UAInboxUtils.h"
+#import "UAPush.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -234,7 +235,7 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-    [self addDataWithValue:[UAirship shared].deviceToken forKey:@"device_token"];
+    [self addDataWithValue:[UAPush shared].deviceToken forKey:@"device_token"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
 }
 
