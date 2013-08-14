@@ -34,18 +34,64 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 @interface UAHTTPRequest : NSObject
 
+/**
+ * The URL for the request.
+ */
 @property (nonatomic, readonly, strong) NSURL *url;
+
+/**
+ * The dictionary containing the request's header fields.
+ */
 @property (nonatomic, strong) NSDictionary *headers;
+
+/**
+ * The HTTP request method.
+ */
 @property (nonatomic, copy) NSString *HTTPMethod;
+
+/**
+ * The user name.
+ */
 @property (nonatomic, copy) NSString *username;
+
+/**
+ * The user password.
+ */
 @property (nonatomic, copy) NSString *password;
+
+/**
+ * The body of the request.
+ */
 @property (nonatomic, strong) NSMutableData *body;
+
+/**
+ * Boolean to compress the request's body. 'YES' will enable GZIP.
+ */
 @property (nonatomic, assign) BOOL compressBody;
+
+/**
+ * The user info.
+ */
 @property (nonatomic, strong) id userInfo;
 
+/**
+ * The response.
+ */
 @property (nonatomic, readonly, strong) NSHTTPURLResponse *response;
+
+/**
+ * The response string.
+ */
 @property (nonatomic, readonly, copy) NSString *responseString;
+
+/**
+ * The response data.
+ */
 @property (nonatomic, readonly, strong) NSData *responseData;
+
+/**
+ * The error related to the request.
+ */
 @property (nonatomic, readonly, strong) NSError *error;
 
 /**
