@@ -63,6 +63,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.contentType = [message objectForKey:@"content_type"];
         self.title = [message objectForKey: @"title"];
         self.extra = [message objectForKey: @"extra"];
+        self.rawMessageObject = message;
 
         self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];
         self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
@@ -86,6 +87,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     self.messageSent = nil;
     self.title = nil;
     self.extra = nil;
+    self.rawMessageObject = nil;
     self.client = nil;
     [super dealloc];
 }
