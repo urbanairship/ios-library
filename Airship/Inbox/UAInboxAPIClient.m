@@ -9,6 +9,8 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAInboxDBManager.h"
+
 @interface UAInboxAPIClient()
 
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -146,17 +148,21 @@
           NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
           UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
-          // Convert dictionary to objects for convenience
-          NSMutableArray *newMessages = [NSMutableArray array];
+          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
+          
+          // Convert dictionary to objects for convenience          
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-              UAInboxMessage *tmp = [[UAInboxMessage alloc] initWithDict:message inbox:[UAInbox shared].messageList];
-              [newMessages addObject:tmp];
+
+              if (![inboxDBManager updateMessageWithDictionary:message]) {
+                  UAInboxMessage *tmp = [inboxDBManager addMessageFromDictionary:message];
+                  tmp.inbox = [UAInbox shared].messageList;
+              }
           }
 
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
           if (successBlock) {
-             successBlock(newMessages, unread);
+             successBlock([[inboxDBManager getMessages] mutableCopy], unread);
           } else {
               UA_LERR(@"missing successBlock");
           }

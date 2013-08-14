@@ -24,6 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @class UAInboxMessageList;
 
@@ -32,19 +33,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * the available information about a message, including the URLs where
  * the message can be retrieved.
  */
-@interface UAInboxMessage : NSObject
+@interface UAInboxMessage : NSManagedObject
 
-
-/**
- * Initialize the message.
- *
- * @param message A dictionary with keys and values conforming to the
- * Urban Airship JSON API for retrieving inbox messages.
- * @param inbox The inbox containing this message.
- *
- * @return A message, populated with data from the message dictionary.
- */
-- (id)initWithDict:(NSDictionary *)message inbox:(UAInboxMessageList *)inbox;
 
 /**
  * Mark the message as read.

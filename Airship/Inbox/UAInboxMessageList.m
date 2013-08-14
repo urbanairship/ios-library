@@ -88,8 +88,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username
-                                                                              app:[UAirship shared].config.appKey];
+    NSMutableArray *savedMessages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
@@ -123,12 +122,9 @@ static UAInboxMessageList *_messageList = nil;
 
     [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
         self.isRetrieving = NO;
-        
-        [[UAInboxDBManager shared] deleteMessages:self.messages];
+
         self.messages = newMessages;
         self.unreadCount = unread;
-
-        [[UAInboxDBManager shared] addMessages:self.messages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
@@ -183,7 +179,12 @@ static UAInboxMessageList *_messageList = nil;
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             succeed();
-            [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+            
+            for (UAInboxMessage *message in updateMessageArray) {
+                message.unread = NO;
+            }
+            
+            [[UAInboxDBManager shared] saveContext];
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
         }onFailure:^(UAHTTPRequest *request){
             fail(request);

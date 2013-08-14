@@ -25,59 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAGlobal.h"
-
-@class UAInboxMessage;
-
-#define OLD_DB_NAME @"UAInbox.db"
-
-#define CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
-#define CORE_DATA_DIRECTORY_NAME @"UAInbox"
-
-
-@interface UAInboxDBManager : NSObject {
-}
-
-SINGLETON_INTERFACE(UAInboxDBManager);
-
-/**
- * Gets the current users messages, sorted descending 
- * by the messageSent time.
- *
- * @return NSArray of UAInboxMessages
- */
-- (NSArray *)getMessages;
-
-/**
- * Adds a message inbox.
- *
- * @param dict A dictionary with keys and values conforming to the
- * Urban Airship JSON API for retrieving inbox messages.
- *
- * @return A message, populated with data from the message dictionary.
- */
-- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary;
-
-
-/**
- * Updates an existing message in the inbox.
- *
- * @param dictionary A dictionary with keys and values conforming to the
- * Urban Airship JSON API for retrieving inbox messages.
- *
- * @return YES if the message was updated, NO otherwise.
- */
-- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary;
-
-/**
- * Deletes a list of messages from the database
- * @param messages NSArray of UAInboxMessages to be deleted 
- */
-- (void)deleteMessages:(NSArray *)messages;
-
-/**
- * Saves any changes to the database
- */
-- (void)saveContext;
+@interface UAJSONValueTransformer : NSValueTransformer
 
 @end
