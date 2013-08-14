@@ -1,4 +1,8 @@
 -------------------------
+2.0.2 - August 15, 2013
+-------------------------
+- Added the entire raw message object to UAInboxMessage to be able to retrieve data that is missing from the model.
+-------------------------
 2.0.1 - August 7, 2013
 -------------------------
 - Fixed a bug in UAHTTPConnectionOperation causing intermittent crashes
