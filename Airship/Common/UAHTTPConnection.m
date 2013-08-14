@@ -183,7 +183,9 @@
     UA_LDEBUG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     self.request.error = error;
     if ([self.delegate respondsToSelector:self.failureSelector]) {
-        [self.delegate performSelector:self.failureSelector withObject:_request];
+        UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
+            [self.delegate performSelector:self.failureSelector withObject:_request]
+        );
     }
 
     if (self.failureBlock) {
@@ -201,7 +203,9 @@
     self.request.responseData = self.responseData;
     
     if ([self.delegate respondsToSelector:self.successSelector]) {
-        [self.delegate performSelector:self.successSelector withObject:self.request];
+        UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
+            [self.delegate performSelector:self.successSelector withObject:self.request]
+        );
     }
 
     if (self.successBlock) {

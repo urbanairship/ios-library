@@ -23,6 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "UAGlobal.h"
 #import "UAirship.h"
 #import "UAObservable.h"
 
@@ -33,7 +34,7 @@
 @implementation UAObservable
 
 
--(id)init {
+- (id)init {
     self = [super init];
     if (self) {
         self.observers = [[NSMutableSet alloc] init];
@@ -41,59 +42,68 @@
     return self;
 }
 
--(void)notifyObservers:(SEL)selector {
+- (void)notifyObservers:(SEL)selector {
+
+    NSSet *observerCopy = nil;
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in self.observers) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector];
-            }
+        observerCopy = [self.observers copy];
+    }
+
+    for (id observer in observerCopy) {
+        if ([observer respondsToSelector:selector]) {
+            UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING([observer performSelector:selector]);
         }
     }
 }
 
--(void)notifyObservers:(SEL)selector withObject:(id)arg1 {
+- (void)notifyObservers:(SEL)selector withObject:(id)arg1 {
+
+    NSSet *observerCopy = nil;
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in observer_copy) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector withObject: arg1];
-            }
+        observerCopy = [self.observers copy];
+    }
+
+    for (id observer in observerCopy) {
+        if ([observer respondsToSelector:selector]) {
+            UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING([observer performSelector:selector withObject:arg1]);
         }
     }
 }
 
--(void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2 {
+- (void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2 {
+
+    NSSet *observerCopy = nil;
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in observer_copy) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector withObject: arg1 withObject: arg2];
-            }
+         observerCopy = [self.observers copy];
+    }
+
+    for (id observer in observerCopy) {
+        if ([observer respondsToSelector:selector]) {
+            UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING([observer performSelector:selector withObject:arg1 withObject:arg2]);
         }
     }
 }
 
 
--(void)addObserver:(id)observer {
+- (void)addObserver:(id)observer {
     @synchronized(self) {
-        [self.observers addObject: observer];
+        [self.observers addObject:observer];
     }
 }
 
--(void)removeObserver:(id)observer {
+- (void)removeObserver:(id)observer {
     @synchronized(self) {
-        [self.observers removeObject: observer];
+        [self.observers removeObject:observer];
     }
 }
 
--(void)removeObservers {
+- (void)removeObservers {
     @synchronized(self) {
         [self.observers removeAllObjects];
     }
 }
 
--(int)countObservers {
+- (int)countObservers {
     return [self.observers count];
 }
 
