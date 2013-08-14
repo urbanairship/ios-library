@@ -46,7 +46,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 - (id)init {
     self = [super init];
     if (self) {
-        NSString  *databaseName = [[UAirship shared].config.appKey stringByAppendingString:@".sqlite"];
+        NSString  *databaseName = [NSString stringWithFormat:CORE_DATA_STORE_NAME, [UAirship shared].config.appKey];
         self.storeURL = [[self getStoreDirectoryURL] URLByAppendingPathComponent:databaseName];
 
         // Delete the old directory if it exists
@@ -236,7 +236,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     NSFileManager *fm = [NSFileManager defaultManager];
 
     NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: @"UAInbox"];
+    NSURL *directoryURL = [libraryDirectoryURL URLByAppendingPathComponent: CORE_DATA_DIRECTORY_NAME];
 
     // Create the store directory if it doesnt exist
     if (![fm fileExistsAtPath:[directoryURL path]]) {

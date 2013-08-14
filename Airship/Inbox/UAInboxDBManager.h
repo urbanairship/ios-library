@@ -30,7 +30,10 @@
 @class UAInboxMessage;
 
 #define OLD_DB_NAME @"UAInbox.db"
-#define CORE_DATA_STORE_NAME @"UAInbox-%@.sqlite"
+
+#define CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
+#define CORE_DATA_DIRECTORY_NAME @"UAInbox"
+
 
 @interface UAInboxDBManager : NSObject {
 }
