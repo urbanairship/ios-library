@@ -53,8 +53,6 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  *
  * @param dict A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- * @param userID The messages userID
- * @param appID The messages UAirship appKey
  *
  * @return A message, populated with data from the message dictionary.
  */
@@ -64,7 +62,7 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 /**
  * Updates an existing message in the inbox.
  *
- * @param dict A dictionary with keys and values conforming to the
+ * @param dictionary A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
  *
  * @return YES if the message was updated, NO otherwise.
