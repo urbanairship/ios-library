@@ -170,6 +170,10 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
     [inboxProperties addObject:extraDescription];
 
+    NSAttributeDescription *rawMessageObjectDescription = [self createAttributeDescription:@"rawMessageObject" withType:NSTransformableAttributeType setOptional:true];
+    [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
+    [inboxProperties addObject:rawMessageObjectDescription];
+
     [inboxEntity setProperties:inboxProperties];
 
     return _managedObjectModel;
@@ -214,6 +218,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
     message.unread = [[dict objectForKey: @"unread"] boolValue];
     message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
+    message.rawMessageObject = dict;
 }
 
 - (void)deleteOldDatabaseIfExists {
