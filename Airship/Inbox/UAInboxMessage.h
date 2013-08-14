@@ -95,6 +95,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @property (nonatomic, strong) NSDictionary *extra;
 
+/** 
+ * The raw message dictionary. This is the dictionary that
+ * originally created the message.  It can contain more values
+ * then the message.
+ */
+@property (nonatomic, strong) NSDictionary *rawMessageObject;
+
 /**
  * The parent inbox.
  * 

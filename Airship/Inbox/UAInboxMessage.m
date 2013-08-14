@@ -54,6 +54,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @dynamic messageURL;
 @dynamic messageID;
 @dynamic extra;
+@dynamic rawMessageObject;
+
 @synthesize inbox;
 @synthesize contentType;
 @synthesize client;
