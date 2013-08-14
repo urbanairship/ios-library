@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -32,12 +32,6 @@
 #import "UAConfig.h"
 #include <sys/xattr.h>
 
-@interface UAInboxDBManager()
-@property(nonatomic, strong)NSURL *storeURL;
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
-@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@end
 
 @implementation UAInboxDBManager
 
@@ -242,7 +236,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     if (![fm fileExistsAtPath:[directoryURL path]]) {
         NSError *error = nil;
         if (![fm createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error]) {
-            UA_LERR(@"Error creating inbox direcotory %@: %@", [directoryURL lastPathComponent], error);
+            UA_LERR(@"Error creating inbox directory %@: %@", [directoryURL lastPathComponent], error);
         } else {
             u_int8_t b = 1;
             setxattr([[directoryURL path] fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0);
