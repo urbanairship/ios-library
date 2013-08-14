@@ -50,12 +50,12 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, copy) NSString *HTTPMethod;
 
 /**
- * The user name.
+ * The user name for basic authorization.
  */
 @property (nonatomic, copy) NSString *username;
 
 /**
- * The user password.
+ * The user password for basic authorization.
  */
 @property (nonatomic, copy) NSString *password;
 
@@ -70,7 +70,7 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, assign) BOOL compressBody;
 
 /**
- * The user info.
+ * Contextual data containing optional user info for access later.
  */
 @property (nonatomic, strong) id userInfo;
 
