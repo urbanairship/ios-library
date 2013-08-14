@@ -110,7 +110,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * originally created the message.  It can contain more values
  * then the message.
  */
-@property (nonatomic, retain) NSDictionary *rawMessage;
+@property (nonatomic, retain) NSDictionary *rawMessageObject;
 
 /**
  * The parent inbox.

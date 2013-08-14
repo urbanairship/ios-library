@@ -97,7 +97,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         
         msg.extra = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"extra"]];
 
-        msg.rawMessage = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"rawMessage"]];
+        msg.rawMessageObject = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"rawMessageObject"]];
         
         [result addObject: msg];
     }
@@ -108,7 +108,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
     [self.db beginTransaction];
     for (UAInboxMessage *message in messages) {
-        [self.db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra, rawMessage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
+        [self.db executeUpdate:@"INSERT INTO messages (id, title, body_url, sent_time, unread, url, app_id, user_id, extra, rawMessageObject) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" ,
          message.messageID,
          message.title,
          message.messageBodyURL,
@@ -118,7 +118,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
          appKey,
          userID,
          [[[UA_SBJsonWriter new] autorelease] stringWithObject:message.extra],
-         [[[UA_SBJsonWriter new] autorelease] stringWithObject:message.rawMessage]];
+         [[[UA_SBJsonWriter new] autorelease] stringWithObject:message.rawMessageObject]];
     }
     [self.db commit];
     UA_FMDBLogError
