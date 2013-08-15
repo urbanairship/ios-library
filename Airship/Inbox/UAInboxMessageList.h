@@ -25,6 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 
+#import "UAInboxMessageListDelegate.h"
 #import "UAUser.h"
 #import "UAObservable.h"
 
@@ -72,6 +73,8 @@ typedef enum {
 - (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
                            onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
 
+- (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+
 /**
  * Update the message list by marking messages as read, or deleting them.
  * This eventually will result in an asyncrhonous observer callback to
@@ -88,6 +91,11 @@ typedef enum {
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
                         onSuccess:(UAInboxMessageListCallbackBlock)successBlock
                         onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
+
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                     withDelegate:(id<UAInboxMessageListDelegate>)delegate;
+
 
 /**
  * Returns the number of messages currently in the inbox.
