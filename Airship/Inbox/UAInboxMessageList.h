@@ -28,6 +28,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUser.h"
 #import "UAObservable.h"
 
+typedef void (^UAInboxMessageListCallbackBlock)(void);
+
+extern NSString * const UAInboxMessageListWillUpdateNotification;
+extern NSString * const UAInboxMessageListUpdatedNotification;
+
 @class UAInboxMessage;
 
 /**
@@ -64,6 +69,9 @@ typedef enum {
  */
 - (void)retrieveMessageList;
 
+- (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                           onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
+
 /**
  * Update the message list by marking messages as read, or deleting them.
  * This eventually will result in an asyncrhonous observer callback to
@@ -75,6 +83,11 @@ typedef enum {
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet;
+
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                        onSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                        onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Returns the number of messages currently in the inbox.

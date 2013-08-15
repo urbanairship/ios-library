@@ -26,6 +26,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+typedef void (^UAInboxMessageCallbackBlock)(void);
+
 @class UAInboxMessageList;
 
 /**
@@ -42,6 +44,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * @return YES if the request was submitted or already complete, otherwise NO.
  */
 - (BOOL)markAsRead;
+
+- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock onFailure:(UAInboxMessageCallbackBlock)failureBlock;
 
 /**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
