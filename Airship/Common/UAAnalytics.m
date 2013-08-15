@@ -28,7 +28,6 @@
 
 #import "UAAnalytics+Internal.h"
 
-#import "UA_SBJSON.h"
 #import "UA_Reachability.h"
 
 #import "UAirship.h"
@@ -41,6 +40,8 @@
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
 #import "UAInboxUtils.h"
+#import "NSJSONSerialization+UAAdditions.h"
+#import "UAPush.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -54,13 +55,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     [self.queue cancelAllOperations];
     
-    self.queue = nil;
-    self.packageVersion = nil;
-    self.notificationUserInfo = nil;
-    self.session = nil;
-    self.config = nil;
     
-    [super dealloc];
 }
 
 - (id)initWithConfig:(UAConfig *)airshipConfig {
@@ -109,7 +104,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self initSession];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
-        self.queue = [[[NSOperationQueue alloc] init] autorelease];
+        self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
     }
     
@@ -498,6 +493,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Language" value:[[NSLocale currentLocale] objectForKey:NSLocaleLanguageCode]];
     [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale currentLocale] objectForKey: NSLocaleCountryCode]];
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale currentLocale] objectForKey: NSLocaleVariantCode]];
+    [request addRequestHeader:@"X-UA-Push-Address" value:[UAPush shared].deviceToken];
 
     return request;
 }
@@ -570,13 +566,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             
             if (errString) {
                 UA_LTRACE("Deserialization Error: %@", errString);
-                [errString release];//must be relased by caller per docs
             }
         }
         
         // Always include a data entry, even if it is empty
         if (!eventData) {
-            eventData = [[[NSMutableDictionary alloc] init] autorelease];
+            eventData = [[NSMutableDictionary alloc] init];
         }
         
         [eventData setValue:[event objectForKey:@"session_id"] forKey:@"session_id"];
@@ -609,16 +604,14 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (UAHTTPConnectionOperation *)sendOperationWithEvents:(NSArray *)events {
 
     UAHTTPRequest *analyticsRequest = [self analyticsRequest];
+
+    [analyticsRequest appendBodyData:[NSJSONSerialization dataWithJSONObject:events
+                                                                     options:0
+                                                                       error:nil]];
     
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] autorelease];
-    
-    writer.humanReadable = NO;//strip whitespace
-    [analyticsRequest appendBodyData:[[writer stringWithObject:events] dataUsingEncoding:NSUTF8StringEncoding]];
-    
-    writer.humanReadable = YES; //turn on formatting for debugging
     UA_LTRACE(@"Sending to server: %@", self.config.analyticsURL);
     UA_LTRACE(@"Sending analytics headers: %@", [analyticsRequest.headers descriptionWithLocale:nil indent:1]);
-    UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
+    UA_LTRACE(@"Sending analytics body: %@", [NSJSONSerialization stringWithObject:events options:NSJSONWritingPrettyPrinted]);
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LDEBUG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);

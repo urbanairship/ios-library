@@ -36,7 +36,7 @@
 
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest {
-    return [[[UAHTTPConnection alloc] initWithRequest:httpRequest] autorelease];
+    return [[UAHTTPConnection alloc] initWithRequest:httpRequest];
 }
 
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
@@ -73,15 +73,6 @@
     return self;
 }
 
-- (void)dealloc {
-    self.urlResponse = nil;
-    self.urlConnection = nil;
-    self.request = nil;
-    self.responseData = nil;
-    self.successBlock = nil;
-    self.failureBlock = nil;
-    [super dealloc];
-}
 
 - (NSURLRequest *)buildRequest {
     if (self.urlConnection) {
@@ -146,7 +137,6 @@
     }
 
     // keep ourselves around for a while so the request can complete
-    [self retain];
 
     self.responseData = [NSMutableData data];
     self.urlConnection = [NSURLConnection connectionWithRequest:urlRequest delegate:self];
@@ -163,7 +153,7 @@
 
     NSHTTPURLResponse *response = nil;
     NSError *error = nil;
-    self.responseData = [[[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error] mutableCopy] autorelease];
+    self.responseData = [[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error] mutableCopy];
 
     self.request.response = self.urlResponse = response;
     self.request.responseData = self.responseData;
@@ -202,7 +192,6 @@
     self.failureBlock = nil;
     self.successBlock = nil;
     
-    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
@@ -221,7 +210,6 @@
     self.failureBlock = nil;
     self.successBlock = nil;
     
-    [self release];
 }
 
 #pragma mark GZIP compression

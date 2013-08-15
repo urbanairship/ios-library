@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -24,37 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAPush.h"
 
-#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
-
-/**
- * The default implementation provided in the library's sample UI distribution.
- */
-
-@interface UAPushUI : NSObject<UAPushUIProtocol>
-
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
-@property (nonatomic, strong) NSBundle *localizationBundle;
-
-SINGLETON_INTERFACE(UAPushUI)
-
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
+@interface UAJSONValueTransformer : NSValueTransformer
 
 @end

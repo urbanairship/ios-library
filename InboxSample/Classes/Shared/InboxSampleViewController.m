@@ -53,10 +53,10 @@
     }
     
     
-    UIActionSheet *sheet = [[[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@"Select Inbox Style" delegate:self 
                         cancelButtonTitle:@"Cancel" 
                    destructiveButtonTitle:nil 
-                        otherButtonTitles:@"Modal", popoverOrNav, nil] autorelease];
+                        otherButtonTitles:@"Modal", popoverOrNav, nil];
     
     [sheet showInView:self.view];
     
@@ -80,7 +80,7 @@
     self.version.text = [NSString stringWithFormat:@"UAInbox Version: %@", [UAirshipVersion get]];
     
     self.navigationItem.rightBarButtonItem 
-        = [[[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)] autorelease];
+        = [[UIBarButtonItem alloc] initWithTitle:@"Inbox" style:UIBarButtonItemStylePlain target:self action:@selector(mail:)];
     
     // For UINavigationController UI
     [UAInboxNavUI shared].popoverButton = self.navigationItem.rightBarButtonItem;
@@ -95,9 +95,5 @@
     [super didReceiveMemoryWarning];
 }
 
-- (void)dealloc {
-    self.version = nil;
-    [super dealloc];
-}
 
 @end

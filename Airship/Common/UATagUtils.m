@@ -31,7 +31,7 @@
 
 + (NSArray *)createTags:(UATagType) tagFlags {
     
-    NSMutableArray *tags = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray *tags = [[NSMutableArray alloc] init];
     
     // Full time zone - geopolitical descriptor
     if (tagFlags & UATagTypeTimeZone) {

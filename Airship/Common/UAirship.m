@@ -87,14 +87,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 #pragma mark -
 #pragma mark Object Lifecycle
-- (void)dealloc {
-
-    self.config = nil;
-    self.analytics = nil;
-    self.locationService = nil;
-    
-    [super dealloc];
-}
 
 - (id)init {
     self = [super init];
@@ -152,12 +144,12 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
     if (config.automaticSetupEnabled) {
 
-        _sharedAirship.appDelegate = [[[UABaseAppDelegateSurrogate alloc ]init] autorelease];
+        _sharedAirship.appDelegate = [[UABaseAppDelegateSurrogate alloc ]init];
 
         //swap pointers with the initial app delegate
         @synchronized ([UIApplication sharedApplication]) {
             _sharedAirship.appDelegate.defaultAppDelegate = [UIApplication sharedApplication].delegate;
-            _sharedAirship.appDelegate.surrogateDelegate = [[[UAAutoAppDelegate alloc] init] autorelease];
+            _sharedAirship.appDelegate.surrogateDelegate = [[UAAutoAppDelegate alloc] init];
             [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
         }
     }
@@ -167,7 +159,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [_sharedAirship configureUserAgent];
 
     // Set up analytics
-    _sharedAirship.analytics = [[[UAAnalytics alloc] initWithConfig:_sharedAirship.config] autorelease];
+    _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config];
     [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
     /*
@@ -244,7 +236,6 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     [NSClassFromString(@"UAInbox") land];
     
     //Finally, release the airship!
-    [_sharedAirship release];
     _sharedAirship = nil;
 
     takeOffPred_ = 0; // reset the dispatch_once_t flag for testing

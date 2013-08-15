@@ -57,8 +57,8 @@
 
 @interface UAAnalytics ()
 
-@property (nonatomic, retain) NSMutableDictionary *session;
-@property (nonatomic, retain) NSDictionary *notificationUserInfo;
+@property (nonatomic, strong) NSMutableDictionary *session;
+@property (nonatomic, strong) NSDictionary *notificationUserInfo;
 @property (nonatomic, assign) NSInteger maxTotalDBSize;
 @property (nonatomic, assign) NSInteger maxBatchSize;
 @property (nonatomic, assign) NSInteger maxWait;
@@ -66,9 +66,9 @@
 @property (nonatomic, assign) NSInteger databaseSize;
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain) UAConfig *config;
+@property (nonatomic, strong) UAConfig *config;
 @property (nonatomic, copy) NSString *packageVersion;
-@property (nonatomic, retain) NSOperationQueue *queue;
+@property (nonatomic, strong) NSOperationQueue *queue;
 @property (assign) BOOL isSending;
 
 // YES if the app is in the process of entering the foreground, but is not yet active.

@@ -5,7 +5,7 @@
 #import "UAGlobal.h"
 
 @interface UAHTTPRequestEngine()
-@property(nonatomic, retain) NSOperationQueue *queue;
+@property(nonatomic, strong) NSOperationQueue *queue;
 @end
 
 @implementation UAHTTPRequestEngine
@@ -23,7 +23,7 @@
 }
 
 - (id)init {
-    return [self initWithQueue:[[[NSOperationQueue alloc] init] autorelease]];
+    return [self initWithQueue:[[NSOperationQueue alloc] init]];
 }
 
 //Multiply the current delay interval by the backoff factor, clipped at the max value
@@ -159,8 +159,6 @@
 
 - (void)dealloc {
     [self.queue cancelAllOperations];
-    self.queue = nil;
-    [super dealloc];
 }
 
 @end

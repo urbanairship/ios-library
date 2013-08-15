@@ -33,11 +33,11 @@
 
 @interface UAInboxNavUI ()
 
-@property (nonatomic, retain) UIViewController *rootViewController;
+@property (nonatomic, strong) UIViewController *rootViewController;
 @property (nonatomic, assign) BOOL isVisible;
-@property (nonatomic, retain) UAInboxMessageViewController *messageViewController;
-@property (nonatomic, retain) UAInboxMessageListController *messageListController;
-@property (nonatomic, retain) UAInboxAlertHandler *alertHandler;
+@property (nonatomic, strong) UAInboxMessageViewController *messageViewController;
+@property (nonatomic, strong) UAInboxMessageListController *messageListController;
+@property (nonatomic, strong) UAInboxAlertHandler *alertHandler;
 
 - (void)quitInbox;
 
@@ -53,18 +53,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     runiPhoneTargetOniPad = value;
 }
 
-- (void)dealloc {
-    self.localizationBundle = nil;
-    self.alertHandler = nil;
-    self.rootViewController = nil;
-    self.inboxParentController = nil;
-    self.popoverController = nil;
-    self.popoverButton = nil;
-    self.navigationController = nil;
-    self.messageListController = nil;
-    self.messageViewController = nil;
-    [super dealloc];
-} 
 
 - (id)init {
     self = [super init];
@@ -75,14 +63,14 @@ static BOOL runiPhoneTargetOniPad = NO;
         self.useOverlay = NO;
         self.isVisible = NO;
         
-        UAInboxMessageListController *mlc = [[[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil] autorelease];
+        UAInboxMessageListController *mlc = [[UAInboxMessageListController alloc] initWithNibName:@"UAInboxMessageListController" bundle:nil];
         
         mlc.navigationItem.leftBarButtonItem = 
-            [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)] autorelease];
+            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(inboxDone:)];
         
         self.messageListController = mlc;
         
-        self.alertHandler = [[[UAInboxAlertHandler alloc] init] autorelease];
+        self.alertHandler = [[UAInboxAlertHandler alloc] init];
         
         self.popoverSize = CGSizeMake(320, 1100);
     }
@@ -110,8 +98,8 @@ static BOOL runiPhoneTargetOniPad = NO;
         }
         
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad && !runiPhoneTargetOniPad) {
-            [UAInboxNavUI shared].navigationController = [[[UINavigationController alloc] initWithRootViewController:[UAInboxNavUI shared].messageListController] autorelease];
-            [UAInboxNavUI shared].popoverController = [[[UIPopoverController alloc] initWithContentViewController:[UAInboxNavUI shared].navigationController] autorelease];
+            [UAInboxNavUI shared].navigationController = [[UINavigationController alloc] initWithRootViewController:[UAInboxNavUI shared].messageListController];
+            [UAInboxNavUI shared].popoverController = [[UIPopoverController alloc] initWithContentViewController:[UAInboxNavUI shared].navigationController];
             
             [UAInboxNavUI shared].popoverController.popoverContentSize = [UAInboxNavUI shared].popoverSize;
             [UAInboxNavUI shared].messageListController.contentSizeForViewInPopover = [UAInboxNavUI shared].popoverSize;
@@ -159,7 +147,7 @@ static BOOL runiPhoneTargetOniPad = NO;
         } else {
 			
             [UAInboxNavUI shared].messageViewController = 
-                [[[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil] autorelease];			
+                [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];			
             [[UAInboxNavUI shared].messageViewController loadMessageForID:messageID];
             [navController pushViewController:[UAInboxNavUI shared].messageViewController animated:YES];
         }

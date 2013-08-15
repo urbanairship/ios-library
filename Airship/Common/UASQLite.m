@@ -51,7 +51,6 @@
 - (void)dealloc {
     [self close];
 
-    [super dealloc];
 }
 
 - (BOOL)open:(NSString *)aDBPath {
@@ -62,7 +61,7 @@
         return NO;
     }
 
-    self.dbPath = [aDBPath retain];
+    self.dbPath = aDBPath;
     return YES;
 }
 
@@ -248,7 +247,6 @@
 
     NSArray *result = [self executeQuery:sql arguments:argsArray];
 
-    [argsArray release];
     return result;
 }
 
@@ -262,9 +260,9 @@
             id columnData = [self columnData:sqlStmt columnIndex:i];
             [dictionary setObject:columnData forKey:columnName];
         }
-        [arrayList addObject:[dictionary autorelease]];
+        [arrayList addObject:dictionary];
     }
-    return [arrayList autorelease];
+    return arrayList;
 }
 
 - (NSArray *)executeQuery:(NSString *)sql arguments:(NSArray *)args {
@@ -295,7 +293,7 @@
             id arg = va_arg(args, id);
             if (!arg) {
                 UA_LDEBUG(@"Update failed. Attempted to insert a nil value into DB.");
-                [argsArray release];// clean up before bailing
+                // clean up before bailing
                 return NO;
             }
             [argsArray addObject:arg];
@@ -306,7 +304,6 @@
 
     BOOL success = [self executeUpdate:sql arguments:argsArray];
 
-    [argsArray release];
     return success;
 }
 

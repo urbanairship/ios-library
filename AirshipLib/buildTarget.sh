@@ -96,33 +96,6 @@ echo "Build log: ${SIMULATOR_LOG_FILE}"
 
 xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
 
-#
-# Build an ARMV6 if an older version of Xcode is provided via an environment variable or $2 argument
-#
-if [ -n "$XCODE_4_4_APP" ]
-then
-    export DEVELOPER_DIR=$XCODE_4_4_APP/Contents/Developer
-    echo "Set DEVELOPER_DIR based on XCODE_4_4_APP"
-fi
-
-if [ -n "$2" ]
-then
-    export DEVELOPER_DIR=$2/Contents/Developer
-    echo "Set DEVELOPER_DIR based on PARAM"
-fi
-
-if [ -n "$DEVELOPER_DIR" ]
-then
-  echo "Building ARMv6 Legacy Library"
-  # Switch to Xcode 4.4
-  xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}"  -target "${TARGET_NAME}" -sdk "${ARMV6_SDK_TO_BUILD}" -arch "armv6" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}-armv6" SYMROOT="${SYMROOT}-armv6" OBJROOT="${OBJROOT}-armv6" BUILD_ROOT="${BUILD_ROOT}-armv6" TARGET_BUILD_DIR="$CURRENTCONFIG_ARMV6_DEVICE_DIR" | tee ${ARMV6_LOG_FILE}
-
-  # Unset DEVELOPER_DIR for the rest of the script
-  export -n DEVELOPER_DIR
-
-  ARMV6_EXECUTABLE=${CURRENTCONFIG_ARMV6_DEVICE_DIR}/${EXECUTABLE_NAME}
-fi
-
 # Merge all platform binaries as a fat binary for each configurations.
 
 echo "Taking device build from: ${CURRENTCONFIG_DEVICE_DIR}"
@@ -140,14 +113,8 @@ mkdir -p "${CREATING_UNIVERSAL_DIR}"
 LIPO="xcrun -sdk iphoneos lipo"
 
 echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
-if [ -z "$ARMV6_EXECUTABLE" ]
-then
-  echo "...outputing a universal armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
-  $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
-else
-  echo "...outputing a universal armv6/armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
-  $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${ARMV6_EXECUTABLE}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
-fi
+echo "...outputing a universal armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
+$LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
 
 echo "Copying ${EXECUTABLE_NAME} to ${DEPLOY_DIR}"
 cp ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME} ${DEPLOY_DIR}

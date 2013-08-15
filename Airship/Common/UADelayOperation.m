@@ -12,7 +12,7 @@
     self = [super init];
     if (self) {
         self.semaphore = dispatch_semaphore_create(0);
-        __block UADelayOperation *_self = self;
+        __weak UADelayOperation *_self = self;
 
         [self addExecutionBlock:^{
             //dispatch time is calculated as nanoseconds delta offset
@@ -32,11 +32,10 @@
 
 - (void)dealloc {
     dispatch_release(self.semaphore);
-    [super dealloc];
 }
 
 + (id)operationWithDelayInSeconds:(NSInteger)seconds {
-    return [[[UADelayOperation alloc] initWithDelayInSeconds:seconds] autorelease];
+    return [[UADelayOperation alloc] initWithDelayInSeconds:seconds];
 }
 
 @end

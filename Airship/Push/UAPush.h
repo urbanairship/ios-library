@@ -390,7 +390,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Time Zone for quiet time.
  */
-@property (nonatomic, retain) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
+@property (nonatomic, strong) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
 
 /**
  * Enables/Disables quiet time

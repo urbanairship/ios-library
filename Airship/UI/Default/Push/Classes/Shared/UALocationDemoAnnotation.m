@@ -34,11 +34,6 @@
 
 @implementation UALocationDemoAnnotation
 
-- (void)dealloc {
-    self.title = nil;
-    self.subtitle = nil;
-    [super dealloc];
-}
 
 - (id)initWithLocation:(CLLocation*)location {
     self = [super init];
@@ -57,7 +52,7 @@
 }
 
 + (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location {
-    return [[[UALocationDemoAnnotation alloc] initWithLocation:location] autorelease];
+    return [[UALocationDemoAnnotation alloc] initWithLocation:location];
 }
 
 - (NSString*)description {

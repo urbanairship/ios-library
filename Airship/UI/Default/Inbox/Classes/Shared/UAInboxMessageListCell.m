@@ -31,14 +31,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @implementation UAInboxMessageListCell
 
-- (void)dealloc {
-    self.dateView = nil;
-    self.title = nil;
-    self.unreadIndicator = nil;
-    self.checkmark = nil;
-    self.selectedEditingBackgroundView = nil;
-    [super dealloc];
-}
 
 - (void)setData:(UAInboxMessage*)message {
 

@@ -210,13 +210,13 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 - (CLLocation *)location;
 
 /// Last location reported to Urban Airship
-@property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
+@property (nonatomic, strong, readonly) CLLocation *lastReportedLocation;
 
 /// Date of last location event reported 
-@property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
+@property (nonatomic, strong, readonly) NSDate *dateOfLastLocation;
 
 /// UALocationServiceDelegate for location service callbacks
-@property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
+@property (nonatomic, weak) id <UALocationServiceDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Automatic Location Services 

@@ -27,28 +27,57 @@
 
 #import "UAGlobal.h"
 
-@class UA_FMDatabase;
 @class UAInboxMessage;
 
-#define UA_FMDBLogError if ([self.db hadError]) { UALOG(@"Err %d: %@", [self.db lastErrorCode], [self.db lastErrorMessage]);}
-#define DB_NAME @"UAInbox.db"
+#define OLD_DB_NAME @"UAInbox.db"
+
+#define CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
+#define CORE_DATA_DIRECTORY_NAME @"UAInbox"
+
 
 @interface UAInboxDBManager : NSObject {
 }
 
-@property (nonatomic, retain) UA_FMDatabase *db;
-
 SINGLETON_INTERFACE(UAInboxDBManager);
 
-- (void)createEditableCopyOfDatabaseIfNeeded;
-- (void)initDBIfNeeded;
-- (NSMutableArray *)getMessagesForUser:(NSString *)userID app:(NSString *)appKey;
-- (void)addMessages:(NSArray *)messages forUser:(NSString *)userID app:(NSString *)appKey;
-- (void)deleteMessages:(NSArray *)messages;
-- (void)updateMessageAsRead:(UAInboxMessage *)msg;
-- (void)updateMessagesAsRead:(NSArray *)messages;
+/**
+ * Gets the current users messages, sorted descending 
+ * by the messageSent time.
+ *
+ * @return NSArray of UAInboxMessages
+ */
+- (NSArray *)getMessages;
 
-// Helper for development
-- (void)resetDB;
+/**
+ * Adds a message inbox.
+ *
+ * @param dict A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ *
+ * @return A message, populated with data from the message dictionary.
+ */
+- (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary;
+
+
+/**
+ * Updates an existing message in the inbox.
+ *
+ * @param dictionary A dictionary with keys and values conforming to the
+ * Urban Airship JSON API for retrieving inbox messages.
+ *
+ * @return YES if the message was updated, NO otherwise.
+ */
+- (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary;
+
+/**
+ * Deletes a list of messages from the database
+ * @param messages NSArray of UAInboxMessages to be deleted 
+ */
+- (void)deleteMessages:(NSArray *)messages;
+
+/**
+ * Saves any changes to the database
+ */
+- (void)saveContext;
 
 @end

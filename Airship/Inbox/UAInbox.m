@@ -93,7 +93,6 @@ static Class _uiClass;
         [[g_sharedUAInbox uiClass]land];
         [UAInboxMessageList land];
         
-        [g_sharedUAInbox release];
         g_sharedUAInbox = nil;
     }
 }
@@ -125,7 +124,7 @@ static Class _uiClass;
         
         [self.messageList retrieveMessageList];
 		
-		self.pushHandler = [[[UAInboxPushHandler alloc] init] autorelease];
+		self.pushHandler = [[UAInboxPushHandler alloc] init];
 
         [self.messageList addObserver:self.pushHandler];
 
@@ -144,10 +143,7 @@ static Class _uiClass;
 - (void)dealloc {
     [self.messageList removeObserver:self.pushHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
     self.pushHandler = nil;
-
-    [super dealloc];
 }
 
 @end

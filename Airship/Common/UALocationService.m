@@ -55,16 +55,12 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
     // private
     self.standardLocationProvider = nil;
     self.significantChangeProvider = nil;
-    self.bestAvailableSingleLocation = nil;
 
     // Single location deleagate is set to nil in stop method
     [self stopSingleLocation];
 
     // public
-    self.lastReportedLocation = nil;
-    self.dateOfLastLocation = nil;
 
-    [super dealloc];
 }
 
 - (id)init {
@@ -74,7 +70,7 @@ NSString * const UALocationServiceBestAvailableSingleLocationKey = @"UABestAvail
         [self beginObservingUIApplicationState];
         // The standard location setter method pulls the distanceFilter and desiredAccuracy from
         // NSUserDefaults. 
-        [self setStandardLocationProvider:[[[UAStandardLocationProvider alloc] init] autorelease]]; 
+        [self setStandardLocationProvider:[[UAStandardLocationProvider alloc] init]]; 
         self.singleLocationBackgroundIdentifier = UIBackgroundTaskInvalid;
     }
     return self;
@@ -281,7 +277,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Attempt to start standard location service");
     if (!self.standardLocationProvider) {
         // Factory methods aren't used to avoid setting the delegate twice
-        self.standardLocationProvider = [[[UAStandardLocationProvider alloc] init] autorelease];
+        self.standardLocationProvider = [[UAStandardLocationProvider alloc] init];
     }
 
     [self startReportingLocationWithProvider:self.standardLocationProvider];
@@ -315,7 +311,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     UALOG(@"Attempt to start significant change service");
     if (!self.significantChangeProvider) {
         // Factory methods aren't used to avoid setting the delegate twice
-        self.significantChangeProvider = [[[UASignificantChangeProvider alloc] init] autorelease];
+        self.significantChangeProvider = [[UASignificantChangeProvider alloc] init];
     }
 
     [self startReportingLocationWithProvider:self.significantChangeProvider];
@@ -498,9 +494,8 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)setStandardLocationProvider:(UAStandardLocationProvider *)standardLocationProvider {
     [_standardLocationProvider stopReportingLocation];
     _standardLocationProvider.delegate = nil;
-    [_standardLocationProvider autorelease];
     
-    _standardLocationProvider = [standardLocationProvider retain];
+    _standardLocationProvider = standardLocationProvider;
     [self setCommonPropertiesOnProvider:_standardLocationProvider];
     _standardLocationProvider.distanceFilter = [self distanceFilterForLocationServiceKey:UAStandardLocationDistanceFilterKey];
     _standardLocationProvider.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UAStandardLocationDesiredAccuracyKey];
@@ -511,8 +506,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 }
 
 - (void)setSignificantChangeProvider:(UASignificantChangeProvider *)significantChangeProvider {
-    [_significantChangeProvider autorelease];
-    _significantChangeProvider = [significantChangeProvider retain];
+    _significantChangeProvider = significantChangeProvider;
     [self setCommonPropertiesOnProvider:_significantChangeProvider];
 }
 
@@ -522,8 +516,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 // The distanceFilter is not set as a side effect with this setter.
 - (void)setSingleLocationProvider:(UAStandardLocationProvider *)singleLocationProvider {
-    [_singleLocationProvider autorelease];
-    _singleLocationProvider = [singleLocationProvider retain];
+    _singleLocationProvider = singleLocationProvider;
     _singleLocationProvider.distanceFilter = kCLDistanceFilterNone;
     _singleLocationProvider.desiredAccuracy = [self desiredAccuracyForLocationServiceKey:UASingleLocationDesiredAccuracyKey];
     [self setCommonPropertiesOnProvider:_singleLocationProvider];

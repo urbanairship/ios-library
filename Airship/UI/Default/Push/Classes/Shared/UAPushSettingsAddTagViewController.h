@@ -35,12 +35,12 @@
 
 @interface UAPushSettingsAddTagViewController : UIViewController
 
-@property (nonatomic, assign) id<UAPushSettingsAddTagDelegate> tagDelegate;
-@property (nonatomic, retain) UIBarButtonItem *cancelButton;
-@property (nonatomic, retain) UIBarButtonItem *saveButton;
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
-@property (nonatomic, retain) IBOutlet UITableViewCell *tagCell;
-@property (nonatomic, retain) IBOutlet UITextField *tagField;
-@property (nonatomic, retain) NSArray *presetTags;
+@property (nonatomic, weak) id<UAPushSettingsAddTagDelegate> tagDelegate;
+@property (nonatomic, strong) UIBarButtonItem *cancelButton;
+@property (nonatomic, strong) UIBarButtonItem *saveButton;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) IBOutlet UITableViewCell *tagCell;
+@property (nonatomic, strong) IBOutlet UITextField *tagField;
+@property (nonatomic, strong) NSArray *presetTags;
 
 @end

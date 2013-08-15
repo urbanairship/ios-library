@@ -28,10 +28,10 @@
 
 @interface UAPushSettingsAliasViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
-@property (nonatomic, retain) IBOutlet UITableViewCell *aliasCell;
-@property (nonatomic, retain) IBOutlet UITableViewCell *textCell;
-@property (nonatomic, retain) IBOutlet UILabel *textLabel;
-@property (nonatomic, retain) IBOutlet UITextField *aliasField;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) IBOutlet UITableViewCell *aliasCell;
+@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, strong) IBOutlet UILabel *textLabel;
+@property (nonatomic, strong) IBOutlet UITextField *aliasField;
 
 @end

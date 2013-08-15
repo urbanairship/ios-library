@@ -27,25 +27,25 @@
 
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
-@property (nonatomic, retain) IBOutlet UIDatePicker *datePicker;
+@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) IBOutlet UIDatePicker *datePicker;
 @property (nonatomic, assign) CGRect pickerShownFrame;
 @property (nonatomic, assign) CGRect pickerHiddenFrame;
 
 
-@property (nonatomic, retain) IBOutlet UITableViewCell *pushEnabledCell;
-@property (nonatomic, retain) IBOutlet UILabel *pushEnabledLabel;
-@property (nonatomic, retain) IBOutlet UISwitch *pushEnabledSwitch;
+@property (nonatomic, strong) IBOutlet UITableViewCell *pushEnabledCell;
+@property (nonatomic, strong) IBOutlet UILabel *pushEnabledLabel;
+@property (nonatomic, strong) IBOutlet UISwitch *pushEnabledSwitch;
 
-@property (nonatomic, retain) IBOutlet UITableViewCell *quietTimeEnabledCell;
-@property (nonatomic, retain) IBOutlet UILabel *quietTimeLabel;
-@property (nonatomic, retain) IBOutlet UISwitch *quietTimeSwitch;
-@property (nonatomic, retain) UITableViewCell *fromCell;
-@property (nonatomic, retain) UITableViewCell *toCell;
+@property (nonatomic, strong) IBOutlet UITableViewCell *quietTimeEnabledCell;
+@property (nonatomic, strong) IBOutlet UILabel *quietTimeLabel;
+@property (nonatomic, strong) IBOutlet UISwitch *quietTimeSwitch;
+@property (nonatomic, strong) UITableViewCell *fromCell;
+@property (nonatomic, strong) UITableViewCell *toCell;
 
-@property (nonatomic, retain) IBOutlet UISwitch *airshipLocationEnabledSwitch;
-@property (nonatomic, retain) IBOutlet UILabel *airshipLocationEnabledLabel;
-@property (nonatomic, retain) IBOutlet UITableViewCell *airshipLocationEnabledCell;
+@property (nonatomic, strong) IBOutlet UISwitch *airshipLocationEnabledSwitch;
+@property (nonatomic, strong) IBOutlet UILabel *airshipLocationEnabledLabel;
+@property (nonatomic, strong) IBOutlet UITableViewCell *airshipLocationEnabledCell;
 
 
 @property (nonatomic, assign) BOOL dirty;

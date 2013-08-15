@@ -29,7 +29,7 @@ typedef void (^UAInboxAlertHandlerViewBlock)(void);
 
 @interface UAInboxAlertHandler : NSObject <UIAlertViewDelegate>
 
-@property(nonatomic, retain) UIAlertView *notificationAlert;
+@property(nonatomic, strong) UIAlertView *notificationAlert;
 
 - (void)showNewMessageAlert:(NSString *)message withViewBlock:(UAInboxAlertHandlerViewBlock)viewBlock;
 

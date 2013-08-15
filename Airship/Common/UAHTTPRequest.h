@@ -34,19 +34,65 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 @interface UAHTTPRequest : NSObject
 
-@property (nonatomic, readonly, retain) NSURL *url;
-@property (nonatomic, retain) NSDictionary *headers;
-@property (nonatomic, copy) NSString *HTTPMethod;
-@property (nonatomic, copy) NSString *username;
-@property (nonatomic, copy) NSString *password;
-@property (nonatomic, retain) NSMutableData *body;
-@property (nonatomic, assign) BOOL compressBody;
-@property (nonatomic, retain) id userInfo;
+/**
+ * The URL for the request.
+ */
+@property (nonatomic, readonly, strong) NSURL *url;
 
-@property (nonatomic, readonly, retain) NSHTTPURLResponse *response;
+/**
+ * The dictionary containing the request's header fields.
+ */
+@property (nonatomic, strong) NSDictionary *headers;
+
+/**
+ * The HTTP request method.
+ */
+@property (nonatomic, copy) NSString *HTTPMethod;
+
+/**
+ * The user name for basic authorization.
+ */
+@property (nonatomic, copy) NSString *username;
+
+/**
+ * The user password for basic authorization.
+ */
+@property (nonatomic, copy) NSString *password;
+
+/**
+ * The body of the request.
+ */
+@property (nonatomic, strong) NSMutableData *body;
+
+/**
+ * Boolean to compress the request's body. 'YES' will enable GZIP.
+ */
+@property (nonatomic, assign) BOOL compressBody;
+
+/**
+ * Contextual data containing optional user info for access later.
+ */
+@property (nonatomic, strong) id userInfo;
+
+/**
+ * The response.
+ */
+@property (nonatomic, readonly, strong) NSHTTPURLResponse *response;
+
+/**
+ * The response string.
+ */
 @property (nonatomic, readonly, copy) NSString *responseString;
-@property (nonatomic, readonly, retain) NSData *responseData;
-@property (nonatomic, readonly, retain) NSError *error;
+
+/**
+ * The response data.
+ */
+@property (nonatomic, readonly, strong) NSData *responseData;
+
+/**
+ * The error related to the request.
+ */
+@property (nonatomic, readonly, strong) NSError *error;
 
 /**
  * Create a request with the URL string.

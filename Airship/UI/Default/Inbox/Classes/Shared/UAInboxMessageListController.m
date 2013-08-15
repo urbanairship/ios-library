@@ -52,16 +52,16 @@
 - (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
-@property (nonatomic, retain) IBOutlet UITableView *messageTable;
-@property (nonatomic, retain) IBOutlet UIView *loadingView;
-@property (nonatomic, retain) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
-@property (nonatomic, retain) IBOutlet UILabel *loadingLabel;
-@property (nonatomic, retain) NSMutableSet *setOfUnreadMessagesInSelection;
-@property (nonatomic, retain) NSMutableSet *selectedIndexPathsForEditing;
-@property (nonatomic, retain) UABarButtonSegmentedControl *deleteItem;
-@property (nonatomic, retain) UIBarButtonItem *markAsReadButtonItem;
-@property (nonatomic, retain) UIBarButtonItem *editItem;
-@property (nonatomic, retain) UIBarButtonItem *cancelItem;
+@property (nonatomic, strong) IBOutlet UITableView *messageTable;
+@property (nonatomic, strong) IBOutlet UIView *loadingView;
+@property (nonatomic, strong) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, strong) IBOutlet UILabel *loadingLabel;
+@property (nonatomic, strong) NSMutableSet *setOfUnreadMessagesInSelection;
+@property (nonatomic, strong) NSMutableSet *selectedIndexPathsForEditing;
+@property (nonatomic, strong) UABarButtonSegmentedControl *deleteItem;
+@property (nonatomic, strong) UIBarButtonItem *markAsReadButtonItem;
+@property (nonatomic, strong) UIBarButtonItem *editItem;
+@property (nonatomic, strong) UIBarButtonItem *cancelItem;
 @property (nonatomic, copy) NSString *cellReusableId;
 @property (nonatomic, copy) NSString *cellNibName;
 
@@ -69,23 +69,6 @@
 
 @implementation UAInboxMessageListController
 
-- (void)dealloc {
-    self.messageTable = nil;
-    self.loadingView = nil;
-    self.loadingIndicator = nil;
-    self.loadingLabel = nil;
-    self.setOfUnreadMessagesInSelection = nil;
-    self.selectedIndexPathsForEditing = nil;
-    self.deleteItem = nil;
-
-    self.markAsReadButtonItem = nil;
-    self.editItem = nil;
-    self.cancelItem = nil;
-    self.cellReusableId = nil;
-    self.cellNibName = nil;
-
-    [super dealloc];
-}
 
 - (void)initNibNames {
     self.cellReusableId = @"UAInboxMessageListCell";
@@ -109,15 +92,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.editItem = [[[UIBarButtonItem alloc]
+    self.editItem = [[UIBarButtonItem alloc]
                 initWithBarButtonSystemItem:UIBarButtonSystemItemEdit
                 target:self
-                action:@selector(editButtonPressed:)] autorelease];
-    self.cancelItem = [[[UIBarButtonItem alloc]
+                action:@selector(editButtonPressed:)];
+    self.cancelItem = [[UIBarButtonItem alloc]
                   initWithTitle:UA_INBOX_TR(@"UA_Cancel")
                   style:UIBarButtonItemStyleDone
                   target:self
-                  action:@selector(cancelButtonPressed:)] autorelease];
+                  action:@selector(cancelButtonPressed:)];
 
     self.navigationItem.rightBarButtonItem = self.editItem;
 
@@ -125,7 +108,7 @@
 
     [self updateNavigationTitleText];
 
-    self.selectedIndexPathsForEditing = [[[NSMutableSet alloc] init] autorelease];
+    self.selectedIndexPathsForEditing = [[NSMutableSet alloc] init];
 }
 
 - (void)createToolbarItems {
@@ -136,8 +119,8 @@
                                                                                    target:nil action:nil];
     flexibleSpace.width = 25;
 
-    self.deleteItem = [[[UABarButtonSegmentedControl alloc]
-                        initWithItems:[NSArray arrayWithObject:UA_INBOX_TR(@"UA_Delete")]] autorelease];
+    self.deleteItem = [[UABarButtonSegmentedControl alloc]
+                        initWithItems:[NSArray arrayWithObject:UA_INBOX_TR(@"UA_Delete")]];
     self.deleteItem.frame = CGRectMake(0, 0, 130, 30);
     self.deleteItem.segmentedControlStyle = UISegmentedControlStyleBar;
     self.deleteItem.momentary = NO;
@@ -146,17 +129,15 @@
     [self.deleteItem addTarget:self action:@selector(batchUpdateButtonCanceled:) forControlEvents:UIControlEventTouchUpOutside];
     self.deleteItem.tintColor = [UIColor colorWithRed:0.70 green:0.171 blue:0.1 alpha:1.0];
 
-    UIBarButtonItem *deleteButton = [[[UIBarButtonItem alloc] initWithCustomView:self.deleteItem] autorelease];
+    UIBarButtonItem *deleteButton = [[UIBarButtonItem alloc] initWithCustomView:self.deleteItem];
     deleteButton.width = 130;
-    self.markAsReadButtonItem = [[[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
+    self.markAsReadButtonItem = [[UIBarButtonItem alloc] initWithTitle:UA_INBOX_TR(@"UA_Mark_as_Read")
                                                 style:UIBarButtonItemStyleBordered
-                                               target:self action:@selector(batchUpdateButtonPressed:)] autorelease];
+                                               target:self action:@selector(batchUpdateButtonPressed:)];
     self.markAsReadButtonItem.width = 130;
 
     self.toolbarItems = [NSArray arrayWithObjects:fixedSpace, deleteButton, flexibleSpace, self.markAsReadButtonItem, fixedSpace, nil];
 
-    [fixedSpace release];
-    [flexibleSpace release];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -490,7 +471,6 @@
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                               otherButtonTitles:nil];
         [alert show];
-        [alert release];
         
     }
 }
@@ -512,7 +492,6 @@
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                               otherButtonTitles:nil];
         [alert show];
-        [alert release];
         
     }
     [self refreshAfterBatchUpdate];
@@ -538,7 +517,6 @@
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                               otherButtonTitles:nil];
         [alert show];
-        [alert release];
         
     }
     [self refreshAfterBatchUpdate];

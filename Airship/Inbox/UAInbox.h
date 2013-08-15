@@ -150,14 +150,14 @@ SINGLETON_INTERFACE(UAInbox);
  */
 + (void)land;
 
-@property (nonatomic, assign) UAInboxMessageList *messageList;
-@property (nonatomic, retain) UAInboxPushHandler *pushHandler;
+@property (nonatomic, weak) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxPushHandler *pushHandler;
 
 /**
  * The Javascript delegate.
  * 
  * NOTE: this delegate is not retained.
  */
-@property (nonatomic, assign) id<UAInboxJavaScriptDelegate> jsDelegate;
+@property (nonatomic, weak) id<UAInboxJavaScriptDelegate> jsDelegate;
 
 @end

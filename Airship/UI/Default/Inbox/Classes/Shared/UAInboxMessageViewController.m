@@ -40,14 +40,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshHeader;
 - (void)updateMessageNavButtons;
 
-@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *activity;
-@property (nonatomic, retain) IBOutlet UIView *statusBar;
-@property (nonatomic, retain) IBOutlet UILabel *statusBarTitle;
-@property (nonatomic, retain) UISegmentedControl *messageNav;
+@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activity;
+@property (nonatomic, strong) IBOutlet UIView *statusBar;
+@property (nonatomic, strong) IBOutlet UILabel *statusBarTitle;
+@property (nonatomic, strong) UISegmentedControl *messageNav;
 /**
  * The UIWebView used to display the message content.
  */
-@property (nonatomic, retain) UIWebView *webView;
+@property (nonatomic, strong) UIWebView *webView;
 @end
 
 @implementation UAInboxMessageViewController
@@ -56,15 +56,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)dealloc {
     [[UAInbox shared].messageList removeObserver:self];
-    self.message = nil;
     self.webView.delegate = nil;
-    self.webView = nil;
-    self.activity = nil;
-    self.statusBar = nil;
-    self.statusBarTitle = nil;
-    self.messageNav = nil;
 
-    [super dealloc];
 }
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
@@ -75,11 +68,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         self.title = UA_INBOX_TR(@"UA_Message");
 
         // "Segmented" up/down control to the right
-        UISegmentedControl *segmentedControl = [[[UISegmentedControl alloc] initWithItems:
+        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:
                                                  [NSArray arrayWithObjects:
                                                   [UIImage imageNamed:@"up.png"],
                                                   [UIImage imageNamed:@"down.png"],
-                                                  nil]] autorelease];
+                                                  nil]];
         [segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
         segmentedControl.frame = CGRectMake(0, 0, 90, 30);
         segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
@@ -88,7 +81,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         UIBarButtonItem *segmentBarItem = [[UIBarButtonItem alloc] initWithCustomView:segmentedControl];
         self.navigationItem.rightBarButtonItem = segmentBarItem;
-        [segmentBarItem release];
 
         
         self.shouldShowAlerts = YES;
@@ -142,7 +134,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.webView removeFromSuperview];
     self.webView.delegate = nil;
 
-    self.webView = [[[UIWebView alloc] initWithFrame:self.view.frame] autorelease];
+    self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
     self.webView.delegate = self;
     [self.view insertSubview:self.webView belowSubview:self.statusBar];
 
@@ -297,7 +289,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                   cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
                                                   otherButtonTitles:nil];
         [someError show];
-        [someError release];
     }
 }
 

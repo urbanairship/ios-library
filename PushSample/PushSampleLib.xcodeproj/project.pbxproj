@@ -155,6 +155,9 @@
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
+		CC523FCC17BA8E6600233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
+		CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
+		CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		D5A3F63512C15636009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
 		D5A3F63712C15644009731BE /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63612C15644009731BE /* iTunesArtwork */; };
 		D5C75CB712BC24150041239E /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB312BC24150041239E /* Icon-72.png */; };
@@ -324,6 +327,7 @@
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIF-Info.plist"; sourceTree = "<group>"; };
+		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
 		D5C75CB312BC24150041239E /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
@@ -343,6 +347,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				1F42313B16C19A48004B52C1 /* libUAirship-2.0.1.a in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
@@ -365,6 +370,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC523FCC17BA8E6600233005 /* CoreData.framework in Frameworks */,
 				1FCBB568175AA20800F42F07 /* libKIF.a in Frameworks */,
 				1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.1.a in Frameworks */,
 				1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */,
@@ -388,6 +394,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */,
 				BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */,
 				BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */,
 				BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */,
@@ -662,6 +669,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC523FCB17BA8E6600233005 /* CoreData.framework */,
 				BB75D9AC151BEAAC00F4241E /* MapKit.framework */,
 				BBEFB0311507F68500976645 /* libOCMock.a */,
 				BBEFB0101507F37200976645 /* CoreLocation.framework */,
@@ -1085,6 +1093,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1114,6 +1123,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
@@ -1205,6 +1215,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "${BUILT_PRODUCTS_DIR}/PushSample.app/PushSample";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1246,6 +1257,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1380,6 +1392,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1410,6 +1423,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "${BUILT_PRODUCTS_DIR}/PushSample.app/PushSample";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

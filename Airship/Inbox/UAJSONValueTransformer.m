@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,38 +23,29 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAPush.h"
+#import "UAJSONValueTransformer.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
-#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
+@implementation UAJSONValueTransformer
 
-/**
- * The default implementation provided in the library's sample UI distribution.
- */
++ (Class)transformedValueClass {
+    return [NSData class];
+}
 
-@interface UAPushUI : NSObject<UAPushUIProtocol>
++ (BOOL)allowsReverseTransformation {
+    return YES;
+}
 
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
-@property (nonatomic, strong) NSBundle *localizationBundle;
+- (id)transformedValue:(NSDictionary *)value {
+    return [NSJSONSerialization dataWithJSONObject:value
+                                           options:NSJSONWritingPrettyPrinted
+                                             error:nil];
+}
 
-SINGLETON_INTERFACE(UAPushUI)
-
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
+- (id)reverseTransformedValue:(id)value {
+    return [NSJSONSerialization JSONObjectWithData: value
+                                           options: NSJSONReadingMutableContainers
+                                             error: nil];
+}
 
 @end

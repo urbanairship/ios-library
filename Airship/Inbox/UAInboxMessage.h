@@ -24,6 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @class UAInboxMessageList;
 
@@ -32,19 +33,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * the available information about a message, including the URLs where
  * the message can be retrieved.
  */
-@interface UAInboxMessage : NSObject
+@interface UAInboxMessage : NSManagedObject
 
-
-/**
- * Initialize the message.
- *
- * @param message A dictionary with keys and values conforming to the
- * Urban Airship JSON API for retrieving inbox messages.
- * @param inbox The inbox containing this message.
- *
- * @return A message, populated with data from the message dictionary.
- */
-- (id)initWithDict:(NSDictionary *)message inbox:(UAInboxMessageList *)inbox;
 
 /**
  * Mark the message as read.
@@ -74,18 +64,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The Urban Airship message ID.
  * This ID may be used to match an incoming push notification to a specific message.
  */
-@property (nonatomic, retain) NSString *messageID;
+@property (nonatomic, strong) NSString *messageID;
 
 /**
  * The URL for the message body itself.
  * This URL may only be accessed with Basic Auth credentials set to the user id and password.
  */
-@property (nonatomic, retain) NSURL *messageBodyURL;
+@property (nonatomic, strong) NSURL *messageBodyURL;
 
 /** The URL for the message.
  * This URL may only be accessed with Basic Auth credentials set to the user id and password.
  */
-@property (nonatomic, retain) NSURL *messageURL;
+@property (nonatomic, strong) NSURL *messageURL;
 
 /** The MIME content type for the message (e.g., text/html) */
 @property (nonatomic, copy) NSString *contentType;
@@ -94,22 +84,29 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (assign) BOOL unread;
 
 /** The date and time the message was sent (UTC) */
-@property (nonatomic, retain) NSDate *messageSent;
+@property (nonatomic, strong) NSDate *messageSent;
 
 /** The message title */
-@property (nonatomic, retain) NSString *title;
+@property (nonatomic, strong) NSString *title;
 
 /**
  * The message's extra dictionary. This dictionary can be populated
  * with arbitrary key-value data at the time the message is composed.
  */
-@property (nonatomic, retain) NSDictionary *extra;
+@property (nonatomic, strong) NSDictionary *extra;
+
+/** 
+ * The raw message dictionary. This is the dictionary that
+ * originally created the message.  It can contain more values
+ * then the message.
+ */
+@property (nonatomic, strong) NSDictionary *rawMessageObject;
 
 /**
  * The parent inbox.
  * 
  * Note that this object is not retained by the message.
  */
-@property (assign) UAInboxMessageList *inbox; 
+@property (weak) UAInboxMessageList *inbox; 
 
 @end

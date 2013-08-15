@@ -34,7 +34,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
-#import "UA_SBJSON.h"
 
 /*
  * Private methods
@@ -43,9 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void)loadSavedMessages;
 
-@property(nonatomic, retain) UAInboxAPIClient *client;
+@property(nonatomic, strong) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
-@property(nonatomic, retain) id userCreatedObserver;
+@property(nonatomic, strong) id userCreatedObserver;
 
 @end
 
@@ -57,12 +56,9 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
     self.messages = nil;
-    self.client = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-    self.userCreatedObserver = nil;
 
-    [super dealloc];
 }
 
 + (void)land {
@@ -70,7 +66,6 @@ static UAInboxMessageList *_messageList = nil;
         if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
             _messageList.client = nil;
         }
-        [_messageList release];
         _messageList = nil;
     }
 }
@@ -83,7 +78,7 @@ static UAInboxMessageList *_messageList = nil;
             _messageList.unreadCount = -1;
             _messageList.isBatchUpdating = NO;
 
-            _messageList.client = [[[UAInboxAPIClient alloc] init] autorelease];
+            _messageList.client = [[UAInboxAPIClient alloc] init];
         }
     }
     
@@ -93,13 +88,12 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
-    NSMutableArray *savedMessages = [[UAInboxDBManager shared] getMessagesForUser:[UAUser defaultUser].username
-                                                                              app:[UAirship shared].config.appKey];
+    NSMutableArray *savedMessages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;
     }
 
-    self.messages = [[[NSMutableArray alloc] initWithArray:savedMessages] autorelease];
+    self.messages = [[NSMutableArray alloc] initWithArray:savedMessages];
     UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
 }
 
@@ -128,12 +122,9 @@ static UAInboxMessageList *_messageList = nil;
 
     [self.client retrieveMessageListOnSuccess:^(NSMutableArray *newMessages, NSUInteger unread){
         self.isRetrieving = NO;
-        
-        [[UAInboxDBManager shared] deleteMessages:self.messages];
+
         self.messages = newMessages;
         self.unreadCount = unread;
-
-        [[UAInboxDBManager shared] addMessages:self.messages forUser:[UAUser defaultUser].username app:[UAirship shared].config.appKey];
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         [self notifyObservers:@selector(messageListLoaded)];
@@ -188,7 +179,12 @@ static UAInboxMessageList *_messageList = nil;
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             succeed();
-            [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
+            
+            for (UAInboxMessage *message in updateMessageArray) {
+                message.unread = NO;
+            }
+            
+            [[UAInboxDBManager shared] saveContext];
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
         }onFailure:^(UAHTTPRequest *request){
             fail(request);
@@ -230,13 +226,13 @@ static UAInboxMessageList *_messageList = nil;
 - (void)setMessages:(NSMutableArray *)messages {
     // Sort the messages by date
     if (messages.count > 0) {
-        NSSortDescriptor* dateDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:NO] autorelease];
+        NSSortDescriptor* dateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent"
+                                                                        ascending:NO];
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [messages sortUsingDescriptors:sortDescriptors];
     }
 
-    _messages = [messages retain];
+    _messages = messages;
 }
 
 

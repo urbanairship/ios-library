@@ -23,38 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAPush.h"
+#import "UAInboxDBManager.h"
 
-#define UA_PU_TR(key) [[UAPushUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
-
-/**
- * The default implementation provided in the library's sample UI distribution.
- */
-
-@interface UAPushUI : NSObject<UAPushUIProtocol>
-
-@property (nonatomic, strong) UIViewController *apnsSettingsViewController;
-@property (nonatomic, strong) UIViewController *tokenSettingsViewController;
-@property (nonatomic, strong) NSBundle *localizationBundle;
-
-SINGLETON_INTERFACE(UAPushUI)
-
-/**
- * Open the push token demo screen. The default implementation provides a UI for vieweing and
- * managing device token metadata.
- *
- * @param viewController The parent view controller.
- * @param animated `YES` to animate the display, otherwise `NO`
- */
-+ (void)openTokenSettings:(UIViewController *)viewController
-                 animated:(BOOL)animated;
-
-/**
- * Close the push token demo screen.
- *
- * @param animated `YES` to animate the view transition, otherwise `NO`
- */
- + (void)closeTokenSettingsAnimated:(BOOL)animated;
-
+@interface UAInboxDBManager ()
+@property (nonatomic, strong) NSURL *storeURL;
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @end

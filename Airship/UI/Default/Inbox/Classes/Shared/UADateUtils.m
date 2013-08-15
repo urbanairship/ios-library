@@ -31,7 +31,7 @@
 + (NSString *)formattedDateRelativeToNow:(NSDate *)date {
 
     // shared locale object
-    NSLocale *enUSPOSIXLocale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
 
     NSDateFormatter* mdf = [[NSDateFormatter alloc] init];
     [mdf setLocale:enUSPOSIXLocale];
@@ -40,10 +40,9 @@
     [mdf setDateFormat:@"yyyy-MM-dd"];
 
     NSDate *midnight = [mdf dateFromString:[mdf stringFromDate:date]];
-    [mdf release];
 
     NSInteger dayDiff = (int)[midnight timeIntervalSinceNow] / (60*60*24);
-    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setLocale:enUSPOSIXLocale];
     [dateFormatter setTimeStyle:NSDateFormatterFullStyle];
     [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];

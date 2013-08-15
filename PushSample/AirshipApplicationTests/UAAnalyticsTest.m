@@ -52,7 +52,7 @@
 
 
 - (void)setUp {
-    UAConfig *config = [[[UAConfig alloc] init] autorelease];
+    UAConfig *config = [[UAConfig alloc] init];
     _analytics = [[UAAnalytics alloc] initWithConfig:config];
 
     [UAirship shared].analytics = _analytics;
@@ -60,7 +60,6 @@
 
 - (void)tearDown {
 
-    [_analytics release];
     _analytics = nil;
 
 }
@@ -275,7 +274,7 @@
 
 - (void)testAddEvent {
     // Should add an event in the foreground
-    UAEventAppActive *event = [[[UAEventAppActive alloc] init] autorelease];
+    UAEventAppActive *event = [[UAEventAppActive alloc] init];
     id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
     [[mockDBManager expect] addEvent:event withSession:_analytics.session];
     _analytics.oldestEventTime = 0;
@@ -296,7 +295,7 @@
 
     // Should send a location event in the background
     mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    UALocationEvent *locationEvent = [[[UALocationEvent alloc] initWithLocationContext:nil] autorelease];
+    UALocationEvent *locationEvent = [[UALocationEvent alloc] initWithLocationContext:nil];
     [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
     [[mockAnalytics expect] send];
     [_analytics addEvent:locationEvent];
@@ -355,7 +354,7 @@
 
 // This test is not comprehensive for this method, as the method needs refactoring.
 - (void)testPrepareEventsForUpload {
-    UAEventAppForeground *appEvent = [[[UAEventAppForeground alloc] initWithContext:nil] autorelease];
+    UAEventAppForeground *appEvent = [[UAEventAppForeground alloc] initWithContext:nil];
     // If the events database is empty, everything crashes
     STAssertNotNil(appEvent, nil);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset

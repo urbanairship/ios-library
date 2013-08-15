@@ -93,12 +93,6 @@
 		BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BB8860B3159A7E9600584445 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BB8860B4159A7E9600584445 /* UAObservable.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8F1238462100B7E69F /* UAObservable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860C1159A7E9600584445 /* UA_FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07212505131004E6D93 /* UA_FMDatabase.h */; };
-		BB8860C2159A7E9600584445 /* UA_FMResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07712505131004E6D93 /* UA_FMResultSet.h */; };
-		BB8860C3159A7E9600584445 /* UA_SBJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07A12505131004E6D93 /* UA_SBJSON.h */; };
-		BB8860C4159A7E9600584445 /* UA_SBJsonBase.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07D12505131004E6D93 /* UA_SBJsonBase.h */; };
-		BB8860C5159A7E9600584445 /* UA_SBJsonParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC07F12505131004E6D93 /* UA_SBJsonParser.h */; };
-		BB8860C6159A7E9600584445 /* UA_SBJsonWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = B6DFC08112505131004E6D93 /* UA_SBJsonWriter.h */; };
 		BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; };
 		BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
 		BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -121,12 +115,6 @@
 		BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
 		BB8860EE159A7E9600584445 /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		BB8860F0159A7E9600584445 /* UAObservable.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8E1238462100B7E69F /* UAObservable.m */; };
-		BB8860F8159A7E9600584445 /* UA_FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07312505131004E6D93 /* UA_FMDatabase.m */; };
-		BB8860F9159A7E9600584445 /* UA_FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07812505131004E6D93 /* UA_FMResultSet.m */; };
-		BB8860FA159A7E9600584445 /* UA_SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07B12505131004E6D93 /* UA_SBJSON.m */; };
-		BB8860FB159A7E9600584445 /* UA_SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC07E12505131004E6D93 /* UA_SBJsonBase.m */; };
-		BB8860FC159A7E9600584445 /* UA_SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08012505131004E6D93 /* UA_SBJsonParser.m */; };
-		BB8860FD159A7E9600584445 /* UA_SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DFC08212505131004E6D93 /* UA_SBJsonWriter.m */; };
 		BB886103159A7E9600584445 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		BB886104159A7E9600584445 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
@@ -155,7 +143,16 @@
 		BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */; };
 		BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87D661505758100971CEC /* CoreLocation.framework */; };
 		BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB87E5015057EEA00971CEC /* libOCMock.a */; };
+		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
+		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
+		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
 		CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85FD161773A1010074674F /* UAAnalyticsTest.m */; };
+		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
+		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
+		CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
+		CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
+		CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
+		CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -276,18 +273,6 @@
 		B63B5ECF1246380200145424 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		B69DB4C812533B280037AF7F /* UA_Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_Base64.h; sourceTree = "<group>"; };
 		B69DB4C912533B280037AF7F /* UA_Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_Base64.m; sourceTree = "<group>"; };
-		B6DFC07212505131004E6D93 /* UA_FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMDatabase.h; sourceTree = "<group>"; };
-		B6DFC07312505131004E6D93 /* UA_FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMDatabase.m; sourceTree = "<group>"; };
-		B6DFC07712505131004E6D93 /* UA_FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_FMResultSet.h; sourceTree = "<group>"; };
-		B6DFC07812505131004E6D93 /* UA_FMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_FMResultSet.m; sourceTree = "<group>"; };
-		B6DFC07A12505131004E6D93 /* UA_SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJSON.h; sourceTree = "<group>"; };
-		B6DFC07B12505131004E6D93 /* UA_SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_SBJSON.m; sourceTree = "<group>"; };
-		B6DFC07D12505131004E6D93 /* UA_SBJsonBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJsonBase.h; sourceTree = "<group>"; };
-		B6DFC07E12505131004E6D93 /* UA_SBJsonBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_SBJsonBase.m; sourceTree = "<group>"; };
-		B6DFC07F12505131004E6D93 /* UA_SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJsonParser.h; sourceTree = "<group>"; };
-		B6DFC08012505131004E6D93 /* UA_SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_SBJsonParser.m; sourceTree = "<group>"; };
-		B6DFC08112505131004E6D93 /* UA_SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UA_SBJsonWriter.h; sourceTree = "<group>"; };
-		B6DFC08212505131004E6D93 /* UA_SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UA_SBJsonWriter.m; sourceTree = "<group>"; };
 		BB13C4241575706100541EF3 /* UABase64Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABase64Test.m; sourceTree = "<group>"; };
 		BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationCommonValues.h; sourceTree = "<group>"; };
 		BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UALocationProviderProtocol.h; sourceTree = "<group>"; };
@@ -316,8 +301,16 @@
 		BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseLocationProvider.h; sourceTree = "<group>"; };
 		BBB87E3615057CF200971CEC /* UABaseLocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseLocationProvider.m; sourceTree = "<group>"; };
 		BBB87E5015057EEA00971CEC /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
+		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
+		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
+		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CC85FD151773A1010074674F /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
+		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
+		CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxDBManager+Internal.h"; sourceTree = "<group>"; };
+		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
+		CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditions.m"; sourceTree = "<group>"; };
+		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditionsTests.m"; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -346,6 +339,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */,
 				1F4230C016C09876004B52C1 /* libUAirship-2.0.1.a in Frameworks */,
 				BBB87E5115057EEA00971CEC /* libOCMock.a in Frameworks */,
 				BBB87E4F15057EC400971CEC /* CoreLocation.framework in Frameworks */,
@@ -405,6 +399,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC523FC217BA8AC200233005 /* CoreData.framework */,
 				BBB87E5015057EEA00971CEC /* libOCMock.a */,
 				D51846AC1300B8C200A40CAC /* CFNetwork.framework */,
 				D51846B11300B8D900A40CAC /* Security.framework */,
@@ -495,6 +490,9 @@
 				1F610DD017835C3A00BCD96E /* UAInboxPushHandler.m */,
 				1F610DD317835C3A00BCD96E /* UAInboxUtils.h */,
 				1F610DD417835C3A00BCD96E /* UAInboxUtils.m */,
+				CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */,
+				CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */,
+				CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -620,6 +618,7 @@
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXGroup;
 			children = (
+				CCB7DF5917BBF19E00CEDC56 /* Inbox */,
 				CC85FD141773A0CB0074674F /* Analytics */,
 				7BB679661429357100B877DB /* Frameworks */,
 				4950489E1738590D00F8B5BE /* HTTP */,
@@ -640,6 +639,7 @@
 				494BF702176277E000B25E12 /* UAUserTest.m */,
 				7BB679121429288D00B877DB /* UAUtilsTest.h */,
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
+				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -676,32 +676,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B6DFC07112505131004E6D93 /* UA_fmdb */ = {
-			isa = PBXGroup;
-			children = (
-				B6DFC07212505131004E6D93 /* UA_FMDatabase.h */,
-				B6DFC07312505131004E6D93 /* UA_FMDatabase.m */,
-				B6DFC07712505131004E6D93 /* UA_FMResultSet.h */,
-				B6DFC07812505131004E6D93 /* UA_FMResultSet.m */,
-			);
-			path = UA_fmdb;
-			sourceTree = "<group>";
-		};
-		B6DFC07912505131004E6D93 /* UA_json-framework */ = {
-			isa = PBXGroup;
-			children = (
-				B6DFC07A12505131004E6D93 /* UA_SBJSON.h */,
-				B6DFC07B12505131004E6D93 /* UA_SBJSON.m */,
-				B6DFC07D12505131004E6D93 /* UA_SBJsonBase.h */,
-				B6DFC07E12505131004E6D93 /* UA_SBJsonBase.m */,
-				B6DFC07F12505131004E6D93 /* UA_SBJsonParser.h */,
-				B6DFC08012505131004E6D93 /* UA_SBJsonParser.m */,
-				B6DFC08112505131004E6D93 /* UA_SBJsonWriter.h */,
-				B6DFC08212505131004E6D93 /* UA_SBJsonWriter.m */,
-			);
-			path = "UA_json-framework";
-			sourceTree = "<group>";
-		};
 		CC85FD141773A0CB0074674F /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
@@ -709,6 +683,14 @@
 				CC85FD161773A1010074674F /* UAAnalyticsTest.m */,
 			);
 			name = Analytics;
+			sourceTree = "<group>";
+		};
+		CCB7DF5917BBF19E00CEDC56 /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */,
+			);
+			name = Inbox;
 			sourceTree = "<group>";
 		};
 		D9FD1A13122DB77000522B4E /* Airship */ = {
@@ -733,6 +715,8 @@
 				1F610E0D17835CB100BCD96E /* User */,
 				1F610E0E17835CCB00BCD96E /* Util */,
 				1F610DB217835C2200BCD96E /* UAirship.h */,
+				CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */,
+				CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */,
 				1F610DB317835C2200BCD96E /* UAirship.m */,
 				1F610DB417835C2200BCD96E /* UAirship+Internal.h */,
 				D9FD1C43122DBCEA00522B4E /* UAGlobal.h */,
@@ -751,8 +735,6 @@
 			isa = PBXGroup;
 			children = (
 				1F16423C16F383E700C87CAB /* UA_Base64 */,
-				B6DFC07112505131004E6D93 /* UA_fmdb */,
-				B6DFC07912505131004E6D93 /* UA_json-framework */,
 				1F16423D16F383F400C87CAB /* UA_Reachability */,
 			);
 			path = External;
@@ -772,12 +754,14 @@
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
 				BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */,
 				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
+				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				BB8860B4159A7E9600584445 /* UAObservable.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
 				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
+				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
 				BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */,
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */,
@@ -789,17 +773,11 @@
 				1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */,
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				BB8860B3159A7E9600584445 /* UAUtils.h in Headers */,
-				BB8860C1159A7E9600584445 /* UA_FMDatabase.h in Headers */,
 				1F610DEE17835C3A00BCD96E /* UAInboxMessageList.h in Headers */,
 				1F610DF817835C3A00BCD96E /* UAInboxUtils.h in Headers */,
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
-				BB8860C2159A7E9600584445 /* UA_FMResultSet.h in Headers */,
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
-				BB8860C3159A7E9600584445 /* UA_SBJSON.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
-				BB8860C4159A7E9600584445 /* UA_SBJsonBase.h in Headers */,
-				BB8860C5159A7E9600584445 /* UA_SBJsonParser.h in Headers */,
-				BB8860C6159A7E9600584445 /* UA_SBJsonWriter.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
@@ -823,6 +801,7 @@
 				494BF70D1762789D00B25E12 /* UAUserData.h in Headers */,
 				76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
+				CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -941,9 +920,12 @@
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
+				CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
+				CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */,
+				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */,
 				495048B5173AD41A00F8B5BE /* UADeviceRegistrationDataTest.m in Sources */,
 				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
@@ -961,18 +943,13 @@
 				1F610E0217835C3A00BCD96E /* UADeviceRegistrationPayload.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				BB8860F0159A7E9600584445 /* UAObservable.m in Sources */,
-				BB8860F8159A7E9600584445 /* UA_FMDatabase.m in Sources */,
 				1F610DFC17835C3A00BCD96E /* UADeviceAPIClient.m in Sources */,
 				1F610DF317835C3A00BCD96E /* UAInboxPushHandler.m in Sources */,
-				BB8860F9159A7E9600584445 /* UA_FMResultSet.m in Sources */,
-				BB8860FA159A7E9600584445 /* UA_SBJSON.m in Sources */,
 				1F610DBE17835C2200BCD96E /* UAirship.m in Sources */,
-				BB8860FB159A7E9600584445 /* UA_SBJsonBase.m in Sources */,
 				1F610DB917835C2200BCD96E /* UABaseAppDelegateSurrogate.m in Sources */,
-				BB8860FC159A7E9600584445 /* UA_SBJsonParser.m in Sources */,
-				BB8860FD159A7E9600584445 /* UA_SBJsonWriter.m in Sources */,
 				1F610DFF17835C3A00BCD96E /* UADeviceRegistrationData.m in Sources */,
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
+				CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				1F610DB617835C2200BCD96E /* UAAutoAppDelegate.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
@@ -1004,6 +981,7 @@
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
 				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
+				CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1099,6 +1077,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1139,6 +1118,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1174,6 +1154,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
@@ -1211,6 +1192,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DSTROOT = /tmp/AirshipLib.dst;
@@ -1275,6 +1257,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
@@ -1312,6 +1295,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

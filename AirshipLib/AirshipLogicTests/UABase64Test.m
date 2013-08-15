@@ -74,13 +74,13 @@ NSString *easure64 = @"ZWFzdXJlLg==";
 
 - (void)testBase64Decode {
     NSData *decodedData = UA_dataFromBase64String(pleasure64);
-    NSString *decodedString = [[[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding] autorelease];
+    NSString *decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     STAssertTrue([decodedString isEqualToString:pleasure], nil);
     decodedData = UA_dataFromBase64String(leasure64);
-    decodedString = [[[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding] autorelease];
+    decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     STAssertTrue([decodedString isEqualToString:leasure], nil);
     decodedData = UA_dataFromBase64String(easure64);
-    decodedString = [[[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding] autorelease];
+    decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
     STAssertTrue([decodedString isEqualToString:easure], nil);
 }
 

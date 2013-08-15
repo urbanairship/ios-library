@@ -3,13 +3,13 @@
 #include <QuartzCore/QuartzCore.h>
 
 @interface UABeveledLoadingIndicator()
-@property(nonatomic, retain) UIActivityIndicatorView *activity;
+@property(nonatomic, strong) UIActivityIndicatorView *activity;
 @end
 
 @implementation UABeveledLoadingIndicator
 
 + (UABeveledLoadingIndicator *)indicator {
-    return [[[UABeveledLoadingIndicator alloc] initWithFrame:CGRectMake(0, 0, 100, 100)] autorelease];
+    return [[UABeveledLoadingIndicator alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
 }
 
 - (void)setup {
@@ -18,7 +18,7 @@
     self.layer.cornerRadius = 10.0;
     self.hidden = YES;
     
-    self.activity = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
+    self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     self.activity.hidesWhenStopped = YES;
 
     [self addSubview:self.activity];
@@ -48,9 +48,5 @@
     [self.activity stopAnimating];
 }
 
-- (void)dealloc {
-    self.activity = nil;
-    [super dealloc];
-}
 
 @end
