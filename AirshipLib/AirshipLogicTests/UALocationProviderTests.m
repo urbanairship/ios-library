@@ -93,7 +93,7 @@
     provider.desiredAccuracy = 21;
 
     NSString *expectedDescription = @"Provider:UNKNOWN, Purpose:CATS, Updating:0, desiredAccuracy 21.000000, distanceFilter 21.000000";
-    STAssertEqualObjects(expectedDescription, provider.description, @"Provider description is unexepected");
+    STAssertEqualObjects(expectedDescription, provider.description, @"Provider description is unexpected");
 }
 
 - (void)testCLLocationManagerSetter {
@@ -164,7 +164,7 @@
                                                         didUpdateLocation:self.testLocationPDX
                                                              fromLocation:self.testLocationSFO];
 
-    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+
     [base.locationManager.delegate locationManager:base.locationManager
                                didUpdateToLocation:self.testLocationPDX
                                       fromLocation:self.testLocationSFO];
@@ -179,7 +179,6 @@
     UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForStandard = [OCMockObject partialMockForObject:standard];
     
-    //- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation*)oldLocation to:(CLLocation*)newLocation
     [[[mockForStandard  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
                                                                                         from:self.testLocationSFO];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
@@ -187,7 +186,7 @@
                                                          didUpdateLocation:self.testLocationPDX
                                                               fromLocation:self.testLocationSFO];
 
-    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+
     [standard.locationManager.delegate locationManager:standard.locationManager
                                    didUpdateToLocation:self.testLocationPDX
                                           fromLocation:self.testLocationSFO];
@@ -207,7 +206,7 @@
                                                        withLocationManager:significant.locationManager
                                                          didUpdateLocation:self.testLocationPDX
                                                               fromLocation:self.testLocationSFO];
-    // base.locationMananger would call its delegate, UABaseLocationDelegate would test, then call UALocationService
+
     [significant.locationManager.delegate locationManager:significant.locationManager
                                       didUpdateToLocation:self.testLocationPDX
                                              fromLocation:self.testLocationSFO];
