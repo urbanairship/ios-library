@@ -38,10 +38,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*
  * Private methods
  */
-@interface UAInboxMessage()
-
+@interface UAInboxMessage ()
 @property(nonatomic, strong) UAInboxAPIClient *client;
-
 @end
 
 /*
@@ -49,58 +47,22 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 @implementation UAInboxMessage
 
-- (id)initWithDict:(NSDictionary*)message inbox:(UAInboxMessageList *)i {
-    self = [super init];
-    if (self) {
+@dynamic title;
+@dynamic messageBodyURL;
+@dynamic messageSent;
+@dynamic unread;
+@dynamic messageURL;
+@dynamic messageID;
+@dynamic extra;
+@dynamic rawMessageObject;
 
-        message = [message dictionaryWithValuesForKeys:[[message keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
-                return ![obj isEqual:[NSNull null]];
-            }] allObjects]];
-
-        self.inbox = i;
-
-        self.messageID = [message objectForKey: @"message_id"];
-        self.contentType = [message objectForKey:@"content_type"];
-        self.title = [message objectForKey: @"title"];
-        self.extra = [message objectForKey: @"extra"];
-
-        self.messageBodyURL = [NSURL URLWithString: [message objectForKey: @"message_body_url"]];
-        self.messageURL = [NSURL URLWithString: [message objectForKey: @"message_url"]];
-
-        self.unread = [[message objectForKey: @"unread"] intValue] ? YES : NO;
-
-        NSString *dateString = [message objectForKey: @"message_sent"];
-        self.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:dateString];
-
-        self.client = [[UAInboxAPIClient alloc] init];
-    }
-
-    return self;
-}
-
+@synthesize inbox;
+@synthesize contentType;
+@synthesize client;
 
 
 #pragma mark -
 #pragma mark NSObject methods
-
-// NSObject override
-- (BOOL)isEqual:(id)anObject {
-    if (self == anObject) {
-        return YES;
-    }
-
-    if (anObject == nil || ![anObject isKindOfClass:[UAInboxMessage class]]) {
-        return NO;
-    }
-
-    UAInboxMessage *other = (UAInboxMessage *)anObject;
-    return [self.messageID isEqualToString:other.messageID];
-}
-
-// NSObject override
-- (NSUInteger)hash {
-    return [self.messageID hash];
-}
 
 // NSObject override
 - (NSString *)description {
@@ -127,7 +89,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          if (self.unread) {
              self.inbox.unreadCount = self.inbox.unreadCount - 1;
              self.unread = NO;
-             [[UAInboxDBManager shared] updateMessageAsRead:self];
+             [[UAInboxDBManager shared] saveContext];
          }
 
          self.inbox.isBatchUpdating = NO;
@@ -182,6 +144,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             [webView stringByEvaluatingJavaScriptFromString:script];
         }
     }
+}
+
+-(UAInboxAPIClient *)client {
+    if (!client) {
+       client = [[UAInboxAPIClient alloc] init];
+    }
+
+    return client;
 }
 
 @end

@@ -249,7 +249,6 @@ Core Library
 ===================  ========  ======================================================
 Third party Package  License   Copyright / Creator 
 ===================  ========  ======================================================
-fmdb                 MIT       Copyright (c) 2008 Flying Meat Inc. gus@flyingmeat.com
 Base64               BSD       Copyright 2009-2010 Matt Gallagher.
 Reachability         BSD       Copyright (C) 2010 Apple Inc.
 ===================  ========  ======================================================
