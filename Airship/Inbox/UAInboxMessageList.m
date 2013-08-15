@@ -164,8 +164,17 @@ static UAInboxMessageList *_messageList = nil;
 
 }
 
+- (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
+    __weak id<UAInboxMessageListDelegate> _delegate = delegate;
+    [self retrieveMessageListOnSuccess:^{
+        [_delegate messgageListLoadSucceeded];
+    } onFailure:^{
+        [_delegate messageListLoadFailed];
+    }];
+}
+
 - (void)retrieveMessageList {
-    //TODO: delegates?
+    //TODO: deprecate, move observable calls into success/failure blocks here
     [self retrieveMessageListOnSuccess:nil onFailure:nil];
 }
 
@@ -232,8 +241,29 @@ static UAInboxMessageList *_messageList = nil;
     }
 }
 
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                     withDelegate:(id<UAInboxMessageListDelegate>)delegate {
+
+    __weak id<UAInboxMessageListDelegate> _delegate = delegate;
+
+    [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet onSuccess:^{
+        if (command == UABatchDeleteMessages) {
+            [_delegate batchDeleteFinished];
+        } else if (command == UABatchReadMessages) {
+            [_delegate batchMarkAsReadFinished];
+        }
+    } onFailure:^{
+        if (command == UABatchDeleteMessages) {
+            [_delegate batchDeleteFailed];
+        } else if (command == UABatchReadMessages) {
+            [_delegate batchMarkAsReadFailed];
+        }
+    }];
+}
+
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
-    //TODO: delegates?
+    //TODO: deprecate, move observable calls into success/failure blocks here
     [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet onSuccess:nil onFailure:nil];
 }
 

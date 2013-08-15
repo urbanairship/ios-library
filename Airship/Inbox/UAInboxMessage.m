@@ -144,7 +144,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (BOOL)markAsRead {
     //TODO: delegates?
-    [self markAsReadOnSuccess:nil onFailure:nil];
+    return [self markAsReadOnSuccess:nil onFailure:nil];
 }
 
 #pragma mark -

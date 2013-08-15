@@ -25,6 +25,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 
+#import "UAInboxMessageListDelegate.h"
+
 typedef void (^UAInboxMessageCallbackBlock)(void);
 
 @class UAInboxMessageList;
@@ -54,6 +56,8 @@ typedef void (^UAInboxMessageCallbackBlock)(void);
  * @return YES if the request was submitted or already complete, otherwise NO.
  */
 - (BOOL)markAsRead;
+
+- (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
 - (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock onFailure:(UAInboxMessageCallbackBlock)failureBlock;
 
