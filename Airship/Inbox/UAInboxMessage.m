@@ -110,16 +110,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
 
-- (BOOL)markAsRead {
-    
+- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock
+                  onFailure:(UAInboxMessageCallbackBlock)failureBlock {
     if (!self.unread) {
         return YES;
     }
-    
+
     if (self.inbox.isBatchUpdating) {
         return NO;
     }
-    
+
     self.inbox.isBatchUpdating = YES;
 
     [self.client
@@ -140,6 +140,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      }];
 
     return YES;
+}
+
+- (BOOL)markAsRead {
+    //TODO: delegates?
+    [self markAsReadOnSuccess:nil onFailure:nil];
 }
 
 #pragma mark -
