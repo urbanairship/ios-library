@@ -126,14 +126,11 @@ return g_shared##CLASSNAME;                                                     
 return self;                                                                                \
 }                                                                                           \
 
-
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_4_1
-#define IF_IOS4_1_OR_GREATER(...) \
-if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_4_1) \
-{ \
-__VA_ARGS__ \
-}
-#else
-#define IF_IOS4_1_OR_GREATER(...)
-#endif
+#define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \
+do { \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Warc-performSelector-leaks\"") \
+THE_CODE; \
+_Pragma("clang diagnostic pop") \
+} while (0)
 
