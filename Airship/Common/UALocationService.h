@@ -104,7 +104,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 /**
  * The distance filter on the standard location provider.
- * @returns CLLocationDistance The current distance filter on the standard location provider
+ * @return CLLocationDistance The current distance filter on the standard location provider
  */
 - (CLLocationDistance)standardLocationDistanceFilter;
 
@@ -138,7 +138,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 + (BOOL)airshipLocationServiceEnabled;
 
 /** 
- * The allows UA Location Services to report location.
+ * This method allows UA Location Services to report location.
  *
  * @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  * if the system reports that location services are available and authorized. This setting will not

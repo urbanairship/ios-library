@@ -44,7 +44,7 @@
 - (void)richPushNotificationArrived:(NSDictionary *)notification;
 /**
  * Handle a rich push notification that launched the application.
- * @param notification An NSDictionary with thep ush notification contents.
+ * @param notification An NSDictionary with the push notification contents.
  */
 - (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
 
