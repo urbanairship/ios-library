@@ -27,23 +27,23 @@
 
 #import "UAAnalytics.h"
 
-// total size in bytes that the event queue is allowed to grow to.
+// Total size in bytes that the event queue is allowed to grow to.
 #define kMaxTotalDBSizeBytes 5*1024*1024 // local max of 5MB
 #define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
 
-// total size in bytes that a given event post is allowed to send.
+// Total size in bytes that a given event post is allowed to send.
 #define kMaxBatchSizeBytes 500*1024      // local max of 500KB
 #define kMinBatchSizeBytes 1024          // local min of 1KB
 
-// maximum amount of time in seconds that events should queue for
+// Maximum amount of time in seconds that events should queue for.
 #define kMaxWaitSeconds 14*24*3600      // local max of 14 days
 #define kMinWaitSeconds 7*24*3600       // local min of 7 days
 
-// The actual amount of time in seconds that elapse between event-server posts
+// The actual amount of time in seconds that elapse between event-server posts.
 #define kMinBatchIntervalSeconds 60        // local min of 60s
 #define kMaxBatchIntervalSeconds 7*24*3600  // local max of 7 days
 
-// minimum amount of time between background location events
+// Minimum amount of time between background location events.
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
 
 
@@ -225,7 +225,7 @@
 
 /**
  * Prepare the event data for sending. Enforce max batch limits.
- * Loop through events and sicard DB-only items, format the
+ * Loop through events and discard DB-only items, format the
  * JSON data field as a dictionary.
  */
 - (NSArray *)prepareEventsForUpload;
