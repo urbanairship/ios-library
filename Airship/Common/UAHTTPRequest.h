@@ -65,7 +65,9 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
 @property (nonatomic, strong) NSMutableData *body;
 
 /**
- * Boolean to compress the request's body. 'YES' will enable GZIP.
+ * Boolean to compress the request's body.
+ * @return YES will enable GZIP and compress the body.
+ * @return NO will not compress the body.
  */
 @property (nonatomic, assign) BOOL compressBody;
 

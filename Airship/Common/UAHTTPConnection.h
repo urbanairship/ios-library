@@ -33,15 +33,39 @@
 
 }
 
+/**
+ * The connection sending the message.
+ */
 @property (nonatomic, strong, readonly) NSURLConnection *urlConnection;
+
+/**
+ * The connection request as a UAHTTPRequest.
+ */
 @property (nonatomic, strong, readonly) UAHTTPRequest *request;
 
-
+/**
+ * The connection delegate.
+ */
 @property (weak, nonatomic) id delegate;
+
+/**
+ * The connection success selector.
+ */
 @property (nonatomic, assign) SEL successSelector;
+
+/**
+ * The connection failure selector.
+ */
 @property (nonatomic, assign) SEL failureSelector;
 
+/**
+ * The connection success block.
+ */
 @property (nonatomic, copy) UAHTTPConnectionSuccessBlock successBlock;
+
+/**
+ * The connection failure block.
+ */
 @property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
@@ -50,6 +74,13 @@
  */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
+/**
+ * Class factory method for creating a UAHTTPConnection.
+ * @param httpRequest An instance of UAHTTPRequest.
+ * @param delegate The delegate
+ * @param successSelector The selector to be called if the connection was successful.
+ * @param failureSelector The selector to be called if the connection was unsuccessful.
+ */
 + (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
                                    delegate:(id)delegate
                                     success:(SEL)successSelector

@@ -61,8 +61,14 @@
 /**
  * The purpose associated with the CLLocationManager that is displayed to the user when
  * permission for location services is required.
+ * @return The location manager purpose as an NSString.
  */
 - (NSString *)purpose;
+
+/**
+ * Set the location manager purpose.
+ * @param newPurpose The new purpose to set.
+ */
 - (void)setPurpose:(NSString *)newPurpose;
 
 /**
