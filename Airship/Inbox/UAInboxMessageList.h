@@ -120,6 +120,10 @@ typedef enum {
  */
 @property(assign) BOOL isBatchUpdating;
 
+/**
+ * YES if retrieving message list is currently in progress.
+ * NO otherwise.
+ */
 @property(nonatomic, readonly, assign) BOOL isRetrieving;
 
 @end

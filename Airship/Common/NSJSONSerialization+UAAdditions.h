@@ -25,6 +25,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * The NSJSONSerialization convenience methods.
+ */
 @interface NSJSONSerialization (UAAdditions)
 
 /**

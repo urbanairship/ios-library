@@ -34,7 +34,9 @@
 #define CORE_DATA_STORE_NAME @"Inbox-%@.sqlite"
 #define CORE_DATA_DIRECTORY_NAME @"UAInbox"
 
-
+/**
+ * The UAInboxDBManager singleton provides access to the Rich Push Inbox data.
+ */
 @interface UAInboxDBManager : NSObject {
 }
 
@@ -50,10 +52,8 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 
 /**
  * Adds a message inbox.
- *
- * @param dict A dictionary with keys and values conforming to the
+ * @param dictionary A dictionary with keys and values conforming to the
  * Urban Airship JSON API for retrieving inbox messages.
- *
  * @return A message, populated with data from the message dictionary.
  */
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary;

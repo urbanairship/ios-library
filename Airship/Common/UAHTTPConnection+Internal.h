@@ -27,11 +27,31 @@
 
 @interface UAHTTPConnection()
 
+/**
+ * The connection request as a UAHTTPRequest.
+ */
 @property (nonatomic, strong) UAHTTPRequest *request;
+
+/**
+ * The URL response for the connection's request.
+ */
 @property (nonatomic, strong) NSHTTPURLResponse *urlResponse;
+
+/**
+ * The response data for the connection's request.
+ */
 @property (nonatomic, strong) NSMutableData *responseData;
+
+/**
+ * The connection sending the message.
+ */
 @property (nonatomic, strong) NSURLConnection *urlConnection;
 
+/**
+ * Compress the data with GZIP.
+ * @param uncompressedData Data to be compressed.
+ * @return Compressed data.
+ */
 - (NSData *)gzipCompress:(NSData *)uncompressedData;
 
 @end
