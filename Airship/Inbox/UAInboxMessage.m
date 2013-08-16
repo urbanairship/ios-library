@@ -131,20 +131,40 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          }
 
          self.inbox.isBatchUpdating = NO;
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-
+         if (successBlock) {
+             successBlock();
+         }
      }onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
          self.inbox.isBatchUpdating = NO;
+         if (failureBlock) {
+             failureBlock();
+         }
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
 
     return YES;
 }
 
+- (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
+    __weak id<UAInboxMessageListDelegate> _del = delegate;
+    return [self markAsReadOnSuccess:^{
+        if ([_del respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
+            [_del singleMessageMarkAsReadFinished:self];
+        }
+    } onFailure: ^{
+        if ([_del respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
+            [_del singleMessageMarkAsReadFailed:self];
+        }
+    }];
+}
+
 - (BOOL)markAsRead {
-    //TODO: delegates?
-    return [self markAsReadOnSuccess:nil onFailure:nil];
+    return [self markAsReadOnSuccess:^{
+        [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+    }onFailure:^{
+        [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
+    }];
 }
 
 #pragma mark -

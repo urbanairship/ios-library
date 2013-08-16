@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAConfig.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageListObserver.h"
+#import "UAInboxMessageListDelegate.h"
 #import "UAInboxMessage.h"
 #import "UAInboxDBManager.h"
 #import "UAUtils.h"
@@ -111,13 +112,19 @@ static UAInboxMessageList *_messageList = nil;
     UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
 }
 
-- (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
-                           onFailure:(UAInboxMessageListCallbackBlock)failureBlock {
+- (void)retrieveMessageListWithInitialBlock:(UAInboxMessageCallbackBlock)initialBlock
+                                  onSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                                  onFailure:(UAInboxMessageCallbackBlock)failureBlock {
     if (![[UAUser defaultUser] defaultUserCreated]) {
         UA_LDEBUG("Postponing retrieving message list once the user is created.");
+        if (self.userCreatedObserver) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
+        }
         self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
             //load the message list once the user has been created
-            [self retrieveMessageList];
+            [self retrieveMessageListWithInitialBlock:initialBlock
+                                            onSuccess:successBlock
+                                            onFailure:failureBlock];
 
             //unregister and deallocate observer
             [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
@@ -127,9 +134,12 @@ static UAInboxMessageList *_messageList = nil;
         return;
     }
 
+    if (initialBlock) {
+        initialBlock();
+    }
+
     UA_LDEBUG("Retrieving message list.");
 
-    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     [self loadSavedMessages];
@@ -149,7 +159,6 @@ static UAInboxMessageList *_messageList = nil;
         if (successBlock) {
             successBlock();
         }
-        [self notifyObservers:@selector(messageListLoaded)];
         [self sendMessageListUpdatedNotification];
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
@@ -158,28 +167,39 @@ static UAInboxMessageList *_messageList = nil;
         if (failureBlock) {
             failureBlock();
         }
-        [self notifyObservers:@selector(inboxLoadFailed)];
         [self sendMessageListUpdatedNotification];
     }];
+}
 
+- (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                           onFailure:(UAInboxMessageListCallbackBlock)failureBlock {
+    [self retrieveMessageListWithInitialBlock:nil onSuccess:successBlock onFailure:failureBlock];
 }
 
 - (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> _delegate = delegate;
-    [self retrieveMessageListOnSuccess:^{
-        [_delegate messgageListLoadSucceeded];
+    __weak id<UAInboxMessageListDelegate> _del = delegate;
+    [self retrieveMessageListWithInitialBlock:nil onSuccess:^{
+        if ([_del respondsToSelector:@selector(messageListLoadSucceeded)]) {
+            [_del messageListLoadSucceeded];
+        }
     } onFailure:^{
-        [_delegate messageListLoadFailed];
+        [_del messageListLoadFailed];
     }];
 }
 
 - (void)retrieveMessageList {
-    //TODO: deprecate, move observable calls into success/failure blocks here
-    [self retrieveMessageListOnSuccess:nil onFailure:nil];
+    [self retrieveMessageListWithInitialBlock:^{
+        [self notifyObservers: @selector(messageListWillLoad)];
+    } onSuccess:^{
+        [self notifyObservers:@selector(messageListLoaded)];
+    } onFailure:^{
+        [self notifyObservers:@selector(inboxLoadFailed)];
+    }];
 }
 
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                 withInitialBlock:(UAInboxMessageCallbackBlock)initialBlock
                         onSuccess:(UAInboxMessageListCallbackBlock)successBlock
                         onFailure:(UAInboxMessageListCallbackBlock)failureBlock {
     if (command != UABatchDeleteMessages && command != UABatchReadMessages) {
@@ -187,10 +207,13 @@ static UAInboxMessageList *_messageList = nil;
         return;
     }
 
+    if (initialBlock) {
+        initialBlock();
+    }
+
     NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
 
     self.isBatchUpdating = YES;
-    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     void (^succeed)(void) = ^{
@@ -243,28 +266,65 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                        onSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                        onFailure:(UAInboxMessageListCallbackBlock)failureBlock {
+    [self performBatchUpdateCommand:command
+                withMessageIndexSet:messageIndexSet
+                   withInitialBlock:nil
+                          onSuccess:successBlock
+                          onFailure:failureBlock];
+}
+
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
                      withDelegate:(id<UAInboxMessageListDelegate>)delegate {
 
-    __weak id<UAInboxMessageListDelegate> _delegate = delegate;
+    __weak id<UAInboxMessageListDelegate> _del = delegate;
 
     [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet onSuccess:^{
         if (command == UABatchDeleteMessages) {
-            [_delegate batchDeleteFinished];
+            if ([_del respondsToSelector:@selector(batchDeleteFinished)]) {
+                [_del batchDeleteFinished];
+            }
         } else if (command == UABatchReadMessages) {
-            [_delegate batchMarkAsReadFinished];
+            if ([_del respondsToSelector:@selector(batchMarkAsReadFinished)]) {
+                [_del batchMarkAsReadFinished];
+            }
         }
     } onFailure:^{
         if (command == UABatchDeleteMessages) {
-            [_delegate batchDeleteFailed];
+            if ([_del respondsToSelector:@selector(batchDeleteFailed)]) {
+                [_del batchDeleteFailed];
+            }
         } else if (command == UABatchReadMessages) {
-            [_delegate batchMarkAsReadFailed];
+            if ([_del respondsToSelector:@selector(batchMarkAsReadFailed)]) {
+                [_del batchMarkAsReadFailed];
+            }
         }
     }];
 }
 
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
-    //TODO: deprecate, move observable calls into success/failure blocks here
-    [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet onSuccess:nil onFailure:nil];
+    [self
+     performBatchUpdateCommand:command
+     withMessageIndexSet:messageIndexSet
+     withInitialBlock:^{
+         [self notifyObservers: @selector(messageListWillLoad)];
+     }
+     onSuccess:^{
+         if (command == UABatchDeleteMessages) {
+             [self notifyObservers:@selector(batchDeleteFinished)];
+         } else if (command == UABatchReadMessages) {
+             [self notifyObservers:@selector(batchMarkAsReadFinished)];
+         }
+     }
+     onFailure:^{
+         if (command == UABatchDeleteMessages) {
+             [self notifyObservers:@selector(batchDeleteFailed)];
+         } else if (command == UABatchReadMessages) {
+             [self notifyObservers:@selector(batchMarkAsReadFailed)];
+         }
+     }];
 }
 
 #pragma mark -
