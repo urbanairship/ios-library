@@ -63,17 +63,68 @@ typedef enum {
  */
 + (void)land;
 
+
 /**
- * Fetch new messages from the server.  This will result in a
- * callback to observers at [UAInboxMessageListObserver messageListWillLoad] when loading starts, 
- * and [UAInboxMessageListObserver messageListLoaded] upon completion.
+ * Fetch new messages from the server.
+ *
+ * @param successBlock A block to be executed if message retrieval succeeds.
+ * @param failureBlock A block to be executed if message retrieval fails.
  */
-- (void)retrieveMessageList;
 
 - (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
                            onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
 
+/**
+ * Fetch new messages from the server.  This will result in a
+ * callback to the passed delegate at [UAInboxMessageListDelegate messageListLoadSucceeded] upon
+ * successful completion, and [UAInboxMessageListDelegate messageListLoadFailed] on failure.
+ *
+ * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ */
 - (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+
+
+/**
+ * Fetch new messages from the server.  This will result in a
+ * callback to observers at [UAInboxMessageListObserver messageListWillLoad] when loading starts,
+ * and [UAInboxMessageListObserver messageListLoaded] upon completion.
+ *
+ * Note: this method is deprecated. New applicaitons should use the block and delegate-based
+ * methods.
+ */
+- (void)retrieveMessageList __attribute__((deprecated));
+
+/**
+ * Update the message list by marking messages as read, or deleting them.
+ *
+ *
+ * @param command the UABatchUpdateCommand to perform.
+ * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
+ * @param successBlock A block to be executed if the batch update succeeds.
+ * @param failureBlock A block to be executed if the batch update fails.
+ */
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                        onSuccess:(UAInboxMessageListCallbackBlock)successBlock
+                        onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
+
+/**
+ * Update the message list by marking messages as read, or deleting them.
+ * This eventually will result in an asyncrhonous delegate callback to
+ * [UAInboxMessageListDelegate batchMarkAsReadFinished],
+ * [UAInboxMessageListDelegate batchMarkAsReadFailed],
+ * [UAInboxMessageListDelegate batchDeleteFinished], or
+ * [UAInboxMessageListDelegate batchDeleteFailed].
+ *
+ * @param command the UABatchUpdateCommand to perform.
+ * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
+ * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ */
+
+- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                     withDelegate:(id<UAInboxMessageListDelegate>)delegate;
+
 
 /**
  * Update the message list by marking messages as read, or deleting them.
@@ -82,20 +133,15 @@ typedef enum {
  * [UAInboxMessageListObserver batchMarkAsReadFailed],
  * [UAInboxMessageListObserver batchDeleteFinished], or
  * [UAInboxMessageListObserver batchDeleteFailed].
+ *
+ * Note: this method is deprecated. New applications should use the block and delegate-based
+ * methods.
+ *
  * @param command the UABatchUpdateCommand to perform.
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  */
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet;
-
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                        onSuccess:(UAInboxMessageListCallbackBlock)successBlock
-                        onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
-
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                     withDelegate:(id<UAInboxMessageListDelegate>)delegate;
-
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated));
 
 /**
  * Returns the number of messages currently in the inbox.

@@ -42,14 +42,33 @@ typedef void (^UAInboxMessageCallbackBlock)(void);
 
 /**
  * Mark the message as read.
- * 
+ * @param successBlock A block to be executed if the mark-as-read operation is successful.
+ * @param failureBlock A block to be executed if the mark-as-read operation fails.
  * @return YES if the request was submitted or already complete, otherwise NO.
  */
-- (BOOL)markAsRead;
+- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock onFailure:(UAInboxMessageCallbackBlock)failureBlock;
 
+/**
+ * Mark the message as read. This eventually results in a callback to
+ * [UAInboxMessageListDelegate singleMessageMarkAsReadFinished:] or
+ * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
+ *
+ * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ * @return YES if the request was submitted or already complete, otherwise NO.
+ *
+ */
 - (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
-- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock onFailure:(UAInboxMessageCallbackBlock)failureBlock;
+/**
+ * Mark the message as read. This eventually results in a callback to
+ * [UAInboxMessageListObserver singleMessageMarkAsReadFinished:] or
+ * [UAInboxMessageListObserver singleMessageMarkAsReadFailed:].
+ *
+ * @return YES if the request was submitted or already complete, otherwise NO.
+ *
+ * Note: This method is deprecated. New applications should use the block or delegate-based methods.
+ */
+- (BOOL)markAsRead __attribute__((deprecated));
 
 /**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
