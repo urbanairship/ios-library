@@ -1,6 +1,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAInboxMessage;
+
 /**
  * The UAInboxMessageListDelegate protocol declares methods that
  * are implemented by delegates of a UAInboxMessageList API calls.
@@ -14,7 +16,7 @@
 /**
  * Tells the delegate that a request for inbox messages succeeded.
  */
-- (void)messgageListLoadSucceeded;
+- (void)messageListLoadSucceeded;
 /**
  * Tells the delegate that a request for inbox messages failed.
  */
