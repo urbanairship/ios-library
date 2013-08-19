@@ -25,7 +25,7 @@
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "UAConfig.h"
 #import "UAAnalyticsDBManager.h"
@@ -41,7 +41,7 @@
  usage */
 
 
-@interface UAAnalyticsTest : SenTestCase {
+@interface UAAnalyticsTest : XCTestCase {
   @private
     UAAnalytics *_analytics;
 }
@@ -73,7 +73,7 @@
 
     // Date formatting for string representation truncates the date value to the nearest second
     // hence, expect to be off by a second
-    STAssertEqualsWithAccuracy(timeBetweenDates, (NSTimeInterval)0, 1, nil);
+    XCTAssertEqualWithAccuracy(timeBetweenDates, (NSTimeInterval)0, 1);
 }
 
 - (void)testHandleNotification {
@@ -86,8 +86,8 @@
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"] inApplicationState:UIApplicationStateActive];
-    STAssertNotNil(arg, nil);
-    STAssertTrue([arg isKindOfClass:[UAEventPushReceived class]], nil);    
+    XCTAssertNotNil(arg);
+    XCTAssertTrue([arg isKindOfClass:[UAEventPushReceived class]]);
 }
 
 //// Refactor this next time it's changed
@@ -109,8 +109,8 @@
     
     [_analytics enterForeground];
     
-    STAssertTrue(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to YES");
-    STAssertNil(arg, @"`enterForeground` should not insert an event");
+    XCTAssertTrue(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to YES");
+    XCTAssertNil(arg, @"`enterForeground` should not insert an event");
     
     [mockAnalytics verify];
 }
@@ -143,13 +143,13 @@
     _analytics.isEnteringForeground = YES;
     [_analytics didBecomeActive];
     
-    STAssertFalse(_analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
+    XCTAssertFalse(_analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
     
-    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+    XCTAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
     
-    STAssertEquals(foregroundCount, 1, @"One foreground event inserted.");
-    STAssertEquals(activeCount, 1, @"One active event inserted.");
-    STAssertEquals(eventCount, 2, @"Two total events inserted.");
+    XCTAssertEqual(foregroundCount, 1, @"One foreground event inserted.");
+    XCTAssertEqual(activeCount, 1, @"One active event inserted.");
+    XCTAssertEqual(eventCount, 2, @"Two total events inserted.");
     
     [mockAnalytics verify];
 }
@@ -206,12 +206,12 @@
     //now the app is active, according to NSNotificationCenter
     [[UAirship shared].analytics didBecomeActive];
     
-    STAssertFalse([UAirship shared].analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
+    XCTAssertFalse([UAirship shared].analytics.isEnteringForeground, @"`didBecomeActive` should set `isEnteringForeground_` to NO");
         
-    STAssertEquals(foregroundCount, 1, @"One foreground event should be inserted.");
-    STAssertEquals(activeCount, 1, @"One active event should be inserted.");
-    STAssertEquals(eventCount, 2, @"Two total events should be inserted.");
-    STAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
+    XCTAssertEqual(foregroundCount, 1, @"One foreground event should be inserted.");
+    XCTAssertEqual(activeCount, 1, @"One active event should be inserted.");
+    XCTAssertEqual(eventCount, 2, @"Two total events should be inserted.");
+    XCTAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
     
     [mockAnalytics verify];
 }
@@ -226,8 +226,8 @@
     };
     [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics enterBackground];
-    STAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
-    STAssertTrue(_analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
+    XCTAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
+    XCTAssertTrue(_analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
     [mockAnalytics verify];
 }
 
@@ -239,7 +239,7 @@
     }];
     _analytics.sendBackgroundTask = identifier;
     [_analytics invalidateBackgroundTask];
-    STAssertTrue(_analytics.sendBackgroundTask == UIBackgroundTaskInvalid, nil);
+    XCTAssertTrue(_analytics.sendBackgroundTask == UIBackgroundTaskInvalid);
 }
 
 - (void)testDidBecomeActive {
@@ -254,9 +254,9 @@
     
     [_analytics didBecomeActive];
     
-    STAssertFalse(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to NO");
+    XCTAssertFalse(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to NO");
     
-    STAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+    XCTAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
 }
 
 - (void)testWillResignActive {
@@ -269,7 +269,7 @@
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics willResignActive];
-    STAssertTrue([arg isKindOfClass:[UAEventAppInactive class]], @"willResignActive should fire UAEventAppInactive");
+    XCTAssertTrue([arg isKindOfClass:[UAEventAppInactive class]], @"willResignActive should fire UAEventAppInactive");
 }
 
 - (void)testAddEvent {
@@ -282,7 +282,7 @@
     [mockDBManager verify];
 
     // Should not send an event in the background when not location event
-    STAssertTrue(_analytics.oldestEventTime == [event.time doubleValue], nil);
+    XCTAssertTrue(_analytics.oldestEventTime == [event.time doubleValue]);
     [[mockDBManager expect] addEvent:event withSession:_analytics.session];
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
@@ -304,17 +304,17 @@
 
 - (void)testShouldSendAnalyticsCore {
     _analytics.config.analyticsEnabled = NO;
-    STAssertFalse([_analytics shouldSendAnalytics], nil);
+    XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.config.analyticsEnabled = YES;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
     [[[mockDBManger stub] andReturnValue:@0] eventCount];
-    STAssertFalse([_analytics shouldSendAnalytics], nil);
+    XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.databaseSize = 0;
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
     [[[mockDBManger stub] andReturnValue:@5] eventCount];
-    STAssertFalse([_analytics shouldSendAnalytics], nil);
+    XCTAssertFalse([_analytics shouldSendAnalytics]);
 }
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
@@ -327,16 +327,16 @@
     UIApplicationState state = UIApplicationStateBackground;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
     _analytics.sendBackgroundTask = 9;
-    STAssertTrue([_analytics shouldSendAnalytics], nil);
+    XCTAssertTrue([_analytics shouldSendAnalytics]);
     _analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
     _analytics.lastSendTime = [NSDate distantPast];
-    STAssertTrue([_analytics shouldSendAnalytics], nil);
+    XCTAssertTrue([_analytics shouldSendAnalytics]);
     _analytics.lastSendTime = [NSDate date];
-    STAssertFalse([_analytics shouldSendAnalytics], nil);
+    XCTAssertFalse([_analytics shouldSendAnalytics]);
     mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     state = UIApplicationStateActive;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
-    STAssertTrue([_analytics shouldSendAnalytics], nil);
+    XCTAssertTrue([_analytics shouldSendAnalytics]);
 }
 
 - (void)testSend {
@@ -356,15 +356,15 @@
 - (void)testPrepareEventsForUpload {
     UAEventAppForeground *appEvent = [[UAEventAppForeground alloc] initWithContext:nil];
     // If the events database is empty, everything crashes
-    STAssertNotNil(appEvent, nil);
+    XCTAssertNotNil(appEvent);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset
     // preferences if the methods under test rely on them
     _analytics.maxTotalDBSize = kMaxTotalDBSizeBytes;
     _analytics.maxBatchSize = kMaxBatchSizeBytes;
     [_analytics addEvent:appEvent];
     NSArray* events = [_analytics prepareEventsForUpload];
-    STAssertTrue([events isKindOfClass:[NSArray class]], nil);
-    STAssertTrue([events count] > 0, nil);
+    XCTAssertTrue([events isKindOfClass:[NSArray class]]);
+    XCTAssertTrue([events count] > 0);
 }
 
 - (void)testAnalyticsIsThreadSafe {
@@ -388,8 +388,10 @@
         }
     });
     dispatch_group_wait(testGroup, 5 * NSEC_PER_SEC);
+    #if !OS_OBJECT_USE_OBJC
     dispatch_release(testGroup);
     dispatch_release(testQueue);
+    #endif
     UAAnalyticsDBManager *analyticsDb = [UAAnalyticsDBManager shared];
     NSArray *bunchOevents = [analyticsDb getEvents:100];
     __block BOOL testFail = YES;
@@ -411,7 +413,7 @@
             testFail = NO;
         }
     }];
-    STAssertFalse(testFail, @"NULL value in UAAnalyticsDB, check threading issues");
+    XCTAssertFalse(testFail, @"NULL value in UAAnalyticsDB, check threading issues");
 }
 
 
