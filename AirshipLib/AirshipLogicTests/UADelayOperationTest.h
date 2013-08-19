@@ -1,6 +1,6 @@
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface UADelayOperationTest : SenTestCase
+@interface UADelayOperationTest : XCTestCase
 
 @end

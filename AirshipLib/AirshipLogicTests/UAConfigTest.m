@@ -46,21 +46,21 @@
     // ensure that unknown values don't crash the app with an unkown key exception
 
     UAConfig *config =[[UAConfig alloc] init];
-    STAssertNoThrow([config setValue:@"someValue" forKey:@"thisKeyDoesNotExist"], @"Invalid key incorrectly throws an exception.");
+    XCTAssertNoThrow([config setValue:@"someValue" forKey:@"thisKeyDoesNotExist"], @"Invalid key incorrectly throws an exception.");
 }
 
 - (void)testProductionProfileParsing {
     NSString *profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"production-embedded" ofType:@"mobileprovision"];
-    STAssertTrue([UAConfig isProductionProvisioningProfile:profilePath], @"Incorrectly evaluated a production profile");
+    XCTAssertTrue([UAConfig isProductionProvisioningProfile:profilePath], @"Incorrectly evaluated a production profile");
 }
 
 - (void)testDevelopmentProfileParsing {
     NSString *profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"development-embedded" ofType:@"mobileprovision"];
-    STAssertFalse([UAConfig isProductionProvisioningProfile:profilePath], @"Incorrectly evaluated a development profile");
+    XCTAssertFalse([UAConfig isProductionProvisioningProfile:profilePath], @"Incorrectly evaluated a development profile");
 }
 
 - (void)testMissingEmbeddedProfile {
-    STAssertTrue([UAConfig isProductionProvisioningProfile:nil], @"Missing profiles should result in a production mode determination.");
+    XCTAssertTrue([UAConfig isProductionProvisioningProfile:nil], @"Missing profiles should result in a production mode determination.");
 }
 
 - (void)testSimulatorFallback {
@@ -70,12 +70,12 @@
     UAConfig *configInProduction =[[UAConfig alloc] init];
     configInProduction.inProduction = YES;
     configInProduction.detectProvisioningMode = YES;
-    STAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
+    XCTAssertTrue(configInProduction.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 
     UAConfig *configInDevelopment =[[UAConfig alloc] init];
     configInDevelopment.inProduction = NO;
     configInDevelopment.detectProvisioningMode = YES;
-    STAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
+    XCTAssertFalse(configInDevelopment.inProduction, @"Simulators with provisioning detection enabled should return the production value as set.");
 }
 
 - (void)testProductionFlag {
@@ -93,26 +93,26 @@
     config.productionAppSecret = @"prodAppSecret";
     config.productionLogLevel = UALogLevelNone;//not the default
 
-    STAssertFalse(config.inProduction, @"inProduction defaults to NO.");
-    STAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
+    XCTAssertFalse(config.inProduction, @"inProduction defaults to NO.");
+    XCTAssertFalse(config.detectProvisioningMode, @"detectProvisioningMode defaults to NO.");
 
-    STAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
-    STAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
-    STAssertEquals(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
+    XCTAssertEqualObjects(config.appKey, config.developmentAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.developmentAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.developmentLogLevel, @"Incorrect log level resolution.");
 
     config.inProduction = YES;
-    STAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
-    STAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
-    STAssertEquals(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
+    XCTAssertEqualObjects(config.appKey, config.productionAppKey, @"Incorrect app key resolution.");
+    XCTAssertEqualObjects(config.appSecret, config.productionAppSecret, @"Incorrect app secret resolution.");
+    XCTAssertEqual(config.logLevel, config.productionLogLevel, @"Incorrect log level resolution.");
 
     config.inProduction = NO;
     config.detectProvisioningMode = YES;
 
-    STAssertTrue(config.inProduction, @"The embedded provisioning profile is a production profile.");
+    XCTAssertTrue(config.inProduction, @"The embedded provisioning profile is a production profile.");
 
     // ensure that our dispatch_once block works when wrapping the in production flag
     config.profilePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"development-embedded" ofType:@"mobileprovision"];
-    STAssertTrue(config.inProduction, @"The development profile path should not be used as the file will only be read once.");
+    XCTAssertTrue(config.inProduction, @"The development profile path should not be used as the file will only be read once.");
 }
 
 - (void)testOldPlistFormat {
@@ -122,16 +122,16 @@
     NSString *validAppValue = @"0A00000000000000000000";
     UAConfig *config = [UAConfig configWithContentsOfFile:legacyPlistPath];
 
-    STAssertTrue([config validate], @"Legacy Config File is invalid.");
+    XCTAssertTrue([config validate], @"Legacy Config File is invalid.");
 
-    STAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
-    STAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
 
-    STAssertEquals(config.developmentLogLevel, 5, @"Development log level was improperly loaded.");
-    STAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
-    STAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
+    XCTAssertEqual(config.developmentLogLevel, 5, @"Development log level was improperly loaded.");
+    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
+    XCTAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
 
 }
 
@@ -142,21 +142,21 @@
     NSString *validAppValue = @"0A00000000000000000000";
     UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
 
-    STAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
+    XCTAssertTrue([config validate], @"AirshipConfig (modern) File is invalid.");
 
-    STAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
-    STAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
 
-    STAssertEquals(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
-    STAssertEquals(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
-    STAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
-    STAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
+    XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
+    XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
+    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
-    STAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
+    XCTAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
 }
 
 - (void)testNeXTStepPlistParsing {
@@ -165,21 +165,21 @@
     NSString *validAppValue = @"0A00000000000000000000";
     UAConfig *config = [UAConfig configWithContentsOfFile:plistPath];
 
-    STAssertTrue([config validate], @"NeXTStep plist file is invalid.");
+    XCTAssertTrue([config validate], @"NeXTStep plist file is invalid.");
 
-    STAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
-    STAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
-    STAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppKey, validAppValue, @"Production app key was improperly loaded.");
+    XCTAssertEqualObjects(config.productionAppSecret, validAppValue, @"Production app secret was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppKey, validAppValue, @"Development app key was improperly loaded.");
+    XCTAssertEqualObjects(config.developmentAppSecret, validAppValue, @"Development app secret was improperly loaded.");
 
-    STAssertEquals(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
-    STAssertEquals(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
-    STAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
-    STAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
+    XCTAssertEqual(config.developmentLogLevel, 1, @"Development log level was improperly loaded.");
+    XCTAssertEqual(config.productionLogLevel, 5, @"Production log level was improperly loaded.");
+    XCTAssertTrue(config.clearKeychain, @"Clear keychain was improperly loaded.");
+    XCTAssertTrue(config.detectProvisioningMode, @"detectProvisioningMode was improperly loaded.");
 
     //special case this one since we have to disable detectProvisioningMode
     config.detectProvisioningMode = NO;
-    STAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
+    XCTAssertTrue(config.inProduction, @"inProduction was improperly loaded.");
 }
 
 - (void)testValidation {
@@ -197,22 +197,22 @@
     // Make it invalid and then valid again, asserting the whole way.
     
     config.developmentAppKey = invalidValue;
-    STAssertFalse([config validate], @"Development App Key is improperly verified.");
+    XCTAssertFalse([config validate], @"Development App Key is improperly verified.");
     config.developmentAppKey = validAppValue;
 
     config.developmentAppSecret = invalidValue;
-    STAssertFalse([config validate], @"Development App Secret is improperly verified.");
+    XCTAssertFalse([config validate], @"Development App Secret is improperly verified.");
     config.developmentAppSecret = validAppValue;
 
     //switch to production mode as validation only strictly checks the current keypair
     config.inProduction = YES;
 
     config.productionAppKey = invalidValue;
-    STAssertFalse([config validate], @"Production App Key is improperly verified.");
+    XCTAssertFalse([config validate], @"Production App Key is improperly verified.");
     config.productionAppKey = validAppValue;
 
     config.productionAppSecret = invalidValue;
-    STAssertFalse([config validate], @"Production App Secret is improperly verified.");
+    XCTAssertFalse([config validate], @"Production App Secret is improperly verified.");
     config.productionAppSecret = validAppValue;
 
 }
@@ -221,20 +221,20 @@
     UAConfig *config =[[UAConfig alloc] init];
 
     config.analyticsURL = @"http://some-other-url.com";
-    STAssertEqualObjects(@"http://some-other-url.com", config.analyticsURL, @"Analytics URL does not set correctly");
+    XCTAssertEqualObjects(@"http://some-other-url.com", config.analyticsURL, @"Analytics URL does not set correctly");
     
     config.analyticsURL = @"http://some-url.com/";
-    STAssertEqualObjects(@"http://some-url.com", config.analyticsURL, @"Analytics URL still contains trailing slash");
+    XCTAssertEqualObjects(@"http://some-url.com", config.analyticsURL, @"Analytics URL still contains trailing slash");
 }
 
 - (void) testSetDeviceAPIURL {
     UAConfig *config =[[UAConfig alloc] init];
 
     config.deviceAPIURL = @"http://some-other-url.com";
-    STAssertEqualObjects(@"http://some-other-url.com", config.deviceAPIURL, @"Device API URL does not set correctly");
+    XCTAssertEqualObjects(@"http://some-other-url.com", config.deviceAPIURL, @"Device API URL does not set correctly");
     
     config.deviceAPIURL = @"http://some-url.com/";
-    STAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
+    XCTAssertEqualObjects(@"http://some-url.com", config.deviceAPIURL, @"Device API URL still contains trailing slash");
 }
 
 @end

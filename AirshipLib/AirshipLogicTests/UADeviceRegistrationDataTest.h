@@ -1,6 +1,6 @@
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface UADeviceRegistrationDataTest : SenTestCase
+@interface UADeviceRegistrationDataTest : XCTestCase
 
 @end

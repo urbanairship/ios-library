@@ -23,12 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import "UAInboxDBManager+Internal.h"
 #import "UAInboxMessage.h"
 #import "UAUtils.h"
 
-@interface UAInboxDBManagerTests : SenTestCase
+@interface UAInboxDBManagerTests : XCTestCase
 @property(nonatomic, strong) UAInboxDBManager *dbManager;
 @end
 
@@ -50,7 +50,7 @@
 
     NSArray *messages = [self.dbManager getMessages];
 
-    STAssertEquals(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
+    XCTAssertEqual(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
     [self verifyMessage:[messages lastObject] withDictionary:messageDictionary];
 }
 
@@ -59,7 +59,7 @@
 
     NSArray *messages = [self.dbManager getMessages];
 
-    STAssertEquals(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
+    XCTAssertEqual(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
     [self verifyMessage:[messages lastObject] withDictionary:@{}];
 }
 
@@ -68,21 +68,21 @@
 
     NSArray *messages = [self.dbManager getMessages];
 
-    STAssertEquals(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
+    XCTAssertEqual(1u, messages.count, @"Unable to add message from dictionary to inbox database store");
 
     [self verifyMessage:[messages lastObject] withDictionary:@{}];
 }
 
 - (void)testUpdateMessageFromDictionaryEmptyMessages {
     NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someId"];
-    STAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should have no message to update.");
+    XCTAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should have no message to update.");
 }
 
 - (void)testUpdateMessageFromDictionaryNewMessages {
     [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"someId"]];
 
     NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"someOtherId"];
-    STAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should not have a matching message to update.");
+    XCTAssertFalse([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message returned YES when it should not have a matching message to update.");
 }
 
 - (void)testUpdateMessage {
@@ -94,11 +94,11 @@
     [messageDictionary setValue:@"I am title" forKey:@"title"];
 
     // Update message with modified dictionary
-    STAssertTrue([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message failed to update a message.");
+    XCTAssertTrue([self.dbManager updateMessageWithDictionary:messageDictionary], @"Update message failed to update a message.");
 
     // Verify the message is updated
     NSArray *messages = [self.dbManager getMessages];
-    STAssertEquals(1u, messages.count, @"Updating a message changed the amount of messages");
+    XCTAssertEqual(1u, messages.count, @"Updating a message changed the amount of messages");
     [self verifyMessage:[messages lastObject] withDictionary:messageDictionary];
 }
 
@@ -107,14 +107,14 @@
     [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]]];
     [messagesToDelete addObject:[self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"yetAnotherId"]]];
 
-    STAssertEquals(2u, [self.dbManager getMessages].count, @"2 messages should of been added");
+    XCTAssertEqual(2u, [self.dbManager getMessages].count, @"2 messages should of been added");
 
     [self.dbManager deleteMessages:messagesToDelete];
-    STAssertEquals(0u, [self.dbManager getMessages].count, @"All of the messages should be deleted");
+    XCTAssertEqual(0u, [self.dbManager getMessages].count, @"All of the messages should be deleted");
 
     // Try to delete them again make sure it does not throw
-    STAssertNoThrow([self.dbManager deleteMessages:messagesToDelete], @"Deleted messages twice causes an exception to be thrown");
-    STAssertEquals(0u, [self.dbManager getMessages].count, @"All of the messages should be deleted");
+    XCTAssertNoThrow([self.dbManager deleteMessages:messagesToDelete], @"Deleted messages twice causes an exception to be thrown");
+    XCTAssertEqual(0u, [self.dbManager getMessages].count, @"All of the messages should be deleted");
 }
 
 - (void)testDeleteMessages {
@@ -124,24 +124,24 @@
     NSDictionary *messageDictionary = [self createMessageDictionaryWithMessageID:@"anotherMessageId"];
     [self.dbManager addMessageFromDictionary:messageDictionary];
 
-    STAssertEquals(2u, [self.dbManager getMessages].count, @"2 messages should of been added");
+    XCTAssertEqual(2u, [self.dbManager getMessages].count, @"2 messages should of been added");
 
     [self.dbManager deleteMessages:messagesToDelete];
-    STAssertEquals(1u, [self.dbManager getMessages].count, @"Only one of the messages should of been deleted");
+    XCTAssertEqual(1u, [self.dbManager getMessages].count, @"Only one of the messages should of been deleted");
     [self verifyMessage:[[self.dbManager getMessages] lastObject] withDictionary:messageDictionary];
 }
 
 - (void)testDeleteMessagesEmptyArray {
-    STAssertNoThrow([self.dbManager deleteMessages:[NSArray array]], @"Deleting messagse with an empty array is causing an exception to be thrown");
+    XCTAssertNoThrow([self.dbManager deleteMessages:[NSArray array]], @"Deleting messagse with an empty array is causing an exception to be thrown");
 }
 
 - (void)testDeleteMessagesNilArray {
-    STAssertNoThrow([self.dbManager deleteMessages:nil], @"Deleting messagse with a nil array is causing an exception to be thrown");
+    XCTAssertNoThrow([self.dbManager deleteMessages:nil], @"Deleting messagse with a nil array is causing an exception to be thrown");
 }
 
 - (void)testDeleteMessagesInvalidArray {
     NSArray *invalidArray = @[@1, @"what", [NSArray array]];
-    STAssertThrows([self.dbManager deleteMessages:invalidArray], @"Deleting messagse with invalid array is not throwing an exception");
+    XCTAssertThrows([self.dbManager deleteMessages:invalidArray], @"Deleting messagse with invalid array is not throwing an exception");
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
@@ -156,14 +156,14 @@
 }
 
 - (void) verifyMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dictionary {
-    STAssertEqualObjects([dictionary valueForKey:@"message_id"], message.messageID, @"Message's id does not match the expected message id");
-    STAssertEqualObjects([dictionary valueForKey:@"title"], message.title, @"Message's title does not match the expected message title");
-    STAssertEqualObjects([dictionary valueForKey:@"content_type"], message.contentType, @"Message's content type does not match the expected message content type");
-    STAssertEqualObjects([dictionary valueForKey:@"message_url"], [message.messageURL absoluteString], @"Message's url does not match the expected message url");
-    STAssertEqualObjects([dictionary valueForKey:@"message_body_url"], [message.messageBodyURL absoluteString], @"Message's body url does not match the expected message body url");
-    STAssertEqualObjects([dictionary valueForKey:@"extra"], message.extra, @"Message's extras does not match the expected message extras");
-    STAssertEquals([[dictionary valueForKey:@"unread"] boolValue], message.unread, @"Message's unread does not match the expected message unread");
-    STAssertEqualObjects([[UAUtils ISODateFormatterUTC] dateFromString:[dictionary objectForKey: @"message_sent"]], message.messageSent, @"Message's messageSent does not match the expected messageSent");
+    XCTAssertEqualObjects([dictionary valueForKey:@"message_id"], message.messageID, @"Message's id does not match the expected message id");
+    XCTAssertEqualObjects([dictionary valueForKey:@"title"], message.title, @"Message's title does not match the expected message title");
+    XCTAssertEqualObjects([dictionary valueForKey:@"content_type"], message.contentType, @"Message's content type does not match the expected message content type");
+    XCTAssertEqualObjects([dictionary valueForKey:@"message_url"], [message.messageURL absoluteString], @"Message's url does not match the expected message url");
+    XCTAssertEqualObjects([dictionary valueForKey:@"message_body_url"], [message.messageBodyURL absoluteString], @"Message's body url does not match the expected message body url");
+    XCTAssertEqualObjects([dictionary valueForKey:@"extra"], message.extra, @"Message's extras does not match the expected message extras");
+    XCTAssertEqual([[dictionary valueForKey:@"unread"] boolValue], message.unread, @"Message's unread does not match the expected message unread");
+    XCTAssertEqualObjects([[UAUtils ISODateFormatterUTC] dateFromString:[dictionary objectForKey: @"message_sent"]], message.messageSent, @"Message's messageSent does not match the expected messageSent");
 }
 
 @end

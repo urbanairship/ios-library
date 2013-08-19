@@ -29,6 +29,7 @@
     #if !OS_OBJECT_USE_OBJC
     dispatch_release(self.semaphore);
     #endif
+
 }
 
 //send a completion signal
@@ -52,11 +53,11 @@
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:@"http://jkhadfskhjladfsjklhdfas.com"];
 
     self.operation = [UAHTTPConnectionOperation operationWithRequest:request onSuccess:^(UAHTTPRequest *request) {
-        STAssertNil(request.error, @"there should be no error on success");
+        XCTAssertNil(request.error, @"there should be no error on success");
         //signal completion
         [self done];
     } onFailure: ^(UAHTTPRequest *request) {
-        STAssertNotNil(request.error, @"there should be an error on failure");
+        XCTAssertNotNil(request.error, @"there should be an error on failure");
         //signal completion
         [self done];
     }];
@@ -72,10 +73,10 @@
 /* tests */
 
 - (void)testDefaults {
-    STAssertEquals(self.operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
-    STAssertEquals(self.operation.isExecuting, NO, @"isExecuting will not be set until the operation begins");
-    STAssertEquals(self.operation.isCancelled, NO, @"isCancelled defaults to NO");
-    STAssertEquals(self.operation.isFinished, NO, @"isFinished defaults to NO");
+    XCTAssertEqual(self.operation.isConcurrent, YES, @"UAHTTPConnectionOperations are concurrent (asynchronous)");
+    XCTAssertEqual(self.operation.isExecuting, NO, @"isExecuting will not be set until the operation begins");
+    XCTAssertEqual(self.operation.isCancelled, NO, @"isCancelled defaults to NO");
+    XCTAssertEqual(self.operation.isFinished, NO, @"isFinished defaults to NO");
 }
 
 - (void)testSuccessCase {
@@ -95,19 +96,19 @@
     [self.operation start];
     [self waitUntilDone];
     
-    STAssertEquals(self.operation.isExecuting, NO, @"the operation should no longer be executing");
-    STAssertEquals(self.operation.isFinished, YES, @"the operation should be finished");
+    XCTAssertEqual(self.operation.isExecuting, NO, @"the operation should no longer be executing");
+    XCTAssertEqual(self.operation.isFinished, YES, @"the operation should be finished");
 }
 
 - (void)testPreemptiveCancel {
     [self.operation cancel];
-    STAssertEquals(self.operation.isCancelled, YES, @"you can cancel operations before they have started");
+    XCTAssertEqual(self.operation.isCancelled, YES, @"you can cancel operations before they have started");
     [self.operation start];
 
     [self waitUntilNextRunLoopIteration];
 
-    STAssertEquals(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
-    STAssertEquals(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
+    XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
+    XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
 
 - (void)testQueueCancel {
@@ -129,17 +130,17 @@
     sleep(1);
 
     //we should have an operation count of zero
-    STAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
+    XCTAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
 }
 
 - (void)testInFlightCancel {
     [self.operation start];
     [self.operation cancel];
     [self waitUntilNextRunLoopIteration];
-    STAssertEquals(self.operation.isCancelled, YES, @"the operation should now be canceled");
+    XCTAssertEqual(self.operation.isCancelled, YES, @"the operation should now be canceled");
     [self waitUntilNextRunLoopIteration];
-    STAssertEquals(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
-    STAssertEquals(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
+    XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
+    XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }
 
 @end
