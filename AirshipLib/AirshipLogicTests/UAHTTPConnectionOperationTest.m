@@ -7,7 +7,11 @@
 
 @interface UAHTTPConnectionOperationTest()
 @property(nonatomic, strong) UAHTTPConnectionOperation *operation;
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;
+#if OS_OBJECT_USE_OBJC
+@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+#else
+@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
+#endif
 @end
 
 @implementation UAHTTPConnectionOperationTest
@@ -22,7 +26,9 @@
         //this is effectively a 10 second timeout, in case something goes awry
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+    #if !OS_OBJECT_USE_OBJC
     dispatch_release(self.semaphore);
+    #endif
 }
 
 //send a completion signal

@@ -67,7 +67,9 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     dispatch_sync(dbQueue, ^{
         [self.db close];
     });
+    #if !OS_OBJECT_USE_OBJC
     dispatch_release(dbQueue);
+    #endif
 }
 
 // Used for development
