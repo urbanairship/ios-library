@@ -41,6 +41,7 @@
 // C includes
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/xattr.h>
 
 @implementation UAUtils
 
@@ -218,6 +219,32 @@
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 
     return dateFormatter;
+}
+
++ (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url {
+    if (![[NSFileManager defaultManager] fileExistsAtPath: [url path]]) {
+        return false;
+    }
+
+    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_5_1) {
+        NSError *error = nil;
+        BOOL success = [url setResourceValue: [NSNumber numberWithBool: YES]
+                                      forKey: NSURLIsExcludedFromBackupKey error: &error];
+        if (!success) {
+            UA_LERR(@"Error excluding %@ from backup %@", [url lastPathComponent], error);
+        }
+
+        return success;
+    } else {
+        u_int8_t b = 1;
+        BOOL success = setxattr([[url path] fileSystemRepresentation], "com.apple.MobileBackup", &b, 1, 0, 0) == 0;
+
+        if (!success) {
+            UA_LERR(@"Error excluding %@ from backup using setxattr", [url lastPathComponent]);
+        }
+
+        return success;
+    }
 }
 
 @end
