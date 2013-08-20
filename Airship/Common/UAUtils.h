@@ -111,4 +111,17 @@
  */
 + (NSDateFormatter *)ISODateFormatterUTC;
 
+///---------------------------------------------------------------------------------------
+/// @name File management
+///---------------------------------------------------------------------------------------
+
+/**
+ * Sets a file or directory at a url to not backup in
+ * iCloud or iTunes
+ * @param url The items url
+ * @return YES if successful, NO otherwise
+ */
++ (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url;
+
+
 @end
