@@ -25,7 +25,11 @@
 
 #import <Foundation/Foundation.h>
 
-__attribute__((deprecated))
+__attribute__((deprecated("As of version 2.1")))
+/**
+ * @deprecated As of version 2.1. Replaced by NSNotification and
+ * callback-based methods in `UAPush`, `UAInboMessage` and `UAInboxMessageList`.
+ */
 @interface UAObservable : NSObject 
 
 -(void)notifyObservers:(SEL)selector;
