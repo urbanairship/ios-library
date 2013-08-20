@@ -84,8 +84,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 
 + (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated {
 
-    [[UAInbox shared].messageList addObserver:[UAInboxNavUI shared].messageListController];
-
     if ([UAInboxNavUI shared].isVisible) {
         //don't display twice
         return;
@@ -159,9 +157,6 @@ static BOOL runiPhoneTargetOniPad = NO;
 }
 
 - (void)quitInbox {
-    
-    [[UAInbox shared].messageList removeObserver:[UAInboxNavUI shared].messageListController];
-    
     self.isVisible = NO;
     [self.navigationController popToViewController:self.messageListController animated:YES];
     [self.navigationController popViewControllerAnimated:YES];
@@ -170,8 +165,6 @@ static BOOL runiPhoneTargetOniPad = NO;
         [self.popoverController dismissPopoverAnimated:YES];
         self.popoverController = nil;
     }
-
-    
 }
 
 + (void)land {

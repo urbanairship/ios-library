@@ -178,12 +178,15 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> _del = delegate;
+
     [self retrieveMessageListWithInitialBlock:nil onSuccess:^{
         if ([_del respondsToSelector:@selector(messageListLoadSucceeded)]) {
             [_del messageListLoadSucceeded];
         }
     } onFailure:^{
-        [_del messageListLoadFailed];
+        if ([_del respondsToSelector:@selector(messageListLoadFailed)]){
+            [_del messageListLoadFailed];
+        }
     }];
 }
 

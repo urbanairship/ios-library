@@ -64,6 +64,7 @@
 @property (nonatomic, strong) UIBarButtonItem *cancelItem;
 @property (nonatomic, copy) NSString *cellReusableId;
 @property (nonatomic, copy) NSString *cellNibName;
+@property (nonatomic, strong) id messageListObserver;
 
 @end
 
@@ -146,12 +147,27 @@
     if ([UAInbox shared].messageList.isRetrieving) {
         [self showLoadingScreen];
     } else {
-        [self coverUpEmptyListIfNeeded];
+        [self hideLoadingScreen];
         [self tableReloadData];
         [self updateNavigationTitleText];
     }
     
     [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:animated];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(messageListWillUpdate)
+                                                 name:UAInboxMessageListWillUpdateNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(messageListUpdated)
+                                                 name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListWillUpdateNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
 }
 
 - (void)viewDidUnload {
@@ -184,8 +200,6 @@
 }
 
 - (void)refreshAfterBatchUpdate {
-    [self hideLoadingScreen];
-    
     [self.selectedIndexPathsForEditing removeAllObjects];
     self.cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
@@ -193,7 +207,6 @@
     [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:NO];
     
     [self refreshBatchUpdateButtons];
-    
 }
 
 - (void)showLoadingScreen {
@@ -309,9 +322,13 @@
     self.cancelItem.enabled = NO;
 
     if (sender == self.markAsReadButtonItem) {
-        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:messageIDs];
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages
+                                            withMessageIndexSet:messageIDs
+                                                    withDelegate:self];
     } else {
-        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:messageIDs];
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
+                                            withMessageIndexSet:messageIDs
+                                                   withDelegate:self];
     }
 
     self.deleteItem.selectedSegmentIndex = UISegmentedControlNoSegment;
@@ -356,7 +373,9 @@
     [set addIndex:indexPath.row];
     [self.selectedIndexPathsForEditing removeAllObjects];
     [self.selectedIndexPathsForEditing addObject:indexPath];
-    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:set];
+    [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
+                                        withMessageIndexSet:set
+                                               withDelegate:self];
     [self refreshBatchUpdateButtons];
 }
 
@@ -441,14 +460,14 @@
 }
 
 #pragma mark -
-#pragma mark UAInboxMessageListObserver
+#pragma mark NSNotificationCenter callbacks
 
-- (void)messageListWillLoad {
+- (void)messageListWillUpdate {
     [self showLoadingScreen];
 }
 
-- (void)messageListLoaded {
-	UA_LDEBUG(@"UAInboxMessageListController messageListLoaded");
+- (void)messageListUpdated {
+	UA_LDEBUG(@"UAInboxMessageListController messageListUpdated");
 	
     [self hideLoadingScreen];
     
@@ -456,25 +475,8 @@
     [self updateNavigationTitleText];
 }
 
-- (void)inboxLoadFailed {
-    
-    [self hideLoadingScreen];
-    
-    [self tableReloadData];
-    [self updateNavigationTitleText];
-    
-    if (self.shouldShowAlerts) {
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_Mailbox_Error_Title")
-                                                        message:UA_INBOX_TR(@"UA_Error_Fetching_Message_List")
-                                                       delegate:nil
-                                              cancelButtonTitle:UA_INBOX_TR(@"UA_OK")
-                                              otherButtonTitles:nil];
-        [alert show];
-        
-    }
-}
-
+#pragma mark -
+#pragma mark UAInboxMessageListDelegate
 
 - (void)batchMarkAsReadFinished {
     [self.messageTable reloadRowsAtIndexPaths:[self.selectedIndexPathsForEditing allObjects]

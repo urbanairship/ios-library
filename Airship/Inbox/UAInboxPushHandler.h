@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAInboxMessageListObserver.h"
+#import "UAInboxMessageListDelegate.h"
 
 @class UAInboxMessageList;
 
@@ -68,7 +68,7 @@
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
-@interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver>
+@interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
 
 /**
  * Handle an incoming in-app notification.  This should typically be called 
