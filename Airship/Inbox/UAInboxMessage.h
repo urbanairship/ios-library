@@ -56,7 +56,8 @@ typedef void (^UAInboxMessageCallbackBlock)(void);
  * @param failureBlock A block to be executed if the mark-as-read operation fails.
  * @return YES if the request was submitted or already complete, otherwise NO.
  */
-- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock onFailure:(UAInboxMessageCallbackBlock)failureBlock;
+- (BOOL)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
+                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock;
 
 /**
  * Mark the message as read. This eventually results in a callback to

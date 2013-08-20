@@ -108,8 +108,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
 
-- (BOOL)markAsReadOnSuccess:(UAInboxMessageCallbackBlock)successBlock
-                  onFailure:(UAInboxMessageCallbackBlock)failureBlock {
+- (BOOL)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
+                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
     if (!self.unread) {
         return YES;
     }
@@ -147,11 +147,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
-    return [self markAsReadOnSuccess:^{
+    return [self markAsReadWithSuccessBlock:^{
         if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
             [weakDelegate singleMessageMarkAsReadFinished:self];
         }
-    } onFailure: ^{
+    } withFailureBlock: ^{
         if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
             [weakDelegate singleMessageMarkAsReadFailed:self];
         }
@@ -159,9 +159,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)markAsRead {
-    return [self markAsReadOnSuccess:^{
+    return [self markAsReadWithSuccessBlock:^{
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-    }onFailure:^{
+    } withFailureBlock:^{
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
     }];
 }
