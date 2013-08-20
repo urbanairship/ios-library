@@ -223,7 +223,7 @@
 
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url {
     if (![[NSFileManager defaultManager] fileExistsAtPath: [url path]]) {
-        return false;
+        return NO;
     }
 
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_5_1) {
