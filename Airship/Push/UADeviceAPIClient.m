@@ -5,11 +5,13 @@
 #import "UAConfig.h"
 #import "UAUtils.h"
 #import "UAHTTPConnectionOperation.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 #define kUAPushRetryTimeInitialDelay 60
 #define kUAPushRetryTimeMultiplier 2
 #define kUAPushRetryTimeMaxDelay 300
 #define kUAPushDeviceTokensURLBase @"/api/device_tokens/"
+
 
 @interface UADeviceAPIClient()
 
@@ -98,6 +100,8 @@
          succeedWhere:succeedWhereBlock
          retryWhere:retryWhereBlock
          onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+             UA_LTRACE(@"DeviceAPI request succeeded: responseData=%@, length=%d", request.responseString, [request.responseData length]);
+
              //clear the pending cache,  update last successful cache
              self.pendingRegistration = nil;
              self.lastSuccessfulRegistration = registrationData;
@@ -108,6 +112,8 @@
              }
          }
          onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+             UA_LTRACE(@"DeviceAPI request failed");
+
              //clear the pending cache
              self.pendingRegistration = nil;
              if (failureBlock) {
@@ -129,6 +135,9 @@
     UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithData:registrationData];
 
     UA_LDEBUG(@"Running device registration.");
+    UA_LTRACE(@"Sending device registration with headers: %@, payload: %@",
+              [putRequest.headers descriptionWithLocale:nil indent:1],
+              [NSJSONSerialization stringWithObject:registrationData.payload.asDictionary options:NSJSONWritingPrettyPrinted]);
 
     [self
      runRequest:putRequest withData:registrationData
@@ -159,6 +168,9 @@
     UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceTokenWithData:registrationData];
 
     UA_LDEBUG(@"Running device unregistration.");
+    UA_LTRACE(@"Sending device unregistration with headers: %@, payload: %@",
+              [deleteRequest.headers descriptionWithLocale:nil indent:1],
+              [NSJSONSerialization stringWithObject:registrationData.payload.asDictionary options:NSJSONWritingPrettyPrinted]);
 
     [self
      runRequest:deleteRequest withData:registrationData
