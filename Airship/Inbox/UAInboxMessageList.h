@@ -31,7 +31,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 typedef void (^UAInboxMessageListCallbackBlock)(void);
 
+/**
+ * NSNotification posted when the message list is about to update.
+ *
+ * Note: this notification is posted regardless of the type of update (retrieval, batch).
+ */
 extern NSString * const UAInboxMessageListWillUpdateNotification;
+
+/**
+ * NSNotification posted when the message list is finished updating.
+ *
+ * Note: this notification is posted regardless of the type of update (retrieval, batch)
+ * and regardless of the success/failure of the underlying operation.
+ */
 extern NSString * const UAInboxMessageListUpdatedNotification;
 
 @class UAInboxMessage;
