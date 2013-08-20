@@ -175,15 +175,15 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> _del = delegate;
+    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     [self retrieveMessageListWithInitialBlock:nil onSuccess:^{
-        if ([_del respondsToSelector:@selector(messageListLoadSucceeded)]) {
-            [_del messageListLoadSucceeded];
+        if ([weakDelegate respondsToSelector:@selector(messageListLoadSucceeded)]) {
+            [weakDelegate messageListLoadSucceeded];
         }
     } onFailure:^{
-        if ([_del respondsToSelector:@selector(messageListLoadFailed)]){
-            [_del messageListLoadFailed];
+        if ([weakDelegate respondsToSelector:@selector(messageListLoadFailed)]){
+            [weakDelegate messageListLoadFailed];
         }
     }];
 }
@@ -286,26 +286,26 @@ static UAInboxMessageList *_messageList = nil;
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
                      withDelegate:(id<UAInboxMessageListDelegate>)delegate {
 
-    __weak id<UAInboxMessageListDelegate> _del = delegate;
+    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet onSuccess:^{
         if (command == UABatchDeleteMessages) {
-            if ([_del respondsToSelector:@selector(batchDeleteFinished)]) {
-                [_del batchDeleteFinished];
+            if ([weakDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
+                [weakDelegate batchDeleteFinished];
             }
         } else if (command == UABatchReadMessages) {
-            if ([_del respondsToSelector:@selector(batchMarkAsReadFinished)]) {
-                [_del batchMarkAsReadFinished];
+            if ([weakDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
+                [weakDelegate batchMarkAsReadFinished];
             }
         }
     } onFailure:^{
         if (command == UABatchDeleteMessages) {
-            if ([_del respondsToSelector:@selector(batchDeleteFailed)]) {
-                [_del batchDeleteFailed];
+            if ([weakDelegate respondsToSelector:@selector(batchDeleteFailed)]) {
+                [weakDelegate batchDeleteFailed];
             }
         } else if (command == UABatchReadMessages) {
-            if ([_del respondsToSelector:@selector(batchMarkAsReadFailed)]) {
-                [_del batchMarkAsReadFailed];
+            if ([weakDelegate respondsToSelector:@selector(batchMarkAsReadFailed)]) {
+                [weakDelegate batchMarkAsReadFailed];
             }
         }
     }];
