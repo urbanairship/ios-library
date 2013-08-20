@@ -145,15 +145,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
-    __weak id<UAInboxMessageListDelegate> _del = delegate;
+    __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self markAsReadOnSuccess:^{
-        if ([_del respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [_del singleMessageMarkAsReadFinished:self];
+        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
+            [weakDelegate singleMessageMarkAsReadFinished:self];
         }
     } onFailure: ^{
-        if ([_del respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
-            [_del singleMessageMarkAsReadFailed:self];
+        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
+            [weakDelegate singleMessageMarkAsReadFailed:self];
         }
     }];
 }
