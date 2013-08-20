@@ -43,6 +43,7 @@
     NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     if (registrationData.payload != nil) {
         [request addRequestHeader: @"Content-Type" value: @"application/json"];
@@ -55,6 +56,7 @@
     NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     return request;
 }

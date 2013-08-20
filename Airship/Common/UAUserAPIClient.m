@@ -42,12 +42,11 @@
 
     NSURL *createUrl = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     NSDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
-
-
     NSString *body = [NSJSONSerialization stringWithObject:data];
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
     UA_LDEBUG(@"Request to create user with body: %@", body);
@@ -70,6 +69,7 @@
     UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
 
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     NSString *body = [NSJSONSerialization stringWithObject:dict];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
