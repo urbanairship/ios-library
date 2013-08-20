@@ -93,13 +93,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
          self.inbox.isBatchUpdating = NO;
          if (successBlock) {
-             successBlock();
+             successBlock(self);
          }
      }onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
          self.inbox.isBatchUpdating = NO;
          if (failureBlock) {
-             failureBlock();
+             failureBlock(self);
          }
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
@@ -110,21 +110,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
-    return [self markAsReadWithSuccessBlock:^{
+    return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
         if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [weakDelegate singleMessageMarkAsReadFinished:self];
+            [weakDelegate singleMessageMarkAsReadFinished:message];
         }
-    } withFailureBlock: ^{
+    } withFailureBlock: ^(UAInboxMessage *message){
         if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
-            [weakDelegate singleMessageMarkAsReadFailed:self];
+            [weakDelegate singleMessageMarkAsReadFailed:message];
         }
     }];
 }
 
 - (BOOL)markAsRead {
-    return [self markAsReadWithSuccessBlock:^{
+    return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-    } withFailureBlock:^{
+    } withFailureBlock:^(UAInboxMessage *message){
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
     }];
 }

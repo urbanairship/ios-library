@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInboxMessageListDelegate.h"
 
-typedef void (^UAInboxMessageCallbackBlock)(void);
+typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 @class UAInboxMessageList;
 
