@@ -71,8 +71,8 @@ typedef enum {
  * @param failureBlock A block to be executed if message retrieval fails.
  */
 
-- (void)retrieveMessageListOnSuccess:(UAInboxMessageListCallbackBlock)successBlock
-                           onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
+- (void)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Fetch new messages from the server.  This will result in a
@@ -104,8 +104,8 @@ typedef enum {
  */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                        onSuccess:(UAInboxMessageListCallbackBlock)successBlock
-                        onFailure:(UAInboxMessageListCallbackBlock)failureBlock;
+                        withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+                        withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
  * Update the message list by marking messages as read, or deleting them.
