@@ -467,7 +467,7 @@
 }
 
 - (void)messageListUpdated {
-	UA_LDEBUG(@"UAInboxMessageListController messageListUpdated");
+    UA_LDEBUG(@"UAInboxMessageListController messageListUpdated");
 	
     [self hideLoadingScreen];
     
