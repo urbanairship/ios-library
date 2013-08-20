@@ -176,12 +176,15 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> _del = delegate;
+
     [self retrieveMessageListWithInitialBlock:nil onSuccess:^{
         if ([_del respondsToSelector:@selector(messageListLoadSucceeded)]) {
             [_del messageListLoadSucceeded];
         }
     } onFailure:^{
-        [_del messageListLoadFailed];
+        if ([_del respondsToSelector:@selector(messageListLoadFailed)]){
+            [_del messageListLoadFailed];
+        }
     }];
 }
 
@@ -252,18 +255,14 @@ static UAInboxMessageList *_messageList = nil;
     } else if (command == UABatchReadMessages) {
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
-<<<<<<< HEAD
-            succeed();
-            
             for (UAInboxMessage *message in updateMessageArray) {
                 message.unread = NO;
             }
             
             [[UAInboxDBManager shared] saveContext];
-=======
-            [[UAInboxDBManager shared] updateMessagesAsRead:updateMessageArray];
->>>>>>> new block-based UAInboxMessage(List) APIs
+
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
+
             succeed();
         }onFailure:^(UAHTTPRequest *request){
             [self notifyObservers:@selector(batchMarkAsReadFailed)];

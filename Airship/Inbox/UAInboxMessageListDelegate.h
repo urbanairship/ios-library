@@ -13,6 +13,8 @@
  */
 @protocol UAInboxMessageListDelegate <NSObject>
 
+@optional
+
 /**
  * Tells the delegate that a request for inbox messages succeeded.
  */

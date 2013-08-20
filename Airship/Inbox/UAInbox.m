@@ -58,7 +58,7 @@ static Class _uiClass;
 }
 
 - (void)enterForeground {
-    [self.messageList retrieveMessageList];
+    [self.messageList retrieveMessageListWithDelegate:nil];
 }
 
 #pragma mark -
@@ -122,7 +122,7 @@ static Class _uiClass;
     if (self) {
         self.messageList = [UAInboxMessageList shared];
         
-        [self.messageList retrieveMessageList];
+        [self.messageList retrieveMessageListWithDelegate:nil];
 		
 		self.pushHandler = [[UAInboxPushHandler alloc] init];
 

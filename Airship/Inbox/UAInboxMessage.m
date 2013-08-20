@@ -60,7 +60,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @synthesize contentType;
 @synthesize client;
 
-
 #pragma mark -
 #pragma mark NSObject methods
 
@@ -110,6 +109,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> _del = delegate;
+
     return [self markAsReadOnSuccess:^{
         if ([_del respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
             [_del singleMessageMarkAsReadFinished:self];

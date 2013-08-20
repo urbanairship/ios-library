@@ -74,8 +74,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 }
 
 + (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated {
-    [[[UAInbox shared] messageList] addObserver:[UAInboxUI shared].messageListController];
-    
+
     if ([parentViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)parentViewController popToRootViewControllerAnimated:NO];
     }
@@ -148,8 +147,6 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
 
 - (void)quitInbox {
     
-    [[[UAInbox shared] messageList] removeObserver:self.messageListController];
-
     if ([self.rootViewController isKindOfClass:[UINavigationController class]]) {
         [(UINavigationController *)self.rootViewController popToRootViewControllerAnimated:NO];
     }
