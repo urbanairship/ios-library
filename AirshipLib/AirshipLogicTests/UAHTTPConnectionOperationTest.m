@@ -54,11 +54,11 @@
 
     self.operation = [UAHTTPConnectionOperation operationWithRequest:request onSuccess:^(UAHTTPRequest *request) {
         XCTAssertNil(request.error, @"there should be no error on success");
-        //signal completion
+        // signal completion
         [self done];
     } onFailure: ^(UAHTTPRequest *request) {
         XCTAssertNotNil(request.error, @"there should be an error on failure");
-        //signal completion
+        // signal completion
         [self done];
     }];
 }
