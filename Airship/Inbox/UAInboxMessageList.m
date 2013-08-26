@@ -121,7 +121,7 @@ static UAInboxMessageList *_messageList = nil;
         }
         self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
             //load the message list once the user has been created
-            [self retrieveMessageListWithSuccessBlock:successBlock withFailureBlock:failureBlock];
+            [self retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 
             //unregister and deallocate observer
             [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
