@@ -90,11 +90,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)viewDidLoad {
-    int index = [[UAInbox shared].messageList indexOfMessage:self.message];
     [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
-
-    // IBOutlet(webView etc) alloc memory when viewDidLoad, so we need to Reload message.
-    [self loadMessageAtIndex:index];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
@@ -134,15 +130,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.webView removeFromSuperview];
     self.webView.delegate = nil;
 
+    self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
+    self.webView.delegate = self;
+    [self.view insertSubview:self.webView belowSubview:self.statusBar];
+
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
         UALOG(@"Can not find message with index: %d", index);
         return;
     }
-
-    self.webView = [[UIWebView alloc] initWithFrame:self.view.frame];
-    self.webView.delegate = self;
-    [self.view insertSubview:self.webView belowSubview:self.statusBar];
 
     [self refreshHeader];
 
