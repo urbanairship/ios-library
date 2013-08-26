@@ -21,10 +21,10 @@
         finished = YES;
     }]];
 
-    STAssertFalse(finished, @"flag should not be set until after delay completes");
+    XCTAssertFalse(finished, @"flag should not be set until after delay completes");
     //give it enough time to complete
     sleep(2);
-    STAssertTrue(finished, @"flag should be set once delay completes");
+    XCTAssertTrue(finished, @"flag should be set once delay completes");
 }
 
 - (void)testCancel {
@@ -38,14 +38,14 @@
     //give it some time to spin things up
     sleep(1);
 
-    STAssertTrue(self.queue.operationCount == 2, @"we should have two operations running");
+    XCTAssertTrue(self.queue.operationCount == 2, @"we should have two operations running");
     [self.queue cancelAllOperations];
 
     //give it some time to wind things down
     sleep(1);
 
-    STAssertFalse(finished, @"flag should still be unset");
-    STAssertTrue(self.queue.operationCount == 0, @"operation count should be zero");
+    XCTAssertFalse(finished, @"flag should still be unset");
+    XCTAssertTrue(self.queue.operationCount == 0, @"operation count should be zero");
 }
 
 - (void)tearDown {

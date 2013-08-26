@@ -23,11 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "NSJSONSerialization+UAAdditions.h"
 
-@interface NSJSONSerialization_UAAdditionsTests : SenTestCase
+@interface NSJSONSerialization_UAAdditionsTests : XCTestCase
 
 @end
 
@@ -39,11 +39,11 @@
 
     NSString *jsonString = [NSJSONSerialization stringWithObject:dictionary];
 
-    STAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produces unexpected json strings");
+    XCTAssertEqualObjects(@"{\"stringKey\":\"stringValue\",\"intKey\":1}", jsonString, @"stringWithObject produces unexpected json strings");
 }
 
 - (void)testStringWithNilObject {
-    STAssertNil([NSJSONSerialization stringWithObject:nil], @"stringWithObject should return nil if the object is nil");
+    XCTAssertNil([NSJSONSerialization stringWithObject:nil], @"stringWithObject should return nil if the object is nil");
 }
 
 - (void)testobjectWithString {
@@ -51,16 +51,16 @@
     NSDictionary *jsonDictionary = [NSJSONSerialization objectWithString:jsonString];
 
     NSDictionary *expectedDictonary =@{@"stringKey":@"stringValue", @"intKey": @1};
-    STAssertEqualObjects(expectedDictonary, jsonDictionary, @"objectWithString produces unexpected json dictionaries");
+    XCTAssertEqualObjects(expectedDictonary, jsonDictionary, @"objectWithString produces unexpected json dictionaries");
 }
 
 - (void)testobjectWithInvalidString {
     NSString *jsonString = @"some invalid json string";
-    STAssertNil([NSJSONSerialization objectWithString:jsonString], @"objectWithString should return nil for invalid json strings");
+    XCTAssertNil([NSJSONSerialization objectWithString:jsonString], @"objectWithString should return nil for invalid json strings");
 }
 
 - (void)testobjectWithNilStringRaises {
-   STAssertNil([NSJSONSerialization objectWithString:nil], @"objectWithString should return nil for invalid json strings");
+   XCTAssertNil([NSJSONSerialization objectWithString:nil], @"objectWithString should return nil for invalid json strings");
 }
 
 

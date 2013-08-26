@@ -26,7 +26,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "UALocationEvent.h"
 #import "UALocationService+Internal.h"
@@ -41,7 +41,7 @@
 #import "UALocationTestUtils.h"
 
 
-@interface UALocationServicesApplicationTest : SenTestCase <UALocationServiceDelegate> {
+@interface UALocationServicesApplicationTest : XCTestCase <UALocationServiceDelegate> {
   @private
     BOOL _locationReceived;
     BOOL _errorReceived;
@@ -106,27 +106,27 @@
     [service reportLocationToAnalytics:PDX fromProvider:standard];
 
     BOOL compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeContinuous;
-    STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeContinuous for standardLocationProvider");
+    XCTAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeContinuous for standardLocationProvider");
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
-    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
+    XCTAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
 
     UASignificantChangeProvider *sigChange = [[UASignificantChangeProvider alloc] init];
     service.significantChangeProvider = sigChange;
     [service reportLocationToAnalytics:PDX fromProvider:sigChange];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeChange;
-    STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeChange");
+    XCTAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeChange");
 
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderNetwork;
-    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderNetwork");
+    XCTAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderNetwork");
 
     UAStandardLocationProvider *single = [[UAStandardLocationProvider alloc] init];
     service.singleLocationProvider = single;
     [service reportLocationToAnalytics:PDX fromProvider:single];
     compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeSingle;
-    STAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeSingle");
+    XCTAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeSingle");
 
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
-    STAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
+    XCTAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
 
 }
 
@@ -163,10 +163,10 @@
     NSString *convertedLat = [NSString stringWithFormat:@"%.7f", pdx.coordinate.latitude];
     NSLog(@"LAT %@, CONVERTED LAT %@", lat, convertedLat);
     // Just do lightweight testing, heavy testing is done in the UALocationEvent class
-    STAssertTrue([event isKindOfClass:[UALocationEvent class]],nil);
-    STAssertTrue([lat isEqualToString:convertedLat], nil);
+    XCTAssertTrue([event isKindOfClass:[UALocationEvent class]]);
+    XCTAssertTrue([lat isEqualToString:convertedLat]);
     UALocationEventUpdateType *typeInDate = (UALocationEventUpdateType*)[data valueForKey:UALocationEventUpdateTypeKey];
-    STAssertTrue(type == typeInDate, nil);
+    XCTAssertTrue(type == typeInDate);
 }
 
 - (BOOL)serviceAcquiredLocation {
@@ -191,7 +191,7 @@
     _locationService.delegate = self;
     
     [_locationService startReportingStandardLocation];    
-    STAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
+    XCTAssertTrue([self serviceAcquiredLocation], @"Location Service failed to acquire location");
 }
 
 
@@ -205,10 +205,10 @@
 
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
     [[[mockLocationService stub] andDo:^(NSInvocation *invoc) { shutdownCalled = YES;}] stopSingleLocationWithError:OCMOCK_ANY];
-    STAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
+    XCTAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be NO");
 
     [_locationService singleLocationDidUpdateToLocation:[UALocationTestUtils testLocationPDX] fromLocation:[UALocationTestUtils testLocationSFO]];
-    STAssertTrue(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
+    XCTAssertTrue(_locationService.singleLocationShutdownScheduled, @"singleLocationShutdownScheduled should be YES");
     _timeout = [[NSDate alloc] initWithTimeInterval:3.0 sinceDate:[NSDate date]];
 
     while (!shutdownCalled) {
@@ -217,13 +217,13 @@
             break;
         }
     }
-    STAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
+    XCTAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
 }
 
 - (void)testStopSingleLocationSetsShutdownScheduledFlag {
     _locationService.singleLocationShutdownScheduled = YES;
     [_locationService stopSingleLocation];
-    STAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationServiceShutdownScheduled should be NO after stopSingleLocation");
+    XCTAssertFalse(_locationService.singleLocationShutdownScheduled, @"singleLocationServiceShutdownScheduled should be NO after stopSingleLocation");
 }
 
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
@@ -235,12 +235,12 @@
     id mockProvider = [OCMockObject partialMockForObject:_locationService.singleLocationProvider];
     [[mockProvider stub] startReportingLocation];
     [_locationService reportCurrentLocation];
-    STAssertFalse(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LocationService background identifier should be valid");
+    XCTAssertFalse(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LocationService background identifier should be valid");
 
     [_locationService.singleLocationProvider.delegate locationProvider:_locationService.singleLocationProvider 
                                                   withLocationManager:_locationService.singleLocationProvider.locationManager 
                                                      didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil]];
-     STAssertTrue(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LcoationService background identifier should be invalid");
+     XCTAssertTrue(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LcoationService background identifier should be invalid");
     
 
 }
@@ -252,9 +252,9 @@
     _locationService = [[UALocationService alloc] initWithPurpose:@"app_test"];
     CLLocation *pdx = [UALocationTestUtils testLocationPDX];
     [_locationService reportLocationToAnalytics:pdx fromProvider:_locationService.standardLocationProvider];
-    STAssertEqualObjects(pdx, _locationService.lastReportedLocation, nil);
+    XCTAssertEqualObjects(pdx, _locationService.lastReportedLocation);
     NSTimeInterval smallAmountOfTime = [_locationService.dateOfLastLocation timeIntervalSinceNow];
-    STAssertEqualsWithAccuracy(smallAmountOfTime, 0.1, 0.5, nil);
+    XCTAssertEqualWithAccuracy(smallAmountOfTime, 0.1, 0.5);
 }
 
 #pragma mark -

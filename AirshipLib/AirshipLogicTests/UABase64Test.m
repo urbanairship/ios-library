@@ -24,7 +24,7 @@
  */
 
 #import "UA_Base64.h"
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 // Examples from Wikipedia page on base64 encoding
 // http://en.wikipedia.org/wiki/Base64
@@ -54,7 +54,7 @@ NSString *leasure64 = @"bGVhc3VyZS4=";
 NSString *easure = @"easure.";
 NSString *easure64 = @"ZWFzdXJlLg==";
 
-@interface UABase64Test : SenTestCase
+@interface UABase64Test : XCTestCase
 @end
 
 
@@ -63,25 +63,25 @@ NSString *easure64 = @"ZWFzdXJlLg==";
 - (void)testBase64Encode {
     NSData *dataToEncode = [pleasure dataUsingEncoding:NSASCIIStringEncoding];
     NSString* encoded = UA_base64EncodedStringFromData(dataToEncode);
-    STAssertTrue([encoded isEqualToString:pleasure64], nil);
+    XCTAssertTrue([encoded isEqualToString:pleasure64]);
     dataToEncode = [leasure dataUsingEncoding:NSASCIIStringEncoding];
     encoded = UA_base64EncodedStringFromData(dataToEncode);
-    STAssertTrue([encoded isEqualToString:leasure64], nil);
+    XCTAssertTrue([encoded isEqualToString:leasure64]);
     dataToEncode = [easure dataUsingEncoding:NSASCIIStringEncoding];
     encoded = UA_base64EncodedStringFromData(dataToEncode);
-    STAssertTrue([encoded isEqualToString:easure64], nil);
+    XCTAssertTrue([encoded isEqualToString:easure64]);
 }
 
 - (void)testBase64Decode {
     NSData *decodedData = UA_dataFromBase64String(pleasure64);
     NSString *decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
-    STAssertTrue([decodedString isEqualToString:pleasure], nil);
+    XCTAssertTrue([decodedString isEqualToString:pleasure]);
     decodedData = UA_dataFromBase64String(leasure64);
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
-    STAssertTrue([decodedString isEqualToString:leasure], nil);
+    XCTAssertTrue([decodedString isEqualToString:leasure]);
     decodedData = UA_dataFromBase64String(easure64);
     decodedString = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
-    STAssertTrue([decodedString isEqualToString:easure], nil);
+    XCTAssertTrue([decodedString isEqualToString:easure]);
 }
 
 //void *UA_NewBase64Decode(
@@ -105,14 +105,14 @@ NSString *easure64 = @"ZWFzdXJlLg==";
     char *outputBuffer = UA_NewBase64Encode(data, 3*sizeof(Byte), NO, &outputLength);
     char *bufferShouldBe = "AAcf";
     for (int i=0; i<4; i++) {
-        STAssertTrue(outputBuffer[i] == bufferShouldBe[i], @"Encoding non printable failed");
+        XCTAssertTrue(outputBuffer[i] == bufferShouldBe[i], @"Encoding non printable failed");
     }
     // Test decoding
     // This buffer needs to be freed at the end of the test
     void *buffer = UA_NewBase64Decode(bufferShouldBe, 4*sizeof(char), &outputLength);
     Byte *byteBuffer = (Byte*)buffer;
     for (size_t i = 0; i < outputLength; i++) {
-        STAssertTrue(data[i] == byteBuffer[i], @"Decoding non printable failed");
+        XCTAssertTrue(data[i] == byteBuffer[i], @"Decoding non printable failed");
     }
     free(buffer);
     // Test wrapper functions
@@ -120,7 +120,7 @@ NSString *easure64 = @"ZWFzdXJlLg==";
     NSData *encodedUprintableData = [NSData dataWithBytes:data length:3*sizeof(Byte)];
     NSString *encodedUprintableDataString = UA_base64EncodedStringFromData(encodedUprintableData);
     NSString *encodedChars = [NSString stringWithCString:bufferShouldBe encoding:NSASCIIStringEncoding];
-    STAssertTrue([encodedUprintableDataString isEqualToString:encodedChars], nil);
+    XCTAssertTrue([encodedUprintableDataString isEqualToString:encodedChars]);
     // Test decoding 
     NSData *decodedData = UA_dataFromBase64String(encodedChars);
 //    STAssertTrue([decodedData length] == 3, @"NSData reporting unexpected test data length in base64 decoding");
@@ -130,10 +130,10 @@ NSString *easure64 = @"ZWFzdXJlLg==";
 //        STAssertTrue(decodedByteData[i] == data[i], @"Decoding non printable using ObjC wrapper failed");
 //    }
     NSString *stringFromDecodedData = [[NSString alloc] initWithData:decodedData encoding:NSASCIIStringEncoding];
-    STAssertTrue([stringFromDecodedData length] == 3, @"String from decoded data is the wrong lenght");
+    XCTAssertTrue([stringFromDecodedData length] == 3, @"String from decoded data is the wrong lenght");
     // things can get wonky, characterAtIndex returns a unichar (unsigned short) which is getting downcast to a byte
     for (int i=0; i < [stringFromDecodedData length]; i++) {
-        STAssertTrue((Byte)[stringFromDecodedData characterAtIndex:i] == data[i], @"Creating NSString from decoded NSData failed");
+        XCTAssertTrue((Byte)[stringFromDecodedData characterAtIndex:i] == data[i], @"Creating NSString from decoded NSData failed");
     }
     
     

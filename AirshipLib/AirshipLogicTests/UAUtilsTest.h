@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface UAUtilsTest : SenTestCase
+@interface UAUtilsTest : XCTestCase
 
 @end

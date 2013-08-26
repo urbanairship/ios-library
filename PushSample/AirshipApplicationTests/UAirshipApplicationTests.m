@@ -23,12 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 #import "UAirship+Internal.h"
 #import "UALocationService.h"
 
-@interface UAirshipApplicationTests : SenTestCase 
+@interface UAirshipApplicationTests : XCTestCase
 @end
 
 @implementation UAirshipApplicationTests
@@ -36,7 +36,7 @@
 // Testing because of lazy instantiation
 - (void)testLocationGetSet {
     UALocationService *location = [UAirship shared].locationService;
-    STAssertTrue([location isKindOfClass:[UALocationService class]],nil);
+    XCTAssertTrue([location isKindOfClass:[UALocationService class]]);
 }
 
 - (void)testExceptionForTakeOffOnNotTheMainThread {
@@ -57,8 +57,8 @@
     @autoreleasepool {
     
         NSLog(@"Testing [UAirship takeOff:nil] in background thread %@", [NSThread currentThread]); 
-        STAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
-        STAssertThrowsSpecificNamed(
+        XCTAssertFalse([[NSThread currentThread] isMainThread], @"Test invalid, running on the main thread");
+        XCTAssertThrowsSpecificNamed(
                                     [UAirship takeOff],
                                     NSException, UAirshipTakeOffBackgroundThreadException,
                                     @"Calling takeOff on a background thread should throw a UAirshipTakeOffBackgroundThreadException");

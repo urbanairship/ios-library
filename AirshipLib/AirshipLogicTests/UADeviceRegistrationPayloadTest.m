@@ -118,21 +118,21 @@
 /* tests */
 
 - (void)verifyDictionary:(NSDictionary *)dict {
-    STAssertNotNil(dict, @"dictionary should not be nil");
-    STAssertEqualObjects(self.alias, [dict valueForKey:UAPushAliasJSONKey], @"alias should be present");
-    STAssertEqualObjects(self.tags, [dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should be present");
-    STAssertEqualObjects(self.timeZone, [dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should be present");
-    STAssertEqualObjects(self.quietTime, [dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should be present");
-    STAssertEqualObjects(self.badge, [dict valueForKey:UAPushBadgeJSONKey], @"badge should be present");
+    XCTAssertNotNil(dict, @"dictionary should not be nil");
+    XCTAssertEqualObjects(self.alias, [dict valueForKey:UAPushAliasJSONKey], @"alias should be present");
+    XCTAssertEqualObjects(self.tags, [dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should be present");
+    XCTAssertEqualObjects(self.timeZone, [dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should be present");
+    XCTAssertEqualObjects(self.quietTime, [dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should be present");
+    XCTAssertEqualObjects(self.badge, [dict valueForKey:UAPushBadgeJSONKey], @"badge should be present");
 }
 
 //nil arguments to the payload constructor should result in their keys not being present in the resulting dictionary
 - (void)verifyEmptyDictionary:(NSDictionary *)dict {
-    STAssertNil([dict valueForKey:UAPushAliasJSONKey], @"alias should not be present");
-    STAssertNil([dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should not be present");
-    STAssertNil([dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should not be present");
-    STAssertNil([dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should not be present");
-    STAssertNil([dict valueForKey:UAPushBadgeJSONKey], @"badge should not be present");
+    XCTAssertNil([dict valueForKey:UAPushAliasJSONKey], @"alias should not be present");
+    XCTAssertNil([dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should not be present");
+    XCTAssertNil([dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should not be present");
+    XCTAssertNil([dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should not be present");
+    XCTAssertNil([dict valueForKey:UAPushBadgeJSONKey], @"badge should not be present");
 }
 
 - (void)testAsDictionary {

@@ -133,6 +133,7 @@
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		4944B7F0178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		76955C7A17C2D83E004BAC64 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76955C7917C2D83E004BAC64 /* XCTest.framework */; };
 		76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
@@ -146,7 +147,6 @@
 		BBAAD871151D263F00A090CD /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
 		BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */; };
 		BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
-		BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
 		BBEFB01A1507F3A400976645 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		BBEFB01B1507F3A400976645 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BBEFB01F1507F3A400976645 /* InfoPlist.strings */; };
@@ -300,6 +300,7 @@
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
+		76955C7917C2D83E004BAC64 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFTestStep+UAAdditions.h"; sourceTree = "<group>"; };
 		76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFTestStep+UAAdditions.m"; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
@@ -318,7 +319,7 @@
 		BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAMapPresentationViewController.xib; sourceTree = "<group>"; };
 		BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirshipApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB0101507F37200976645 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipApplicationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBEFB0181507F3A400976645 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		BBEFB01E1507F3A400976645 /* AirshipApplicationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipApplicationTests-Info.plist"; sourceTree = "<group>"; };
 		BBEFB0201507F3A400976645 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -394,10 +395,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76955C7A17C2D83E004BAC64 /* XCTest.framework in Frameworks */,
 				CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */,
 				BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */,
 				BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */,
-				BBEFB0191507F3A400976645 /* SenTestingKit.framework in Frameworks */,
 				BBEFB01A1507F3A400976645 /* UIKit.framework in Frameworks */,
 				BBEFB01B1507F3A400976645 /* Foundation.framework in Frameworks */,
 			);
@@ -595,7 +596,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* PushSample.app */,
-				BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */,
+				BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */,
 				1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */,
 			);
 			name = Products;
@@ -669,6 +670,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				76955C7917C2D83E004BAC64 /* XCTest.framework */,
 				CC523FCB17BA8E6600233005 /* CoreData.framework */,
 				BB75D9AC151BEAAC00F4241E /* MapKit.framework */,
 				BBEFB0311507F68500976645 /* libOCMock.a */,
@@ -774,7 +776,7 @@
 			);
 			name = AirshipApplicationTests;
 			productName = AirshipApplicationTests;
-			productReference = BBEFB0171507F3A400976645 /* AirshipApplicationTests.octest */;
+			productReference = BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -1222,6 +1224,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1251,7 +1254,7 @@
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALID_ARCHS = "$(inherited)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
@@ -1264,6 +1267,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
@@ -1287,7 +1291,7 @@
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "$(inherited)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -1434,6 +1438,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1463,7 +1468,7 @@
 				TEST_AFTER_BUILD = NO;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALID_ARCHS = "$(inherited)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Coverage;
 		};
