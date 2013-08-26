@@ -148,11 +148,8 @@
     
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
     request.HTTPMethod = method;
-
     request.username = [UAUser defaultUser].username;
     request.password = [UAUser defaultUser].password;
-
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     return request;
 }
@@ -164,11 +161,8 @@
     
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:url];
     request.HTTPMethod = method;
-
     request.username = [UAirship shared].config.appKey;
     request.password = [UAirship shared].config.appSecret;
-
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
     return request;
 }
