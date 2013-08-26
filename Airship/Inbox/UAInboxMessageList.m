@@ -113,8 +113,7 @@ static UAInboxMessageList *_messageList = nil;
     UA_LDEBUG(@"Loaded saved messages: %@.", self.messages);
 }
 
-- (UADisposable *)retrieveMessageListWithInitialBlock:(UAInboxMessageListCallbackBlock)initialBlock
-                                  withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+- (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                                   withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
     if (![[UAUser defaultUser] defaultUserCreated]) {
         UA_LDEBUG("Postponing retrieving message list once the user is created.");
@@ -123,9 +122,7 @@ static UAInboxMessageList *_messageList = nil;
         }
         self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
             //load the message list once the user has been created
-            [self retrieveMessageListWithInitialBlock:initialBlock
-                                            withSuccessBlock:successBlock
-                                            withFailureBlock:failureBlock];
+            [self retrieveMessageListWithSuccessBlock:successBlock withFailureBlock:failureBlock];
 
             //unregister and deallocate observer
             [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
@@ -135,12 +132,9 @@ static UAInboxMessageList *_messageList = nil;
         return nil;
     }
 
-    if (initialBlock) {
-        initialBlock();
-    }
-
     UA_LDEBUG("Retrieving message list.");
 
+    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     [self loadSavedMessages];
@@ -166,29 +160,26 @@ static UAInboxMessageList *_messageList = nil;
         if (successBlock && !isCallbackCancelled) {
             successBlock();
         }
+        [self notifyObservers:@selector(messageListLoaded)];
         [self sendMessageListUpdatedNotification];
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
 
         UA_LDEBUG(@"Retrieve message list failed with status: %d", request.response.statusCode);
-        if (failureBlock&& !isCallbackCancelled) {
+        if (failureBlock && !isCallbackCancelled) {
             failureBlock();
         }
+        [self notifyObservers:@selector(inboxLoadFailed)];
         [self sendMessageListUpdatedNotification];
     }];
 
     return disposable;
 }
 
-- (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
-    return [self retrieveMessageListWithInitialBlock:nil withSuccessBlock:successBlock withFailureBlock:failureBlock];
-}
-
 - (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
-    return [self retrieveMessageListWithInitialBlock:nil withSuccessBlock:^{
+    return [self retrieveMessageListWithSuccessBlock:^{
         if ([weakDelegate respondsToSelector:@selector(messageListLoadSucceeded)]) {
             [weakDelegate messageListLoadSucceeded];
         }
@@ -200,32 +191,22 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (void)retrieveMessageList {
-    [self retrieveMessageListWithInitialBlock:^{
-        [self notifyObservers: @selector(messageListWillLoad)];
-    } withSuccessBlock:^{
-        [self notifyObservers:@selector(messageListLoaded)];
-    } withFailureBlock:^{
-        [self notifyObservers:@selector(inboxLoadFailed)];
-    }];
+    [self retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
 }
 
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                 withInitialBlock:(UAInboxMessageListCallbackBlock)initialBlock
-                        withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                        withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
+                        withMessageIndexSet:(NSIndexSet *)messageIndexSet
+                           withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+                           withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
     if (command != UABatchDeleteMessages && command != UABatchReadMessages) {
         UA_LWARN(@"Unable to perform batch update with invalid command type: %d", command);
         return nil;
     }
 
-    if (initialBlock) {
-        initialBlock();
-    }
-
     NSArray *updateMessageArray = [self.messages objectsAtIndexes:messageIndexSet];
 
     self.isBatchUpdating = YES;
+    [self notifyObservers: @selector(messageListWillLoad)];
     [self sendMessageListWillUpdateNotification];
 
     __block BOOL isCallbackCancelled = NO;
@@ -284,25 +265,15 @@ static UAInboxMessageList *_messageList = nil;
     return disposable;
 }
 
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet
-                        withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
-                        withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
-    [self performBatchUpdateCommand:command
-                withMessageIndexSet:messageIndexSet
-                   withInitialBlock:nil
-                   withSuccessBlock:successBlock
-                   withFailureBlock:failureBlock];
-}
-
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
                      withDelegate:(id<UAInboxMessageListDelegate>)delegate {
 
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
-    [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet withSuccessBlock:^{
+    return [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet withSuccessBlock:^{
         if (command == UABatchDeleteMessages) {
+
             if ([weakDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
                 [weakDelegate batchDeleteFinished];
             }
@@ -325,26 +296,10 @@ static UAInboxMessageList *_messageList = nil;
 }
 
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command withMessageIndexSet:(NSIndexSet *)messageIndexSet {
-    [self
-     performBatchUpdateCommand:command
-     withMessageIndexSet:messageIndexSet
-     withInitialBlock:^{
-         [self notifyObservers: @selector(messageListWillLoad)];
-     }
-     withSuccessBlock:^{
-         if (command == UABatchDeleteMessages) {
-             [self notifyObservers:@selector(batchDeleteFinished)];
-         } else if (command == UABatchReadMessages) {
-             [self notifyObservers:@selector(batchMarkAsReadFinished)];
-         }
-     }
-     withFailureBlock:^{
-         if (command == UABatchDeleteMessages) {
-             [self notifyObservers:@selector(batchDeleteFailed)];
-         } else if (command == UABatchReadMessages) {
-             [self notifyObservers:@selector(batchMarkAsReadFailed)];
-         }
-     }];
+    [self performBatchUpdateCommand:command
+                withMessageIndexSet:messageIndexSet
+                   withSuccessBlock:nil
+                   withFailureBlock:nil];
 }
 
 #pragma mark -

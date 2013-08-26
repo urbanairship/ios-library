@@ -115,7 +115,7 @@ typedef enum {
  * @param successBlock A block to be executed if the batch update succeeds.
  * @param failureBlock A block to be executed if the batch update fails.
  */
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
                         withSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                         withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
@@ -133,7 +133,7 @@ typedef enum {
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
  */
 
-- (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
+- (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
                      withDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
