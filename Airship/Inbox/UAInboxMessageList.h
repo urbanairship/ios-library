@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UAInboxMessageListDelegate.h"
 #import "UAUser.h"
+#import "UADisposable.h"
 #import "UAObservable.h"
 
 typedef void (^UAInboxMessageListCallbackBlock)(void);
@@ -83,7 +84,7 @@ typedef enum {
  * @param failureBlock A block to be executed if message retrieval fails.
  */
 
-- (void)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
+- (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                            withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock;
 
 /**
@@ -93,7 +94,7 @@ typedef enum {
  *
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
  */
-- (void)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+- (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
 
 /**
