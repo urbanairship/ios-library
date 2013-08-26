@@ -198,6 +198,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
     _sharedAirship.analytics.notificationUserInfo = remoteNotification;
+    [_sharedAirship.analytics refreshSessionWhenActive];
 
     //Send Startup Analytics Info
     //init first event
