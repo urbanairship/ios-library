@@ -62,6 +62,10 @@ static Class _uiClass;
     [self.messageList retrieveMessageListWithDelegate:nil];
 }
 
+- (void)userCreated {
+    [self.messageList retrieveMessageListWithDelegate:nil];
+}
+
 #pragma mark -
 #pragma mark Open APIs, set custom ui
 
@@ -140,6 +144,11 @@ static Class _uiClass;
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
 
+        if (![[UAUser defaultUser] defaultUserCreated]) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(userCreated)
+                                                         name:UAUserCreatedNotification object:nil];
+        }
     }
 
     return self;
@@ -179,8 +188,6 @@ static Class _uiClass;
 - (void)dealloc {
     [self.messageList removeObserver:self.pushHandler];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-
 }
 
 @end

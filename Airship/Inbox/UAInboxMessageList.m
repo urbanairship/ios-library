@@ -49,7 +49,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 @property(nonatomic, strong) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
-@property(nonatomic, strong) id userCreatedObserver;
 
 @end
 
@@ -61,9 +60,6 @@ static UAInboxMessageList *_messageList = nil;
 
 - (void)dealloc {
     self.messages = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-
 }
 
 + (void)land {
@@ -116,19 +112,6 @@ static UAInboxMessageList *_messageList = nil;
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
                                   withFailureBlock:(UAInboxMessageListCallbackBlock)failureBlock {
     if (![[UAUser defaultUser] defaultUserCreated]) {
-        UA_LDEBUG("Postponing retrieving message list once the user is created.");
-        if (self.userCreatedObserver) {
-            [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-        }
-        self.userCreatedObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UAUserCreatedNotification object:nil queue:nil usingBlock:^(NSNotification *note){
-            //load the message list once the user has been created
-            [self retrieveMessageListWithSuccessBlock:nil withFailureBlock:nil];
-
-            //unregister and deallocate observer
-            [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
-            self.userCreatedObserver = nil;
-        }];
-
         return nil;
     }
 
