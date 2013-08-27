@@ -20,7 +20,7 @@ PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
 
 TARGET_NAME=$1
 
-XCODE_SETTINGS="/tmp/${TARGET_NAME}.settings"
+XCODE_SETTINGS=mktemp -t ${TARGET_NAME}.settings
 
 # Query the Xcode Project for the current settings, based on the current target
 # Dump the settings output as an awkdb into /tmp
