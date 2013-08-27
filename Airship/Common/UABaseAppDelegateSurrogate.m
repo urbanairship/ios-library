@@ -97,19 +97,8 @@
     SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
 
     __block int resultCount = 0;
-    __block BOOL finished = NO;
-    __block dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-
     __block NSMutableArray *delegates = [NSMutableArray array];
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
-
-    void (^finish)(void) = ^{
-        if (!finished) {
-            finished = YES;
-            dispatch_semaphore_signal(semaphore);
-            handler(fetchResult);
-        }
-    };
 
     if ([self.surrogateDelegate respondsToSelector:selector]) {
         [delegates addObject:self.surrogateDelegate];
@@ -126,8 +115,15 @@
     }
 
     for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+        __block BOOL completionHandlerCalled = NO;
         [self.surrogateDelegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
             @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
                 resultCount ++;
 
                 // Results priority: NewData, Failed, NoData
@@ -136,19 +132,11 @@
                 }
 
                 if (delegates.count == resultCount) {
-                    finish();
+                    handler(fetchResult);
                 }
             }
-
         }];
     }
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        dispatch_semaphore_wait(semaphore, 30);
-        @synchronized(self) {
-             finish();
-        }
-    });
 }
 
 
