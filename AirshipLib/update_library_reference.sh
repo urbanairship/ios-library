@@ -25,7 +25,7 @@
 
 
 TARGET_NAME="AirshipLib"
-TEMP_DIR=mktemp -d -t ${TARGET_NAME}
+TEMP_DIR=$(mktemp -d -t $TARGET_NAME)
 PROJECT_PATH=`dirname $0`/AirshipLib.xcodeproj
 XCODE_SETTINGS="${TEMP_DIR}/${TARGET_NAME}.settings"
 
