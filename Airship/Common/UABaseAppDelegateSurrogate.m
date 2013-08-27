@@ -43,7 +43,6 @@
     }
 
     BOOL responds = NO;
-
     //give the surrogate and default app delegates an opportunity to handle the message
     if ([self.surrogateDelegate respondsToSelector:selector]) {
         responds = YES;
@@ -60,6 +59,7 @@
         //but that way the exception will come from the expected location
         [invocation invokeWithTarget:self.defaultAppDelegate];
     }
+
 
 }
 
@@ -91,5 +91,65 @@
     // If none of the above classes return a non nil method signature, this will likely crash
     return signature;
 }
+
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
+    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
+
+    __block int resultCount = 0;
+    __block BOOL finished = NO;
+    __block dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+    __block NSMutableArray *delegates = [NSMutableArray array];
+    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    void (^finish)(void) = ^{
+        if (!finished) {
+            finished = YES;
+            dispatch_semaphore_signal(semaphore);
+            handler(fetchResult);
+        }
+    };
+
+    if ([self.surrogateDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.surrogateDelegate];
+    }
+
+    if ([self.defaultAppDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.defaultAppDelegate];
+    }
+
+    // if we have no delegates that respond to the selector, return early
+    if (!delegates.count) {
+        handler(fetchResult);
+        return;
+    }
+
+    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+        [self.surrogateDelegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            @synchronized(self) {
+                resultCount ++;
+
+                // Results priority: NewData, Failed, NoData
+                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+                    fetchResult = result;
+                }
+
+                if (delegates.count == resultCount) {
+                    finish();
+                }
+            }
+
+        }];
+    }
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        dispatch_semaphore_wait(semaphore, 30);
+        @synchronized(self) {
+             finish();
+        }
+    });
+}
+
 
 @end
