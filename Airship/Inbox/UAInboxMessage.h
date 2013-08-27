@@ -25,6 +25,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 
+#import "UADisposable.h"
 #import "UAInboxMessageListDelegate.h"
 
 typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
@@ -54,9 +55,11 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * Mark the message as read.
  * @param successBlock A block to be executed if the mark-as-read operation is successful.
  * @param failureBlock A block to be executed if the mark-as-read operation fails.
- * @return YES if the request was submitted or already complete, otherwise NO.
+ * @return A UADisposable which can be used to cancel callback execution.
+ * This value will be nil if the request is not submitted due to an already scheduled update,
+ * or because the message has already been marked as read.
  */
-- (BOOL)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
+- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
                   withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock;
 
 /**
@@ -65,10 +68,11 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
  *
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return YES if the request was submitted or already complete, otherwise NO.
- *
+ * @return A UADisposable which can be used to cancel callback execution.
+ * This value will be nil if the request is not submitted due to an already scheduled update,
+ * or because the message has already been marked as read.
  */
-- (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
 /**
  * Mark the message as read. This eventually results in a callback to
