@@ -71,17 +71,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark -
 #pragma mark Mark As Read Delegate Methods
 
-- (BOOL)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
+- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
                   withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
-    if (!self.unread) {
-        return YES;
-    }
 
-    if (self.inbox.isBatchUpdating) {
-        return NO;
+    if (!self.unread || self.inbox.isBatchUpdating) {
+        return nil;
     }
 
     self.inbox.isBatchUpdating = YES;
+
+    __block BOOL isCallbackCancelled = NO;
+    UADisposable *disposable = [UADisposable disposableWithBlock:^{
+        isCallbackCancelled = YES;
+    }];
 
     [self.client
      markMessageRead:self onSuccess:^{
@@ -92,22 +94,22 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          }
 
          self.inbox.isBatchUpdating = NO;
-         if (successBlock) {
+         if (successBlock && !isCallbackCancelled) {
              successBlock(self);
          }
-     }onFailure:^(UAHTTPRequest *request){
+     } onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
          self.inbox.isBatchUpdating = NO;
-         if (failureBlock) {
+         if (failureBlock && !isCallbackCancelled) {
              failureBlock(self);
          }
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
 
-    return YES;
+    return disposable;
 }
 
-- (BOOL)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
+- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate {
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
@@ -122,11 +124,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)markAsRead {
-    return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
+    UADisposable *disposable = [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
     } withFailureBlock:^(UAInboxMessage *message){
         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
     }];
+
+    //the return value should be YES if a request was sent or if we're already marked read.
+    return disposable || !self.unread;
 }
 
 #pragma mark -
