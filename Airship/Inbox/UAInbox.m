@@ -61,6 +61,10 @@ static Class _uiClass;
     [self.messageList retrieveMessageListWithDelegate:nil];
 }
 
+- (void)userCreated {
+    [self.messageList retrieveMessageListWithDelegate:nil];
+}
+
 #pragma mark -
 #pragma mark Open APIs, set custom ui
 
@@ -135,6 +139,12 @@ static Class _uiClass;
 
         //delete legacy UAInboxCache if present
         [self deleteInboxCache];
+
+        if (![[UAUser defaultUser] defaultUserCreated]) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(userCreated)
+                                                         name:UAUserCreatedNotification object:nil];
+        }
     }
 
     return self;
