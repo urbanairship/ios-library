@@ -78,10 +78,13 @@ typedef enum {
 
 
 /**
- * Fetch new messages from the server.
+ * Fetch new messages from the server. If the associated user has not yet
+ * been created, this will be a no-op.
  *
  * @param successBlock A block to be executed if message retrieval succeeds.
  * @param failureBlock A block to be executed if message retrieval fails.
+ * @return A UADisposable token which can be used to cancel callback execution.
+ * This value will be nil if the associated user has not yet been created.
  */
 
 - (UADisposable *)retrieveMessageListWithSuccessBlock:(UAInboxMessageListCallbackBlock)successBlock
@@ -90,9 +93,12 @@ typedef enum {
 /**
  * Fetch new messages from the server.  This will result in a
  * callback to the passed delegate at [UAInboxMessageListDelegate messageListLoadSucceeded] upon
- * successful completion, and [UAInboxMessageListDelegate messageListLoadFailed] on failure.
+ * successful completion, and [UAInboxMessageListDelegate messageListLoadFailed] on failure. If
+ * The associated user has not yet been created, this will be a no-op.
  *
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ * @return A UADisposable token which can be used to cancel callback execution.
+ * This value will be nil if the associated user has not yet been created.
  */
 - (UADisposable *)retrieveMessageListWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
 
@@ -100,7 +106,8 @@ typedef enum {
 /**
  * Fetch new messages from the server.  This will result in a
  * callback to observers at [UAInboxMessageListObserver messageListWillLoad] when loading starts,
- * and [UAInboxMessageListObserver messageListLoaded] upon completion.
+ * and [UAInboxMessageListObserver messageListLoaded] upon completion. If the associated user
+ * has not yet been created, this will be a no-op.
  *
  * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
  */
@@ -114,6 +121,8 @@ typedef enum {
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  * @param successBlock A block to be executed if the batch update succeeds.
  * @param failureBlock A block to be executed if the batch update fails.
+ * @return A UADisposable token which can be used to cancel callback execution.
+ * If the passed batch update command cannot be interpreted, this value will be nil.
  */
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
               withMessageIndexSet:(NSIndexSet *)messageIndexSet
@@ -131,6 +140,8 @@ typedef enum {
  * @param command the UABatchUpdateCommand to perform.
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ * @return A UADisposable token which can be used to cancel callback execution.
+ * If the passed batch update command cannot be interpreted, this value will be nil.
  */
 
 - (UADisposable *)performBatchUpdateCommand:(UABatchUpdateCommand)command
