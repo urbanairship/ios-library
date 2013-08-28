@@ -387,37 +387,90 @@ static Class _uiClass;
 }
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
-    
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
-    if (state != UIApplicationStateActive) {
-        UA_LTRACE(@"Received a notification for an inactive application state.");
-        
-        if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)])
-            [self.pushNotificationDelegate launchedFromNotification:notification];
-        return;
+    switch(state) {
+        case UIApplicationStateActive:
+            [self notifyForegroundNotification:notification];
+            UA_LTRACE(@"Received a notification for a foregrounded application.");
+            if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
+                [self.pushNotificationDelegate receivedForegroundNotification:notification];
+            }
+            break;
+        default:
+            UA_LTRACE(@"Received a notification for an inactive application state.");
+            if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
+                [self.pushNotificationDelegate launchedFromNotification:notification];
+            }
+            break;
+    }
+}
+
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
+
+    switch(state) {
+        case UIApplicationStateActive:
+            [self notifyForegroundNotification:notification];
+            UA_LTRACE(@"Received a notification application state is UIApplicationStateActive");
+            if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
+                [self.pushNotificationDelegate receivedForegroundNotification:notification fetchCompletionHandler:completionHandler];
+            } else {
+                if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
+
+                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:.  receivedForegroundNotification: will still be called.");
+
+                    [self.pushNotificationDelegate receivedForegroundNotification:notification];
+                }
+
+                completionHandler(UIBackgroundFetchResultNoData);
+            }
+            break;
+        case UIApplicationStateInactive:
+            UA_LTRACE(@"Received a notification application state is UIApplicationStateInactive");
+
+            if([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
+                [self.pushNotificationDelegate launchedFromNotification:notification fetchCompletionHandler:completionHandler];
+            } else {
+                if([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
+
+                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:.  launchedFromNotification: will still be called.");
+
+                    [self.pushNotificationDelegate launchedFromNotification:notification];
+                }
+
+                completionHandler(UIBackgroundFetchResultNoData);
+            }
+
+            break;
+        case UIApplicationStateBackground:
+            UA_LTRACE(@"Received a notification application state is UIApplicationStateBackground");
+            if([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
+                [self.pushNotificationDelegate receivedBackgroundNotification:notification fetchCompletionHandler:completionHandler];
+            }
+            break;
     }
 
-    UA_LTRACE(@"Received a notification for a foregrounded application.");
-    
+}
+
+- (void) notifyForegroundNotification:(NSDictionary *)notification {
+
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
 	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
-	
-	if ([[notification allKeys] containsObject:@"aps"]) { 
-		
+    if ([[notification allKeys] containsObject:@"aps"]) {
         NSDictionary *apsDict = [notification objectForKey:@"aps"];
-        
+
 		if ([[apsDict allKeys] containsObject:@"alert"]) {
 
 			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]] &&
                 [self.pushNotificationDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
-                
+
 				// The alert is a single string message so we can display it
                 [self.pushNotificationDelegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
 
 			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 				// The alert is a a dictionary with more localization details
-				// This should be customized to fit your message details or usage scenario 
+				// This should be customized to fit your message details or usage scenario
                 [self.pushNotificationDelegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
 			}
 
@@ -426,30 +479,22 @@ static Class _uiClass;
         //badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
         if (badgeNumber) {
-            
+
 			if (self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
 				[self.pushNotificationDelegate handleBadgeUpdate:[badgeNumber intValue]];
 			}
         }
-		
+
         //sound
 		NSString *soundName = [apsDict valueForKey:@"sound"];
 		if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
 			[self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
 		}
         
-	}//aps
-
-	// 
-	if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-		[self.pushNotificationDelegate receivedForegroundNotification:notification];
-    }
-    
+	}
 }
-
-
 
 #pragma mark -
 #pragma mark UIApplication State Observation

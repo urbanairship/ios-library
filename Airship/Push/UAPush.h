@@ -102,11 +102,42 @@
 
 
 /**
+ * Called when a push notification is received while the app is running in the foreground 
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)receivedForegroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
+
+/**
+ * Called when a push notification is received while the app is running in the background
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
+
+/**
  * Called when the app is started or resumed because a user opened a notification.
  *
  * @param notification The notification dictionary.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
+
+
+/**
+ * Called when the app is started or resumed because a user opened a notification
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult as soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
 @end
 
 //---------------------------------------------------------------------------------------
