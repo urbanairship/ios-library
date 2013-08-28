@@ -204,7 +204,6 @@ typedef void (^MethodBlock)(NSInvocation *);
  * responds with the results of the single delegate that responds
  */
 - (void)testDidReceiveRemoteNotificationOneSubDelegateResponse {
-    // Add a method that only the surrogateDelegate responds to
     [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) {
         void *arg;
         // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
@@ -217,6 +216,44 @@ typedef void (^MethodBlock)(NSInvocation *);
 
     [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
         XCTAssertEqual(UIBackgroundFetchResultNewData, result, @"application:didReceiveRemoteNotification:fetchCompletionHandler should return no data as a default value");
+    }];
+}
+
+
+/*
+ * Test calling completion handlers application:didReceiveRemoteNotification:fetchCompletionHandler
+ * multiple times are ignored
+ */
+- (void)testDidReceiveRemoteNotificationCallingCompletionHandlerMultipleTimes {
+
+    // Define application:didReceiveRemoteNotification:fetchCompletionHandler: that calls the completion
+    // handler multiple times on both delegates.
+    
+    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) {
+        void *arg;
+        // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+
+        // Call the handler multiple times
+        handler(UIBackgroundFetchResultNoData);
+        handler(UIBackgroundFetchResultNewData);
+    } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+
+    [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) {
+        void *arg;
+        // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
+        [invocation getArgument:&arg atIndex:4];
+        void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
+
+        // Call the handler multiple times
+        handler(UIBackgroundFetchResultNoData);
+        handler(UIBackgroundFetchResultNewData);
+    } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
+
+
+    [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
+        XCTAssertEqual(UIBackgroundFetchResultNoData, result, @"application:didReceiveRemoteNotification:fetchCompletionHandler should ignore multiple calls to the completion handler");
     }];
 }
 
