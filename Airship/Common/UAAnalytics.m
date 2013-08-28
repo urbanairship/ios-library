@@ -321,10 +321,15 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 #pragma mark Analytics
 
 - (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState {
-    if (applicationState == UIApplicationStateActive) {
-        [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
-    } else {
-        self.notificationUserInfo = userInfo;
+    switch (applicationState) {
+        case UIApplicationStateActive:
+            [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
+            break;
+        case UIApplicationStateInactive:
+            self.notificationUserInfo = userInfo;
+            break;
+        case UIApplicationStateBackground:
+            break;
     }
 }
 
