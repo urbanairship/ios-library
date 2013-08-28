@@ -187,16 +187,16 @@ typedef void (^MethodBlock)(NSInvocation *);
 
 
 -(NSString *)stringFromBackgroundFetchResult:(UIBackgroundFetchResult)result {
-    if (result == UIBackgroundFetchResultFailed) {
-        return @"UIBackgroundFetchResultFailed";
+    switch(result) {
+        case UIBackgroundFetchResultFailed:
+            return @"UIBackgroundFetchResultFailed";
+        case UIBackgroundFetchResultNewData:
+            return @"UIBackgroundFetchResultNewData";
+        case UIBackgroundFetchResultNoData:
+            return  @"UIBackgroundFetchResultNoData";
+        default:
+            return @"UKNOWN";
     }
-    if (result == UIBackgroundFetchResultNewData) {
-        return @"UIBackgroundFetchResultNewData";
-    }
-    if (result == UIBackgroundFetchResultNoData) {
-        return @"UIBackgroundFetchResultNoData";
-    }
-    return @"UNKNOWN";
 }
 
 /*
