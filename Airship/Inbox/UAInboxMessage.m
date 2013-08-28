@@ -94,16 +94,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          }
 
          self.inbox.isBatchUpdating = NO;
+
+         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+
          if (successBlock && !isCallbackCancelled) {
              successBlock(self);
          }
      } onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
          self.inbox.isBatchUpdating = NO;
+
+         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
+
          if (failureBlock && !isCallbackCancelled) {
              failureBlock(self);
          }
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
      }];
 
     return disposable;
@@ -124,14 +129,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)markAsRead {
-    UADisposable *disposable = [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
-        [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
-    } withFailureBlock:^(UAInboxMessage *message){
-        [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
-    }];
-
     //the return value should be YES if a request was sent or if we're already marked read.
-    return disposable || !self.unread;
+    return [self markAsReadWithSuccessBlock:nil withFailureBlock:nil] || !self.unread;
 }
 
 #pragma mark -
