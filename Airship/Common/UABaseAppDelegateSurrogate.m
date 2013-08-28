@@ -43,7 +43,6 @@
     }
 
     BOOL responds = NO;
-
     //give the surrogate and default app delegates an opportunity to handle the message
     if ([self.surrogateDelegate respondsToSelector:selector]) {
         responds = YES;
@@ -60,7 +59,6 @@
         //but that way the exception will come from the expected location
         [invocation invokeWithTarget:self.defaultAppDelegate];
     }
-
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
@@ -92,4 +90,53 @@
     return signature;
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
+    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
+
+    __block int resultCount = 0;
+    __block int expectedCount = 0;
+    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    NSMutableArray *delegates = [NSMutableArray array];
+    if ([self.surrogateDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.surrogateDelegate];
+    }
+    if ([self.defaultAppDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.defaultAppDelegate];
+    }
+
+    // if we have no delegates that respond to the selector, return early
+    if (!delegates.count) {
+        handler(fetchResult);
+        return;
+    }
+
+    expectedCount = delegates.count;
+    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+        __block BOOL completionHandlerCalled = NO;
+        [delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
+                resultCount ++;
+
+                // Merge the UIBackgroundFetchResults.  If final fetchResult is not already UIBackgroundFetchResultNewData
+                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+                    fetchResult = result;
+                }
+
+                if (expectedCount == resultCount) {
+                    handler(fetchResult);
+                }
+            }
+        }];
+    }
+
+}
 @end
