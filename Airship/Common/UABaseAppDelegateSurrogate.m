@@ -106,7 +106,7 @@
     }
 
     // if we have no delegates that respond to the selector, return early
-    if (delegates.count) {
+    if (!delegates.count) {
         handler(fetchResult);
         return;
     }
