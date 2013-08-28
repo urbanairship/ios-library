@@ -59,8 +59,6 @@
         //but that way the exception will come from the expected location
         [invocation invokeWithTarget:self.defaultAppDelegate];
     }
-
-
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
@@ -92,31 +90,31 @@
     return signature;
 }
 
-
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
     SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
 
     __block int resultCount = 0;
-    __block NSMutableArray *delegates = [NSMutableArray array];
+    __block int expectedCount = 0;
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
 
+    NSMutableArray *delegates = [NSMutableArray array];
     if ([self.surrogateDelegate respondsToSelector:selector]) {
         [delegates addObject:self.surrogateDelegate];
     }
-
     if ([self.defaultAppDelegate respondsToSelector:selector]) {
         [delegates addObject:self.defaultAppDelegate];
     }
 
     // if we have no delegates that respond to the selector, return early
-    if (!delegates.count) {
+    if (delegates.count) {
         handler(fetchResult);
         return;
     }
 
+    expectedCount = delegates.count;
     for (NSObject<UIApplicationDelegate> *delegate in delegates) {
         __block BOOL completionHandlerCalled = NO;
-        [self.surrogateDelegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+        [delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
             @synchronized(self) {
                 if (completionHandlerCalled) {
                     UA_LERR(@"Completion handler called multiple times.");
@@ -131,13 +129,12 @@
                     fetchResult = result;
                 }
 
-                if (delegates.count == resultCount) {
+                if (expectedCount == resultCount) {
                     handler(fetchResult);
                 }
             }
         }];
     }
+
 }
-
-
 @end
