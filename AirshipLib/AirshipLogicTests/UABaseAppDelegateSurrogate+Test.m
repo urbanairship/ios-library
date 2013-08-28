@@ -271,9 +271,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
-    MethodBlock methodBlock = [self.methodBlocks valueForKey:NSStringFromSelector(selector)];
-
-    return methodBlock != nil;
+    return (self.methodBlocks[NSStringFromSelector(selector)]);
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
