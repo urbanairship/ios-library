@@ -124,7 +124,9 @@
                 completionHandlerCalled = YES;
                 resultCount ++;
 
-                // Results priority: NewData, Failed, NoData
+                // Merge the UIBackgroundFetchResults.  If final fetchResult is not already UIBackgroundFetchResultNewData
+                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
                 if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
                     fetchResult = result;
                 }
