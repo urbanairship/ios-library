@@ -196,7 +196,7 @@ typedef void (^MethodBlock)(NSInvocation *);
     if (result == UIBackgroundFetchResultNoData) {
         return @"UIBackgroundFetchResultNoData";
     }
-    return @"UNKOWN";
+    return @"UNKNOWN";
 }
 
 /*
