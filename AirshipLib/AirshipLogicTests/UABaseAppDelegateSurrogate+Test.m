@@ -140,7 +140,7 @@ typedef void (^MethodBlock)(NSInvocation *);
  */
 - (void)testDidReceiveRemoteNotificationBothSubDelegateResponses {
 
-    __block UIBackgroundFetchResult allBackgroundFetchResults[] = {UIBackgroundFetchResultNoData, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData};
+    UIBackgroundFetchResult allBackgroundFetchResults[] = {UIBackgroundFetchResultNoData, UIBackgroundFetchResultFailed, UIBackgroundFetchResultNewData};
 
     // The expected matrix from the different combined values of allBackgroundFetchResults indicies
     UIBackgroundFetchResult expectedResults[3][3] = {
@@ -271,7 +271,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
-    return (self.methodBlocks[NSStringFromSelector(selector)]);
+    return self.methodBlocks[NSStringFromSelector(selector)] != nil;
 }
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
