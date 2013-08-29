@@ -53,7 +53,7 @@
 }
 
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (application.applicationState == UIApplicationStateActive) {
+    if (application.applicationState != UIApplicationStateBackground) {
         UA_LINFO(@"Received remote notification: %@", userInfo);
         [UAInboxPushHandler handleNotification:userInfo];
     }
