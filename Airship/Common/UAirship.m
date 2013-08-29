@@ -206,7 +206,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
 
-    if (remoteNotification) {
+    if (remoteNotification && !_sharedAirship.backgroundNotificationEnabled) {
         [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
         [UAInboxPushHandler handleNotification:remoteNotification];
     }
