@@ -117,11 +117,29 @@
 }
 
 - (void)testRemoveTagFromCurrentDevice {
+    [UAPush shared].tags = nil;
+    XCTAssertNoThrow([[UAPush shared] removeTagFromCurrentDevice:@"some-tag"], @"Should not throw when removing a tag when tags are empty");
 
+    [UAPush shared].tags = @[@"some-tag", @"some-other-tag"];
+    XCTAssertNoThrow([[UAPush shared] removeTagFromCurrentDevice:@"some-not-found-tag"], @"Should not throw when removing a tag that does not exist");
+
+    [[UAPush shared] removeTagFromCurrentDevice:@"some-tag"];
+    XCTAssertEqualObjects((@[@"some-other-tag"]), [UAPush shared].tags, @"Remove tag from device should actually remove the tag");
+
+    XCTAssertThrows([[UAPush shared] removeTagFromCurrentDevice:nil], @"Should throw when removing a nil tag");
 }
 
 - (void)testRemoveTagsFromCurrentDevice {
+    [UAPush shared].tags = nil;
+    XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:@[@"some-tag"]], @"Should not throw when removing a tags when tags are empty");
 
+    [UAPush shared].tags = @[@"some-tag", @"some-other-tag"];
+    XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:@[@"some-not-found-tag"]], @"Should not throw when removing tags that do not exist");
+
+    [[UAPush shared] removeTagsFromCurrentDevice:@[@"some-tag"]];
+    XCTAssertEqualObjects((@[@"some-other-tag"]), [UAPush shared].tags, @"Remove tags from device should actually remove the tag");
+
+    XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:nil], @"Should throw when removing a nil set of tags");
 }
 
 - (void)testPushEnabledToYes {
@@ -204,12 +222,47 @@
     XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey], @"timezone should be able to be cleared in standardUserDefaults");
 }
 
-- (void)testRegisterFroRemoteNotificationTypes {
+- (void)testRegisterFroRemoteNotificationsPushEnabled {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+
+    [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
+    [[UAPush shared] registerForRemoteNotifications];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"should register for push notification types when push is enabled");
 
 }
 
-- (void)testRegisterFroRemoteNotifications {
+- (void)testRegisterFroRemoteNotificationsPushDisabled {
+    [UAPush shared].pushEnabled = NO;
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
 
+    [[self.mockedApplication reject] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
+    [[UAPush shared] registerForRemoteNotifications];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"should not register for push notification types when push is enabled");
+}
+
+- (void)testRegisterFroRemoteNotificationTypesPushEnabled {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+
+    [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge];
+    [[UAPush shared] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"should register for push notification types when push is enabled");
+    XCTAssertEqual(UIRemoteNotificationTypeBadge, [UAPush shared].notificationTypes, @"registerForPushNotificationTypes should still set the notificationTypes when push is disabled");
+}
+
+- (void)testRegisterFroRemoteNotificationTypesPushDisabled {
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+    [UAPush shared].pushEnabled = NO;
+
+    [[self.mockedApplication reject] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge];
+    [[UAPush shared] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"should not register for push notification types when push is disabled");
+    XCTAssertEqual(UIRemoteNotificationTypeBadge, [UAPush shared].notificationTypes, @"registerForPushNotificationTypes should still set the notificationTypes when push is disabled");
 }
 
 - (void)testSetBadgeNumber {
@@ -233,15 +286,4 @@
 }
 
 
-///*
-//
-//
-// handleNotification
-// handleNotificationCompletionHandler
-// 
-// registrationPayload
-// registrationData
-// updateRegistrationForcefully
-//*/
-//
 @end
