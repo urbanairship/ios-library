@@ -59,7 +59,7 @@ typedef enum _UALogLevel {
 #endif
 
 extern BOOL uaLoggingEnabled; // Default is true
-extern UALogLevel uaLogLevel; // Default is UALogLevelDebug
+extern UALogLevel uaLogLevel; // Default is UALogLevelError
 
 #define UA_LTRACE(fmt, ...) UA_LEVEL_LOG(UALogLevelTrace, @"T", fmt, ##__VA_ARGS__)
 #define UA_LDEBUG(fmt, ...) UA_LEVEL_LOG(UALogLevelDebug, @"D", fmt, ##__VA_ARGS__)
