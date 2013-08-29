@@ -297,6 +297,7 @@ static Class _uiClass;
     }
 
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    [cal setTimeZone:timezone];
     
     NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
                               [cal components:NSHourCalendarUnit fromDate:from].hour,
@@ -397,6 +398,7 @@ static Class _uiClass;
                 [self.pushNotificationDelegate receivedForegroundNotification:notification];
             }
             break;
+
         default:
             UA_LTRACE(@"Received a notification for an inactive application state.");
             if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
@@ -426,6 +428,7 @@ static Class _uiClass;
                 completionHandler(UIBackgroundFetchResultNoData);
             }
             break;
+
         case UIApplicationStateInactive:
             UA_LTRACE(@"Received a notification application state is UIApplicationStateInactive");
 
@@ -441,8 +444,8 @@ static Class _uiClass;
 
                 completionHandler(UIBackgroundFetchResultNoData);
             }
-
             break;
+
         case UIApplicationStateBackground:
             UA_LTRACE(@"Received a notification application state is UIApplicationStateBackground");
             if([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
