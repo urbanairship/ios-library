@@ -137,14 +137,14 @@ static Class _uiClass;
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
 
-        //delete legacy UAInboxCache if present
-        [self deleteInboxCache];
-
         if (![[UAUser defaultUser] defaultUserCreated]) {
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(userCreated)
                                                          name:UAUserCreatedNotification object:nil];
         }
+
+        //delete legacy UAInboxCache if present
+        [self deleteInboxCache];
     }
 
     return self;
