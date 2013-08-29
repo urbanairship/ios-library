@@ -64,6 +64,9 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
+
+@property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
+
 /**
  * This flag is set to `YES` if the shared instance of
  * UAirship has been initialized and is ready for use.
