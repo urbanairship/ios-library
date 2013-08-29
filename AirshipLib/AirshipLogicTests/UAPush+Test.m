@@ -3,11 +3,15 @@
 #import <OCMock/OCMConstraint.h>
 #import "UAPush+Internal.h"
 #import "UADeviceAPIClient.h"
+#import "UAirship.h"
+#import "UAAnalytics.h"
 
 @interface UAPush_Test : XCTestCase
 @property(nonatomic, strong) id applicationClassMock;
 @property(nonatomic, strong) id mockedApplication;
 @property(nonatomic, strong) id mockedDeviceAPIClient;
+@property(nonatomic, strong) id mockedAirshipClass;
+@property(nonatomic, strong) id mockedAnalytics;
 @end
 
 @implementation UAPush_Test
@@ -22,6 +26,13 @@
 
     // Set up a mocked device api client
     self.mockedDeviceAPIClient = [OCMockObject partialMockForObject:[UAPush shared].deviceAPIClient];
+
+    self.mockedAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+
+    self.mockedAirshipClass =[OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockedAirshipClass stub] andReturn:self.mockedAirshipClass] shared];
+    [[[self.mockedAirshipClass stub] andReturn:self.mockedAnalytics] analytics];
+
 }
 
 - (void)tearDown {
@@ -29,6 +40,8 @@
     [self.applicationClassMock stopMocking];
     [self.mockedApplication stopMocking];
     [self.mockedDeviceAPIClient stopMocking];
+    [self.mockedAnalytics stopMocking];
+    [self.mockedAirshipClass stopMocking];
 }
 
 - (void)testParseDeviceToken {
@@ -265,16 +278,77 @@
     XCTAssertEqual(UIRemoteNotificationTypeBadge, [UAPush shared].notificationTypes, @"registerForPushNotificationTypes should still set the notificationTypes when push is disabled");
 }
 
-- (void)testSetBadgeNumber {
+- (void)testSetBadgeNumberAutoBadgeEnabled{
+    // Set the right values so we can check if a device api client call was made or not
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].autobadgeEnabled = YES;
+    [UAPush shared].deviceToken = @"some-device-token";
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+
+    [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
+    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+
+    [[UAPush shared] setBadgeNumber:15];
+    XCTAssertNoThrow([self.mockedApplication verify], @"should update applicaiton icon badge number when its different");
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should update registration so autobadge works");
 }
 
-- (void)testResetBadge {
+- (void)testSetBadgeNumberNoChange {
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[self.mockedApplication reject] setApplicationIconBadgeNumber:30];
 
+    [[UAPush shared] setBadgeNumber:30];
+    XCTAssertNoThrow([self.mockedApplication verify], @"should not update applicaiton icon badge number if there is no change");
+}
+
+- (void)testSetBadgeNumberAutoBadgeDisabled {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = @"some-device-token";
+
+    [UAPush shared].autobadgeEnabled = NO;
+
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
+
+    // Reject device api client registration because autobadge is not enabled
+    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+
+    [[UAPush shared] setBadgeNumber:15];
+    XCTAssertNoThrow([self.mockedApplication verify], @"should update applicaiton icon badge number when its different");
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should not update registration because autobadge is disabled");
 }
 
 - (void)testRegisterDeviceToken {
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = nil;
 
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
+    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
+
+    [[UAPush shared] registerDeviceToken:token];
+
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"should add device registeration event to analytics");
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should update registration on registering device token");
+
+    XCTAssertEqualObjects([[UAPush shared] parseDeviceToken:[token description]], [UAPush shared].deviceToken, @"registering device token should set the deviceToken on UAPush");
+}
+
+- (void)testRegisterDeviceTokenNoNotificationTypes {
+    [UAPush shared].notificationTypes = 0;
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = nil;
+
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [[self.mockedAnalytics reject] addEvent:OCMOCK_ANY];
+    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
+
+    [[UAPush shared] registerDeviceToken:token];
+
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"should not do anything if notificationTypes are not set");
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should not do anything if notificationTypes are not set");
 }
 
 - (void)testRegisterNSUserDefaults {
@@ -282,7 +356,7 @@
 }
 
 - (void)testsetDefaultPushEnabledValue {
-
+    
 }
 
 
