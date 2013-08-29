@@ -501,4 +501,7 @@ SINGLETON_INTERFACE(UAPush);
  */
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
 
+- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler NS_AVAILABLE_IOS(7_0);
+
+
 @end

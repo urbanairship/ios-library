@@ -58,7 +58,7 @@
         [UAInboxPushHandler handleNotification:userInfo];
     }
 
-    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
+    [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
 }
 
 
