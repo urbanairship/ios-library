@@ -35,6 +35,8 @@
 #import "UALocationSettingsViewController.h"
 #import "UAUser.h"
 
+#define kUAPushDeviceTokenPath @"deviceToken"
+
 enum {
     SectionDeviceToken = 0,
     SectionUser        = 1,
@@ -102,13 +104,22 @@ static NSUInteger userRowCount = 1;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    
+    [super viewWillAppear:animated];
+
+    [[UAPush shared] addObserver:self forKeyPath:kUAPushDeviceTokenPath options:NSKeyValueObservingOptionNew context:nil];
+
     [self updateCellValues];
-    
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:NO];
+    [[UAPush shared] removeObserver:self forKeyPath:kUAPushDeviceTokenPath];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
     [self.tableView flashScrollIndicators];
 }
 
@@ -334,18 +345,22 @@ static NSUInteger userRowCount = 1;
 }
 
 #pragma mark -
-#pragma mark UA Registration Observer methods
+#pragma mark KVO methods
 
-- (void)registerDeviceTokenSucceeded {
-    
-    [self updateCellValues];
-    
-    [self.deviceTokenCell setNeedsLayout];
-    [self.deviceTokenTypesCell setNeedsLayout];
-    [self.deviceTokenDisabledTypesCell setNeedsLayout];
-    [self.deviceTokenAliasCell setNeedsLayout];
-    [self.deviceTokenTagsCell setNeedsLayout];
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context {
+    if ([keyPath isEqualToString:kUAPushDeviceTokenPath]) {
+        [self updateCellValues];
+
+        [self.deviceTokenCell setNeedsLayout];
+        [self.deviceTokenTypesCell setNeedsLayout];
+        [self.deviceTokenDisabledTypesCell setNeedsLayout];
+        [self.deviceTokenAliasCell setNeedsLayout];
+        [self.deviceTokenTagsCell setNeedsLayout];
+    }
 }
+
 
 - (void)updateCellValues {
     

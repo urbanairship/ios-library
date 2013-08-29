@@ -78,7 +78,7 @@ static Class _uiClass;
         self.defaultPushHandler = [[NSClassFromString(PUSH_DELEGATE_CLASS) alloc] init];
         self.pushNotificationDelegate = _defaultPushHandler;
 
-        [[NSNotificationCenter defaultCenter] addObserver:self 
+        [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(applicationDidBecomeActive) 
                                                      name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];

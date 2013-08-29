@@ -26,6 +26,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+#import "UADisposable.h"
+#import "UAInboxMessageListDelegate.h"
+
+typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
+
 @class UAInboxMessageList;
 
 /**
@@ -38,10 +43,37 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Mark the message as read.
- * 
- * @return YES if the request was submitted or already complete, otherwise NO.
+ * @param successBlock A block to be executed if the mark-as-read operation is successful.
+ * @param failureBlock A block to be executed if the mark-as-read operation fails.
+ * @return A UADisposable which can be used to cancel callback execution.
+ * This value will be nil if the request is not submitted due to an already scheduled update,
+ * or because the message has already been marked as read.
  */
-- (BOOL)markAsRead;
+- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
+                  withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock;
+
+/**
+ * Mark the message as read. This eventually results in a callback to
+ * [UAInboxMessageListDelegate singleMessageMarkAsReadFinished:] or
+ * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
+ *
+ * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
+ * @return A UADisposable which can be used to cancel callback execution.
+ * This value will be nil if the request is not submitted due to an already scheduled update,
+ * or because the message has already been marked as read.
+ */
+- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate;
+
+/**
+ * Mark the message as read. This eventually results in a callback to
+ * [UAInboxMessageListObserver singleMessageMarkAsReadFinished:] or
+ * [UAInboxMessageListObserver singleMessageMarkAsReadFailed:].
+ *
+ * @return YES if the request was submitted or already complete, otherwise NO.
+ *
+ * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ */
+- (BOOL)markAsRead __attribute__((deprecated("As of version 2.1")));
 
 /**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.

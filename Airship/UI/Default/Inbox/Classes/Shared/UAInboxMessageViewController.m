@@ -55,15 +55,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 - (void)dealloc {
-    [[UAInbox shared].messageList removeObserver:self];
     self.webView.delegate = nil;
 
 }
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle {
     if (self = [super initWithNibName:nibName bundle:nibBundle]) {
-        
-        [[UAInbox shared].messageList addObserver:self];
         
         self.title = UA_INBOX_TR(@"UA_Message");
 
@@ -92,6 +89,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)viewDidLoad {
     [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(messageListUpdated)
+                                                 name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
+}
+
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
@@ -263,7 +273,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     // Mark message as read after it has finished loading
     if(self.message.unread) {
-        [self.message markAsRead];
+        [self.message markAsReadWithDelegate:nil];
     }
     
     [self.webView injectViewportFix];
@@ -323,9 +333,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     UALOG(@"update nav %d, of %d", index, [[UAInbox shared].messageList messageCount]);
 }
 
-#pragma mark UAInboxMessageListObserver
+#pragma mark NSNotificationCenter callbacks
 
-- (void)messageListLoaded {
+- (void)messageListUpdated {
     [self refreshHeader];
 }
 

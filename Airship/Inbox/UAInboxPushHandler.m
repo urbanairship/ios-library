@@ -42,30 +42,32 @@
 }
 
 + (void)handleNotification:(NSDictionary *)userInfo{
+
+    UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
     
     [UAInboxUtils getRichPushMessageIDFromNotification:userInfo withAction:^(NSString *richPushId){
         UA_LDEBUG(@"Received push for rich message id %@", richPushId);
-        [UAInbox shared].pushHandler.viewingMessageID = richPushId;
+        handler.viewingMessageID = richPushId;
 
         //if the app is in the foreground, let the UI class decide how it
         //wants to respond to the incoming push
         if ([self isApplicationActive]) {
-            [[UAInbox shared].pushHandler.delegate richPushNotificationArrived:userInfo];
+            [handler.delegate richPushNotificationArrived:userInfo];
         }
 
         //otherwise, load the message list
         else {
             //this will result in calling loadLaunchMessage on the UI class
             //once the request is complete
-            [UAInbox shared].pushHandler.hasLaunchMessage = YES;
-            [[UAInbox shared].pushHandler.delegate applicationLaunchedWithRichPushNotification:userInfo];
+            handler.hasLaunchMessage = YES;
+            [handler.delegate applicationLaunchedWithRichPushNotification:userInfo];
         }
 
-        [[UAInbox shared].messageList retrieveMessageList];
+        [[UAInbox shared].messageList retrieveMessageListWithDelegate:handler];
     }];
 }
 
-- (void)messageListLoaded {
+- (void)messageListLoadSucceeded {
 
     //only take action if there's a new message
     if(self.viewingMessageID) {

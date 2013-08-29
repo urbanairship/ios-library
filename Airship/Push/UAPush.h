@@ -156,9 +156,9 @@
  * Implement this protocol and register with the UAPush shared instance to receive
  * device token registration success and failure callbacks.
  *
- * This protocol is deprecated. New applications should use the `UARegistrationDelegate` protocol.
+ * @deprecated As of version 2.1. Replaced with `UARegistrationDelegate` protocol.
  */
-__attribute__((deprecated))
+__attribute__((deprecated("As of version 2.1")))
 @protocol UARegistrationObserver
 @optional
 
@@ -269,21 +269,20 @@ SINGLETON_INTERFACE(UAPush);
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> pushNotificationDelegate;
+@property (nonatomic, weak) id<UAPushNotificationDelegate> pushNotificationDelegate;
 
 /**
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  *
- * Note: this property is deprecated. New applications should use the [UAPush pushNotificationDelegate] property.
+ * @deprecated As of version 2.1. Replaced with [UAPush pushNotificationDelegate] property.
  */
-@property (nonatomic, assign) id<UAPushNotificationDelegate> delegate __attribute__((deprecated));
+@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 2.1")));
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
 @property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

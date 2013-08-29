@@ -58,7 +58,11 @@ static Class _uiClass;
 }
 
 - (void)enterForeground {
-    [self.messageList retrieveMessageList];
+    [self.messageList retrieveMessageListWithDelegate:nil];
+}
+
+- (void)userCreated {
+    [self.messageList retrieveMessageListWithDelegate:nil];
 }
 
 #pragma mark -
@@ -122,7 +126,7 @@ static Class _uiClass;
     if (self) {
         self.messageList = [UAInboxMessageList shared];
         
-        [self.messageList retrieveMessageList];
+        [self.messageList retrieveMessageListWithDelegate:nil];
 		
 		self.pushHandler = [[UAInboxPushHandler alloc] init];
 
@@ -132,6 +136,12 @@ static Class _uiClass;
                                                 selector:@selector(enterForeground)
                                                     name:UIApplicationWillEnterForegroundNotification
                                                   object:nil];
+
+        if (![[UAUser defaultUser] defaultUserCreated]) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(userCreated)
+                                                         name:UAUserCreatedNotification object:nil];
+        }
 
         //delete legacy UAInboxCache if present
         [self deleteInboxCache];

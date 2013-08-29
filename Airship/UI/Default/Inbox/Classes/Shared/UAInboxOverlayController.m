@@ -435,7 +435,7 @@ static NSMutableSet *overlayControllers = nil;
     
     // Mark message as read after it has finished loading
     if(self.message.unread) {
-        [self.message markAsRead];
+        [self.message markAsReadWithDelegate:nil];
     }
 
     [self.webView injectViewportFix];

@@ -34,11 +34,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * An observer is notified when messages are modified, loaded or
  * fail to load or update.
  *
- * This protocol is deprecated. New applications should use
- * a combination of NSNotificationCenter events and the new
- * callback methods exposed in UAInboxMessageList and UAInboxMessage.
+ * @deprecated As of version 2.1. Replaced NSNotification and callback-based 
+ * methods in `UAPush`, `UAInboxMessage` and `UAInboxMessageList`. 
  */
-__attribute__((deprecated))
+__attribute__((deprecated("As of version 2.1")))
 @protocol UAInboxMessageListObserver <NSObject>
 
 @optional
