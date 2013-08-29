@@ -51,9 +51,9 @@ static UAirship *_sharedAirship;
 static dispatch_once_t takeOffPred_;
 
 // Logging info
-// Default to ON and DEBUG - options/plist will override
+// Default to ON and ERROR - options/plist will override
 BOOL uaLoggingEnabled = YES;
-UALogLevel uaLogLevel = UALogLevelUndefined;
+UALogLevel uaLogLevel = UALogLevelError;
 
 @implementation UAirship
 
@@ -189,11 +189,13 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
 
+    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
+
     if (!_sharedAirship) {
         UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
+        UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
+        return;
     }
-
-    [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 

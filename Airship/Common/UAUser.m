@@ -93,6 +93,12 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         if (![UAirship shared].ready) {
             return;
         }
+
+        if (!self.appKey) {
+            UA_LERR(@"No App Key was set on UAUser. Unable to initialize.");
+            UA_LERR("[UAirship takeOff] has probably not been called yet or is being called after application:didFinishLaunchingWithOptions: has returned");
+            return;
+        }
                 
         NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
         NSString *storedPassword = [UAKeychainUtils getPassword:self.appKey];
