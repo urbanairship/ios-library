@@ -93,7 +93,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     if (self) {
         self.ready = NO;
         self.backgroundNotificationEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
-                                    && kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1;
+                                    && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
     }
     return self;
 }

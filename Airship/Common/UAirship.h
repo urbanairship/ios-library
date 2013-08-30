@@ -35,6 +35,12 @@ UA_VERSION_INTERFACE(UAirshipVersion)
 // creation and first upload.
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
+// TODO: Remove this when its actually available
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
+#endif
+
+
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.
