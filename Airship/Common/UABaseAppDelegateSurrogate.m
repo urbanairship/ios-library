@@ -24,6 +24,7 @@
  */
 
 #import "UABaseAppDelegateSurrogate.h"
+#import "UAirship.h"
 
 @implementation UABaseAppDelegateSurrogate
 
@@ -62,16 +63,15 @@
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
-    if ([super respondsToSelector:selector]) {
-        return YES;
-    } else {
-        //if this isn't a selector we normally respond to, say we do as long as either delegate does
-        if ([self.defaultAppDelegate respondsToSelector:selector] || [self.surrogateDelegate respondsToSelector:selector]) {
-            return YES;
-        }
+    // We only want to respond to the new notification delegate if background push is
+    // enabled or the default app delegate responds to it.
+    if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
+        return [UAirship shared].backgroundNotificationEnabled || [self.defaultAppDelegate respondsToSelector:selector];
     }
 
-    return NO;
+    return [super respondsToSelector:selector]
+            || [self.defaultAppDelegate respondsToSelector:selector]
+            || [self.surrogateDelegate respondsToSelector:selector];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
