@@ -393,17 +393,21 @@ static Class _uiClass;
     switch(state) {
         case UIApplicationStateActive:
             [self notifyForegroundNotification:notification];
-            UA_LTRACE(@"Received a notification for a foregrounded application.");
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
             if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
                 [self.pushNotificationDelegate receivedForegroundNotification:notification];
             }
             break;
 
-        default:
-            UA_LTRACE(@"Received a notification for an inactive application state.");
+        case UIApplicationStateInactive:
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
             if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
                 [self.pushNotificationDelegate launchedFromNotification:notification];
             }
+            break;
+
+        case UIApplicationStateBackground:
+            // Do nothing, probably news stand content
             break;
     }
 }
@@ -414,7 +418,7 @@ static Class _uiClass;
     switch(state) {
         case UIApplicationStateActive:
             [self notifyForegroundNotification:notification];
-            UA_LTRACE(@"Received a notification application state is UIApplicationStateActive");
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
             if([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
                 [self.pushNotificationDelegate receivedForegroundNotification:notification fetchCompletionHandler:completionHandler];
             } else {
@@ -430,7 +434,7 @@ static Class _uiClass;
             break;
 
         case UIApplicationStateInactive:
-            UA_LTRACE(@"Received a notification application state is UIApplicationStateInactive");
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
 
             if([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
                 [self.pushNotificationDelegate launchedFromNotification:notification fetchCompletionHandler:completionHandler];
@@ -447,7 +451,7 @@ static Class _uiClass;
             break;
 
         case UIApplicationStateBackground:
-            UA_LTRACE(@"Received a notification application state is UIApplicationStateBackground");
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
             if([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
                 [self.pushNotificationDelegate receivedBackgroundNotification:notification fetchCompletionHandler:completionHandler];
             }
@@ -456,33 +460,34 @@ static Class _uiClass;
 
 }
 
-- (void) notifyForegroundNotification:(NSDictionary *)notification {
+- (void)notifyForegroundNotification:(NSDictionary *)notification {
 
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
 	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
-    if ([[notification allKeys] containsObject:@"aps"]) {
-        NSDictionary *apsDict = [notification objectForKey:@"aps"];
 
-		if ([[apsDict allKeys] containsObject:@"alert"]) {
+    NSDictionary *apsDict = [notification objectForKey:@"aps"];
+    if (apsDict) {
 
-			if ([[apsDict objectForKey:@"alert"] isKindOfClass:[NSString class]] &&
+        // Alert
+        id alert = [apsDict valueForKey:@"alert"];
+		if (alert) {
+			if ([alert isKindOfClass:[NSString class]] &&
                 [self.pushNotificationDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
 
 				// The alert is a single string message so we can display it
-                [self.pushNotificationDelegate displayNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.pushNotificationDelegate displayNotificationAlert:alert];
 
 			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
 				// The alert is a a dictionary with more localization details
 				// This should be customized to fit your message details or usage scenario
-                [self.pushNotificationDelegate displayLocalizedNotificationAlert:[apsDict valueForKey:@"alert"]];
+                [self.pushNotificationDelegate displayLocalizedNotificationAlert:alert];
 			}
-
 		}
 
-        //badge
+        // Badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-        if (badgeNumber) {
 
+        if (badgeNumber) {
 			if (self.autobadgeEnabled) {
 				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
 			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
@@ -490,7 +495,7 @@ static Class _uiClass;
 			}
         }
 
-        //sound
+        // Sound
 		NSString *soundName = [apsDict valueForKey:@"sound"];
 		if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
 			[self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
@@ -633,10 +638,12 @@ static Class _uiClass;
     // Migration for pre 1.3.0 library quiet time settings
     // This pulls an object, instead of a BOOL
     id quietTimeEnabled = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeEnabledSettingsKey];
-
     NSDictionary *currentQuietTime = [[NSUserDefaults standardUserDefaults] valueForKey:UAPushQuietTimeSettingsKey];
+
     if (!quietTimeEnabled && currentQuietTime) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
+    } else {
+         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
     
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];

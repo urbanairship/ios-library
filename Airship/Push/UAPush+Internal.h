@@ -116,4 +116,7 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 + (void)land;
 
+
+- (void)notifyForegroundNotification:(NSDictionary *)notification;
+
 @end

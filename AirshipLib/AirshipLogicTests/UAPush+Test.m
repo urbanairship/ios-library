@@ -12,6 +12,7 @@
 @property(nonatomic, strong) id mockedDeviceAPIClient;
 @property(nonatomic, strong) id mockedAirshipClass;
 @property(nonatomic, strong) id mockedAnalytics;
+@property(nonatomic, strong) id mockedPushDelegate;
 @end
 
 @implementation UAPush_Test
@@ -33,20 +34,25 @@
     [[[self.mockedAirshipClass stub] andReturn:self.mockedAirshipClass] shared];
     [[[self.mockedAirshipClass stub] andReturn:self.mockedAnalytics] analytics];
 
+    self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
+    [UAPush shared].pushNotificationDelegate = self.mockedPushDelegate;
 }
 
 - (void)tearDown {
     [super tearDown];
+    [UAPush shared].pushNotificationDelegate = nil;
+
     [self.applicationClassMock stopMocking];
     [self.mockedApplication stopMocking];
     [self.mockedDeviceAPIClient stopMocking];
     [self.mockedAnalytics stopMocking];
     [self.mockedAirshipClass stopMocking];
+    [self.mockedPushDelegate stopMocking];
 }
 
 - (void)testParseDeviceToken {
     XCTAssertEqualObjects(@"hello", [[UAPush shared] parseDeviceToken:@"<> he<l <<<l >> o"],
-                          @"parseDeviceTokens should remove all <, >, and white space from the token");
+                          @"parseDeviceTokens should remove all '<', '>', and white space from the token");
 
     XCTAssertNil([[UAPush shared] parseDeviceToken:nil],
                           @"parseDeviceTokens should return nil when passed nil");
@@ -351,13 +357,175 @@
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should not do anything if notificationTypes are not set");
 }
 
-- (void)testRegisterNSUserDefaults {
+- (void)testRegisterNSUserDefaultsSetsPushEnabled {
+    // Clear out any existing push enabled defaults values
+    NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
+    [defaults setValue:[NSNumber numberWithBool:NO] forKey:UAPushEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 
+    // Remove exisiting push setting
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
+
+     XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"Unable to set push enable default");
+
+    [UAPush registerNSUserDefaults];
+
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"register defaults should set default value of pushEnabled to YES");
 }
 
-- (void)testsetDefaultPushEnabledValue {
+- (void)testRegisterNSUserDefaultsQuietTime {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeSettingsKey];
+
+    [UAPush registerNSUserDefaults];
+    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey], @"Quiet time should not be enabled if neither setting or enabled is set");
+
+    // Add quiet time dictionary and remove the enable setting
+    [[NSUserDefaults standardUserDefaults] setValue:[NSDictionary dictionary] forKey:UAPushQuietTimeSettingsKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushQuietTimeEnabledSettingsKey];
+
+    [UAPush registerNSUserDefaults];
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey], @"Quiet time should be enabled if quiet time setting has a value but enabled does not");
+
+    // Set quiet time enabled to false to make sure it does not get set back to true
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
+
+    [UAPush registerNSUserDefaults];
+    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushQuietTimeEnabledSettingsKey], @"Quiet time should not be enabled if it already is set to disable");
+}
+
+- (void)testSetDefaultPushEnabledValue {
+    [UAPush setDefaultPushEnabledValue:YES];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"UAPushEnabledSettingsKey in standardUserDefaults should default to YES");
+
+    [UAPush setDefaultPushEnabledValue:NO];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
+    XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"UAPushEnabledSettingsKey in standardUserDefaults should default to NO");
+}
+
+- (void)testHandleNotificationUIApplicationStateActive {
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    // Set auto badge to disabled so we can expect handleBadgeUpdate
+    [UAPush shared].autobadgeEnabled = NO;
+
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:notification];
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
+    [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
+
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateActive];
     
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateActive];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of notification");
 }
 
+- (void)testHandleNotificationUIApplicationStateInactive {
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    [[self.mockedPushDelegate expect] launchedFromNotification:notification];
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateInactive];
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateInactive];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of notification");
+}
+
+- (void)testHandleNotificationUIApplicationStateBackground {
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateBackground];
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateBackground];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+}
+
+- (void)testHandleNotificationCompletionHandlerUIApplicationStateActive {
+    void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {};
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    // Set auto badge to disabled so we can expect handleBadgeUpdate
+    [UAPush shared].autobadgeEnabled = NO;
+
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:notification fetchCompletionHandler:completionHandler];
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
+    [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
+
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateActive];
+
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateActive fetchCompletionHandler:completionHandler];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of notification");
+}
+
+- (void)testHandleNotificationCompletionHandlerUIApplicationStateInactive {
+    void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {};
+
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    [[self.mockedPushDelegate expect] launchedFromNotification:notification fetchCompletionHandler:completionHandler];
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateInactive];
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateInactive fetchCompletionHandler:completionHandler];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of notification");
+}
+
+- (void)testHandleNotificationCompletionHandlerUIApplicationStateBackground {
+    void (^completionHandler)(UIBackgroundFetchResult) = ^(UIBackgroundFetchResult result) {};
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:notification fetchCompletionHandler:completionHandler];
+    [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:UIApplicationStateBackground];
+
+    [[UAPush shared] handleNotification:notification applicationState:UIApplicationStateBackground fetchCompletionHandler:completionHandler];
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of notification");
+}
+
+- (void)testNotifyForegroundNotification {
+    NSDictionary *notification = @{@"aps": @{@"alert": @"sample alert!", @"badge": @2, @"sound": @"cat"}};
+    [UAPush shared].autobadgeEnabled = NO;
+
+    [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
+
+    [[UAPush shared] notifyForegroundNotification:notification];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should be notified of foreground notification");
+
+
+    [UAPush shared].autobadgeEnabled = YES;
+    [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
+
+    [[self.mockedApplication expect] setApplicationIconBadgeNumber:2];
+    [[UAPush shared] notifyForegroundNotification:notification];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should not receive handlebadge if auto badge is enabled");
+    XCTAssertNoThrow([self.mockedApplication verify], @"application should set its application icon badge if autobadge is enabled");
+
+
+    notification = @{@"aps": @{}};
+    [UAPush shared].autobadgeEnabled = NO;
+    [[self.mockedPushDelegate reject] playNotificationSound:@"cat"];
+    [[self.mockedPushDelegate reject] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
+
+    [[UAPush shared] notifyForegroundNotification:notification];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should not receive foreground information for empty push elements");
+
+
+    // alert is a dictionary
+    notification = @{@"aps": @{@"alert": @{}}};
+    [[self.mockedPushDelegate expect] displayLocalizedNotificationAlert:@{}];
+    [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
+
+    [[UAPush shared] notifyForegroundNotification:notification];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should not receive foreground information for empty push elements");
+}
 
 @end
