@@ -587,4 +587,81 @@
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip unregistering if app is in the background");
 }
 
+- (void)testRegistrationPayload {
+    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+    [UAPush shared].alias = @"ALIAS";
+    [UAPush shared].deviceTagsEnabled = YES;
+    [UAPush shared].tags = @[@"tag-one"];
+
+    // Set up badge
+    [UAPush shared].autobadgeEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+
+    // Set quiet time
+    [[UAPush shared] setQuietTimeEnabled:YES];
+    [[UAPush shared] setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
+                                   to:[NSDate dateWithTimeIntervalSince1970:10]
+                         withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
+
+
+    [[registrationPayloadClassMock expect] payloadWithAlias:@"ALIAS"
+                                                   withTags:@[@"tag-one"]
+                                               withTimeZone:@"Pacific/Auckland"
+                                              withQuietTime:[UAPush shared].quietTime
+                                                  withBadge:@30];
+    [[UAPush shared] registrationPayload];
+
+    XCTAssertNoThrow([registrationPayloadClassMock verify], @"registrationPayload is not being created with expected values");
+
+}
+
+- (void)testRegistrationPayloadDeviceTagsDisabled {
+    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+    [UAPush shared].deviceTagsEnabled = NO;
+    [UAPush shared].tags = @[@"tag-one"];
+
+    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
+                                                   withTags:nil
+                                               withTimeZone:OCMOCK_ANY
+                                              withQuietTime:OCMOCK_ANY
+                                                  withBadge:OCMOCK_ANY];
+    [[UAPush shared] registrationPayload];
+
+    XCTAssertNoThrow([registrationPayloadClassMock verify], @"registrationPayload should not include tags if device tags is disabled");
+}
+
+
+- (void)testRegistrationPayloadAutoBadgeDisabled {
+    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+    [UAPush shared].autobadgeEnabled = NO;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+
+    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
+                                                   withTags:OCMOCK_ANY
+                                               withTimeZone:OCMOCK_ANY
+                                              withQuietTime:OCMOCK_ANY
+                                                  withBadge:nil];
+    [[UAPush shared] registrationPayload];
+
+    XCTAssertNoThrow([registrationPayloadClassMock verify], @"registrationPayload should not be created with badge if autobadge is disabled");
+}
+
+- (void)testRegistrationPayloadQuietTime {
+    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+
+    [[UAPush shared] setQuietTimeEnabled:NO];
+    [[UAPush shared] setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
+                                   to:[NSDate dateWithTimeIntervalSince1970:10]
+                         withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
+
+    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
+                                                   withTags:OCMOCK_ANY
+                                               withTimeZone:nil
+                                              withQuietTime:nil
+                                                  withBadge:OCMOCK_ANY];
+    [[UAPush shared] registrationPayload];
+
+    XCTAssertNoThrow([registrationPayloadClassMock verify], @"registrationPayload should not include quiet time if quiet time is disabled");
+}
+
 @end

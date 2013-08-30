@@ -238,19 +238,10 @@ static Class _uiClass;
 #pragma mark UA Device API Payload
 
 - (UADeviceRegistrationPayload *)registrationPayload {
-    
     NSString *alias =  self.alias;
-    NSArray *tags = nil;
-    
-    if (self.deviceTagsEnabled) {
-        tags = self.tags;
-        // If there are no tags, and tags are editable, send an 
-        // empty array
-        if (!tags) {
-            tags = [NSArray array];
-        }
-    }
-    
+    NSArray *tags = self.deviceTagsEnabled ? self.tags : nil;
+    NSNumber *badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
+
     NSString *tz = nil;
     NSDictionary *quietTime = nil;
     if (self.timeZone.name != nil && self.quietTimeEnabled) {
@@ -258,18 +249,11 @@ static Class _uiClass;
         quietTime = self.quietTime;
     }
 
-    NSNumber *badge = nil;
-    
-    if (self.autobadgeEnabled) {
-        badge = [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]];
-    }
-
-    UADeviceRegistrationPayload *payload = [UADeviceRegistrationPayload payloadWithAlias:alias
-                                                                                withTags:tags
-                                                                            withTimeZone:tz
-                                                                           withQuietTime:quietTime
-                                                                               withBadge:badge];
-    return payload;
+    return [UADeviceRegistrationPayload payloadWithAlias:alias
+                                                withTags:tags
+                                            withTimeZone:tz
+                                           withQuietTime:quietTime
+                                               withBadge:badge];
 }
 
 #pragma mark -
