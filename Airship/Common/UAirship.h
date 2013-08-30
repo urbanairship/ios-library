@@ -70,7 +70,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
-
+/**
+ * This flag is set to `YES` if the application is enabled
+ * and capable of 'remote-notifications' in the background.
+ *
+ */
 @property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
 
 /**

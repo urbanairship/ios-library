@@ -116,7 +116,20 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 + (void)land;
 
-
+/**
+ * Notifies the push delegate of any foreground notification (alert, badge, sound)
+ * for a push
+ * @param notification The notification payload
+ */
 - (void)notifyForegroundNotification:(NSDictionary *)notification;
+
+/**
+ * Registers or updates the current registration with an API call. If push notifications are
+ * not enabled, this unregisters the device token.
+ *
+ * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
+ *
+ *@param forcefully Tells the device api client to do any device api call forcefully.
+ */
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
 @end
