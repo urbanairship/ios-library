@@ -98,7 +98,7 @@
     [UAPush shared].tags = nil;
 
     [[UAPush shared] addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
-    XCTAssertEqualObjects((@[@"tag-one", @"tag-two"]), [UAPush shared].tags, @"Add tags to current device failes when no existing tags exist");
+    XCTAssertEqualObjects((@[@"tag-one", @"tag-two"]), [UAPush shared].tags, @"Add tags to current device fails when no existing tags exist");
 
     // Try to add same tags again
     [[UAPush shared] addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
@@ -121,7 +121,7 @@
     [UAPush shared].tags = nil;
 
     [[UAPush shared] addTagToCurrentDevice:@"tag-one"];
-    XCTAssertEqualObjects((@[@"tag-one"]), [UAPush shared].tags, @"Add tag to current device failes when no existing tags exist");
+    XCTAssertEqualObjects((@[@"tag-one"]), [UAPush shared].tags, @"Add tag to current device fails when no existing tags exist");
 
     // Try to add same tag again
     [[UAPush shared] addTagToCurrentDevice:@"tag-one"];
@@ -150,7 +150,7 @@
 
 - (void)testRemoveTagsFromCurrentDevice {
     [UAPush shared].tags = nil;
-    XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:@[@"some-tag"]], @"Should not throw when removing a tags when tags are empty");
+    XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:@[@"some-tag"]], @"Should not throw when removing tags when current tags are empty");
 
     [UAPush shared].tags = @[@"some-tag", @"some-other-tag"];
     XCTAssertNoThrow([[UAPush shared] removeTagsFromCurrentDevice:@[@"some-not-found-tag"]], @"Should not throw when removing tags that do not exist");
@@ -196,7 +196,7 @@
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"pushEnabled should make unregister with the device api client");
 }
 
-- (void)testSetQuiteTimeFromTo {
+- (void)testSetQuietTimeFromTo {
     NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
     NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
 
@@ -217,7 +217,7 @@
     XCTAssertEqualObjects(@"7:00", [quietTime valueForKey:UAPushQuietTimeEndKey], @"Quiet time end is not set handling timezone correctly");
 }
 
-- (void)testSetQuiteTimeFromToNoTimeZone {
+- (void)testSetQuietTimeFromToNoTimeZone {
     NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
     NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
 
@@ -241,7 +241,7 @@
     XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey], @"timezone should be able to be cleared in standardUserDefaults");
 }
 
-- (void)testRegisterFroRemoteNotificationsPushEnabled {
+- (void)testRegisterForRemoteNotificationsPushEnabled {
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
 
@@ -252,17 +252,17 @@
 
 }
 
-- (void)testRegisterFroRemoteNotificationsPushDisabled {
+- (void)testRegisterForRemoteNotificationsPushDisabled {
     [UAPush shared].pushEnabled = NO;
     [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
 
     [[self.mockedApplication reject] registerForRemoteNotificationTypes:UIRemoteNotificationTypeSound];
     [[UAPush shared] registerForRemoteNotifications];
 
-    XCTAssertNoThrow([self.mockedApplication verify], @"should not register for push notification types when push is enabled");
+    XCTAssertNoThrow([self.mockedApplication verify], @"should not register for push notification types when push is disabled");
 }
 
-- (void)testRegisterFroRemoteNotificationTypesPushEnabled {
+- (void)testRegisterForRemoteNotificationTypesPushEnabled {
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
 
@@ -270,10 +270,10 @@
     [[UAPush shared] registerForRemoteNotificationTypes:UIRemoteNotificationTypeBadge];
 
     XCTAssertNoThrow([self.mockedApplication verify], @"should register for push notification types when push is enabled");
-    XCTAssertEqual(UIRemoteNotificationTypeBadge, [UAPush shared].notificationTypes, @"registerForPushNotificationTypes should still set the notificationTypes when push is disabled");
+    XCTAssertEqual(UIRemoteNotificationTypeBadge, [UAPush shared].notificationTypes, @"registerForPushNotificationTypes should still set the notificationTypes when push is enabled");
 }
 
-- (void)testRegisterFroRemoteNotificationTypesPushDisabled {
+- (void)testRegisterForRemoteNotificationTypesPushDisabled {
     [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
     [UAPush shared].pushEnabled = NO;
 
@@ -296,7 +296,7 @@
     [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
 
     [[UAPush shared] setBadgeNumber:15];
-    XCTAssertNoThrow([self.mockedApplication verify], @"should update applicaiton icon badge number when its different");
+    XCTAssertNoThrow([self.mockedApplication verify], @"should update application icon badge number when its different");
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should update registration so autobadge works");
 }
 
@@ -305,7 +305,7 @@
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:30];
 
     [[UAPush shared] setBadgeNumber:30];
-    XCTAssertNoThrow([self.mockedApplication verify], @"should not update applicaiton icon badge number if there is no change");
+    XCTAssertNoThrow([self.mockedApplication verify], @"should not update application icon badge number if there is no change");
 }
 
 - (void)testSetBadgeNumberAutoBadgeDisabled {
@@ -321,7 +321,7 @@
     [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
 
     [[UAPush shared] setBadgeNumber:15];
-    XCTAssertNoThrow([self.mockedApplication verify], @"should update applicaiton icon badge number when its different");
+    XCTAssertNoThrow([self.mockedApplication verify], @"should update application icon badge number when its different");
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should not update registration because autobadge is disabled");
 }
 
@@ -336,7 +336,7 @@
 
     [[UAPush shared] registerDeviceToken:token];
 
-    XCTAssertNoThrow([self.mockedAnalytics verify], @"should add device registeration event to analytics");
+    XCTAssertNoThrow([self.mockedAnalytics verify], @"should add device registration event to analytics");
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"should update registration on registering device token");
 
     XCTAssertEqualObjects([[UAPush shared] parseDeviceToken:[token description]], [UAPush shared].deviceToken, @"registering device token should set the deviceToken on UAPush");
@@ -363,7 +363,7 @@
     [defaults setValue:[NSNumber numberWithBool:NO] forKey:UAPushEnabledSettingsKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 
-    // Remove exisiting push setting
+    // Remove existing push setting
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushEnabledSettingsKey];
 
      XCTAssertFalse([[NSUserDefaults standardUserDefaults] boolForKey:UAPushEnabledSettingsKey], @"Unable to set push enable default");
