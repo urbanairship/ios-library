@@ -118,5 +118,5 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 
 - (void)notifyForegroundNotification:(NSDictionary *)notification;
-
+- (void)updateRegistrationForcefully:(BOOL)forcefully;
 @end

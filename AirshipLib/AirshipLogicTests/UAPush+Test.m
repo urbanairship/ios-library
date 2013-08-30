@@ -528,4 +528,63 @@
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"push delegate should not receive foreground information for empty push elements");
 }
 
+- (void)testUpdateRegistrationForcefullyPushEnabled {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = @"some-token";
+
+    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[UAPush shared] updateRegistrationForcefully:YES];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should update registration when it has a valid token and the app is not in the background");
+
+    // Verify it skips registration if device token is nil
+    [UAPush shared].deviceToken = nil;
+
+    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[UAPush shared] updateRegistrationForcefully:YES];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip registering if device token is nil");
+
+
+    // Verify it skips registration application state is background
+    [UAPush shared].deviceToken = @"some-token";
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[UAPush shared] updateRegistrationForcefully:YES];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip registering if app is in the background");
+}
+
+- (void)testUpdateRegistrationForcefullyPushDisabled {
+    [UAPush shared].pushEnabled = NO;
+    [UAPush shared].deviceToken = @"some-token";
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
+
+    [[self.mockedDeviceAPIClient expect] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
+    [[UAPush shared] updateRegistrationForcefully:NO];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should unregister when it has a valid token and the app is not in the background");
+
+    // Verify it skips unregistering if UAPushNeedsUnregistering is NO
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
+
+    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[UAPush shared] updateRegistrationForcefully:NO];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip unregistering UAPushNeedsUnregistering is NO");
+
+    // Verify it skips registration if device token is nil
+    [UAPush shared].deviceToken = nil;
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
+
+    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[UAPush shared] updateRegistrationForcefully:NO];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip unregistering if device token is nil");
+
+
+    // Verify it skips registration application state is background
+    [UAPush shared].deviceToken = @"some-token";
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
+    [[UAPush shared] updateRegistrationForcefully:NO];
+    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip unregistering if app is in the background");
+}
+
 @end
