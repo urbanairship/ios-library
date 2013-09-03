@@ -97,7 +97,7 @@
     UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
 
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
-    // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+    // [UAPush shared].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
     
     // Reset the badge after a push received (optional)
     [[UAPush shared] resetBadge];
@@ -107,7 +107,7 @@
     UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
 
     // Optionally provide a delegate that will be used to handle notifications received while the app is running
-    // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+    // [UAPush shared].pushNotificationDelegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
 
     // Reset the badge after a push is received in a active or inactive state
     if (application.applicationState != UIApplicationStateBackground) {
