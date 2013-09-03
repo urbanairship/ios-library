@@ -455,15 +455,14 @@ static Class _uiClass;
         // Alert
         id alert = [apsDict valueForKey:@"alert"];
 		if (alert) {
-			if ([alert isKindOfClass:[NSString class]] &&
+            if ([alert isKindOfClass:[NSString class]] &&
                 [self.pushNotificationDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
 
-				// The alert is a single string message so we can display it
+                // The alert is a single string message so we can display it
                 [self.pushNotificationDelegate displayNotificationAlert:alert];
-
 			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
-				// The alert is a a dictionary with more localization details
-				// This should be customized to fit your message details or usage scenario
+                // The alert is a a dictionary with more localization details
+                // This should be customized to fit your message details or usage scenario
                 [self.pushNotificationDelegate displayLocalizedNotificationAlert:alert];
 			}
 		}
@@ -472,19 +471,18 @@ static Class _uiClass;
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
 
         if (badgeNumber) {
-			if (self.autobadgeEnabled) {
-				[[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-				[self.pushNotificationDelegate handleBadgeUpdate:[badgeNumber intValue]];
+            if (self.autobadgeEnabled) {
+                [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+            } else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
+                [self.pushNotificationDelegate handleBadgeUpdate:[badgeNumber intValue]];
 			}
         }
 
         // Sound
-		NSString *soundName = [apsDict valueForKey:@"sound"];
-		if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
-			[self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
-		}
-        
+        NSString *soundName = [apsDict valueForKey:@"sound"];
+        if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
+            [self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+        }
 	}
 }
 
