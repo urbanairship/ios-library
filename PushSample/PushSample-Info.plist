@@ -33,6 +33,10 @@
 	<string>MainWindow_Phone</string>
 	<key>NSMainNibFile~ipad</key>
 	<string>MainWindow_Pad</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchImageFile~ipad</key>
 	<string>iPadDefault</string>
 	<key>UIPrerenderedIcon</key>
