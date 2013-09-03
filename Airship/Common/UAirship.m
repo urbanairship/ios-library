@@ -206,7 +206,15 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     //init first event
     [_sharedAirship.analytics addEvent:[UAEventAppInit eventWithContext:nil]];
 
-    if (remoteNotification && !_sharedAirship.backgroundNotificationEnabled) {
+
+    // If the device is running iOS7 or greater, and the app delegate responds to
+    // application:handleEventsForBackgroundURLSession:completionHandler:, it will
+    // call the app delegate right after launch.
+    
+    BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleEventsForBackgroundURLSession:completionHandler:)]
+    && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
+
+    if (remoteNotification && !skipNotifyPush) {
         [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
         [UAInboxPushHandler handleNotification:remoteNotification];
     }
