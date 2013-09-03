@@ -591,17 +591,6 @@
 			name = HTTP;
 			sourceTree = "<group>";
 		};
-		495048AF173AD3CA00F8B5BE /* PushLib */ = {
-			isa = PBXGroup;
-			children = (
-				495048B0173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.h */,
-				495048B1173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m */,
-				495048B3173AD41A00F8B5BE /* UADeviceRegistrationDataTest.h */,
-				495048B4173AD41A00F8B5BE /* UADeviceRegistrationDataTest.m */,
-			);
-			name = PushLib;
-			sourceTree = "<group>";
-		};
 		49995CED172AF52100103932 /* HTTP */ = {
 			isa = PBXGroup;
 			children = (
@@ -627,27 +616,9 @@
 				CCD3158217CFBD45002E93A1 /* Push */,
 				CC4C2A0D17CE50BE003B9A55 /* Common */,
 				CCB7DF5917BBF19E00CEDC56 /* Inbox */,
-				CC85FD141773A0CB0074674F /* Analytics */,
 				7BB679661429357100B877DB /* Frameworks */,
-				4950489E1738590D00F8B5BE /* HTTP */,
 				1FF8221017A1D0B60092F812 /* JRSwizzle */,
-				495048AF173AD3CA00F8B5BE /* PushLib */,
 				7BB6790D1429288D00B877DB /* Supporting Files */,
-				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
-				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
-				1F675944175682DF00C062E0 /* UAConfigTest.h */,
-				1F675945175682DF00C062E0 /* UAConfigTest.m */,
-				494BF70F17628B1800B25E12 /* UAirship+Test.h */,
-				494BF71017628B1900B25E12 /* UAirship+Test.m */,
-				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
-				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
-				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
-				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
-				494BF701176277E000B25E12 /* UAUserTest.h */,
-				494BF702176277E000B25E12 /* UAUserTest.m */,
-				7BB679121429288D00B877DB /* UAUtilsTest.h */,
-				7BB679141429288D00B877DB /* UAUtilsTest.m */,
-				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -687,7 +658,17 @@
 		CC4C2A0D17CE50BE003B9A55 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				CC85FD141773A0CB0074674F /* Analytics */,
 				CC4C2A0E17CE50C7003B9A55 /* AppDelegates */,
+				4950489E1738590D00F8B5BE /* HTTP */,
+				CCF0A53B17D139B200098A2B /* Location */,
+				CCF0A53C17D139D500098A2B /* User */,
+				CCF0A53D17D139DF00098A2B /* Util */,
+				494BF70F17628B1800B25E12 /* UAirship+Test.h */,
+				494BF71017628B1900B25E12 /* UAirship+Test.m */,
+				1F675944175682DF00C062E0 /* UAConfigTest.h */,
+				1F675945175682DF00C062E0 /* UAConfigTest.m */,
+				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -720,9 +701,44 @@
 		CCD3158217CFBD45002E93A1 /* Push */ = {
 			isa = PBXGroup;
 			children = (
+				495048B0173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.h */,
+				495048B1173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m */,
+				495048B3173AD41A00F8B5BE /* UADeviceRegistrationDataTest.h */,
+				495048B4173AD41A00F8B5BE /* UADeviceRegistrationDataTest.m */,
 				CCD3158317CFBD5A002E93A1 /* UAPush+Test.m */,
 			);
 			name = Push;
+			sourceTree = "<group>";
+		};
+		CCF0A53B17D139B200098A2B /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */,
+				BBB87D5D150574DE00971CEC /* UALocationServiceTest.m */,
+				BB484B2915910C370097B38C /* UALocationTestUtils.h */,
+				BB484B2A15910C370097B38C /* UALocationTestUtils.m */,
+				BBB87D56150574DE00971CEC /* CLLocationManager+Test.h */,
+				BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */,
+			);
+			name = Location;
+			sourceTree = "<group>";
+		};
+		CCF0A53C17D139D500098A2B /* User */ = {
+			isa = PBXGroup;
+			children = (
+				494BF701176277E000B25E12 /* UAUserTest.h */,
+				494BF702176277E000B25E12 /* UAUserTest.m */,
+			);
+			name = User;
+			sourceTree = "<group>";
+		};
+		CCF0A53D17D139DF00098A2B /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				7BB679121429288D00B877DB /* UAUtilsTest.h */,
+				7BB679141429288D00B877DB /* UAUtilsTest.m */,
+			);
+			name = Util;
 			sourceTree = "<group>";
 		};
 		D9FD1A13122DB77000522B4E /* Airship */ = {
