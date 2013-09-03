@@ -119,6 +119,13 @@
  */
 - (void)receivedBackgroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
+/**
+ * Called when a push notification is received while the app is running in the background.
+ *
+ * @param notification The notification dictionary.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification;
+
 
 /**
  * Called when the app is started or resumed because a user opened a notification.

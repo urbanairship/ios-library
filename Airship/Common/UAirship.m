@@ -215,7 +215,8 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
-        [[UAPush shared] handleNotification:remoteNotification applicationState:UIApplicationStateInactive];/*set the state to inactive as we're still launching*/
+        [[UAPush shared] handleNotification:remoteNotification
+                           applicationState:[UIApplication sharedApplication].applicationState];
         [UAInboxPushHandler handleNotification:remoteNotification];
     }
 

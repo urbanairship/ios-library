@@ -391,7 +391,10 @@ static Class _uiClass;
             break;
 
         case UIApplicationStateBackground:
-            // Do nothing, probably news stand content
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
+            if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
+                [self.pushNotificationDelegate receivedBackgroundNotification:notification];
+            }
             break;
     }
 }
@@ -437,7 +440,17 @@ static Class _uiClass;
         case UIApplicationStateBackground:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
             if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
-                [self.pushNotificationDelegate receivedBackgroundNotification:notification fetchCompletionHandler:completionHandler];
+                [self.pushNotificationDelegate receivedBackgroundNotification:notification
+                                                       fetchCompletionHandler:completionHandler];
+            } else {
+                if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
+
+                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
+
+                    [self.pushNotificationDelegate receivedBackgroundNotification:notification];
+                }
+
+                completionHandler(UIBackgroundFetchResultNoData);
             }
             break;
     }
