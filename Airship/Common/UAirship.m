@@ -301,25 +301,50 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     if (self.backgroundNotificationEnabled) {
 
         if (self.config.automaticSetupEnabled) {
-            id appDelegate = self.appDelegate.defaultAppDelegate;
+            id delegate = self.appDelegate.defaultAppDelegate;
 
             // If its automatic setup up, make sure if they are implmenting own app delegates, that they are
             // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.
-            if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
-                && ![appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+            if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
 
                 UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler.  application:didReceiveRemoteNotification: will be ignored.");
             }
         } else {
-            id appDelegate = [UIApplication sharedApplication].delegate;
+            id delegate = [UIApplication sharedApplication].delegate;
 
             // They must implement application:didReceiveRemoteNotification:fetchCompletionHandler: to handle background
             // notifications
-            if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
-                && ![appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+            if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
 
                 UA_LWARN(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
             }
+        }
+    }
+
+    // Push notification delegate validation
+    id appDelegate = [UIApplication sharedApplication].delegate;
+    if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+        id pushDelegate = [UAPush shared].pushNotificationDelegate;
+
+        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
+
+             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:.  receivedForegroundNotification: will still be called.");
+
+        }
+
+        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
+
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:.  launchedFromNotification: will still be called.");
+        }
+
+        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
+
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
         }
     }
 }
