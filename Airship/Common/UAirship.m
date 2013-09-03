@@ -180,6 +180,10 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
     }
 
+    if (!config.inProduction) {
+        [_sharedAirship validate];
+    }
+
 
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
@@ -290,6 +294,59 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UAHTTPRequest setDefaultUserAgentString:userAgent];
+}
+
+- (void)validate {
+    // Background notification validation
+    if (self.backgroundNotificationEnabled) {
+
+        if (self.config.automaticSetupEnabled) {
+            id delegate = self.appDelegate.defaultAppDelegate;
+
+            // If its automatic setup up, make sure if they are implementing their own app delegates, that they are
+            // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.
+            if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+
+                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler.  application:didReceiveRemoteNotification: will be ignored.");
+            }
+        } else {
+            id delegate = [UIApplication sharedApplication].delegate;
+
+            // They must implement application:didReceiveRemoteNotification:fetchCompletionHandler: to handle background
+            // notifications
+            if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+
+                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
+            }
+        }
+    }
+
+    // Push notification delegate validation
+    id appDelegate = [UIApplication sharedApplication].delegate;
+    if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+        id pushDelegate = [UAPush shared].pushNotificationDelegate;
+
+        if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
+
+             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:.  receivedForegroundNotification: will still be called.");
+
+        }
+
+        if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
+
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:.  launchedFromNotification: will still be called.");
+        }
+
+        if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]
+            && ! [pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
+
+            UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
+        }
+    }
 }
 
 @end
