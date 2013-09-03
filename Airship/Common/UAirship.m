@@ -303,7 +303,7 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         if (self.config.automaticSetupEnabled) {
             id delegate = self.appDelegate.defaultAppDelegate;
 
-            // If its automatic setup up, make sure if they are implmenting own app delegates, that they are
+            // If its automatic setup up, make sure if they are implementing their own app delegates, that they are
             // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.
             if ([delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
                 && ![delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
