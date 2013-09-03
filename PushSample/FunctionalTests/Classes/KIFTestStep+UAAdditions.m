@@ -35,7 +35,7 @@
 + (id)stepToSetUniqueID:(NSString *)alertID {
     return [KIFTestStep stepWithDescription:@"Set uniqueID." executionBlock:^(KIFTestStep *step, NSError **error) {
 
-        UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAPush shared].delegate;
+        UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAPush shared].pushNotificationDelegate;
         pushDelegate.uniqueID = alertID;
 
         return KIFTestStepResultSuccess;
