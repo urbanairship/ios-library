@@ -180,6 +180,10 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];
     }
 
+    if (!config.inProduction) {
+        [_sharedAirship validate];
+    }
+
 
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
@@ -290,6 +294,34 @@ UALogLevel uaLogLevel = UALogLevelUndefined;
     
     UALOG(@"Setting User-Agent for UA requests to %@", userAgent);
     [UAHTTPRequest setDefaultUserAgentString:userAgent];
+}
+
+- (void)validate {
+    // Background notification validation
+    if (self.backgroundNotificationEnabled) {
+
+        if (self.config.automaticSetupEnabled) {
+            id appDelegate = self.appDelegate.defaultAppDelegate;
+
+            // If its automatic setup up, make sure if they are implmenting own app delegates, that they are
+            // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.
+            if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+
+                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate only implements application:didReceiveRemoteNotification: and not application:didReceiveRemoteNotification:fetchCompletionHandler.  application:didReceiveRemoteNotification: will be ignored.");
+            }
+        } else {
+            id appDelegate = [UIApplication sharedApplication].delegate;
+
+            // They must implement application:didReceiveRemoteNotification:fetchCompletionHandler: to handle background
+            // notifications
+            if ([appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:)]
+                && ![appDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]) {
+
+                UA_LWARN(@"Application is set up to receive background notifications, but the app delegate does not implements application:didReceiveRemoteNotification:fetchCompletionHandler:. Use either UAirship automaticSetupEnabled or implement a proper application:didReceiveRemoteNotification:fetchCompletionHandler: in the app delegate.");
+            }
+        }
+    }
 }
 
 @end
