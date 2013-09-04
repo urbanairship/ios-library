@@ -24,23 +24,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInboxMessage.h"
+#import "UAInboxMessage+Internal.h"
 
 #import "UAirship.h"
 #import "UAInbox.h"
-#import "UAInboxAPIClient.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxDBManager.h"
 #import "UAHTTPConnection.h"
 #import "UAUtils.h"
 #import "UAGlobal.h"
-
-/*
- * Private methods
- */
-@interface UAInboxMessage ()
-@property(nonatomic, strong) UAInboxAPIClient *client;
-@end
 
 /*
  * Implementation

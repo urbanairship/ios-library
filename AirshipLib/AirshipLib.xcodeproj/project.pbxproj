@@ -60,6 +60,8 @@
 		494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF71017628B1900B25E12 /* UAirship+Test.m */; };
 		495008A617D67D35001784ED /* UAInboxMessageList+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 495008A517D67D35001784ED /* UAInboxMessageList+Internal.h */; };
 		495008A917D68717001784ED /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495008A817D68717001784ED /* UAUser+Test.m */; };
+		495008AF17D79B74001784ED /* UAInboxMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495008AE17D79B74001784ED /* UAInboxMessageTest.m */; };
+		495008B117D79D1E001784ED /* UAInboxMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 495008B017D79D1E001784ED /* UAInboxMessage+Internal.h */; };
 		495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */; };
 		495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A31738778300F8B5BE /* UAHTTPConnection+Test.m */; };
 		495048A71738812500F8B5BE /* UADelayOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048A51738812500F8B5BE /* UADelayOperation.h */; };
@@ -241,6 +243,8 @@
 		495008A517D67D35001784ED /* UAInboxMessageList+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessageList+Internal.h"; sourceTree = "<group>"; };
 		495008A717D68717001784ED /* UAUser+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Test.h"; sourceTree = "<group>"; };
 		495008A817D68717001784ED /* UAUser+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAUser+Test.m"; sourceTree = "<group>"; };
+		495008AE17D79B74001784ED /* UAInboxMessageTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageTest.m; sourceTree = "<group>"; };
+		495008B017D79D1E001784ED /* UAInboxMessage+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxMessage+Internal.h"; sourceTree = "<group>"; };
 		4950489F1738593000F8B5BE /* UAHTTPConnectionOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperationTest.h; sourceTree = "<group>"; };
 		495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPConnectionOperationTest.m; sourceTree = "<group>"; };
 		495048A21738778300F8B5BE /* UAHTTPConnection+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPConnection+Test.h"; sourceTree = "<group>"; };
@@ -501,6 +505,7 @@
 				1F610DC817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h */,
 				1F610DC917835C3A00BCD96E /* UAInboxDefaultJSDelegate.m */,
 				1F610DCA17835C3A00BCD96E /* UAInboxMessage.h */,
+				495008B017D79D1E001784ED /* UAInboxMessage+Internal.h */,
 				1F610DCB17835C3A00BCD96E /* UAInboxMessage.m */,
 				1F610DCC17835C3A00BCD96E /* UAInboxMessageList.h */,
 				495008A517D67D35001784ED /* UAInboxMessageList+Internal.h */,
@@ -731,6 +736,7 @@
 			children = (
 				CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */,
 				49F0CC9117D66727007D7D62 /* UAInboxMessageListTest.m */,
+				495008AE17D79B74001784ED /* UAInboxMessageTest.m */,
 			);
 			name = Inbox;
 			sourceTree = "<group>";
@@ -823,6 +829,7 @@
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
+				495008B117D79D1E001784ED /* UAInboxMessage+Internal.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
@@ -983,6 +990,7 @@
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
+				495008AF17D79B74001784ED /* UAInboxMessageTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
