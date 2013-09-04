@@ -24,6 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAInboxMessageList.h"
+#import "UAInboxMessageList+Internal.h"
 
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -47,7 +48,6 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 - (void)loadSavedMessages;
 
-@property(nonatomic, strong) UAInboxAPIClient *client;
 @property(nonatomic, assign) BOOL isRetrieving;
 
 @end
