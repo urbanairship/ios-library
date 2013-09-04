@@ -273,7 +273,6 @@
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
-
 }
 
 - (void)testMarkAsReadWithBlocksSuccessDisposal {
@@ -310,7 +309,6 @@
 
     [self.mockMessageListObserver verify];
     [self.mockMessageListDelegate verify];
-
 }
 
 - (void)testMarkAsReadWithBlocksFailureDisposal {
