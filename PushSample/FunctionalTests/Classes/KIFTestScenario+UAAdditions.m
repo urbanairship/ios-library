@@ -36,6 +36,11 @@
 #define kAliasTagsRegistrationWait 30.0
 #define kPushWait 90.0
 
+// TODO: Remove this when its actually available
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
+#endif
+
 @implementation KIFTestScenario (UAAdditions)
 
 + (id)scenarioToEnablePush {
@@ -123,9 +128,8 @@
             [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag]
                                                       traits:UIAccessibilityTraitButton]];
 
-        // Detect the iOS version at run-time using feature detection of NSURLSession (added in iOS 7).
         // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.
-        if ([NSURLSession class]) {
+        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
             [scenario addStep:
              [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"]
                                                        traits:UIAccessibilityTraitButton]];
