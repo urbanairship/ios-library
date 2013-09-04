@@ -36,6 +36,11 @@
 #define kAliasTagsRegistrationWait 30.0
 #define kPushWait 90.0
 
+// TODO: Remove this when its actually available
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
+#endif
+
 @implementation KIFTestScenario (UAAdditions)
 
 + (id)scenarioToEnablePush {
@@ -84,7 +89,7 @@
 
 + (id)scenarioToSetAlias {
 
-    NSString *uniqueAlias = [UAUtils UUID];
+    NSString *uniqueAlias = [[UAUtils UUID] lowercaseString];
 
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that an alias can be set and we can receive a push"];
 
@@ -112,7 +117,7 @@
     
     KIFTestScenario *scenario = [KIFTestScenario scenarioWithDescription:@"Test that a tag can be set."];
 
-    NSString *uniqueTag = [UAUtils UUID];
+    NSString *uniqueTag = [[UAUtils UUID] lowercaseString];
 
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Token Settings"]];
     [scenario addStep:[KIFTestStep stepToTapViewWithAccessibilityLabel:@"Tags"]];
@@ -122,9 +127,17 @@
         [scenario addStep:
             [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag]
                                                       traits:UIAccessibilityTraitButton]];
-        [scenario addStep:
-         [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Confirm Deletion for %@", tag]
-                                                   traits:UIAccessibilityTraitButton]];
+
+        // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.
+        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
+            [scenario addStep:
+             [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"]
+                                                       traits:UIAccessibilityTraitButton]];
+        } else {
+            [scenario addStep:
+             [KIFTestStep stepToTapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Confirm Deletion for %@", tag]
+                                                       traits:UIAccessibilityTraitButton]];
+        }
     }
 
     // add a tag with the uniqueTag
