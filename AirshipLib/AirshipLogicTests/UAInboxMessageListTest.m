@@ -92,6 +92,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList retrieveMessageList];
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListFailure {
@@ -110,7 +114,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList retrieveMessageList];
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testRetrieveMessageListWithDelegateDefaultUserNotCreated {
     //if there's no user, the delegate version of this method should do nothing and return a nil disposable
@@ -141,6 +148,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListWithDelegateFailure {
@@ -162,6 +173,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList retrieveMessageListWithDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListWithDelegateSuccessDisposal {
@@ -191,7 +206,10 @@ static UAUser *mockUser = nil;
     //disposal should prevent the successBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testRetrieveMessageListWithDelegateFailureDisposal {
 
@@ -221,6 +239,10 @@ static UAUser *mockUser = nil;
     //otherwise we should see unexpected callbacks
 
     trigger();
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListWithBlocksDefaultUserNotCreated {
@@ -265,6 +287,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been called");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListWithBlocksFailure {
@@ -291,6 +317,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertTrue(fail, @"failure block should have been called");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testRetrieveMessageListWithBlocksSuccessDisposal {
@@ -328,7 +358,10 @@ static UAUser *mockUser = nil;
     trigger();
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testRetrieveMessageListWithBlocksFailureDisposal {
 
@@ -366,6 +399,10 @@ static UAUser *mockUser = nil;
     trigger();
 
     XCTAssertFalse(fail, @"callback blocks should not have been executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadSuccess {
@@ -383,6 +420,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadFailure {
@@ -400,6 +441,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil];
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithDelegateSuccess {
@@ -421,6 +466,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithDelegateFailure {
@@ -442,6 +491,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithDelegateSuccessDisposal {
@@ -472,7 +525,10 @@ static UAUser *mockUser = nil;
     //disposal should prevent the successBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testPerformBatchMarkAsReadWithDelegateFailureDisposal {
 
@@ -492,8 +548,6 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListObserver expect] messageListWillLoad];
     [[self.mockMessageListObserver expect] batchMarkAsReadFailed];
 
-    [[self.mockMessageListDelegate expect] batchMarkAsReadFailed];
-
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
@@ -504,6 +558,10 @@ static UAUser *mockUser = nil;
     //disposal should prevent the failureBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithBlocksSuccess {
@@ -531,6 +589,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithBlocksFailure {
@@ -557,7 +619,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"failure block should have been executed");
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testPerformBatchMarkAsReadWithBlocksSuccessDisposal {
 
@@ -595,6 +660,10 @@ static UAUser *mockUser = nil;
     trigger();
 
     XCTAssertFalse(fail, @"callback blocks should not have executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchMarkAsReadWithBlocksFailureDisposal {
@@ -633,6 +702,10 @@ static UAUser *mockUser = nil;
     trigger();
 
     XCTAssertFalse(fail, @"callback blocks should not have executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteSuccess {
@@ -650,6 +723,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteFailure {
@@ -667,7 +744,10 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
     [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil];
-}
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];}
 
 - (void)testPerformBatchDeleteWithDelegateSuccess {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
@@ -688,6 +768,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithDelegateFailure {
@@ -709,6 +793,10 @@ static UAUser *mockUser = nil;
     UADisposable *disposable = [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages withMessageIndexSet:nil withDelegate:self.mockMessageListDelegate];
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithDelegateSuccessDisposal {
@@ -739,6 +827,10 @@ static UAUser *mockUser = nil;
     //disposal should prevent the successBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithDelegateFailureDisposal {
@@ -759,8 +851,6 @@ static UAUser *mockUser = nil;
     [[self.mockMessageListObserver expect] messageListWillLoad];
     [[self.mockMessageListObserver expect] batchDeleteFailed];
 
-    [[self.mockMessageListDelegate expect] batchDeleteFailed];
-
     [[self.mockMessageListNotificationObserver expect] messageListWillUpdate];
     [[self.mockMessageListNotificationObserver expect] messageListUpdated];
 
@@ -771,6 +861,10 @@ static UAUser *mockUser = nil;
     //disposal should prevent the failureBlock from being executed in the trigger function
     //otherwise we should see unexpected callbacks
     trigger();
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithBlocksSuccess {
@@ -798,6 +892,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"success block should have been executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithBlocksFailure {
@@ -824,6 +922,10 @@ static UAUser *mockUser = nil;
 
     XCTAssertNotNil(disposable, @"disposable should be non-nil");
     XCTAssertFalse(fail, @"failure block should have been executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithBlocksSuccessDisposal {
@@ -862,6 +964,10 @@ static UAUser *mockUser = nil;
     trigger();
 
     XCTAssertFalse(fail, @"callback blocks should not have executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 - (void)testPerformBatchDeleteWithBlocksFailureDisposal {
@@ -900,6 +1006,10 @@ static UAUser *mockUser = nil;
     trigger();
     
     XCTAssertFalse(fail, @"callback blocks should not have executed");
+
+    [self.mockMessageListObserver verify];
+    [self.mockMessageListDelegate verify];
+    [self.mockMessageListNotificationObserver verify];
 }
 
 @end
