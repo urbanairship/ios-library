@@ -105,7 +105,7 @@
         return (BOOL)(status == 201);
     } retryWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 500 && status <= 599);
+        return (BOOL)((status >= 500 && status <= 599) || request.error);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         UA_SBJsonParser *parser = [[[UA_SBJsonParser alloc] init] autorelease];
         NSDictionary *result = [parser objectWithString:request.responseString];
@@ -143,7 +143,7 @@
         return (BOOL)(status == 200 || status == 201);
     } retryWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status >= 500 && status <= 599);
+        return (BOOL)((status >= 500 && status <= 599) || request.error);
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         // The dictionary for the post body is built as follows in updateDeviceToken
         //    "device_tokens" =     {
