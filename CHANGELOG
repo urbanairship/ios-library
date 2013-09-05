@@ -1,4 +1,9 @@
 -------------------------
+2.0.4 - September 5, 2013
+-------------------------
+- Fixed a bug that could cause failing Inbox API requests to retry indefinitely.
+- Fixed Inbox database schema error resulting in the Inbox message list to be unavailable when the device is offline.
+-------------------------
 2.0.3 - August 23, 2013
 -------------------------
 - Fixed an analytics bug where opening an application for the first time from a push notification would not count it
