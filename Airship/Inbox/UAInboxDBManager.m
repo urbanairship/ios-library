@@ -55,13 +55,13 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 
 - (void)resetDB {
     [self.db executeUpdate:@"DROP TABLE messages"];
-    [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+    [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255), rawMessageObject BLOB)"];
     UA_FMDBLogError
 }
 
 - (void)initDBIfNeeded {
     if (![self.db tableExists:@"messages"]) {
-        [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255))"];
+        [self.db executeUpdate:@"CREATE TABLE messages (id VARCHAR(255) PRIMARY KEY, title VARCHAR(255), body_url VARCHAR(255), sent_time VARCHAR(255), unread INTEGER, url VARCHAR(255), app_id VARCHAR(255), user_id VARCHAR(255), extra VARCHAR(255), rawMessageObject BLOB)"];
         UA_FMDBLogError
     }
 }
@@ -97,7 +97,8 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
         
         msg.extra = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"extra"]];
 
-        msg.rawMessageObject = [[[UA_SBJsonParser new] autorelease] objectWithString:[rs stringForColumn:@"rawMessageObject"]];
+        NSString *messageJSON = [[[NSString alloc] initWithData:[rs dataForColumn:@"rawMessageObject"] encoding:NSUTF8StringEncoding] autorelease];
+        msg.rawMessageObject = [[[UA_SBJsonParser new] autorelease] objectWithString:messageJSON];
         
         [result addObject: msg];
     }
