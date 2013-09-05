@@ -32,10 +32,14 @@
 }
 
 - (void)tearDown {
-    // Put teardown code here; it will be run once, after the last test case.
+    [self.mockDeviceAPIClient stopMocking];
+    [self.mockRegistrationDelegate stopMocking];
+    [self.mockRegistrationObserver stopMocking];
     [super tearDown];
 }
 
+//when push is enabled, updateRegistration should result in a registerDeviceTokenSucceeded callback
+//to the observer and delegate on success
 - (void)testUpdateRegistrationPushEnabledSuccess {
 
     //the device api client should receive a registration call.
@@ -56,7 +60,8 @@
     [[UAPush shared] updateRegistration];
 }
 
-
+//when push is enabled, updateRegistration should result in a registerDeviceTokenFailed callback
+//to the observer and delegate on failure
 - (void)testUpdateRegistrationPushEnabledFailure {
 
     //the device api client should receive an registration call.
@@ -78,6 +83,8 @@
     [[UAPush shared] updateRegistration];
 }
 
+//when push is disabled, updateRegistration should result in a unregisterDeviceTokenSucceeded callback
+//to the observer and delegate on success
 - (void)testUpdateRegistrationPushDisabledSuccess {
 
     //the device api client should receive an unregistration call.
@@ -98,6 +105,8 @@
     [[UAPush shared] updateRegistration];
 }
 
+//when push is disabled, updateRegistration should result in a unregisterDeviceTokenFailed callback
+//to the observer and delegate on failure
 - (void)testUpdateRegistrationPushDisabledFailure {
 
     //the device api client should receive an unregistration call.

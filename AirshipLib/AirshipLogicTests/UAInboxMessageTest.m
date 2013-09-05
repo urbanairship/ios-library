@@ -72,6 +72,9 @@
     [super tearDown];
 }
 
+#pragma mark deprecated methods
+
+//if successful, the observer should get a singleMessageMarkAsReadFinished callback
 - (void)testMarkAsReadSuccess {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -88,6 +91,7 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if unsuccessful, the observer should get a singleMessageMarkAsReadFailed callback
 - (void)testMarkAsReadFailure {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -104,6 +108,7 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if the inbox is currently batch updating, this method should do nothing
 - (void)testMarkAsReadBatchUpdating {
     [UAInbox shared].messageList.isBatchUpdating = YES;
     [self.message markAsRead];
@@ -112,6 +117,7 @@
     [UAInbox shared].messageList.isBatchUpdating = NO;
 }
 
+//if the message is already marked read, this method should do nothing
 - (void)testMarkAsReadAlreadyMarkedRead {
     self.message.unread = NO;
     [self.message markAsRead];
@@ -120,6 +126,11 @@
     self.message.unread = YES;
 }
 
+#pragma mark delegate methods
+
+//if successful, the observer should get a singleMessageMarkAsReadFinished callback.
+//the delegate should get a singleMessageMarkAsReadFinished callback.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithDelegateSuccess {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -138,6 +149,9 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if unsuccessful, the observer should get a singleMessageMarkAsReadFailed callback.
+//the delegate should get a singleMessageMarkAsReadFailed callback.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithDelegateFailure {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -156,6 +170,9 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if successful, the observer should get a singleMessageMarkAsReadFinished callback.
+//if dispose is called on the disposable, delegate callbacks should be cancelled.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithDelegateSuccessDisposal {
 
     __block void (^trigger)(void) = ^{
@@ -181,6 +198,9 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if unsuccessful, the observer should get a singleMessageMarkAsReadFailed callback.
+//if dispose is called on the disposable, delegate callbacks should be cancelled.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithDelegateFailureDisposal {
 
     __block void (^trigger)(void) = ^{
@@ -206,7 +226,8 @@
     [self.mockMessageListDelegate verify];
 }
 
-
+//if the inbox is currently batch updating, this method should do nothing.
+//the returned disposable should be nil.
 - (void)testMarkAsReadWithDelegateBatchUpdating {
     [UAInbox shared].messageList.isBatchUpdating = YES;
     UADisposable *disposable = [self.message markAsReadWithDelegate:self.mockMessageListDelegate];
@@ -216,6 +237,8 @@
     [UAInbox shared].messageList.isBatchUpdating = NO;
 }
 
+//if the message is already marked as read, this method should do nothing.
+//the returned disposable should be nil.
 - (void)testMarkAsReadWithDelegateAlreadyMarkedRead {
     self.message.unread = NO;
     UADisposable *disposable = [self.message markAsReadWithDelegate:self.mockMessageListDelegate];
@@ -225,6 +248,11 @@
     self.message.unread = YES;
 }
 
+#pragma mark block-based methods
+
+//if successful, the observer should get a singleMessageMarkAsReadFinished callback.
+//the successBlock should be executed.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithBlocksSuccess {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -250,6 +278,9 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if successful, the observer should get a singleMessageMarkAsReadFailed callback.
+//the failureBlock should be executed.
+//the returned disposable should be non-nil.
 - (void)testMarkAsReadWithBlocksFailure {
     [[[self.mockInboxAPIClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -275,6 +306,8 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if successful, the observer should get a singleMessageMarkAsReadFinished callback.
+//if dispose is called on the disposable, the successBlock should not be executed.
 - (void)testMarkAsReadWithBlocksSuccessDisposal {
 
     __block void (^trigger)(void) = ^{
@@ -311,6 +344,8 @@
     [self.mockMessageListDelegate verify];
 }
 
+//if successful, the observer should get a singleMessageMarkAsReadFailed callback.
+//if dispose is called on the disposable, the failureBlock should not be executed.
 - (void)testMarkAsReadWithBlocksFailureDisposal {
 
     __block void (^trigger)(void) = ^{
@@ -347,7 +382,8 @@
     [self.mockMessageListDelegate verify];
 }
 
-
+//if the inbox is currently batch updating, this method should do nothing.
+//the returned disposable should be nil.
 - (void)testMarkAsReadWithBlocksBatchUpdating {
     [UAInbox shared].messageList.isBatchUpdating = YES;
     __block BOOL fail = NO;
@@ -365,6 +401,8 @@
     [UAInbox shared].messageList.isBatchUpdating = NO;
 }
 
+//if the message is already marked as read, this method should do nothing.
+//the returned disposable should be nil.
 - (void)testMarkAsReadWithBlocksAlreadyMarkedRead {
     self.message.unread = NO;
     __block BOOL fail = NO;
@@ -381,7 +419,5 @@
     //unexpected methods will be called.
     self.message.unread = YES;
 }
-
-
 
 @end
