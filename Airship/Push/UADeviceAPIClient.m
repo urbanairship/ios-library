@@ -138,7 +138,7 @@
      }
      retryWhere:^(UAHTTPRequest *request) {
          NSInteger status = request.response.statusCode;
-         return (BOOL)(status >= 500 && status <= 599 && self.shouldRetryOnConnectionError);
+         return (BOOL)(((status >= 500 && status <= 599)|| request.error) && self.shouldRetryOnConnectionError);
      }
      onSuccess:successBlock
      onFailure:failureBlock
@@ -168,7 +168,7 @@
      }
      retryWhere:^(UAHTTPRequest *request) {
          NSInteger status = request.response.statusCode;
-         return (BOOL)(status >= 500 && status <= 599 && self.shouldRetryOnConnectionError);
+         return (BOOL)(((status >= 500 && status <= 599) || request.error) && self.shouldRetryOnConnectionError);
      }
      onSuccess:successBlock
      onFailure:failureBlock
