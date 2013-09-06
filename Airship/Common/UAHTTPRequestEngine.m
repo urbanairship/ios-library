@@ -75,10 +75,6 @@
             UA_LERR(@"missing retryWhereBlock");
         }
 
-        if (request.error) {
-            shouldRetry = YES;
-        }
-
         if (shouldRetry) {
             retry(request);
         } else {

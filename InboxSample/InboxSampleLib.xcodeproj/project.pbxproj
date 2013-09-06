@@ -188,7 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
-				1F42314516C19AAC004B52C1 /* libUAirship-2.0.3.a in Frameworks */,
+				1F42314516C19AAC004B52C1 /* libUAirship-2.0.4.a in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
 				1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */,
