@@ -25,7 +25,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SampleAppDelegate : NSObject <UIApplicationDelegate>
+@interface SampleAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UIViewController *controller;

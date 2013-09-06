@@ -27,6 +27,11 @@
 
 @implementation UABaseAppDelegateSurrogate
 
+- (id)init {
+    //NSProxy has no default init method, so [super init] is unnecessary
+    return self;
+}
+
 - (void)forwardInvocation:(NSInvocation *)invocation {
     SEL selector = [invocation selector];
 
@@ -44,48 +49,46 @@
 
     BOOL responds = NO;
 
-    //give the surrogate and default app delegates an opportunity to handle the message
+    /*
+     Give the surrogate and default app delegates an opportunity to handle the message
+
+     NOTE: The order here is crucial. NSInvocation sets a return value after being invoked,
+     which is the value returned to the original sender. Since our surrogateDelegate does not
+     implement any methods with return values, we want to make sure that the defaultAppDelegate
+     always wins, which means it should be invoked last.
+     */
     if ([self.surrogateDelegate respondsToSelector:selector]) {
         responds = YES;
         [invocation invokeWithTarget:self.surrogateDelegate];
     }
+
     if ([self.defaultAppDelegate respondsToSelector:selector]) {
         responds = YES;
         [invocation invokeWithTarget:self.defaultAppDelegate];
     }
 
     if (!responds) {
-        //in the off chance that neither app delegate responds, forward the message
+        //In the off chance that neither app delegate responds, forward the message
         //to the default app delegate anyway.  this will likely result in a crash,
         //but that way the exception will come from the expected location
         [invocation invokeWithTarget:self.defaultAppDelegate];
     }
-
 }
 
-- (BOOL)respondsToSelector:(SEL)selector {
-    if ([super respondsToSelector:selector]) {
-        return YES;
-    } else {
-        //if this isn't a selector we normally respond to, say we do as long as either delegate does
-        if ([self.defaultAppDelegate respondsToSelector:selector] || [self.surrogateDelegate respondsToSelector:selector]) {
-            return YES;
-        }
-    }
 
-    return NO;
+- (BOOL)respondsToSelector:(SEL)selector {
+    //If this isn't a selector we normally respond to, say we do as long as either delegate does
+    return ([self.defaultAppDelegate respondsToSelector:selector] || [self.surrogateDelegate respondsToSelector:selector]);
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
     NSMethodSignature *signature = nil;
+
     // First non nil method signature returns
-    signature = [super methodSignatureForSelector:selector];
+    signature = [self.surrogateDelegate methodSignatureForSelector:selector];
     if (signature) return signature;
 
     signature = [self.defaultAppDelegate methodSignatureForSelector:selector];
-    if (signature) return signature;
-
-    signature = [self.surrogateDelegate methodSignatureForSelector:selector];
     if (signature) return signature;
 
     // If none of the above classes return a non nil method signature, this will likely crash
