@@ -82,9 +82,9 @@
         
         self.shouldShowAlerts = YES;
 
-        // make our existing layout work beyond iOS6
+        // make our existing layout work in iOS7
         if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
-            [self setValue:[NSNumber numberWithInt:0] forKey:@"edgesForExtendedLayout"];
+            self.edgesForExtendedLayout = UIRectEdgeNone;
         }
     }    
     return self;
