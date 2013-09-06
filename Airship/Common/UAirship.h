@@ -35,6 +35,12 @@ UA_VERSION_INTERFACE(UAirshipVersion)
 // creation and first upload.
 #define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
+// TODO: Remove this when its actually available
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
+#endif
+
+
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.
@@ -63,6 +69,13 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * so this is for internal library use only at this time.
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
+
+/**
+ * This flag is set to `YES` if the application is set up 
+ * with the "remote-notification" background mode and is running
+ * iOS7 or greater.
+ */
+@property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
 
 /**
  * This flag is set to `YES` if the shared instance of

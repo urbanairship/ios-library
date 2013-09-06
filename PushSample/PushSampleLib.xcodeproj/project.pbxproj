@@ -37,7 +37,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F42313B16C19A48004B52C1 /* libUAirship-2.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.1.a */; };
+		1F42313B16C19A48004B52C1 /* libUAirship-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.3.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -104,7 +104,7 @@
 		1FCBB548175A9F7F00F42F07 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
 		1FCBB549175A9F7F00F42F07 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
 		1FCBB54A175A9F7F00F42F07 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
-		1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.1.a */; };
+		1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.3.a */; };
 		1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
 		1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
 		1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
@@ -349,7 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
-				1F42313B16C19A48004B52C1 /* libUAirship-2.0.1.a in Frameworks */,
+				1F42313B16C19A48004B52C1 /* libUAirship-2.0.3.a in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
 				1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */,
@@ -373,7 +373,7 @@
 			files = (
 				CC523FCC17BA8E6600233005 /* CoreData.framework in Frameworks */,
 				1FCBB568175AA20800F42F07 /* libKIF.a in Frameworks */,
-				1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.1.a in Frameworks */,
+				1FCBB54C175A9F7F00F42F07 /* libUAirship-2.0.3.a in Frameworks */,
 				1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */,
 				1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */,
 				1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */,
@@ -586,8 +586,8 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.1.a */,
-				7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.3.a */,
+				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -786,6 +786,22 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0500;
+				TargetAttributes = {
+					1D6058900D05DD3D006BFB54 = {
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
+					};
+					1FCBB511175A9F7F00F42F07 = {
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PushSampleLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -827,17 +843,17 @@
 			remoteRef = 1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		7B909D40142935C900D0AB36 /* AirshipLogicTests.octest */ = {
+		7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = AirshipLogicTests.octest;
+			path = AirshipLogicTests.xctest;
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.1.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-2.0.3.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-2.0.1.a";
+			path = "libUAirship-2.0.3.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1155,6 +1171,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1172,7 +1189,7 @@
 					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
 				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSampleKIF;
@@ -1188,6 +1205,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Release;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
@@ -1203,7 +1221,7 @@
 					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
 				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSampleKIF;
 				PROVISIONING_PROFILE = "";
@@ -1477,6 +1495,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUILD_STYLE = Debug;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1494,7 +1513,7 @@
 					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
 				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSampleKIF;

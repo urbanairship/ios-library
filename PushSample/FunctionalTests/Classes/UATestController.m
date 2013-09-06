@@ -33,13 +33,10 @@
 @implementation UATestController
 
 - (void)dealloc {
-    if ([UAPush shared].delegate == self.pushDelegate) {
-        [UAPush shared].delegate = nil;
+    if ([UAPush shared].pushNotificationDelegate == self.pushDelegate) {
+        [UAPush shared].pushNotificationDelegate = nil;
     }
     self.pushDelegate = nil;
-
-    [super dealloc];
-    
 }
 
 - (void)initializeScenarios {
@@ -47,8 +44,8 @@
     // replace existing push delegate with new handler that prints the alert in the cancel button
 
     // pull master secret from internal airship config properties
-    self.pushDelegate = [[[UATestPushDelegate alloc] init] autorelease];
-    [UAPush shared].delegate = self.pushDelegate;
+    self.pushDelegate = [[UATestPushDelegate alloc] init];
+    [UAPush shared].pushNotificationDelegate = self.pushDelegate;
 
     [self addScenario:[KIFTestScenario scenarioToEnablePush]];
     [self addScenario:[KIFTestScenario scenarioToReceiveUnicastPush]];
