@@ -27,4 +27,26 @@
 
 @implementation UAActionArguments
 
+- (instancetype)initWithName:(NSString *)name
+                    withSituation:(NSString *)situation
+                        withValue:(id)value
+                       withExtras:(NSDictionary *)extras {
+    self = [super init];
+    if (self) {
+        self.name = name;
+        self.situation = situation;
+        self.value = value;
+        self.extras = extras;
+    }
+
+    return self;
+}
+
++ (instancetype)argumentsWithName:(NSString *)name
+                    withSituation:(NSString *)situation
+                        withValue:(id)value
+                       withExtras:(NSDictionary *)extras {
+    return [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withExtras:extras];
+}
+
 @end
