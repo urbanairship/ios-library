@@ -31,17 +31,51 @@
 
 @interface UAActionRunner : NSObject
 
+/**
+ * Performs a registered action with the given name.
+ *
+ * If the action is not registered or if the predicate prevents
+ * the action from running, the completion handler will be called
+ * immediately with UAActionResultNoData.
+ *
+ * @param name Name of the action to perform.
+ * @param situation Situation to perform the action in.
+ * @param value The value.
+ * @param payload The payload.
+ * @param completionHandler CompletionHandler to pass to the action.
+ */
 + (void)performAction:(NSString *)name
         withSituation:(NSString *)situation
             withValue:(id)value
           withPayload:(NSDictionary *)payload
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
+
+/**
+ * Performs a registered action with the given name.
+ *
+ * If the action is not registered or if the predicate prevents
+ * the action from running, the completion handler will be called
+ * immediately with UAActionResultNoData.
+ *
+ * @param arguments The arguments for the action to perform
+ * @param completionHandler CompletionHandler to pass to the action.
+ */
++ (void)performActionWithArguments:(UAActionArguments *)arguments
+             withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+
+/**
+ * Performs any actions defined in the notificaiton.
+ *
+ * @param notification The notification.
+ * @param situation The situation of the action.
+ * @param completionHandler CompletionHandler to run after all the 
+ * actions have completed.  The result will be the aggregated result 
+ * of all the actions performed.
+ */
 + (void)performActionsForNotification:(NSDictionary *)notification
                           inSituation:(NSString *)situation
                 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
-
-+ (void)performActionWithArguments:(UAActionArguments *)arguments
-             withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
