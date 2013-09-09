@@ -31,7 +31,17 @@
 
 @interface UAActionRunner : NSObject
 
-+ (void)performAction:(NSString *)name withSituation:(NSString *)situation withValue:(id)value withPayload:(NSDictionary *)payload withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)performAction:(NSString *)name
+        withSituation:(NSString *)situation
+            withValue:(id)value
+          withPayload:(NSDictionary *)payload
+withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-+ (void)performActionsForNotification:(NSDictionary *)notification inSituation:(NSString *)situation withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)performActionsForNotification:(NSDictionary *)notification
+                          inSituation:(NSString *)situation
+                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
++ (void)performActionWithArguments:(UAActionArguments *)arguments
+             withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
 @end

@@ -27,20 +27,30 @@
 
 @implementation UAActionRunner
 
+
++ (void)performActionWithArguments:(UAActionArguments *)arguments
+             withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:arguments.name];
+    if (!entry || (entry.predicate && !entry.predicate(arguments))) {
+        completionHandler(UAActionResultNoData);
+    } else {
+        [entry.action performWithArguments:arguments withCompletionHandler:completionHandler];
+    }
+}
+
 + (void)performAction:(NSString *)name
         withSituation:(NSString *)situation
             withValue:(id)value
           withPayload:(NSDictionary *)payload
 withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionArguments *args = [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withPayload:payload];
+    UAActionArguments *args = [UAActionArguments argumentsWithName:name
+                                                     withSituation:situation
+                                                         withValue:value
+                                                       withPayload:payload];
 
-    UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:name];
-    if (!entry || (entry.predicate && !entry.predicate(args))) {
-        completionHandler(UAActionResultNoData);
-    } else {
-        [entry.action performWithArguments:args withCompletionHandler:completionHandler];
-    }
+    [self performActionWithArguments:args withCompletionHandler:completionHandler];
 }
 
 + (void)performActionsForNotification:(NSDictionary *)notification
