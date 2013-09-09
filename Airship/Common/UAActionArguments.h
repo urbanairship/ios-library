@@ -26,4 +26,14 @@
 
 @interface UAActionArguments : NSObject
 
++ (instancetype)argumentsWithName:(NSString *)name
+                    withSituation:(NSString *)situation
+                        withValue:(id)value
+                       withExtras:(NSDictionary *)extras;
+
+@property(nonatomic, copy) NSString *name;
+@property(nonatomic, copy) NSString *situation;
+@property(nonatomic, strong) id value;
+@property(nonatomic, strong) NSDictionary *extras;
+
 @end
