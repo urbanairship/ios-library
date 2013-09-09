@@ -26,24 +26,66 @@
 #import <Foundation/Foundation.h>
 #import "UAActionArguments.h"
 
+/**
+ * Represents a situation in which the application was launched from a push notification.
+ */
 extern NSString * const UASituationLaunchedFromPush;
+/**
+ * Represents a situation in which a push notification was received in the foreground.
+ */
 extern NSString * const UASituationForegroundPush;
+/**
+ * Represents a situation in which a push notification was received in the background.
+ */
 extern NSString * const UASituationBackgroundPush;
-extern NSString * const UASituationRichPush;
 
+/**
+ * Represents the result of performing an action.
+ */
 typedef enum  {
+    /**
+     * The action did not result in any new data being fetched.
+     */
     UAActionResultNoData,
+    /**
+     * The action resulted in a new data being fetched.
+     */
     UAActionResultNewData,
+    /**
+     * The action failed.
+     */
     UAActionResultFailed,
 } UAActionResult;
 
+/**
+ * A custom predicate block that can be used to limit the scope of an action.
+ */
 typedef BOOL (^UAActionPredicate)(UAActionArguments *);
+/**
+ * A completion handler that singals that an action has finished executing.
+ */
 typedef void (^UAActionCompletionHandler)(UAActionResult);
+/**
+ * A block that defines the work performed by an action.
+ */
 typedef UAActionResult (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
 
+/**
+ * A unit of work that can be associated with a push notification.
+ */
 @interface UAAction : NSObject
 
+/**
+ * Convenience constructor for defining custom actions.
+ * @param actionBlock A block representing the work performed by the action.
+ */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
+
+/**
+ * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
+ * @param arguments An instance of UAActionArguments.
+ * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
+ */
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
