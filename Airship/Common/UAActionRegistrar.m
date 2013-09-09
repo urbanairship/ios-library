@@ -49,10 +49,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
 - (UAAction *)actionForName:(NSString *)name {
     UAActionEntry *entry = [self.registeredEntries valueForKey:name];
-    if (entry) {
-        return entry.action;
-    }
-    return nil;
+    return entry.action;
 }
 
 @end
