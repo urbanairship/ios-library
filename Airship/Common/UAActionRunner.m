@@ -75,7 +75,8 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
                 resultCount ++;
 
-                [self combineActionResult:currentResult withResult:result];
+                currentResult = [self combineActionResult:currentResult
+                                               withResult:result];
 
                 if (expectedCount == resultCount && completionHandler) {
                     completionHandler(currentResult);
