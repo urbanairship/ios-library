@@ -25,6 +25,34 @@
 
 #import "UAAction.h"
 
+NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
+NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
+NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
+NSString * const UASituationRichPush = @"com.urbanairship.situation.rich_push";
+
+@interface UAAction()
+@property(nonatomic, copy) UAActionBlock actionBlock;
+@end
+
 @implementation UAAction
+
+- (instancetype)initWithBlock:(UAActionBlock)actionBlock {
+    self = [super init];
+    if (self) {
+        self.actionBlock = actionBlock;
+    }
+
+    return self;
+}
+
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
+    return [[UAAction alloc] initWithBlock:actionBlock];
+}
+
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (self.actionBlock) {
+        self.actionBlock(arguments, completionHandler);
+    }
+}
 
 @end

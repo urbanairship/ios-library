@@ -26,8 +26,24 @@
 #import <Foundation/Foundation.h>
 #import "UAActionArguments.h"
 
+extern NSString * const UASituationLaunchedFromPush;
+extern NSString * const UASituationForegroundPush;
+extern NSString * const UASituationBackgroundPush;
+extern NSString * const UASituationRichPush;
+
+typedef enum  {
+    UAActionResultNoData,
+    UAActionResultNewData,
+    UAActionResultFailed,
+} UAActionResult;
+
 typedef BOOL (^UAActionPredicate)(UAActionArguments *);
+typedef void (^UAActionCompletionHandler)(UAActionResult);
+typedef UAActionResult (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
 
 @interface UAAction : NSObject
+
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
