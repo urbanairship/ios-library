@@ -43,6 +43,6 @@
  * @param action The entry's action
  * @param predicate The entry's predicate
  */
-+ (UAActionEntry *)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
++ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
 
 @end
