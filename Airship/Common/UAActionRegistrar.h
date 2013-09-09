@@ -37,7 +37,10 @@
 @property(nonatomic, strong) NSDictionary *registeredEntries;
 
 /**
- * Registers an action with a predicate..
+ * Registers an action with a predicate.
+ * 
+ * If an action is already registered for the given name,
+ * the entry will be overwritten.
  *
  * @param action Action to be performed
  * @param name Name of the action
@@ -47,7 +50,10 @@
 -(void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate;
 
 /**
- * Registers an action with a predicate..
+ * Registers an action.
+ *
+ * If an action is already registered for the given name,
+ * the entry will be overwritten.
  *
  * @param action Action to be performed
  * @param name Name of the action
