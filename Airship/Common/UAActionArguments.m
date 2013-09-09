@@ -30,13 +30,13 @@
 - (instancetype)initWithName:(NSString *)name
                     withSituation:(NSString *)situation
                         withValue:(id)value
-                       withExtras:(NSDictionary *)extras {
+                       withPayload:(NSDictionary *)payload {
     self = [super init];
     if (self) {
         self.name = name;
         self.situation = situation;
         self.value = value;
-        self.extras = extras;
+        self.payload = payload;
     }
 
     return self;
@@ -45,8 +45,8 @@
 + (instancetype)argumentsWithName:(NSString *)name
                     withSituation:(NSString *)situation
                         withValue:(id)value
-                       withExtras:(NSDictionary *)extras {
-    return [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withExtras:extras];
+                       withPayload:(NSDictionary *)payload {
+    return [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withPayload:payload];
 }
 
 @end

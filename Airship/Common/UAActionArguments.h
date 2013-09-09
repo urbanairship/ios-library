@@ -35,12 +35,12 @@
  * @param name The name.
  * @param situation The situation.
  * @param value The value.
- * @param extras The extras.
+ * @param extras The payload.
  */
 + (instancetype)argumentsWithName:(NSString *)name
                     withSituation:(NSString *)situation
                         withValue:(id)value
-                       withExtras:(NSDictionary *)extras;
+                       withPayload:(NSDictionary *)payload;
 
 /**
  * The name under which the action is registered.
@@ -60,6 +60,6 @@
 /**
  * The full push payload.
  */
-@property(nonatomic, strong) NSDictionary *extras;
+@property(nonatomic, strong) NSDictionary *payload;
 
 @end
