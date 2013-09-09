@@ -172,6 +172,9 @@
 		CCC4B31B17DE5FE90086B592 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31817DE5FE90086B592 /* UAActionArguments.m */; };
 		CCC4B31C17DE606D0086B592 /* UAActionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30B17DE5F830086B592 /* UAActionRegistrar.m */; };
 		CCC4B31D17DE606D0086B592 /* UAActionEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30F17DE5FB00086B592 /* UAActionEntry.m */; };
+		CCC4B32117DE6A860086B592 /* UAActionRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B31F17DE6A860086B592 /* UAActionRunner.h */; };
+		CCC4B32217DE6A860086B592 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B32017DE6A860086B592 /* UAActionRunner.m */; };
+		CCC4B32317DE6A860086B592 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B32017DE6A860086B592 /* UAActionRunner.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
 /* End PBXBuildFile section */
 
@@ -348,6 +351,8 @@
 		CCC4B31317DE5FC50086B592 /* UAAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAction.m; sourceTree = "<group>"; };
 		CCC4B31717DE5FE90086B592 /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionArguments.h; sourceTree = "<group>"; };
 		CCC4B31817DE5FE90086B592 /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArguments.m; sourceTree = "<group>"; };
+		CCC4B31F17DE6A860086B592 /* UAActionRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRunner.h; sourceTree = "<group>"; };
+		CCC4B32017DE6A860086B592 /* UAActionRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRunner.m; sourceTree = "<group>"; };
 		CCD3158317CFBD5A002E93A1 /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushTest.m; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -747,6 +752,8 @@
 				CCC4B31317DE5FC50086B592 /* UAAction.m */,
 				CCC4B31717DE5FE90086B592 /* UAActionArguments.h */,
 				CCC4B31817DE5FE90086B592 /* UAActionArguments.m */,
+				CCC4B31F17DE6A860086B592 /* UAActionRunner.h */,
+				CCC4B32017DE6A860086B592 /* UAActionRunner.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -899,6 +906,7 @@
 				49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */,
 				49D11C1217270C6E0058E7C3 /* UAHTTPRequestEngine.h in Headers */,
 				495048A71738812500F8B5BE /* UADelayOperation.h in Headers */,
+				CCC4B32117DE6A860086B592 /* UAActionRunner.h in Headers */,
 				1F610E0517835C3A00BCD96E /* UAPush.h in Headers */,
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
@@ -1032,6 +1040,7 @@
 				CCC4B31617DE5FC50086B592 /* UAAction.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
+				CCC4B32317DE6A860086B592 /* UAActionRunner.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
@@ -1068,6 +1077,7 @@
 				1F610DB917835C2200BCD96E /* UABaseAppDelegateSurrogate.m in Sources */,
 				1F610DFF17835C3A00BCD96E /* UADeviceRegistrationData.m in Sources */,
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
+				CCC4B32217DE6A860086B592 /* UAActionRunner.m in Sources */,
 				CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				1F610DB617835C2200BCD96E /* UAAutoAppDelegate.m in Sources */,
 				CCC4B31517DE5FC50086B592 /* UAAction.m in Sources */,
