@@ -48,7 +48,7 @@ typedef enum  {
      */
     UAActionResultNoData,
     /**
-     * The action resulted in a new data being fetched.
+     * The action resulted in new data being fetched.
      */
     UAActionResultNewData,
     /**
@@ -84,7 +84,7 @@ typedef UAActionResult (^UAActionBlock)(UAActionArguments *, UAActionCompletionH
 
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
- * 
+ *
  * @param arguments An instance of UAActionArguments.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
