@@ -30,6 +30,7 @@
 
 @interface UAActionRegistrar : NSObject
 
+SINGLETON_INTERFACE(UAActionRegistrar);
 
 /**
  * A dictionary containing registered action entries

@@ -24,7 +24,14 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAction.h"
+#import "UAActionEntry.h"
+#import "UAActionRegistrar.h"
+#import "UAActionArguments.h"
 
 @interface UAActionRunner : NSObject
 
++ (void)performAction:(NSString *)name withSituation:(NSString *)situation withValue:(id)value withPayload:(NSDictionary *)payload withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
++ (void)performActionsForNotification:(NSDictionary *)notification inSituation:(NSString *)situation withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 @end
