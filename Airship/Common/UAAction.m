@@ -28,7 +28,6 @@
 NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
 NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
 NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-NSString * const UASituationRichPush = @"com.urbanairship.situation.rich_push";
 
 @interface UAAction()
 @property(nonatomic, copy) UAActionBlock actionBlock;
