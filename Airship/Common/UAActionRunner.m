@@ -27,4 +27,70 @@
 
 @implementation UAActionRunner
 
++ (void)performAction:(NSString *)name
+        withSituation:(NSString *)situation
+            withValue:(id)value
+          withPayload:(NSDictionary *)payload
+withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    UAActionArguments *args = [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withPayload:payload];
+
+    UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:name];
+    if (!entry || (entry.predicate && !entry.predicate(args))) {
+        completionHandler(UAActionResultNoData);
+    } else {
+        [entry.action performWithArguments:args withCompletionHandler:completionHandler];
+    }
+}
+
++ (void)performActionsForNotification:(NSDictionary *)notification
+                      inSituation:(NSString *)situation
+            withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    NSDictionary *notificationActions = [notification objectForKey:@"actions"];
+
+    __block int expectedCount = notificationActions.count;
+    __block int resultCount = 0;
+    __block UAActionResult currentResult = UAActionResultNoData;
+
+    for (NSString *name in notificationActions) {
+
+        __block BOOL completionHandlerCalled = NO;
+        UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult result) {
+            @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Action %@ completion handler called multiple times.", name);
+                    return;
+                }
+
+                resultCount ++;
+
+                [self combineActionResult:currentResult withResult:result];
+
+                if (expectedCount == resultCount && completionHandler) {
+                    completionHandler(currentResult);
+                }
+            }
+        };
+
+        [self performAction:name
+              withSituation:situation
+                  withValue:[notificationActions valueForKey:name]
+                withPayload:notification
+      withCompletionHandler:intermediateCompletionHandler];
+    }
+}
+
++ (UAActionResult)combineActionResult:(UAActionResult)result withResult:(UAActionResult)otherResult {
+    if (otherResult == UAActionResultNewData || result == UAActionResultNewData) {
+        return UAActionResultNewData;
+    }
+
+    if (otherResult == UAActionResultFailed || result == UAActionResultFailed) {
+        return UAActionResultFailed;
+    }
+
+    return UAActionResultNoData;
+}
+
 @end
