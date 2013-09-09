@@ -27,12 +27,18 @@
 
 @implementation UAActionEntry
 
+- (instancetype)initWithAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
+    self = [super init];
+    if (self) {
+        self.action = action;
+        self.predicate = predicate;
+    }
 
-+ (UAActionEntry *)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
-    UAActionEntry *entry = [[UAActionEntry alloc] init];
-    entry.action = action;
-    entry.predicate = predicate;
-    return entry;
+    return self;
+}
+
++ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
+    return [[UAActionEntry alloc] initWithAction:action withPredicate:predicate];
 }
 
 @end
