@@ -24,6 +24,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAActionArguments.h"
+
+typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 
 @interface UAAction : NSObject
 
