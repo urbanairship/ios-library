@@ -77,12 +77,14 @@ typedef UAActionResult (^UAActionBlock)(UAActionArguments *, UAActionCompletionH
 
 /**
  * Convenience constructor for defining custom actions.
+ *
  * @param actionBlock A block representing the work performed by the action.
  */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
 
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
+ * 
  * @param arguments An instance of UAActionArguments.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
