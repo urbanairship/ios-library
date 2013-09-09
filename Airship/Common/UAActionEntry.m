@@ -27,4 +27,12 @@
 
 @implementation UAActionEntry
 
+
++ (UAActionEntry *)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
+    UAActionEntry *entry = [[UAActionEntry alloc] init];
+    entry.action = action;
+    entry.predicate = predicate;
+    return entry;
+}
+
 @end

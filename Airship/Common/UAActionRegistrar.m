@@ -25,6 +25,34 @@
 
 #import "UAActionRegistrar.h"
 
+
 @implementation UAActionRegistrar
+
+SINGLETON_IMPLEMENTATION(UAActionRegistrar)
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.registeredEntries = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
+    id entry = (action == nil) ? nil : [UAActionEntry entryForAction:action withPredicate:predicate];
+    [self.registeredEntries setValue:entry forKey:name];
+}
+
+- (void)registerAction:(UAAction *)action forName:(NSString *)name {
+    [self registerAction:action forName:name withPredicate:nil];
+}
+
+- (UAAction *)actionForName:(NSString *)name {
+    UAActionEntry *entry = [self.registeredEntries valueForKey:name];
+    if (entry) {
+        return entry.action;
+    }
+    return nil;
+}
 
 @end

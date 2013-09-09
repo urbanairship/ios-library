@@ -24,7 +24,42 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAction.h"
+#import "UAActionEntry.h"
+#import "UAGlobal.h"
 
 @interface UAActionRegistrar : NSObject
+
+
+/**
+ * A dictionary containing registered action entries
+ */
+@property(nonatomic, strong) NSDictionary *registeredEntries;
+
+/**
+ * Registers an action with a predicate..
+ *
+ * @param action Action to be performed
+ * @param name Name of the action
+ * @param predicate A predicate that is evaluated to determine if the
+ * action should be performed
+ */
+-(void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate;
+
+/**
+ * Registers an action with a predicate..
+ *
+ * @param action Action to be performed
+ * @param name Name of the action
+ */
+-(void)registerAction:(UAAction *)action forName:(NSString *)name;
+
+/**
+ * Returns a registered action for the name
+ * 
+ * @param name The name of the action
+ * @return The action if an action is registered for that name, nil otherwise.
+ */
+-(UAAction *)actionForName:(NSString *)name;
 
 @end
