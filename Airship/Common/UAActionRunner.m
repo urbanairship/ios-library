@@ -58,6 +58,11 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
             withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *notificationActions = [notification objectForKey:@"actions"];
+    
+    if (!notificationActions || !notificationActions.count) {
+        completionHandler(UAActionResultNoData);
+        return;
+    }
 
     __block int expectedCount = notificationActions.count;
     __block int resultCount = 0;
