@@ -46,7 +46,7 @@
                     withSituation:(NSString *)situation
                         withValue:(id)value
                        withPayload:(NSDictionary *)payload {
-    return [UAActionArguments argumentsWithName:name withSituation:situation withValue:value withPayload:payload];
+    return [[UAActionArguments alloc] initWithName:name withSituation:situation withValue:value withPayload:payload];
 }
 
 @end
