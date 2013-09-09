@@ -24,7 +24,25 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAAction.h"
 
 @interface UAActionEntry : NSObject
+
+/**
+ *  The entry's action
+ */
+@property(nonatomic, strong) UAAction *action;
+
+/**
+ *  The entry's predicate
+ */
+@property(nonatomic, copy) UAActionPredicate predicate;
+
+/**
+ * UAActionEntry class factory method.
+ * @param action The entry's action
+ * @param predicate The entry's predicate
+ */
++ (UAActionEntry *)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
 
 @end
