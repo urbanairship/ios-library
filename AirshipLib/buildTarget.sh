@@ -62,16 +62,12 @@ ARM_SDK_TO_BUILD=iphoneos${SDK_VERSION}
 ARM_ARCH_TO_BUILD="armv7 armv7s"
 ARM_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_arm"
 
-ARMV6_SDK_TO_BUILD=iphoneos
-ARMV6_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_armv6"
-
 SIMULATOR_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
 SIMULATOR_ARCH_TO_BUILD="i386"
 SIMULATOR_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_i386"
 
 # Calculate where the (multiple) built files are coming from:
 CURRENTCONFIG_DEVICE_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphoneos
-CURRENTCONFIG_ARMV6_DEVICE_DIR=${TARGET_BUILD_DIR}-armv6/${CONFIGURATION}-iphoneos
 CURRENTCONFIG_SIMULATOR_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphonesimulator
 
 if [ $DEBUG_THIS_SCRIPT = "true" ]
@@ -86,10 +82,10 @@ echo "BUILT_PRODUCTS_DIR = $BUILT_PRODUCTS_DIR"
 echo "TARGET_BUILD_DIR = $TARGET_BUILD_DIR"
 fi
 
-echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" -arch \"${ARM_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
+echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${ARM_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" ${ACTION} ONLY_ACTIVE_ARCH=NO RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
 
 echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
@@ -100,7 +96,6 @@ xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target 
 
 echo "Taking device build from: ${CURRENTCONFIG_DEVICE_DIR}"
 echo "Taking simulator build from: ${CURRENTCONFIG_SIMULATOR_DIR}"
-echo "Including legacy armv6 binary: $ARMV6_EXECUTABLE"
 
 CREATING_UNIVERSAL_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-universal
 
