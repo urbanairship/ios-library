@@ -66,16 +66,18 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
 /**
- * Performs any actions defined in the notificaiton.
+ * Performs registered actions from a dictionary and merges the action results
  *
- * @param notification The notification.
+ * @param actiondictionary Dictionary of actions and there values.
  * @param situation The situation of the action.
+ * @param payload The payload.
  * @param completionHandler CompletionHandler to run after all the 
  * actions have completed.  The result will be the aggregated result 
  * of all the actions performed.
  */
-+ (void)performActionsForNotification:(NSDictionary *)notification
-                          inSituation:(NSString *)situation
-                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)performActionsFromDictionary:(NSDictionary *)actionDictionary
+                       withSituation:(NSString *)situation
+                         withPayload:(NSDictionary *)payload
+               withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
