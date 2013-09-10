@@ -53,22 +53,21 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     [self performActionWithArguments:args withCompletionHandler:completionHandler];
 }
 
-+ (void)performActionsForNotification:(NSDictionary *)notification
-                      inSituation:(NSString *)situation
-            withCompletionHandler:(UAActionCompletionHandler)completionHandler {
++ (void)performActionsFromDictionary:(NSDictionary *)actionDictionary
+                       withSituation:(NSString *)situation
+                         withPayload:(NSDictionary *)payload
+               withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSDictionary *notificationActions = [notification objectForKey:@"actions"];
-    
-    if (!notificationActions || !notificationActions.count) {
+    if (!actionDictionary || !actionDictionary.count) {
         completionHandler(UAActionResultNoData);
         return;
     }
 
-    __block int expectedCount = notificationActions.count;
+    __block int expectedCount = actionDictionary.count;
     __block int resultCount = 0;
     __block UAActionResult currentResult = UAActionResultNoData;
 
-    for (NSString *name in notificationActions) {
+    for (NSString *name in actionDictionary) {
 
         __block BOOL completionHandlerCalled = NO;
         UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult result) {
@@ -91,8 +90,8 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
         [self performAction:name
               withSituation:situation
-                  withValue:[notificationActions valueForKey:name]
-                withPayload:notification
+                  withValue:[actionDictionary valueForKey:name]
+                withPayload:actionDictionary
       withCompletionHandler:intermediateCompletionHandler];
     }
 }
