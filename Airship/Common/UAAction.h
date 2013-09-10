@@ -68,7 +68,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult);
 /**
  * A block that defines the work performed by an action.
  */
-typedef UAActionResult (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
 
 /**
  * A unit of work that can be associated with a push notification.
