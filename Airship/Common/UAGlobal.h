@@ -126,6 +126,7 @@ return g_shared##CLASSNAME;                                                     
 return self;                                                                                \
 }                                                                                           \
 
+// TODO: Remove this when its actually available
 #ifndef kCFCoreFoundationVersionNumber_iOS_7_0
 #define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
 #endif
