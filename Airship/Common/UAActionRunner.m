@@ -24,6 +24,7 @@
  */
 
 #import "UAActionRunner.h"
+#import "UAActionAggregatedResult.h"
 
 @implementation UAActionRunner
 
@@ -33,7 +34,7 @@
 
     UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:arguments.name];
     if (!entry || (entry.predicate && !entry.predicate(arguments))) {
-        completionHandler(UAActionResultNoData);
+        completionHandler(nil);
     } else {
         [entry.action performWithArguments:arguments withCompletionHandler:completionHandler];
     }
@@ -59,18 +60,19 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
                withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     if (!actionDictionary || !actionDictionary.count) {
-        completionHandler(UAActionResultNoData);
+        completionHandler(nil);
         return;
     }
 
     __block int expectedCount = actionDictionary.count;
     __block int resultCount = 0;
-    __block UAActionResult currentResult = UAActionResultNoData;
+
+    __block UAActionAggregatedResult *aggregatedResult = [[UAActionAggregatedResult alloc] init];
 
     for (NSString *name in actionDictionary) {
 
         __block BOOL completionHandlerCalled = NO;
-        UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult result) {
+        UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult *result) {
             @synchronized(self) {
                 if (completionHandlerCalled) {
                     UA_LERR(@"Action %@ completion handler called multiple times.", name);
@@ -79,11 +81,12 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
                 resultCount ++;
 
-                currentResult = [self combineActionResult:currentResult
-                                               withResult:result];
-
+                if (result) {
+                    [aggregatedResult addResult:result];
+                }
+                
                 if (expectedCount == resultCount && completionHandler) {
-                    completionHandler(currentResult);
+                    completionHandler(aggregatedResult);
                 }
             }
         };
@@ -96,16 +99,6 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     }
 }
 
-+ (UAActionResult)combineActionResult:(UAActionResult)result withResult:(UAActionResult)otherResult {
-    if (otherResult == UAActionResultNewData || result == UAActionResultNewData) {
-        return UAActionResultNewData;
-    }
 
-    if (otherResult == UAActionResultFailed || result == UAActionResultFailed) {
-        return UAActionResultFailed;
-    }
-
-    return UAActionResultNoData;
-}
 
 @end

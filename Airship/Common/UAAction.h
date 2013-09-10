@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAActionArguments.h"
+#import "UAActionResult.h"
 
 /**
  * Represents a situation in which the application was launched from a push notification.
@@ -46,16 +47,16 @@ typedef enum  {
     /**
      * The action did not result in any new data being fetched.
      */
-    UAActionResultNoData,
+    UAActionFetchResultNoData,
     /**
      * The action resulted in new data being fetched.
      */
-    UAActionResultNewData,
+    UAActionFetchResultNewData,
     /**
      * The action failed.
      */
-    UAActionResultFailed,
-} UAActionResult;
+    UAActionFetchResultFailed,
+} UAActionFetchResult;
 
 /**
  * A custom predicate block that can be used to limit the scope of an action.
@@ -64,7 +65,7 @@ typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 /**
  * A completion handler that singals that an action has finished executing.
  */
-typedef void (^UAActionCompletionHandler)(UAActionResult);
+typedef void (^UAActionCompletionHandler)(UAActionResult *);
 /**
  * A block that defines the work performed by an action.
  */
