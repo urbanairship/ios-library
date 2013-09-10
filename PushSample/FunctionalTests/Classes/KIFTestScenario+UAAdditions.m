@@ -36,11 +36,6 @@
 #define kAliasTagsRegistrationWait 30.0
 #define kPushWait 90.0
 
-// TODO: Remove this when its actually available
-#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
-#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
-#endif
-
 @implementation KIFTestScenario (UAAdditions)
 
 + (id)scenarioToEnablePush {
