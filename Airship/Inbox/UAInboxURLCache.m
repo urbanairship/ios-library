@@ -261,16 +261,16 @@
             NSString *hash = [UAUtils md5:[url absoluteString]];
             
             @synchronized(self.metadata) {
-                [[self.metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInt:content.length] forKey:hash];
+                [[self.metadata objectForKey:SIZES_KEY] setValue:[NSNumber numberWithUnsignedInteger:content.length] forKey:hash];
                 [[self.metadata objectForKey:ACCESS_KEY] setValue:[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] forKey:hash];
                 
                 
                 NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
                 currentSize += content.length;
-                [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+                [self.metadata setValue:[NSNumber numberWithUnsignedInteger:currentSize] forKey:CACHE_SIZE_KEY];
                 
-                UALOG(@"Cache size: %d bytes", currentSize);
-                UALOG(@"Actual disk capacity: %d bytes", self.actualDiskCapacity);
+                UALOG(@"Cache size: %lu bytes", (unsigned long)currentSize);
+                UALOG(@"Actual disk capacity: %lu bytes", (unsigned long)self.actualDiskCapacity);
                 
                 if (currentSize > self.actualDiskCapacity) {
                     [self purge];
@@ -359,7 +359,7 @@
     NSUInteger contentSize = [[[self.metadata objectForKey:SIZES_KEY] objectForKey:hash] unsignedIntValue];
     currentSize -= contentSize;
     
-    [self.metadata setValue:[NSNumber numberWithUnsignedInt:currentSize] forKey:CACHE_SIZE_KEY];
+    [self.metadata setValue:[NSNumber numberWithUnsignedInteger:currentSize] forKey:CACHE_SIZE_KEY];
     
     [[self.metadata objectForKey:SIZES_KEY] removeObjectForKey:hash];
     [[self.metadata objectForKey:ACCESS_KEY] removeObjectForKey:hash];
@@ -370,12 +370,12 @@
 - (void)purge {
     UALOG(@"Purge");
     NSUInteger currentSize = [[self.metadata objectForKey:CACHE_SIZE_KEY] unsignedIntValue];
-    UALOG(@"Cache size before purge: %d bytes", currentSize);
+    UALOG(@"Cache size before purge: %lu bytes", (unsigned long)currentSize);
     if (currentSize <= self.actualDiskCapacity) {
         //nothing to do here
         return;
     } else {
-        int delta = 0;
+        NSUInteger delta = 0;
         NSArray *sortedHashes = [[self.metadata objectForKey:ACCESS_KEY] keysSortedByValueUsingSelector:@selector(compare:)];
         
         for (NSString *hash in sortedHashes) {
@@ -386,7 +386,7 @@
             }
         }
     
-        UALOG(@"Cache size after purge: %d bytes", currentSize);
+        UALOG(@"Cache size after purge: %lu bytes", (unsigned long)currentSize);
     }
 }
 

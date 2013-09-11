@@ -217,7 +217,7 @@
     
     // FIXME - someday check the return codes on these binds.
     else if ([obj isKindOfClass:[NSData class]]) {
-        sqlite3_bind_blob(pStmt, idx, [obj bytes], [obj length], SQLITE_STATIC);
+        sqlite3_bind_blob(pStmt, idx, [obj bytes], (int)[obj length], SQLITE_STATIC);
     }
     else if ([obj isKindOfClass:[NSDate class]]) {
         sqlite3_bind_double(pStmt, idx, [obj timeIntervalSince1970]);

@@ -51,7 +51,7 @@
 
     //Called in a retry condition.
     void (^retry)(UAHTTPRequest *request) = ^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Retrying connection to %@ in %d seconds", request.url.description, delay);
+        UA_LDEBUG(@"Retrying connection to %@ in %lu seconds", request.url.description, (unsigned long)delay);
 
         [self sleepForSeconds:delay withContinuation:
             [self operationWithRequest:theRequest

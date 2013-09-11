@@ -154,7 +154,7 @@
     if (obj == nil || obj == [NSNull null]) {
         sqlite3_bind_null(stmt, idx);
     } else if ([obj isKindOfClass:[NSData class]]) {
-        sqlite3_bind_blob(stmt, idx, [obj bytes], [obj length], SQLITE_STATIC);
+        sqlite3_bind_blob(stmt, idx, [obj bytes], (int)[obj length], SQLITE_STATIC);
     } else if ([obj isKindOfClass:[NSDate class]]) {
         sqlite3_bind_double(stmt, idx, [obj timeIntervalSince1970]);
     } else if ([obj isKindOfClass:[NSNumber class]]) {
@@ -204,25 +204,25 @@
 }
 
 - (id)columnData:(sqlite3_stmt *)stmt columnIndex:(NSInteger)index {
-    int columnType = sqlite3_column_type(stmt, index);
+    int columnType = sqlite3_column_type(stmt, (int) index);
 
     if (columnType == SQLITE_NULL)
         return([NSNull null]);
 
     if (columnType == SQLITE_INTEGER)
-        return [NSNumber numberWithInt:sqlite3_column_int(stmt, index)];
+        return [NSNumber numberWithInt:sqlite3_column_int(stmt, (int) index)];
 
     if (columnType == SQLITE_FLOAT)
-        return [NSNumber numberWithDouble:sqlite3_column_double(stmt, index)];
+        return [NSNumber numberWithDouble:sqlite3_column_double(stmt, (int) index)];
 
     if (columnType == SQLITE_TEXT) {
-        const unsigned char *text = sqlite3_column_text(stmt, index);
+        const unsigned char *text = sqlite3_column_text(stmt, (int) index);
         return [NSString stringWithFormat:@"%s", text];
     }
 
     if (columnType == SQLITE_BLOB) {
-        int nbytes = sqlite3_column_bytes(stmt, index);
-        const char *bytes = sqlite3_column_blob(stmt, index);
+        int nbytes = sqlite3_column_bytes(stmt, (int) index);
+        const char *bytes = sqlite3_column_blob(stmt, (int) index);
         return [NSData dataWithBytes:bytes length:nbytes];
     }
 
@@ -230,7 +230,7 @@
 }
 
 - (NSString *)columnName:(sqlite3_stmt *)stmt columnIndex:(NSInteger)index {
-    return [NSString stringWithUTF8String:sqlite3_column_name(stmt, index)];
+    return [NSString stringWithUTF8String:sqlite3_column_name(stmt, (int) index)];
 }
 
 - (NSArray *)executeQuery:(NSString *)sql, ... {
