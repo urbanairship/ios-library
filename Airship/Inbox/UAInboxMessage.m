@@ -94,7 +94,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
              successBlock(self);
          }
      } onFailure:^(UAHTTPRequest *request){
-         UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %d", self.messageID, request.response.statusCode);
+         UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %ld", self.messageID, (long)request.response.statusCode);
          self.inbox.isBatchUpdating = NO;
 
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];

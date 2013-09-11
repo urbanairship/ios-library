@@ -92,7 +92,7 @@
 /**
  * The size of the database.
  */
-@property (nonatomic, assign) NSInteger databaseSize;
+@property (nonatomic, assign) NSUInteger databaseSize;
 
 /**
  * The oldest event time as an NSTimeInterval.

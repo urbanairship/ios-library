@@ -254,7 +254,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *updatedToken) {
         UA_LINFO(@"Device token updated to: %@", updatedToken);
     } onFailure:^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Device token update failed with status: %d", request.response.statusCode);
+        UA_LDEBUG(@"Device token update failed with status: %ld", (long)request.response.statusCode);
     }];
 }
 
