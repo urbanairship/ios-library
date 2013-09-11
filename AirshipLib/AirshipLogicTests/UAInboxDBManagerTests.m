@@ -141,7 +141,7 @@
 
 - (void)testDeleteMessagesInvalidArray {
     NSArray *invalidArray = @[@1, @"what", [NSArray array]];
-    XCTAssertThrows([self.dbManager deleteMessages:invalidArray], @"Deleting messagse with invalid array is not throwing an exception");
+    XCTAssertNoThrow([self.dbManager deleteMessages:invalidArray], @"Deleting invalid messages should not result in an exception");
 }
 
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
