@@ -100,20 +100,20 @@
 
 - (void)receivedForegroundNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"Received a notification while the app was already in the foreground");
-	
-	// Do something with your customData JSON, then entire notification is also available
+
+    // Do something with your customData JSON, then entire notification is also available
 }
 
 - (void)launchedFromNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"The application was launched or resumed from a notification");
-	
-	// Do something when launched via a notification
+
+    // Do something when launched via a notification
 }
 
 - (void)receivedForegroundNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
     UA_LDEBUG(@"Received a notification while the app was already in the foreground");
 
-	// Do something with your customData JSON, then entire notification is also available
+    // Do something with your customData JSON, then entire notification is also available
 
     // Call the completion handler
     completionHandler(UIBackgroundFetchResultNoData);
@@ -122,7 +122,7 @@
 - (void)launchedFromNotification:(NSDictionary *)notification fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     UA_LDEBUG(@"The application was launched or resumed from a notification");
 
-	// Do something when launched via a notification
+    // Do something when launched via a notification
 
     // Call the completion handler
     completionHandler(UIBackgroundFetchResultNoData);
