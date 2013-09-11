@@ -113,6 +113,8 @@
     if (application.applicationState != UIApplicationStateBackground) {
         [[UAPush shared] resetBadge];
     }
+
+    completionHandler(UIBackgroundFetchResultNoData);
 }
 
 - (void)failIfSimulator {
