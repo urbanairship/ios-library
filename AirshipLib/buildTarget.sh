@@ -59,7 +59,6 @@ SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 ACTION="clean build"
 
 ARM_SDK_TO_BUILD=iphoneos${SDK_VERSION}
-ARM_ARCH_TO_BUILD="armv7 armv7s"
 ARM_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_arm"
 
 ARMV6_SDK_TO_BUILD=iphoneos
@@ -89,7 +88,7 @@ fi
 echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" -arch \"${ARM_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${ARM_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch "${ARM_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" ONLY_ACTIVE_ARCH=NO ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
 
 echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
