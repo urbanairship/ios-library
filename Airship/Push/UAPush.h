@@ -27,6 +27,16 @@
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < __IPHONE_7_0
+typedef NS_ENUM(NSUInteger, UIBackgroundFetchResult) {
+    UIBackgroundFetchResultNewData,
+    UIBackgroundFetchResultNoData,
+    UIBackgroundFetchResultFailed
+};
+#endif
+
+
+
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
 //---------------------------------------------------------------------------------------
