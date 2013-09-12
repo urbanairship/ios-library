@@ -256,7 +256,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)invalidateBackgroundTask {
     if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending analytics background task %u", self.sendBackgroundTask);
+        UA_LTRACE(@"Ending analytics background task %lu", (unsigned long)self.sendBackgroundTask);
         
         [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
         self.sendBackgroundTask = UIBackgroundTaskInvalid;
@@ -414,7 +414,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (void)setMinBatchInterval:(int)minBatchInterval {
+- (void)setMinBatchInterval:(NSInteger)minBatchInterval {
     if (minBatchInterval < kMinBatchIntervalSeconds) {
         _minBatchInterval = kMinBatchIntervalSeconds;
     }else if (minBatchInterval > kMaxBatchIntervalSeconds) {
@@ -438,7 +438,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.oldestEventTime = 0;
     }
 
-    UA_LTRACE(@"Database size: %d", self.databaseSize);
+    UA_LTRACE(@"Database size: %ld", (long)self.databaseSize);
     UA_LTRACE(@"Oldest Event: %f", self.oldestEventTime);
 }
 
@@ -503,7 +503,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)pruneEvents {
     // Delete older events until the database size is met
     while (self.databaseSize > self.maxTotalDBSize) {
-        UA_LTRACE(@"Database exceeds max size of %d bytes... Deleting oldest session.", self.maxTotalDBSize);
+        UA_LTRACE(@"Database exceeds max size of %ld bytes... Deleting oldest session.", (long)self.maxTotalDBSize);
         [[UAAnalyticsDBManager shared] deleteOldestSession];
         [self resetEventsDatabaseStatus];
     }
@@ -530,7 +530,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    int avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
+    NSUInteger avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
     int batchEventCount = 0;
     
@@ -619,8 +619,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     UA_LTRACE(@"Sending analytics body: %@", [writer stringWithObject:events]);
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
-        UA_LDEBUG(@"Analytics data sent successfully. Status: %d", [request.response statusCode]);
-        UA_LTRACE(@"responseData=%@, length=%d", request.responseString, [request.responseData length]);
+        UA_LDEBUG(@"Analytics data sent successfully. Status: %ld", (long)[request.response statusCode]);
+        UA_LTRACE(@"responseData=%@, length=%lu", request.responseString, (unsigned long)[request.responseData length]);
         self.lastSendTime = [NSDate date];
 
         // Update analytics settings with new header values
@@ -630,7 +630,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             [[UAAnalyticsDBManager shared] deleteEvents:events];
             [self resetEventsDatabaseStatus];
         } else {
-            UA_LTRACE(@"Send analytics data request failed: %d", [request.response statusCode]);
+            UA_LTRACE(@"Send analytics data request failed: %ld", (long)[request.response statusCode]);
         }
     };
 

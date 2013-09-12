@@ -42,7 +42,7 @@
 + (id)eventWithContext:(NSDictionary *)context;
 - (NSString *)getType;
 - (void)gatherData:(NSDictionary *)context;
-- (int)getEstimatedSize;
+- (NSUInteger)getEstimatedSize;
 - (void)addDataFromSessionForKey:(NSString *)dataKey;
 - (void)addDataWithValue:(id)value forKey:(NSString *)key;
 @end

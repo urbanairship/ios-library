@@ -140,7 +140,7 @@ static UAInboxMessageList *_messageList = nil;
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
 
-        UA_LDEBUG(@"Retrieve message list failed with status: %d", request.response.statusCode);
+        UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
         [self notifyObservers:@selector(inboxLoadFailed)];
     }];
 }
@@ -169,7 +169,7 @@ static UAInboxMessageList *_messageList = nil;
 
     void (^fail)(UAHTTPRequest *) = ^(UAHTTPRequest *request){
         self.isBatchUpdating = NO;
-        UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
+        UA_LDEBUG(@"Perform batch update failed with status: %ld", (long)request.response.statusCode);
     };
 
     if (command == UABatchDeleteMessages) {
@@ -200,7 +200,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark -
 #pragma mark Get messages
 
-- (int)messageCount {
+- (NSUInteger)messageCount {
     return [self.messages count];
 }
 
@@ -215,13 +215,13 @@ static UAInboxMessageList *_messageList = nil;
 
 - (UAInboxMessage *)messageAtIndex:(int)index {
     if (index < 0 || index >= [self.messages count]) {
-        UA_LWARN("Load message(index=%d, count=%d) error.", index, [self.messages count]);
+        UA_LWARN("Load message(index=%d, count=%lu) error.", index, (unsigned long)[self.messages count]);
         return nil;
     }
     return [self.messages objectAtIndex:index];
 }
 
-- (int)indexOfMessage:(UAInboxMessage *)message {
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)message {
     return [self.messages indexOfObject:message];
 }
 

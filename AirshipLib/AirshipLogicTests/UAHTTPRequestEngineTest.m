@@ -72,7 +72,7 @@
         [(UAHTTPConnection *)operation start];
     } else if ([operation isKindOfClass:[NSBlockOperation class]]) {
         NSInteger seconds = ((UADelayOperation *)operation).seconds;
-        NSLog(@"quote unquote sleeping for %d seconds", seconds);
+        NSLog(@"quote unquote sleeping for %ld seconds", (long)seconds);
     } else {
         STFail(@"got an unexpected operation type: %@", operation);
     }

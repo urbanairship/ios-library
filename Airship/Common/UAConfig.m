@@ -214,7 +214,7 @@
             NSString *type = [NSString stringWithUTF8String:property_getAttributes(property)];
 
             UA_LTRACE(@"Type: %@", type);
-            if ([type hasPrefix:@"Tc"]) {//treat chars as bools
+            if ([type hasPrefix:@"Tc"] || [type hasPrefix:@"TB"]) {//treat chars as bools
                 value = [NSNumber numberWithBool:[value boolValue]];
             } else if (![type hasPrefix:@"T@"]) {//indicates an obj-c object (id)
                 value = [NSNumber numberWithInt:[value intValue]];

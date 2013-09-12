@@ -80,7 +80,7 @@ typedef enum {
  * Returns the number of messages currently in the inbox.
  * @return The message count as an integer.
  */
-- (int)messageCount;
+- (NSUInteger)messageCount;
 
 /**
  * Returns the message associated with a particular ID.
@@ -101,7 +101,7 @@ typedef enum {
  * @param message The UAInboxMessage object of interest.
  * @return The index of the message as an integer.
  */
-- (int)indexOfMessage:(UAInboxMessage *)message;
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)message;
 
 /**
  * The list of messages on disk as an NSMutableArray.

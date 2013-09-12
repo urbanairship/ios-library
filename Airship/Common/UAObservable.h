@@ -33,6 +33,6 @@
 -(void)addObserver:(id)observer;
 -(void)removeObserver:(id)observer;
 -(void)removeObservers;
--(int)countObservers;
+-(NSUInteger)countObservers;
 
 @end

@@ -251,7 +251,7 @@
     strm.opaque = Z_NULL;
     strm.total_out = 0;
     strm.next_in=(Bytef *)[uncompressedData bytes];
-    strm.avail_in = [uncompressedData length];
+    strm.avail_in = (uInt)[uncompressedData length];
 
     if (deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, (15+16), 8, Z_DEFAULT_STRATEGY) != Z_OK) {
         return nil;
@@ -266,7 +266,7 @@
         }
 
         strm.next_out = [compressed mutableBytes] + strm.total_out;
-        strm.avail_out = [compressed length] - strm.total_out;
+        strm.avail_out = (uInt)([compressed length] - strm.total_out);
 
         status = deflate(&strm, Z_FINISH);
         
