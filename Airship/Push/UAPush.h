@@ -28,11 +28,11 @@
 #import "UAHTTPConnection.h"
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED < 70000
-typedef NS_ENUM(NSUInteger, UIBackgroundFetchResult) {
+typedef enum UIBackgroundFetchResult : NSUInteger {
     UIBackgroundFetchResultNewData,
     UIBackgroundFetchResultNoData,
     UIBackgroundFetchResultFailed
-};
+} UIBackgroundFetchResult;
 #endif
 
 
