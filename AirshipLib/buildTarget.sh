@@ -83,12 +83,12 @@ fi
 echo "ARM Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${ARM_SDK_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${ARM_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" -arch armv7 -arch armv7s -arch arm64 ${ACTION} ONLY_ACTIVE_ARCH=NO RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -xcconfig 32BitConfig.xcconfig -project $"${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${ARM_SDK_TO_BUILD}" ${ACTION} ONLY_ACTIVE_ARCH=NO RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_DEVICE_DIR" | tee ${ARM_LOG_FILE}
 
 echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch i386 -arch x86_64 ONLY_ACTIVE_ARCH=NO ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -xcconfig 32BitConfig.xcconfig -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" ${ACTION} ONLY_ACTIVE_ARCH=NO RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
 
 # Merge all platform binaries as a fat binary for each configurations.
 
@@ -108,6 +108,7 @@ LIPO="xcrun -sdk iphoneos lipo"
 echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
 echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
 $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
+$LIPO -i "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
 
 echo "Copying ${EXECUTABLE_NAME} to ${DEPLOY_DIR}"
 cp ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME} ${DEPLOY_DIR}
