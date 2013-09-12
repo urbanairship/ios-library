@@ -27,6 +27,16 @@
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED < 70000
+typedef NS_ENUM(NSUInteger, UIBackgroundFetchResult) {
+    UIBackgroundFetchResultNewData,
+    UIBackgroundFetchResultNoData,
+    UIBackgroundFetchResultFailed
+};
+#endif
+
+
+
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
 //---------------------------------------------------------------------------------------
@@ -100,6 +110,35 @@
  */
 - (void)receivedForegroundNotification:(NSDictionary *)notification;
 
+/**
+ * Called when a push notification is received while the app is running in the foreground
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult 
+ as soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)receivedForegroundNotification:(NSDictionary *)notification
+                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
+/**
+ * Called when a push notification is received while the app is running in the background.
+ *
+ * @param notification The notification dictionary.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification;
+
+/**
+ * Called when a push notification is received while the app is running in the background
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult as 
+ soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)receivedBackgroundNotification:(NSDictionary *)notification
+                fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
 
 /**
  * Called when the app is started or resumed because a user opened a notification.
@@ -107,6 +146,19 @@
  * @param notification The notification dictionary.
  */
 - (void)launchedFromNotification:(NSDictionary *)notification;
+
+/**
+ * Called when the app is started or resumed because a user opened a notification
+ * for applications with the "remote-notification" background mode.
+ *
+ * @param notification The notification dictionary.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult 
+ as soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)launchedFromNotification:(NSDictionary *)notification
+          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
+
 @end
 
 
@@ -415,5 +467,19 @@ SINGLETON_INTERFACE(UAPush);
  * @param state The application state at the time the notification was received.
  */
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state;
+
+/**
+ * Handle incoming push notifications. This method will record push conversions, parse the notification
+ * and call the appropriate methods on your delegate.
+ *
+ * @param notification The notification payload, as passed to your application delegate.
+ * @param state The application state at the time the notification was received.
+ * @param completionHandler Should be called with a UIBackgroundFetchResult as 
+ soon as possible, so the system can accurately estimate its power and data cost.
+ */
+- (void)handleNotification:(NSDictionary *)notification
+          applicationState:(UIApplicationState)state
+    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler;
+
 
 @end
