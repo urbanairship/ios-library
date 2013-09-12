@@ -32,7 +32,6 @@
 #import "UAStandardLocationProvider.h"
 #import "UASignificantChangeProvider.h"
 
-
 /*  testing all the delegates in one class because
  *  they are all small. If this changes, break them out 
  *  to their own files
@@ -158,7 +157,7 @@
     UABaseLocationProvider *base = [[UABaseLocationProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForBase = [OCMockObject partialMockForObject:base];
 
-    [[[mockForBase  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX from:self.testLocationSFO];
+    [[[mockForBase  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX from:self.testLocationSFO];
     [[(OCMockObject *)self.mockUALocationService expect] locationProvider:base
                                                       withLocationManager:base.locationManager
                                                         didUpdateLocation:self.testLocationPDX
@@ -179,7 +178,7 @@
     UAStandardLocationProvider *standard = [[UAStandardLocationProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForStandard = [OCMockObject partialMockForObject:standard];
     
-    [[[mockForStandard  expect] andReturnValue:@YES] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
+    [[[mockForStandard  expect] andReturnValue:OCMOCK_VALUE(YES)] locationChangeMeetsAccuracyRequirements:self.testLocationPDX
                                                                                         from:self.testLocationSFO];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:standard
                                                        withLocationManager:standard.locationManager
@@ -200,7 +199,7 @@
     UASignificantChangeProvider *significant = [[UASignificantChangeProvider alloc] initWithDelegate:self.mockUALocationService];
     id mockForSignificant = [OCMockObject partialMockForObject:significant];
 
-    [[[mockForSignificant  expect] andReturnValue:@YES]locationChangeMeetsAccuracyRequirements:self.testLocationPDX
+    [[[mockForSignificant  expect] andReturnValue:OCMOCK_VALUE(YES)]locationChangeMeetsAccuracyRequirements:self.testLocationPDX
                                                                                           from:self.testLocationSFO];
     [[(OCMockObject *) self.mockUALocationService expect] locationProvider:significant
                                                        withLocationManager:significant.locationManager
