@@ -24,6 +24,7 @@
  */
 
 #import "UABaseAppDelegateSurrogate.h"
+#import "UAirship.h"
 
 @implementation UABaseAppDelegateSurrogate
 
@@ -77,6 +78,12 @@
 
 
 - (BOOL)respondsToSelector:(SEL)selector {
+    // We only want to respond to the new notification delegate if background push is
+    // enabled or the default app delegate responds to it.
+    if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
+        return [UAirship shared].backgroundNotificationEnabled || [self.defaultAppDelegate respondsToSelector:selector];
+    }
+
     //If this isn't a selector we normally respond to, say we do as long as either delegate does
     return ([self.defaultAppDelegate respondsToSelector:selector] || [self.surrogateDelegate respondsToSelector:selector]);
 }
@@ -93,6 +100,56 @@
 
     // If none of the above classes return a non nil method signature, this will likely crash
     return signature;
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
+    SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
+
+    __block int resultCount = 0;
+    __block int expectedCount = 0;
+    __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
+
+    NSMutableArray *delegates = [NSMutableArray array];
+    if ([self.surrogateDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.surrogateDelegate];
+    }
+    if ([self.defaultAppDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.defaultAppDelegate];
+    }
+
+    // if we have no delegates that respond to the selector, return early
+    if (!delegates.count) {
+        handler(fetchResult);
+        return;
+    }
+
+    expectedCount = delegates.count;
+    for (NSObject<UIApplicationDelegate> *delegate in delegates) {
+        __block BOOL completionHandlerCalled = NO;
+        [delegate application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:^(UIBackgroundFetchResult result) {
+            @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Completion handler called multiple times.");
+                    return;
+                }
+
+                completionHandlerCalled = YES;
+                resultCount ++;
+
+                // Merge the UIBackgroundFetchResults.  If final fetchResult is not already UIBackgroundFetchResultNewData
+                // and the current result is not UIBackgroundFetchResultNoData, then set the fetchResult to result
+                // (should be either UIBackgroundFetchFailed or UIBackgroundFetchResultNewData)
+                if (fetchResult != UIBackgroundFetchResultNewData && result != UIBackgroundFetchResultNoData) {
+                    fetchResult = result;
+                }
+
+                if (expectedCount == resultCount) {
+                    handler(fetchResult);
+                }
+            }
+        }];
+    }
+    
 }
 
 @end

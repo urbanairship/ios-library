@@ -35,6 +35,7 @@
 @property (nonatomic, assign) BOOL ready;
 @property (nonatomic, retain) UAConfig *config;
 @property (nonatomic, retain) UAAnalytics *analytics;
+@property (nonatomic, assign) BOOL backgroundNotificationEnabled;
 
 
 /**

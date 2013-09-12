@@ -151,3 +151,18 @@ __VA_ARGS__ \
 #define IF_IOS4_1_OR_GREATER(...)
 #endif
 
+// TODO: Remove this when its actually available
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
+#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
+#endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+#define IF_IOS7_OR_GREATER(...) \
+if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) \
+{ \
+__VA_ARGS__ \
+}
+#else
+#define IF_IOS_7_OR_GREATER(...)
+#endif
+
