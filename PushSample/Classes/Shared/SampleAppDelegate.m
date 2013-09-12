@@ -107,6 +107,20 @@
     [[UAPush shared] resetBadge];
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    UA_LINFO(@"Received remote notification (in appDelegate): %@", userInfo);
+
+    // Optionally provide a delegate that will be used to handle notifications received while the app is running
+    // [UAPush shared].delegate = your custom push delegate class conforming to the UAPushNotificationDelegate protocol
+
+    // Reset the badge after a push received (optional)
+    [[UAPush shared] resetBadge];
+
+
+    completionHandler(UIBackgroundFetchResultNoData);
+}
+
 - (void)failIfSimulator {
     if ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound) {
         UIAlertView *someError = [[[UIAlertView alloc] initWithTitle:@"Notice"
