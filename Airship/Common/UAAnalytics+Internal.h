@@ -27,25 +27,24 @@
 
 #import "UAAnalytics.h"
 
-// Total size in bytes that the event queue is allowed to grow to.
-#define kMaxTotalDBSizeBytes 5*1024*1024 // local max of 5MB
-#define kMinTotalDBSizeBytes 10*1024     // local min of 10KB
+//total size in bytes that the event queue is allowed to grow to.
+#define kMaxTotalDBSizeBytes (NSInteger)5*1024*1024 // local max of 5MB
+#define kMinTotalDBSizeBytes (NSInteger)10*1024     // local min of 10KB
 
-// Total size in bytes that a given event post is allowed to send.
-#define kMaxBatchSizeBytes 500*1024      // local max of 500KB
-#define kMinBatchSizeBytes 1024          // local min of 1KB
+// total size in bytes that a given event post is allowed to send.
+#define kMaxBatchSizeBytes (NSInteger)500*1024      // local max of 500KB
+#define kMinBatchSizeBytes (NSInteger)1024          // local min of 1KB
 
-// Maximum amount of time in seconds that events should queue for.
-#define kMaxWaitSeconds 14*24*3600      // local max of 14 days
-#define kMinWaitSeconds 7*24*3600       // local min of 7 days
+// maximum amount of time in seconds that events should queue for
+#define kMaxWaitSeconds (NSInteger)14*24*3600      // local max of 14 days
+#define kMinWaitSeconds (NSInteger)7*24*3600       // local min of 7 days
 
-// The actual amount of time in seconds that elapse between event-server posts.
-#define kMinBatchIntervalSeconds 60        // local min of 60s
-#define kMaxBatchIntervalSeconds 7*24*3600  // local max of 7 days
+// The actual amount of time in seconds that elapse between event-server posts
+#define kMinBatchIntervalSeconds (NSInteger)60        // local min of 60s
+#define kMaxBatchIntervalSeconds (NSInteger)7*24*3600  // local max of 7 days
 
 // Minimum amount of time between background location events.
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
-
 
 #define kMaxTotalDBSizeUserDefaultsKey @"X-UA-Max-Total"
 #define kMaxBatchSizeUserDefaultsKey @"X-UA-Max-Batch"
