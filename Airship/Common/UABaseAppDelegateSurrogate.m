@@ -25,6 +25,7 @@
 
 #import "UABaseAppDelegateSurrogate.h"
 #import "UAirship.h"
+#import "UAPush.h"
 
 @implementation UABaseAppDelegateSurrogate
 
