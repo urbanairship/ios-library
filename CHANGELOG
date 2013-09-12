@@ -3,7 +3,7 @@
 --------------------------
 - Added background push notification support.
 - Added 64bit compatibiliy when building from source (Shipped binaries only contain 32bit support).
-- Improved the automatic integration feature by allowing app delegates to inherit from from additional classes and protocols.
+- Improved the automatic integration feature by allowing app delegates to inherit from additional classes and protocols.
 
 -------------------------
 2.0.4 - September 5, 2013
