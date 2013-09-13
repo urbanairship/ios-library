@@ -104,8 +104,8 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
     SEL selector = @selector(application:didReceiveRemoteNotification:fetchCompletionHandler:);
 
-    __block int resultCount = 0;
-    __block int expectedCount = 0;
+    __block NSUInteger resultCount = 0;
+    __block NSUInteger expectedCount = 0;
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
 
     NSMutableArray *delegates = [NSMutableArray array];

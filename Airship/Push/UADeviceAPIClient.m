@@ -102,7 +102,7 @@
          succeedWhere:succeedWhereBlock
          retryWhere:retryWhereBlock
          onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-             UA_LTRACE(@"DeviceAPI request succeeded: responseData=%@, length=%d", request.responseString, [request.responseData length]);
+             UA_LTRACE(@"DeviceAPI request succeeded: responseData=%@, length=%lu", request.responseString, (unsigned long)[request.responseData length]);
 
              //clear the pending cache,  update last successful cache
              self.pendingRegistration = nil;

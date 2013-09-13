@@ -38,7 +38,6 @@
 #import "JRSwizzle.h"
 #import "CLLocationManager+Test.h"
 
-
 // This needs to be kept in sync with the value in UAirship
 
 @interface UALocationService(Test)
@@ -343,7 +342,8 @@
 }
 
 - (void)testForcePromptLocation {
-    [[[_mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
+
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(NO)] isLocationServiceEnabledAndAuthorized];
     id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     [[mockProvider expect] startReportingLocation];
 
@@ -377,7 +377,7 @@
 
     // Nil the delegate, it should be reset when the service is started
     _locationService.singleLocationProvider.delegate = nil;
-    [[[_mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
     [[mockProvider expect] startReportingLocation];
     [_locationService reportCurrentLocation];
     XCTAssertEqualObjects(_locationService, _locationService.singleLocationProvider.delegate);
@@ -389,7 +389,7 @@
 
 - (void)testReportCurrentLocationWontStartUnauthorized {
     _locationService.singleLocationProvider = nil;
-    [[[_mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(NO)] isLocationServiceEnabledAndAuthorized];
     [_locationService reportCurrentLocation];
     [_mockLocationService verify];
     //This depends on the lazy loading working correctly
@@ -399,7 +399,7 @@
 /* Tests that the single location service won't start when already updating */
 - (void)testAcquireSingleLocationWontStartWhenUpdating {
     // Make sure location services are authorized
-    [[[_mockLocationService expect] andReturnValue:@NO] isLocationServiceEnabledAndAuthorized];
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(NO)] isLocationServiceEnabledAndAuthorized];
     id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
 
     UALocationProviderStatus updating = UALocationProviderUpdating;
@@ -597,8 +597,8 @@
 - (void)testStopLocationServiceWhenBackgroundNotEnabledAndAppEntersBackground {
     _locationService.backgroundLocationServiceEnabled = NO;
 
-    [[[_mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
-    [[[_mockLocationService expect] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
+    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
 
     [_locationService startReportingStandardLocation];
     [_locationService startReportingSignificantLocationChanges];

@@ -283,13 +283,13 @@ static Class _uiClass;
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     [cal setTimeZone:timezone];
     
-    NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
-                              [cal components:NSHourCalendarUnit fromDate:from].hour,
-                              [cal components:NSMinuteCalendarUnit fromDate:from].minute];
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
+                              (long)[cal components:NSHourCalendarUnit fromDate:from].hour,
+                              (long)[cal components:NSMinuteCalendarUnit fromDate:from].minute];
     
-    NSString *endTimeStr = [NSString stringWithFormat:@"%d:%02d",
-                            [cal components:NSHourCalendarUnit fromDate:to].hour,
-                            [cal components:NSMinuteCalendarUnit fromDate:to].minute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
+                            (long)[cal components:NSHourCalendarUnit fromDate:to].hour,
+                            (long)[cal components:NSMinuteCalendarUnit fromDate:to].minute];
 
     UA_LDEBUG("Setting quiet time: (%@) %@ to %@", [timezone name], startTimeStr, endTimeStr);
 
@@ -354,7 +354,7 @@ static Class _uiClass;
         return;
     }
 
-    UA_LDEBUG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
+    UA_LDEBUG(@"Change Badge from %ld to %ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber], (long)badgeNumber);
 
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 

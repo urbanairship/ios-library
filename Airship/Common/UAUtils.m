@@ -49,7 +49,7 @@
 + (NSString *)md5:(NSString *)sourceString  {
     const char *cStr = [sourceString UTF8String];
     unsigned char result[16];
-    CC_MD5(cStr, strlen(cStr), result);
+    CC_MD5(cStr, (unsigned int)strlen(cStr), result);
     return [NSString stringWithFormat:
             @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
             result[0], result[1], result[2], result[3],
@@ -176,7 +176,7 @@
           @"\n\tMethod: %@"
           @"\n\tBody: %@"
           @"\nResponse:"
-          @"\n\tStatus code: %d"
+          @"\n\tStatus code: %ld"
           @"\n\tHeaders: %@"
           @"\n\tBody: %@"
           @"\nUsing U/P: [ %@ / %@ ]",
@@ -186,7 +186,7 @@
           [request.headers description],
           request.HTTPMethod,
           [request.body description],
-          [request.response statusCode],
+          (long)[request.response statusCode],
           [[request.response allHeaderFields] description],
           [request.responseData description],
           request.username,

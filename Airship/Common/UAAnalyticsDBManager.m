@@ -81,7 +81,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
-    int estimateSize = [event getEstimatedSize];
+    NSUInteger estimateSize = [event getEstimatedSize];
     
     // Serialize the event data dictionary
     NSString *errString = nil;
@@ -107,17 +107,17 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
          event.time,
          serializedData,
          sessionID,
-         [NSString stringWithFormat:@"%d", estimateSize]];
+         [NSString stringWithFormat:@"%lu", (unsigned long)estimateSize]];
     });
     //UALOG(@"DB Count %d", [self eventCount]);
     //UALOG(@"DB Size %d", [self sizeInBytes]);
 }
 
 //If max<0, it will get all data.
-- (NSArray *)getEvents:(int)max {
+- (NSArray *)getEvents:(NSUInteger)max {
     __block NSArray *result = nil;
     dispatch_sync(dbQueue, ^{
-        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInt:max]];
+        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInteger:max]];
     });
     return result;
 }

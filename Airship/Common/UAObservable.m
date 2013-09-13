@@ -103,7 +103,7 @@
     }
 }
 
-- (int)countObservers {
+- (NSUInteger)countObservers {
     return [self.observers count];
 }
 
