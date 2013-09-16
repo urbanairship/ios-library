@@ -145,6 +145,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     self.webView = [[UIWebView alloc] init];
     self.webView.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+
     self.webView.delegate = self;
 
     [self.view insertSubview:self.webView belowSubview:self.statusBar];
