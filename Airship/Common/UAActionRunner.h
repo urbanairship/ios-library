@@ -29,6 +29,22 @@
 #import "UAActionRegistrar.h"
 #import "UAActionArguments.h"
 
+/**
+ * Represents a situation in which the application was launched from a push notification.
+ */
+extern NSString * const UASituationLaunchedFromPush;
+/**
+ * Represents a situation in which a push notification was received in the foreground.
+ */
+extern NSString * const UASituationForegroundPush;
+/**
+ * Represents a situation in which a push notification was received in the background.
+ */
+extern NSString * const UASituationBackgroundPush;
+
+
+
+
 @interface UAActionRunner : NSObject
 
 /**
@@ -44,6 +60,9 @@
  * @param payload The payload.
  * @param completionHandler CompletionHandler to pass to the action.
  */
+
+
+
 + (void)performAction:(NSString *)name
         withSituation:(NSString *)situation
             withValue:(id)value
@@ -66,18 +85,16 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
 /**
- * Performs registered actions from a dictionary and merges the action results
+ * Performs any actions defined in the notificaiton.
  *
- * @param actiondictionary Dictionary of actions and there values.
+ * @param notification The notification.
  * @param situation The situation of the action.
- * @param payload The payload.
  * @param completionHandler CompletionHandler to run after all the 
  * actions have completed.  The result will be the aggregated result 
  * of all the actions performed.
  */
-+ (void)performActionsFromDictionary:(NSDictionary *)actionDictionary
-                       withSituation:(NSString *)situation
-                         withPayload:(NSDictionary *)payload
-               withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)performActionsForNotification:(NSDictionary *)notification
+                          inSituation:(NSString *)situation
+                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

@@ -3,38 +3,30 @@
 
 @implementation UAActionResult
 
-
-- (instancetype)initWithObject:(id)result
-                 withArguments:arguments
+- (instancetype)initWithValue:(id)value
                withFetchResult:(UAActionFetchResult)fetchResult {
 
     self = [super init];
     if (self) {
-        self.result = result;
-        self.arguments = arguments;
+        self.value = value;
         self.fetchResult = fetchResult;
     }
 
     return self;
 }
 
-+ (instancetype)resultWithObject:(id)result
-                   withArguments:(UAActionArguments *)arguments {
++ (instancetype)resultWithValue:(id)value {
 
-    return [[UAActionResult alloc] initWithObject:result
-                                    withArguments:arguments
+    return [[UAActionResult alloc] initWithValue:value
                                   withFetchResult:UAActionFetchResultNoData];
 
 }
 
-+ (instancetype)resultWithObject:(id)result
-                   withArguments:arguments
++ (instancetype)resultWithValue:(id)value
                  withFetchResult:(UAActionFetchResult)fetchResult {
 
-    return [[UAActionResult alloc] initWithObject:result
-                                    withArguments:arguments
+    return [[UAActionResult alloc] initWithValue:value
                                   withFetchResult:fetchResult];
 }
-
 
 @end

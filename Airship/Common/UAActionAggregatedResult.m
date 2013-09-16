@@ -6,6 +6,8 @@
 //
 //
 
+/*
+
 #import "UAActionAggregatedResult.h"
 
 @implementation UAActionAggregatedResult
@@ -38,3 +40,5 @@
 }
 
 @end
+ 
+ */

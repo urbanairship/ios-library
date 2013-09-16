@@ -24,10 +24,7 @@
  */
 
 #import "UAAction.h"
-
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
+#import "UAActionResult.h"
 
 @interface UAAction()
 @property(nonatomic, copy) UAActionBlock actionBlock;
@@ -48,7 +45,46 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (instancetype)actionWithContinuationAction:(UAAction *)continuationAction {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
+        [self performWithArguments:args withCompletionHandler:^(id result){
+            [continuationAction performWithArguments:result withCompletionHandler:^(id continuationResult){
+                completionHandler(continuationResult);
+            }];
+        }];
+    }];
+
+    return aggregateAction;
+}
+
+- (instancetype)actionFoldingAction:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
+        [self performWithArguments:args withCompletionHandler:^(id result){
+            [foldedAction performWithArguments:args withCompletionHandler:^(id foldedResult){
+                if (foldBlock) {
+                    completionHandler(foldBlock(result, foldedResult));
+                }
+            }];
+        }];
+    }];
+
+    return aggregateAction;
+}
+
+- (instancetype)actionWithPredicate:(UAActionPredicate)predicateBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
+        if (predicateBlock && predicateBlock(args)) {
+            [self performWithArguments:args withCompletionHandler:completionHandler];
+        } else {
+            //note: is it better to pass nil, or simply return (and short circuit) here?
+            completionHandler(nil);
+        }
+    }];
+
+    return aggregateAction;
+}
+
+- (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
     }
