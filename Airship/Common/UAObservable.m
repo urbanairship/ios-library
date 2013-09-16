@@ -46,15 +46,19 @@
 }
 
 -(void)notifyObservers:(SEL)selector {
+    NSSet* observer_copy = nil;
+
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in self.observers) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector];
-            }
-        }
-        [observer_copy release];
+       observer_copy = [self.observers copy];
     }
+
+    for (id observer in observer_copy) {
+        if([observer respondsToSelector: selector]) {
+            [observer performSelector: selector];
+        }
+    }
+
+    [observer_copy release];
 }
 
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1 {
