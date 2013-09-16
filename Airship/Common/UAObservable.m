@@ -53,8 +53,8 @@
     }
 
     for (id observer in observer_copy) {
-        if([observer respondsToSelector: selector]) {
-            [observer performSelector: selector];
+        if([observer respondsToSelector:selector]) {
+            [observer performSelector:selector];
         }
     }
 
@@ -62,27 +62,35 @@
 }
 
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1 {
+    NSSet* observer_copy = nil;
+
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in observer_copy) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector withObject: arg1];
-            }
-        }
-        [observer_copy release];
+        observer_copy = [self.observers copy];
     }
+
+    for (id observer in observer_copy) {
+        if([observer respondsToSelector:selector]) {
+            [observer performSelector:selector withObject:arg1];
+        }
+    }
+
+    [observer_copy release];
 }
 
 -(void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2 {
+    NSSet* observer_copy = nil;
+
     @synchronized(self) {
-        NSSet* observer_copy = [self.observers copy];
-        for (id observer in observer_copy) {
-            if([observer respondsToSelector: selector]) {
-                [observer performSelector: selector withObject: arg1 withObject: arg2];
-            }
-        }
-        [observer_copy release];
+        observer_copy = [self.observers copy];
     }
+
+    for (id observer in observer_copy) {
+        if([observer respondsToSelector:selector]) {
+            [observer performSelector:selector withObject:arg1 withObject:arg2];
+        }
+    }
+
+    [observer_copy release];
 }
 
 
