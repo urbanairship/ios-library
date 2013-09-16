@@ -53,7 +53,10 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 @implementation UAPush 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 SINGLETON_IMPLEMENTATION(UAPush)
+#pragma clang diagnostic pop
 
 static Class _uiClass;
 
