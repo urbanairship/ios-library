@@ -64,7 +64,10 @@ typedef enum {
  * delete or mark messages as read, retrieve individual messages from the
  * list.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface UAInboxMessageList : UAObservable
+#pragma clang diagnostic pop
 /**
  * The shared singleton accessor.
  */

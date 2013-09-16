@@ -233,7 +233,10 @@ __attribute__((deprecated("As of version 2.1")))
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface UAPush : UAObservable
+#pragma clang diagnostic pop
 
 
 SINGLETON_INTERFACE(UAPush);
