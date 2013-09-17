@@ -1,15 +1,6 @@
 --------------------------
-2.1.0 - September 18, 2013
---------------------------
-- Added background push notification support.
-- Added 64bit compatibility when building from source (Shipped binaries only contain 32bit support).
-- Improved the automatic integration feature by allowing app delegates to inherit from additional classes and protocols.
-- Fixed inbox message webview layout for iOS7 in sample UI.
-- Fixed a posssible crash in UAObservable.
-
--------------------------
 3.0.0 - September 18, 2013
--------------------------
+--------------------------
 - Removed iOS 4 support. This library version supports iOS 5, 6 and 7.
 - Added iOS 7 background push support. Updated sample apps for background notfications.
 - Updated the library for 64 bit support.
@@ -26,6 +17,15 @@
 - UAInboxMessageList/UAInboxMessage exposes new block and delegate-based APIs.
 - Don't automatically retry on NSError in UAHTTPRequestEngine.
 - Fixed Inbox message webview layout on iOS 7.
+
+--------------------------
+2.1.0 - September 18, 2013
+--------------------------
+- Added background push notification support.
+- Added 64bit compatibility when building from source (Shipped binaries only contain 32bit support).
+- Improved the automatic integration feature by allowing app delegates to inherit from additional classes and protocols.
+- Fixed inbox message webview layout for iOS7 in sample UI.
+- Fixed a posssible crash in UAObservable.
 
 -------------------------
 2.0.4 - September 5, 2013
