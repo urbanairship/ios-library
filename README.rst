@@ -16,7 +16,8 @@ application targets.
 NOTE: 64-bit support is included, but is still considered experimental because 64-bit hardware
 will be unavailable at the time of the iOS7 release. There are no static analyzer warnings,
 unit tests, application tests, and manual simulator tests pass, but please use it with
-caution until it can be tested on physical hardware.
+caution until it can be tested on physical hardware. If you do encounter any issues, please
+notify us at support@urbanairship.com.
 
 Resources
 ----------
