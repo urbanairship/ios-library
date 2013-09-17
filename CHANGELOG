@@ -1,9 +1,11 @@
 --------------------------
-2.1.0 - September 16, 2013
+2.1.0 - September 18, 2013
 --------------------------
 - Added background push notification support.
 - Added 64bit compatibility when building from source (Shipped binaries only contain 32bit support).
 - Improved the automatic integration feature by allowing app delegates to inherit from additional classes and protocols.
+- Fixed inbox message webview layout for iOS7 in sample UI.
+- Fixed a posssible crash in UAObservable.
 
 -------------------------
 2.0.4 - September 5, 2013
