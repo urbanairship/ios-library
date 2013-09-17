@@ -8,8 +8,15 @@ Urban Airship's libUAirship is a drop-in static library that provides a simple w
 integrate Urban Airship services into your iOS applications. This entire project will
 allow you to build the library files and all sample projects. If you just want to
 include the library in your app, you can download the latest ``libUAirship.zip``
-These zips contain a pre-compiled universal armv6/armv7/armv7s/i386 library as well as the
-samples.
+These zips contain two pre-compiled universal libraries: an armv7/armv7s/arm64/i386/x86_64
+version (``libUAirship-x.y.z.a``), which includes 32 and 64-bit binaries and can be used with
+iOS6+, and a 32-bit only package (``libUAirship-iOS5-x.y.z.a``) which can be used with iOS5+
+application targets.
+
+NOTE: 64-bit support is included, but is still considered experimental because 64-bit hardware
+will be unavailable at the time of the iOS7 release. There are no static analyzer warnings,
+unit tests, application tests, and manual simulator tests pass, but please use it with
+caution until it can be tested on physical hardware.
 
 Resources
 ----------
@@ -66,7 +73,7 @@ Prerequisite
 
 Before getting started you must perform the steps outlined above.
 
-In addition you'll need to include *UAirship.h* in your source files.
+In addition you'll need to include *UAirship.h* and *UAPush.h* in your source files.
 
 The AirshipConfig File
 ######################
@@ -223,15 +230,6 @@ To build full and push-only static libraries from the command line, run the dist
 
 This will produce static libraries (.a files) in /Airship and create the samples and Airship library distribution zip file in
 Deploy/output
-
-
-Xcode 4.5 now supports the armv7s architecture, but armv6 builds are not longer supported.
-To build an extra-fat binary that includes the armv6 architecture, set an environment variable pointing
-to an Xcode 4.4 app:
-
-.. code:: bash
-
-    export XCODE_4_4_APP=/Applications/Xcode_4_4_1/Xcode.app
 
 Contributing Code
 -----------------
