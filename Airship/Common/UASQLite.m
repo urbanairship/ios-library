@@ -203,25 +203,25 @@
 }
 
 - (id)columnData:(sqlite3_stmt *)stmt columnIndex:(NSInteger)index {
-    int columnType = sqlite3_column_type(stmt, (int) index);
+    int columnType = sqlite3_column_type(stmt, (int)index);
 
     if (columnType == SQLITE_NULL)
         return([NSNull null]);
 
     if (columnType == SQLITE_INTEGER)
-        return [NSNumber numberWithInt:sqlite3_column_int(stmt, (int) index)];
+        return [NSNumber numberWithInt:sqlite3_column_int(stmt, (int)index)];
 
     if (columnType == SQLITE_FLOAT)
-        return [NSNumber numberWithDouble:sqlite3_column_double(stmt, (int) index)];
+        return [NSNumber numberWithDouble:sqlite3_column_double(stmt, (int)index)];
 
     if (columnType == SQLITE_TEXT) {
-        const unsigned char *text = sqlite3_column_text(stmt, (int) index);
+        const unsigned char *text = sqlite3_column_text(stmt, (int)index);
         return [NSString stringWithFormat:@"%s", text];
     }
 
     if (columnType == SQLITE_BLOB) {
-        int nbytes = sqlite3_column_bytes(stmt, (int) index);
-        const char *bytes = sqlite3_column_blob(stmt, (int) index);
+        int nbytes = sqlite3_column_bytes(stmt, (int)index);
+        const char *bytes = sqlite3_column_blob(stmt, (int)index);
         return [NSData dataWithBytes:bytes length:nbytes];
     }
 
@@ -229,7 +229,7 @@
 }
 
 - (NSString *)columnName:(sqlite3_stmt *)stmt columnIndex:(NSInteger)index {
-    return [NSString stringWithUTF8String:sqlite3_column_name(stmt, (int) index)];
+    return [NSString stringWithUTF8String:sqlite3_column_name(stmt, (int)index)];
 }
 
 - (NSArray *)executeQuery:(NSString *)sql, ... {
