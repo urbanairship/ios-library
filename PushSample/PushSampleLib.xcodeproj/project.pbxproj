@@ -220,6 +220,13 @@
 			remoteGlobalIDString = 1D6058900D05DD3D006BFB54;
 			remoteInfo = PushSample;
 		};
+		CC96720C17E9116500DFF2F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
+			remoteInfo = "AirshipLib-iOS5";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -588,6 +595,7 @@
 			children = (
 				BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
+				CC96720D17E9116500DFF2F3 /* libUAirship-iOS5-3.0.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -857,6 +865,13 @@
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		CC96720D17E9116500DFF2F3 /* libUAirship-iOS5-3.0.0.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libUAirship-iOS5-3.0.0.a";
+			remoteRef = CC96720C17E9116500DFF2F3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -986,8 +1001,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/bash -ex";
-			shellScript = "\"${SRCROOT}/../run_sim_app_tests.sh\"";
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
 		};
 		1FCBB55B175A9F7F00F42F07 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
