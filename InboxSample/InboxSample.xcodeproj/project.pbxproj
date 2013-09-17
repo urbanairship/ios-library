@@ -171,7 +171,7 @@
 		1F69B12613BD1DDD002CA606 /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1F79710012DE3B7100D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
-		1FE0B7F617E27BA800856C60 /* InboxSample copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FE0B7F617E27BA800856C60 /* InboxSample-iOS5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-iOS5.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FE0B7F817E27C1D00856C60 /* libUAirship-iOS5-3.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-iOS5-3.0.0.a"; path = "../Airship/libUAirship-iOS5-3.0.0.a"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4977C18B141ECF31009263FA /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
@@ -346,7 +346,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* InboxSample.app */,
-				1FE0B7F617E27BA800856C60 /* InboxSample copy.app */,
+				1FE0B7F617E27BA800856C60 /* InboxSample-iOS5.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -539,7 +539,7 @@
 			);
 			name = "InboxSample-iOS5";
 			productName = InboxSample;
-			productReference = 1FE0B7F617E27BA800856C60 /* InboxSample copy.app */;
+			productReference = 1FE0B7F617E27BA800856C60 /* InboxSample-iOS5.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -828,7 +828,7 @@
 				);
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "InboxSample copy";
+				PRODUCT_NAME = "InboxSample-iOS5";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -857,7 +857,7 @@
 					"\"$(SRCROOT)/../Airship\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "InboxSample copy";
+				PRODUCT_NAME = "InboxSample-iOS5";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
