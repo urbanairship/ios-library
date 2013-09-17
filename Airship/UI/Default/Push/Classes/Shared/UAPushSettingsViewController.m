@@ -99,7 +99,7 @@ enum {
     [super viewWillAppear:animated];
 }
 
-- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
     //if shown, update picker and scroll offset
     if (self.pickerDisplayed) {
@@ -231,7 +231,12 @@ enum {
     self.pickerDisplayed = NO;
     self.pickerShownFrame = CGRectZero;
     self.pickerHiddenFrame = CGRectZero;
-    
+
+    // make our existing layout work in iOS7
+    if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+
     [self.view setNeedsLayout];
 }
 
