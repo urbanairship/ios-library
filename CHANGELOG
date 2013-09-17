@@ -2,7 +2,7 @@
 3.0.0 - September 18, 2013
 --------------------------
 - Removed iOS 4 support. This library version supports iOS 5, 6 and 7.
-- Added iOS 7 background push support. Updated sample apps for background notfications.
+- Added iOS 7 background push support. Updated sample apps for background notifications.
 - Updated the library for 64 bit support.
 - Converted to ARC (Automatic Reference Counting).
 - Removed SBJSON and replaced with NSJSONSerialization.
