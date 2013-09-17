@@ -186,7 +186,7 @@ typedef enum {
  * @param index The message list index as an integer.
  * @return The associated UAInboxMessage object.
  */
-- (UAInboxMessage*)messageAtIndex:(int)index;
+- (UAInboxMessage*)messageAtIndex:(NSUInteger)index;
 
 /**
  * Returns the index of a particular message within the message list.
