@@ -37,7 +37,7 @@ DEPLOY_DIR="${SRCROOT}/distribution_binaries/"
 
 echo $DEPLOY_DIR
 
-BASE_DIR="/tmp/build"
+BASE_DIR=$(mktemp -d /tmp/build-XXXXX)
 TARGET_BUILD_DIR="$BASE_DIR/$TARGET_NAME"
 SYMROOT="$BASE_DIR/$TARGET_NAME"
 OBJROOT="$BASE_DIR/$TARGET_NAME/obj"
@@ -59,12 +59,10 @@ SDK_VERSION=$(echo ${SDK_NAME} | grep -o '.\{3\}$')
 ACTION="clean build"
 
 ARM_SDK_TO_BUILD=iphoneos${SDK_VERSION}
-ARM_ARCH_TO_BUILD="armv7 armv7s"
 ARM_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_arm"
 
 SIMULATOR_SDK_TO_BUILD=iphonesimulator${SDK_VERSION}
-SIMULATOR_ARCH_TO_BUILD="i386"
-SIMULATOR_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_i386"
+SIMULATOR_LOG_FILE="${BUILD_LOGS}/${TARGET_NAME}.build_output_simulator"
 
 # Calculate where the (multiple) built files are coming from:
 CURRENTCONFIG_DEVICE_DIR=${TARGET_BUILD_DIR}/${CONFIGURATION}-iphoneos
@@ -90,7 +88,7 @@ xcodebuild -configuration "${CONFIGURATION}" -project $"${PROJECT_PATH}" -target
 echo "Simulator Build: xcodebuild -configuration \"${CONFIGURATION}\" -project \"${PROJECT_PATH}\" -target \"${TARGET_NAME}\" -sdk \"${SIMULATOR_SDK_TO_BUILD}\" -arch \"${SIMULATOR_ARCH_TO_BUILD}\" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO"
 echo "Build log: ${SIMULATOR_LOG_FILE}"
 
-xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" -arch "${SIMULATOR_ARCH_TO_BUILD}" ${ACTION} RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
+xcodebuild -configuration "${CONFIGURATION}" -project "${PROJECT_PATH}" -target "${TARGET_NAME}" -sdk "${SIMULATOR_SDK_TO_BUILD}" ${ACTION} ONLY_ACTIVE_ARCH=NO RUN_CLANG_STATIC_ANALYZER=NO BUILD_DIR="${BUILD_DIR}" SYMROOT="${SYMROOT}" OBJROOT="${OBJROOT}" BUILD_ROOT="${BUILD_ROOT}" TARGET_BUILD_DIR="$CURRENTCONFIG_SIMULATOR_DIR" | tee ${SIMULATOR_LOG_FILE}
 
 # Merge all platform binaries as a fat binary for each configurations.
 
@@ -108,8 +106,9 @@ mkdir -p "${CREATING_UNIVERSAL_DIR}"
 LIPO="xcrun -sdk iphoneos lipo"
 
 echo "lipo: for current configuration (${CONFIGURATION}) creating output file: ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
-echo "...outputing a universal armv7/armv7s/i386 build to: ${CREATING_UNIVERSAL_DIR}"
+echo "...outputing a universal armv7/armv7s/arm64/x86_64/i386 build to: ${CREATING_UNIVERSAL_DIR}"
 $LIPO -create -output "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_DEVICE_DIR}/${EXECUTABLE_NAME}" "${CURRENTCONFIG_SIMULATOR_DIR}/${EXECUTABLE_NAME}"
+$LIPO -i "${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME}"
 
 echo "Copying ${EXECUTABLE_NAME} to ${DEPLOY_DIR}"
 cp ${CREATING_UNIVERSAL_DIR}/${EXECUTABLE_NAME} ${DEPLOY_DIR}
