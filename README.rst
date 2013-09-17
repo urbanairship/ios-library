@@ -21,8 +21,9 @@ notify us at support@urbanairship.com.
 
 Resources
 ----------
-- Urban Airship iOS Library Reference: http://docs.urbanairship.com/ios-lib
+- Urban Airship iOS Library Reference: http://docs.urbanairship.com/reference/libraries/ios/latest/
 - Getting started guide: http://docs.urbanairship.com/build/ios.html
+- Library Upgrade Guides: http://docs.urbanairship.com/topic_guides/ios_migration.html
 
 Working with the Library
 ------------------------
