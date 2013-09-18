@@ -217,7 +217,7 @@
 }
 
 - (void)coverUpEmptyListIfNeeded {
-    int messageCount = [[UAInbox shared].messageList messageCount];
+    NSUInteger messageCount = [[UAInbox shared].messageList messageCount];
     
     self.loadingView.hidden = (messageCount != 0);
     
@@ -350,7 +350,7 @@
         self.deleteItem.enabled = NO;
         self.markAsReadButtonItem.enabled = NO;
     } else {
-        [self.deleteItem setTitle:[NSString stringWithFormat:@"%@ (%d)", deleteStr, count] forSegmentAtIndex:0];
+        [self.deleteItem setTitle:[NSString stringWithFormat:@"%@ (%lu)", deleteStr, (unsigned long)count] forSegmentAtIndex:0];
         NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInSetOfIndexPaths:self.selectedIndexPathsForEditing];
         self.markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)ureadCountInSelection];
         if ([UAInbox shared].messageList.isBatchUpdating) {
@@ -408,7 +408,7 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    int messageCount = [[UAInbox shared].messageList messageCount];
+    NSUInteger messageCount = [[UAInbox shared].messageList messageCount];
     self.editItem.enabled = (messageCount == 0) ? NO : YES;
     return messageCount;
 }
@@ -526,7 +526,7 @@
 
 
 - (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)m {
-    int row = [[UAInbox shared].messageList indexOfMessage:m];
+    NSUInteger row = [[UAInbox shared].messageList indexOfMessage:m];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
     cell.unreadIndicator.hidden = YES;

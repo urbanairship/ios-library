@@ -178,6 +178,13 @@
 			remoteGlobalIDString = BB8860A7159A7E9600584445;
 			remoteInfo = AirshipLib;
 		};
+		1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
+			remoteInfo = "AirshipLib-iOS5";
+		};
 		1FCBB513175A9F7F00F42F07 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
@@ -595,7 +602,7 @@
 			children = (
 				BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
-				CC96720D17E9116500DFF2F3 /* libUAirship-iOS5-3.0.0.a */,
+				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -844,6 +851,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.0.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libUAirship-iOS5-3.0.0.a";
+			remoteRef = 1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		1FCBB567175AA0E200F42F07 /* libKIF.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1331,7 +1345,6 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -1345,6 +1358,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1366,7 +1380,6 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -1380,6 +1393,7 @@
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -1400,7 +1414,6 @@
 		CC3914A11790A6770033094B /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -1414,6 +1427,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;

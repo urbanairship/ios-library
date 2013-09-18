@@ -304,9 +304,9 @@ static UAInboxMessageList *_messageList = nil;
     return nil;
 }
 
-- (UAInboxMessage *)messageAtIndex:(int)index {
-    if (index < 0 || index >= [self.messages count]) {
-        UA_LWARN("Load message(index=%d, count=%lu) error.", index, (unsigned long)[self.messages count]);
+- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+    if (index >= [self.messages count]) {
+        UA_LWARN("Load message(index=%lu, count=%lu) error.", (unsigned long)index, (unsigned long)[self.messages count]);
         return nil;
     }
     return [self.messages objectAtIndex:index];

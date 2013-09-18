@@ -63,7 +63,7 @@ static NSMutableSet *overlayControllers = nil;
 @interface UAInboxOverlayController()
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID;
-- (void)loadMessageAtIndex:(int)index;
+- (void)loadMessageAtIndex:(NSUInteger)index;
 - (void)loadMessageForID:(NSString *)mid;
 - (void)displayWindow;
 - (void)closePopupWindow;
@@ -146,10 +146,10 @@ static NSMutableSet *overlayControllers = nil;
                                                   object:nil];
 }
 
-- (void)loadMessageAtIndex:(int)index {
+- (void)loadMessageAtIndex:(NSUInteger)index {
     self.message = [[UAInbox shared].messageList messageAtIndex:index];
     if (self.message == nil) {
-        UALOG(@"Can not find message with index: %d", index);
+        UALOG(@"Can not find message with index: %lu", (unsigned long)index);
         [self closePopupWindow];
         return;
     }
