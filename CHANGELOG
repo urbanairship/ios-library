@@ -1,4 +1,19 @@
 --------------------------
+3.0.0 - September 18, 2013
+--------------------------
+- Removed iOS 4 support. This library version supports iOS 5, 6 and 7.
+- Converted to ARC (Automatic Reference Counting).
+- Removed SBJSON and replaced with NSJSONSerialization.
+- Removed FMDB and replaced with CoreData.
+- Removed UAInboxCache.
+- Use Urban Airship API V3 'Accepts' Header.
+- Send Push Address in request header for location events.
+- Added logging for iOS registration.
+- Deprecated UAObservable and all related protocols/methods.
+- UAPush has a registrationDelegate and the "delegate" property has been deprecated and renamed pushNotificationDelegate.
+- UAInboxMessageList/UAInboxMessage exposes new block and delegate-based APIs.
+
+--------------------------
 2.1.0 - September 18, 2013
 --------------------------
 - Added background push notification support.
