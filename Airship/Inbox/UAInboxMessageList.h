@@ -112,9 +112,9 @@ typedef enum {
  * and [UAInboxMessageListObserver messageListLoaded] upon completion. If the associated user
  * has not yet been created, this will be a no-op.
  *
- * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
  */
-- (void)retrieveMessageList __attribute__((deprecated("As of version 2.1")));
+- (void)retrieveMessageList __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Update the message list by marking messages as read, or deleting them.
@@ -160,13 +160,13 @@ typedef enum {
  * [UAInboxMessageListObserver batchDeleteFinished], or
  * [UAInboxMessageListObserver batchDeleteFailed].
  *
- * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
  *
  * @param command the UABatchUpdateCommand to perform.
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated("As of version 2.1")));
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Returns the number of messages currently in the inbox.
