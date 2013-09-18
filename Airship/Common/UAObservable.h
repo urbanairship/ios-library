@@ -28,7 +28,7 @@
 __attribute__((deprecated("As of version 3.0")))
 /**
  * @deprecated As of version 3.0. Replaced by NSNotification and
- * callback-based methods in `UAPush`, `UAInboMessage` and `UAInboxMessageList`.
+ * callback-based methods in `UAPush`, `UAInboxMessage` and `UAInboxMessageList`.
  */
 @interface UAObservable : NSObject 
 
