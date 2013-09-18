@@ -48,7 +48,7 @@
 - (NSString*)monthDateFromDate:(NSDate *)date {
     NSUInteger components = NSMonthCalendarUnit | NSDayCalendarUnit;
     NSDateComponents *monthDay = [[NSCalendar currentCalendar] components:components fromDate:date];
-    return [NSString stringWithFormat:@"%d/%d", monthDay.month, monthDay.day];
+    return [NSString stringWithFormat:@"%ld/%ld", (long)monthDay.month, (long)monthDay.day];
 }
 
 + (UALocationDemoAnnotation*)locationAnnotationFromLocation:(CLLocation*)location {
