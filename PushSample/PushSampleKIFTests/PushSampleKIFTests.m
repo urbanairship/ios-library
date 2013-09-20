@@ -113,8 +113,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     // Now send a unicast push to the device token and verify we received the notification
     [tester sendAndWaitForNotification:@"Send a unicast Push" sendPushBlock:^(NSString *alertID) {
-        // TODO: [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
-        [UAPushClient sendAlert:alertID toDeviceToken:@"686ba477da73fb432a5ec25b28a2e8379e1c02234655458e5ee98b90c6a106c6"];
+        [UAPushClient sendAlert:alertID toDeviceToken:[UAPush shared].deviceToken];
     }];
 }
 

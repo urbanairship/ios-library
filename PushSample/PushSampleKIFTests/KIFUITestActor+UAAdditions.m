@@ -27,7 +27,7 @@
 #import "UATestPushDelegate.h"
 #import "UAUtils.h"
 
-#define kPushWait 10.0 // TODO: Testing only. Revert back original value 90.0
+#define kPushWait 20.0 // TODO: Testing only. Revert back original value 90.0
 
 @implementation KIFUITestActor (UAAdditions)
 

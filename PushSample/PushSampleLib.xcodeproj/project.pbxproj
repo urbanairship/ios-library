@@ -144,6 +144,9 @@
 		76811F0C17EBA80B00874D1F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		76955C7A17C2D83E004BAC64 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76955C7917C2D83E004BAC64 /* XCTest.framework */; };
 		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
+		76B14D7117ECC40700377362 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76B14D7017ECC40700377362 /* Entitlements.plist */; };
+		76B14D7217ECC4CE00377362 /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 76B14D7017ECC40700377362 /* Entitlements.plist */; };
+		76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
 		76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
@@ -358,6 +361,7 @@
 		76811F0417EBA6BD00874D1F /* UATestPushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestPushDelegate.h; sourceTree = "<group>"; };
 		76811F0517EBA6BD00874D1F /* UATestPushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestPushDelegate.m; sourceTree = "<group>"; };
 		76955C7917C2D83E004BAC64 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		76B14D7017ECC40700377362 /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Entitlements.plist; sourceTree = "<group>"; };
 		76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFTestStep+UAAdditions.h"; sourceTree = "<group>"; };
 		76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFTestStep+UAAdditions.m"; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
@@ -732,6 +736,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				76B14D7017ECC40700377362 /* Entitlements.plist */,
 				1F79711212DE3BFB00D4937F /* AirshipConfig.plist */,
 				D5F70FBC12C94C39007285C4 /* PushSample-Info.plist */,
 				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
@@ -1039,6 +1044,7 @@
 				1F7FD45612F8956900317B96 /* UAPushSettingsAddTagViewController.xib in Resources */,
 				1F7FD5F012F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib in Resources */,
 				1F7FD61912F8E39900317B96 /* cat.caf in Resources */,
+				76B14D7117ECC40700377362 /* Entitlements.plist in Resources */,
 				1F7FD61A12F8E39900317B96 /* cow.caf in Resources */,
 				1F7FD61B12F8E39900317B96 /* frog.caf in Resources */,
 				1F7FD61C12F8E39900317B96 /* pig.caf in Resources */,
@@ -1099,6 +1105,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */,
+				76B14D7217ECC4CE00377362 /* Entitlements.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1294,9 +1302,10 @@
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1309,10 +1318,11 @@
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "$(inherited)";
 			};
@@ -1325,9 +1335,10 @@
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Helen Crowell (D86C232ZRL)";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
@@ -1337,9 +1348,10 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -1424,7 +1436,9 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1443,9 +1457,10 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -1462,7 +1477,9 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1475,9 +1492,10 @@
 				GCC_PREFIX_HEADER = "PushSampleKIFTests/PushSampleKIFTests-Prefix.pch";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = octest;
@@ -1495,7 +1513,9 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1508,9 +1528,11 @@
 				GCC_PREFIX_HEADER = "PushSampleKIFTests/PushSampleKIFTests-Prefix.pch";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
+				"PROVISIONING_PROFILE[sdk=*]" = "";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = octest;
@@ -1610,6 +1632,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1645,6 +1668,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1679,6 +1703,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1709,9 +1734,10 @@
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "$(SRCROOT)/Entitlements.plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Helen Crowell (D86C232ZRL)";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1725,10 +1751,11 @@
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				PROVISIONING_PROFILE = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "987D5E47-34E4-4C9D-81AD-2D038538E0F6";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "$(inherited)";
 			};
@@ -1823,7 +1850,7 @@
 				1D6058950D05DD3E006BFB54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1FCBB55C175A9F7F00F42F07 /* Build configuration list for PBXNativeTarget "PushSampleKIF" */ = {
 			isa = XCConfigurationList;
@@ -1833,7 +1860,7 @@
 				1FCBB55E175A9F7F00F42F07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		76811EFB17EBA63700874D1F /* Build configuration list for PBXNativeTarget "PushSampleKIFTests" */ = {
 			isa = XCConfigurationList;
@@ -1843,7 +1870,7 @@
 				76811EFE17EBA63700874D1F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		BBEFB0261507F3A400976645 /* Build configuration list for PBXNativeTarget "AirshipApplicationTests" */ = {
 			isa = XCConfigurationList;
@@ -1853,7 +1880,7 @@
 				BBEFB0281507F3A400976645 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PushSampleLib" */ = {
 			isa = XCConfigurationList;
@@ -1863,7 +1890,7 @@
 				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
