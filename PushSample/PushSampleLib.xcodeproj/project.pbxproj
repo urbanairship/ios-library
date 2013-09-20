@@ -136,8 +136,6 @@
 		76811EED17EBA63700874D1F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		76811EEF17EBA63700874D1F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		76811EF517EBA63700874D1F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 76811EF317EBA63700874D1F /* InfoPlist.strings */; };
-		76811EF717EBA63700874D1F /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811EF617EBA63700874D1F /* PushSampleKIFTests.m */; };
 		76811F0617EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */; };
 		76811F0717EBA6BD00874D1F /* UAPushClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0317EBA6BD00874D1F /* UAPushClient.m */; };
 		76811F0817EBA6BD00874D1F /* UATestPushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0517EBA6BD00874D1F /* UATestPushDelegate.m */; };
@@ -145,6 +143,7 @@
 		76811F0B17EBA80500874D1F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		76811F0C17EBA80B00874D1F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		76955C7A17C2D83E004BAC64 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76955C7917C2D83E004BAC64 /* XCTest.framework */; };
+		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
 		76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
@@ -351,10 +350,6 @@
 		76811ED617EBA60100874D1F /* PushSampleKIFTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushSampleKIFTests.m; sourceTree = "<group>"; };
 		76811ED817EBA60100874D1F /* PushSampleKIFTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PushSampleKIFTests-Prefix.pch"; sourceTree = "<group>"; };
 		76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PushSampleKIFTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		76811EF217EBA63700874D1F /* PushSampleKIFTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIFTests-Info.plist"; sourceTree = "<group>"; };
-		76811EF417EBA63700874D1F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		76811EF617EBA63700874D1F /* PushSampleKIFTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushSampleKIFTests.m; sourceTree = "<group>"; };
-		76811EF817EBA63700874D1F /* PushSampleKIFTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PushSampleKIFTests-Prefix.pch"; sourceTree = "<group>"; };
 		76811EFF17EBA6BD00874D1F /* KIFUITestActor+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFUITestActor+UAAdditions.h"; sourceTree = "<group>"; };
 		76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFUITestActor+UAAdditions.m"; sourceTree = "<group>"; };
 		76811F0117EBA6BD00874D1F /* PushSampleKIFTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSampleKIFTests.h; sourceTree = "<group>"; };
@@ -727,7 +722,6 @@
 				BBEFB01C1507F3A400976645 /* AirshipApplicationTests */,
 				1FCBB56A175AA35C00F42F07 /* FunctionalTests */,
 				76811ED017EBA60100874D1F /* PushSampleKIFTests */,
-				76811EF017EBA63700874D1F /* PushSampleKIFTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */,
@@ -795,25 +789,6 @@
 				76811ED217EBA60100874D1F /* PushSampleKIFTests-Info.plist */,
 				76811ED317EBA60100874D1F /* InfoPlist.strings */,
 				76811ED817EBA60100874D1F /* PushSampleKIFTests-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		76811EF017EBA63700874D1F /* PushSampleKIFTests */ = {
-			isa = PBXGroup;
-			children = (
-				76811EF617EBA63700874D1F /* PushSampleKIFTests.m */,
-				76811EF117EBA63700874D1F /* Supporting Files */,
-			);
-			path = PushSampleKIFTests;
-			sourceTree = "<group>";
-		};
-		76811EF117EBA63700874D1F /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				76811EF217EBA63700874D1F /* PushSampleKIFTests-Info.plist */,
-				76811EF317EBA63700874D1F /* InfoPlist.strings */,
-				76811EF817EBA63700874D1F /* PushSampleKIFTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1124,7 +1099,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76811EF517EBA63700874D1F /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1239,9 +1213,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */,
 				76811F0817EBA6BD00874D1F /* UATestPushDelegate.m in Sources */,
 				76811F0617EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m in Sources */,
-				76811EF717EBA63700874D1F /* PushSampleKIFTests.m in Sources */,
 				76811F0717EBA6BD00874D1F /* UAPushClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1298,14 +1272,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				76811ED417EBA60100874D1F /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		76811EF317EBA63700874D1F /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				76811EF417EBA63700874D1F /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
