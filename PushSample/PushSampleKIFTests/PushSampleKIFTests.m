@@ -187,7 +187,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
     // Now send a push to the tag and verify we received the notification
     [tester sendAndWaitForNotification:@"Send Push to tag" sendPushBlock:^(NSString *alertID) {
-        [UAPushClient sendAlert:alertID toAlias:uniqueTag];
+        [UAPushClient sendAlert:alertID toTag:uniqueTag];
     }];
 }
 
