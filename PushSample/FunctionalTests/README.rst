@@ -1,5 +1,7 @@
-Use the PushSampleKIF target.
+Use the PushSampleKIFTests target.
 
-You can run these on a real device from the command line using fruitstrap_.
+You can run these on a real device from the command line using xcodebuild with the 'test' buildaction.
 
-.. _fruitstrap: https://github.com/cowboygneox/fruitstrap
+For example, to run the PushSampleKIFTests on the iPod:
+xcodebuild -destination "name=iPod" -project PushSampleLib.xcodeproj -scheme PushSampleKIFTests test
+
