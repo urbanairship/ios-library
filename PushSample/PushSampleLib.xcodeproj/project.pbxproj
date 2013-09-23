@@ -775,10 +775,10 @@
 		76811ED017EBA60100874D1F /* PushSampleKIFTests */ = {
 			isa = PBXGroup;
 			children = (
-				76811EFF17EBA6BD00874D1F /* KIFUITestActor+UAAdditions.h */,
-				76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */,
 				76811F0117EBA6BD00874D1F /* PushSampleKIFTests.h */,
 				76811ED617EBA60100874D1F /* PushSampleKIFTests.m */,
+				76811EFF17EBA6BD00874D1F /* KIFUITestActor+UAAdditions.h */,
+				76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */,
 				76811F0217EBA6BD00874D1F /* UAPushClient.h */,
 				76811F0317EBA6BD00874D1F /* UAPushClient.m */,
 				76811F0417EBA6BD00874D1F /* UATestPushDelegate.h */,

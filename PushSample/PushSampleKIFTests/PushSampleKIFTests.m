@@ -33,7 +33,6 @@
 
 #define kPushRegistrationWait 10.0
 #define kAliasTagsRegistrationWait 30.0
-#define kPushWait 90.0
 
 static NSObject<UAPushNotificationDelegate> *pushDelegate;
 

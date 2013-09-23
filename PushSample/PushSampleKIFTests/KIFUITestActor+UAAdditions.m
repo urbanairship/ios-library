@@ -27,7 +27,7 @@
 #import "UATestPushDelegate.h"
 #import "UAUtils.h"
 
-#define kPushWait 20.0 // TODO: Testing only. Revert back original value 90.0
+#define kPushWait 90.0
 
 @implementation KIFUITestActor (UAAdditions)
 
@@ -49,8 +49,7 @@
     return [self runBlock:^KIFTestStepResult(NSError **error) {
         NSLog(@"%@", description);
         sendPushBlock(alertID);
-        [self waitForTimeInterval:kPushWait];
-        [self waitForTappableViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton];
+        [[self usingTimeout:kPushWait] waitForTappableViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton];
         [self tapViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton];
         return KIFTestStepResultSuccess;
     }];
