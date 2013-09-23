@@ -65,15 +65,21 @@
     [self.mockRegistrationObserver stopMocking];
 }
 
-- (void)testParseDeviceToken {
-    XCTAssertEqualObjects(@"hello", [[UAPush shared] parseDeviceToken:@"<> he<l <<<l >> o"],
-                          @"parseDeviceTokens should remove all '<', '>', and white space from the token");
+- (void)testSetDeviceToken {
 
-    XCTAssertNil([[UAPush shared] parseDeviceToken:nil],
-                          @"parseDeviceTokens should return nil when passed nil");
+    [UAPush shared].deviceToken = @"<> he<l <<<l >> o";
 
-    XCTAssertEqualObjects(@"", [[UAPush shared] parseDeviceToken:@""],
-                 @"parseDeviceTokens should do nothing to an empty string");
+
+    XCTAssertEqualObjects(@"hello", [UAPush shared].deviceToken,
+                          @"setDeviceToken should remove all '<', '>', and white space from the token");
+
+    [UAPush shared].deviceToken = nil;
+    XCTAssertNil([UAPush shared].deviceToken,
+                          @"setDeviceToken should return nil when passed nil");
+
+    [UAPush shared].deviceToken = @"";
+    XCTAssertEqualObjects(@"", [UAPush shared].deviceToken,
+                 @"setDeviceToken should do nothing to an empty string");
 }
 
 - (void)testAutoBadgeEnabled {
@@ -440,9 +446,8 @@
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
                      @"should update registration on registering device token");
 
-    XCTAssertEqualObjects([[UAPush shared] parseDeviceToken:[token description]],
-                          [UAPush shared].deviceToken,
-                          @"registering device token should set the deviceToken on UAPush");
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
 }
 
 - (void)testRegisterDeviceTokenNoNotificationTypes {

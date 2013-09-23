@@ -103,10 +103,11 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
-- (NSString *)parseDeviceToken:(NSString *)tokenStr {
-    return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
-             stringByReplacingOccurrencesOfString:@">" withString:@""]
-            stringByReplacingOccurrencesOfString:@" " withString:@""];
+- (void)setDeviceToken:(NSString *)deviceToken {
+
+    _deviceToken = [[[[deviceToken lowercaseString] stringByReplacingOccurrencesOfString:@"<" withString:@""]
+                    stringByReplacingOccurrencesOfString:@">" withString:@""]
+                    stringByReplacingOccurrencesOfString:@" " withString:@""];
 }
 
 #pragma mark -
@@ -611,10 +612,20 @@ static Class _uiClass;
 - (void)registerDeviceToken:(NSData *)token {
     if (!self.notificationTypes) {
         UA_LERR(@"Attempted to register device token with no notificationTypes set!  \
-              Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication.");
+                Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication.");
         return;
     }
-    self.deviceToken = [self parseDeviceToken:[token description]];
+
+    // Convert device token to a hex string
+    NSMutableString *deviceToken = [NSMutableString stringWithCapacity:([token length] * 2)];
+    const unsigned char *bytes = (const unsigned char *)[token bytes];
+
+    for (NSUInteger i = 0; i < [token length]; i++) {
+        [deviceToken appendFormat:@"%02X", bytes[i]];
+    }
+
+    self.deviceToken = deviceToken;
+
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
