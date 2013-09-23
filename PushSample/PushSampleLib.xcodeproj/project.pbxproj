@@ -284,7 +284,6 @@
 		BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
-		CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIF-Info.plist"; sourceTree = "<group>"; };
 		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -590,7 +589,6 @@
 				76B14D7017ECC40700377362 /* Entitlements.plist */,
 				1F79711212DE3BFB00D4937F /* AirshipConfig.plist */,
 				D5F70FBC12C94C39007285C4 /* PushSample-Info.plist */,
-				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
 				D5F70FBD12C94C39007285C4 /* PushSample_Prefix.pch */,
 				18C02947124F216B00D49CD5 /* main.m */,
 				0D2E051611AA61F300C4CD8A /* checkConfig.sh */,
