@@ -40,6 +40,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UABaseAppDelegateSurrogate.h"
 #import "UAAutoAppDelegate.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -349,6 +350,11 @@ UALogLevel uaLogLevel = UALogLevelError;
             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
         }
     }
-}
 
+    // -ObjC linker flag is set
+    if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
+        UA_LERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
+    }
+}
 @end
+
