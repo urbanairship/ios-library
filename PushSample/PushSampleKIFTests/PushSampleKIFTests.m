@@ -38,8 +38,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
 @implementation PushSampleKIFTests
 
-- (void)beforeAll
-{
+- (void)beforeAll {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that push can be enabled in the settings screen and register for remote notifications.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
@@ -70,8 +69,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester verifyPushEnabled:YES];
 }
 
-- (void)afterAll
-{
+- (void)afterAll {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that push can be disabled in the settings screen and unregister from remote notifications.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
@@ -92,8 +90,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     pushDelegate = nil;
 }
 
-- (void)testReceiveBroadcastPush
-{
+- (void)testReceiveBroadcastPush {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that a broadcast push is received and properly handled.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
@@ -104,8 +101,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     }];
 }
 
-- (void)testReceiveUnicastPush
-{
+- (void)testReceiveUnicastPush {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that a unicast push is received and properly handled.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
@@ -116,8 +112,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     }];
 }
 
-- (void)testSetAlias
-{
+- (void)testSetAlias {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that an alias can be set and we can receive a push");
     NSLog(@"-----------------------------------------------------------------------------------------------");
@@ -144,8 +139,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
 }
 
-- (void)testSetTag
-{
+- (void)testSetTag {
     NSLog(@"-----------------------------------------------------------------------------------------------");
     NSLog(@"Test that a tag can be set.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
