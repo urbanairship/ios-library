@@ -40,6 +40,8 @@
 @implementation UAInboxURLProtocol
 
 static NSMutableOrderedSet *cachableURLs = nil;
+static NSURLCache *cache = nil;
+
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
@@ -57,6 +59,24 @@ static NSMutableOrderedSet *cachableURLs = nil;
         cachableURLs = [NSMutableOrderedSet orderedSet];
     }
     return cachableURLs;
+}
+
++ (NSURLCache *)cache {
+    if (!cache) {
+        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
+        NSError *error;
+
+        [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil error:&error];
+
+        cache = [[NSURLCache alloc] initWithMemoryCapacity:UA_PROTOCOL_MEMORY_CACHE_SIZE
+                                              diskCapacity:UA_PROTOCOL_DISK_CACHE_SIZE
+                                                  diskPath:diskCachePath];
+    }
+    return cache;
 }
 
 + (void)addCachableURL:(NSURL *)url {
@@ -85,7 +105,7 @@ static NSMutableOrderedSet *cachableURLs = nil;
             NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
                                                                                           data:request.responseData];
 
-            [[UAInbox shared].cache storeCachedResponse:cachedResponse forRequest:_self.request];
+            [[UAInboxURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
 
             [self finishRequest:request.response responseData:request.responseData];
         }
@@ -108,11 +128,12 @@ static NSMutableOrderedSet *cachableURLs = nil;
 }
 
 - (void)loadFromCache {
-    NSCachedURLResponse *cachedResponse = [[UAInbox shared].cache cachedResponseForRequest:self.request];
+    NSCachedURLResponse *cachedResponse = [[UAInboxURLProtocol cache] cachedResponseForRequest:self.request];
     if (cachedResponse) {
         [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
     } else {
         UA_LTRACE(@"No cache for response %@", self.request.URL);
+
         [self finishRequest];
     }
 }
@@ -134,7 +155,7 @@ static NSMutableOrderedSet *cachableURLs = nil;
         [request addRequestHeader:header value:[self.request valueForHTTPHeaderField:header]];
     }
 
-    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAInbox shared].cache cachedResponseForRequest:self.request].response;
+    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAInboxURLProtocol cache] cachedResponseForRequest:self.request].response;
     if (cachedResponse) {
         NSString *cachedDate = [[cachedResponse allHeaderFields] valueForKey:@"Date"];
         [request addRequestHeader:@"If-Modified-Since" value:cachedDate];

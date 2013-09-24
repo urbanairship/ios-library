@@ -147,9 +147,7 @@ static Class _uiClass;
         //delete legacy UAInboxCache if present
         [self deleteInboxCache];
 
-        self.cache = [[NSURLCache alloc] initWithMemoryCapacity:5 * 1024 * 1024
-                                                   diskCapacity:100 * 1024 * 1024
-                                                       diskPath:nil];
+        
 
         [NSURLProtocol registerClass:[UAInboxURLProtocol class]];
     }
