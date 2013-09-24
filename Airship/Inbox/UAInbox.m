@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-#import "UAInboxURLProtocol.h"
+#import "UAURLProtocol.h"
 
 #import "UAInboxMessageListObserver.h"
 
@@ -149,7 +149,7 @@ static Class _uiClass;
 
         
 
-        [NSURLProtocol registerClass:[UAInboxURLProtocol class]];
+        [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
     return self;

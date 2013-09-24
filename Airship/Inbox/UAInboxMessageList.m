@@ -37,7 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
-#import "UAInboxURLProtocol.h"
+#import "UAURLProtocol.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";
@@ -330,7 +330,7 @@ static UAInboxMessageList *_messageList = nil;
 
     // Add messsage's body url to the cachable urls
     for (UAInboxMessage *message in messages) {
-        [UAInboxURLProtocol addCachableURL:message.messageBodyURL];
+        [UAURLProtocol addCachableURL:message.messageBodyURL];
     }
 
     _messages = messages;

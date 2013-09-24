@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface UAInboxURLProtocol : NSURLProtocol
+@interface UAURLProtocol : NSURLProtocol
 
 #define UA_SKIP_PROTOCOL_HEADER @"UA-Skip-Cache-Protocol"
 #define UA_PROTOCOL_MEMORY_CACHE_SIZE  5 * 1024 * 1024 // 5 MB

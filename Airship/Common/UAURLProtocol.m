@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxURLProtocol.h"
+#import "UAURLProtocol.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
@@ -31,13 +31,13 @@
 #import "UAHTTPConnection.h"
 
 
-@interface UAInboxURLProtocol()
+@interface UAURLProtocol()
 
 @property(nonatomic, strong) UAHTTPConnection *connection;
 
 @end
 
-@implementation UAInboxURLProtocol
+@implementation UAURLProtocol
 
 static NSMutableOrderedSet *cachableURLs = nil;
 static NSURLCache *cache = nil;
@@ -92,7 +92,7 @@ static NSURLCache *cache = nil;
 }
 
 - (void)startLoading {
-    __weak UAInboxURLProtocol *_self = self;
+    __weak UAURLProtocol *_self = self;
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
@@ -105,7 +105,7 @@ static NSURLCache *cache = nil;
             NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
                                                                                           data:request.responseData];
 
-            [[UAInboxURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
+            [[UAURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
 
             [_self finishRequest:request.response responseData:request.responseData];
         }
@@ -128,7 +128,7 @@ static NSURLCache *cache = nil;
 }
 
 - (void)loadFromCache {
-    NSCachedURLResponse *cachedResponse = [[UAInboxURLProtocol cache] cachedResponseForRequest:self.request];
+    NSCachedURLResponse *cachedResponse = [[UAURLProtocol cache] cachedResponseForRequest:self.request];
     if (cachedResponse) {
         [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
     } else {
@@ -155,7 +155,7 @@ static NSURLCache *cache = nil;
         [request addRequestHeader:header value:[self.request valueForHTTPHeaderField:header]];
     }
 
-    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAInboxURLProtocol cache] cachedResponseForRequest:self.request].response;
+    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAURLProtocol cache] cachedResponseForRequest:self.request].response;
     if (cachedResponse) {
         NSString *cachedDate = [[cachedResponse allHeaderFields] valueForKey:@"Date"];
         [request addRequestHeader:@"If-Modified-Since" value:cachedDate];
