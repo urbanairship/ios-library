@@ -84,9 +84,6 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     // verify push is disabled
     [tester verifyPushEnabled:NO];
 
-    if ([UAPush shared].pushNotificationDelegate == pushDelegate) {
-        [UAPush shared].pushNotificationDelegate = nil;
-    }
     pushDelegate = nil;
 }
 
