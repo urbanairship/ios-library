@@ -56,7 +56,7 @@
 }
 
 // This method verifies the pushEnabled value
-- (void)verifyPushEnabled:(Boolean)enabled {
+- (void)verifyPushEnabled:(BOOL)enabled {
     return [self runBlock:^KIFTestStepResult(NSError **error) {
         NSLog(@"Verify PushEnabled.");
         KIFTestCondition(([UAPush shared].pushEnabled == enabled), error, @"PushEnabled does not match expected value.");

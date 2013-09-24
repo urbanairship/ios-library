@@ -154,9 +154,8 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
         [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete %@", tag] traits:UIAccessibilityTraitButton];
 
         // iOS 7 UI requires another tap on 'Delete' button, while older versions need to confirm deletion.
-        if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
-            [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];
-        } else {
+        IF_IOS7_OR_GREATER([tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Delete"] traits:UIAccessibilityTraitButton];)
+        else {
             [tester tapViewWithAccessibilityLabel:[NSString stringWithFormat:@"Confirm Deletion for %@", tag] traits:UIAccessibilityTraitButton];
         }
     }
