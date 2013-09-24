@@ -163,6 +163,8 @@ static NSURLCache *cache = nil;
         UA_LTRACE(@"Request %@ previously cached %@", request.url, cachedDate);
     }
 
+    // Add a special header to tell our protocol to ignore it so a different
+    // protocol will handle the request.
     [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@"true"];
 
     return request;
