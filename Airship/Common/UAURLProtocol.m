@@ -97,7 +97,8 @@ static NSURLCache *cache = nil;
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
 
-       if ([request.response statusCode] == 304) {
+        // Load from cache on any response that is not 200
+        if ([request.response statusCode] != 200) {
            UA_LTRACE(@"Loading response from cache.");
            [_self loadFromCache];
         } else {
