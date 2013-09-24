@@ -262,8 +262,8 @@
 		CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; };
 		CC85427917F2130700D2DE10 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; };
 		CC85427A17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
-		CC85427B17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
 		CC85427C17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
+		CC85427E17F2164500D2DE10 /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
 		CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85FD161773A1010074674F /* UAAnalyticsTest.m */; };
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
@@ -435,6 +435,7 @@
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		CC85427617F2130700D2DE10 /* UAURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAURLProtocol.h; sourceTree = "<group>"; };
 		CC85427717F2130700D2DE10 /* UAURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAURLProtocol.m; sourceTree = "<group>"; };
+		CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAURLProtocolTest.m; sourceTree = "<group>"; };
 		CC85FD151773A1010074674F /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
@@ -813,6 +814,7 @@
 				495526AE17D95552009BC301 /* UAUser+Test.h */,
 				495526AF17D95552009BC301 /* UAUser+Test.m */,
 				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */,
+				CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1263,13 +1265,13 @@
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
-				CC85427B17F2130700D2DE10 /* UAURLProtocol.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */,
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */,
 				495048B5173AD41A00F8B5BE /* UADeviceRegistrationDataTest.m in Sources */,
 				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
+				CC85427E17F2164500D2DE10 /* UAURLProtocolTest.m in Sources */,
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
