@@ -31,6 +31,11 @@
 #import "UAHTTPConnection.h"
 
 
+@interface UAInboxURLProtocol()
+
+@property(nonatomic, strong) UAHTTPConnection *connection;
+
+@end
 
 @implementation UAInboxURLProtocol
 
@@ -80,15 +85,15 @@ static NSMutableOrderedSet *cachableURLs = nil;
     };
 
 
-    UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request
+    self.connection = [UAHTTPConnection connectionWithRequest:request
                                                               successBlock:successBlock
                                                               failureBlock:failureBlock];
 
-    [connection start];
+    [self.connection start];
 }
 
 - (void)stopLoading {
-
+    [self.connection cancel];
 }
 
 + (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
