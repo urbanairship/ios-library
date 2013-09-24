@@ -107,7 +107,7 @@ static NSURLCache *cache = nil;
 
             [[UAInboxURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
 
-            [self finishRequest:request.response responseData:request.responseData];
+            [_self finishRequest:request.response responseData:request.responseData];
         }
     };
 
