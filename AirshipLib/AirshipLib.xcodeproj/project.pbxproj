@@ -259,6 +259,11 @@
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
+		CC85427117F0D80500D2DE10 /* UAInboxURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85426F17F0D80500D2DE10 /* UAInboxURLProtocol.h */; };
+		CC85427217F0D80500D2DE10 /* UAInboxURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85426F17F0D80500D2DE10 /* UAInboxURLProtocol.h */; };
+		CC85427317F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427017F0D80500D2DE10 /* UAInboxURLProtocol.m */; };
+		CC85427417F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427017F0D80500D2DE10 /* UAInboxURLProtocol.m */; };
+		CC85427517F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427017F0D80500D2DE10 /* UAInboxURLProtocol.m */; };
 		CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85FD161773A1010074674F /* UAAnalyticsTest.m */; };
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
@@ -428,6 +433,8 @@
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CC85426F17F0D80500D2DE10 /* UAInboxURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxURLProtocol.h; sourceTree = "<group>"; };
+		CC85427017F0D80500D2DE10 /* UAInboxURLProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxURLProtocol.m; sourceTree = "<group>"; };
 		CC85FD151773A1010074674F /* UAAnalyticsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAnalyticsTest.h; sourceTree = "<group>"; };
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
@@ -634,6 +641,8 @@
 				CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */,
 				CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */,
 				CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */,
+				CC85426F17F0D80500D2DE10 /* UAInboxURLProtocol.h */,
+				CC85427017F0D80500D2DE10 /* UAInboxURLProtocol.m */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -957,6 +966,7 @@
 				1FE0B75317E2751000856C60 /* UALocationProviderProtocol.h in Headers */,
 				1FE0B75417E2751000856C60 /* UALocationProviderDelegate.h in Headers */,
 				1FE0B75517E2751000856C60 /* UAEvent.h in Headers */,
+				CC85427217F0D80500D2DE10 /* UAInboxURLProtocol.h in Headers */,
 				1FE0B75617E2751000856C60 /* UAConfig.h in Headers */,
 				1FE0B75717E2751000856C60 /* UALocationEvent.h in Headers */,
 				1FE0B75817E2751000856C60 /* UABaseAppDelegateSurrogate.h in Headers */,
@@ -1021,6 +1031,7 @@
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
+				CC85427117F0D80500D2DE10 /* UAInboxURLProtocol.h in Headers */,
 				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
 				1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */,
@@ -1212,6 +1223,7 @@
 				1FE0B79217E2751000856C60 /* UALocationService.m in Sources */,
 				1FE0B79317E2751000856C60 /* UAInboxUtils.m in Sources */,
 				1FE0B79417E2751000856C60 /* UAInboxMessage.m in Sources */,
+				CC85427517F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */,
 				1FE0B79517E2751000856C60 /* UAInboxDBManager.m in Sources */,
 				1FE0B79617E2751000856C60 /* UASignificantChangeProvider.m in Sources */,
 				1FE0B79717E2751000856C60 /* UAStandardLocationProvider.m in Sources */,
@@ -1238,6 +1250,7 @@
 			files = (
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
+				CC85427417F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
@@ -1294,6 +1307,7 @@
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				1F610DF917835C3A00BCD96E /* UAInboxUtils.m in Sources */,
 				1F610DEC17835C3A00BCD96E /* UAInboxMessage.m in Sources */,
+				CC85427317F0D80500D2DE10 /* UAInboxURLProtocol.m in Sources */,
 				1F610DE617835C3A00BCD96E /* UAInboxDBManager.m in Sources */,
 				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,
 				BB886119159A7E9600584445 /* UAStandardLocationProvider.m in Sources */,

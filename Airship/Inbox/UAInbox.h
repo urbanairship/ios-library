@@ -160,6 +160,9 @@ SINGLETON_INTERFACE(UAInbox);
  */
 @property (nonatomic, strong) UAInboxPushHandler *pushHandler;
 
+
+@property (nonatomic, strong) NSURLCache *cache;
+
 /**
  * The Javascript delegate.
  * 

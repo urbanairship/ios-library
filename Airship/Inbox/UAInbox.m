@@ -33,6 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
+#import "UAInboxURLProtocol.h"
 
 #import "UAInboxMessageListObserver.h"
 
@@ -145,6 +146,12 @@ static Class _uiClass;
 
         //delete legacy UAInboxCache if present
         [self deleteInboxCache];
+
+        self.cache = [[NSURLCache alloc] initWithMemoryCapacity:5 * 1024 * 1024
+                                                   diskCapacity:100 * 1024 * 1024
+                                                       diskPath:nil];
+
+        [NSURLProtocol registerClass:[UAInboxURLProtocol class]];
     }
 
     return self;
@@ -155,5 +162,6 @@ static Class _uiClass;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.pushHandler = nil;
 }
+
 
 @end
