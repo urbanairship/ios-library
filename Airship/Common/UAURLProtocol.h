@@ -27,7 +27,7 @@
 
 @interface UAURLProtocol : NSURLProtocol
 
-#define UA_SKIP_PROTOCOL_HEADER @"UA-Skip-Cache-Protocol"
+#define UA_SKIP_PROTOCOL_HEADER @"X-UAURLProtocol"
 #define UA_PROTOCOL_MEMORY_CACHE_SIZE  5 * 1024 * 1024 // 5 MB
 #define UA_PROTOCOL_DISK_CACHE_SIZE  100 * 1024 * 1024 // 100 MB
 

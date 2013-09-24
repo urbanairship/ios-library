@@ -167,7 +167,7 @@ static NSURLCache *cache = nil;
 
     // Add a special header to tell our protocol to ignore it so a different
     // protocol will handle the request.
-    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@"true"];
+    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@""];
 
     return request;
 }
