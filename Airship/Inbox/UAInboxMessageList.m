@@ -37,6 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
+#import "UAInboxURLProtocol.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";
@@ -322,9 +323,14 @@ static UAInboxMessageList *_messageList = nil;
     // Sort the messages by date
     if (messages.count > 0) {
         NSSortDescriptor* dateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:NO];
+                                                                       ascending:NO];
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [messages sortUsingDescriptors:sortDescriptors];
+    }
+
+    // Add messsage's body url to the cachable urls
+    for (UAInboxMessage *message in messages) {
+        [UAInboxURLProtocol addCachableURL:message.messageBodyURL];
     }
 
     _messages = messages;

@@ -34,6 +34,7 @@
 
 @implementation UAInboxURLProtocol
 
+static NSMutableOrderedSet *cachableURLs = nil;
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
@@ -41,17 +42,10 @@
         return false;
     }
 
-    NSURL *url = request.mainDocumentURL ?: request.URL;
+    return [[self cachableURLs] containsObject:request.URL]
+            || [[self cachableURLs] containsObject:request.mainDocumentURL];
 
-    for (UAInboxMessage *message in [UAInbox shared].messageList.messages) {
-        if ([message.messageBodyURL isEqual:url]) {
-            return true;
-        }
-    }
-
-    return false;
 }
-
 
 - (void)startLoading {
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:self.request.URL];
@@ -120,5 +114,19 @@
     [self.client URLProtocolDidFinishLoading:self];
 }
 
++(NSMutableOrderedSet *)cachableURLs {
+    if (!cachableURLs) {
+        cachableURLs = [NSMutableOrderedSet orderedSet];
+    }
+    return cachableURLs;
+}
+
++(void)addCachableURL:(NSURL *)url {
+    [[self cachableURLs] addObject:url];
+}
+
++(void)removeCachableURL:(NSURL *)url {
+    [[self cachableURLs] removeObject:url];
+}
 
 @end

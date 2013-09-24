@@ -27,4 +27,7 @@
 
 @interface UAInboxURLProtocol : NSURLProtocol
 
++(void)addCachableURL:(NSURL *)url;
++(void)removeCachableURL:(NSURL *)url;
+
 @end
