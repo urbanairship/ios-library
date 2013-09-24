@@ -29,7 +29,18 @@
 
 #define UA_SKIP_PROTOCOL_HEADER @"UA-Skip-Cache-Protocol"
 
-+(void)addCachableURL:(NSURL *)url;
-+(void)removeCachableURL:(NSURL *)url;
+/**
+ * Adds a URl to be handled and cached by the Protocol.
+ *
+ *@param url The URL or mainDocumentURL of a request to cache.
+ */
++ (void)addCachableURL:(NSURL *)url;
+
+/**
+ * Removes a URl from being cached.
+ *
+ *@param url The URL or mainDocumentURL of a request.
+ */
++ (void)removeCachableURL:(NSURL *)url;
 
 @end

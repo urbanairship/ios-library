@@ -52,25 +52,36 @@ static NSMutableOrderedSet *cachableURLs = nil;
 
 }
 
++ (NSMutableOrderedSet *)cachableURLs {
+    if (!cachableURLs) {
+        cachableURLs = [NSMutableOrderedSet orderedSet];
+    }
+    return cachableURLs;
+}
+
++ (void)addCachableURL:(NSURL *)url {
+    [[self cachableURLs] addObject:url];
+}
+
++ (void)removeCachableURL:(NSURL *)url {
+    [[self cachableURLs] removeObject:url];
+}
+
++ (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
+    return request;
+}
+
 - (void)startLoading {
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:self.request.URL];
     __weak UAInboxURLProtocol *_self = self;
 
-    for (NSString *header in [self.request allHTTPHeaderFields]) {
-        [request addRequestHeader:header value:[self.request valueForHTTPHeaderField:header]];
-    }
-
-    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAInbox shared].cache cachedResponseForRequest:self.request].response;
-    if (cachedResponse) {
-        [request addRequestHeader:@"If-Modified-Since" value:[[cachedResponse allHeaderFields] valueForKey:@"Date"]];
-    }
-
-    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@"true"];
-
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
-        if (request.error || [request.response statusCode] == 304) {
-            [_self loadFromCache];
+        UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
+
+       if ([request.response statusCode] == 304) {
+           UA_LTRACE(@"Loading response from cache.");
+           [_self loadFromCache];
         } else {
+            UA_LTRACE(@"Caching response.");
             NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
                                                                                           data:request.responseData];
 
@@ -81,13 +92,13 @@ static NSMutableOrderedSet *cachableURLs = nil;
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        UA_LTRACE(@"Error %@ for request %@, attempting to fall back to cache.", request.error, request.url);
         [_self loadFromCache];
     };
 
-
-    self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                              successBlock:successBlock
-                                                              failureBlock:failureBlock];
+    self.connection = [UAHTTPConnection connectionWithRequest:[self createUAHTTPRequest]
+                                                 successBlock:successBlock
+                                                 failureBlock:failureBlock];
 
     [self.connection start];
 }
@@ -96,15 +107,12 @@ static NSMutableOrderedSet *cachableURLs = nil;
     [self.connection cancel];
 }
 
-+ (NSURLRequest *)canonicalRequestForRequest:(NSURLRequest *)request {
-    return request;
-}
-
 - (void)loadFromCache {
     NSCachedURLResponse *cachedResponse = [[UAInbox shared].cache cachedResponseForRequest:self.request];
     if (cachedResponse) {
         [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
     } else {
+        UA_LTRACE(@"No cache for response %@", self.request.URL);
         [self finishRequest];
     }
 }
@@ -119,19 +127,24 @@ static NSMutableOrderedSet *cachableURLs = nil;
     [self.client URLProtocolDidFinishLoading:self];
 }
 
-+(NSMutableOrderedSet *)cachableURLs {
-    if (!cachableURLs) {
-        cachableURLs = [NSMutableOrderedSet orderedSet];
+- (UAHTTPRequest *)createUAHTTPRequest {
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:self.request.URL];
+
+    for (NSString *header in [self.request allHTTPHeaderFields]) {
+        [request addRequestHeader:header value:[self.request valueForHTTPHeaderField:header]];
     }
-    return cachableURLs;
-}
 
-+(void)addCachableURL:(NSURL *)url {
-    [[self cachableURLs] addObject:url];
-}
+    NSHTTPURLResponse *cachedResponse = (NSHTTPURLResponse *)[[UAInbox shared].cache cachedResponseForRequest:self.request].response;
+    if (cachedResponse) {
+        NSString *cachedDate = [[cachedResponse allHeaderFields] valueForKey:@"Date"];
+        [request addRequestHeader:@"If-Modified-Since" value:cachedDate];
 
-+(void)removeCachableURL:(NSURL *)url {
-    [[self cachableURLs] removeObject:url];
+        UA_LTRACE(@"Request %@ previously cached %@", request.url, cachedDate);
+    }
+
+    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@"true"];
+
+    return request;
 }
 
 @end
