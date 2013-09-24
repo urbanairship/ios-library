@@ -22,15 +22,14 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
 
-#import "UAGlobal.h"
+#import "UAPush.h"
 
-@interface UATestingDelegate : NSObject
+@interface UATestPushDelegate : NSObject<UAPushNotificationDelegate>
 
-SINGLETON_INTERFACE(UATestingDelegate);
+// the unique alert ID for the expected push notification
+@property (nonatomic, copy) NSString *uniqueID;
 
 @end
-
-
-

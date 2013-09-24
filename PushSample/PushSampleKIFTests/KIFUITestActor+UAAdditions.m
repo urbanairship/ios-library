@@ -23,53 +23,43 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KIFTestStep+UAAdditions.h"
+#import "KIFUITestActor+UAAdditions.h"
 #import "UATestPushDelegate.h"
 #import "UAUtils.h"
 
 #define kPushWait 90.0
 
-@implementation KIFTestStep (UAAdditions)
+@implementation KIFUITestActor (UAAdditions)
 
 // This method stores the uniqueID for the expected push notification
-+ (id)stepToSetUniqueID:(NSString *)alertID {
-    return [KIFTestStep stepWithDescription:@"Set uniqueID." executionBlock:^(KIFTestStep *step, NSError **error) {
-
+- (void)setUniqueID:(NSString *)alertID {
+    return [self runBlock:^KIFTestStepResult(NSError *__autoreleasing *error) {
+        NSLog(@"Set uniqueID.");
         UATestPushDelegate *pushDelegate = (UATestPushDelegate*) [UAPush shared].pushNotificationDelegate;
         pushDelegate.uniqueID = alertID;
-
         return KIFTestStepResultSuccess;
     }];
 }
 
 // This method sends the push notification with the uniqueID and verifies the expected push arrived
-+ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock {
+- (void)sendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock {
     NSString *alertID = [UAUtils UUID];
+    [self setUniqueID:alertID];
 
-    NSMutableArray *steps = [NSMutableArray array];
-
-    [steps addObject:[KIFTestStep stepToSetUniqueID:alertID]];
-
-    [steps addObject:[KIFTestStep stepWithDescription:description executionBlock:^(KIFTestStep *step, NSError **error) {
+    return [self runBlock:^KIFTestStepResult(NSError **error) {
+        NSLog(@"%@", description);
         sendPushBlock(alertID);
+        [[self usingTimeout:kPushWait] waitForTappableViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton];
+        [self tapViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton];
         return KIFTestStepResultSuccess;
-    }]];
-
-    KIFTestStep *waitStep = [KIFTestStep stepToWaitForTappableViewWithAccessibilityLabel:alertID];
-    waitStep.timeout = kPushWait;
-
-    [steps addObject:waitStep];
-    [steps addObject:[KIFTestStep stepToTapViewWithAccessibilityLabel:alertID traits:UIAccessibilityTraitButton]];
-
-    return steps;
+    }];
 }
 
 // This method verifies the pushEnabled value
-+ (id)stepToVerifyPushEnabled:(Boolean)enabled {
-    return [KIFTestStep stepWithDescription:@"Verify PushEnabled" executionBlock:^(KIFTestStep *step, NSError **error) {
-
+- (void)verifyPushEnabled:(BOOL)enabled {
+    return [self runBlock:^KIFTestStepResult(NSError **error) {
+        NSLog(@"Verify PushEnabled.");
         KIFTestCondition(([UAPush shared].pushEnabled == enabled), error, @"PushEnabled does not match expected value.");
-
         return KIFTestStepResultSuccess;
     }];
 }

@@ -53,88 +53,24 @@
 		1F7FD61B12F8E39900317B96 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
 		1F7FD61C12F8E39900317B96 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
 		1F86D94F13007F790021ABF3 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
-		1FCBB515175A9F7F00F42F07 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
-		1FCBB516175A9F7F00F42F07 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
-		1FCBB517175A9F7F00F42F07 /* MainWindow_Phone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02950124F216B00D49CD5 /* MainWindow_Phone.xib */; };
-		1FCBB518175A9F7F00F42F07 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02952124F216B00D49CD5 /* Default.png */; };
-		1FCBB519175A9F7F00F42F07 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18C02954124F216B00D49CD5 /* Icon-Small.png */; };
-		1FCBB51A175A9F7F00F42F07 /* SampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C02955124F216B00D49CD5 /* SampleViewController.xib */; };
-		1FCBB51B175A9F7F00F42F07 /* bottom-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA121251B5E900E6EBF1 /* bottom-detail.png */; };
-		1FCBB51C175A9F7F00F42F07 /* bottom-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA131251B5E900E6EBF1 /* bottom-detail@2x.png */; };
-		1FCBB51D175A9F7F00F42F07 /* middle-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA141251B5E900E6EBF1 /* middle-detail.png */; };
-		1FCBB51E175A9F7F00F42F07 /* middle-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA151251B5E900E6EBF1 /* middle-detail@2x.png */; };
-		1FCBB51F175A9F7F00F42F07 /* top-detail.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA161251B5E900E6EBF1 /* top-detail.png */; };
-		1FCBB520175A9F7F00F42F07 /* top-detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA171251B5E900E6EBF1 /* top-detail@2x.png */; };
-		1FCBB521175A9F7F00F42F07 /* UAPushMoreSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA181251B5E900E6EBF1 /* UAPushMoreSettingsView.xib */; };
-		1FCBB522175A9F7F00F42F07 /* UAPushSettingsAliasView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA191251B5E900E6EBF1 /* UAPushSettingsAliasView.xib */; };
-		1FCBB523175A9F7F00F42F07 /* UAPushSettingsTokenView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */; };
-		1FCBB524175A9F7F00F42F07 /* UAPushSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */; };
-		1FCBB525175A9F7F00F42F07 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB312BC24150041239E /* Icon-72.png */; };
-		1FCBB526175A9F7F00F42F07 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB412BC24150041239E /* Icon-Small-50.png */; };
-		1FCBB527175A9F7F00F42F07 /* iPadDefault-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB512BC24150041239E /* iPadDefault-Landscape.png */; };
-		1FCBB528175A9F7F00F42F07 /* iPadDefault-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CB612BC24150041239E /* iPadDefault-Portrait.png */; };
-		1FCBB529175A9F7F00F42F07 /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBB12BC24210041239E /* Icon-Small@2x.png */; };
-		1FCBB52A175A9F7F00F42F07 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBD12BC242F0041239E /* Default@2x.png */; };
-		1FCBB52B175A9F7F00F42F07 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = D5C75CBE12BC242F0041239E /* Icon.png */; };
-		1FCBB52C175A9F7F00F42F07 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
-		1FCBB52D175A9F7F00F42F07 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63612C15644009731BE /* iTunesArtwork */; };
-		1FCBB52E175A9F7F00F42F07 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
-		1FCBB52F175A9F7F00F42F07 /* UAPushSettingsTagsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */; };
-		1FCBB530175A9F7F00F42F07 /* UAPushSettingsAddTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */; };
-		1FCBB531175A9F7F00F42F07 /* UAPushSettingsSoundsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */; };
-		1FCBB532175A9F7F00F42F07 /* cat.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61512F8E39900317B96 /* cat.caf */; };
-		1FCBB533175A9F7F00F42F07 /* cow.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61612F8E39900317B96 /* cow.caf */; };
-		1FCBB534175A9F7F00F42F07 /* frog.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61712F8E39900317B96 /* frog.caf */; };
-		1FCBB535175A9F7F00F42F07 /* pig.caf in Resources */ = {isa = PBXBuildFile; fileRef = 1F7FD61812F8E39900317B96 /* pig.caf */; };
-		1FCBB536175A9F7F00F42F07 /* UAPushLocalization.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */; };
-		1FCBB537175A9F7F00F42F07 /* UALocationSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BB75D9AE151BEB1600F4241E /* UALocationSettingsViewController.xib */; };
-		1FCBB538175A9F7F00F42F07 /* UAMapPresentationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBAAD870151D263E00A090CD /* UAMapPresentationViewController.xib */; };
-		1FCBB539175A9F7F00F42F07 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1FCBB53D175A9F7F00F42F07 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02947124F216B00D49CD5 /* main.m */; };
-		1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18C02949124F216B00D49CD5 /* SampleViewController.m */; };
-		1FCBB53F175A9F7F00F42F07 /* UAPushMoreSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA071251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m */; };
-		1FCBB540175A9F7F00F42F07 /* UAPushSettingsAliasViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA091251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m */; };
-		1FCBB541175A9F7F00F42F07 /* UAPushSettingsTokenViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0B1251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m */; };
-		1FCBB542175A9F7F00F42F07 /* UAPushSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0D1251B5E900E6EBF1 /* UAPushSettingsViewController.m */; };
-		1FCBB543175A9F7F00F42F07 /* UAPushUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1890BA0F1251B5E900E6EBF1 /* UAPushUI.m */; };
-		1FCBB544175A9F7F00F42F07 /* UAPushSettingsTagsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD3F712F79AFF00317B96 /* UAPushSettingsTagsViewController.m */; };
-		1FCBB545175A9F7F00F42F07 /* UAPushSettingsAddTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD45312F8956900317B96 /* UAPushSettingsAddTagViewController.m */; };
-		1FCBB546175A9F7F00F42F07 /* UAPushSettingsSoundsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7FD5ED12F8DE2200317B96 /* UAPushSettingsSoundsViewController.m */; };
-		1FCBB547175A9F7F00F42F07 /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
-		1FCBB548175A9F7F00F42F07 /* UALocationDemoAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D98152B5E9C006E6A92 /* UALocationDemoAnnotation.m */; };
-		1FCBB549175A9F7F00F42F07 /* UALocationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9A152B5E9C006E6A92 /* UALocationSettingsViewController.m */; };
-		1FCBB54A175A9F7F00F42F07 /* UAMapPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB935D9C152B5E9C006E6A92 /* UAMapPresentationController.m */; };
-		1FCBB54C175A9F7F00F42F07 /* libUAirship-3.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.0.a */; };
-		1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB75D9AC151BEAAC00F4241E /* MapKit.framework */; };
-		1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
-		1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
-		1FCBB550175A9F7F00F42F07 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
-		1FCBB551175A9F7F00F42F07 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
-		1FCBB552175A9F7F00F42F07 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
-		1FCBB553175A9F7F00F42F07 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E042C11AA5D1E00C4CD8A /* CFNetwork.framework */; };
-		1FCBB554175A9F7F00F42F07 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E049311AA5DB100C4CD8A /* MobileCoreServices.framework */; };
-		1FCBB555175A9F7F00F42F07 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D2E04AC11AA5E9700C4CD8A /* SystemConfiguration.framework */; };
-		1FCBB556175A9F7F00F42F07 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
-		1FCBB557175A9F7F00F42F07 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A698BE129F679B00757214 /* Security.framework */; };
-		1FCBB558175A9F7F00F42F07 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C75CD612BC28EA0041239E /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		1FCBB559175A9F7F00F42F07 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7FD3A812F784E100317B96 /* MessageUI.framework */; };
-		1FCBB55A175A9F7F00F42F07 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
-		1FCBB568175AA20800F42F07 /* libKIF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FCBB567175AA0E200F42F07 /* libKIF.a */; };
-		1FCBB619175AA3D400F42F07 /* UATestingDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB618175AA3D400F42F07 /* UATestingDelegate.m */; };
-		1FCBB61C175AA5B200F42F07 /* UATestController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB61B175AA5B200F42F07 /* UATestController.m */; };
-		1FCBB61F175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB61E175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m */; };
-		1FCBB622175D175000F42F07 /* UATestPushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB621175D175000F42F07 /* UATestPushDelegate.m */; };
-		1FCBB625175D56C600F42F07 /* UAPushClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB624175D56C600F42F07 /* UAPushClient.m */; };
 		1FCBB650176237BA00F42F07 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
 		1FF54B2313BD319500F8E5A1 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
-		4944B7ED178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
-		4944B7F0178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		76811EED17EBA63700874D1F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
+		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		76811EEF17EBA63700874D1F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		76811F0617EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */; };
+		76811F0717EBA6BD00874D1F /* UAPushClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0317EBA6BD00874D1F /* UAPushClient.m */; };
+		76811F0817EBA6BD00874D1F /* UATestPushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811F0517EBA6BD00874D1F /* UATestPushDelegate.m */; };
+		76811F0917EBA6CB00874D1F /* libKIF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FCBB567175AA0E200F42F07 /* libKIF.a */; };
+		76811F0B17EBA80500874D1F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF54B2213BD319500F8E5A1 /* libz.dylib */; };
+		76811F0C17EBA80B00874D1F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
 		76955C7A17C2D83E004BAC64 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76955C7917C2D83E004BAC64 /* XCTest.framework */; };
-		76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */; };
+		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
+		76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
 		BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB6B828B15892C0D00C42B03 /* TagTest.plist */; };
@@ -154,8 +90,6 @@
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
-		CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */; };
-		CC523FCC17BA8E6600233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		CC523FCE17BA8E6D00233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FCB17BA8E6600233005 /* CoreData.framework */; };
 		D5A3F63512C15636009731BE /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D5A3F63412C15636009731BE /* Icon@2x.png */; };
@@ -185,13 +119,6 @@
 			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
 			remoteInfo = "AirshipLib-iOS5";
 		};
-		1FCBB513175A9F7F00F42F07 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BB8860A7159A7E9600584445;
-			remoteInfo = AirshipLib;
-		};
 		1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
@@ -199,11 +126,32 @@
 			remoteGlobalIDString = AAB07268139719AC008AF393;
 			remoteInfo = KIF;
 		};
-		7681EF62176A5179004EA765 /* PBXContainerItemProxy */ = {
+		76811EE317EBA60100874D1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EB60ECC1177F8C83005A041A;
+			remoteInfo = "Test Host";
+		};
+		76811EE517EBA60100874D1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EB60ECEB177F8DB3005A041A;
+			remoteInfo = "KIF Tests";
+		};
+		76811EF917EBA63700874D1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1D6058900D05DD3D006BFB54;
+			remoteInfo = PushSample;
+		};
+		76811F0D17EBA83B00874D1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = AAB07267139719AC008AF393;
+			remoteGlobalIDString = EB72043E1680DDAD00278DA2;
 			remoteInfo = KIF;
 		};
 		7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */ = {
@@ -226,13 +174,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1D6058900D05DD3D006BFB54;
 			remoteInfo = PushSample;
-		};
-		CC96720C17E9116500DFF2F3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 18C02962124F21B800D49CD5 /* AirshipLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FE0B7B117E2751000856C60;
-			remoteInfo = "AirshipLib-iOS5";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -295,18 +236,7 @@
 		1F7FD61712F8E39900317B96 /* frog.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = frog.caf; sourceTree = "<group>"; };
 		1F7FD61812F8E39900317B96 /* pig.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = pig.caf; sourceTree = "<group>"; };
 		1F86D94E13007F790021ABF3 /* UAPushLocalization.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = UAPushLocalization.bundle; sourceTree = "<group>"; };
-		1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PushSampleKIF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KIF.xcodeproj; path = FunctionalTests/Frameworks/KIF/KIF.xcodeproj; sourceTree = "<group>"; };
-		1FCBB617175AA3D400F42F07 /* UATestingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestingDelegate.h; sourceTree = "<group>"; };
-		1FCBB618175AA3D400F42F07 /* UATestingDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestingDelegate.m; sourceTree = "<group>"; };
-		1FCBB61A175AA5B200F42F07 /* UATestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestController.h; sourceTree = "<group>"; };
-		1FCBB61B175AA5B200F42F07 /* UATestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestController.m; sourceTree = "<group>"; };
-		1FCBB61D175AA68D00F42F07 /* KIFTestScenario+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFTestScenario+UAAdditions.h"; sourceTree = "<group>"; };
-		1FCBB61E175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFTestScenario+UAAdditions.m"; sourceTree = "<group>"; };
-		1FCBB620175D175000F42F07 /* UATestPushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestPushDelegate.h; sourceTree = "<group>"; };
-		1FCBB621175D175000F42F07 /* UATestPushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestPushDelegate.m; sourceTree = "<group>"; };
-		1FCBB623175D56C600F42F07 /* UAPushClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushClient.h; sourceTree = "<group>"; };
-		1FCBB624175D56C600F42F07 /* UAPushClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushClient.m; sourceTree = "<group>"; };
 		1FCBB64E176237BA00F42F07 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
 		1FCBB64F176237BA00F42F07 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FF54B2213BD319500F8E5A1 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -314,9 +244,19 @@
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
+		76811ED217EBA60100874D1F /* PushSampleKIFTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIFTests-Info.plist"; sourceTree = "<group>"; };
+		76811ED417EBA60100874D1F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		76811ED617EBA60100874D1F /* PushSampleKIFTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushSampleKIFTests.m; sourceTree = "<group>"; };
+		76811ED817EBA60100874D1F /* PushSampleKIFTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PushSampleKIFTests-Prefix.pch"; sourceTree = "<group>"; };
+		76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PushSampleKIFTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		76811EFF17EBA6BD00874D1F /* KIFUITestActor+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFUITestActor+UAAdditions.h"; sourceTree = "<group>"; };
+		76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFUITestActor+UAAdditions.m"; sourceTree = "<group>"; };
+		76811F0117EBA6BD00874D1F /* PushSampleKIFTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushSampleKIFTests.h; sourceTree = "<group>"; };
+		76811F0217EBA6BD00874D1F /* UAPushClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushClient.h; sourceTree = "<group>"; };
+		76811F0317EBA6BD00874D1F /* UAPushClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushClient.m; sourceTree = "<group>"; };
+		76811F0417EBA6BD00874D1F /* UATestPushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestPushDelegate.h; sourceTree = "<group>"; };
+		76811F0517EBA6BD00874D1F /* UATestPushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestPushDelegate.m; sourceTree = "<group>"; };
 		76955C7917C2D83E004BAC64 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "KIFTestStep+UAAdditions.h"; sourceTree = "<group>"; };
-		76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "KIFTestStep+UAAdditions.m"; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
@@ -341,7 +281,6 @@
 		BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
-		CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIF-Info.plist"; sourceTree = "<group>"; };
 		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		D5A3F63412C15636009731BE /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		D5A3F63612C15644009731BE /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; path = iTunesArtwork; sourceTree = "<group>"; };
@@ -381,27 +320,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FCBB54B175A9F7F00F42F07 /* Frameworks */ = {
+		76811EE917EBA63600874D1F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC523FCC17BA8E6600233005 /* CoreData.framework in Frameworks */,
-				1FCBB568175AA20800F42F07 /* libKIF.a in Frameworks */,
-				1FCBB54C175A9F7F00F42F07 /* libUAirship-3.0.0.a in Frameworks */,
-				1FCBB54D175A9F7F00F42F07 /* MapKit.framework in Frameworks */,
-				1FCBB54E175A9F7F00F42F07 /* CoreLocation.framework in Frameworks */,
-				1FCBB54F175A9F7F00F42F07 /* libz.dylib in Frameworks */,
-				1FCBB550175A9F7F00F42F07 /* Foundation.framework in Frameworks */,
-				1FCBB551175A9F7F00F42F07 /* UIKit.framework in Frameworks */,
-				1FCBB552175A9F7F00F42F07 /* CoreGraphics.framework in Frameworks */,
-				1FCBB553175A9F7F00F42F07 /* CFNetwork.framework in Frameworks */,
-				1FCBB554175A9F7F00F42F07 /* MobileCoreServices.framework in Frameworks */,
-				1FCBB555175A9F7F00F42F07 /* SystemConfiguration.framework in Frameworks */,
-				1FCBB556175A9F7F00F42F07 /* libsqlite3.dylib in Frameworks */,
-				1FCBB557175A9F7F00F42F07 /* Security.framework in Frameworks */,
-				1FCBB558175A9F7F00F42F07 /* CoreTelephony.framework in Frameworks */,
-				1FCBB559175A9F7F00F42F07 /* MessageUI.framework in Frameworks */,
-				1FCBB55A175A9F7F00F42F07 /* AudioToolbox.framework in Frameworks */,
+				76811F0C17EBA80B00874D1F /* libsqlite3.dylib in Frameworks */,
+				76811F0B17EBA80500874D1F /* libz.dylib in Frameworks */,
+				76811F0917EBA6CB00874D1F /* libKIF.a in Frameworks */,
+				76811EED17EBA63700874D1F /* SenTestingKit.framework in Frameworks */,
+				76811EEF17EBA63700874D1F /* UIKit.framework in Frameworks */,
+				76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -612,7 +540,7 @@
 			children = (
 				1D6058910D05DD3D006BFB54 /* PushSample.app */,
 				BBEFB0171507F3A400976645 /* AirshipApplicationTests.xctest */,
-				1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */,
+				76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -621,6 +549,8 @@
 			isa = PBXGroup;
 			children = (
 				1FCBB567175AA0E200F42F07 /* libKIF.a */,
+				76811EE417EBA60100874D1F /* Test Host.app */,
+				76811EE617EBA60100874D1F /* KIF Tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -628,28 +558,8 @@
 		1FCBB56A175AA35C00F42F07 /* FunctionalTests */ = {
 			isa = PBXGroup;
 			children = (
-				1FCBB56B175AA35C00F42F07 /* Classes */,
 			);
 			path = FunctionalTests;
-			sourceTree = "<group>";
-		};
-		1FCBB56B175AA35C00F42F07 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-				1FCBB617175AA3D400F42F07 /* UATestingDelegate.h */,
-				1FCBB618175AA3D400F42F07 /* UATestingDelegate.m */,
-				1FCBB61A175AA5B200F42F07 /* UATestController.h */,
-				1FCBB61B175AA5B200F42F07 /* UATestController.m */,
-				1FCBB61D175AA68D00F42F07 /* KIFTestScenario+UAAdditions.h */,
-				1FCBB61E175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m */,
-				1FCBB620175D175000F42F07 /* UATestPushDelegate.h */,
-				1FCBB621175D175000F42F07 /* UATestPushDelegate.m */,
-				1FCBB623175D56C600F42F07 /* UAPushClient.h */,
-				1FCBB624175D56C600F42F07 /* UAPushClient.m */,
-				76E982021774C3ED00AAC0B9 /* KIFTestStep+UAAdditions.h */,
-				76E982041774C47200AAC0B9 /* KIFTestStep+UAAdditions.m */,
-			);
-			path = Classes;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
@@ -662,6 +572,7 @@
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				BBEFB01C1507F3A400976645 /* AirshipApplicationTests */,
 				1FCBB56A175AA35C00F42F07 /* FunctionalTests */,
+				76811ED017EBA60100874D1F /* PushSampleKIFTests */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				1FCBB562175AA0E200F42F07 /* KIF.xcodeproj */,
@@ -674,7 +585,6 @@
 			children = (
 				1F79711212DE3BFB00D4937F /* AirshipConfig.plist */,
 				D5F70FBC12C94C39007285C4 /* PushSample-Info.plist */,
-				CC1F7AB5176A4867002E42B2 /* PushSampleKIF-Info.plist */,
 				D5F70FBD12C94C39007285C4 /* PushSample_Prefix.pch */,
 				18C02947124F216B00D49CD5 /* main.m */,
 				0D2E051611AA61F300C4CD8A /* checkConfig.sh */,
@@ -705,6 +615,32 @@
 				BBEFB0181507F3A400976645 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		76811ED017EBA60100874D1F /* PushSampleKIFTests */ = {
+			isa = PBXGroup;
+			children = (
+				76811F0117EBA6BD00874D1F /* PushSampleKIFTests.h */,
+				76811ED617EBA60100874D1F /* PushSampleKIFTests.m */,
+				76811EFF17EBA6BD00874D1F /* KIFUITestActor+UAAdditions.h */,
+				76811F0017EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m */,
+				76811F0217EBA6BD00874D1F /* UAPushClient.h */,
+				76811F0317EBA6BD00874D1F /* UAPushClient.m */,
+				76811F0417EBA6BD00874D1F /* UATestPushDelegate.h */,
+				76811F0517EBA6BD00874D1F /* UATestPushDelegate.m */,
+				76811ED117EBA60100874D1F /* Supporting Files */,
+			);
+			path = PushSampleKIFTests;
+			sourceTree = "<group>";
+		};
+		76811ED117EBA60100874D1F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				76811ED217EBA60100874D1F /* PushSampleKIFTests-Info.plist */,
+				76811ED317EBA60100874D1F /* InfoPlist.strings */,
+				76811ED817EBA60100874D1F /* PushSampleKIFTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
@@ -755,25 +691,24 @@
 			productReference = 1D6058910D05DD3D006BFB54 /* PushSample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1FCBB511175A9F7F00F42F07 /* PushSampleKIF */ = {
+		76811EEB17EBA63600874D1F /* PushSampleKIFTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1FCBB55C175A9F7F00F42F07 /* Build configuration list for PBXNativeTarget "PushSampleKIF" */;
+			buildConfigurationList = 76811EFB17EBA63700874D1F /* Build configuration list for PBXNativeTarget "PushSampleKIFTests" */;
 			buildPhases = (
-				1FCBB514175A9F7F00F42F07 /* Resources */,
-				1FCBB53A175A9F7F00F42F07 /* Sources */,
-				1FCBB54B175A9F7F00F42F07 /* Frameworks */,
-				1FCBB55B175A9F7F00F42F07 /* ShellScript */,
+				76811EE817EBA63600874D1F /* Sources */,
+				76811EE917EBA63600874D1F /* Frameworks */,
+				76811EEA17EBA63600874D1F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				7681EF63176A5179004EA765 /* PBXTargetDependency */,
-				1FCBB512175A9F7F00F42F07 /* PBXTargetDependency */,
+				76811F0E17EBA83B00874D1F /* PBXTargetDependency */,
+				76811EFA17EBA63700874D1F /* PBXTargetDependency */,
 			);
-			name = PushSampleKIF;
-			productName = PushLibSample;
-			productReference = 1FCBB55F175A9F7F00F42F07 /* PushSampleKIF.app */;
-			productType = "com.apple.product-type.application";
+			name = PushSampleKIFTests;
+			productName = PushSampleKIFTests;
+			productReference = 76811EEC17EBA63600874D1F /* PushSampleKIFTests.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 		BBEFB0161507F3A400976645 /* AirshipApplicationTests */ = {
 			isa = PBXNativeTarget;
@@ -809,12 +744,8 @@
 							};
 						};
 					};
-					1FCBB511175A9F7F00F42F07 = {
-						SystemCapabilities = {
-							com.apple.BackgroundModes = {
-								enabled = 0;
-							};
-						};
+					76811EEB17EBA63600874D1F = {
+						TestTargetID = 1D6058900D05DD3D006BFB54;
 					};
 				};
 			};
@@ -845,7 +776,7 @@
 			targets = (
 				1D6058900D05DD3D006BFB54 /* PushSample */,
 				BBEFB0161507F3A400976645 /* AirshipApplicationTests */,
-				1FCBB511175A9F7F00F42F07 /* PushSampleKIF */,
+				76811EEB17EBA63600874D1F /* PushSampleKIFTests */,
 			);
 		};
 /* End PBXProject section */
@@ -865,6 +796,20 @@
 			remoteRef = 1FCBB566175AA0E200F42F07 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		76811EE417EBA60100874D1F /* Test Host.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Test Host.app";
+			remoteRef = 76811EE317EBA60100874D1F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		76811EE617EBA60100874D1F /* KIF Tests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "KIF Tests.octest";
+			remoteRef = 76811EE517EBA60100874D1F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -877,13 +822,6 @@
 			fileType = archive.ar;
 			path = "libUAirship-3.0.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CC96720D17E9116500DFF2F3 /* libUAirship-iOS5-3.0.0.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libUAirship-iOS5-3.0.0.a";
-			remoteRef = CC96720C17E9116500DFF2F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -934,48 +872,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FCBB514175A9F7F00F42F07 /* Resources */ = {
+		76811EEA17EBA63600874D1F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FCBB515175A9F7F00F42F07 /* checkConfig.sh in Resources */,
-				1FCBB516175A9F7F00F42F07 /* MainWindow_Pad.xib in Resources */,
-				1FCBB517175A9F7F00F42F07 /* MainWindow_Phone.xib in Resources */,
-				1FCBB518175A9F7F00F42F07 /* Default.png in Resources */,
-				1FCBB519175A9F7F00F42F07 /* Icon-Small.png in Resources */,
-				1FCBB51A175A9F7F00F42F07 /* SampleViewController.xib in Resources */,
-				1FCBB51B175A9F7F00F42F07 /* bottom-detail.png in Resources */,
-				1FCBB51C175A9F7F00F42F07 /* bottom-detail@2x.png in Resources */,
-				1FCBB51D175A9F7F00F42F07 /* middle-detail.png in Resources */,
-				1FCBB51E175A9F7F00F42F07 /* middle-detail@2x.png in Resources */,
-				1FCBB51F175A9F7F00F42F07 /* top-detail.png in Resources */,
-				1FCBB520175A9F7F00F42F07 /* top-detail@2x.png in Resources */,
-				1FCBB521175A9F7F00F42F07 /* UAPushMoreSettingsView.xib in Resources */,
-				1FCBB522175A9F7F00F42F07 /* UAPushSettingsAliasView.xib in Resources */,
-				1FCBB523175A9F7F00F42F07 /* UAPushSettingsTokenView.xib in Resources */,
-				1FCBB524175A9F7F00F42F07 /* UAPushSettingsView.xib in Resources */,
-				1FCBB525175A9F7F00F42F07 /* Icon-72.png in Resources */,
-				1FCBB526175A9F7F00F42F07 /* Icon-Small-50.png in Resources */,
-				1FCBB527175A9F7F00F42F07 /* iPadDefault-Landscape.png in Resources */,
-				1FCBB528175A9F7F00F42F07 /* iPadDefault-Portrait.png in Resources */,
-				1FCBB529175A9F7F00F42F07 /* Icon-Small@2x.png in Resources */,
-				1FCBB52A175A9F7F00F42F07 /* Default@2x.png in Resources */,
-				1FCBB52B175A9F7F00F42F07 /* Icon.png in Resources */,
-				1FCBB52C175A9F7F00F42F07 /* Icon@2x.png in Resources */,
-				1FCBB52D175A9F7F00F42F07 /* iTunesArtwork in Resources */,
-				1FCBB52E175A9F7F00F42F07 /* AirshipConfig.plist in Resources */,
-				1FCBB52F175A9F7F00F42F07 /* UAPushSettingsTagsViewController.xib in Resources */,
-				1FCBB530175A9F7F00F42F07 /* UAPushSettingsAddTagViewController.xib in Resources */,
-				1FCBB531175A9F7F00F42F07 /* UAPushSettingsSoundsViewController.xib in Resources */,
-				1FCBB532175A9F7F00F42F07 /* cat.caf in Resources */,
-				1FCBB533175A9F7F00F42F07 /* cow.caf in Resources */,
-				1FCBB534175A9F7F00F42F07 /* frog.caf in Resources */,
-				1FCBB535175A9F7F00F42F07 /* pig.caf in Resources */,
-				1FCBB536175A9F7F00F42F07 /* UAPushLocalization.bundle in Resources */,
-				1FCBB537175A9F7F00F42F07 /* UALocationSettingsViewController.xib in Resources */,
-				1FCBB538175A9F7F00F42F07 /* UAMapPresentationViewController.xib in Resources */,
-				1FCBB539175A9F7F00F42F07 /* Default-568h@2x.png in Resources */,
-				4944B7F0178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */,
+				76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1018,19 +919,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
 		};
-		1FCBB55B175A9F7F00F42F07 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/checkConfig.sh\"";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1057,32 +945,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1FCBB53A175A9F7F00F42F07 /* Sources */ = {
+		76811EE817EBA63600874D1F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76E982061774C54B00AAC0B9 /* KIFTestStep+UAAdditions.m in Sources */,
-				CC1F7AB2176A4743002E42B2 /* SampleAppDelegate.m in Sources */,
-				1FCBB53D175A9F7F00F42F07 /* main.m in Sources */,
-				1FCBB53E175A9F7F00F42F07 /* SampleViewController.m in Sources */,
-				1FCBB53F175A9F7F00F42F07 /* UAPushMoreSettingsViewController.m in Sources */,
-				1FCBB540175A9F7F00F42F07 /* UAPushSettingsAliasViewController.m in Sources */,
-				1FCBB541175A9F7F00F42F07 /* UAPushSettingsTokenViewController.m in Sources */,
-				1FCBB542175A9F7F00F42F07 /* UAPushSettingsViewController.m in Sources */,
-				1FCBB543175A9F7F00F42F07 /* UAPushUI.m in Sources */,
-				1FCBB544175A9F7F00F42F07 /* UAPushSettingsTagsViewController.m in Sources */,
-				1FCBB545175A9F7F00F42F07 /* UAPushSettingsAddTagViewController.m in Sources */,
-				1FCBB546175A9F7F00F42F07 /* UAPushSettingsSoundsViewController.m in Sources */,
-				1FCBB547175A9F7F00F42F07 /* UAPushNotificationHandler.m in Sources */,
-				1FCBB548175A9F7F00F42F07 /* UALocationDemoAnnotation.m in Sources */,
-				1FCBB549175A9F7F00F42F07 /* UALocationSettingsViewController.m in Sources */,
-				1FCBB54A175A9F7F00F42F07 /* UAMapPresentationController.m in Sources */,
-				1FCBB619175AA3D400F42F07 /* UATestingDelegate.m in Sources */,
-				1FCBB61C175AA5B200F42F07 /* UATestController.m in Sources */,
-				1FCBB61F175AA68D00F42F07 /* KIFTestScenario+UAAdditions.m in Sources */,
-				1FCBB622175D175000F42F07 /* UATestPushDelegate.m in Sources */,
-				1FCBB625175D56C600F42F07 /* UAPushClient.m in Sources */,
-				4944B7ED178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */,
+				76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */,
+				76811F0817EBA6BD00874D1F /* UATestPushDelegate.m in Sources */,
+				76811F0617EBA6BD00874D1F /* KIFUITestActor+UAAdditions.m in Sources */,
+				76811F0717EBA6BD00874D1F /* UAPushClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1106,15 +976,15 @@
 			name = AirshipLib;
 			targetProxy = 1F42309816C08ADF004B52C1 /* PBXContainerItemProxy */;
 		};
-		1FCBB512175A9F7F00F42F07 /* PBXTargetDependency */ = {
+		76811EFA17EBA63700874D1F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = AirshipLib;
-			targetProxy = 1FCBB513175A9F7F00F42F07 /* PBXContainerItemProxy */;
+			target = 1D6058900D05DD3D006BFB54 /* PushSample */;
+			targetProxy = 76811EF917EBA63700874D1F /* PBXContainerItemProxy */;
 		};
-		7681EF63176A5179004EA765 /* PBXTargetDependency */ = {
+		76811F0E17EBA83B00874D1F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = KIF;
-			targetProxy = 7681EF62176A5179004EA765 /* PBXContainerItemProxy */;
+			targetProxy = 76811F0D17EBA83B00874D1F /* PBXContainerItemProxy */;
 		};
 		BBEFB02A1507F4AC00976645 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1124,6 +994,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		76811ED317EBA60100874D1F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				76811ED417EBA60100874D1F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		BBEFB01F1507F3A400976645 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1145,6 +1023,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1157,6 +1036,7 @@
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				PROVISIONING_PROFILE = "";
@@ -1176,6 +1056,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
@@ -1185,6 +1066,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				PROVISIONING_PROFILE = "";
@@ -1195,69 +1077,114 @@
 			};
 			name = Release;
 		};
-		1FCBB55D175A9F7F00F42F07 /* Debug */ = {
+		76811EFC17EBA63700874D1F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUILD_STYLE = Debug;
+				ARCHS = "$(ARCHS_STANDARD)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PushSample.app/PushSample";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
+				GCC_PREFIX_HEADER = "PushSampleKIFTests/PushSampleKIFTests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
 					"$(inherited)",
-					"$(SRCROOT)/../Airship/**",
-					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
 				);
-				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				OTHER_CFLAGS = "-DUADEBUG";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = PushSampleKIF;
+				OTHER_CODE_SIGN_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos;
-				VALID_ARCHS = "$(inherited)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
-		1FCBB55E175A9F7F00F42F07 /* Release */ = {
+		76811EFD17EBA63700874D1F /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUILD_STYLE = Release;
+				ARCHS = "$(ARCHS_STANDARD)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PushSample.app/PushSample";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_GENERATE_TEST_COVERAGE_FILES = NO;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
-					"$(SRCROOT)/../Airship/**",
-					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
-				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PushSampleKIFTests/PushSampleKIFTests-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = PushSampleKIF;
+				OTHER_CODE_SIGN_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Coverage;
+		};
+		76811EFE17EBA63700874D1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/PushSample.app/PushSample";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PushSampleKIFTests/PushSampleKIFTests-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				INFOPLIST_FILE = "PushSampleKIFTests/PushSampleKIFTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CODE_SIGN_FLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=*]" = "";
-				SDKROOT = iphoneos;
+				TEST_HOST = "$(BUNDLE_LOADER)";
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "$(inherited)";
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -1267,6 +1194,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "${BUILT_PRODUCTS_DIR}/PushSample.app/PushSample";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1310,6 +1238,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1354,6 +1283,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1389,7 +1319,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Distribution";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1423,6 +1354,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -1456,6 +1388,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_RESOURCE_RULES_PATH = "";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1469,6 +1402,7 @@
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_CFLAGS = "-DUADEBUG";
+				OTHER_CODE_SIGN_FLAGS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PushSample;
 				PROVISIONING_PROFILE = "";
@@ -1484,6 +1418,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				BUNDLE_LOADER = "${BUILT_PRODUCTS_DIR}/PushSample.app/PushSample";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1522,40 +1457,6 @@
 			};
 			name = Coverage;
 		};
-		CC3914A41790A6770033094B /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				BUILD_STYLE = Debug;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
-				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../Airship/**",
-					"$(SRCROOT)/FunctionalTests/Frameworks/KIF/**",
-				);
-				INFOPLIST_FILE = "PushSampleKIF-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				OTHER_CFLAGS = "-DUADEBUG";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = PushSampleKIF;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos;
-				VALID_ARCHS = "$(inherited)";
-			};
-			name = Coverage;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1567,17 +1468,17 @@
 				1D6058950D05DD3E006BFB54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
-		1FCBB55C175A9F7F00F42F07 /* Build configuration list for PBXNativeTarget "PushSampleKIF" */ = {
+		76811EFB17EBA63700874D1F /* Build configuration list for PBXNativeTarget "PushSampleKIFTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1FCBB55D175A9F7F00F42F07 /* Debug */,
-				CC3914A41790A6770033094B /* Coverage */,
-				1FCBB55E175A9F7F00F42F07 /* Release */,
+				76811EFC17EBA63700874D1F /* Debug */,
+				76811EFD17EBA63700874D1F /* Coverage */,
+				76811EFE17EBA63700874D1F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		BBEFB0261507F3A400976645 /* Build configuration list for PBXNativeTarget "AirshipApplicationTests" */ = {
 			isa = XCConfigurationList;
@@ -1587,7 +1488,7 @@
 				BBEFB0281507F3A400976645 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "PushSampleLib" */ = {
 			isa = XCConfigurationList;
@@ -1597,7 +1498,7 @@
 				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

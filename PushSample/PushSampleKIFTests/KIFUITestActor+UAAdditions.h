@@ -23,40 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UATestingDelegate.h"
+#import <KIF/KIF.h>
 
-#import "UAGlobal.h"
+typedef void (^SendPushBlock)(NSString *alertID);
 
-#import "UATestController.h"
-#import "UA_Reachability.h"
+@interface KIFUITestActor (UAAdditions)
 
-
-@implementation UATestingDelegate
-
-SINGLETON_IMPLEMENTATION(UATestingDelegate);
-
-/* this method is called the moment the class is made known to the obj-c runtime,
- before app launch completes. */
-+ (void)load {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:[UATestingDelegate shared] selector:@selector(runKIF:) name:@"UIApplicationDidFinishLaunchingNotification" object:nil];
-}
-
-- (void)runKIF:(NSNotification *)notification {
-    
-    // Capture connection type using Reachability
-    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
-    if (netStatus == UA_NotReachable) {
-        NSLog(@"The Internet connection appears to be offline. Abort KIF tests.");
-        exit(EXIT_FAILURE);
-    } else {
-        [[UATestController sharedInstance] startTestingWithCompletionBlock:^{
-            // Exit after the tests complete so that CI knows we're done
-            exit([[UATestController sharedInstance] failureCount]);
-        }];
-    }
-
-}
-
+- (void)setUniqueID:(NSString *)alertID;
+- (void)sendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
+- (void)verifyPushEnabled:(BOOL)enabled;
 @end
-

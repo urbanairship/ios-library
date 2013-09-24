@@ -23,12 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KIFTestStep.h"
-typedef void (^SendPushBlock)(NSString *alertID);
+#import <KIF/KIF.h>
 
-@interface KIFTestStep (UAAdditions)
+@interface PushSampleKIFTests : KIFTestCase
 
-+ (id)stepToSetUniqueID:(NSString *)alertID;
-+ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
-+ (id)stepToVerifyPushEnabled:(Boolean)enabled;
 @end
