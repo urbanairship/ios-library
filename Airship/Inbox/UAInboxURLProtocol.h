@@ -27,6 +27,8 @@
 
 @interface UAInboxURLProtocol : NSURLProtocol
 
+#define UA_SKIP_PROTOCOL_HEADER @"UA-Skip-Cache-Protocol"
+
 +(void)addCachableURL:(NSURL *)url;
 +(void)removeCachableURL:(NSURL *)url;
 

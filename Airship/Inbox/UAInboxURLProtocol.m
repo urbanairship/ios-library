@@ -38,7 +38,7 @@ static NSMutableOrderedSet *cachableURLs = nil;
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
-    if ([request valueForHTTPHeaderField:@"ua-skip-protocol"] || ![request.HTTPMethod isEqual:@"GET"]) {
+    if ([request valueForHTTPHeaderField:UA_SKIP_PROTOCOL_HEADER] || ![request.HTTPMethod isEqual:@"GET"]) {
         return false;
     }
 
@@ -60,7 +60,7 @@ static NSMutableOrderedSet *cachableURLs = nil;
         [request addRequestHeader:@"If-Modified-Since" value:[[cachedResponse allHeaderFields] valueForKey:@"Date"]];
     }
 
-    [request addRequestHeader:@"ua-skip-protocol" value:@"true"];
+    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@"true"];
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         if (request.error || [request.response statusCode] == 304) {
