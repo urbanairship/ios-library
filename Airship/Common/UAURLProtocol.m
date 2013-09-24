@@ -144,6 +144,7 @@ static NSURLCache *cache = nil;
 }
 
 - (void)finishRequest:(NSURLResponse *)response responseData:(NSData *)data {
+    // NSURLCacheStorageNotAllowed - we handle the caching ourselves.
     [self.client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
     [self.client URLProtocol:self didLoadData:data];
     [self.client URLProtocolDidFinishLoading:self];
