@@ -141,7 +141,7 @@
  */
 - (void)tesCanInitWithRequestSkipHeader {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.cachableURL];
-    [request setValue:@"" forHTTPHeaderField:UA_SKIP_PROTOCOL_HEADER];
+    [request setValue:@"" forHTTPHeaderField:kUASkipProtocolHeader];
 
 
     XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should ignore requests with UA_SKIP_PROTOCOL_HEADER header.");
@@ -184,7 +184,7 @@
 
     [self.urlProtocol startLoading];
 
-    XCTAssertNotNil([self.connectionRequest.headers valueForKey:UA_SKIP_PROTOCOL_HEADER], @"Requests should contain the skip protocol header.");
+    XCTAssertNotNil([self.connectionRequest.headers valueForKey:kUASkipProtocolHeader], @"Requests should contain the skip protocol header.");
     XCTAssertNil([self.connectionRequest.headers valueForKey:@"If-Modified-Since"], @"Uncached request should not contain if modified since time.");
 
 

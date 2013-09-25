@@ -27,8 +27,8 @@
 
 @interface UAURLProtocol : NSURLProtocol
 
-#define UA_SKIP_PROTOCOL_HEADER @"X-UAURLProtocol"
-#define UA_PROTOCOL_MEMORY_CACHE_SIZE  5 * 1024 * 1024 // 5 MB
+#define kUASkipProtocolHeader @"X-UAURLProtocol"
+#define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
 
 /**
  * Adds a URl to be handled and cached by the Protocol.

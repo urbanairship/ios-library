@@ -47,7 +47,7 @@ static NSURLCache *cache = nil;
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
-    if ([request valueForHTTPHeaderField:UA_SKIP_PROTOCOL_HEADER] || ![request.HTTPMethod isEqual:@"GET"]) {
+    if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]) {
         return false;
     }
 
@@ -79,7 +79,7 @@ static NSURLCache *cache = nil;
                                       withIntermediateDirectories:YES
                                                        attributes:nil error:&error];
 
-            cache = [[NSURLCache alloc] initWithMemoryCapacity:UA_PROTOCOL_MEMORY_CACHE_SIZE
+            cache = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInMB
                                                   diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
                                                       diskPath:diskCachePath];
         }
@@ -181,7 +181,7 @@ static NSURLCache *cache = nil;
 
     // Add a special header to tell our protocol to ignore it so a different
     // protocol will handle the request.
-    [request addRequestHeader:UA_SKIP_PROTOCOL_HEADER value:@""];
+    [request addRequestHeader:kUASkipProtocolHeader value:@""];
 
     return request;
 }
