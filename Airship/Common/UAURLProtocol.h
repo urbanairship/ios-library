@@ -27,7 +27,7 @@
 
 @interface UAURLProtocol : NSURLProtocol
 
-#define kUASkipProtocolHeader @"X-UAURLProtocol"
+#define kUASkipProtocolHeader @"UA-Client-Protocol"
 #define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
 
 /**
