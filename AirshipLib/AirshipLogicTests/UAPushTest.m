@@ -19,6 +19,8 @@
 
 @implementation UAPushTest
 
+NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
 - (void)setUp {
     [super setUp];
 
@@ -74,13 +76,12 @@
     XCTAssertNil([UAPush shared].deviceToken, @"setDeviceToken should ignore device tokens with invalid characters.");
 
 
-    [UAPush shared].deviceToken = @"0123456789abf";
-    XCTAssertEqualObjects(@"0123456789abf", [UAPush shared].deviceToken,
-                 @"setDeviceToken should set tokens with valid characters");
+    [UAPush shared].deviceToken = validDeviceToken;
+    XCTAssertEqualObjects(validDeviceToken, [UAPush shared].deviceToken, @"setDeviceToken should set tokens with valid characters");
 
     [UAPush shared].deviceToken = nil;
     XCTAssertNil([UAPush shared].deviceToken,
-                          @"setDeviceToken should return nil when passed nil");
+                          @"setDeviceToken should allow a nil device token.");
 
     [UAPush shared].deviceToken = @"";
     XCTAssertEqualObjects(@"", [UAPush shared].deviceToken,
@@ -235,7 +236,7 @@
 }
 
 - (void)testPushEnabledToNo {
-    [UAPush shared].deviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    [UAPush shared].deviceToken = validDeviceToken;
     [UAPush shared].pushEnabled = YES;
 
     // Add a device token so we get a device api callback
@@ -383,7 +384,7 @@
     // Set the right values so we can check if a device api client call was made or not
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].autobadgeEnabled = YES;
-    [UAPush shared].deviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    [UAPush shared].deviceToken = validDeviceToken;
 
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
@@ -412,7 +413,7 @@
 
 - (void)testSetBadgeNumberAutoBadgeDisabled {
     [UAPush shared].pushEnabled = YES;
-    [UAPush shared].deviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    [UAPush shared].deviceToken = validDeviceToken;
 
     [UAPush shared].autobadgeEnabled = NO;
 
@@ -730,7 +731,7 @@
 
 - (void)testUpdateRegistrationForcefullyPushEnabled {
     [UAPush shared].pushEnabled = YES;
-    [UAPush shared].deviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
     [[UAPush shared] updateRegistrationForcefully:YES];
@@ -758,7 +759,7 @@
 
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     [UAPush shared].pushEnabled = NO;
-    [UAPush shared].deviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+    [UAPush shared].deviceToken = validDeviceToken;
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
 
     [[self.mockedDeviceAPIClient expect] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
