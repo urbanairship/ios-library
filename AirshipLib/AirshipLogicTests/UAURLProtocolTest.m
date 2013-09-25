@@ -118,7 +118,7 @@
 - (void)testCanInitWithRequestUnknownURL {
     NSURLRequest *request = [NSURLRequest requestWithURL:self.uncachableURL];
 
-    XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should ignore requests whos url or mainDocumentURl is not added as cachable URL.");
+    XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should ignore requests whose url or mainDocumentURl is not added as cachable URL.");
 }
 
 /*
@@ -139,7 +139,7 @@
  * to requests with the UA_SKIP_PROTOCOL_HEADER
  * header.
  */
-- (void)tesCanInitWithRequestSkipHeader {
+- (void)testCanInitWithRequestSkipHeader {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.cachableURL];
     [request setValue:@"" forHTTPHeaderField:kUASkipProtocolHeader];
 
