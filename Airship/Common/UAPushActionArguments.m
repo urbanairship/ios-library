@@ -25,20 +25,17 @@
 
 #import "UAPushActionArguments.h"
 
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-
 @implementation UAPushActionArguments
 
 - (instancetype)initWithName:(NSString *)name
-                    withSituation:(NSString *)situation
-                        withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
+        withApplicationState:(UIApplicationState)state
+                   withValue:(id)value
+                 withPayload:(NSDictionary *)payload {
+
     self = [super init];
     if (self) {
         self.name = name;
-        self.situation = situation;
+        self.applicationState = state;
         self.value = value;
         self.payload = payload;
     }
@@ -47,10 +44,11 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
 }
 
 + (instancetype)argumentsWithName:(NSString *)name
-                    withSituation:(NSString *)situation
+             withApplicationState:(UIApplicationState)state
                         withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
-    return [[UAPushActionArguments alloc] initWithName:name withSituation:situation withValue:value withPayload:payload];
+                      withPayload:(NSDictionary *)payload {
+    
+    return [[UAPushActionArguments alloc] initWithName:name withApplicationState:state withValue:value withPayload:payload];
 }
 
 @end

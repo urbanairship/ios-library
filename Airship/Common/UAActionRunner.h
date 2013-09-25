@@ -34,51 +34,29 @@
 /**
  * Performs a registered action with the given name.
  *
- * If the action is not registered or if the predicate prevents
- * the action from running, the completion handler will be called
- * immediately with UAActionResultNoData.
+ * If the action is not registered the completion handler 
+ * will be called immedietly with [UAActionResult none]
  *
- * @param name Name of the action to perform.
- * @param situation Situation to perform the action in.
- * @param value The value.
- * @param payload The payload.
+ * @param actionName The name of the action to perform
+ * @param argument The action's argument.
  * @param completionHandler CompletionHandler to pass to the action.
  */
-
-
-
-+ (void)performAction:(NSString *)name
-        withSituation:(NSString *)situation
-            withValue:(id)value
-          withPayload:(NSDictionary *)payload
++ (void)performAction:(NSString *)actionName
+         withArgument:(UAPushActionArguments *)argument
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
-
-
-/**
- * Performs a registered action with the given name.
- *
- * If the action is not registered or if the predicate prevents
- * the action from running, the completion handler will be called
- * immediately with UAActionResultNoData.
- *
- * @param arguments The arguments for the action to perform
- * @param completionHandler CompletionHandler to pass to the action.
- */
-+ (void)performActionWithArguments:(UAPushActionArguments *)arguments
-             withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
 /**
  * Performs any actions defined in the notificaiton.
  *
  * @param notification The notification.
- * @param situation The situation of the action.
+ * @param applicationState The state of the application.
  * @param completionHandler CompletionHandler to run after all the 
  * actions have completed.  The result will be the aggregated result 
  * of all the actions performed.
  */
 + (void)performActionsForNotification:(NSDictionary *)notification
-                          inSituation:(NSString *)situation
+                 withApplicationState:(UIApplicationState)applicationState
                 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

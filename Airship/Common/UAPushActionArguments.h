@@ -25,19 +25,6 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Represents a situation in which the application was launched from a push notification.
- */
-extern NSString * const UASituationLaunchedFromPush;
-/**
- * Represents a situation in which a push notification was received in the foreground.
- */
-extern NSString * const UASituationForegroundPush;
-/**
- * Represents a situation in which a push notification was received in the background.
- */
-extern NSString * const UASituationBackgroundPush;
-
-/**
  * Represents the context surrounding an action at the moment of execution.
  */
 @interface UAPushActionArguments : NSObject
@@ -46,12 +33,12 @@ extern NSString * const UASituationBackgroundPush;
  * Convenience constructor for UAActionArguments.
  *
  * @param name The name.
- * @param situation The situation.
+ * @param state The application state.
  * @param value The value.
  * @param extras The payload.
  */
 + (instancetype)argumentsWithName:(NSString *)name
-                    withSituation:(NSString *)situation
+             withApplicationState:(UIApplicationState)state
                         withValue:(id)value
                        withPayload:(NSDictionary *)payload;
 
@@ -59,11 +46,12 @@ extern NSString * const UASituationBackgroundPush;
  * The name under which the action is registered.
  */
 @property(nonatomic, copy) NSString *name;
+
 /**
- * A predefined or custom string representing the situation in which the action is being performed (e.g.
- * foreground, background, etc).
+ * State of the application when the push notification was received.
  */
-@property(nonatomic, copy) NSString *situation;
+@property(nonatomic, assign) UIApplicationState applicationState;
+
 /**
  * The value associated with the action in the push payload.
  * This can be an NSString or NSDictionary value.

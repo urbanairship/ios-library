@@ -98,12 +98,12 @@
 }
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (![self willAcceptArguments:arguments]) {
+         completionHandler([UAActionResult none]);
+    }
+
     if (self.actionBlock) {
-        if ([self willAcceptArguments:arguments]) {
-            self.actionBlock(arguments, completionHandler);
-        } else {
-            completionHandler([UAActionResult none]);
-        }
+        self.actionBlock(arguments, completionHandler);
     }
 }
 
@@ -119,8 +119,8 @@
         }
     }
 
-    //log a warning and reject the arguments
-    UA_LWARN(@"action %@ expected argument of type %@ but received %@",
+    // Log that we rejected the argumnts
+    UA_LINFO(@"action %@ expected argument of type %@ but received %@",
              [self description],
              [self.expectedArgumentType description],
              [arguments description]);
