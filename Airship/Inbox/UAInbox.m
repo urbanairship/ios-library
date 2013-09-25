@@ -33,8 +33,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-#import "UAURLProtocol.h"
-
 #import "UAInboxMessageListObserver.h"
 
 @implementation UAInbox
@@ -146,10 +144,6 @@ static Class _uiClass;
 
         //delete legacy UAInboxCache if present
         [self deleteInboxCache];
-
-        
-
-        [NSURLProtocol registerClass:[UAURLProtocol class]];
     }
 
     return self;

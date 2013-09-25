@@ -29,6 +29,8 @@
 #import "UAInboxMessageList.h"
 #import "UAHTTPRequest.H"
 #import "UAHTTPConnection.h"
+#import "UAirship.h"
+#import "UAConfig.h"
 
 
 @interface UAURLProtocol()
@@ -73,7 +75,7 @@ static NSURLCache *cache = nil;
                                                    attributes:nil error:&error];
 
         cache = [[NSURLCache alloc] initWithMemoryCapacity:UA_PROTOCOL_MEMORY_CACHE_SIZE
-                                              diskCapacity:UA_PROTOCOL_DISK_CACHE_SIZE
+                                              diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
                                                   diskPath:diskCachePath];
     }
     return cache;

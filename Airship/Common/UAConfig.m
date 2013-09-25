@@ -53,6 +53,7 @@
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         usesProductionPushServer_ = NO;
+        self.cacheDiskSizeInMB = 100;
     }
     return self;
 }
@@ -73,7 +74,8 @@
             "Clear Keychain: %d\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
-            "Device API URL: %@\n",
+            "Device API URL: %@\n"
+            "Cache Size: %ld MB\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -89,7 +91,8 @@
             self.clearKeychain,
             self.analyticsEnabled,
             self.analyticsURL,
-            self.deviceAPIURL];
+            self.deviceAPIURL,
+            self.cacheDiskSizeInMB];
 }
 
 #pragma mark -
