@@ -304,8 +304,8 @@
 }
 
 /*
- * Test that the protocol returns the response
- * current response when no cached response is 
+ * Test that the protocol returns the failed
+ * response when no cached response is
  * available
  */
 - (void)testStartLoadingNoCachedRequest {
