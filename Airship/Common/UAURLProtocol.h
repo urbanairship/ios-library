@@ -27,7 +27,7 @@
 
 
 /**
- * A NSURLProtocol that caches successfull responses to requests
+ * A NSURLProtocol that caches successful responses to requests
  * who's URL or mainDocumentURL has been added as a cachableURL.
  * A failed response will always fall back to a cached response 
  * when available.
@@ -38,14 +38,14 @@
 #define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
 
 /**
- * Adds a URl to be handled and cached by the Protocol.
+ * Adds a URL to be handled and cached by the Protocol.
  *
  *@param url The URL or mainDocumentURL of a request to cache.
  */
 + (void)addCachableURL:(NSURL *)url;
 
 /**
- * Removes a URl from being cached.
+ * Removes a URL from being cached.
  *
  *@param url The URL or mainDocumentURL of a request.
  */

@@ -114,7 +114,7 @@
  * cached.
  * 
  * Any size greater than 0 will cause the UA Disk Cache to become active. 
- * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whos
+ * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
  * mainDocumentURL or URL that have been added as a cachable URL will be considered
  * for caching.  By defualt it includes all of the Rich Application Page URLs.
  *
