@@ -28,12 +28,16 @@
 @implementation UASyncAction
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    completionHandler([self performWithArguments:arguments]);
+    if ([self willAcceptArguments:arguments]) {
+        completionHandler([self performWithArguments:arguments]);
+    } else {
+        completionHandler([UAActionResult none]);
+    }
 }
 
-- (id)performWithArguments:(id)arguments {
+- (UAActionResult *)performWithArguments:(id)arguments {
     //override
-    return nil;
+    return [UAActionResult none];
 }
 
 @end

@@ -22,31 +22,57 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#import <Foundation/Foundation.h>
 
-#import "UAActionArguments.h"
+/**
+ * Represents a situation in which the application was launched from a push notification.
+ */
+extern NSString * const UASituationLaunchedFromPush;
+/**
+ * Represents a situation in which a push notification was received in the foreground.
+ */
+extern NSString * const UASituationForegroundPush;
+/**
+ * Represents a situation in which a push notification was received in the background.
+ */
+extern NSString * const UASituationBackgroundPush;
 
-@implementation UAActionArguments
+/**
+ * Represents the context surrounding an action at the moment of execution.
+ */
+@interface UAPushActionArguments : NSObject
 
-- (instancetype)initWithName:(NSString *)name
-                    withSituation:(NSString *)situation
-                        withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
-    self = [super init];
-    if (self) {
-        self.name = name;
-        self.situation = situation;
-        self.value = value;
-        self.payload = payload;
-    }
-
-    return self;
-}
-
+/**
+ * Convenience constructor for UAActionArguments.
+ *
+ * @param name The name.
+ * @param situation The situation.
+ * @param value The value.
+ * @param extras The payload.
+ */
 + (instancetype)argumentsWithName:(NSString *)name
                     withSituation:(NSString *)situation
                         withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
-    return [[UAActionArguments alloc] initWithName:name withSituation:situation withValue:value withPayload:payload];
-}
+                       withPayload:(NSDictionary *)payload;
+
+/**
+ * The name under which the action is registered.
+ */
+@property(nonatomic, copy) NSString *name;
+/**
+ * A predefined or custom string representing the situation in which the action is being performed (e.g.
+ * foreground, background, etc).
+ */
+@property(nonatomic, copy) NSString *situation;
+/**
+ * The value associated with the action in the push payload.
+ * This can be an NSString or NSDictionary value.
+ */
+@property(nonatomic, strong) id value;
+
+/**
+ * The full push payload.
+ */
+@property(nonatomic, strong) NSDictionary *payload;
 
 @end

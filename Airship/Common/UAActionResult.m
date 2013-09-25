@@ -29,4 +29,9 @@
                                   withFetchResult:fetchResult];
 }
 
++ (instancetype)none {
+    return [[UAActionResult alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
+}
+
+
 @end

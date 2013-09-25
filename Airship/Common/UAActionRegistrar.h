@@ -25,7 +25,6 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionEntry.h"
 #import "UAGlobal.h"
 
 @interface UAActionRegistrar : NSObject
@@ -35,7 +34,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
 /**
  * A dictionary containing registered action entries
  */
-@property(nonatomic, strong) NSDictionary *registeredEntries;
+@property(nonatomic, strong) NSDictionary *registeredActions;
 
 /**
  * Registers an action with a predicate.

@@ -25,6 +25,7 @@
 
 #import "UAAction.h"
 #import "UAActionResult.h"
+#import "UAGlobal.h"
 
 @interface UAAction()
 @property(nonatomic, copy) UAActionBlock actionBlock;
@@ -36,6 +37,11 @@
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
+
+        //set a default predicate
+        self.predicateBlock = ^(id args){
+            return YES;
+        };
     }
 
     return self;
@@ -45,25 +51,35 @@
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
-- (instancetype)actionWithContinuationAction:(UAAction *)continuationAction {
+- (instancetype)continueWith:(UAAction *)continuationAction {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
-        [self performWithArguments:args withCompletionHandler:^(id result){
-            [continuationAction performWithArguments:result withCompletionHandler:^(id continuationResult){
+        [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+            [continuationAction performWithArguments:selfResult.value withCompletionHandler:^(UAActionResult *continuationResult){
+                //I think we may want to reduce the result or at least give the option in a similar operator...
                 completionHandler(continuationResult);
             }];
         }];
     }];
 
+    //copy over the predicate block and expected argument type from the receiver, so that the
+    //aggregate action has the same restrictions as the head
+    aggregateAction.predicateBlock = self.predicateBlock;
+    aggregateAction.expectedArgumentType = self.expectedArgumentType;
+
     return aggregateAction;
 }
 
-- (instancetype)actionFoldingAction:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
+- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
+    if (!foldBlock) {
+        //perhaps provide a default implementation for common use cases?
+        UA_LWARN(@"missing foldBlock, returning nil");
+        return nil;
+    }
+
     UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
-        [self performWithArguments:args withCompletionHandler:^(id result){
-            [foldedAction performWithArguments:args withCompletionHandler:^(id foldedResult){
-                if (foldBlock) {
-                    completionHandler(foldBlock(result, foldedResult));
-                }
+        [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+            [foldedAction performWithArguments:args withCompletionHandler:^(UAActionResult *foldedResult){
+                completionHandler(foldBlock(selfResult, foldedResult));
             }];
         }];
     }];
@@ -71,23 +87,45 @@
     return aggregateAction;
 }
 
-- (instancetype)actionWithPredicate:(UAActionPredicate)predicateBlock {
+- (instancetype)filter:(UAActionPredicate)predicateBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
-        if (predicateBlock && predicateBlock(args)) {
-            [self performWithArguments:args withCompletionHandler:completionHandler];
-        } else {
-            //note: is it better to pass nil, or simply return (and short circuit) here?
-            completionHandler(nil);
-        }
+        [self performWithArguments:args withCompletionHandler:completionHandler];
     }];
+
+    aggregateAction.predicateBlock = predicateBlock;
 
     return aggregateAction;
 }
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
-        self.actionBlock(arguments, completionHandler);
+        if ([self willAcceptArguments:arguments]) {
+            self.actionBlock(arguments, completionHandler);
+        } else {
+            completionHandler([UAActionResult none]);
+        }
     }
 }
+
+- (BOOL)willAcceptArguments:(id)arguments {
+    //if no type is specified, or the arguments match our expected argument type
+    if (!self.expectedArgumentType || [arguments isKindOfClass:self.expectedArgumentType]) {
+        //if we have a predicate block, execute it to determine whether these arguments are within the desired scope
+        if (self.predicateBlock) {
+            return self.predicateBlock(arguments);
+        } else {
+            //otherwise default to YES
+            return YES;
+        }
+    }
+
+    //log a warning and reject the arguments
+    UA_LWARN(@"action %@ expected argument of type %@ but received %@",
+             [self description],
+             [self.expectedArgumentType description],
+             [arguments description]);
+    return NO;
+}
+
 
 @end

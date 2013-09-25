@@ -25,17 +25,14 @@
 
 #import "UAActionRunner.h"
 
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-
 @implementation UAActionRunner
 
 /*
 
-+ (void)performActionWithArguments:(UAActionArguments *)arguments
-             withCompletionHandler:(UAActionBaseCompletionHandler)completionHandler {
++ (void)performActionWithArguments:(id)arguments
+             withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
+    UAAction *action = [[UAActionRegistrar shared] actionForName:arguments]
     UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:arguments.name];
     if (!entry || (entry.predicate && !entry.predicate(arguments))) {
         completionHandler([UAActionResult resultWithObject:nil withArguments:arguments]);
@@ -96,6 +93,6 @@ withCompletionHandler:(UAActionBaseCompletionHandler)completionHandler {
                 withPayload:notification
       withCompletionHandler:intermediateCompletionHandler];
     }
-} */
-
+}
+*/ 
 @end

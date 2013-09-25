@@ -23,26 +23,34 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAAction.h"
+#import "UAPushActionArguments.h"
 
-@interface UAActionEntry : NSObject
+NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
+NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
+NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
 
-/**
- *  The entry's action
- */
-@property(nonatomic, strong) UAAction *action;
+@implementation UAPushActionArguments
 
-/**
- *  The entry's predicate
- */
-@property(nonatomic, copy) UAActionPredicate predicate;
+- (instancetype)initWithName:(NSString *)name
+                    withSituation:(NSString *)situation
+                        withValue:(id)value
+                       withPayload:(NSDictionary *)payload {
+    self = [super init];
+    if (self) {
+        self.name = name;
+        self.situation = situation;
+        self.value = value;
+        self.payload = payload;
+    }
 
-/**
- * UAActionEntry class factory method.
- * @param action The entry's action
- * @param predicate The entry's predicate
- */
-+ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
+    return self;
+}
+
++ (instancetype)argumentsWithName:(NSString *)name
+                    withSituation:(NSString *)situation
+                        withValue:(id)value
+                       withPayload:(NSDictionary *)payload {
+    return [[UAPushActionArguments alloc] initWithName:name withSituation:situation withValue:value withPayload:payload];
+}
 
 @end

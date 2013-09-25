@@ -25,24 +25,8 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionEntry.h"
 #import "UAActionRegistrar.h"
-#import "UAActionArguments.h"
-
-/**
- * Represents a situation in which the application was launched from a push notification.
- */
-extern NSString * const UASituationLaunchedFromPush;
-/**
- * Represents a situation in which a push notification was received in the foreground.
- */
-extern NSString * const UASituationForegroundPush;
-/**
- * Represents a situation in which a push notification was received in the background.
- */
-extern NSString * const UASituationBackgroundPush;
-
-
+#import "UAPushActionArguments.h"
 
 
 @interface UAActionRunner : NSObject
@@ -80,7 +64,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
  * @param arguments The arguments for the action to perform
  * @param completionHandler CompletionHandler to pass to the action.
  */
-+ (void)performActionWithArguments:(UAActionArguments *)arguments
++ (void)performActionWithArguments:(UAPushActionArguments *)arguments
              withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 

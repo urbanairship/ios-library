@@ -11,6 +11,7 @@
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
+        self.expectedArgumentType = [UAPushActionArguments class];
     }
 
     return self;
@@ -21,12 +22,12 @@
 }
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *result){
-        completionHandler(result);
+    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *fetchResult){
+        completionHandler([UAActionResult resultWithValue:fetchResult]);
     }];
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments withPushCompletionHandler:(UAActionPushCompletionHandler)completionHandler {
+- (void)performWithArguments:(UAPushActionArguments *)arguments withPushCompletionHandler:(UAActionPushCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
     }

@@ -1,7 +1,5 @@
 
 #import <Foundation/Foundation.h>
-#import "UAAction.h"
-#import "UAActionArguments.h"
 
 /**
  * Represents the result of performing a background fetch, or none if no fetch was performed.
@@ -32,5 +30,7 @@ typedef enum  {
 + (instancetype)resultWithValue:(id)value;
 
 + (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
+
++ (instancetype)none;
 
 @end

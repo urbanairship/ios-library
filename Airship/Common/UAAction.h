@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAActionResult.h"
 
 @class UAAction;
 
@@ -35,13 +36,13 @@ typedef BOOL (^UAActionPredicate)(id);
 /**
  * A custom predicate block that can be used to limit the scope of an action.
  */
-typedef id (^UAActionFoldResultsBlock)(id, id);
+typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
 
 /**
  * A completion handler that singals that an action has finished executing.
  */
 
-typedef void (^UAActionCompletionHandler)(id);
+typedef void (^UAActionCompletionHandler)(UAActionResult *);
 
 /**
  * A block that defines the work performed by an action.
@@ -66,7 +67,7 @@ typedef void (^UAActionBlock)(id, UAActionCompletionHandler completionHandler);
  *
  * @param predicateBlock A UAActionPredicate block.
  */
-- (instancetype)actionWithPredicate:(UAActionPredicate)predicateBlock;
+- (instancetype)filter:(UAActionPredicate)predicateBlock;
 
 /**
  * Operator for creating an action that strings together two separate actions,
@@ -77,9 +78,9 @@ typedef void (^UAActionBlock)(id, UAActionCompletionHandler completionHandler);
  * @param continuationAction A UAAction to be executed as the continuation of
  * the receiver.
  */
-- (instancetype)actionWithContinuationAction:(UAAction *)continuationAction;
+- (instancetype)continueWith:(UAAction *)continuationAction;
 
-- (instancetype)actionFoldingAction:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock;
+- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock;
 
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
@@ -88,5 +89,10 @@ typedef void (^UAActionBlock)(id, UAActionCompletionHandler completionHandler);
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+- (BOOL)willAcceptArguments:(id)arguments;
+
+@property(nonatomic, copy) UAActionPredicate predicateBlock;
+@property(nonatomic, strong) Class expectedArgumentType;
 
 @end

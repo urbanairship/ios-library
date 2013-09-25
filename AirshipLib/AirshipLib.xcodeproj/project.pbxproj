@@ -159,8 +159,6 @@
 		4903208017BD55E800E03BA1 /* UAInboxMessageListDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */; };
 		491AE6BC17DF9E350007DA0C /* UASyncAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 491AE6BA17DF9E350007DA0C /* UASyncAction.h */; };
 		491AE6BD17DF9E350007DA0C /* UASyncAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 491AE6BB17DF9E350007DA0C /* UASyncAction.m */; };
-		491AE6CC17DFDFD10007DA0C /* UAExampleActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 491AE6CA17DFDFD10007DA0C /* UAExampleActions.h */; };
-		491AE6CD17DFDFD10007DA0C /* UAExampleActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 491AE6CB17DFDFD10007DA0C /* UAExampleActions.m */; };
 		494BF703176277E000B25E12 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF702176277E000B25E12 /* UAUserTest.m */; };
 		494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7051762789D00B25E12 /* UAUser+Internal.h */; };
 		494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7061762789D00B25E12 /* UAUserAPIClient.h */; };
@@ -274,25 +272,19 @@
 		CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */; };
 		CCC4B30C17DE5F830086B592 /* UAActionRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B30A17DE5F830086B592 /* UAActionRegistrar.h */; };
 		CCC4B30D17DE5F830086B592 /* UAActionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30B17DE5F830086B592 /* UAActionRegistrar.m */; };
-		CCC4B31017DE5FB00086B592 /* UAActionEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B30E17DE5FB00086B592 /* UAActionEntry.h */; };
-		CCC4B31117DE5FB00086B592 /* UAActionEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30F17DE5FB00086B592 /* UAActionEntry.m */; };
 		CCC4B31417DE5FC50086B592 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B31217DE5FC50086B592 /* UAAction.h */; };
 		CCC4B31517DE5FC50086B592 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31317DE5FC50086B592 /* UAAction.m */; };
 		CCC4B31617DE5FC50086B592 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31317DE5FC50086B592 /* UAAction.m */; };
-		CCC4B31917DE5FE90086B592 /* UAActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B31717DE5FE90086B592 /* UAActionArguments.h */; };
-		CCC4B31A17DE5FE90086B592 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31817DE5FE90086B592 /* UAActionArguments.m */; };
-		CCC4B31B17DE5FE90086B592 /* UAActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31817DE5FE90086B592 /* UAActionArguments.m */; };
+		CCC4B31917DE5FE90086B592 /* UAPushActionArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B31717DE5FE90086B592 /* UAPushActionArguments.h */; };
+		CCC4B31A17DE5FE90086B592 /* UAPushActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31817DE5FE90086B592 /* UAPushActionArguments.m */; };
+		CCC4B31B17DE5FE90086B592 /* UAPushActionArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B31817DE5FE90086B592 /* UAPushActionArguments.m */; };
 		CCC4B31C17DE606D0086B592 /* UAActionRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30B17DE5F830086B592 /* UAActionRegistrar.m */; };
-		CCC4B31D17DE606D0086B592 /* UAActionEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B30F17DE5FB00086B592 /* UAActionEntry.m */; };
 		CCC4B32117DE6A860086B592 /* UAActionRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B31F17DE6A860086B592 /* UAActionRunner.h */; };
 		CCC4B32217DE6A860086B592 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B32017DE6A860086B592 /* UAActionRunner.m */; };
 		CCC4B32317DE6A860086B592 /* UAActionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B32017DE6A860086B592 /* UAActionRunner.m */; };
 		CCC4B33217DFC6780086B592 /* UAActionResult.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B33017DFC6780086B592 /* UAActionResult.h */; };
 		CCC4B33317DFC6780086B592 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B33117DFC6780086B592 /* UAActionResult.m */; };
 		CCC4B33417DFC6780086B592 /* UAActionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B33117DFC6780086B592 /* UAActionResult.m */; };
-		CCC4B33717DFD2060086B592 /* UAActionAggregatedResult.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC4B33517DFD2060086B592 /* UAActionAggregatedResult.h */; };
-		CCC4B33817DFD2060086B592 /* UAActionAggregatedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B33617DFD2060086B592 /* UAActionAggregatedResult.m */; };
-		CCC4B33917DFD2060086B592 /* UAActionAggregatedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = CCC4B33617DFD2060086B592 /* UAActionAggregatedResult.m */; };
 		CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCD3158317CFBD5A002E93A1 /* UAPushTest.m */; };
 /* End PBXBuildFile section */
 
@@ -365,8 +357,6 @@
 		4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListDelegate.h; sourceTree = "<group>"; };
 		491AE6BA17DF9E350007DA0C /* UASyncAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASyncAction.h; sourceTree = "<group>"; };
 		491AE6BB17DF9E350007DA0C /* UASyncAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASyncAction.m; sourceTree = "<group>"; };
-		491AE6CA17DFDFD10007DA0C /* UAExampleActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAExampleActions.h; sourceTree = "<group>"; };
-		491AE6CB17DFDFD10007DA0C /* UAExampleActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAExampleActions.m; sourceTree = "<group>"; };
 		494BF701176277E000B25E12 /* UAUserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserTest.h; sourceTree = "<group>"; };
 		494BF702176277E000B25E12 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		494BF7051762789D00B25E12 /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
@@ -470,18 +460,14 @@
 		CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+UAAdditionsTests.m"; sourceTree = "<group>"; };
 		CCC4B30A17DE5F830086B592 /* UAActionRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRegistrar.h; sourceTree = "<group>"; };
 		CCC4B30B17DE5F830086B592 /* UAActionRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistrar.m; sourceTree = "<group>"; };
-		CCC4B30E17DE5FB00086B592 /* UAActionEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionEntry.h; sourceTree = "<group>"; };
-		CCC4B30F17DE5FB00086B592 /* UAActionEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionEntry.m; sourceTree = "<group>"; };
 		CCC4B31217DE5FC50086B592 /* UAAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAction.h; sourceTree = "<group>"; };
 		CCC4B31317DE5FC50086B592 /* UAAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAction.m; sourceTree = "<group>"; };
-		CCC4B31717DE5FE90086B592 /* UAActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionArguments.h; sourceTree = "<group>"; };
-		CCC4B31817DE5FE90086B592 /* UAActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArguments.m; sourceTree = "<group>"; };
+		CCC4B31717DE5FE90086B592 /* UAPushActionArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushActionArguments.h; sourceTree = "<group>"; };
+		CCC4B31817DE5FE90086B592 /* UAPushActionArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushActionArguments.m; sourceTree = "<group>"; };
 		CCC4B31F17DE6A860086B592 /* UAActionRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRunner.h; sourceTree = "<group>"; };
 		CCC4B32017DE6A860086B592 /* UAActionRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRunner.m; sourceTree = "<group>"; };
 		CCC4B33017DFC6780086B592 /* UAActionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionResult.h; sourceTree = "<group>"; };
 		CCC4B33117DFC6780086B592 /* UAActionResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionResult.m; sourceTree = "<group>"; };
-		CCC4B33517DFD2060086B592 /* UAActionAggregatedResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionAggregatedResult.h; sourceTree = "<group>"; };
-		CCC4B33617DFD2060086B592 /* UAActionAggregatedResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionAggregatedResult.m; sourceTree = "<group>"; };
 		CCD3158317CFBD5A002E93A1 /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushTest.m; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -889,22 +875,16 @@
 			children = (
 				CCC4B30A17DE5F830086B592 /* UAActionRegistrar.h */,
 				CCC4B30B17DE5F830086B592 /* UAActionRegistrar.m */,
-				CCC4B30E17DE5FB00086B592 /* UAActionEntry.h */,
-				CCC4B30F17DE5FB00086B592 /* UAActionEntry.m */,
 				CCC4B31217DE5FC50086B592 /* UAAction.h */,
 				CCC4B31317DE5FC50086B592 /* UAAction.m */,
-				CCC4B31717DE5FE90086B592 /* UAActionArguments.h */,
-				CCC4B31817DE5FE90086B592 /* UAActionArguments.m */,
+				CCC4B31717DE5FE90086B592 /* UAPushActionArguments.h */,
+				CCC4B31817DE5FE90086B592 /* UAPushActionArguments.m */,
 				CCC4B31F17DE6A860086B592 /* UAActionRunner.h */,
 				CCC4B32017DE6A860086B592 /* UAActionRunner.m */,
 				CCC4B33017DFC6780086B592 /* UAActionResult.h */,
 				CCC4B33117DFC6780086B592 /* UAActionResult.m */,
-				CCC4B33517DFD2060086B592 /* UAActionAggregatedResult.h */,
-				CCC4B33617DFD2060086B592 /* UAActionAggregatedResult.m */,
 				491AE6BA17DF9E350007DA0C /* UASyncAction.h */,
 				491AE6BB17DF9E350007DA0C /* UASyncAction.m */,
-				491AE6CA17DFDFD10007DA0C /* UAExampleActions.h */,
-				491AE6CB17DFDFD10007DA0C /* UAExampleActions.m */,
 				499B8C6817E3D23400C49954 /* UAPushAction.h */,
 				499B8C6917E3D23400C49954 /* UAPushAction.m */,
 			);
@@ -1075,7 +1055,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCC4B31917DE5FE90086B592 /* UAActionArguments.h in Headers */,
+				CCC4B31917DE5FE90086B592 /* UAPushActionArguments.h in Headers */,
 				1F610DE517835C3A00BCD96E /* UAInboxDBManager.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
 				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
@@ -1089,7 +1069,6 @@
 				BB8860B4159A7E9600584445 /* UAObservable.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
-				CCC4B33717DFD2060086B592 /* UAActionAggregatedResult.h in Headers */,
 				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
 				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
@@ -1111,7 +1090,6 @@
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
-				CCC4B31017DE5FB00086B592 /* UAActionEntry.h in Headers */,
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
@@ -1130,7 +1108,6 @@
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				CCC4B33217DFC6780086B592 /* UAActionResult.h in Headers */,
-				491AE6CC17DFDFD10007DA0C /* UAExampleActions.h in Headers */,
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
 				494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */,
 				1F610E0B17835C6700BCD96E /* UAConfig+Internal.h in Headers */,
@@ -1322,10 +1299,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCC4B31C17DE606D0086B592 /* UAActionRegistrar.m in Sources */,
-				CCC4B31D17DE606D0086B592 /* UAActionEntry.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
-				CCC4B31B17DE5FE90086B592 /* UAActionArguments.m in Sources */,
+				CCC4B31B17DE5FE90086B592 /* UAPushActionArguments.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				CCC4B31617DE5FC50086B592 /* UAAction.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
@@ -1340,7 +1316,6 @@
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
 				CC4C2A1017CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m in Sources */,
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
-				CCC4B33917DFD2060086B592 /* UAActionAggregatedResult.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
@@ -1362,7 +1337,6 @@
 			files = (
 				1F610E0217835C3A00BCD96E /* UADeviceRegistrationPayload.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
-				491AE6CD17DFDFD10007DA0C /* UAExampleActions.m in Sources */,
 				BB8860F0159A7E9600584445 /* UAObservable.m in Sources */,
 				1F610DFC17835C3A00BCD96E /* UADeviceAPIClient.m in Sources */,
 				1F610DF317835C3A00BCD96E /* UAInboxPushHandler.m in Sources */,
@@ -1375,7 +1349,6 @@
 				1F610DB617835C2200BCD96E /* UAAutoAppDelegate.m in Sources */,
 				CCC4B31517DE5FC50086B592 /* UAAction.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
-				CCC4B31117DE5FB00086B592 /* UAActionEntry.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
@@ -1384,7 +1357,6 @@
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,
 				1F610DBB17835C2200BCD96E /* UAConfig.m in Sources */,
 				BB88610F159A7E9600584445 /* UAHTTPConnection.m in Sources */,
-				CCC4B33817DFD2060086B592 /* UAActionAggregatedResult.m in Sources */,
 				BB886110159A7E9600584445 /* UAEvent.m in Sources */,
 				BB886111159A7E9600584445 /* UAAnalyticsDBManager.m in Sources */,
 				1F610E0617835C3A00BCD96E /* UAPush.m in Sources */,
@@ -1406,7 +1378,7 @@
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
-				CCC4B31A17DE5FE90086B592 /* UAActionArguments.m in Sources */,
+				CCC4B31A17DE5FE90086B592 /* UAPushActionArguments.m in Sources */,
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,

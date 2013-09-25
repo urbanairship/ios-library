@@ -33,14 +33,16 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 - (id)init {
     self = [super init];
     if (self) {
-        self.registeredEntries = [[NSMutableDictionary alloc] init];
+        self.registeredActions = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
-    id entry = (action == nil) ? nil : [UAActionEntry entryForAction:action withPredicate:predicate];
-    [self.registeredEntries setValue:entry forKey:name];
+    if (predicate) {
+        action.predicateBlock = predicate;
+    }
+    [self.registeredActions setValue:action forKey:name];
 }
 
 - (void)registerAction:(UAAction *)action forName:(NSString *)name {
@@ -48,8 +50,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 }
 
 - (UAAction *)actionForName:(NSString *)name {
-    UAActionEntry *entry = [self.registeredEntries valueForKey:name];
-    return entry.action;
+    UAAction *action = [self.registeredActions valueForKey:name];
+    return action;
 }
 
 @end
