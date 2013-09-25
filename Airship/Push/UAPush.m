@@ -104,10 +104,27 @@ static Class _uiClass;
 #pragma mark Device Token Get/Set Methods
 
 - (void)setDeviceToken:(NSString *)deviceToken {
+    if (deviceToken == nil) {
+        _deviceToken = deviceToken;
+        return;
+    }
+    
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"[^0-9a-fA-F]"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:NULL];
 
-    _deviceToken = [[[[deviceToken lowercaseString] stringByReplacingOccurrencesOfString:@"<" withString:@""]
-                    stringByReplacingOccurrencesOfString:@">" withString:@""]
-                    stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if ([regex numberOfMatchesInString:deviceToken options:0 range:NSMakeRange(0, [deviceToken length])]) {
+        UA_LERR(@"Device token %@ contains invalid characters.  Only hex characters are allowed", deviceToken);
+        return;
+    }
+
+    // 64 - device tokens are 32 bytes long, each byte is 2 characters
+    if ([deviceToken length] != 64) {
+        UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
+    }
+
+    _deviceToken = deviceToken;
+
 }
 
 #pragma mark -
@@ -624,7 +641,7 @@ static Class _uiClass;
         [deviceToken appendFormat:@"%02X", bytes[i]];
     }
 
-    self.deviceToken = deviceToken;
+    self.deviceToken = [deviceToken lowercaseString];
 
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
