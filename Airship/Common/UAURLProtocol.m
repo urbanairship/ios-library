@@ -105,7 +105,7 @@ static NSURLCache *cache = nil;
 }
 
 - (void)startLoading {
-    __weak UAURLProtocol *_self = self;
+    __weak UAURLProtocol *weakSelf = self;
 
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
@@ -115,18 +115,18 @@ static NSURLCache *cache = nil;
             UA_LTRACE(@"Caching response.");
             NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
                                                                                           data:request.responseData];
-            [[UAURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
+            [[UAURLProtocol cache] storeCachedResponse:cachedResponse forRequest:weakSelf.request];
 
-            [_self finishRequest:request.response responseData:request.responseData];
-        } else if (![_self loadFromCache]) {
-            [_self finishRequest:request.response responseData:request.responseData];
+            [weakSelf finishRequest:request.response responseData:request.responseData];
+        } else if (![weakSelf loadFromCache]) {
+            [weakSelf finishRequest:request.response responseData:request.responseData];
         }
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Error %@ for request %@, attempting to fall back to cache.", request.error, request.url);
-        if (![_self loadFromCache]) {
-            [_self finishRequest];
+        if (![weakSelf loadFromCache]) {
+            [weakSelf finishRequest];
         }
     };
 
