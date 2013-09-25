@@ -48,7 +48,7 @@ static NSURLCache *cache = nil;
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
     if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]) {
-        return false;
+        return NO;
     }
 
     return [[self cachableURLs] containsObject:request.URL]
@@ -148,11 +148,11 @@ static NSURLCache *cache = nil;
     if (cachedResponse) {
          UA_LTRACE(@"Loading response from cache.");
         [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
-        return true;
+        return YES;
     }
 
     UA_LTRACE(@"No cache for response %@", self.request.URL);
-    return false;
+    return NO;
 }
 
 - (void)finishRequest {
