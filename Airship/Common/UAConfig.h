@@ -182,7 +182,7 @@
 /**
  * Creates an instance with empty values.
  */
-+ (UAConfig *)emptyConfig;
++ (UAConfig *)config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers

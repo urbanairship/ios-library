@@ -104,26 +104,19 @@
 }
 
 + (UAConfig *)configWithContentsOfFile:(NSString *)path {
+    UAConfig *config = [UAConfig config];
     if (path) {
-        UAConfig *config = [[UAConfig alloc] init];
-
         //copy from dictionary plist
         NSDictionary *configDict = [[NSDictionary alloc] initWithContentsOfFile:path];
         NSDictionary *normalizedDictionary = [UAConfig normalizeDictionary:configDict];
 
         [config setValuesForKeysWithDictionary:normalizedDictionary];
-        return config;
-    } else {
-        return [UAConfig emptyConfig];
     }
+    return config;
 }
 
-+ (UAConfig *)emptyConfig {
++ (UAConfig *)config {
     UAConfig *config = [[UAConfig alloc] init];
-    [config setValue:@"Your Development App Key" forKey:@"developmentAppKey"];
-    [config setValue:@"Your Development App Secret" forKey:@"developmentAppSecret"];
-    [config setValue:@"Your Production App Key" forKey:@"productionAppKey"];
-    [config setValue:@"Your Production App Secret" forKey:@"productionAppSecret"];
     return config;
 }
 
