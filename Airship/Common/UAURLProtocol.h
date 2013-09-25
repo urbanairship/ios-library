@@ -25,6 +25,13 @@
 
 #import <Foundation/Foundation.h>
 
+
+/**
+ * A NSURLProtocol that caches successfull responses to requests
+ * who's URL or mainDocumentURL has been added as a cachableURL.
+ * A failed response will always fall back to a cached response 
+ * when available.
+ */
 @interface UAURLProtocol : NSURLProtocol
 
 #define kUASkipProtocolHeader @"UA-Client-Protocol"
