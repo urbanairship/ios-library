@@ -70,14 +70,16 @@ static NSURLCache *cache = nil;
     @synchronized(self) {
         if (!cache) {
 
+            NSString *diskCachePath = nil;
             NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-            NSString *cacheDirectory = [cachePaths objectAtIndex:0];
-            NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
-            NSError *error;
+            if ([cachePaths count]) {
+                NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+                diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
 
-            [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
-                                      withIntermediateDirectories:YES
-                                                       attributes:nil error:&error];
+                [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
+                                          withIntermediateDirectories:YES
+                                                           attributes:nil error:NULL];
+            }
 
             cache = [[NSURLCache alloc] initWithMemoryCapacity:kUACacheMemorySizeInMB
                                                   diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
