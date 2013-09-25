@@ -179,6 +179,11 @@
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
 
+/**
+ * Creates an instance with empty values.
+ */
++ (UAConfig *)emptyConfig;
+
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers
 ///---------------------------------------------------------------------------------------
