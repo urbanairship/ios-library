@@ -32,11 +32,6 @@
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
-    
-    
-    self.deviceAPIURL = nil;
-    self.analyticsURL = nil;
-
 
 }
 
