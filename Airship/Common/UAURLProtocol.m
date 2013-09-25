@@ -79,6 +79,10 @@ static NSURLCache *cache = nil;
     return cache;
 }
 
++ (void)clearCache {
+    [[self cache] removeAllCachedResponses];
+}
+
 + (void)addCachableURL:(NSURL *)url {
     [[self cachableURLs] addObject:url];
 }
@@ -97,24 +101,24 @@ static NSURLCache *cache = nil;
     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Received %ld for request %@.", (long)[request.response statusCode], request.url);
 
-        // Load from cache on any response that is not 200
-        if ([request.response statusCode] != 200) {
-           UA_LTRACE(@"Loading response from cache.");
-           [_self loadFromCache];
-        } else {
+        // 200, cache response
+        if ([request.response statusCode] == 200) {
             UA_LTRACE(@"Caching response.");
             NSCachedURLResponse *cachedResponse = [[NSCachedURLResponse alloc]initWithResponse:request.response
                                                                                           data:request.responseData];
-
             [[UAURLProtocol cache] storeCachedResponse:cachedResponse forRequest:_self.request];
 
+            [_self finishRequest:request.response responseData:request.responseData];
+        } else if (![_self loadFromCache]) {
             [_self finishRequest:request.response responseData:request.responseData];
         }
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Error %@ for request %@, attempting to fall back to cache.", request.error, request.url);
-        [_self loadFromCache];
+        if (![_self loadFromCache]) {
+            [_self finishRequest];
+        }
     };
 
     self.connection = [UAHTTPConnection connectionWithRequest:[self createUAHTTPRequest]
@@ -128,15 +132,16 @@ static NSURLCache *cache = nil;
     [self.connection cancel];
 }
 
-- (void)loadFromCache {
+- (BOOL)loadFromCache {
     NSCachedURLResponse *cachedResponse = [[UAURLProtocol cache] cachedResponseForRequest:self.request];
     if (cachedResponse) {
+         UA_LTRACE(@"Loading response from cache.");
         [self finishRequest:cachedResponse.response responseData:cachedResponse.data];
-    } else {
-        UA_LTRACE(@"No cache for response %@", self.request.URL);
-
-        [self finishRequest];
+        return true;
     }
+
+    UA_LTRACE(@"No cache for response %@", self.request.URL);
+    return false;
 }
 
 - (void)finishRequest {

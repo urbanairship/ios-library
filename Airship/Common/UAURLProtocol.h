@@ -45,4 +45,8 @@
  */
 + (void)removeCachableURL:(NSURL *)url;
 
+/**
+ * Clears the URL cache
+ */
++ (void)clearCache;
 @end
