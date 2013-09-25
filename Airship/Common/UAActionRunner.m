@@ -49,8 +49,8 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *notificationActions = [notification objectForKey:@"actions"];
 
-    __block int expectedCount = notificationActions.count;
-    __block int resultCount = 0;
+    __block NSUInteger expectedCount = notificationActions.count;
+    __block NSUInteger resultCount = 0;
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
 
     for (__block NSString *actionName in notificationActions) {
