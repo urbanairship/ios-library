@@ -57,27 +57,34 @@ static NSURLCache *cache = nil;
 }
 
 + (NSMutableOrderedSet *)cachableURLs {
-    if (!cachableURLs) {
-        cachableURLs = [NSMutableOrderedSet orderedSet];
+    @synchronized(self) {
+        if (!cachableURLs) {
+            cachableURLs = [NSMutableOrderedSet orderedSet];
+        }
     }
+
     return cachableURLs;
 }
 
 + (NSURLCache *)cache {
-    if (!cache) {
-        NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cacheDirectory = [cachePaths objectAtIndex:0];
-        NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
-        NSError *error;
+    @synchronized(self) {
+        if (!cache) {
 
-        [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
-                                  withIntermediateDirectories:YES
-                                                   attributes:nil error:&error];
+            NSArray *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            NSString *cacheDirectory = [cachePaths objectAtIndex:0];
+            NSString *diskCachePath = [NSString stringWithFormat:@"%@/%@", cacheDirectory, @"UAURLCache"];
+            NSError *error;
 
-        cache = [[NSURLCache alloc] initWithMemoryCapacity:UA_PROTOCOL_MEMORY_CACHE_SIZE
-                                              diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
-                                                  diskPath:diskCachePath];
+            [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil error:&error];
+
+            cache = [[NSURLCache alloc] initWithMemoryCapacity:UA_PROTOCOL_MEMORY_CACHE_SIZE
+                                                  diskCapacity:[UAirship shared].config.cacheDiskSizeInMB
+                                                      diskPath:diskCachePath];
+        }
     }
+
     return cache;
 }
 
