@@ -125,6 +125,9 @@
             [urlRequest setHTTPBody:body];
 
         }
+
+        urlRequest.mainDocumentURL = _request.mainDocumentURL;
+        
         return urlRequest;
     }
 }
