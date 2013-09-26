@@ -32,11 +32,6 @@
 #pragma mark -
 #pragma mark Object Lifecycle
 - (void)dealloc {
-    
-    
-    self.deviceAPIURL = nil;
-    self.analyticsURL = nil;
-
 
 }
 
@@ -104,18 +99,19 @@
 }
 
 + (UAConfig *)configWithContentsOfFile:(NSString *)path {
-    UAConfig *config = [[UAConfig alloc] init];
+    UAConfig *config = [UAConfig config];
+    if (path) {
+        //copy from dictionary plist
+        NSDictionary *configDict = [[NSDictionary alloc] initWithContentsOfFile:path];
+        NSDictionary *normalizedDictionary = [UAConfig normalizeDictionary:configDict];
 
-    //copy from dictionary plist
-
-    NSDictionary *configDict = [[NSDictionary alloc] initWithContentsOfFile:path];
-
-    NSDictionary *normalizedDictionary = [UAConfig normalizeDictionary:configDict];
-
-    [config setValuesForKeysWithDictionary:normalizedDictionary];
-
-
+        [config setValuesForKeysWithDictionary:normalizedDictionary];
+    }
     return config;
+}
+
++ (UAConfig *)config {
+    return [[UAConfig alloc] init];
 }
 
 #pragma mark -
