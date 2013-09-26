@@ -52,11 +52,11 @@
                                  UASituationBackgroundPush,
                                  UASituationForegroundPush];
 
-    if (!arguments.situation && ![validSituations containsObject:arguments.situation]) {
+    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
         return NO;
     }
 
-    if ([arguments.value isKindOfClass:[NSDictionary class]]) {
+    if (![arguments.value isKindOfClass:[NSDictionary class]]) {
         return NO;
     }
 
