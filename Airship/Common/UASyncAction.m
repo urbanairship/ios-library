@@ -28,11 +28,7 @@
 @implementation UASyncAction
 
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    if ([self willAcceptArguments:arguments]) {
-        completionHandler([self performWithArguments:arguments]);
-    } else {
-        completionHandler([UAActionResult none]);
-    }
+    completionHandler([self performWithArguments:arguments]);
 }
 
 - (UAActionResult *)performWithArguments:(id)arguments {

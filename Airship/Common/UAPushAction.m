@@ -35,10 +35,14 @@
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
-        self.expectedArgumentType = [UAPushActionArguments class];
     }
 
     return self;
+}
+
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+    return [arguments isKindOfClass:[UAPushActionArguments class]]
+        && [super canPerformWithArguments:arguments];
 }
 
 + (instancetype)pushActionWithBlock:(UAPushActionBlock)actionBlock {
