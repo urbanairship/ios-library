@@ -111,8 +111,7 @@
 }
 
 + (UAConfig *)config {
-    UAConfig *config = [[UAConfig alloc] init];
-    return config;
+    return [[UAConfig alloc] init];
 }
 
 #pragma mark -
