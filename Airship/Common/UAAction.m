@@ -26,6 +26,7 @@
 #import "UAAction.h"
 #import "UAActionResult.h"
 #import "UAGlobal.h"
+#import "UAActionRunner.h"
 
 NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
 NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
@@ -71,22 +72,32 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     }
 }
 
+
+
+// TODO: Just like we have an optional block for perform, we
+// may want to have an optional block for canPerformWithArguments.
+// This way, the aggregateAction can have a block that checks with the
+// original actions canPerformWithArguments.
+
 - (instancetype)continueWith:(UAAction *)continuationAction {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
-        [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
-            [continuationAction performWithArguments:selfResult.value withCompletionHandler:^(UAActionResult *continuationResult){
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+
+        [UAActionRunner performAction:self withArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+
+            UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult
+                                                                           wihSituation:args.situation];
+
+            [UAActionRunner performAction:continuationAction withArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
+
                 //I think we may want to reduce the result or at least give the option in a similar operator...
                 completionHandler(continuationResult);
             }];
         }];
     }];
 
-    //copy over the predicate block from the receiver, so that the
-    //aggregate action has the same restrictions as the head
-    aggregateAction.predicateBlock = self.predicateBlock;
-
     return aggregateAction;
 }
+
 
 - (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
     if (!foldBlock) {
@@ -95,7 +106,8 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
         return nil;
     }
 
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+
         [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
             [foldedAction performWithArguments:args withCompletionHandler:^(UAActionResult *foldedResult){
                 completionHandler(foldBlock(selfResult, foldedResult));
@@ -107,8 +119,8 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
 }
 
 - (instancetype)filter:(UAActionPredicate)predicateBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(id args, UAActionCompletionHandler completionHandler){
-        [self performWithArguments:args withCompletionHandler:completionHandler];
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [UAActionRunner performAction:self withArguments:args withCompletionHandler:completionHandler];
     }];
 
     aggregateAction.predicateBlock = predicateBlock;
