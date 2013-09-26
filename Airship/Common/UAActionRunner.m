@@ -28,59 +28,65 @@
 
 @implementation UAActionRunner
 
-+ (void)performAction:(NSString *)actionName
-         withArgument:(UAActionArguments *)argument
-withCompletionHandler:(UAActionCompletionHandler)completionHandler {
++ (void)performActionWithName:(NSString *)actionName
+                withArguments:(UAActionArguments *)arguments
+        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     UAAction *action = [[UAActionRegistrar shared] actionForName:actionName];
 
     if (action) {
         UA_LINFO("Running action %@", actionName);
-        [action performWithArguments:argument withCompletionHandler:completionHandler];
+        [self performAction:action withArguments:arguments withCompletionHandler:completionHandler];
     } else {
         UA_LINFO("No action found with name %@, skipping action.", actionName);
         completionHandler([UAActionResult none]);
     }
 }
 
-//+ (void)performActionsForNotification:(NSDictionary *)notification
-//                 withApplicationState:(UIApplicationState)state
-//                withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-//
-//    NSDictionary *notificationActions = [notification objectForKey:@"actions"];
-//
-//    __block NSUInteger expectedCount = notificationActions.count;
-//    __block NSUInteger resultCount = 0;
-//    __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-//
-//    for (__block NSString *actionName in notificationActions) {
-//        __block BOOL completionHandlerCalled = NO;
-//
-//        __block UAPushActionArguments *arg = [UAPushActionArguments argumentsWithName:actionName
-//                                                                withApplicationState:state
-//                                                                            withValue:[notificationActions valueForKey:actionName]
-//                                                                          withPayload:notification];
-//
-//        UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult *result) {
-//            @synchronized(self) {
-//                if (completionHandlerCalled) {
-//                    UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
-//                    return;
-//                }
-//
-//                resultCount ++;
-//
-//                [aggregateResult addResult:result forAction:actionName];
-//
-//                if (expectedCount == resultCount && completionHandler) {
-//                    completionHandler(aggregateResult);
-//                }
-//            }
-//        };
-//
-//        [self performAction:actionName
-//               withArgument:arg withCompletionHandler:intermediateCompletionHandler];
-//    }
-//}
-//
+
++ (void)performAction:(UAAction *)action
+        withArguments:(UAActionArguments *)arguments
+withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    if ([action canPerformWithArguments:arguments]) {
+        [action performWithArguments:arguments withCompletionHandler:completionHandler];
+    } else {
+        UA_LINFO("Action %@ is unable to perfomWithArguments.", action);
+        completionHandler([UAActionResult none]);
+    }
+}
+
++ (void)performActions:(NSDictionary *)actions
+ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    __block NSUInteger expectedCount = actions.count;
+    __block NSUInteger resultCount = 0;
+    __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
+
+    for (__block NSString *actionName in actions) {
+        __block BOOL completionHandlerCalled = NO;
+
+        UAActionCompletionHandler handler = ^(UAActionResult *result) {
+            @synchronized(self) {
+                if (completionHandlerCalled) {
+                    UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
+                    return;
+                }
+
+                resultCount ++;
+
+                [aggregateResult addResult:result forAction:actionName];
+
+                if (expectedCount == resultCount && completionHandler) {
+                    completionHandler(aggregateResult);
+                }
+            }
+        };
+
+        UAActionArguments *args = [actions objectForKey:actionName];
+
+        [self performActionWithName:actionName
+                      withArguments:args withCompletionHandler:handler];
+    }
+}
 @end

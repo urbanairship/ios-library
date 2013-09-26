@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAActionResult.h"
+#import "UAAction.h"
 
 @interface UAAggregateActionResult : UAActionResult
 - (void) addResult:(UAActionResult *)result forAction:(NSString *)actionName;

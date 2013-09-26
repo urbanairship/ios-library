@@ -38,25 +38,30 @@
  * will be called immedietly with [UAActionResult none]
  *
  * @param actionName The name of the action to perform
- * @param argument The action's argument.
+ * @param arguments The action's arguments
  * @param completionHandler CompletionHandler to pass to the action.
  */
-+ (void)performAction:(NSString *)actionName
-         withArgument:(UAActionArguments *)argument
++ (void)performActionWithName:(NSString *)actionName
+                withArguments:(UAActionArguments *)arguments
+        withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+
++ (void)performAction:(UAAction *)action
+        withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-
-///**
-// * Performs any actions defined in the notificaiton.
-// *
-// * @param notification The notification.
-// * @param applicationState The state of the application.
-// * @param completionHandler CompletionHandler to run after all the 
-// * actions have completed.  The result will be the aggregated result 
-// * of all the actions performed.
-// */
-//+ (void)performActionsForNotification:(NSDictionary *)notification
-//                 withApplicationState:(UIApplicationState)applicationState
-//                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+/**
+ * Performs a map of actionNames and action arguments.
+ *
+ * The results of all the actions will be aggregated into a 
+ * single UAAggregateActionResult.
+ *
+ * @param actions The map of action names and arguments.
+ * @param completionHandler CompletionHandler to run after all the
+ * actions have completed.  The result will be the aggregated result 
+ * of all the actions performed.
+ */
++ (void)performActions:(NSDictionary *)actions
+ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

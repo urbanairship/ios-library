@@ -38,7 +38,7 @@
     return self;
 }
 
-- (void) addResult:(UAActionResult *)result forAction:(NSString *)actionName {
+- (void) addResult:(UAActionResult *)result forAction:(NSString*)actionName {
     @synchronized(self) {
         NSDictionary *resultDictionary = (NSMutableDictionary *)self.value;
         [resultDictionary setValue:result forKey:actionName];
