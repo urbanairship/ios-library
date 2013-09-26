@@ -61,10 +61,9 @@
         }];
     }];
 
-    //copy over the predicate block and expected argument type from the receiver, so that the
+    //copy over the predicate block from the receiver, so that the
     //aggregate action has the same restrictions as the head
     aggregateAction.predicateBlock = self.predicateBlock;
-    aggregateAction.expectedArgumentType = self.expectedArgumentType;
 
     return aggregateAction;
 }
@@ -97,8 +96,8 @@
     return aggregateAction;
 }
 
-- (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    if (![self willAcceptArguments:arguments]) {
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (![self canPerformWithArguments:arguments]) {
          completionHandler([UAActionResult none]);
     }
 
@@ -107,24 +106,13 @@
     }
 }
 
-- (BOOL)willAcceptArguments:(id)arguments {
-    //if no type is specified, or the arguments match our expected argument type
-    if (!self.expectedArgumentType || [arguments isKindOfClass:self.expectedArgumentType]) {
-        //if we have a predicate block, execute it to determine whether these arguments are within the desired scope
-        if (self.predicateBlock) {
-            return self.predicateBlock(arguments);
-        } else {
-            //otherwise default to YES
-            return YES;
-        }
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+    if (self.predicateBlock) {
+        return self.predicateBlock(arguments);
+    } else {
+        //otherwise default to YES
+        return YES;
     }
-
-    // Log that we rejected the argumnts
-    UA_LINFO(@"action %@ expected argument of type %@ but received %@",
-             [self description],
-             [self.expectedArgumentType description],
-             [arguments description]);
-    return NO;
 }
 
 

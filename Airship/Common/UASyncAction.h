@@ -32,6 +32,6 @@
  *
  * @param arguments An id value representing the arguments passed to the action.
  */
-- (UAActionResult *)performWithArguments:(id)arguments;
+- (UAActionResult *)performWithArguments:(UAActionArguments *)arguments;
 
 @end

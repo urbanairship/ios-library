@@ -23,36 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPushActionArguments.h"
+#import <Foundation/Foundation.h>
 
-@implementation UAPushActionArguments
+@interface UAActionArguments : NSObject
 
-- (instancetype)initWithValue:(id)value
-                withSituation:(NSString *)situation
-                     withName:(NSString *)name
-                  withPayload:(NSDictionary *)payload {
++ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation;
 
+/**
+ * Situation of the action
+ */
+@property(nonatomic, copy) NSString *situation;
 
-    self = [super init];
-    if (self) {
-        self.name = name;
-        self.situation = situation;
-        self.value = value;
-        self.payload = payload;
-    }
-
-    return self;
-}
-
-+ (instancetype)argumentsWithValue:(id)value
-                     withSituation:(NSString *)situation
-                          withName:(NSString *)name
-                       withPayload:(NSDictionary *)payload {
-
-    return [[UAPushActionArguments alloc] initWithValue:value
-                                          withSituation:situation
-                                               withName:name
-                                            withPayload:payload];
-}
+/**
+ * The value associated with the action
+ */
+@property(nonatomic, strong) id value;
 
 @end

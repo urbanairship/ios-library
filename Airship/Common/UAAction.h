@@ -25,13 +25,14 @@
 
 #import <Foundation/Foundation.h>
 #import "UAActionResult.h"
+#import "UAActionArguments.h"
 
 @class UAAction;
 
 /**
  * A custom predicate block that can be used to limit the scope of an action.
  */
-typedef BOOL (^UAActionPredicate)(id);
+typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 
 /**
  * A custom predicate block that can be used to limit the scope of an action.
@@ -47,7 +48,7 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
 /**
  * A block that defines the work performed by an action.
  */
-typedef void (^UAActionBlock)(id, UAActionCompletionHandler completionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
 /**
  * A unit of work that can be associated with a push notification.
@@ -85,14 +86,13 @@ typedef void (^UAActionBlock)(id, UAActionCompletionHandler completionHandler);
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
  *
- * @param arguments An id value representing the arguments passed to the action.
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
-- (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-- (BOOL)willAcceptArguments:(id)arguments;
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments;
 
 @property(nonatomic, copy) UAActionPredicate predicateBlock;
-@property(nonatomic, strong) Class expectedArgumentType;
 
 @end

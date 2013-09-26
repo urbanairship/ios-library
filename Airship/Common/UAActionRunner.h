@@ -42,21 +42,21 @@
  * @param completionHandler CompletionHandler to pass to the action.
  */
 + (void)performAction:(NSString *)actionName
-         withArgument:(UAPushActionArguments *)argument
+         withArgument:(UAActionArguments *)argument
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
-/**
- * Performs any actions defined in the notificaiton.
- *
- * @param notification The notification.
- * @param applicationState The state of the application.
- * @param completionHandler CompletionHandler to run after all the 
- * actions have completed.  The result will be the aggregated result 
- * of all the actions performed.
- */
-+ (void)performActionsForNotification:(NSDictionary *)notification
-                 withApplicationState:(UIApplicationState)applicationState
-                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+///**
+// * Performs any actions defined in the notificaiton.
+// *
+// * @param notification The notification.
+// * @param applicationState The state of the application.
+// * @param completionHandler CompletionHandler to run after all the 
+// * actions have completed.  The result will be the aggregated result 
+// * of all the actions performed.
+// */
+//+ (void)performActionsForNotification:(NSDictionary *)notification
+//                 withApplicationState:(UIApplicationState)applicationState
+//                withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

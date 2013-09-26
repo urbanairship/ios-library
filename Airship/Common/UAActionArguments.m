@@ -23,36 +23,23 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAPushActionArguments.h"
+#import "UAActionArguments.h"
 
-@implementation UAPushActionArguments
+@implementation UAActionArguments
 
-- (instancetype)initWithValue:(id)value
-                withSituation:(NSString *)situation
-                     withName:(NSString *)name
-                  withPayload:(NSDictionary *)payload {
-
+- (instancetype)initWithValue:(id)value wihSituation:(NSString *)situation {
 
     self = [super init];
     if (self) {
-        self.name = name;
         self.situation = situation;
         self.value = value;
-        self.payload = payload;
     }
 
     return self;
 }
 
-+ (instancetype)argumentsWithValue:(id)value
-                     withSituation:(NSString *)situation
-                          withName:(NSString *)name
-                       withPayload:(NSDictionary *)payload {
-
-    return [[UAPushActionArguments alloc] initWithValue:value
-                                          withSituation:situation
-                                               withName:name
-                                            withPayload:payload];
++ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation {
+    return [[UAActionArguments alloc] initWithValue:value wihSituation:situation];
 }
 
 @end

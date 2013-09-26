@@ -23,40 +23,30 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <Foundation/Foundation.h>
+#import "UAActionArguments.h"
 
 /**
  * Represents the context surrounding an action at the moment of execution.
  */
-@interface UAPushActionArguments : NSObject
+@interface UAPushActionArguments : UAActionArguments
 
 /**
  * Convenience constructor for UAActionArguments.
  *
- * @param name The name.
- * @param state The application state.
  * @param value The value.
- * @param extras The payload.
+ * @param state The situation.
+ * @param value The name of the action.
+ * @param extras The notification payload.
  */
-+ (instancetype)argumentsWithName:(NSString *)name
-             withApplicationState:(UIApplicationState)state
-                        withValue:(id)value
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(NSString *)situation
+                          withName:(NSString *)name
                        withPayload:(NSDictionary *)payload;
 
 /**
  * The name under which the action is registered.
  */
 @property(nonatomic, copy) NSString *name;
-
-/**
- * State of the application when the push notification was received.
- */
-@property(nonatomic, assign) UIApplicationState applicationState;
-
-/**
- * The value associated with the action in the push payload.
- * This can be an NSString or NSDictionary value.
- */
-@property(nonatomic, strong) id value;
 
 /**
  * The full push payload.
