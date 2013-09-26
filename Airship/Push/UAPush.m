@@ -124,7 +124,7 @@ static Class _uiClass;
     }
 
     _deviceToken = deviceToken;
-
+    NSLog(@"Device token: %@", deviceToken);
 }
 
 #pragma mark -
