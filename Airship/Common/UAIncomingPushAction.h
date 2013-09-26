@@ -23,37 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "UAAction.h"
 
-/**
- * Represents the result of performing a background fetch, or none if no fetch was performed.
- */
-typedef enum  {
-    /**
-     * The action did not result in any new data being fetched.
-     */
-    UAActionFetchResultNoData = UIBackgroundFetchResultNoData,
-    /**
-     * The action resulted in new data being fetched.
-     */
-    UAActionFetchResultNewData = UIBackgroundFetchResultNewData,
-    /**
-     * The action failed.
-     */
-    UAActionFetchResultFailed = UIBackgroundFetchResultFailed
-} UAActionFetchResult;
-
-
-@interface UAActionResult : NSObject
-
-@property(nonatomic, strong) id value;
-@property(nonatomic, assign) UAActionFetchResult fetchResult;
-
-
-+ (instancetype)resultWithValue:(id)value;
-
-+ (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
-
-+ (instancetype)none;
+@interface UAIncomingPushAction : UAAction
 
 @end

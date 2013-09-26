@@ -27,6 +27,10 @@
 #import "UAActionResult.h"
 #import "UAGlobal.h"
 
+NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
+NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
+NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
+
 @interface UAAction()
 @property(nonatomic, copy) UAActionBlock actionBlock;
 @end
@@ -49,6 +53,22 @@
 
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
     return [[UAAction alloc] initWithBlock:actionBlock];
+}
+
+
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (self.actionBlock) {
+        self.actionBlock(arguments, completionHandler);
+    }
+}
+
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+    if (self.predicateBlock) {
+        return self.predicateBlock(arguments);
+    } else {
+        //otherwise default to YES
+        return YES;
+    }
 }
 
 - (instancetype)continueWith:(UAAction *)continuationAction {
@@ -96,24 +116,6 @@
     return aggregateAction;
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    if (![self canPerformWithArguments:arguments]) {
-         completionHandler([UAActionResult none]);
-    }
-
-    if (self.actionBlock) {
-        self.actionBlock(arguments, completionHandler);
-    }
-}
-
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
-    if (self.predicateBlock) {
-        return self.predicateBlock(arguments);
-    } else {
-        //otherwise default to YES
-        return YES;
-    }
-}
 
 
 @end

@@ -24,7 +24,8 @@
  */
 
 #import "UAActionRegistrar.h"
-
+#import "UAirship.h"
+#import "UAIncomingPushAction.h"
 
 @implementation UAActionRegistrar
 
@@ -34,6 +35,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     self = [super init];
     if (self) {
         self.registeredActions = [[NSMutableDictionary alloc] init];
+        [self registerDefaultActions];
     }
     return self;
 }
@@ -54,4 +56,9 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return action;
 }
 
+
+- (void)registerDefaultActions {
+    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
+    [self registerAction:incomingPushAction forName:@"_incoming_push_action"];
+}
 @end
