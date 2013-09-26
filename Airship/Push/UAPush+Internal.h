@@ -78,14 +78,6 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
 
 /**
- * Parse a device token string from the NSData string representation.
- * @param tokenStr NSString returned from [NSData description]
- *
- * @return The device token as a hex-encoded string without dashes or spaces.
- */
-- (NSString *)parseDeviceToken:(NSString *)tokenStr;
-
-/**
  * Generate a payload object for the current push settings.
  *
  * @return The current push settings as a UADeviceRegistrationPayload.

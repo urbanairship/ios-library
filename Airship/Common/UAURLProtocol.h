@@ -23,35 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADisposable.h"
+#import <Foundation/Foundation.h>
 
-@interface UADisposable ()
-@property(nonatomic, copy) UADisposalBlock disposalBlock;
-@end
 
-@implementation UADisposable
+/**
+ * A NSURLProtocol that caches successful responses to requests
+ * who's URL or mainDocumentURL has been added as a cachableURL.
+ * A failed response will always fall back to a cached response 
+ * when available.
+ */
+@interface UAURLProtocol : NSURLProtocol
 
-- (id)initWithDisposalBlock:(UADisposalBlock)disposalBlock {
-    self = [super init];
+#define kUASkipProtocolHeader @"UA-Client-Protocol"
+#define kUACacheMemorySizeInMB  5 * 1024 * 1024 // 5 MB
 
-    if (self) {
-        self.disposalBlock = disposalBlock;
-    }
+/**
+ * Adds a URL to be handled and cached by the Protocol.
+ *
+ *@param url The URL or mainDocumentURL of a request to cache.
+ */
++ (void)addCachableURL:(NSURL *)url;
 
-    return self;
-}
+/**
+ * Removes a URL from being cached.
+ *
+ *@param url The URL or mainDocumentURL of a request.
+ */
++ (void)removeCachableURL:(NSURL *)url;
 
-- (void)dispose {
-    @synchronized(self) {
-        if (self.disposalBlock) {
-            self.disposalBlock();
-            self.disposalBlock = nil;
-        }
-    }
-}
-
-+ (instancetype) disposableWithBlock:(UADisposalBlock)disposalBlock {
-    return [[UADisposable alloc] initWithDisposalBlock:disposalBlock];
-}
-
+/**
+ * Clears the URL cache
+ */
++ (void)clearCache;
 @end

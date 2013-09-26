@@ -33,7 +33,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessage.h"
 #import "UAUser.h"
-
 #import "UAInboxMessageListObserver.h"
 
 @implementation UAInbox
@@ -155,5 +154,6 @@ static Class _uiClass;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.pushHandler = nil;
 }
+
 
 @end

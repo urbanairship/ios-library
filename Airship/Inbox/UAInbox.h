@@ -160,6 +160,7 @@ SINGLETON_INTERFACE(UAInbox);
  */
 @property (nonatomic, strong) UAInboxPushHandler *pushHandler;
 
+
 /**
  * The Javascript delegate.
  * 
