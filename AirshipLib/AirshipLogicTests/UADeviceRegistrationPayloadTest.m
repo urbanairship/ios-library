@@ -53,13 +53,13 @@
 - (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
    
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSString *fromStr = [NSString stringWithFormat:@"%d:%02d",
-                         [cal components:NSHourCalendarUnit fromDate:startDate].hour,
-                         [cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
+    NSString *fromStr = [NSString stringWithFormat:@"%ld:%02ld",
+                         (long)[cal components:NSHourCalendarUnit fromDate:startDate].hour,
+                         (long)[cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
 
-    NSString *toStr = [NSString stringWithFormat:@"%d:%02d",
-                       [cal components:NSHourCalendarUnit fromDate:endDate].hour,
-                       [cal components:NSMinuteCalendarUnit fromDate:endDate].minute];
+    NSString *toStr = [NSString stringWithFormat:@"%ld:%02ld",
+                       (long)[cal components:NSHourCalendarUnit fromDate:endDate].hour,
+                       (long)[cal components:NSMinuteCalendarUnit fromDate:endDate].minute];
 
     return [NSMutableDictionary dictionaryWithObjectsAndKeys:
                       fromStr, UAPushQuietTimeStartKey,
