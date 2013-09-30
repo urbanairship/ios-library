@@ -63,7 +63,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     __block NSUInteger resultCount = 0;
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
 
-    for (__block NSString *actionName in actions) {
+    for (NSString *actionName in actions) {
         __block BOOL completionHandlerCalled = NO;
 
         UAActionCompletionHandler handler = ^(UAActionResult *result) {
