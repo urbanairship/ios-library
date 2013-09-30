@@ -69,6 +69,15 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return results ?: [NSArray array];
 }
 
+- (NSSet *)getMessageIDs {
+    NSMutableSet *messageIDs = [NSMutableSet set];
+    for (UAInboxMessage *message in [self getMessages]) {
+        [messageIDs addObject:message.messageID];
+    }
+
+    return messageIDs;
+}
+
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary {
     UAInboxMessage *message = (UAInboxMessage *)[NSEntityDescription insertNewObjectForEntityForName:@"UAInboxMessage"
                                                                               inManagedObjectContext:self.managedObjectContext];
@@ -106,7 +115,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [self saveContext];
 }
 
-- (void)deleteMessagesWithIDs:(NSArray *)messageIDs {
+- (void)deleteMessagesWithIDs:(NSSet *)messageIDs {
     for (NSString *messageID in messageIDs) {
         UAInboxMessage *message = [self getMessageWithID:messageID];
 

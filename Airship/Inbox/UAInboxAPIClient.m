@@ -144,20 +144,30 @@
       } retryWhere:^(UAHTTPRequest *request){
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
+          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
           NSString *responseString = request.responseString;
           NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
           UA_LTRACE(@"Retrieved message list respose: %@", responseString);
 
-          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
-          
+          NSMutableSet *responseMessageIDs = [NSMutableSet set];
+
           // Convert dictionary to objects for convenience          
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-
               if (![inboxDBManager updateMessageWithDictionary:message]) {
                   UAInboxMessage *tmp = [inboxDBManager addMessageFromDictionary:message];
                   tmp.inbox = [UAInbox shared].messageList;
               }
+
+              NSString *messageID = [message valueForKey:@"message_id"];
+              if (messageID) {
+                  [responseMessageIDs addObject:messageID];
+              }
           }
+
+          // Delete server side deleted messages
+          NSMutableSet *messagesToDelete = [[inboxDBManager getMessageIDs] mutableCopy];
+          [messagesToDelete minusSet:responseMessageIDs];
+          [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
 
           NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
 
