@@ -146,7 +146,7 @@
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
           NSString *responseString = request.responseString;
           NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
-          UA_LTRACE(@"Retrieved message list respose: %@", responseString);
+          UA_LTRACE(@"Retrieved message list response: %@", responseString);
 
           UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
           

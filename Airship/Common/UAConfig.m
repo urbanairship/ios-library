@@ -87,7 +87,7 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
-            self.cacheDiskSizeInMB];
+            (unsigned long)self.cacheDiskSizeInMB];
 }
 
 #pragma mark -
