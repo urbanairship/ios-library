@@ -24,51 +24,46 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UAActionResult.h"
 #import "UAActionArguments.h"
 
 /**
  * Represents a situation in which the application was launched from a push notification.
  */
 extern NSString * const UASituationLaunchedFromPush;
-/**
- * Represents a situation in which a push notification was received in the foreground.
- */
-extern NSString * const UASituationForegroundPush;
-/**
- * Represents a situation in which a push notification was received in the background.
- */
-extern NSString * const UASituationBackgroundPush;
 
 /**
- * Represents the result of performing an action.
- */
-typedef enum  {
-    /**
-     * The action did not result in any new data being fetched.
-     */
-    UAActionResultNoData,
-    /**
-     * The action resulted in new data being fetched.
-     */
-    UAActionResultNewData,
-    /**
-     * The action failed.
-     */
-    UAActionResultFailed,
-} UAActionResult;
+  * Represents a situation in which a push notification was received in the foreground.
+  */
+extern NSString * const UASituationForegroundPush;
+
+/**
+  * Represents a situation in which a push notification was received in the background.
+  */
+extern NSString * const UASituationBackgroundPush;
+
+@class UAAction;
 
 /**
  * A custom predicate block that can be used to limit the scope of an action.
  */
 typedef BOOL (^UAActionPredicate)(UAActionArguments *);
+
+/**
+ * A custom predicate block that can be used to limit the scope of an action.
+ */
+typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
+
 /**
  * A completion handler that singals that an action has finished executing.
  */
-typedef void (^UAActionCompletionHandler)(UAActionResult);
+
+typedef void (^UAActionCompletionHandler)(UAActionResult *);
+
 /**
  * A block that defines the work performed by an action.
  */
-typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
+typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
 /**
  * A unit of work that can be associated with a push notification.
@@ -76,18 +71,43 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler);
 @interface UAAction : NSObject
 
 /**
- * Convenience constructor for defining custom actions.
+ * Operator for defining anonymous actions
  *
- * @param actionBlock A block representing the work performed by the action.
+ * @param actionBlock A UAActionBlock representing the work performed by the action.
  */
+
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
+
+/**
+ * Operator for limiting the scope of actions with a predicate.
+ *
+ * @param predicateBlock A UAActionPredicate block.
+ */
+- (instancetype)filter:(UAActionPredicate)predicateBlock;
+
+/**
+ * Operator for creating an action that strings together two separate actions,
+ * passing the result of the first as the argument of the second.
+ *
+ * The result of the aggregate action is the result of the second action.
+ *
+ * @param continuationAction A UAAction to be executed as the continuation of
+ * the receiver.
+ */
+- (instancetype)continueWith:(UAAction *)continuationAction;
+
+- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock;
 
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
  *
- * @param arguments An instance of UAActionArguments.
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
  */
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments;
+
+@property(nonatomic, copy) UAActionPredicate predicateBlock;
 
 @end

@@ -59,6 +59,7 @@ typedef void (^UAHTTPConnectionFailureBlock)(UAHTTPRequest *request);
  */
 @property (nonatomic, copy) NSString *password;
 
+@property (nonatomic, strong) NSURL *mainDocumentURL;
 /**
  * The body of the request.
  */

@@ -19,6 +19,8 @@
 
 @implementation UAPushTest
 
+NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
 - (void)setUp {
     [super setUp];
 
@@ -65,15 +67,25 @@
     [self.mockRegistrationObserver stopMocking];
 }
 
-- (void)testParseDeviceToken {
-    XCTAssertEqualObjects(@"hello", [[UAPush shared] parseDeviceToken:@"<> he<l <<<l >> o"],
-                          @"parseDeviceTokens should remove all '<', '>', and white space from the token");
+- (void)testSetDeviceToken {
 
-    XCTAssertNil([[UAPush shared] parseDeviceToken:nil],
-                          @"parseDeviceTokens should return nil when passed nil");
+    [UAPush shared].deviceToken = nil;
 
-    XCTAssertEqualObjects(@"", [[UAPush shared] parseDeviceToken:@""],
-                 @"parseDeviceTokens should do nothing to an empty string");
+    [UAPush shared].deviceToken = @"invalid characters";
+
+    XCTAssertNil([UAPush shared].deviceToken, @"setDeviceToken should ignore device tokens with invalid characters.");
+
+
+    [UAPush shared].deviceToken = validDeviceToken;
+    XCTAssertEqualObjects(validDeviceToken, [UAPush shared].deviceToken, @"setDeviceToken should set tokens with valid characters");
+
+    [UAPush shared].deviceToken = nil;
+    XCTAssertNil([UAPush shared].deviceToken,
+                          @"setDeviceToken should allow a nil device token.");
+
+    [UAPush shared].deviceToken = @"";
+    XCTAssertEqualObjects(@"", [UAPush shared].deviceToken,
+                 @"setDeviceToken should do nothing to an empty string");
 }
 
 - (void)testAutoBadgeEnabled {
@@ -104,14 +116,14 @@
     NSArray *tags = @[@"tag-one", @"tag-two"];
     [UAPush shared].tags = tags;
 
-    XCTAssertEqual(2U, [UAPush shared].tags.count, @"should of added 2 tags");
+    XCTAssertEqual((NSUInteger)2, [UAPush shared].tags.count, @"should of added 2 tags");
     XCTAssertEqualObjects(tags, [UAPush shared].tags, @"tags are not stored correctly");
     XCTAssertEqualObjects([[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey], [UAPush shared].tags,
                           @"tags are not stored correctly in standardUserDefaults");
 
     [UAPush shared].tags = nil;
-    XCTAssertEqual(0U, [UAPush shared].tags.count, @"tags should return an empty array even when set to nil");
-    XCTAssertEqual(0U, [[[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey] count],
+    XCTAssertEqual((NSUInteger)0, [UAPush shared].tags.count, @"tags should return an empty array even when set to nil");
+    XCTAssertEqual((NSUInteger)0, [[[NSUserDefaults standardUserDefaults] valueForKey:UAPushTagsSettingsKey] count],
                    @"tags are not being cleared in standardUserDefaults");
 }
 
@@ -119,21 +131,21 @@
     [UAPush shared].tags = nil;
 
     [[UAPush shared] addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
-    XCTAssertEqualObjects((@[@"tag-one", @"tag-two"]), [UAPush shared].tags,
+    XCTAssertEqualObjects([NSSet setWithArray:(@[@"tag-one", @"tag-two"])], [NSSet setWithArray:[UAPush shared].tags],
                           @"Add tags to current device fails when no existing tags exist");
 
     // Try to add same tags again
     [[UAPush shared] addTagsToCurrentDevice:@[@"tag-one", @"tag-two"]];
-    XCTAssertEqual(2U, [UAPush shared].tags.count, @"Add tags should not add duplicate tags");
+    XCTAssertEqual((NSUInteger)2, [UAPush shared].tags.count, @"Add tags should not add duplicate tags");
 
 
     // Try to add a new set of tags, with one of the tags being unique
     [[UAPush shared] addTagsToCurrentDevice:@[@"tag-one", @"tag-three"]];
 
-    XCTAssertEqual(3U, [UAPush shared].tags.count,
+    XCTAssertEqual((NSUInteger)3, [UAPush shared].tags.count,
                    @"Add tags should add unique tags even if some of them are duplicate");
 
-    XCTAssertEqualObjects((@[@"tag-three", @"tag-one", @"tag-two"]), [UAPush shared].tags,
+    XCTAssertEqualObjects([NSSet setWithArray:(@[@"tag-one", @"tag-two", @"tag-three"])], [NSSet setWithArray:[UAPush shared].tags],
                           @"Add tags should add unique tags even if some of them are duplicate");
 
     // Try to add an nil set of tags
@@ -154,7 +166,7 @@
 
     // Try to add same tag again
     [[UAPush shared] addTagToCurrentDevice:@"tag-one"];
-    XCTAssertEqual(1U, [UAPush shared].tags.count, @"Add tag should not add duplicate tags");
+    XCTAssertEqual((NSUInteger)1, [UAPush shared].tags.count, @"Add tag should not add duplicate tags");
 
     // Add a new tag
     [[UAPush shared] addTagToCurrentDevice:@"tag-two"];
@@ -224,7 +236,7 @@
 }
 
 - (void)testPushEnabledToNo {
-    [UAPush shared].deviceToken = @"sometoken";
+    [UAPush shared].deviceToken = validDeviceToken;
     [UAPush shared].pushEnabled = YES;
 
     // Add a device token so we get a device api callback
@@ -372,9 +384,9 @@
     // Set the right values so we can check if a device api client call was made or not
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].autobadgeEnabled = YES;
-    [UAPush shared].deviceToken = @"some-device-token";
+    [UAPush shared].deviceToken = validDeviceToken;
 
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
     [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY
@@ -391,7 +403,7 @@
 }
 
 - (void)testSetBadgeNumberNoChange {
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
     [[self.mockedApplication reject] setApplicationIconBadgeNumber:30];
 
     [[UAPush shared] setBadgeNumber:30];
@@ -401,11 +413,11 @@
 
 - (void)testSetBadgeNumberAutoBadgeDisabled {
     [UAPush shared].pushEnabled = YES;
-    [UAPush shared].deviceToken = @"some-device-token";
+    [UAPush shared].deviceToken = validDeviceToken;
 
     [UAPush shared].autobadgeEnabled = NO;
 
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
 
     // Reject device api client registration because autobadge is not enabled
@@ -440,9 +452,8 @@
     XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
                      @"should update registration on registering device token");
 
-    XCTAssertEqualObjects([[UAPush shared] parseDeviceToken:[token description]],
-                          [UAPush shared].deviceToken,
-                          @"registering device token should set the deviceToken on UAPush");
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
 }
 
 - (void)testRegisterDeviceTokenNoNotificationTypes {
@@ -720,7 +731,7 @@
 
 - (void)testUpdateRegistrationForcefullyPushEnabled {
     [UAPush shared].pushEnabled = YES;
-    [UAPush shared].deviceToken = @"some-token";
+    [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
     [[UAPush shared] updateRegistrationForcefully:YES];
@@ -748,7 +759,7 @@
 
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     [UAPush shared].pushEnabled = NO;
-    [UAPush shared].deviceToken = @"some-token";
+    [UAPush shared].deviceToken = validDeviceToken;
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
 
     [[self.mockedDeviceAPIClient expect] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
@@ -882,7 +893,7 @@
 
     // Set up badge
     [UAPush shared].autobadgeEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
     // Set quiet time
     [[UAPush shared] setQuietTimeEnabled:YES];

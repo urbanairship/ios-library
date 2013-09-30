@@ -25,59 +25,43 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionEntry.h"
 #import "UAActionRegistrar.h"
-#import "UAActionArguments.h"
+#import "UAPushActionArguments.h"
+
 
 @interface UAActionRunner : NSObject
 
 /**
  * Performs a registered action with the given name.
  *
- * If the action is not registered or if the predicate prevents
- * the action from running, the completion handler will be called
- * immediately with UAActionResultNoData.
+ * If the action is not registered the completion handler 
+ * will be called immedietly with [UAActionResult none]
  *
- * @param name Name of the action to perform.
- * @param situation Situation to perform the action in.
- * @param value The value.
- * @param payload The payload.
+ * @param actionName The name of the action to perform
+ * @param arguments The action's arguments
  * @param completionHandler CompletionHandler to pass to the action.
  */
-+ (void)performAction:(NSString *)name
-        withSituation:(NSString *)situation
-            withValue:(id)value
-          withPayload:(NSDictionary *)payload
++ (void)performActionWithName:(NSString *)actionName
+                withArguments:(UAActionArguments *)arguments
+        withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+
++ (void)performAction:(UAAction *)action
+        withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-
 /**
- * Performs a registered action with the given name.
+ * Performs a map of actionNames and action arguments.
  *
- * If the action is not registered or if the predicate prevents
- * the action from running, the completion handler will be called
- * immediately with UAActionResultNoData.
+ * The results of all the actions will be aggregated into a 
+ * single UAAggregateActionResult.
  *
- * @param arguments The arguments for the action to perform
- * @param completionHandler CompletionHandler to pass to the action.
- */
-+ (void)performActionWithArguments:(UAActionArguments *)arguments
-             withCompletionHandler:(UAActionCompletionHandler)completionHandler;
-
-
-/**
- * Performs registered actions from a dictionary and merges the action results
- *
- * @param actiondictionary Dictionary of actions and there values.
- * @param situation The situation of the action.
- * @param payload The payload.
- * @param completionHandler CompletionHandler to run after all the 
+ * @param actions The map of action names and arguments.
+ * @param completionHandler CompletionHandler to run after all the
  * actions have completed.  The result will be the aggregated result 
  * of all the actions performed.
  */
-+ (void)performActionsFromDictionary:(NSDictionary *)actionDictionary
-                       withSituation:(NSString *)situation
-                         withPayload:(NSDictionary *)payload
-               withCompletionHandler:(UAActionCompletionHandler)completionHandler;
++ (void)performActions:(NSDictionary *)actions
+ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end

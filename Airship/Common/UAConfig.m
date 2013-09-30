@@ -53,6 +53,7 @@
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         usesProductionPushServer_ = NO;
+        self.cacheDiskSizeInMB = 100;
     }
     return self;
 }
@@ -73,7 +74,8 @@
             "Clear Keychain: %d\n"
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
-            "Device API URL: %@\n",
+            "Device API URL: %@\n"
+            "Cache Size: %ld MB\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -89,7 +91,8 @@
             self.clearKeychain,
             self.analyticsEnabled,
             self.analyticsURL,
-            self.deviceAPIURL];
+            self.deviceAPIURL,
+            self.cacheDiskSizeInMB];
 }
 
 #pragma mark -
@@ -208,7 +211,7 @@
             NSString *type = [NSString stringWithUTF8String:property_getAttributes(property)];
 
             UA_LTRACE(@"Type: %@", type);
-            if ([type hasPrefix:@"Tc"]) {//treat chars as bools
+            if ([type hasPrefix:@"Tc"] || [type hasPrefix:@"TB"]) {//treat chars as bools
                 value = [NSNumber numberWithBool:[value boolValue]];
             } else if (![type hasPrefix:@"T@"]) {//indicates an obj-c object (id)
                 value = [NSNumber numberWithInt:[value intValue]];

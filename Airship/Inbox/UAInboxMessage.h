@@ -71,9 +71,9 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  *
  * @return YES if the request was submitted or already complete, otherwise NO.
  *
- * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
  */
-- (BOOL)markAsRead __attribute__((deprecated("As of version 2.1")));
+- (BOOL)markAsRead __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.

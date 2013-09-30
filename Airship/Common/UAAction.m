@@ -24,6 +24,9 @@
  */
 
 #import "UAAction.h"
+#import "UAActionResult.h"
+#import "UAGlobal.h"
+#import "UAActionRunner.h"
 
 NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
 NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
@@ -39,6 +42,11 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
+
+        //set a default predicate
+        self.predicateBlock = ^(id args){
+            return YES;
+        };
     }
 
     return self;
@@ -48,10 +56,78 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
+
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
     }
 }
+
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+    if (self.predicateBlock) {
+        return self.predicateBlock(arguments);
+    } else {
+        //otherwise default to YES
+        return YES;
+    }
+}
+
+
+
+// TODO: Just like we have an optional block for perform, we
+// may want to have an optional block for canPerformWithArguments.
+// This way, the aggregateAction can have a block that checks with the
+// original actions canPerformWithArguments.
+
+- (instancetype)continueWith:(UAAction *)continuationAction {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+
+        [UAActionRunner performAction:self withArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+
+            UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult
+                                                                           wihSituation:args.situation];
+
+            [UAActionRunner performAction:continuationAction withArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
+
+                //I think we may want to reduce the result or at least give the option in a similar operator...
+                completionHandler(continuationResult);
+            }];
+        }];
+    }];
+
+    return aggregateAction;
+}
+
+
+- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
+    if (!foldBlock) {
+        //perhaps provide a default implementation for common use cases?
+        UA_LWARN(@"missing foldBlock, returning nil");
+        return nil;
+    }
+
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+
+        [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+            [foldedAction performWithArguments:args withCompletionHandler:^(UAActionResult *foldedResult){
+                completionHandler(foldBlock(selfResult, foldedResult));
+            }];
+        }];
+    }];
+
+    return aggregateAction;
+}
+
+- (instancetype)filter:(UAActionPredicate)predicateBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [UAActionRunner performAction:self withArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.predicateBlock = predicateBlock;
+
+    return aggregateAction;
+}
+
+
 
 @end

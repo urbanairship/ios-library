@@ -23,12 +23,38 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KIFTestStep.h"
-typedef void (^SendPushBlock)(NSString *alertID);
+#import "UAActionResult.h"
 
-@interface KIFTestStep (UAAdditions)
+@implementation UAActionResult
 
-+ (id)stepToSetUniqueID:(NSString *)alertID;
-+ (NSArray *) stepsToSendAndWaitForNotification:(NSString *)description sendPushBlock:(SendPushBlock)sendPushBlock;
-+ (id)stepToVerifyPushEnabled:(Boolean)enabled;
+- (instancetype)initWithValue:(id)value
+               withFetchResult:(UAActionFetchResult)fetchResult {
+
+    self = [super init];
+    if (self) {
+        self.value = value;
+        self.fetchResult = fetchResult;
+    }
+
+    return self;
+}
+
++ (instancetype)resultWithValue:(id)value {
+
+    return [[UAActionResult alloc] initWithValue:value
+                                  withFetchResult:UAActionFetchResultNoData];
+
+}
+
++ (instancetype)resultWithValue:(id)value
+                 withFetchResult:(UAActionFetchResult)fetchResult {
+
+    return [[UAActionResult alloc] initWithValue:value
+                                  withFetchResult:fetchResult];
+}
+
++ (instancetype)none {
+    return [[UAActionResult alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
+}
+
 @end

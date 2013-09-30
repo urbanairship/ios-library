@@ -106,6 +106,21 @@
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
+
+/**
+ * The size in MB for the UA Disk Cache.  Defaults to 100.
+ *
+ * Only items that are small enough (1/20th of the size) of the cache will be 
+ * cached.
+ * 
+ * Any size greater than 0 will cause the UA Disk Cache to become active. 
+ * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
+ * mainDocumentURL or URL that have been added as a cachable URL will be considered
+ * for caching.  By defualt it includes all of the Rich Application Page URLs.
+ *
+ */
+@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB;
+
 /**
  * If enabled, the UA library automatically registers for remote notifications when push is enabled
  * and intercepts incoming notifications in both the foreground and upon launch.

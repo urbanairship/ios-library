@@ -64,7 +64,10 @@ typedef enum {
  * delete or mark messages as read, retrieve individual messages from the
  * list.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface UAInboxMessageList : UAObservable
+#pragma clang diagnostic pop
 /**
  * The shared singleton accessor.
  */
@@ -109,9 +112,9 @@ typedef enum {
  * and [UAInboxMessageListObserver messageListLoaded] upon completion. If the associated user
  * has not yet been created, this will be a no-op.
  *
- * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
  */
-- (void)retrieveMessageList __attribute__((deprecated("As of version 2.1")));
+- (void)retrieveMessageList __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Update the message list by marking messages as read, or deleting them.
@@ -157,19 +160,19 @@ typedef enum {
  * [UAInboxMessageListObserver batchDeleteFinished], or
  * [UAInboxMessageListObserver batchDeleteFailed].
  *
- * @deprecated As of version 2.1. Replaced with block and delegate-based methods.
+ * @deprecated As of version 3.0. Replaced with block and delegate-based methods.
  *
  * @param command the UABatchUpdateCommand to perform.
  * @param messageIndexSet an NSIndexSet of message IDs representing the subset of the inbox to update.
  */
 - (void)performBatchUpdateCommand:(UABatchUpdateCommand)command
-              withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated("As of version 2.1")));
+              withMessageIndexSet:(NSIndexSet *)messageIndexSet __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Returns the number of messages currently in the inbox.
  * @return The message count as an integer.
  */
-- (int)messageCount;
+- (NSUInteger)messageCount;
 
 /**
  * Returns the message associated with a particular ID.
@@ -183,14 +186,14 @@ typedef enum {
  * @param index The message list index as an integer.
  * @return The associated UAInboxMessage object.
  */
-- (UAInboxMessage*)messageAtIndex:(int)index;
+- (UAInboxMessage*)messageAtIndex:(NSUInteger)index;
 
 /**
  * Returns the index of a particular message within the message list.
  * @param message The UAInboxMessage object of interest.
  * @return The index of the message as an integer.
  */
-- (int)indexOfMessage:(UAInboxMessage *)message;
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)message;
 
 /**
  * The list of messages on disk as an NSMutableArray.

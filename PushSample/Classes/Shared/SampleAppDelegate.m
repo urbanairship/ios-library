@@ -29,6 +29,7 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
+#import "UAPushAction.h"
 
 @implementation SampleAppDelegate
 
@@ -113,6 +114,8 @@
     if (application.applicationState != UIApplicationStateBackground) {
         [[UAPush shared] resetBadge];
     }
+
+    completionHandler(UIBackgroundFetchResultNoData);
 }
 
 - (void)failIfSimulator {

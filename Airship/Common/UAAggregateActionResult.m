@@ -23,16 +23,35 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KIFTestScenario.h"
+#import "UAAggregateActionResult.h"
 
-@interface KIFTestScenario (UAAdditions)
+@implementation UAAggregateActionResult
 
-+ (id)scenarioToEnablePush;
-+ (id)scenarioToReceiveUnicastPush;
-+ (id)scenarioToReceiveBroadcastPush;
-+ (id)scenarioToSetAlias;
-+ (id)scenarioToSetTag;
-+ (id)scenarioToDisablePush;
+- (instancetype)init {
 
+    self = [super init];
+    if (self) {
+        self.value = [NSMutableDictionary dictionary];
+        self.fetchResult = UAActionFetchResultNoData;
+    }
+
+    return self;
+}
+
+- (void)addResult:(UAActionResult *)result forAction:(NSString*)actionName {
+    @synchronized(self) {
+        NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
+        [resultDictionary setValue:result forKey:actionName];
+        [self mergeFetchResult:result.fetchResult];
+    }
+}
+
+- (void)mergeFetchResult:(UAActionFetchResult)result {
+    if (self.fetchResult == UAActionFetchResultNewData || result == UAActionFetchResultNewData) {
+        self.fetchResult = UAActionFetchResultNewData;
+    } else if (self.fetchResult == UAActionFetchResultFailed || result == UAActionFetchResultFailed) {
+        self.fetchResult = UAActionFetchResultFailed;
+    }
+}
 
 @end

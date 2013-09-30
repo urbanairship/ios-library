@@ -99,7 +99,7 @@ enum {
     [super viewWillAppear:animated];
 }
 
-- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     
     //if shown, update picker and scroll offset
     if (self.pickerDisplayed) {
@@ -231,7 +231,12 @@ enum {
     self.pickerDisplayed = NO;
     self.pickerShownFrame = CGRectZero;
     self.pickerHiddenFrame = CGRectZero;
-    
+
+    // make our existing layout work in iOS7
+    if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+
     [self.view setNeedsLayout];
 }
 
@@ -295,7 +300,7 @@ enum {
     [formatter setDateStyle:NSDateFormatterNoStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     
-    int row = [[self.tableView indexPathForSelectedRow] row];
+    NSInteger row = [[self.tableView indexPathForSelectedRow] row];
     if (row == QuietTimeSectionStartCell) {
         self.fromCell.detailTextLabel.text = [formatter stringFromDate:date];
         [self.fromCell setNeedsLayout];
@@ -366,7 +371,7 @@ enum {
     NSString *fromString = self.fromCell.detailTextLabel.text;
     NSString *toString = self.toCell.detailTextLabel.text;
 
-    int row = [[self.tableView indexPathForSelectedRow] row];
+    NSInteger row = [[self.tableView indexPathForSelectedRow] row];
     if (row == 1 && [fromString length] != 0) {
         NSDate *fromDate = [formatter dateFromString:fromString];
         [self.datePicker setDate:fromDate animated:YES];

@@ -64,7 +64,7 @@
 
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
     connection.successBlock = ^(UAHTTPRequest *r) {
-        NSLog(@"Response Code: %d", r.response.statusCode);
+        NSLog(@"Response Code: %ld", (long)r.response.statusCode);
         NSLog(@"Response Body: %@", [NSString stringWithUTF8String:[[request responseData] bytes]]);
     };
     [connection start];
@@ -82,7 +82,7 @@
 
     UAHTTPConnection *connection = [UAHTTPConnection connectionWithRequest:request];
     connection.successBlock = ^(UAHTTPRequest *r) {
-        NSLog(@"Response Code: %d", r.response.statusCode);
+        NSLog(@"Response Code: %ld", (long)r.response.statusCode);
         NSLog(@"Response Body: %@", [NSString stringWithUTF8String:[[request responseData] bytes]]);
     };
     [connection start];
@@ -94,7 +94,7 @@
     request.password = [UAirship shared].config.testingMasterSecret;
     request.HTTPMethod = @"POST";
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
-
+    
     return request;
 }
 

@@ -23,39 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UATestController.h"
+#import "UAPushActionArguments.h"
 
-#import "KIFTestScenario+UAAdditions.h"
-#import "UATestPushDelegate.h"
-#import "UAPush.h"
+@implementation UAPushActionArguments
+
+- (instancetype)initWithValue:(id)value
+                withSituation:(NSString *)situation
+                     withName:(NSString *)name
+                  withPayload:(NSDictionary *)payload {
 
 
-@implementation UATestController
-
-- (void)dealloc {
-    if ([UAPush shared].pushNotificationDelegate == self.pushDelegate) {
-        [UAPush shared].pushNotificationDelegate = nil;
+    self = [super init];
+    if (self) {
+        self.name = name;
+        self.situation = situation;
+        self.value = value;
+        self.payload = payload;
     }
-    self.pushDelegate = nil;
+
+    return self;
 }
 
-- (void)initializeScenarios {
++ (instancetype)argumentsWithValue:(id)value
+                     withSituation:(NSString *)situation
+                          withName:(NSString *)name
+                       withPayload:(NSDictionary *)payload {
 
-    // replace existing push delegate with new handler that prints the alert in the cancel button
-
-    // pull master secret from internal airship config properties
-    self.pushDelegate = [[UATestPushDelegate alloc] init];
-    [UAPush shared].pushNotificationDelegate = self.pushDelegate;
-
-    [self addScenario:[KIFTestScenario scenarioToEnablePush]];
-    [self addScenario:[KIFTestScenario scenarioToReceiveUnicastPush]];
-    [self addScenario:[KIFTestScenario scenarioToReceiveBroadcastPush]];
-    [self addScenario:[KIFTestScenario scenarioToSetAlias]];
-    [self addScenario:[KIFTestScenario scenarioToSetTag]];
-    [self addScenario:[KIFTestScenario scenarioToDisablePush]];
-
-    // moar
-
+    return [[UAPushActionArguments alloc] initWithValue:value
+                                          withSituation:situation
+                                               withName:name
+                                            withPayload:payload];
 }
 
 @end

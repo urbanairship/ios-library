@@ -37,6 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
+#import "UAURLProtocol.h"
 
 NSString * const UAInboxMessageListWillUpdateNotification = @"com.urbanairship.notification.message_list_will_update";
 NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.notification.message_list_updated";
@@ -144,10 +145,11 @@ static UAInboxMessageList *_messageList = nil;
     } onFailure:^(UAHTTPRequest *request){
         self.isRetrieving = NO;
 
-        UA_LDEBUG(@"Retrieve message list failed with status: %d", request.response.statusCode);
+        UA_LDEBUG(@"Retrieve message list failed with status: %ld", (long)request.response.statusCode);
         if (failureBlock && !isCallbackCancelled) {
             failureBlock();
         }
+
         [self notifyObservers:@selector(inboxLoadFailed)];
         [self sendMessageListUpdatedNotification];
     }];
@@ -210,7 +212,7 @@ static UAInboxMessageList *_messageList = nil;
 
     void (^fail)(UAHTTPRequest *) = ^(UAHTTPRequest *request){
         self.isBatchUpdating = NO;
-        UA_LDEBUG(@"Perform batch update failed with status: %d", request.response.statusCode);
+        UA_LDEBUG(@"Perform batch update failed with status: %ld", (long)request.response.statusCode);
         if (failureBlock && !isCallbackCancelled) {
             failureBlock();
         }
@@ -290,7 +292,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark -
 #pragma mark Get messages
 
-- (int)messageCount {
+- (NSUInteger)messageCount {
     return [self.messages count];
 }
 
@@ -303,15 +305,15 @@ static UAInboxMessageList *_messageList = nil;
     return nil;
 }
 
-- (UAInboxMessage *)messageAtIndex:(int)index {
-    if (index < 0 || index >= [self.messages count]) {
-        UA_LWARN("Load message(index=%d, count=%d) error.", index, [self.messages count]);
+- (UAInboxMessage *)messageAtIndex:(NSUInteger)index {
+    if (index >= [self.messages count]) {
+        UA_LWARN("Load message(index=%lu, count=%lu) error.", (unsigned long)index, (unsigned long)[self.messages count]);
         return nil;
     }
     return [self.messages objectAtIndex:index];
 }
 
-- (int)indexOfMessage:(UAInboxMessage *)message {
+- (NSUInteger)indexOfMessage:(UAInboxMessage *)message {
     return [self.messages indexOfObject:message];
 }
 
@@ -321,9 +323,14 @@ static UAInboxMessageList *_messageList = nil;
     // Sort the messages by date
     if (messages.count > 0) {
         NSSortDescriptor* dateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"messageSent"
-                                                                        ascending:NO];
+                                                                       ascending:NO];
         NSArray *sortDescriptors = [NSArray arrayWithObject:dateDescriptor];
         [messages sortUsingDescriptors:sortDescriptors];
+    }
+
+    // Add messsage's body url to the cachable urls
+    for (UAInboxMessage *message in messages) {
+        [UAURLProtocol addCachableURL:message.messageBodyURL];
     }
 
     _messages = messages;

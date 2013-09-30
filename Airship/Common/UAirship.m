@@ -40,6 +40,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "UABaseAppDelegateSurrogate.h"
 #import "UAAutoAppDelegate.h"
+#import "NSJSONSerialization+UAAdditions.h"
+#import "UAURLProtocol.h"
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
@@ -184,6 +186,10 @@ UALogLevel uaLogLevel = UALogLevelError;
         [_sharedAirship validate];
     }
 
+    if (config.cacheDiskSizeInMB > 0) {
+        UA_LINFO("Registering UAURLProtocol");
+        [NSURLProtocol registerClass:[UAURLProtocol class]];
+    }
 
     // The singleton is now ready for use!
     _sharedAirship.ready = true;
@@ -191,6 +197,7 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
+
 }
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
@@ -349,6 +356,11 @@ UALogLevel uaLogLevel = UALogLevelError;
             UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
         }
     }
-}
 
+    // -ObjC linker flag is set
+    if (![[NSJSONSerialization class] respondsToSelector:@selector(stringWithObject:)]) {
+        UA_LERR(@"UAirship library requires the '-ObjC' linker flag set in 'Other linker flags'.");
+    }
+}
 @end
+

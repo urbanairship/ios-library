@@ -34,10 +34,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * An observer is notified when messages are modified, loaded or
  * fail to load or update.
  *
- * @deprecated As of version 2.1. Replaced NSNotification and callback-based 
+ * @deprecated As of version 3.0. Replaced NSNotification and callback-based
  * methods in `UAPush`, `UAInboxMessage` and `UAInboxMessageList`. 
  */
-__attribute__((deprecated("As of version 2.1")))
+__attribute__((deprecated("As of version 3.0")))
 @protocol UAInboxMessageListObserver <NSObject>
 
 @optional

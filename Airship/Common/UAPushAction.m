@@ -22,15 +22,43 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import <Foundation/Foundation.h>
 
-#import "UAGlobal.h"
+#import "UAPushAction.h"
 
-@interface UATestingDelegate : NSObject
-
-SINGLETON_INTERFACE(UATestingDelegate);
-
+@interface UAPushAction()
+@property (nonatomic, copy) UAPushActionBlock actionBlock;
 @end
 
+@implementation UAPushAction
 
+- (instancetype)initWithBlock:(UAPushActionBlock)actionBlock {
+    self = [super init];
+    if (self) {
+        self.actionBlock = actionBlock;
+    }
 
+    return self;
+}
+
+- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+    return [arguments isKindOfClass:[UAPushActionArguments class]]
+        && [super canPerformWithArguments:arguments];
+}
+
++ (instancetype)pushActionWithBlock:(UAPushActionBlock)actionBlock {
+    return [[UAPushAction alloc] initWithBlock:actionBlock];
+}
+
+- (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *fetchResult){
+        completionHandler([UAActionResult resultWithValue:fetchResult]);
+    }];
+}
+
+- (void)performWithArguments:(UAPushActionArguments *)arguments withPushCompletionHandler:(UAActionPushCompletionHandler)completionHandler {
+    if (self.actionBlock) {
+        self.actionBlock(arguments, completionHandler);
+    }
+}
+
+@end

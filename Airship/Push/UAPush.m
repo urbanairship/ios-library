@@ -34,6 +34,9 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
+#import "UAActionRegistrar.h"
+#import "UAPushActionArguments.h"
+#import "UAActionRunner.h"
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -53,7 +56,10 @@ NSString *const UAPushQuietTimeEndKey = @"end";
 
 @implementation UAPush 
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 SINGLETON_IMPLEMENTATION(UAPush)
+#pragma clang diagnostic pop
 
 static Class _uiClass;
 
@@ -94,16 +100,35 @@ static Class _uiClass;
                                   |UIRemoteNotificationTypeBadge
                                   |UIRemoteNotificationTypeSound);
     }
+    
     return self;
 }
 
 #pragma mark -
 #pragma mark Device Token Get/Set Methods
 
-- (NSString *)parseDeviceToken:(NSString *)tokenStr {
-    return [[[tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""]
-             stringByReplacingOccurrencesOfString:@">" withString:@""]
-            stringByReplacingOccurrencesOfString:@" " withString:@""];
+- (void)setDeviceToken:(NSString *)deviceToken {
+    if (deviceToken == nil) {
+        _deviceToken = deviceToken;
+        return;
+    }
+    
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"[^0-9a-fA-F]"
+                                                                           options:NSRegularExpressionCaseInsensitive
+                                                                             error:NULL];
+
+    if ([regex numberOfMatchesInString:deviceToken options:0 range:NSMakeRange(0, [deviceToken length])]) {
+        UA_LERR(@"Device token %@ contains invalid characters.  Only hex characters are allowed", deviceToken);
+        return;
+    }
+
+    // 64 - device tokens are 32 bytes long, each byte is 2 characters
+    if ([deviceToken length] != 64) {
+        UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
+    }
+
+    _deviceToken = deviceToken;
+
 }
 
 #pragma mark -
@@ -283,13 +308,13 @@ static Class _uiClass;
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     [cal setTimeZone:timezone];
     
-    NSString *startTimeStr = [NSString stringWithFormat:@"%d:%02d",
-                              [cal components:NSHourCalendarUnit fromDate:from].hour,
-                              [cal components:NSMinuteCalendarUnit fromDate:from].minute];
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
+                              (long)[cal components:NSHourCalendarUnit fromDate:from].hour,
+                              (long)[cal components:NSMinuteCalendarUnit fromDate:from].minute];
     
-    NSString *endTimeStr = [NSString stringWithFormat:@"%d:%02d",
-                            [cal components:NSHourCalendarUnit fromDate:to].hour,
-                            [cal components:NSMinuteCalendarUnit fromDate:to].minute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",
+                            (long)[cal components:NSHourCalendarUnit fromDate:to].hour,
+                            (long)[cal components:NSMinuteCalendarUnit fromDate:to].minute];
 
     UA_LDEBUG("Setting quiet time: (%@) %@ to %@", [timezone name], startTimeStr, endTimeStr);
 
@@ -354,7 +379,7 @@ static Class _uiClass;
         return;
     }
 
-    UA_LDEBUG(@"Change Badge from %d to %d", [[UIApplication sharedApplication] applicationIconBadgeNumber], badgeNumber);
+    UA_LDEBUG(@"Change Badge from %ld to %ld", (long)[[UIApplication sharedApplication] applicationIconBadgeNumber], (long)badgeNumber);
 
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 
@@ -372,132 +397,87 @@ static Class _uiClass;
 }
 
 - (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state {
+    [self handleNotification:notification applicationState:state fetchCompletionHandler:nil];
+  }
+
+- (void)handleNotification:(NSDictionary *)notification
+          applicationState:(UIApplicationState)state
+    fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
+    NSString *situation = nil;
     switch(state) {
         case UIApplicationStateActive:
-            [self notifyForegroundNotification:notification];
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-                [self.pushNotificationDelegate receivedForegroundNotification:notification];
-            }
-            break;
+            situation = UASituationForegroundPush;
 
-        case UIApplicationStateInactive:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
-                [self.pushNotificationDelegate launchedFromNotification:notification];
-            }
-            break;
-
-        case UIApplicationStateBackground:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
-                [self.pushNotificationDelegate receivedBackgroundNotification:notification];
-            }
-            break;
-    }
-}
-
-- (void)handleNotification:(NSDictionary *)notification applicationState:(UIApplicationState)state fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
-
-    switch(state) {
-        case UIApplicationStateActive:
-            [self notifyForegroundNotification:notification];
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:fetchCompletionHandler:)]) {
-                [self.pushNotificationDelegate receivedForegroundNotification:notification fetchCompletionHandler:completionHandler];
-            } else {
-                if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
-
-                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:.  receivedForegroundNotification: will still be called.");
-
-                    [self.pushNotificationDelegate receivedForegroundNotification:notification];
-                }
-
-                completionHandler(UIBackgroundFetchResultNoData);
-            }
-            break;
-
-        case UIApplicationStateInactive:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
-
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:fetchCompletionHandler:)]) {
-                [self.pushNotificationDelegate launchedFromNotification:notification fetchCompletionHandler:completionHandler];
-            } else {
-                if ([self.pushNotificationDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
-
-                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:.  launchedFromNotification: will still be called.");
-
-                    [self.pushNotificationDelegate launchedFromNotification:notification];
-                }
-
-                completionHandler(UIBackgroundFetchResultNoData);
-            }
-            break;
-
-        case UIApplicationStateBackground:
-            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
-            if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:fetchCompletionHandler:)]) {
-                [self.pushNotificationDelegate receivedBackgroundNotification:notification
-                                                       fetchCompletionHandler:completionHandler];
-            } else {
-                if ([self.pushNotificationDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
-
-                    UA_LWARN(@"Application is configured with background remote notifications. PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:.  receivedBackgroundNotification: will still be called.");
-
-                    [self.pushNotificationDelegate receivedBackgroundNotification:notification];
-                }
-
-                completionHandler(UIBackgroundFetchResultNoData);
-            }
-            break;
-    }
-
-}
-
-- (void)notifyForegroundNotification:(NSDictionary *)notification {
-
-    // Please refer to the following Apple documentation for full details on handling the userInfo payloads
-	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
-
-    NSDictionary *apsDict = [notification objectForKey:@"aps"];
-    if (apsDict) {
-
-        // Alert
-        id alert = [apsDict valueForKey:@"alert"];
-		if (alert) {
-            if ([alert isKindOfClass:[NSString class]] &&
-                [self.pushNotificationDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
-
-                // The alert is a single string message so we can display it
-                [self.pushNotificationDelegate displayNotificationAlert:alert];
-			} else if ([self.pushNotificationDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
-                // The alert is a a dictionary with more localization details
-                // This should be customized to fit your message details or usage scenario
-                [self.pushNotificationDelegate displayLocalizedNotificationAlert:alert];
-			}
-		}
-
-        // Badge
-        NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-
-        if (badgeNumber) {
             if (self.autobadgeEnabled) {
-                [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-            } else if ([self.pushNotificationDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-                [self.pushNotificationDelegate handleBadgeUpdate:[badgeNumber intValue]];
-			}
-        }
+                [self updateBadgeFromNotification:notification];
+            }
+            break;
 
-        // Sound
-        NSString *soundName = [apsDict valueForKey:@"sound"];
-        if (soundName && [self.pushNotificationDelegate respondsToSelector:@selector(playNotificationSound:)]) {
-            [self.pushNotificationDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
+        case UIApplicationStateInactive:
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
+            situation = UASituationLaunchedFromPush;
+            break;
+
+        case UIApplicationStateBackground:
+            UA_LTRACE(@"Received a notification when application state is UIApplicationStateBackground");
+            situation = UASituationBackgroundPush;
+
+            break;
+    }
+
+    // Create dictionary of actions inside the push notification
+    NSMutableDictionary *actions = [self createActionsFromNotification:notification
+                                                         withSituation:situation];
+
+
+    // Add incoming push action
+    UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
+                                                                   wihSituation:situation];
+    [actions setValue:incomingPushArgs forKey:@"_incoming_push_action"];
+
+    //Run the actions
+    [UAActionRunner performActions:actions withCompletionHandler:^(UAActionResult *result) {
+        if (completionHandler) {
+            completionHandler((UIBackgroundFetchResult)[result fetchResult]);
         }
-	}
+    }];
+
 }
+
+- (NSMutableDictionary *)createActionsFromNotification:(NSDictionary *)notification
+                                         withSituation:(NSString *)situation{
+
+    NSMutableDictionary *actions = [NSMutableDictionary dictionary];
+
+    for (NSString *possibleActionName in notification) {
+        UAAction *action = [[UAActionRegistrar shared] actionForName:possibleActionName];
+        if (action) {
+            UAPushActionArguments *args = [UAPushActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+                                                                      withSituation:situation
+                                                                           withName:possibleActionName
+                                                                        withPayload:notification];
+
+            [actions setValue:args forKey:possibleActionName];
+        }
+    }
+
+    return actions;
+}
+
+- (void)updateBadgeFromNotification:(NSDictionary *)notification {
+    NSDictionary *apsDict = [notification objectForKey:@"aps"];
+    NSString *badgeNumber = [apsDict valueForKey:@"badge"];
+    if (badgeNumber) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
+    }
+}
+
+
 
 #pragma mark -
 #pragma mark UIApplication State Observation
@@ -608,10 +588,20 @@ static Class _uiClass;
 - (void)registerDeviceToken:(NSData *)token {
     if (!self.notificationTypes) {
         UA_LERR(@"Attempted to register device token with no notificationTypes set!  \
-              Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication.");
+                Please use [[UAPush shared] registerForRemoteNotificationTypes:] instead of the equivalent method on UIApplication.");
         return;
     }
-    self.deviceToken = [self parseDeviceToken:[token description]];
+
+    // Convert device token to a hex string
+    NSMutableString *deviceToken = [NSMutableString stringWithCapacity:([token length] * 2)];
+    const unsigned char *bytes = (const unsigned char *)[token bytes];
+
+    for (NSUInteger i = 0; i < [token length]; i++) {
+        [deviceToken appendFormat:@"%02X", bytes[i]];
+    }
+
+    self.deviceToken = [deviceToken lowercaseString];
+
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];

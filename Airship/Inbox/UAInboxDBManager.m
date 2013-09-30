@@ -106,9 +106,11 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (void)deleteMessages:(NSArray *)messages {
-    for (UAInboxMessage *persistedMessageToDelete in messages) {
-        UALOG(@"Deleting: %@",persistedMessageToDelete.messageID);
-        [self.managedObjectContext deleteObject:persistedMessageToDelete];
+    for (UAInboxMessage *message in messages) {
+        if ([message isKindOfClass:[NSManagedObject class]]) {
+            UALOG(@"Deleting: %@", message.messageID);
+            [self.managedObjectContext deleteObject:message];
+        }
     }
 
     [self saveContext];

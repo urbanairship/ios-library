@@ -193,9 +193,9 @@
  * Implement this protocol and register with the UAPush shared instance to receive
  * device token registration success and failure callbacks.
  *
- * @deprecated As of version 2.1. Replaced with `UARegistrationDelegate` protocol.
+ * @deprecated As of version 3.0. Replaced with `UARegistrationDelegate` protocol.
  */
-__attribute__((deprecated("As of version 2.1")))
+__attribute__((deprecated("As of version 3.0")))
 @protocol UARegistrationObserver
 @optional
 
@@ -233,7 +233,10 @@ __attribute__((deprecated("As of version 2.1")))
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface UAPush : UAObservable
+#pragma clang diagnostic pop
 
 
 SINGLETON_INTERFACE(UAPush);
@@ -312,9 +315,9 @@ SINGLETON_INTERFACE(UAPush);
  * Set a delegate that implements the UAPushNotificationDelegate protocol. If not
  * set, a default implementation is provided (UAPushNotificationHandler).
  *
- * @deprecated As of version 2.1. Replaced with [UAPush pushNotificationDelegate] property.
+ * @deprecated As of version 3.0. Replaced with [UAPush pushNotificationDelegate] property.
  */
-@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 2.1")));
+@property (nonatomic, weak) id<UAPushNotificationDelegate> delegate __attribute__((deprecated("As of version 3.0")));
 
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.

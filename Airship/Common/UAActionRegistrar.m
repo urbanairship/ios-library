@@ -24,7 +24,8 @@
  */
 
 #import "UAActionRegistrar.h"
-
+#import "UAirship.h"
+#import "UAIncomingPushAction.h"
 
 @implementation UAActionRegistrar
 
@@ -33,14 +34,17 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 - (id)init {
     self = [super init];
     if (self) {
-        self.registeredEntries = [[NSMutableDictionary alloc] init];
+        self.registeredActions = [[NSMutableDictionary alloc] init];
+        [self registerDefaultActions];
     }
     return self;
 }
 
 - (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
-    id entry = (action == nil) ? nil : [UAActionEntry entryForAction:action withPredicate:predicate];
-    [self.registeredEntries setValue:entry forKey:name];
+    if (predicate) {
+        action.predicateBlock = predicate;
+    }
+    [self.registeredActions setValue:action forKey:name];
 }
 
 - (void)registerAction:(UAAction *)action forName:(NSString *)name {
@@ -48,8 +52,13 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 }
 
 - (UAAction *)actionForName:(NSString *)name {
-    UAActionEntry *entry = [self.registeredEntries valueForKey:name];
-    return entry.action;
+    UAAction *action = [self.registeredActions valueForKey:name];
+    return action;
 }
 
+
+- (void)registerDefaultActions {
+    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
+    [self registerAction:incomingPushAction forName:@"_incoming_push_action"];
+}
 @end

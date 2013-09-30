@@ -27,26 +27,19 @@
 
 @implementation UAActionArguments
 
-- (instancetype)initWithName:(NSString *)name
-                    withSituation:(NSString *)situation
-                        withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
+- (instancetype)initWithValue:(id)value wihSituation:(NSString *)situation {
+
     self = [super init];
     if (self) {
-        self.name = name;
         self.situation = situation;
         self.value = value;
-        self.payload = payload;
     }
 
     return self;
 }
 
-+ (instancetype)argumentsWithName:(NSString *)name
-                    withSituation:(NSString *)situation
-                        withValue:(id)value
-                       withPayload:(NSDictionary *)payload {
-    return [[UAActionArguments alloc] initWithName:name withSituation:situation withValue:value withPayload:payload];
++ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation {
+    return [[UAActionArguments alloc] initWithValue:value wihSituation:situation];
 }
 
 @end

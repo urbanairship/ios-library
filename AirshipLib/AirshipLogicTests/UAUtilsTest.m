@@ -68,7 +68,7 @@
     XCTAssertEqualObjects(@"%24100", [UAUtils urlEncodedStringWithString:dollar encoding:NSUTF8StringEncoding], @"\" test failed");
     
     NSString *percent = @"ab%c";
-    XCTAssertEqualObjects(@"ab%25c", [UAUtils urlEncodedStringWithString:percent encoding:NSUTF8StringEncoding], @"% test failed");
+    XCTAssertEqualObjects(@"ab%25c", [UAUtils urlEncodedStringWithString:percent encoding:NSUTF8StringEncoding], @"percent test failed");
     
     NSString *ampersand = @"b&w";
     XCTAssertEqualObjects(@"b%26w", [UAUtils urlEncodedStringWithString:ampersand encoding:NSUTF8StringEncoding], @"& test failed");

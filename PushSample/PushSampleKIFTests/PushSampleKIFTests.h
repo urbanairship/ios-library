@@ -23,22 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UATestPushDelegate.h"
+#import <KIF/KIF.h>
 
-
-@implementation UATestPushDelegate
-
-- (void)displayNotificationAlert:(NSString *)alertMessage {
-    // if uniqueID matches, display the alert else ignore and don't display alert message
-    if ([self.uniqueID isEqualToString:alertMessage]) {
-        // display the push with the alert (a UUID) in all fields
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"alertMessage"
-                                                         message:alertMessage
-                                                        delegate:nil
-                                               cancelButtonTitle:alertMessage
-                                               otherButtonTitles:nil];
-        [alert show];
-    }
-}
+@interface PushSampleKIFTests : KIFTestCase
 
 @end

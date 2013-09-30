@@ -22,44 +22,21 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
 
-/**
- * Represents the context surrounding an action at the moment of execution.
- */
 @interface UAActionArguments : NSObject
 
-/**
- * Convenience constructor for UAActionArguments.
- *
- * @param name The name.
- * @param situation The situation.
- * @param value The value.
- * @param extras The payload.
- */
-+ (instancetype)argumentsWithName:(NSString *)name
-                    withSituation:(NSString *)situation
-                        withValue:(id)value
-                       withPayload:(NSDictionary *)payload;
++ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation;
 
 /**
- * The name under which the action is registered.
- */
-@property(nonatomic, copy) NSString *name;
-/**
- * A predefined or custom string representing the situation in which the action is being performed (e.g.
- * foreground, background, etc).
+ * Situation of the action
  */
 @property(nonatomic, copy) NSString *situation;
-/**
- * The value associated with the action in the push payload.
- * This can be an NSString or NSDictionary value.
- */
-@property(nonatomic, strong) id value;
 
 /**
- * The full push payload.
+ * The value associated with the action
  */
-@property(nonatomic, strong) NSDictionary *payload;
+@property(nonatomic, strong) id value;
 
 @end

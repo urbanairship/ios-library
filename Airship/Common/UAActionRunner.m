@@ -24,88 +24,69 @@
  */
 
 #import "UAActionRunner.h"
+#import "UAAggregateActionResult.h"
 
 @implementation UAActionRunner
 
++ (void)performActionWithName:(NSString *)actionName
+                withArguments:(UAActionArguments *)arguments
+        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-+ (void)performActionWithArguments:(UAActionArguments *)arguments
-             withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    UAAction *action = [[UAActionRegistrar shared] actionForName:actionName];
 
-    UAActionEntry *entry = [[UAActionRegistrar shared].registeredEntries valueForKey:arguments.name];
-    if (!entry || (entry.predicate && !entry.predicate(arguments))) {
-        completionHandler(UAActionResultNoData);
+    if (action) {
+        UA_LINFO("Running action %@", actionName);
+        [self performAction:action withArguments:arguments withCompletionHandler:completionHandler];
     } else {
-        [entry.action performWithArguments:arguments withCompletionHandler:completionHandler];
+        UA_LINFO("No action found with name %@, skipping action.", actionName);
+        completionHandler([UAActionResult none]);
     }
 }
 
-+ (void)performAction:(NSString *)name
-        withSituation:(NSString *)situation
-            withValue:(id)value
-          withPayload:(NSDictionary *)payload
+
++ (void)performAction:(UAAction *)action
+        withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionArguments *args = [UAActionArguments argumentsWithName:name
-                                                     withSituation:situation
-                                                         withValue:value
-                                                       withPayload:payload];
-
-    [self performActionWithArguments:args withCompletionHandler:completionHandler];
+    if ([action canPerformWithArguments:arguments]) {
+        [action performWithArguments:arguments withCompletionHandler:completionHandler];
+    } else {
+        UA_LINFO("Action %@ is unable to perfomWithArguments.", action);
+        completionHandler([UAActionResult none]);
+    }
 }
 
-+ (void)performActionsFromDictionary:(NSDictionary *)actionDictionary
-                       withSituation:(NSString *)situation
-                         withPayload:(NSDictionary *)payload
-               withCompletionHandler:(UAActionCompletionHandler)completionHandler {
++ (void)performActions:(NSDictionary *)actions
+ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    if (!actionDictionary || !actionDictionary.count) {
-        completionHandler(UAActionResultNoData);
-        return;
-    }
+    __block NSUInteger expectedCount = actions.count;
+    __block NSUInteger resultCount = 0;
+    __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
 
-    __block int expectedCount = actionDictionary.count;
-    __block int resultCount = 0;
-    __block UAActionResult currentResult = UAActionResultNoData;
-
-    for (NSString *name in actionDictionary) {
-
+    for (NSString *actionName in actions) {
         __block BOOL completionHandlerCalled = NO;
-        UAActionCompletionHandler intermediateCompletionHandler = ^(UAActionResult result) {
+
+        UAActionCompletionHandler handler = ^(UAActionResult *result) {
             @synchronized(self) {
                 if (completionHandlerCalled) {
-                    UA_LERR(@"Action %@ completion handler called multiple times.", name);
+                    UA_LERR(@"Action %@ completion handler called multiple times.", actionName);
                     return;
                 }
 
                 resultCount ++;
 
-                currentResult = [self combineActionResult:currentResult
-                                               withResult:result];
+                [aggregateResult addResult:result forAction:actionName];
 
                 if (expectedCount == resultCount && completionHandler) {
-                    completionHandler(currentResult);
+                    completionHandler(aggregateResult);
                 }
             }
         };
 
-        [self performAction:name
-              withSituation:situation
-                  withValue:[actionDictionary valueForKey:name]
-                withPayload:actionDictionary
-      withCompletionHandler:intermediateCompletionHandler];
+        UAActionArguments *args = [actions objectForKey:actionName];
+
+        [self performActionWithName:actionName
+                      withArguments:args withCompletionHandler:handler];
     }
 }
-
-+ (UAActionResult)combineActionResult:(UAActionResult)result withResult:(UAActionResult)otherResult {
-    if (otherResult == UAActionResultNewData || result == UAActionResultNewData) {
-        return UAActionResultNewData;
-    }
-
-    if (otherResult == UAActionResultFailed || result == UAActionResultFailed) {
-        return UAActionResultFailed;
-    }
-
-    return UAActionResultNoData;
-}
-
 @end

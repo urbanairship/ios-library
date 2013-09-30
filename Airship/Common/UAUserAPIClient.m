@@ -144,7 +144,7 @@
         //    };
         // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
 
-        UA_LTRACE(@"Update Device Token succeeded with response: %d", [request.response statusCode]);
+        UA_LTRACE(@"Update Device Token succeeded with response: %ld", (long)[request.response statusCode]);
 
         NSString *rawJson = [[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding];
 
@@ -163,7 +163,7 @@
         if (request.response) {
             // If we got an other than 200/201, that's just odd
 
-            UA_LDEBUG(@"Update request did not succeed with expected response: %d", [request.response statusCode]);
+            UA_LDEBUG(@"Update request did not succeed with expected response: %ld", (long)[request.response statusCode]);
         } else {
             UA_LDEBUG(@"Update request failed");
         }
