@@ -26,6 +26,15 @@
 
 // A URL: https://sbux-dl-staging.urbanairship.com/binary/public/kwG7rEc3Tz6542jxYJ4eWA/da67242f-a22c-440c-a270-1a78e0917334
 
++ (UIViewController *)topController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+
+    return topController;
+}
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -33,20 +42,23 @@
     NSString *situation = arguments.situation;
     NSURL *kablamURL = [NSURL URLWithString:arguments.value];
 
+    UIViewController *topController = [UAKablamAction topController];//((UIWindow *)[[UIApplication sharedApplication].windows firstObject]).rootViewController;
+
     if ([situation isEqualToString:UASituationForegroundPush]) {
+
         // show the widget, then load
-        [UAKablamOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withURL:kablamURL];
+        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
         // show the widget, then load (if not already)
-        [UAKablamOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withURL:kablamURL];
+        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromSpringBoard]) {
 
         // show the widget, then load (if not already)
-        [UAKablamOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withURL:kablamURL];
+        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
