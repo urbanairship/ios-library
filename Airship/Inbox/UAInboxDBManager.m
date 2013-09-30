@@ -85,22 +85,12 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (BOOL)updateMessageWithDictionary:(NSDictionary *)dictionary {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
-                                              inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entity];
+    UAInboxMessage *message = [self getMessageWithID:[dictionary objectForKey:@"message_id"]];
 
-
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageID == %@", [dictionary objectForKey: @"message_id"]];
-    [request setPredicate:predicate];
-
-    NSError *error = nil;
-    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
-    if (!results || !results.count) {
+    if (!message) {
         return NO;
     }
 
-    UAInboxMessage *message = (UAInboxMessage *)[results lastObject];
     [self updateMessage:message withDictionary:dictionary];
     return YES;
 }
@@ -109,6 +99,19 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     for (UAInboxMessage *message in messages) {
         if ([message isKindOfClass:[NSManagedObject class]]) {
             UALOG(@"Deleting: %@", message.messageID);
+            [self.managedObjectContext deleteObject:message];
+        }
+    }
+
+    [self saveContext];
+}
+
+- (void)deleteMessagesWithIDs:(NSArray *)messageIDs {
+    for (NSString *messageID in messageIDs) {
+        UAInboxMessage *message = [self getMessageWithID:messageID];
+
+        if (message) {
+            UALOG(@"Deleting: %@", messageID);
             [self.managedObjectContext deleteObject:message];
         }
     }
@@ -232,7 +235,33 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     }
 }
 
-- (NSURL *) getStoreDirectoryURL {
+-(UAInboxMessage *)getMessageWithID:(NSString *)messageID {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
+                                              inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageID == %@", messageID];
+    [request setPredicate:predicate];
+
+    NSError *error = nil;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+
+    if (error) {
+        UA_LWARN("Error when retrieving message with id %@", messageID);
+        return nil;
+    }
+
+
+    if (!results || !results.count) {
+        return nil;
+    }
+
+    return (UAInboxMessage *)[results lastObject];
+}
+
+- (NSURL *)getStoreDirectoryURL {
     NSFileManager *fm = [NSFileManager defaultManager];
 
     NSURL *libraryDirectoryURL = [[fm URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject];
