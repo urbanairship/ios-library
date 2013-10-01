@@ -421,6 +421,7 @@ static Class _uiClass;
         case UIApplicationStateInactive:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateInactive");
             situation = UASituationLaunchedFromPush;
+            self.launchNotification = notification;
             break;
 
         case UIApplicationStateBackground:
@@ -487,10 +488,19 @@ static Class _uiClass;
         UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
         [self updateRegistration];
     }
+
+    if (!self.launchNotification) {
+        NSDictionary *springBoardActions = [UAActionArguments pendingSpringBoardPushActionArguments];
+        [UAActionArguments clearSpringBoardActionArguments];
+        [UAActionRunner performActions:springBoardActions withCompletionHandler:^(UAActionResult *result){
+            UA_LDEBUG(@"Finished performing spring board actions");
+        }];
+    }
 }
 
 - (void)applicationDidEnterBackground {
     self.hasEnteredBackground = YES;
+    self.launchNotification = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];

@@ -73,6 +73,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 
 /**
+ * Notification that launched the application
+ */
+@property (nonatomic, strong) NSDictionary *launchNotification;
+
+/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;

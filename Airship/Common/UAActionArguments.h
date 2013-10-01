@@ -59,6 +59,7 @@ extern NSString * const UASituationRichPushAction;
 
 + (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation;
 
++ (NSDictionary *)pendingSpringBoardPushActionArguments;
 /**
  * Situation of the action
  */
@@ -68,5 +69,9 @@ extern NSString * const UASituationRichPushAction;
  * The value associated with the action
  */
 @property(nonatomic, strong) id value;
+
++ (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value;
++ (void)removePendingSpringBoardAction:(NSString *)name;
++ (void)clearSpringBoardActionArguments;
 
 @end

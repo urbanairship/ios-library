@@ -152,24 +152,4 @@
     return aggregateAction;
 }
 
-    - (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value {
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
-
-    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPendingPushActionDefaultsKey];
-    if (!pendingArguments) {
-        [arguments addEntriesFromDictionary:pendingArguments];
-    }
-
-    [arguments setValue:value forKey:name];
-    [[NSUserDefaults standardUserDefaults] setObject:arguments forKey:kPendingPushActionDefaultsKey];
-}
-
-- (void)removePendingSpringBoardAction:(NSString *)name {
-    [self addPendingSpringBoardAction:name value:nil];
-}
-
-- (void)clearSpringBoardAction {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPendingPushActionDefaultsKey];
-}
-
 @end

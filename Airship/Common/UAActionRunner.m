@@ -54,6 +54,11 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 + (void)runActions:(NSDictionary *)actions
  withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
+    if (!actions.count) {
+        UA_LTRACE("No actions to perform.");
+        return;
+    }
+
     __block NSUInteger expectedCount = actions.count;
     __block NSUInteger resultCount = 0;
     __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
