@@ -27,20 +27,6 @@
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
 
-/**
- * Represents a situation in which the application was launched from a push notification.
- */
-extern NSString * const UASituationLaunchedFromPush;
-
-/**
-  * Represents a situation in which a push notification was received in the foreground.
-  */
-extern NSString * const UASituationForegroundPush;
-
-/**
-  * Represents a situation in which a push notification was received in the background.
-  */
-extern NSString * const UASituationBackgroundPush;
 
 @class UAAction;
 

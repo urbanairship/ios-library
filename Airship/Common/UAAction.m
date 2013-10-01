@@ -28,9 +28,6 @@
 #import "UAActionResult.h"
 #import "UAGlobal.h"
 
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
 
 @implementation UAAction
 
@@ -153,6 +150,26 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     aggregateAction.predicateBlock = predicateBlock;
 
     return aggregateAction;
+}
+
+    - (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value {
+    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
+
+    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPendingPushActionDefaultsKey];
+    if (!pendingArguments) {
+        [arguments addEntriesFromDictionary:pendingArguments];
+    }
+
+    [arguments setValue:value forKey:name];
+    [[NSUserDefaults standardUserDefaults] setObject:arguments forKey:kPendingPushActionDefaultsKey];
+}
+
+- (void)removePendingSpringBoardAction:(NSString *)name {
+    [self addPendingSpringBoardAction:name value:nil];
+}
+
+- (void)clearSpringBoardAction {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPendingPushActionDefaultsKey];
 }
 
 @end

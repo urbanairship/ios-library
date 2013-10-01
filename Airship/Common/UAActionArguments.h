@@ -25,6 +25,36 @@
 
 #import <Foundation/Foundation.h>
 
+#define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
+
+
+/**
+ * Represents a situation in which the application was launched from a push notification.
+ */
+extern NSString * const UASituationLaunchedFromPush;
+
+/**
+ * Represents a situation in which a push notification was received in the foreground.
+ */
+extern NSString * const UASituationForegroundPush;
+
+/**
+ * Represents a situation in which a push notification was received in the background.
+ */
+extern NSString * const UASituationBackgroundPush;
+
+/**
+ * Represents a situation in which the action was triggered from the application
+ * being launched from the spring board.
+ */
+extern NSString * const UASituationLaunchedFromSpringBoard;
+
+/**
+ * Represents a situation in which the action was triggered from a
+ * rich push message.
+ */
+extern NSString * const UASituationRichPushAction;
+
 @interface UAActionArguments : NSObject
 
 + (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation;
