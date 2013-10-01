@@ -34,6 +34,7 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
+#import "UAConfig.h"
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -124,7 +125,12 @@ static Class _uiClass;
     }
 
     _deviceToken = deviceToken;
-    NSLog(@"Device token: %@", deviceToken);
+
+    // Log the device token at error level, but without logging
+    // it as an error.
+    if ([UAirship shared].config.logLevel >= UALogLevelError) {
+        NSLog(@"Device token: %@", deviceToken);
+    }
 }
 
 #pragma mark -
