@@ -56,6 +56,13 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
+- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if ([self canPerformWithArguments:arguments]) {
+        [self performWithArguments:arguments withCompletionHandler:completionHandler];
+    } else {
+        completionHandler([UAActionResult none]);
+    }
+}
 
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
@@ -72,13 +79,6 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     }
 }
 
-
-
-// TODO: Just like we have an optional block for perform, we
-// may want to have an optional block for canPerformWithArguments.
-// This way, the aggregateAction can have a block that checks with the
-// original actions canPerformWithArguments.
-
 - (instancetype)continueWith:(UAAction *)continuationAction {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
 
@@ -88,12 +88,14 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
                                                                            wihSituation:args.situation];
 
             [UAActionRunner performAction:continuationAction withArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
-
-                //I think we may want to reduce the result or at least give the option in a similar operator...
                 completionHandler(continuationResult);
             }];
         }];
     }];
+
+    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
+        return [self canPerformWithArguments:arguments];
+    };
 
     return aggregateAction;
 }
@@ -106,12 +108,27 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
         return nil;
     }
 
+    __block BOOL selfDone = NO;
+    __block BOOL foldedDone = NO;
+    __block UAActionResult *selfResult = nil;
+    __block UAActionResult *foldedResult = nil;
+
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
 
-        [self performWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
-            [foldedAction performWithArguments:args withCompletionHandler:^(UAActionResult *foldedResult){
+        [UAActionRunner performAction:self withArguments:args withCompletionHandler:^(UAActionResult *result){
+            selfResult = result;
+            selfDone = YES;
+            if (selfDone && foldedDone) {
                 completionHandler(foldBlock(selfResult, foldedResult));
-            }];
+            }
+        }];
+
+        [UAActionRunner performAction:foldedAction withArguments:args withCompletionHandler:^(UAActionResult *result){
+            foldedResult = result;
+            foldedDone = YES;
+            if (selfDone && foldedDone) {
+                completionHandler(foldBlock(selfResult, foldedResult));
+            }
         }];
     }];
 
@@ -123,11 +140,11 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
         [UAActionRunner performAction:self withArguments:args withCompletionHandler:completionHandler];
     }];
 
-    aggregateAction.predicateBlock = predicateBlock;
+    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
+        return [self canPerformWithArguments:arguments];
+    };
 
     return aggregateAction;
 }
-
-
 
 @end
