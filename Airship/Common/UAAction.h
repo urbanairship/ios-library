@@ -42,6 +42,18 @@ extern NSString * const UASituationForegroundPush;
   */
 extern NSString * const UASituationBackgroundPush;
 
+/**
+ * Represents a situation in which the action was triggered from the application 
+ * being launched from the spring board.
+ */
+extern NSString * const UASituationLaunchedFromSpringBoard;
+
+/**
+ * Represents a situation in which the action was triggered from a 
+ * rich push message.
+ */
+extern NSString * const UASituationRichPushAction;
+
 @class UAAction;
 
 /**
