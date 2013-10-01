@@ -441,7 +441,7 @@ static Class _uiClass;
     [actions setValue:incomingPushArgs forKey:@"_incoming_push_action"];
 
     //Run the actions
-    [UAActionRunner performActions:actions withCompletionHandler:^(UAActionResult *result) {
+    [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
         if (completionHandler) {
             completionHandler((UIBackgroundFetchResult)[result fetchResult]);
         }
