@@ -48,6 +48,7 @@ typedef enum  {
 
 @property(nonatomic, strong) id value;
 @property(nonatomic, assign) UAActionFetchResult fetchResult;
+@property(nonatomic, strong) NSError *error;
 
 
 + (instancetype)resultWithValue:(id)value;
@@ -55,5 +56,7 @@ typedef enum  {
 + (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
 
 + (instancetype)none;
+
++ (instancetype)error:(NSError *)error;
 
 @end

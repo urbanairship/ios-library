@@ -57,4 +57,10 @@
     return [[UAActionResult alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
 }
 
++ (instancetype)error:(NSError *)error {
+    UAActionResult *result = [self none];
+    result.error = error;
+    return result;
+}
+
 @end
