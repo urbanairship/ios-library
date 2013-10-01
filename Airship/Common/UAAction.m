@@ -24,17 +24,13 @@
  */
 
 #import "UAAction.h"
+#import "UAAction+Internal.h"
 #import "UAActionResult.h"
 #import "UAGlobal.h"
-#import "UAActionRunner.h"
 
 NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
 NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
 NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-
-@interface UAAction()
-@property(nonatomic, copy) UAActionBlock actionBlock;
-@end
 
 @implementation UAAction
 
@@ -42,11 +38,6 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
-
-        //set a default predicate
-        self.predicateBlock = ^(id args){
-            return YES;
-        };
     }
 
     return self;
@@ -60,6 +51,9 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     if ([self canPerformWithArguments:arguments]) {
         [self performWithArguments:arguments withCompletionHandler:completionHandler];
     } else {
+        //Note: this may be overly noisy -- predicates are a common argument rejection case but
+        //not indicative on an error
+        UA_LINFO("Action %@ is unable to perfomWithArguments.", [self description]);
         completionHandler([UAActionResult none]);
     }
 }
@@ -79,17 +73,13 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     }
 }
 
-- (instancetype)continueWith:(UAAction *)continuationAction {
+- (instancetype)precedeWith:(UAActionExtraBlock)extraBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-
-        [UAActionRunner performAction:self withArguments:args withCompletionHandler:^(UAActionResult *selfResult){
-
-            UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult
-                                                                           wihSituation:args.situation];
-
-            [UAActionRunner performAction:continuationAction withArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
-                completionHandler(continuationResult);
-            }];
+        if (extraBlock) {
+            extraBlock();
+        }
+        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
+            completionHandler(result);
         }];
     }];
 
@@ -100,49 +90,67 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
     return aggregateAction;
 }
 
+- (instancetype)followWith:(UAActionExtraBlock)extraBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
+            //Note: do we want errors to prevent the block from executing? probably not?
+            if (extraBlock){
+                extraBlock();
+            };
+            completionHandler(result);
+        }];
+    }];
 
-- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock {
-    if (!foldBlock) {
-        //perhaps provide a default implementation for common use cases?
-        UA_LWARN(@"missing foldBlock, returning nil");
-        return nil;
-    }
+    aggregateAction.predicateBlock = ^(UAActionArguments *args) {
+        return [self canPerformWithArguments:args];
+    };
 
-    __block BOOL selfDone = NO;
-    __block BOOL foldedDone = NO;
-    __block UAActionResult *selfResult = nil;
-    __block UAActionResult *foldedResult = nil;
+    return aggregateAction;
+}
 
+- (instancetype)continueWith:(UAAction *)continuationAction {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
 
-        [UAActionRunner performAction:self withArguments:args withCompletionHandler:^(UAActionResult *result){
-            selfResult = result;
-            selfDone = YES;
-            if (selfDone && foldedDone) {
-                completionHandler(foldBlock(selfResult, foldedResult));
-            }
-        }];
+        [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
 
-        [UAActionRunner performAction:foldedAction withArguments:args withCompletionHandler:^(UAActionResult *result){
-            foldedResult = result;
-            foldedDone = YES;
-            if (selfDone && foldedDone) {
-                completionHandler(foldBlock(selfResult, foldedResult));
+            if (!selfResult.error) {
+                UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult
+                                                                               wihSituation:args.situation];
+
+                [continuationAction runWithArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
+                    completionHandler(continuationResult);
+                }];
+            } else {
+                //Todo: different log level?
+                UA_LINFO(@"%@", selfResult.error.localizedDescription);
+                completionHandler(selfResult);
             }
         }];
     }];
+
+    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
+        return [self canPerformWithArguments:arguments];
+    };
 
     return aggregateAction;
 }
 
 - (instancetype)filter:(UAActionPredicate)predicateBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [UAActionRunner performAction:self withArguments:args withCompletionHandler:completionHandler];
+        [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
 
-    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
-        return [self canPerformWithArguments:arguments];
-    };
+    aggregateAction.predicateBlock = predicateBlock;
+
+    return aggregateAction;
+}
+
+- (instancetype)filterReplace:(UAActionPredicate)predicateBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+            [self performWithArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.predicateBlock = predicateBlock;
 
     return aggregateAction;
 }

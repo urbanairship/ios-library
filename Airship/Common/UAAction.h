@@ -65,6 +65,8 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
  */
 typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
+typedef void (^UAActionExtraBlock)();
+
 /**
  * A unit of work that can be associated with a push notification.
  */
@@ -85,6 +87,12 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  */
 - (instancetype)filter:(UAActionPredicate)predicateBlock;
 
+- (instancetype)filterReplace:(UAActionPredicate)predicateBlock;
+
+- (instancetype)precedeWith:(UAActionExtraBlock)extraBlock;
+
+- (instancetype)followWith:(UAActionExtraBlock)extraBlock;
+
 /**
  * Operator for creating an action that strings together two separate actions,
  * passing the result of the first as the argument of the second.
@@ -96,8 +104,6 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  */
 - (instancetype)continueWith:(UAAction *)continuationAction;
 
-- (instancetype)foldWith:(UAAction *)foldedAction withFoldBlock:(UAActionFoldResultsBlock)foldBlock;
-
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
  *
@@ -107,7 +113,5 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 - (BOOL)canPerformWithArguments:(UAActionArguments *)arguments;
-
-@property(nonatomic, copy) UAActionPredicate predicateBlock;
 
 @end
