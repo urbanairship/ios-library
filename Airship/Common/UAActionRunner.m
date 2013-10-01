@@ -24,11 +24,12 @@
  */
 
 #import "UAActionRunner.h"
+#import "UAAction+Internal.h"
 #import "UAAggregateActionResult.h"
 
 @implementation UAActionRunner
 
-+ (void)performActionWithName:(NSString *)actionName
++ (void)runActionWithName:(NSString *)actionName
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
@@ -36,7 +37,7 @@
 
     if (action) {
         UA_LINFO("Running action %@", actionName);
-        [self performAction:action withArguments:arguments withCompletionHandler:completionHandler];
+        [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
     } else {
         UA_LINFO("No action found with name %@, skipping action.", actionName);
         completionHandler([UAActionResult none]);
@@ -44,19 +45,13 @@
 }
 
 
-+ (void)performAction:(UAAction *)action
++ (void)runAction:(UAAction *)action
         withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    if ([action canPerformWithArguments:arguments]) {
-        [action performWithArguments:arguments withCompletionHandler:completionHandler];
-    } else {
-        UA_LINFO("Action %@ is unable to perfomWithArguments.", action);
-        completionHandler([UAActionResult none]);
-    }
+    [action runWithArguments:arguments withCompletionHandler:completionHandler];
 }
 
-+ (void)performActions:(NSDictionary *)actions
++ (void)runActions:(NSDictionary *)actions
  withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     __block NSUInteger expectedCount = actions.count;
@@ -85,7 +80,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
         UAActionArguments *args = [actions objectForKey:actionName];
 
-        [self performActionWithName:actionName
+        [self runActionWithName:actionName
                       withArguments:args withCompletionHandler:handler];
     }
 }

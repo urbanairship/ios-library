@@ -41,12 +41,12 @@
  * @param arguments The action's arguments
  * @param completionHandler CompletionHandler to pass to the action.
  */
-+ (void)performActionWithName:(NSString *)actionName
++ (void)runActionWithName:(NSString *)actionName
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 
-+ (void)performAction:(UAAction *)action
++ (void)runAction:(UAAction *)action
         withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
@@ -61,7 +61,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
  * actions have completed.  The result will be the aggregated result 
  * of all the actions performed.
  */
-+ (void)performActions:(NSDictionary *)actions
++ (void)runActions:(NSDictionary *)actions
  withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 @end
