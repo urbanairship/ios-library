@@ -42,7 +42,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
 - (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
     if (predicate) {
-        action.predicateBlock = predicate;
+        //Note: do we actually want to always replace the existing predicate?
+        action = [action filterReplace:predicate];
     }
     [self.registeredActions setValue:action forKey:name];
 }
