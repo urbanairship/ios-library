@@ -27,6 +27,13 @@
 
 @implementation UAActionArguments
 
+
+NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
+NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
+NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
+NSString * const UASituationLaunchedFromSpringBoard = @"com.urbanairship.situation.launched_from_springboard";
+NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_push";
+
 - (instancetype)initWithValue:(id)value wihSituation:(NSString *)situation {
 
     self = [super init];
@@ -42,4 +49,16 @@
     return [[UAActionArguments alloc] initWithValue:value wihSituation:situation];
 }
 
++ (NSDictionary *)pendingSpringBoardPushActionArguments {
+    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
+    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] objectForKey:kPendingPushActionDefaultsKey];
+
+    for (NSString *name in pendingArguments) {
+        NSString *value = [pendingArguments valueForKey:name];
+        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:value wihSituation:UASituationLaunchedFromSpringBoard];
+        [arguments setValue:actionArgs forKey:name];
+    }
+
+    return arguments;
+}
 @end

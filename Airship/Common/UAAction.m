@@ -28,11 +28,6 @@
 #import "UAGlobal.h"
 #import "UAActionRunner.h"
 
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-NSString * const UASituationLaunchedFromSpringBoard = @"com.urbanairship.situation.launched_from_springboard";
-NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_push";
 
 @interface UAAction()
 @property(nonatomic, copy) UAActionBlock actionBlock;
@@ -73,8 +68,6 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
         return YES;
     }
 }
-
-
 
 // TODO: Just like we have an optional block for perform, we
 // may want to have an optional block for canPerformWithArguments.
@@ -130,6 +123,24 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
     return aggregateAction;
 }
 
+- (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value {
+    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
 
+    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPendingPushActionDefaultsKey];
+    if (!pendingArguments) {
+        [arguments addEntriesFromDictionary:pendingArguments];
+    }
+
+    [arguments setValue:value forKey:name];
+    [[NSUserDefaults standardUserDefaults] setObject:arguments forKey:kPendingPushActionDefaultsKey];
+}
+
+- (void)removePendingSpringBoardAction:(NSString *)name {
+    [self addPendingSpringBoardAction:name value:nil];
+}
+
+- (void)clearSpringBoardAction {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPendingPushActionDefaultsKey];
+}
 
 @end
