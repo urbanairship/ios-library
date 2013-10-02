@@ -34,7 +34,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
 /**
  * A dictionary containing registered action entries
  */
-@property(nonatomic, strong) NSDictionary *registeredActions;
+@property(nonatomic, strong) NSDictionary *registeredActionEntries;
 
 /**
  * Registers an action with a predicate.

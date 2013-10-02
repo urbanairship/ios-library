@@ -23,39 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
-#import "UAirship.h"
-#import "UAIncomingPushAction.h"
-#import "UAActionRegistryEntry.h"
+#import <Foundation/Foundation.h>
+#import "UAAction.h"
 
-@implementation UAActionRegistrar
+@interface UAActionRegistryEntry : NSObject
 
-SINGLETON_IMPLEMENTATION(UAActionRegistrar)
+/**
+ *  The entry's action
+ */
+@property(nonatomic, strong) UAAction *action;
 
-- (id)init {
-    self = [super init];
-    if (self) {
-        self.registeredActionEntries = [[NSMutableDictionary alloc] init];
-        [self registerDefaultActions];
-    }
-    return self;
-}
+/**
+ *  The entry's predicate
+ */
+@property(nonatomic, copy) UAActionPredicate predicate;
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
-    id entry = (action == nil) ? nil : [UAActionRegistryEntry entryForAction:action withPredicate:predicate];
-    [self.registeredActionEntries setValue:entry forKey:name];
-}
+/**
+ * UAActionRegistryEntry class factory method.
+ * @param action The entry's action
+ * @param predicate The entry's predicate
+ */
++ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name {
-    [self registerAction:action forName:name withPredicate:nil];
-}
-
-- (UAAction *)actionForName:(NSString *)name {
-    return [[self.registeredActionEntries valueForKey:name] action];
-}
-
-- (void)registerDefaultActions {
-    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerAction:incomingPushAction forName:@"_incoming_push_action"];
-}
 @end

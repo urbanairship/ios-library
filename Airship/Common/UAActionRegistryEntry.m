@@ -23,39 +23,22 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
-#import "UAirship.h"
-#import "UAIncomingPushAction.h"
 #import "UAActionRegistryEntry.h"
 
-@implementation UAActionRegistrar
+@implementation UAActionRegistryEntry
 
-SINGLETON_IMPLEMENTATION(UAActionRegistrar)
-
-- (id)init {
+- (instancetype)initWithAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
     self = [super init];
     if (self) {
-        self.registeredActionEntries = [[NSMutableDictionary alloc] init];
-        [self registerDefaultActions];
+        self.action = action;
+        self.predicate = predicate;
     }
+
     return self;
 }
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
-    id entry = (action == nil) ? nil : [UAActionRegistryEntry entryForAction:action withPredicate:predicate];
-    [self.registeredActionEntries setValue:entry forKey:name];
++ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate {
+    return [[UAActionRegistryEntry alloc] initWithAction:action withPredicate:predicate];
 }
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name {
-    [self registerAction:action forName:name withPredicate:nil];
-}
-
-- (UAAction *)actionForName:(NSString *)name {
-    return [[self.registeredActionEntries valueForKey:name] action];
-}
-
-- (void)registerDefaultActions {
-    UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerAction:incomingPushAction forName:@"_incoming_push_action"];
-}
 @end
