@@ -220,9 +220,11 @@
 - (void)testEnterBackground {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
     [[mockAnalytics expect] send];
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        arg = unsafeArg;
     };
     [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics enterBackground];
@@ -308,12 +310,12 @@
     _analytics.config.analyticsEnabled = YES;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
-    [[[mockDBManger stub] andReturnValue:@0] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)0L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.databaseSize = 0;
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
-    [[[mockDBManger stub] andReturnValue:@5] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)5L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
 }
 
@@ -321,7 +323,7 @@
 
     _analytics.config.analyticsURL = @"cats";
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    [[[mockDBManger stub] andReturnValue:@5] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)5L)] eventCount];
 
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
@@ -345,7 +347,7 @@
     _analytics.queue = mockQueue;
     [[mockQueue expect] addOperation:[OCMArg any]];
 
-    [[[mockAnalytics stub] andReturnValue:@YES] shouldSendAnalytics];
+    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] shouldSendAnalytics];
     NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [_analytics send];

@@ -94,12 +94,14 @@
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
 
     // Setup object to get parsed out of method call
-    __block __unsafe_unretained UALocationEvent *event = nil;
+    __block UALocationEvent *event = nil;
 
     // Capture the args passed to the mock in a block
     void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
     {
-        [invocation getArgument:&event atIndex:2];
+        __unsafe_unretained UALocationEvent *unsafeEvent = nil;
+        [invocation getArgument:&unsafeEvent atIndex:2];
+        event = unsafeEvent;
         NSLog(@"EVENT DATA %@", event.data);
     };
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
@@ -145,12 +147,14 @@
     _locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];
     id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
     
-    __block __unsafe_unretained UALocationEvent *event = nil;
+    __block UALocationEvent *event = nil;
 
     // Capture the args passed to the mock in a block
     void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
     {
-        [invocation getArgument:&event atIndex:2];
+        __unsafe_unretained UALocationEvent *unsafeEvent = nil;
+        [invocation getArgument:&unsafeEvent atIndex:2];
+        event = unsafeEvent;
         NSLog(@"EVENT DATA %@", event.data);
     };
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
@@ -229,7 +233,7 @@
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
     _locationService = [[UALocationService alloc] initWithPurpose:@"backgound shutdown test"];
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
-    [[[mockLocationService stub] andReturnValue:@YES] isLocationServiceEnabledAndAuthorized];
+    [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
     _locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:_locationService];
 
     id mockProvider = [OCMockObject partialMockForObject:_locationService.singleLocationProvider];

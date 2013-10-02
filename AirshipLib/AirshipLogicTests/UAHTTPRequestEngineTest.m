@@ -147,7 +147,7 @@
          tries++;
          return result;
      }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-         XCTFail(@"this hould not happen");
+         XCTFail(@"this should not happen");
          [self done];
      }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTAssertEqual(self.engine.initialDelayIntervalInSeconds, lastDelay/self.engine.backoffFactor, @"with two tries, the last delay should be the initial interval * backoff factor");
