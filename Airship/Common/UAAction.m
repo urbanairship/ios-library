@@ -31,6 +31,8 @@
 
 @implementation UAAction
 
+#pragma mark init
+
 - (instancetype)initWithBlock:(UAActionBlock)actionBlock {
     self = [super init];
     if (self) {
@@ -39,6 +41,8 @@
 
     return self;
 }
+
+#pragma mark internal methods
 
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.onRunBlock) {
@@ -57,6 +61,8 @@
     }
 }
 
+#pragma mark core methods
+
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if (self.acceptsArgumentsBlock) {
         return self.acceptsArgumentsBlock(arguments);
@@ -65,6 +71,7 @@
 }
 
 - (void)willPerformWithArguments:(UAActionArguments *)arguments {
+    //override
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -74,45 +81,16 @@
 }
 
 - (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result {
+    //override
 }
 
+#pragma mark factory methods
 
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
-- (instancetype)precedeWith:(UAActionExtraBlock)extraBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        if (extraBlock) {
-            extraBlock();
-        }
-        [self runWithArguments:args withCompletionHandler:completionHandler];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        return [self acceptsArguments:args];
-    };
-
-    return aggregateAction;
-}
-
-- (instancetype)followWith:(UAActionExtraBlock)extraBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
-            //Note: do we want errors to prevent the block from executing? probably not?
-            if (extraBlock){
-                extraBlock();
-            };
-            completionHandler(result);
-        }];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        return [self acceptsArguments:args];
-    };
-
-    return aggregateAction;
-}
+#pragma mark operators
 
 - (instancetype)continueWith:(UAAction *)continuationAction {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
@@ -141,13 +119,13 @@
     return aggregateAction;
 }
 
-- (instancetype)filter:(UAActionPredicate)predicateBlock {
+- (instancetype)filter:(UAActionPredicate)filterBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
 
     aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        if (predicateBlock && !predicateBlock(args)) {
+        if (filterBlock && !filterBlock(args)) {
             return NO;
         }
         return [self acceptsArguments:args];
@@ -156,7 +134,81 @@
     return aggregateAction;
 }
 
-- (instancetype)onNth:(NSUInteger)nth {
+- (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        if (preExecutionBlock) {
+            preExecutionBlock(args);
+        }
+        [self runWithArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
+    };
+
+    return aggregateAction;
+}
+
+- (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
+            //Note: do we want errors to prevent the block from executing? probably not?
+            if (postExecutionBlock){
+                postExecutionBlock(args, result);
+            };
+            completionHandler(result);
+        }];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
+    };
+
+    return aggregateAction;
+}
+
+- (instancetype)take:(NSUInteger)n {
+    __block NSUInteger count = 0;
+
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [self runWithArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
+        BOOL accepts = [self acceptsArguments:arguments];
+        accepts = accepts && count < n;
+        return accepts;
+    };
+
+    aggregateAction.onRunBlock = ^{
+        count++;
+    };
+
+    return aggregateAction;
+
+}
+
+- (instancetype)skip:(NSUInteger)n {
+
+    __block NSUInteger count = 0;
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [self runWithArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
+        BOOL accepts = [self acceptsArguments:arguments];
+        accepts = accepts && count >= n;
+        return accepts;
+    };
+
+    aggregateAction.onRunBlock = ^{
+        count++;
+    };
+
+    return aggregateAction;
+}
+
+- (instancetype)nth:(NSUInteger)nth {
     __block NSUInteger count = 0;
 
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){

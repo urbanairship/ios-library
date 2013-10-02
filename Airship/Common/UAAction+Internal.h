@@ -5,6 +5,7 @@
 
 @property(nonatomic, copy) UAActionBlock actionBlock;
 @property(nonatomic, copy) UAActionPredicate acceptsArgumentsBlock;
-@property(nonatomic, copy) UAActionExtraBlock onRunBlock;
+@property(nonatomic, copy) UAActionVoidBlock onRunBlock;
+
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 @end

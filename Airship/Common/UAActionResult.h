@@ -44,19 +44,59 @@ typedef enum  {
 } UAActionFetchResult;
 
 
+/**
+ * A class that holds the results of running an action, with optional metadata.
+ */
 @interface UAActionResult : NSObject
 
+/**
+ * The result value produced when running an action (can be nil).
+ */
 @property(nonatomic, strong) id value;
+
+/**
+ * An optional UAActionFetchResult that can be set if the action performed a background fetch.
+ */
 @property(nonatomic, assign) UAActionFetchResult fetchResult;
+
+/**
+ * An optional error value that can be set if the action was unable to perform its work successfully.
+ */
 @property(nonatomic, strong) NSError *error;
 
-
+/**
+ * Creates a UAActionResult with the supplied value. The `fetchResult` and `error` properties
+ * default to UAActionFetchResultNone and nil, respectively.
+ *
+ * @param An id typed value object.
+ * @return An instance of UAActionResult.
+ */
 + (instancetype)resultWithValue:(id)value;
 
+/**
+ * Creates a UAActionResult with the supplied value and fetch result. The `error` property
+ * defaults to nil.
+ *
+ * @param An id typed value object.
+ * @param A UAActionFetchResult enum value.
+ * @return An instance of UAActionResult.
+ */
 + (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
 
+/**
+ * Creates an "empty" UAActionResult with the value, fetch result and error set to
+ * nil, UAActionFetchResultNone, and nil, respectively.
+ *
+ */
 + (instancetype)none;
 
+/**
+ * Creates a UAActionResult with the value and fetch result set to
+ * nil and UAActionFetchResultNone, respectively. The `error` property
+ * is set to the supplied argument.
+ *
+ * @param An instance of NSError.
+ */
 + (instancetype)error:(NSError *)error;
 
 @end
