@@ -41,6 +41,10 @@
 }
 
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (self.onRunBlock) {
+        self.onRunBlock();
+    }
+
     if (![self acceptsArguments:arguments]) {
         UA_LINFO("Action %@ is unable to perform with arguments.", [self description]);
         completionHandler([UAActionResult none]);
@@ -147,6 +151,26 @@
             return NO;
         }
         return [self acceptsArguments:args];
+    };
+
+    return aggregateAction;
+}
+
+- (instancetype)onNth:(NSUInteger)nth {
+    __block NSUInteger count = 0;
+
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+        [self runWithArguments:args withCompletionHandler:completionHandler];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
+        BOOL accepts = [self acceptsArguments:arguments];
+        accepts = accepts && count == nth;
+        return accepts;
+    };
+
+    aggregateAction.onRunBlock = ^{
+        count++;
     };
 
     return aggregateAction;
