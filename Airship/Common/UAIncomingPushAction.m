@@ -46,7 +46,7 @@
     }
 }
 
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
     NSArray *validSituations = @[UASituationForegroundPush,
                                  UASituationBackgroundPush,
@@ -60,7 +60,7 @@
         return NO;
     }
 
-    return [super canPerformWithArguments:arguments];
+    return YES;
 }
 
 

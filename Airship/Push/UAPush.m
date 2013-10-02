@@ -492,7 +492,7 @@ static Class _uiClass;
     if (!self.launchNotification) {
         NSDictionary *springBoardActions = [UAActionArguments pendingSpringBoardPushActionArguments];
         [UAActionArguments clearSpringBoardActionArguments];
-        [UAActionRunner performActions:springBoardActions withCompletionHandler:^(UAActionResult *result){
+        [UAActionRunner runActions:springBoardActions withCompletionHandler:^(UAActionResult *result){
             UA_LDEBUG(@"Finished performing spring board actions");
         }];
     }
