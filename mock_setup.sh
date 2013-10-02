@@ -35,7 +35,7 @@ git clone $url "$temp_dir"
 current_dir=`pwd`
 cd "$library_source_dir"
 /usr/bin/xcodebuild clean -target OCMockLib 
-/usr/bin/xcodebuild -target OCMockLib -sdk iphoneos -arch armv7 -arch armv7s -arch arm64 IPHONEOS_DEPLOYMENT_TARGET=6.0
+/usr/bin/xcodebuild -target OCMockLib -sdk iphoneos -arch armv7 -arch armv7s -arch arm64 IPHONEOS_DEPLOYMENT_TARGET=7.0
 /usr/bin/xcodebuild -target OCMockLib -sdk iphonesimulator -arch i386 -arch x86_64 
 lipo -create -output $library_name $device_build $simulator_build
 cd "$current_dir"
