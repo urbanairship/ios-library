@@ -40,9 +40,8 @@
     return self;
 }
 
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
-    return [arguments isKindOfClass:[UAPushActionArguments class]]
-        && [super canPerformWithArguments:arguments];
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    return [arguments isKindOfClass:[UAPushActionArguments class]];
 }
 
 + (instancetype)pushActionWithBlock:(UAPushActionBlock)actionBlock {
