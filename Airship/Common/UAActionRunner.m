@@ -26,6 +26,7 @@
 #import "UAActionRunner.h"
 #import "UAAction+Internal.h"
 #import "UAAggregateActionResult.h"
+#import "UAActionRegistryEntry.h"
 
 @implementation UAActionRunner
 
@@ -33,21 +34,23 @@
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAAction *action = [[UAActionRegistrar shared] actionForName:actionName];
+    UAActionRegistryEntry *entry = [[UAActionRegistrar shared].registeredActionEntries valueForKey:actionName];
 
-    if (action) {
-        UA_LINFO("Running action %@", actionName);
-        [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
+    if (entry) {
+        if (entry.predicate && entry.predicate(arguments)) {
+            UA_LINFO("Running action %@", actionName);
+            [self runAction:entry.action withArguments:arguments withCompletionHandler:completionHandler];
+        }
     } else {
         UA_LINFO("No action found with name %@, skipping action.", actionName);
         completionHandler([UAActionResult none]);
     }
 }
 
-
 + (void)runAction:(UAAction *)action
-        withArguments:(UAActionArguments *)arguments
+    withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
     [action runWithArguments:arguments withCompletionHandler:completionHandler];
 }
 

@@ -73,8 +73,6 @@ typedef void (^UAActionExtraBlock)();
  */
 - (instancetype)filter:(UAActionPredicate)predicateBlock;
 
-- (instancetype)filterReplace:(UAActionPredicate)predicateBlock;
-
 - (instancetype)precedeWith:(UAActionExtraBlock)extraBlock;
 
 - (instancetype)followWith:(UAActionExtraBlock)extraBlock;
@@ -90,6 +88,10 @@ typedef void (^UAActionExtraBlock)();
  */
 - (instancetype)continueWith:(UAAction *)continuationAction;
 
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments;
+
+- (void)willPerformWithArguments:(UAActionArguments *)arguments;
+
 /**
  * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
  *
@@ -98,6 +100,8 @@ typedef void (^UAActionExtraBlock)();
  */
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments;
+
+- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
+
 
 @end

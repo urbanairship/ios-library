@@ -40,19 +40,27 @@
     return self;
 }
 
-+ (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
-    return [[UAAction alloc] initWithBlock:actionBlock];
+- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if (![self acceptsArguments:arguments]) {
+        UA_LINFO("Action %@ is unable to perform with arguments.", [self description]);
+        completionHandler([UAActionResult none]);
+    } else {
+        [self willPerformWithArguments:arguments];
+        [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
+            [self didPerformWithArguments:arguments withResult:result];
+            completionHandler(result);
+        }];
+    }
 }
 
-- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    if ([self canPerformWithArguments:arguments]) {
-        [self performWithArguments:arguments withCompletionHandler:completionHandler];
-    } else {
-        //Note: this may be overly noisy -- predicates are a common argument rejection case but
-        //not indicative on an error
-        UA_LINFO("Action %@ is unable to perfomWithArguments.", [self description]);
-        completionHandler([UAActionResult none]);
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (self.acceptsArgumentsBlock) {
+        return self.acceptsArgumentsBlock(arguments);
     }
+    return YES;
+}
+
+- (void)willPerformWithArguments:(UAActionArguments *)arguments {
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -61,13 +69,12 @@
     }
 }
 
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
-    if (self.predicateBlock) {
-        return self.predicateBlock(arguments);
-    } else {
-        //otherwise default to YES
-        return YES;
-    }
+- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result {
+}
+
+
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
+    return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
 - (instancetype)precedeWith:(UAActionExtraBlock)extraBlock {
@@ -75,13 +82,11 @@
         if (extraBlock) {
             extraBlock();
         }
-        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
-            completionHandler(result);
-        }];
+        [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
 
-    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
-        return [self canPerformWithArguments:arguments];
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
     };
 
     return aggregateAction;
@@ -98,8 +103,8 @@
         }];
     }];
 
-    aggregateAction.predicateBlock = ^(UAActionArguments *args) {
-        return [self canPerformWithArguments:args];
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
     };
 
     return aggregateAction;
@@ -125,8 +130,8 @@
         }];
     }];
 
-    aggregateAction.predicateBlock = ^(UAActionArguments *arguments){
-        return [self canPerformWithArguments:arguments];
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
     };
 
     return aggregateAction;
@@ -137,17 +142,12 @@
         [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
 
-    aggregateAction.predicateBlock = predicateBlock;
-
-    return aggregateAction;
-}
-
-- (instancetype)filterReplace:(UAActionPredicate)predicateBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-            [self performWithArguments:args withCompletionHandler:completionHandler];
-    }];
-
-    aggregateAction.predicateBlock = predicateBlock;
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        if (predicateBlock && !predicateBlock(args)) {
+            return NO;
+        }
+        return [self acceptsArguments:args];
+    };
 
     return aggregateAction;
 }
