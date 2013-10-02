@@ -79,10 +79,12 @@
 - (void)testHandleNotification {
 
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
 
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        arg = unsafeArg;
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"] inApplicationState:UIApplicationStateActive];
@@ -101,9 +103,11 @@
     [[mockAnalytics expect] invalidateBackgroundTask];
     
     //set up event capture
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        arg = unsafeArg;
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     
@@ -123,20 +127,20 @@
     __block int foregroundCount = 0;
     __block int activeCount = 0;
     __block int eventCount = 0;
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        
-        [invocation getArgument:&arg atIndex:2];
-        if ([arg isKindOfClass:[UAEventAppActive class]]) {
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        if ([unsafeArg isKindOfClass:[UAEventAppActive class]]) {
             activeCount++;
         }
         
-        if ([arg isKindOfClass:[UAEventAppForeground class]]) {
+        if ([unsafeArg isKindOfClass:[UAEventAppForeground class]]) {
             foregroundCount++;
         }
         
         eventCount++;
-        
+        arg = unsafeArg;
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     
@@ -248,9 +252,11 @@
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
     
     //set up event capture
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        arg = unsafeArg;
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     
@@ -264,10 +270,12 @@
 - (void)testWillResignActive {
 
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    __block __unsafe_unretained id arg = nil;
+    __block id arg = nil;
 
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
-        [invocation getArgument:&arg atIndex:2];
+        __unsafe_unretained id unsafeArg = nil;
+        [invocation getArgument:&unsafeArg atIndex:2];
+        arg = unsafeArg;
     };
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics willResignActive];
