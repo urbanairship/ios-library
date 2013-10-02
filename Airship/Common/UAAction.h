@@ -51,12 +51,48 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
  */
 typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
 
+
 typedef void (^UAActionExtraBlock)();
 
 /**
  * A unit of work that can be associated with a push notification.
  */
 @interface UAAction : NSObject
+
+/**
+ * Called before an action is performed to determine if the
+ * the action can accept the arguments.
+ *
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @return YES if the action can perform with the arguments, otherwise NO
+ */
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments;
+
+/**
+ * Called before the action's performWithArguments:withCompletionHandler:
+ *
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ */
+- (void)willPerformWithArguments:(UAActionArguments *)arguments;
+
+/**
+ * Perfroms the action. 
+ *
+ * Subclasses of UAAction should override this method to define custom behavior.
+ *
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
+ */
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+
+/**
+ * Called after the action is performed.
+ *
+ * @param arguments A UAActionArguments value representing the arguments passed to the action.
+ * @param result A UAActionResult from performing the action.
+ */
+- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
+
 
 /**
  * Operator for defining anonymous actions
@@ -88,20 +124,6 @@ typedef void (^UAActionExtraBlock)();
  */
 - (instancetype)continueWith:(UAAction *)continuationAction;
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments;
-
-- (void)willPerformWithArguments:(UAActionArguments *)arguments;
-
-/**
- * Triggers the action. Subclasses of UAAction should override this method to define custom behavior.
- *
- * @param arguments A UAActionArguments value representing the arguments passed to the action.
- * @param completionHandler A UAActionCompletionHandler that will be called when the action has finished executing.
- */
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
-
-
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
 
 
 @end
