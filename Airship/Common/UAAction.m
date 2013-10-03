@@ -48,7 +48,6 @@
     if (self.onRunBlock) {
         self.onRunBlock();
     }
-
     if (![self acceptsArguments:arguments]) {
         UA_LINFO("Action %@ is unable to perform with arguments.", [self description]);
         completionHandler([UAActionResult none]);
@@ -134,6 +133,18 @@
     return aggregateAction;
 }
 
+- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
+    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
+    }];
+
+    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return [self acceptsArguments:args];
+    };
+
+    return aggregateAction;
+}
+
 - (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         if (preExecutionBlock) {
@@ -176,7 +187,7 @@
 
     aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
         BOOL accepts = [self acceptsArguments:arguments];
-        accepts = accepts && count < n;
+        accepts = accepts && count <= n;
         return accepts;
     };
 
@@ -197,7 +208,7 @@
 
     aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
         BOOL accepts = [self acceptsArguments:arguments];
-        accepts = accepts && count >= n;
+        accepts = accepts && count > n;
         return accepts;
     };
 
@@ -208,22 +219,18 @@
     return aggregateAction;
 }
 
-- (instancetype)nth:(NSUInteger)nth {
-    __block NSUInteger count = 0;
+- (instancetype)nth:(NSUInteger)n {
+    return [[self take:n] skip:n-1];
+}
 
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:completionHandler];
+- (instancetype)distinctUntilChanged {
+    __block id lastValue = nil;
+
+    UAAction *aggregateAction = [[self preExecution:^(UAActionArguments *args){
+        lastValue = args.value;
+    }] filter:^(UAActionArguments *args){
+        return (BOOL)![args.value isEqual:lastValue];
     }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
-        BOOL accepts = [self acceptsArguments:arguments];
-        accepts = accepts && count == nth;
-        return accepts;
-    };
-
-    aggregateAction.onRunBlock = ^{
-        count++;
-    };
 
     return aggregateAction;
 }

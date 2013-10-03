@@ -41,6 +41,11 @@ typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
 
 /**
+ * A block that defines a means of tranforming one UAActionArguments to another
+ */
+typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
+
+/**
  * A completion handler that singals that an action has finished executing.
  */
 
@@ -159,6 +164,14 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
 - (instancetype)filter:(UAActionPredicate)filterBlock;
 
 /**
+ * Operator for transforming the arguments passed into an action.
+ *
+ * @param mapArgumentsBlock A UAActionMapArgumentsBlock
+ * @return A new UAAction wrapping the receiver and applying the supplied mapArgumentsBlock as a transformation on the arguments.
+ */
+- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock;
+
+/**
  * Operator for adding additional pre-execution logic to an action.
  *
  * This operator serves the same purpose as [UAAction willPerformWithArguments:] but
@@ -206,5 +219,12 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
  * @return A new UAAction wrapping the reciever with the supplied restrictions in place.
  */
 - (instancetype)nth:(NSUInteger)n;
+
+/**
+ * Operator for filtering out non-distinct changes in argument values.
+ *
+ * @return A new UAAction wrapping the receiver that filters out non-distinct changes in argument values.
+ */
+- (instancetype)distinctUntilChanged;
 
 @end
