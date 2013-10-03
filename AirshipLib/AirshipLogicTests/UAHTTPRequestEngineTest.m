@@ -69,6 +69,7 @@
     self.engine = nil;
     self.request = nil;
     self.queue = nil;
+    [self.mockQueue stopMocking];
     self.mockQueue = nil;
     [super tearDown];
 }

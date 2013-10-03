@@ -130,6 +130,7 @@
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
     XCTAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
 
+    [mockAnalytics stopMocking];
 }
 
 - (void)testUALocationServiceSendsLocationToAnalytics {
@@ -140,6 +141,7 @@
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
     [service reportLocationToAnalytics:PDX fromProvider:standard];
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
 }
 
 //// This is the dev analytics call that circumvents UALocation Services
@@ -171,6 +173,7 @@
     XCTAssertTrue([lat isEqualToString:convertedLat]);
     UALocationEventUpdateType *typeInDate = (UALocationEventUpdateType*)[data valueForKey:UALocationEventUpdateTypeKey];
     XCTAssertTrue(type == typeInDate);
+    [mockAnalytics stopMocking];
 }
 
 - (BOOL)serviceAcquiredLocation {
@@ -222,6 +225,7 @@
         }
     }
     XCTAssertTrue(shutdownCalled, @"Location service should be shutdown when a location cannot be obtained within timeout limits");
+    [mockLocationService stopMocking];
 }
 
 - (void)testStopSingleLocationSetsShutdownScheduledFlag {
@@ -246,7 +250,8 @@
                                                      didFailWithError:[NSError errorWithDomain:kCLErrorDomain code:kCLErrorDenied userInfo:nil]];
      XCTAssertTrue(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"LcoationService background identifier should be invalid");
     
-
+    [mockLocationService stopMocking];
+    [mockProvider stopMocking];
 }
 
 #pragma mark -
@@ -294,6 +299,7 @@
     _locationService.delegate = mockDelegate;
     [sigChange.delegate locationProvider:sigChange withLocationManager:sigChange.locationManager didUpdateLocation:pdx fromLocation:sfo];
     [mockDelegate verify];
+    [mockDelegate stopMocking];
 }
 
 @end

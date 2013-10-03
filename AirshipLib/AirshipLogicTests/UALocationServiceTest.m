@@ -84,6 +84,7 @@
 }
 
 - (void)tearDown {
+    [_mockLocationService stopMocking];
     _mockLocationService = nil;
     
     _locationService = nil;
@@ -168,6 +169,7 @@
     [(CLLocationManager *)[mockLocation expect] location];
     [_locationService location];
     [mockLocation verify];
+    [mockLocation stopMocking];
 }
 
 #pragma mark NSUserDefaults class method access
@@ -242,6 +244,7 @@
     [_locationService stopReportingStandardLocation];
     [mockDelegate verify];
     XCTAssertEqual(UALocationProviderNotUpdating, _locationService.standardLocationServiceStatus, @"Service should not be updating");
+    [mockDelegate stopMocking];
 }
 
 - (void)testStandardLocationDidUpdateToLocation {
@@ -262,6 +265,7 @@
     [[mockDelegate expect] locationService:OCMOCK_ANY didUpdateToLocation:location fromLocation:OCMOCK_ANY];
     [_locationService standardLocationDidUpdateToLocation:location fromLocation:[UALocationTestUtils testLocationPDX]];
     [mockDelegate verify];
+    [mockDelegate stopMocking];
 }
 
 #pragma mark Significant Change Service
@@ -281,6 +285,7 @@
     [_locationService stopReportingSignificantLocationChanges];
     [mockLocationManager verify];
     XCTAssertEqual(UALocationProviderNotUpdating, _locationService.significantChangeServiceStatus, @"Sig change should not be updating");
+    [mockLocationManager stopMocking];
 }
 
 - (void)testSignificantChangeDidUpdate {
@@ -351,6 +356,7 @@
     [_locationService startReportingLocationWithProvider:mockProvider];
     [_mockLocationService verify];
     [mockProvider verify];
+    [mockProvider stopMocking];
 }
 
 - (void)testLocationTimeoutError {
@@ -384,7 +390,7 @@
 
     [_mockLocationService verify];
     [mockProvider verify];
-    
+    [mockProvider stopMocking];
 }
 
 - (void)testReportCurrentLocationWontStartUnauthorized {
@@ -408,6 +414,7 @@
     _locationService.singleLocationProvider = mockProvider;
     [[mockProvider reject] startReportingLocation];
     [_locationService reportCurrentLocation];
+    [mockProvider stopMocking];
 }
 
 /* Accuracy calculations */
@@ -431,6 +438,7 @@
     [[_mockLocationService reject] stopSingleLocationWithLocation:OCMOCK_ANY];
     [_locationService singleLocationDidUpdateToLocation:pdx fromLocation:sfo];
     XCTAssertEqual(pdx, _locationService.bestAvailableSingleLocation);
+    [mockDelegate stopMocking];
 }
 
 /* Test that the single location service won't start if a valid location has been 
@@ -495,6 +503,7 @@
     XCTAssertEqualObjects(service, _locationService);
     XCTAssertTrue([locationError.domain isEqualToString:UALocationServiceTimeoutError]);
     XCTAssertTrue(_locationService.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid, @"BackgroundTaskIdentifier in UALocationService needs to be invalid");
+    [mockLocationDelegate stopMocking];
 }
 
 
@@ -522,6 +531,8 @@
 
     [_locationService stopReportingSignificantLocationChanges];
     XCTAssertFalse(_locationService.shouldStartReportingSignificantChange);
+    [mockStandard stopMocking];
+    [mockSignificant stopMocking];
 }
 
 #pragma mark -
@@ -538,6 +549,7 @@
 
     [[_mockLocationService reject] reportCurrentLocation];
     _locationService.automaticLocationOnForegroundEnabled = YES;
+    [mockStandard stopMocking];
 }
 
 - (void)testAutomaticLocationUpdateOnForegroundShouldUpdateCases {
@@ -573,6 +585,7 @@
     localService.dateOfLastLocation = [NSDate date];
     [[localMockService reject] reportCurrentLocation];
     [_locationService appWillEnterForeground];
+    [localMockService stopMocking];
 }
 
 - (void)testShouldPerformAutoLocationUpdate {
@@ -698,6 +711,7 @@
     [[mockDelegate expect] locationService:_locationService didFailWithError:error];
     [standard.delegate locationProvider:standard withLocationManager:standard.locationManager didFailWithError:error];
     [mockDelegate verify];
+    [mockDelegate stopMocking];
 }
 
 - (void)testUpdateToNewLocation {

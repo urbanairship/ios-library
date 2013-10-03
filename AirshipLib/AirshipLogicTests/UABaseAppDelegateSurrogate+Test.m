@@ -101,6 +101,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
     XCTAssertThrows([self.baseDelegate forwardInvocation:mockedInvocation],
                     @"UABaseAppDelegateSurrogate should raise an exception if the default app delegate is nil");
+    [mockedInvocation stopMocking];
 }
 
 /*

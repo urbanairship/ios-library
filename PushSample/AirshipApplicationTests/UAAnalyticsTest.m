@@ -90,6 +90,7 @@
     [_analytics handleNotification:[NSDictionary dictionaryWithObject:@"stuff" forKey:@"key"] inApplicationState:UIApplicationStateActive];
     XCTAssertNotNil(arg);
     XCTAssertTrue([arg isKindOfClass:[UAEventPushReceived class]]);
+    [mockAnalytics stopMocking];
 }
 
 //// Refactor this next time it's changed
@@ -117,6 +118,7 @@
     XCTAssertNil(arg, @"`enterForeground` should not insert an event");
     
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
 }
 
 - (void)testDidBecomeActiveAfterForeground {
@@ -156,6 +158,7 @@
     XCTAssertEqual(eventCount, 2, @"Two total events inserted.");
     
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
 }
 
 /*
@@ -218,6 +221,8 @@
     XCTAssertTrue([incomingPushId isEqualToString:eventPushId], @"The incoming push ID is not included in the event payload.");
     
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
+    [mockApplication stopMocking];
 }
 
 
@@ -235,6 +240,7 @@
     XCTAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
     XCTAssertTrue(_analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
 }
 
 - (void)testInvalidateBackgroundTask {
@@ -265,6 +271,7 @@
     XCTAssertFalse(_analytics.isEnteringForeground, @"`enterForeground` should set `isEnteringForeground_` to NO");
     
     XCTAssertTrue([arg isKindOfClass:[UAEventAppActive class]] , @"didBecomeActive should fire UAEventAppActive");
+    [mockAnalytics stopMocking];
 }
 
 - (void)testWillResignActive {
@@ -280,6 +287,7 @@
     [[[mockAnalytics stub] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics willResignActive];
     XCTAssertTrue([arg isKindOfClass:[UAEventAppInactive class]], @"willResignActive should fire UAEventAppInactive");
+    [mockAnalytics stopMocking];
 }
 
 - (void)testAddEvent {
@@ -302,6 +310,7 @@
     [[mockAnalytics reject] send];
     [_analytics addEvent:event];
     [mockAnalytics verify];
+    [mockAnalytics stopMocking];
 
     // Should send a location event in the background
     mockAnalytics = [OCMockObject partialMockForObject:_analytics];
@@ -310,6 +319,9 @@
     [[mockAnalytics expect] send];
     [_analytics addEvent:locationEvent];
     [mockAnalytics verify];
+    [mockDBManager stopMocking];
+    [mockApplication stopMocking];
+    [mockAnalytics stopMocking];
 }
 
 - (void)testShouldSendAnalyticsCore {
@@ -321,10 +333,13 @@
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)0L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.databaseSize = 0;
+    [mockDBManger stopMocking];
+
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)5L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
+    [mockDBManger stopMocking];
 }
 
 - (void)testShouldSendAnalyticsBackgroundLogic {
@@ -343,10 +358,14 @@
     XCTAssertTrue([_analytics shouldSendAnalytics]);
     _analytics.lastSendTime = [NSDate date];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
+    [mockApplication stopMocking];
+
     mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     state = UIApplicationStateActive;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
     XCTAssertTrue([_analytics shouldSendAnalytics]);
+    [mockDBManger stopMocking];
+    [mockApplication stopMocking];
 }
 
 - (void)testSend {
@@ -360,6 +379,8 @@
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [_analytics send];
     [mockQueue verify];
+    [mockAnalytics stopMocking];
+    [mockQueue stopMocking];
 }
 
 // This test is not comprehensive for this method, as the method needs refactoring.
