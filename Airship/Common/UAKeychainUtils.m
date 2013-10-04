@@ -127,30 +127,34 @@ static NSString *_cachedDeviceID = nil;
 }
 
 + (NSString *)getUsername:(NSString *)identifier {
-    NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
+    NSString *username = nil;
 
-    // Add search attributes
-    [attributeSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
+    if (identifier) {
+        NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
-    // Add search return types
-    [attributeSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
+        // Add search attributes
+        [attributeSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
 
-    // Get username first
-    CFDictionaryRef resultDataRef = nil;
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
-                                          (CFTypeRef *)&resultDataRef);
+        // Add search return types
+        [attributeSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
 
-    NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
+        // Get username first
+        CFDictionaryRef resultDataRef = nil;
+        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
+                                              (CFTypeRef *)&resultDataRef);
 
-	NSString *username = nil;
-	if (status == errSecSuccess) {
-		NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
-		if (accountValue) {
-			username = [accountValue mutableCopy];
-			//UALOG(@"Loaded Username: %@",username);
-		}
-	}
-	
+        NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
+
+
+        if (status == errSecSuccess) {
+            NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
+            if (accountValue) {
+                username = [accountValue mutableCopy];
+                //UALOG(@"Loaded Username: %@",username);
+            }
+        }
+    }
+
 	return username;
 }
 
