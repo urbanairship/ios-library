@@ -499,7 +499,7 @@
         XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
     }];
 
-    XCTAssertTrue(didPerform, @"Actino should still perform if the predicate is nil");
+    XCTAssertTrue(didPerform, @"Action should still perform if the predicate is nil");
 }
 
 /**
