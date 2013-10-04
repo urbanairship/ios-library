@@ -313,6 +313,12 @@
 		CCA3A4EC17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */; };
 		CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */; };
 		CCA3A4EE17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */; };
+		CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F217FF14DF009C7371 /* UAActionTest.m */; };
+		CCA3A4F517FF14F8009C7371 /* UAActionArgumentsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F417FF14F8009C7371 /* UAActionArgumentsTest.m */; };
+		CCA3A4F717FF1506009C7371 /* UAActionRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F617FF1506009C7371 /* UAActionRegistrarTest.m */; };
+		CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */; };
+		CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */; };
+		CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */; };
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
 		CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
@@ -513,6 +519,12 @@
 		CC85FD161773A1010074674F /* UAAnalyticsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
 		CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAActionRegistryEntry.h; sourceTree = "<group>"; };
 		CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntry.m; sourceTree = "<group>"; };
+		CCA3A4F217FF14DF009C7371 /* UAActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionTest.m; sourceTree = "<group>"; };
+		CCA3A4F417FF14F8009C7371 /* UAActionArgumentsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionArgumentsTest.m; sourceTree = "<group>"; };
+		CCA3A4F617FF1506009C7371 /* UAActionRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistrarTest.m; sourceTree = "<group>"; };
+		CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionResultTest.m; sourceTree = "<group>"; };
+		CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRunnerTest.m; sourceTree = "<group>"; };
+		CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntryTest.m; sourceTree = "<group>"; };
 		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
 		CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxDBManager+Internal.h"; sourceTree = "<group>"; };
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
@@ -876,6 +888,7 @@
 		CC4C2A0D17CE50BE003B9A55 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				CCA3A4F117FF14C0009C7371 /* Actions */,
 				CC85FD141773A0CB0074674F /* Analytics */,
 				CC4C2A0E17CE50C7003B9A55 /* AppDelegates */,
 				4950489E1738590D00F8B5BE /* HTTP */,
@@ -943,6 +956,19 @@
 				CC85FD161773A1010074674F /* UAAnalyticsTest.m */,
 			);
 			name = Analytics;
+			sourceTree = "<group>";
+		};
+		CCA3A4F117FF14C0009C7371 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				CCA3A4F217FF14DF009C7371 /* UAActionTest.m */,
+				CCA3A4F417FF14F8009C7371 /* UAActionArgumentsTest.m */,
+				CCA3A4F617FF1506009C7371 /* UAActionRegistrarTest.m */,
+				CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */,
+				CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */,
+				CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */,
+			);
+			name = Actions;
 			sourceTree = "<group>";
 		};
 		CCB7DF5917BBF19E00CEDC56 /* Inbox */ = {
@@ -1402,7 +1428,11 @@
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
+				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,
+				CCA3A4F517FF14F8009C7371 /* UAActionArgumentsTest.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
+				CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */,
+				CCA3A4F717FF1506009C7371 /* UAActionRegistrarTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
@@ -1410,7 +1440,9 @@
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
 				495048AE173996BF00F8B5BE /* UAHTTPRequestEngineTest.m in Sources */,
+				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
+				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */,
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
 				495048B2173AD3F600F8B5BE /* UADeviceRegistrationPayloadTest.m in Sources */,
