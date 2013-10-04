@@ -411,7 +411,7 @@
 
     UAAction *nthAction = [action nth:0];
 
-    // Run the skip action 10 times, should skip each time
+    // Run the nth action 10 times, should skip all the things
     for (int i = 0; i < 10; i++) {
         [nthAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
     }
@@ -419,5 +419,109 @@
     XCTAssertEqual(0, performCount, @"nth should never run on the 0 case");
 }
 
+
+/*
+ * Test preExecution operator performs a UAActionPreExecutionBlock before
+ * the action is performed
+ */
+- (void)testPreExecution {
+    __block BOOL didPerform = NO;
+    __block BOOL preExecutePerformed = NO;
+    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+
+        XCTAssertTrue(preExecutePerformed, @"Pre execute block is not being called before perform");
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action preExecution:^(UAActionArguments *args) {
+        preExecutePerformed = YES;
+
+        XCTAssertFalse(didPerform, @"Pre execute block is not being called before perform");
+        XCTAssertEqualObjects(self.emptyArgs, args, @"Pre execute block is being passed the correct action arguments");
+    }];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"Pre execution block is preventing the original action from running");
+}
+
+/*
+ * Test preExecution operator with a nil block does not hinder the origianl action
+ */
+- (void)testPreExecutionNilBlock {
+    __block BOOL didPerform = NO;
+    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action preExecution:nil];
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertEqualObjects(result, expectedResult, @"preExecution result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"Nil pre execution block is preventing the original action from running");
+}
+
+/*
+ * Test postExecution operator performs a UAActionPostExecutionBlock after
+ * the action is performed but before the completion handler is calleds
+ */
+- (void)testPostExecution {
+    __block BOOL didPerform = NO;
+    __block BOOL postExecuteBlock = NO;
+    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+
+        XCTAssertFalse(postExecuteBlock, @"Post execute block is being called before perform");
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action postExecution:^(UAActionArguments *args, UAActionResult *result) {
+        postExecuteBlock = YES;
+
+        XCTAssertTrue(didPerform, @"Perform is not being called before post execution block");
+
+        XCTAssertEqualObjects(self.emptyArgs, args, @"Post execute block is not being passed the correct action arguments");
+        XCTAssertEqualObjects(expectedResult, result, @"Post execute block is not being passed the correct action result");
+    }];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertTrue(postExecuteBlock, @"Post execute block is not being called beofre the completion handler is called");
+        XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"Post execution block is preventing the original action from running");
+}
+
+
+/*
+ * Test postExecution operator with a nil block does not hinder the origianl action
+ */
+- (void)testPostExecutionNilBlock {
+    __block BOOL didPerform = NO;
+    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action postExecution:nil];
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"Nil post execution block is preventing the original action from running");
+}
 
 @end
