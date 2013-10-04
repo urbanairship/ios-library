@@ -203,6 +203,7 @@
         result = actionResult;
     }];
 
+
     XCTAssertTrue(didContinuationActionRun, @"The continuation action should be run if the original action does not return an error.");
     XCTAssertEqualObjects(continuationArguments.value, @"originalResult", @"The continuation action should be passed a new argument with the value of the previous result");
     XCTAssertEqualObjects(result.value, @"continuationResult", @"Running a continuation action should call completion handler with the result from the continuation action");
@@ -236,6 +237,26 @@
 
     XCTAssertFalse(didContinuationActionRun, @"The continuation action should not run if the action original action returns an error.");
     XCTAssertEqual(result, errorResult, @"Completion handler should be called with the original result if the continuation action is not called.");
+}
+
+
+/**
+ * Test continueWith when passing a nil continuation action
+ */
+- (void)testContinueWithNilAction {
+    __block UAActionResult *result;
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
+    }];
+
+
+    action = [action continueWith:nil];
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+        result = actionResult;
+    }];
+
+    XCTAssertEqualObjects(result.value, @"originalResult", @"Continue with should ignore a nil continue with action and just return the original actions result");
 }
 
 @end

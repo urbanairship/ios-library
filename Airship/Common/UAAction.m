@@ -103,7 +103,7 @@
 
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
 
-            if (!selfResult.error) {
+            if (!selfResult.error && continuationAction) {
                 UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult.value
                                                                                withSituation:args.situation];
 
