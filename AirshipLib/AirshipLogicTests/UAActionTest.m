@@ -551,8 +551,36 @@
     XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator with nil block produces unexpected results");
 }
 
+/**
+ * Test distinct operator only runs if the arguments differs from the last run
+ */
 - (void)testDistinct {
+    __block int performCount = 0;
 
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"hi" withSituation:@"some-sit"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        performCount++;
+        return completionHandler([UAActionResult none]);
+    }];
+
+    action = [action distinctUntilChanged];
+    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
+    XCTAssertEqual(1, performCount, @"Distinct should run if the its the actions first run");
+
+    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
+    XCTAssertEqual(1, performCount, @"Distinct should not run on the same arguments");
+
+    args.value = @"bye";
+    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
+    XCTAssertEqual(2, performCount, @"Distinct should run if the arguments differ from the last run");
+
+    args.value = nil;
+    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
+    XCTAssertEqual(3, performCount, @"Distinct should run if the arguments differ from the last run");
+
+    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
+    XCTAssertEqual(4, performCount, @"Distinct should run if the last value was nil");
 }
 
 /*
