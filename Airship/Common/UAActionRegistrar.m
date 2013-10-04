@@ -23,10 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
-#import "UAirship.h"
+#import "UAActionRegistrar+Internal.h"
 #import "UAIncomingPushAction.h"
-#import "UAActionRegistryEntry.h"
 
 @implementation UAActionRegistrar
 

@@ -319,6 +319,8 @@
 		CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */; };
 		CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */; };
 		CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */; };
+		CCA3A50117FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */; };
+		CCA3A50217FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */; };
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
 		CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
@@ -525,6 +527,7 @@
 		CCA3A4F817FF1515009C7371 /* UAActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionResultTest.m; sourceTree = "<group>"; };
 		CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRunnerTest.m; sourceTree = "<group>"; };
 		CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntryTest.m; sourceTree = "<group>"; };
+		CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionRegistrar+Internal.h"; sourceTree = "<group>"; };
 		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
 		CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxDBManager+Internal.h"; sourceTree = "<group>"; };
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
@@ -923,6 +926,7 @@
 				CC8542A017F4B81600D2DE10 /* UAAction.m */,
 				CC8542A117F4B81600D2DE10 /* UAActionArguments.h */,
 				CC8542A217F4B81600D2DE10 /* UAActionArguments.m */,
+				CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */,
 				CC8542A317F4B81600D2DE10 /* UAActionRegistrar.h */,
 				CC8542A417F4B81600D2DE10 /* UAActionRegistrar.m */,
 				CC8542A517F4B81600D2DE10 /* UAActionResult.h */,
@@ -1092,6 +1096,7 @@
 				1FE0B74417E2751000856C60 /* UAUser.h in Headers */,
 				1FE0B74517E2751000856C60 /* UAAnalytics.h in Headers */,
 				1FE0B74617E2751000856C60 /* UATagUtils.h in Headers */,
+				CCA3A50217FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */,
 				1FE0B74717E2751000856C60 /* UASQLite.h in Headers */,
 				1FE0B74817E2751000856C60 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				1FE0B74917E2751000856C60 /* UAHTTPConnection.h in Headers */,
@@ -1184,6 +1189,7 @@
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */,
 				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
+				CCA3A50117FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,

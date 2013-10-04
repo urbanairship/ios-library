@@ -23,50 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAAction.h"
-#import "UAActionRegistryEntry.h"
-#import "UAGlobal.h"
+#import "UAActionRegistrar.h"
 
-@interface UAActionRegistrar : NSObject
-
-SINGLETON_INTERFACE(UAActionRegistrar);
-
-/**
- * A dictionary containing registered action entries
- */
-@property(nonatomic, readonly) NSDictionary *registeredActionEntries;
-
-/**
- * Registers an action with a predicate.
- * 
- * If an action is already registered for the given name,
- * the entry will be overwritten.
- *
- * @param action Action to be performed
- * @param name Name of the action
- * @param predicate A predicate that is evaluated to determine if the
- * action should be performed
- */
--(void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate;
-
-/**
- * Registers an action.
- *
- * If an action is already registered for the given name,
- * the entry will be overwritten.
- *
- * @param action Action to be performed
- * @param name Name of the action
- */
--(void)registerAction:(UAAction *)action forName:(NSString *)name;
-
-/**
- * Returns a registered action for the name
- * 
- * @param name The name of the action
- * @return The action if an action is registered for that name, nil otherwise.
- */
--(UAAction *)actionForName:(NSString *)name;
-
+@interface UAActionRegistrar ()
+@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
 @end
