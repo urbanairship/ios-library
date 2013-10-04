@@ -46,7 +46,7 @@
 /*
  * Test the resultWithValue:withFetchResult: factory method
  */
-- (void)testResultWitHValueWithFetchResult {
+- (void)testResultWithValueWithFetchResult {
     UAActionResult *result = [UAActionResult resultWithValue:@"some-value" withFetchResult:UAActionFetchResultNewData];
 
     XCTAssertEqualObjects(@"some-value", result.value, @"Result's value is not being set correctly");
