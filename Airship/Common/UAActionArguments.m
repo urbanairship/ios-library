@@ -34,7 +34,7 @@ NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.backgr
 NSString * const UASituationLaunchedFromSpringBoard = @"com.urbanairship.situation.launched_from_springboard";
 NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_push";
 
-- (instancetype)initWithValue:(id)value wihSituation:(NSString *)situation {
+- (instancetype)initWithValue:(id)value withSituation:(NSString *)situation {
 
     self = [super init];
     if (self) {
@@ -45,8 +45,8 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
     return self;
 }
 
-+ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation {
-    return [[UAActionArguments alloc] initWithValue:value wihSituation:situation];
++ (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation {
+    return [[UAActionArguments alloc] initWithValue:value withSituation:situation];
 }
 
 + (NSDictionary *)pendingSpringBoardPushActionArguments {
@@ -55,7 +55,7 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
 
     for (NSString *name in pendingArguments) {
         NSString *value = [pendingArguments valueForKey:name];
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:value wihSituation:UASituationLaunchedFromSpringBoard];
+        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:value withSituation:UASituationLaunchedFromSpringBoard];
         [arguments setValue:actionArgs forKey:name];
     }
 

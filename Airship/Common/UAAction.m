@@ -97,8 +97,8 @@
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
 
             if (!selfResult.error) {
-                UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult
-                                                                               wihSituation:args.situation];
+                UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult.value
+                                                                               withSituation:args.situation];
 
                 [continuationAction runWithArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
                     completionHandler(continuationResult);
@@ -134,12 +134,21 @@
 }
 
 - (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
+
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
-        [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
+        if (mapArgumentsBlock) {
+            [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
+        } else {
+            [self runWithArguments:args withCompletionHandler:handler];
+        }
     }];
 
     aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        return [self acceptsArguments:args];
+        if (mapArgumentsBlock) {
+            return [self acceptsArguments:mapArgumentsBlock(args)];
+        } else {
+            return [self acceptsArguments:args];
+        }
     };
 
     return aggregateAction;

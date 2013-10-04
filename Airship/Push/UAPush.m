@@ -438,7 +438,7 @@ static Class _uiClass;
 
     // Add incoming push action
     UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
-                                                                   wihSituation:situation];
+                                                                   withSituation:situation];
     [actions setValue:incomingPushArgs forKey:@"_incoming_push_action"];
 
     //Run the actions

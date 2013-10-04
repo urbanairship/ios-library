@@ -57,7 +57,7 @@ extern NSString * const UASituationRichPushAction;
 
 @interface UAActionArguments : NSObject
 
-+ (instancetype)argumentsWithValue:(id)value wihSituation:(NSString *)situation;
++ (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation;
 
 + (NSDictionary *)pendingSpringBoardPushActionArguments;
 /**
