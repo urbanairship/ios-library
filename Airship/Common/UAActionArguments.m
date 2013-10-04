@@ -66,7 +66,7 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
 
     NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPendingPushActionDefaultsKey];
-    if (!pendingArguments) {
+    if (pendingArguments) {
         [arguments addEntriesFromDictionary:pendingArguments];
     }
 
