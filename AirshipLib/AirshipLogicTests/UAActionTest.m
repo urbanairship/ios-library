@@ -502,12 +502,53 @@
     XCTAssertTrue(didPerform, @"Actino should still perform if the predicate is nil");
 }
 
+/**
+ * Test the map operator only changes the arguments passed into the original action
+ */
 - (void)testMap {
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionArguments *mappedArgs = [UAActionArguments argumentsWithValue:@"map-value"
+                                                            withSituation:@"mapuation"];
 
+    __block UAActionResult *result;
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(mappedArgs, args, @"Action is not receiving mapped args");
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action map:^UAActionArguments *(UAActionArguments *originalArgs) {
+        XCTAssertEqualObjects(self.emptyArgs, originalArgs, @"Mappped action is not receiving orignal arguments");
+        return mappedArgs;
+    }];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+        result = actionResult;
+    }];
+
+    XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator produces unexpected results");
 }
 
+/**
+ * Test the map operator nil block does not change the arguments passed to the
+ * original action
+ */
 - (void)testMapNilBlock {
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    __block UAActionResult *result;
 
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(self.emptyArgs, args, @"Action is not receiving correct args");
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action map:nil];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+        result = actionResult;
+    }];
+
+    XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator with nil block produces unexpected results");
 }
 
 - (void)testDistinct {
@@ -596,7 +637,6 @@
 
     XCTAssertTrue(didPerform, @"Post execution block is preventing the original action from running");
 }
-
 
 /*
  * Test postExecution operator with a nil block does not hinder the origianl action
