@@ -76,6 +76,8 @@
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
+    } else {
+        completionHandler([UAActionResult none]);
     }
 }
 
