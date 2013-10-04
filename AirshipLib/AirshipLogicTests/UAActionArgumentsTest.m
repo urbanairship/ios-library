@@ -24,6 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
+#import "UAActionArguments.h"
 
 @interface UAActionArgumentsTest : XCTestCase
 
@@ -31,21 +32,94 @@
 
 @implementation UAActionArgumentsTest
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
-    // Put setup code here; it will be run once, before the first test case.
+
+    // Clear arguments before a test runs
+    [UAActionArguments clearSpringBoardActionArguments];
 }
 
-- (void)tearDown
-{
-    // Put teardown code here; it will be run once, after the last test case.
+- (void)tearDown {
+
+    // Clear arguments to avoid polluting other tests
+    [UAActionArguments clearSpringBoardActionArguments];
     [super tearDown];
 }
 
-- (void)testExample
-{
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+/*
+ * Test the argumntesWithValue:withSituation factory method sets the values correctly
+ */
+- (void)testArgumentsWithValue {
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value" withSituation:@"some-situation"];
+    XCTAssertEqualObjects(@"some-value", args.value, @"argumentsWithValue:withSituation: is not setting the value correctly");
+    XCTAssertEqualObjects(@"some-situation", args.situation, @"argumentsWithValue:withSituation: is not setting the situation correctly");
+}
+
+/*
+ * Test pending spring board action arguments creates an empty dictionary
+ * if no arguments exists
+ */
+- (void)testPendingSpringBoardActionArgumentsNoArgs {
+    NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
+    XCTAssertNotNil(args, @"Empty pending arguments should still return an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+}
+
+/*
+ * Test add pending spring board actions
+ */
+- (void)testAddPendingSpringBoardAction {
+    [UAActionArguments addPendingSpringBoardAction:@"action" value:@"action-value"];
+    [UAActionArguments addPendingSpringBoardAction:@"another-action" value:@"another-action-value"];
+
+    NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
+    XCTAssertEqual((NSUInteger)2, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+
+    // Validate the first argument
+    UAActionArguments *actionArgument = [args valueForKey:@"action"];
+    XCTAssertEqual(actionArgument.value, @"action-value", @"Action argument is not mapped to correct value");
+    XCTAssertEqual(actionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+
+    // Validate the second argument
+    UAActionArguments *anotherActionArgument = [args valueForKey:@"another-action"];
+    XCTAssertEqual(anotherActionArgument.value, @"another-action-value", @"Action argument is not mapped to correct value");
+    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+}
+
+/*
+ * Test remove pending spring board actions
+ */
+- (void)testRemovePendingSpringBoardAction {
+    // Add two
+    [UAActionArguments addPendingSpringBoardAction:@"action" value:@"action-value"];
+    [UAActionArguments addPendingSpringBoardAction:@"another-action" value:@"another-action-value"];
+
+    // Remove one
+    [UAActionArguments removePendingSpringBoardAction:@"action"];
+
+    NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
+    XCTAssertEqual((NSUInteger)1, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+
+    // Validate the second argument is still present
+    UAActionArguments *anotherActionArgument = [args valueForKey:@"another-action"];
+    XCTAssertEqual(anotherActionArgument.value, @"another-action-value", @"Action argument is not mapped to correct value");
+    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+}
+
+/*
+ * Test clear pending spring board actions
+ */
+- (void)testClearSpringBoardActionArguments {
+    // Add two
+    [UAActionArguments addPendingSpringBoardAction:@"action" value:@"action-value"];
+    [UAActionArguments addPendingSpringBoardAction:@"another-action" value:@"another-action-value"];
+
+    [UAActionArguments clearSpringBoardActionArguments];
+
+    // Clear it
+    NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
+    XCTAssertEqual((NSUInteger)0, args.count, @"Clear spring board actions is not clearing all the arguments");
+
 }
 
 @end

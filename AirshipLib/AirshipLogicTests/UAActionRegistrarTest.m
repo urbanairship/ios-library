@@ -23,28 +23,109 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #import <XCTest/XCTest.h>
+#import "UAActionRegistrar+Internal.h"
 
 @interface UAActionRegistrarTest : XCTestCase
-
+@property(nonatomic, strong)NSMutableDictionary *originalRegistryEntries;
 @end
 
 @implementation UAActionRegistrarTest
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
-    // Put setup code here; it will be run once, before the first test case.
+
+    // Store current actions to restore later
+    self.originalRegistryEntries = (NSMutableDictionary *)[UAActionRegistrar shared].registeredActionEntries;
+
+    // Start with a new action registry
+    [UAActionRegistrar shared].registeredActionEntries = [NSMutableDictionary dictionary];
 }
 
-- (void)tearDown
-{
-    // Put teardown code here; it will be run once, after the last test case.
+- (void)tearDown {
+    // Restore previous action registries
+    [UAActionRegistrar shared].registeredActionEntries = self.originalRegistryEntries;
     [super tearDown];
 }
 
-- (void)testExample
-{
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+
+- (void)testRegisterAction {
+    UAActionRegistrar *registrar = [UAActionRegistrar shared];
+    UAAction *action = [[UAAction alloc] init];
+    UAAction *anotherAction = [[UAAction alloc] init];
+
+    [registrar registerAction:action forName:@"some-action"];
+    [registrar registerAction:anotherAction forName:@"some-other-action"];
+
+    XCTAssertEqual((NSUInteger) 2, registrar.registeredActionEntries.count, @"Should have 2 action registry entries");
+    [self validateActionIsRegistered:action forName:@"some-action" withPredicate:nil];
+    [self validateActionIsRegistered:anotherAction forName:@"some-other-action" withPredicate:nil];
+
+    //Register another acction as some-action
+    UAAction *yetAnotherAction = [[UAAction alloc] init];
+    [registrar registerAction:yetAnotherAction forName:@"some-action"];
+
+    // Still have only 2 entries
+    XCTAssertEqual((NSUInteger) 2, registrar.registeredActionEntries.count, @"Should have 2 action registry entries");
+    [self validateActionIsRegistered:yetAnotherAction forName:@"some-action" withPredicate:nil];
+    [self validateActionIsRegistered:anotherAction forName:@"some-other-action" withPredicate:nil];
+}
+
+- (void)testRegisterActionWithPredicate {
+    UAActionRegistrar *registrar = [UAActionRegistrar shared];
+    UAAction *action = [[UAAction alloc] init];
+    UAActionPredicate predicate = ^(UAActionArguments *args) { return NO; };
+
+    [registrar registerAction:action forName:@"some-action" withPredicate:predicate];
+
+    XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
+    [self validateActionIsRegistered:action forName:@"some-action" withPredicate:predicate];
+
+    // Clear the predicate
+    [registrar registerAction:action forName:@"some-action" withPredicate:nil];
+
+    XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
+    [self validateActionIsRegistered:action forName:@"some-action" withPredicate:nil];
+}
+
+
+- (void)testRegisterNilAction {
+    UAActionRegistrar *registrar = [UAActionRegistrar shared];
+    [registrar registerAction:nil forName:@"some-action"];
+
+    XCTAssertEqual((NSUInteger) 0, registrar.registeredActionEntries.count, @"Registering a nil action should not add an action registry");
+
+    // Register an action
+    UAAction *action = [[UAAction alloc] init];
+    [registrar registerAction:action forName:@"some-action"];
+    XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
+
+    // Clear the action by registering nil for the name
+    [registrar registerAction:nil forName:@"some-action"];
+    XCTAssertEqual((NSUInteger) 0, registrar.registeredActionEntries.count, @"Registering a nil action should remove the action entry");
+}
+
+- (void)testActionForName {
+    UAActionRegistrar *registrar = [UAActionRegistrar shared];
+
+    UAAction *action = [[UAAction alloc] init];
+    UAAction *anotherAction = [[UAAction alloc] init];
+
+    [registrar registerAction:action forName:@"some-action"];
+    [registrar registerAction:anotherAction forName:@"some-other-action"];
+
+    XCTAssertEqualObjects(action, [registrar actionForName:@"some-action"], @"Action fro name not returning correct action");
+    XCTAssertEqualObjects(anotherAction, [registrar actionForName:@"some-other-action"], @"Action fro name not returning correct action");
+}
+
+- (void)validateActionIsRegistered:(UAAction *)action
+                           forName:(NSString *)name
+                     withPredicate:(UAActionPredicate)predicate {
+
+    UAActionRegistryEntry *entry = [[UAActionRegistrar shared].registeredActionEntries valueForKey:name];
+
+    XCTAssertNotNil(entry, @"Action is not registered");
+    XCTAssertEqualObjects(entry.action, action, @"Registered entry's action is not the right action");
+    XCTAssertEqualObjects(entry.predicate, predicate, @"Registered entry's predicate is not the right predicate");
 }
 
 @end

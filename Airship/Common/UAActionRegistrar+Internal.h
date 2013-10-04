@@ -23,26 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UAAction.h"
+#import "UAActionRegistrar.h"
 
-@interface UAActionEntry : NSObject
-
-/**
- *  The entry's action
- */
-@property(nonatomic, strong) UAAction *action;
-
-/**
- *  The entry's predicate
- */
-@property(nonatomic, copy) UAActionPredicate predicate;
-
-/**
- * UAActionEntry class factory method.
- * @param action The entry's action
- * @param predicate The entry's predicate
- */
-+ (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
-
+@interface UAActionRegistrar ()
+@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
 @end

@@ -24,6 +24,7 @@
  */
 
 #import <XCTest/XCTest.h>
+#import "UAActionRegistryEntry.h"
 
 @interface UAActionRegistryEntryTest : XCTestCase
 
@@ -31,21 +32,14 @@
 
 @implementation UAActionRegistryEntryTest
 
-- (void)setUp
-{
-    [super setUp];
-    // Put setup code here; it will be run once, before the first test case.
-}
+- (void)testEntryForAction {
+    UAAction *action = [[UAAction alloc] init];
+    UAActionPredicate predicate = ^(UAActionArguments *args) { return NO; };
 
-- (void)tearDown
-{
-    // Put teardown code here; it will be run once, after the last test case.
-    [super tearDown];
-}
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action withPredicate:predicate];
 
-- (void)testExample
-{
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    XCTAssertEqual(entry.action, action, @"UAActionEntry is not setting the action correctly");
+    XCTAssertEqual(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
 }
 
 @end
