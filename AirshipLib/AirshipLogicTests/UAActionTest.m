@@ -263,7 +263,7 @@
  */
 - (void)testSkip {
     __block int performCount = 0;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         performCount++;
@@ -315,7 +315,7 @@
  */
 - (void)testTake {
     __block int performCount = 0;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         performCount++;
@@ -367,7 +367,7 @@
  */
 - (void)testNth {
     __block int performCount = 0;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         performCount++;
@@ -419,6 +419,100 @@
     XCTAssertEqual(0, performCount, @"nth should never run on the 0 case");
 }
 
+/**
+ * Test the filter operator behavior when a predicate returns YES
+ */
+- (void)testFilterYesPredicate {
+    __block BOOL didPerform = NO;
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action filter:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(self.emptyArgs, args, @"Filter predicate block is not being passed the correct action arguments");
+        return YES;
+    }];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"When filter returns YES, it should perform the original action");
+
+    // Run it again, this time the action should reject the arguments
+    didPerform = NO;
+
+    action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+        return NO;
+    };
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertNil(result.value, @"Run should return a empty result if the action cannot be run");
+    }];
+
+    XCTAssertFalse(didPerform, @"When filter returns YES, but the action still cannot run, it should not perform");
+}
+
+/**
+ * Test the filter operator behavior when a predicate returns YES
+ */
+- (void)testFilterNoPredicate {
+    __block UAActionResult *result;
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTFail(@"When filter returns NO, it should not perform the original action");
+        return completionHandler([UAActionResult none]);
+    }];
+
+    action = [action filter:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(self.emptyArgs, args, @"Filter predicate block is not being passed the correct action arguments");
+        return NO;
+    }];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+        result = actionResult;
+    }];
+
+    XCTAssertNotNil(result, @"Run should still return a result if the filter returns NO");
+    XCTAssertNil(result.value, @"Run should return a empty result if the filter returns NO");
+}
+
+/**
+ * Test the filter operator with a nil predicate block does not change the actions
+ * run behavior
+ */
+- (void)testFilterNilPredicate {
+    __block BOOL didPerform = NO;
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didPerform = YES;
+        return completionHandler(expectedResult);
+    }];
+
+    action = [action filter:nil];
+
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
+        XCTAssertEqualObjects(result, expectedResult, @"Filter result is unexpected");
+    }];
+
+    XCTAssertTrue(didPerform, @"Actino should still perform if the predicate is nil");
+}
+
+- (void)testMap {
+
+}
+
+- (void)testMapNilBlock {
+
+}
+
+- (void)testDistinct {
+
+}
 
 /*
  * Test preExecution operator performs a UAActionPreExecutionBlock before
@@ -427,7 +521,7 @@
 - (void)testPreExecution {
     __block BOOL didPerform = NO;
     __block BOOL preExecutePerformed = NO;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
@@ -455,7 +549,7 @@
  */
 - (void)testPreExecutionNilBlock {
     __block BOOL didPerform = NO;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
@@ -477,7 +571,7 @@
 - (void)testPostExecution {
     __block BOOL didPerform = NO;
     __block BOOL postExecuteBlock = NO;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
@@ -509,7 +603,7 @@
  */
 - (void)testPostExecutionNilBlock {
     __block BOOL didPerform = NO;
-    __block UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
+    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didPerform = YES;
