@@ -23,42 +23,29 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <XCTest/XCTest.h>
 
-#import "UAAction.h"
+@interface UAActionArgumentsTest : XCTestCase
 
-@interface UAAction ()
+@end
 
-/**
- * A block defining the primary work performed by an action.
- * In the base class, this block is executed by the default implementation of
- * [UAAction performWithArguments:withCompletionHandler:]
- */
-@property(nonatomic, copy) UAActionBlock actionBlock;
+@implementation UAActionArgumentsTest
 
-/**
- * A block that indicates whether the action is willing to accept the provided arguments.
- * In the base class, this block is executed by the default implementation of
- * [UAAction acceptsArguments:]
- */
-@property(nonatomic, copy) UAActionPredicate acceptsArgumentsBlock;
+- (void)setUp
+{
+    [super setUp];
+    // Put setup code here; it will be run once, before the first test case.
+}
 
-/**
- * A block that will be run at the beginning of
- * [UAAction runWithArguments:withCompletionHandler:]
- *
- * This property is useful for injecting custom behavior into
- * the run method when defining anonymous action operators.
- */
-@property(nonatomic, copy) UAActionVoidBlock onRunBlock;
+- (void)tearDown
+{
+    // Put teardown code here; it will be run once, after the last test case.
+    [super tearDown];
+}
 
-/**
- * Performs the action, with pre/post execution calls, if it accepts the provided arguments.
- *
- * If the arguments are accepted, this method will also call
- * [UAAction willPerformWithArguments:] and
- * [UAAction didPerformWithArguments:withResult:]
- * before and after the perform method, respectively.
- */
-- (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler;
+- (void)testExample
+{
+    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+}
 
 @end

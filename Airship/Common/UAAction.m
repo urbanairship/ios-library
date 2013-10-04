@@ -57,6 +57,11 @@
     } else {
         [self willPerformWithArguments:arguments];
         [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
+
+            if (!result) {
+                UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
+            }
+
             [self didPerformWithArguments:arguments withResult:result];
             completionHandler(result);
         }];
@@ -79,6 +84,8 @@
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
+    } else {
+        completionHandler([UAActionResult none]);
     }
 }
 
@@ -99,7 +106,7 @@
 
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
 
-            if (!selfResult.error) {
+            if (!selfResult.error && continuationAction) {
                 UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult.value
                                                                                withSituation:args.situation];
 
@@ -137,7 +144,6 @@
 }
 
 - (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
-
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
         if (mapArgumentsBlock) {
             [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
@@ -208,12 +214,11 @@
     };
 
     return aggregateAction;
-
 }
 
 - (instancetype)skip:(NSUInteger)n {
-
     __block NSUInteger count = 0;
+
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
@@ -232,7 +237,11 @@
 }
 
 - (instancetype)nth:(NSUInteger)n {
-    return [[self take:n] skip:n-1];
+    if (n == 0) {
+        // Never run
+        return [self take:0];
+    }
+    return [[self take:1] skip:n-1];
 }
 
 - (instancetype)distinctUntilChanged {
