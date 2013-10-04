@@ -234,7 +234,11 @@
 }
 
 - (instancetype)nth:(NSUInteger)n {
-    return [[self take:n] skip:n-1];
+    if (n == 0) {
+        // Never run
+        return [self take:0];
+    }
+    return [[self take:1] skip:n-1];
 }
 
 - (instancetype)distinctUntilChanged {
