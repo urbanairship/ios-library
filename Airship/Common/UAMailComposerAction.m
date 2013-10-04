@@ -1,6 +1,32 @@
+/*
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAMailComposerAction.h"
 #import "UAMailComposerData.h"
+
+NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.mailcomposer";
 
 @interface UAMailComposerAction()
 @property(nonatomic, copy) UAActionCompletionHandler handler;
@@ -29,26 +55,25 @@
         [self.mfViewController setToRecipients:data.recipients];
 
 		[rootViewController presentViewController:self.mfViewController animated:YES completion:nil];
-        self.result = [UAActionResult none];
 
 	} else {
-        NSError *error = [NSError errorWithDomain:@"whatever" code:0 userInfo:nil];
+        NSError *error = [NSError errorWithDomain:UAMailComposerActionErrorDomain
+                                             code:UAMailComposerActionErrorCodeMailDisabled
+                                         userInfo:@{NSLocalizedDescriptionKey : @"mail is disabled"}];
 		self.result = [UAActionResult error:error];
         completionHandler(self.result);
 	}
 }
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    //TODO: handle additional error codes? Is it appropriate to continue if we reach an error here?
+    self.result = self.result ?: [UAActionResult none];
     [self.mfViewController dismissViewControllerAnimated:YES completion:nil];
     self.handler(self.result);
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     return (BOOL)[arguments.value isKindOfClass:[UAMailComposerData class]];
-}
-
-- (void)dealloc {
-    NSLog(@"goooooooood bye");
 }
 
 @end

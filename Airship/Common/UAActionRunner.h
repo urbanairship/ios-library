@@ -28,16 +28,15 @@
 #import "UAActionRegistrar.h"
 #import "UAPushActionArguments.h"
 
-
 @interface UAActionRunner : NSObject
 
 /**
- * Performs a registered action with the given name.
+ * Runs a registered action with the given name.
  *
  * If the action is not registered the completion handler 
  * will be called immedietly with [UAActionResult none]
  *
- * @param actionName The name of the action to perform
+ * @param actionName The name of the action to run
  * @param arguments The action's arguments
  * @param completionHandler CompletionHandler to pass to the action.
  */
@@ -45,21 +44,27 @@
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
-
+/**
+ * Runs an action.
+ *
+ * @param action The action to run
+ * @param arguments The action's arguments
+ * @param completionHandler CompletionHandler to pass to the action.
+ */
 + (void)runAction:(UAAction *)action
         withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 /**
- * Performs a map of actionNames and action arguments.
+ * Runs a map of actionNames and action arguments.
  *
  * The results of all the actions will be aggregated into a 
  * single UAAggregateActionResult.
  *
  * @param actions The map of action names and arguments.
- * @param completionHandler CompletionHandler to run after all the
+ * @param completionHandler CompletionHandler to call after all the
  * actions have completed.  The result will be the aggregated result 
- * of all the actions performed.
+ * of all the actions run.
  */
 + (void)runActions:(NSDictionary *)actions
  withCompletionHandler:(UAActionCompletionHandler)completionHandler;

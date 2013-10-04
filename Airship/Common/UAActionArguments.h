@@ -27,7 +27,6 @@
 
 #define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
 
-
 /**
  * Represents a situation in which the application was launched from a push notification.
  */
@@ -55,11 +54,46 @@ extern NSString * const UASituationLaunchedFromSpringBoard;
  */
 extern NSString * const UASituationRichPushAction;
 
+/**
+ * Contains the arguments passed into an action during execution.
+ */
 @interface UAActionArguments : NSObject
 
+/**
+ * UAActionArguments factory method.
+ *
+ * @param value The value associated with the arguments.
+ * @param situation The situation of the action.
+ */
 + (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation;
 
+/**
+ * Returns pending springboard actions and argument.
+ * 
+ * @return An NSDictionary representing pending sprinboard actions by name, and their arguments.
+ */
 + (NSDictionary *)pendingSpringBoardPushActionArguments;
+
+/**
+ * Adds a pending springboard action by name.
+ *
+ * @param name The name of the action.
+ * @param value The value of the action's arguments.
+ */
++ (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value;
+
+/**
+ * Removes a pending springboard action by name.
+ *
+ * @param name The name of the action to remove.
+ */
++ (void)removePendingSpringBoardAction:(NSString *)name;
+
+/**
+ * Clears all pending springboard action arguments.
+ */
++ (void)clearSpringBoardActionArguments;
+
 /**
  * Situation of the action
  */
@@ -69,9 +103,5 @@ extern NSString * const UASituationRichPushAction;
  * The value associated with the action
  */
 @property(nonatomic, strong) id value;
-
-+ (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value;
-+ (void)removePendingSpringBoardAction:(NSString *)name;
-+ (void)clearSpringBoardActionArguments;
 
 @end

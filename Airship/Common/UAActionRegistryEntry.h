@@ -29,19 +29,19 @@
 @interface UAActionRegistryEntry : NSObject
 
 /**
- *  The entry's action
+ *  The entry's action.
  */
 @property(nonatomic, strong) UAAction *action;
 
 /**
- *  The entry's predicate
+ *  The entry's predicate.
  */
 @property(nonatomic, copy) UAActionPredicate predicate;
 
 /**
  * UAActionRegistryEntry class factory method.
- * @param action The entry's action
- * @param predicate The entry's predicate
+ * @param action The entry's action.
+ * @param predicate The entry's predicate.
  */
 + (instancetype)entryForAction:(UAAction *)action withPredicate:(UAActionPredicate)predicate;
 

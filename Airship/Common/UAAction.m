@@ -49,6 +49,9 @@
         self.onRunBlock();
     }
     if (![self acceptsArguments:arguments]) {
+        //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
+        //message because it doesn't provide any context. should it be up to the
+        //action itself to log or somehow provide its reasoning?
         UA_LINFO("Action %@ is unable to perform with arguments.", [self description]);
         completionHandler([UAActionResult none]);
     } else {

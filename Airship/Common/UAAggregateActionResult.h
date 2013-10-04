@@ -27,6 +27,16 @@
 #import "UAActionResult.h"
 #import "UAAction.h"
 
+/**
+ * Convenience class for aggregating and merging multiple UAActionResults.
+ */
 @interface UAAggregateActionResult : UAActionResult
+
+/**
+ * Adds a new result, merging with the existing result.
+ *
+ * @param result The result to add.
+ * @param actionName The name of the action that produced the result.
+ */
 - (void) addResult:(UAActionResult *)result forAction:(NSString *)actionName;
 @end

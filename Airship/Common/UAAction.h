@@ -111,7 +111,7 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
 - (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result;
 
 /**
- * Perfroms the action. 
+ * Performs the action.
  *
  * Subclasses of UAAction should override this method to define custom behavior.
  *
