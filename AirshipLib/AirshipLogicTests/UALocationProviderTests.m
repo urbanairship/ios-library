@@ -314,6 +314,7 @@
     [base.locationManager.delegate locationManager:base.locationManager didFailWithError:testError];
     [(OCMockObject *)self.mockUALocationService verify];
     [mockBase verify];
+    [mockBase stopMocking];
 }
 
 // Test the two cases where UABaseLocationProvider needs to shutdown
@@ -330,7 +331,7 @@
     [[mockBase expect] stopReportingLocation];
     [base.locationManager.delegate locationManager:base.locationManager didFailWithError:error];
     [mockBase verify];
-    
+    [mockBase stopMocking];
 }
 
 - (void)testDidFailWithErrorStandard {
@@ -344,7 +345,8 @@
                                                           didFailWithError:test];
     [standard.locationManager.delegate locationManager:standard.locationManager didFailWithError:test];
     [(OCMockObject *)self.mockUALocationService verify];
-    [mockStandard verify];    
+    [mockStandard verify];
+    [mockStandard stopMocking];
 }
 
 - (void)testDidFailWithErrorSignificant {
@@ -359,6 +361,7 @@
     [significant.locationManager.delegate locationManager:significant.locationManager didFailWithError:test];
     [(OCMockObject *)self.mockUALocationService verify];
     [mockSignificant verify];
+    [mockSignificant stopMocking];
 }
 
 #pragma mark -
@@ -377,6 +380,7 @@
     [standardProvider stopReportingLocation];
     XCTAssertEqual(standardProvider.serviceStatus, UALocationProviderNotUpdating);
     [mockLocationManager verify];
+    [mockLocationManager stopMocking];
 }
 
 - (void)testStartStopProvidingSignificantChange {
@@ -392,6 +396,7 @@
     [significantChange stopReportingLocation];
     XCTAssertEqual(significantChange.serviceStatus, UALocationProviderNotUpdating);
     [mockLocationManager verify];
+    [mockLocationManager stopMocking];
 }
 
 

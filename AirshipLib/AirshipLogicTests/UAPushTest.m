@@ -910,6 +910,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[UAPush shared] registrationPayload];
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload is not being created with expected values");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadDeviceTagsDisabled {
@@ -925,6 +926,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     [[UAPush shared] registrationPayload];
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not include tags if device tags is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadAutoBadgeDisabled {
@@ -941,6 +943,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not be created with badge if autobadge is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadQuietTime {
@@ -960,6 +963,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not include quiet time if quiet time is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 @end

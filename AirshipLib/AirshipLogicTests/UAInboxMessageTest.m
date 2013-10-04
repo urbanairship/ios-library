@@ -67,6 +67,9 @@
 - (void)tearDown {
     // Put teardown code here; it will be run once, after the last test case.
     //undo observer sign-ups
+    [self.mockInboxAPIClient stopMocking];
+    [self.mockMessageListObserver stopMocking];
+    [self.mockMessageListDelegate stopMocking];
     [self.dbManager deleteMessages:[self.dbManager getMessages]];
     [[UAInbox shared].messageList removeObservers];
     [super tearDown];
