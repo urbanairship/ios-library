@@ -177,4 +177,65 @@
     XCTAssertTrue(onRunBlockRan, @"onRunBlock should still be called even if the action is unable to accept the arguments");
 }
 
+/**
+ * Test that the continueWith operator
+ */
+- (void)testContinueWith {
+    __block BOOL didContinuationActionRun = NO;
+    __block UAActionResult *result;
+    __block UAActionArguments *continuationArguments;
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
+    }];
+
+    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        continuationArguments = args;
+        return completionHandler([UAActionResult resultWithValue:@"continuationResult"]);
+    }];
+
+    continuationAction.onRunBlock = ^{
+        didContinuationActionRun = YES;
+    };
+
+    action = [action continueWith:continuationAction];
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+        result = actionResult;
+    }];
+
+    XCTAssertTrue(didContinuationActionRun, @"The continuation action should be run if the original action does not return an error.");
+    XCTAssertEqualObjects(continuationArguments.value, @"originalResult", @"The continuation action should be passed a new argument with the value of the previous result");
+    XCTAssertEqualObjects(result.value, @"continuationResult", @"Running a continuation action should call completion handler with the result from the continuation action");
+}
+
+/**
+ * Test that the continueWith does not call the continuationAction if the original
+ * action returns an error result
+ */
+- (void)testContinueWithError {
+    __block BOOL didContinuationActionRun = NO;
+    __block UAActionResult *result;
+
+    UAActionResult *errorResult = [UAActionResult error:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
+
+
+    // Set up action to return an error result
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        return completionHandler(errorResult);
+    }];
+
+    UAAction *continuationAction = [[UAAction alloc] init];
+    continuationAction.onRunBlock = ^{
+        didContinuationActionRun = YES;
+    };
+
+    action = [action continueWith:continuationAction];
+    [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
+        result = actionResult;
+    }];
+
+    XCTAssertFalse(didContinuationActionRun, @"The continuation action should not run if the action original action returns an error.");
+    XCTAssertEqual(result, errorResult, @"Completion handler should be called with the original result if the continuation action is not called.");
+}
+
 @end

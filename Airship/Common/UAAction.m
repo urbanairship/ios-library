@@ -136,7 +136,6 @@
 }
 
 - (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
-
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
         if (mapArgumentsBlock) {
             [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
@@ -207,12 +206,11 @@
     };
 
     return aggregateAction;
-
 }
 
 - (instancetype)skip:(NSUInteger)n {
-
     __block NSUInteger count = 0;
+
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
