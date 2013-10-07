@@ -35,6 +35,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];
+        self.aliases = [[NSMutableDictionary alloc] init];
+
         [self registerDefaultActions];
     }
     return self;
@@ -66,7 +68,10 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
         id newEntry = [UAActionRegistryEntry entryForAction:action name:name
                                                       alias:alias predicate:predicate];
         [self.registeredActionEntries setValue:newEntry forKey:name];
-        [self.aliases setValue:name forKey:alias];
+
+        if (alias) {
+            [self.aliases setValue:name forKey:alias];
+        }
     }
 }
 
