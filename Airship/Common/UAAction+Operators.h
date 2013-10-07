@@ -84,7 +84,7 @@
  * This operator serves the same purpose as [UAAction didPerformWithArguments:withResult:] but
  * can be used to customize an action ad-hoc without deriving a subclass.
  *
- * @param preExecutionBlock A UAActionPostExecutionBlock.
+ * @param postExecutionBlock A UAActionPostExecutionBlock.
  * @return A new UAAction wrapping the receiver that executes the postExecutionBlock when run, before performing.
  */
 - (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
@@ -92,9 +92,9 @@
 /**
  * Operator for limiting the number of times an action can be performed.
  *
- * @param n The number of times the action should be performed. After this
+ * @param n The maximum number of times the action should be performed. After this
  * count has been reached, running the action will no longer have any effect.
- * @return A new UAAction wrapping the reciever with the supplied restrictions in place.
+ * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
 - (instancetype)take:(NSUInteger)n;
 
@@ -103,16 +103,16 @@
  *
  * @param n The number of times the action should skip performing. Until this
  * count has been reached, running the action will not have any effect.
- * @return A new UAAction wrapping the reciever with the supplied restrictions in place.
+ * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
 - (instancetype)skip:(NSUInteger)n;
 
 /**
  * Operator for limiting execution to an nth run.
  *
- * @param n The nth run on which the action should be performed, if and only
+ * @param n The nth run on which the action should be performed, if and only if
  * this count has been reached. Otherwise, running the action will not have any effect.
- * @return A new UAAction wrapping the reciever with the supplied restrictions in place.
+ * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
 - (instancetype)nth:(NSUInteger)n;
 

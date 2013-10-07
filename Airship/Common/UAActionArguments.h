@@ -44,7 +44,7 @@ extern NSString * const UASituationBackgroundPush;
 
 /**
  * Represents a situation in which the action was triggered from the application
- * being launched from the spring board.
+ * being launched from the springboard.
  */
 extern NSString * const UASituationLaunchedFromSpringBoard;
 
@@ -68,9 +68,9 @@ extern NSString * const UASituationRichPushAction;
 + (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation;
 
 /**
- * Returns pending springboard actions and argument.
+ * Returns pending springboard actions and arguments.
  * 
- * @return An NSDictionary representing pending sprinboard actions by name, and their arguments.
+ * @return An NSDictionary representing pending springboard actions by name, and their arguments.
  */
 + (NSDictionary *)pendingSpringBoardPushActionArguments;
 

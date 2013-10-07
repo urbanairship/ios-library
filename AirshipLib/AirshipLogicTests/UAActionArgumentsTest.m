@@ -56,7 +56,7 @@
 }
 
 /*
- * Test pending spring board action arguments creates an empty dictionary
+ * Test pending springboard action arguments creates an empty dictionary
  * if no arguments exists
  */
 - (void)testPendingSpringBoardActionArgumentsNoArgs {
@@ -66,7 +66,7 @@
 }
 
 /*
- * Test add pending spring board actions
+ * Test add pending springboard actions
  */
 - (void)testAddPendingSpringBoardAction {
     [UAActionArguments addPendingSpringBoardAction:@"action" value:@"action-value"];
@@ -78,16 +78,16 @@
     // Validate the first argument
     UAActionArguments *actionArgument = [args valueForKey:@"action"];
     XCTAssertEqual(actionArgument.value, @"action-value", @"Action argument is not mapped to correct value");
-    XCTAssertEqual(actionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+    XCTAssertEqual(actionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending springboard arguments should have UASituationLaunchedFromSpringBoard situation");
 
     // Validate the second argument
     UAActionArguments *anotherActionArgument = [args valueForKey:@"another-action"];
     XCTAssertEqual(anotherActionArgument.value, @"another-action-value", @"Action argument is not mapped to correct value");
-    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending springboard arguments should have UASituationLaunchedFromSpringBoard situation");
 }
 
 /*
- * Test remove pending spring board actions
+ * Test remove pending springboard actions
  */
 - (void)testRemovePendingSpringBoardAction {
     // Add two
@@ -103,11 +103,11 @@
     // Validate the second argument is still present
     UAActionArguments *anotherActionArgument = [args valueForKey:@"another-action"];
     XCTAssertEqual(anotherActionArgument.value, @"another-action-value", @"Action argument is not mapped to correct value");
-    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending spring board arguments should have UASituationLaunchedFromSpringBoard situation");
+    XCTAssertEqual(anotherActionArgument.situation, UASituationLaunchedFromSpringBoard, @"All pending springboard arguments should have UASituationLaunchedFromSpringBoard situation");
 }
 
 /*
- * Test clear pending spring board actions
+ * Test clear pending springboard actions
  */
 - (void)testClearSpringBoardActionArguments {
     // Add two
@@ -118,7 +118,7 @@
 
     // Clear it
     NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
-    XCTAssertEqual((NSUInteger)0, args.count, @"Clear spring board actions is not clearing all the arguments");
+    XCTAssertEqual((NSUInteger)0, args.count, @"Clear springboard actions is not clearing all the arguments");
 
 }
 

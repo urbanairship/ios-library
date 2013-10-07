@@ -36,7 +36,7 @@
 typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 
 /**
- * A block that defines a means of merging two UAActionResult intsances into one value.
+ * A block that defines a means of merging two UAActionResult instances into one value.
  */
 typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
 
@@ -46,7 +46,7 @@ typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionR
 typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
 
 /**
- * A completion handler that singals that an action has finished executing.
+ * A completion handler that signals that an action has finished executing.
  */
 
 typedef void (^UAActionCompletionHandler)(UAActionResult *);
@@ -84,7 +84,7 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
  *
  * This method can be used both to verify that an argument's value is an appropriate type,
  * as well as to limit the scope of execution of a desired range of values.  Rejecting
- * argumets will result in the action not being performed when it is run.
+ * arguments will result in the action not being performed when it is run.
  *
  * @param arguments A UAActionArguments value representing the arguments passed to the action.
  * @return YES if the action can perform with the arguments, otherwise NO
@@ -101,7 +101,7 @@ typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *
 - (void)willPerformWithArguments:(UAActionArguments *)arguments;
 
 /**
- * Called after the action is performed, before its final complention handler is called.
+ * Called after the action has performed, before its final completion handler is called.
  *
  * This method can be used to define optional teardown or post-execution logic.
  *
