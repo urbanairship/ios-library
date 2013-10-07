@@ -38,5 +38,15 @@
  * @param result The result to add.
  * @param actionName The name of the action that produced the result.
  */
-- (void) addResult:(UAActionResult *)result forAction:(NSString *)actionName;
+- (void)addResult:(UAActionResult *)result forAction:(NSString *)actionName;
+
+
+/**
+ * Gets the results for an action
+ *
+ * @param actionName Name of the action
+ * @return UAActionResult for the action
+ */
+- (UAActionResult *)resultForAction:(NSString*)actionName;
+
 @end
