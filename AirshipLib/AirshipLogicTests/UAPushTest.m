@@ -889,4 +889,56 @@ NSDictionary *notification;
     XCTAssertNotNil([UAPush shared].launchNotification, @"Launch notification should be set in an inactive state");
 }
 
+/**
+ * Test applicationDidEnterBackground clears the notification and sets 
+ * the hasEneteredBackground flag
+ */
+- (void)testApplicationDidEnterBackground {
+    UAPush *push = [UAPush shared];
+    push.hasEnteredBackground = NO;
+    push.launchNotification = notification;
+
+    [push applicationDidEnterBackground];
+    XCTAssertTrue(push.hasEnteredBackground, @"applicationDidEnterBackground should set hasEnteredBackground to true");
+    XCTAssertNil(push.launchNotification, @"applicationDidEnterBackground should clear the launch notification");
+}
+
+/**
+ * Test spring board actions are called if application did enter foreground when 
+ * the launch notification is nil
+ */
+- (void)testApplicationDidBecomeActiveSpringBoardActions {
+    UAPush *push = [UAPush shared];
+    push.launchNotification = nil;
+
+    [UAActionArguments clearSpringBoardActionArguments];
+    [UAActionArguments addPendingSpringBoardAction:@"some-action" value:@"some-value"];
+    [UAActionArguments addPendingSpringBoardAction:@"some-other-action" value:@"some-other-value"];
+
+    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
+        NSDictionary *actions = (NSDictionary *)obj;
+        if (actions.count != 2) {
+            return NO;
+        }
+
+        UAActionArguments *args = [actions valueForKey:@"some-action"];
+        return (BOOL)(args != nil
+                      && [args.situation isEqualToString:UASituationLaunchedFromSpringBoard]
+                      && [args.value isEqualToString:@"some-value"]);
+    };
+
+
+    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:OCMOCK_ANY];
+
+    [push applicationDidBecomeActive];
+    XCTAssertNoThrow([self.mockActionRunner verify], @"spring board launch should run springboard actions");
+    XCTAssertEqual((NSUInteger)0, [UAActionArguments pendingSpringBoardPushActionArguments].count, @"spring board actions should be cleared");
+
+
+    push.launchNotification = notification;
+    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
+    [push applicationDidBecomeActive];
+    XCTAssertNoThrow([self.mockActionRunner verify], @"spring board actions should not be ran if a launchNotification is available");
+}
+
 @end
