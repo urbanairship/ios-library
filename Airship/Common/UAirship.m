@@ -253,6 +253,11 @@ UALogLevel uaLogLevel = UALogLevelError;
     // add app_exit event
     [_sharedAirship.analytics addEvent:[UAEventAppExit eventWithContext:nil]];
 
+    // swap pointers back to the initial app delegate
+    @synchronized ([UIApplication sharedApplication]) {
+        [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate.defaultAppDelegate;
+    }
+
     //Land common classes
     [UAUser land];
     
