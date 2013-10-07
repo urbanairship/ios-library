@@ -44,8 +44,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     [self registerAction:action name:name alias:alias predicate:nil];
 }
 
-- (void)registerAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate) predicate {
-    [self registerAction:action name:name alias:nil predicate:nil];
+- (void)registerAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
+    [self registerAction:action name:name alias:nil predicate:predicate];
 }
 
 - (void)registerAction:(UAAction *)action name:(NSString *)name {
