@@ -37,9 +37,12 @@
     UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registeryEntryForName:actionName];
 
     if (entry) {
-        if (entry.predicate && entry.predicate(arguments)) {
+        if (!entry.predicate || entry.predicate(arguments)) {
             UA_LINFO("Running action %@", actionName);
             [self runAction:entry.action withArguments:arguments withCompletionHandler:completionHandler];
+        } else {
+            UA_LINFO("Not running action %@ because of predicate.", actionName);
+            completionHandler([UAActionResult none]);
         }
     } else {
         UA_LINFO("No action found with name %@, skipping action.", actionName);
@@ -57,14 +60,15 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 + (void)runActions:(NSDictionary *)actions
  withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    if (!actions.count) {
-        UA_LTRACE("No actions to perform.");
-        return;
-    }
-
+    __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
     __block NSUInteger expectedCount = actions.count;
     __block NSUInteger resultCount = 0;
-    __block UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
+
+    if (!actions.count) {
+        UA_LTRACE("No actions to perform.");
+        completionHandler(aggregateResult);
+        return;
+    }
 
     for (NSString *actionName in actions) {
         __block BOOL completionHandlerCalled = NO;
