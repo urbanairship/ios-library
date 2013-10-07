@@ -23,29 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistryEntry+Internal.h"
+#import "UAActionRegistryEntry.h"
 
-@implementation UAActionRegistryEntry
+@interface UAActionRegistryEntry ()
 
-- (instancetype)initWithAction:(UAAction *)action name:(NSString *)name alias:alias predicate:(UAActionPredicate)predicate {
-    self = [super init];
-    if (self) {
-        self.action = action;
-        self.predicate = predicate;
-        self.name = name;
-        self.alias = alias;
-    }
-
-    return self;
-}
-
-+ (instancetype)entryForAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {
-    return [[UAActionRegistryEntry alloc] initWithAction:action name:name alias:alias predicate:predicate];
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"UAActionRegistryEntry name: %@, alias: %@, predicate: %@, action: %@",
-            self.name, self.alias, self.predicate, self.action];
-}
+@property(nonatomic, copy) NSString *name;
+@property(nonatomic, copy) NSString *alias;
 
 @end

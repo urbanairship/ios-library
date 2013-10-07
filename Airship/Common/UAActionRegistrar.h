@@ -33,40 +33,72 @@
 SINGLETON_INTERFACE(UAActionRegistrar);
 
 /**
- * A dictionary containing registered action entries
+ * Registers an action with a predicate and an alias.
+ * 
+ * Previously registered actions with the given name or alias will be overwritten.
+ * Registering a nil action will result in any previous actions to be removed 
+ * the registrar.
+ *
+ * @param action Action to be performed
+ * @param name Name of the action
+ * @param alias Alias of the action
+ * @param predicate A predicate that is evaluated to determine if the
+ * action should be performed
  */
-@property(nonatomic, readonly) NSDictionary *registeredActionEntries;
+-(void)registerAction:(UAAction *)action name:(NSString *)name
+                alias:(NSString *)alias predicate:(UAActionPredicate)predicate;
 
 /**
  * Registers an action with a predicate.
- * 
- * If an action is already registered for the given name,
- * the entry will be overwritten.
+ *
+ * Previously registered actions with the given name will be overwritten.
+ * Registering a nil action will result in any previous actions to be removed
+ * the registrar.
  *
  * @param action Action to be performed
  * @param name Name of the action
  * @param predicate A predicate that is evaluated to determine if the
  * action should be performed
  */
--(void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate;
+-(void)registerAction:(UAAction *)action name:(NSString *)name
+            predicate:(UAActionPredicate)predicate;
+
+
+/**
+ * Registers an action with an alias.
+ *
+ * Previously registered actions with the given name or alias will be overwritten.
+ * Registering a nil action will result in any previous actions to be removed
+ * the registrar.
+ *
+ * @param action Action to be performed
+ * @param name Name of the action
+ * @param alias Alias of the action
+ */
+-(void)registerAction:(UAAction *)action name:(NSString *)name
+                alias:(NSString *)alias;
 
 /**
  * Registers an action.
  *
- * If an action is already registered for the given name,
- * the entry will be overwritten.
+ * Previously registered actions with the given name will be overwritten.
+ * Registering a nil action will result in any previous actions to be removed
+ * the registrar.
  *
  * @param action Action to be performed
  * @param name Name of the action
  */
--(void)registerAction:(UAAction *)action forName:(NSString *)name;
+-(void)registerAction:(UAAction *)action name:(NSString *)name;
 
 /**
- * Returns a registered action for the name
+ * Returns a registered action for a given name or alias.
  * 
- * @param name The name of the action
- * @return The action if an action is registered for that name, nil otherwise.
+ * @param name The name or alias of the action
+ * @return The UAActionRegistryEntry for the name or alis if registered, 
+ nil otherwise.
  */
--(UAAction *)actionForName:(NSString *)name;
+-(UAActionRegistryEntry *)registeryEntryForName:(NSString *)name;
+
+-(NSArray *)registredEntries;
 
 @end

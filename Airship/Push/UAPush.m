@@ -34,7 +34,7 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
-#import "UAActionRegistrar.h"
+#import "UAActionRegistrar+Internal.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
 
@@ -439,7 +439,7 @@ static Class _uiClass;
     // Add incoming push action
     UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
                                                                    withSituation:situation];
-    [actions setValue:incomingPushArgs forKey:@"_incoming_push_action"];
+    [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
 
     //Run the actions
     [UAActionRunner runActions:actions withCompletionHandler:^(UAActionResult *result) {
@@ -456,15 +456,12 @@ static Class _uiClass;
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
     for (NSString *possibleActionName in notification) {
-        UAAction *action = [[UAActionRegistrar shared] actionForName:possibleActionName];
-        if (action) {
-            UAPushActionArguments *args = [UAPushActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
-                                                                      withSituation:situation
-                                                                           withName:possibleActionName
-                                                                        withPayload:notification];
+        UAPushActionArguments *args = [UAPushActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+                                                                  withSituation:situation
+                                                                       withName:possibleActionName
+                                                                    withPayload:notification];
 
-            [actions setValue:args forKey:possibleActionName];
-        }
+        [actions setValue:args forKey:possibleActionName];
     }
 
     return actions;

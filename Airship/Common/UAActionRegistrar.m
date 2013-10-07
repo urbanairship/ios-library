@@ -24,6 +24,7 @@
  */
 
 #import "UAActionRegistrar+Internal.h"
+#import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
 
 @implementation UAActionRegistrar
@@ -39,21 +40,83 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return self;
 }
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name withPredicate:(UAActionPredicate)predicate {
-    id entry = (action == nil) ? nil : [UAActionRegistryEntry entryForAction:action withPredicate:predicate];
-    [self.registeredActionEntries setValue:entry forKey:name];
+- (void)registerAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias {
+    [self registerAction:action name:name alias:alias predicate:nil];
 }
 
-- (void)registerAction:(UAAction *)action forName:(NSString *)name {
-    [self registerAction:action forName:name withPredicate:nil];
+- (void)registerAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate) predicate {
+    [self registerAction:action name:name alias:nil predicate:nil];
 }
 
-- (UAAction *)actionForName:(NSString *)name {
-    return [[self.registeredActionEntries valueForKey:name] action];
+- (void)registerAction:(UAAction *)action name:(NSString *)name {
+    [self registerAction:action name:name alias:nil predicate:nil];
+}
+
+- (void)registerAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {
+    // Clear any previous entries for the name
+    [self clearRegistryForName:name];
+    [self clearAlias:name];
+
+    // Clear any entries that registered under the name of the new alias
+    [self clearRegistryForName:alias];
+    [self clearAlias:alias];
+
+    // Register the action if we actually have an action
+    if (action) {
+        id newEntry = [UAActionRegistryEntry entryForAction:action name:name
+                                                      alias:alias predicate:predicate];
+        [self.registeredActionEntries setValue:newEntry forKey:name];
+        [self.aliases setValue:name forKey:alias];
+    }
+}
+
+- (UAActionRegistryEntry *)registeryEntryForName:(NSString *)name {
+    UAActionRegistryEntry *entry = [self.registeredActionEntries valueForKey:name];
+    if (!entry) {
+        NSString *nameFromAlias = [self.aliases valueForKey:name];
+        if (nameFromAlias) {
+            entry = [self.registeredActionEntries valueForKey:nameFromAlias];
+        }
+    }
+    return entry;
+}
+
+- (NSArray *)registredEntries {
+    NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
+    [entries removeObjectsForKeys:kUAReservedActionKeys];
+    return [entries allValues];
 }
 
 - (void)registerDefaultActions {
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerAction:incomingPushAction forName:@"_incoming_push_action"];
+    [self registerAction:incomingPushAction name:kUAIncomingPushActionRegistryName];
 }
+
+- (void)clearRegistryForName:(NSString *)name {
+    if (!name) {
+        return;
+    }
+
+    UAActionRegistryEntry *previousEntry = [self.registeredActionEntries valueForKey:name];
+    if (previousEntry) {
+        if (previousEntry.alias) {
+            [self.aliases setValue:nil forKey:previousEntry.alias];
+        }
+
+        [self.registeredActionEntries setValue:nil forKey:name];
+    }
+}
+
+- (void)clearAlias:(NSString *)alias {
+    if (!alias) {
+        return;
+    }
+
+    UAActionRegistryEntry *entry = [self registeryEntryForName:alias];
+    if (entry) {
+        entry.alias = nil;
+    }
+    [self.aliases setValue:nil forKey:alias];
+}
+
 @end

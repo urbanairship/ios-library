@@ -25,6 +25,11 @@
 
 #import "UAActionRegistrar.h"
 
+#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
+#define kUAReservedActionKeys @[ kUAIncomingPushActionRegistryName ]
+
 @interface UAActionRegistrar ()
 @property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+@property(nonatomic, strong) NSMutableDictionary *aliases;
+
 @end

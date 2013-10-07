@@ -34,7 +34,7 @@
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionRegistryEntry *entry = [[UAActionRegistrar shared].registeredActionEntries valueForKey:actionName];
+    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registeryEntryForName:actionName];
 
     if (entry) {
         if (entry.predicate && entry.predicate(arguments)) {
