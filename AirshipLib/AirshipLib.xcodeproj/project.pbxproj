@@ -321,6 +321,8 @@
 		CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */; };
 		CCA3A50117FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */; };
 		CCA3A50217FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */; };
+		CCA3A5041803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A5031803184D009C7371 /* UAActionRegistryEntry+Internal.h */; };
+		CCA3A5051803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCA3A5031803184D009C7371 /* UAActionRegistryEntry+Internal.h */; };
 		CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */; };
 		CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */; };
 		CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */; };
@@ -528,6 +530,7 @@
 		CCA3A4FA17FF1521009C7371 /* UAActionRunnerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRunnerTest.m; sourceTree = "<group>"; };
 		CCA3A4FE17FF1582009C7371 /* UAActionRegistryEntryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionRegistryEntryTest.m; sourceTree = "<group>"; };
 		CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionRegistrar+Internal.h"; sourceTree = "<group>"; };
+		CCA3A5031803184D009C7371 /* UAActionRegistryEntry+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAActionRegistryEntry+Internal.h"; sourceTree = "<group>"; };
 		CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxDBManagerTests.m; sourceTree = "<group>"; };
 		CCB7DF5C17BBF71000CEDC56 /* UAInboxDBManager+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInboxDBManager+Internal.h"; sourceTree = "<group>"; };
 		CCBFA2D817B5436500F97E1D /* NSJSONSerialization+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+UAAdditions.h"; sourceTree = "<group>"; };
@@ -929,6 +932,7 @@
 				CCA3A50017FF626C009C7371 /* UAActionRegistrar+Internal.h */,
 				CC8542A317F4B81600D2DE10 /* UAActionRegistrar.h */,
 				CC8542A417F4B81600D2DE10 /* UAActionRegistrar.m */,
+				CCA3A5031803184D009C7371 /* UAActionRegistryEntry+Internal.h */,
 				CCA3A4E917FCB3A8009C7371 /* UAActionRegistryEntry.h */,
 				CCA3A4EA17FCB3A8009C7371 /* UAActionRegistryEntry.m */,
 				CC8542A517F4B81600D2DE10 /* UAActionResult.h */,
@@ -1135,6 +1139,7 @@
 				CCA3A4EC17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC8542C817F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
 				1FE0B76517E2751000856C60 /* UAAutoAppDelegate.h in Headers */,
+				CCA3A5051803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
 				CC8542D017F4B81600D2DE10 /* UAPushAction.h in Headers */,
 				1FE0B76617E2751000856C60 /* UADeviceRegistrationData.h in Headers */,
 				1FE0B76717E2751000856C60 /* UAInboxMessageListObserver.h in Headers */,
@@ -1169,6 +1174,7 @@
 				CC8542D317F4B81600D2DE10 /* UAPushActionArguments.h in Headers */,
 				CC8542CB17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
 				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
+				CCA3A5041803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
 				CC8542D717F4B81600D2DE10 /* UASyncAction.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
