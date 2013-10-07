@@ -24,6 +24,9 @@
  */
 
 #import <XCTest/XCTest.h>
+#import "UAAction.h"
+#import "UAActionRunner.h"
+#import "UAActionRegistrar.h"
 
 @interface UAActionRunnerTest : XCTestCase
 
@@ -31,13 +34,203 @@
 
 @implementation UAActionRunnerTest
 
-- (void)setUp {
-    [super setUp];
-}
+
+NSString *actionName = @"ActionName";
+NSString *anotherActionName = @"AnotherActionName";
 
 - (void)tearDown {
+    // Clear possible actions that were registered in the tests
+    [[UAActionRegistrar shared] registerAction:nil name:actionName];
+    [[UAActionRegistrar shared] registerAction:nil name:anotherActionName];
+
     [super tearDown];
 }
 
+/**
+ * Test running an action
+ */
+- (void)testRunAction {
+    __block BOOL didCompletionHandlerRun = NO;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult none];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler(result);
+    }];
+
+    [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did no receive the acitons results");
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+}
+
+/**
+ * Test running an action from a name
+ */
+- (void)testRunActionWithName {
+    __block BOOL didCompletionHandlerRun = NO;
+    __block BOOL didActionRun = NO;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didActionRun = YES;
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler([UAActionResult none]);
+    }];
+
+    [[UAActionRegistrar shared] registerAction:action name:actionName];
+
+    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didActionRun, @"Runner should run action if no predicate is defined");
+}
+
+/**
+ * Test running an action from a name with a predicate that returns NO
+ */
+- (void)testRunActionWithNameNoPredicate {
+    __block BOOL didCompletionHandlerRun = NO;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        XCTFail(@"Action should not run if the predicate returns NO");
+        completionHandler([UAActionResult none]);
+    }];
+
+    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        return NO;
+    }];
+
+    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+}
+
+/**
+ * Test running an action from a name with a predicate that returns YES
+ */
+- (void)testRunActionWithNameYESPredicate {
+    __block BOOL didCompletionHandlerRun = NO;
+    __block BOOL didActionRun = NO;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        didActionRun = YES;
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler([UAActionResult none]);
+    }];
+
+    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        return YES;
+    }];
+
+    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didActionRun, @"Runner should run action if predicate returns YES");
+}
+
+/**
+ * Test trying to run an action form a name that is not registered
+ */
+- (void)testRunActionWithNameNotRegistered {
+    __block BOOL didCompletionHandlerRun = NO;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+
+    [UAActionRunner runActionWithName:@"SomeUnregisteredActionName" withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+        XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+}
+
+/**
+ * Test running an empty dictionary of actions
+ */
+- (void)testRunActionsEmptyDictionary {
+    __block BOOL didCompletionHandlerRun = NO;
+
+    [UAActionRunner runActions:[NSDictionary dictionary] withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+
+        // Should return an empty aggregate action result
+        XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+
+        NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+
+
+        XCTAssertEqual((NSUInteger) 0, resultDictionary.count, @"Should have an empty dictionary");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+}
+
+/**
+ * Test running a set of actions from a dictionary
+ */
+- (void)testRunActions {
+    __block BOOL didCompletionHandlerRun = NO;
+    __block int actionRunCount = 0;
+
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        actionRunCount++;
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        completionHandler([UAActionResult none]);
+    }];
+
+    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        return YES;
+    }];
+
+    // Register another action
+    [[UAActionRegistrar shared] registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
+        XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
+        return YES;
+    }];
+
+    NSDictionary *actionsToRun = @{actionName : arguments, anotherActionName: arguments};
+    [UAActionRunner runActions:actionsToRun withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+
+        // Should return an empty aggregate action result
+        XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
+
+        NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
+
+        XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
+}
 
 @end

@@ -27,6 +27,7 @@
 #import "UAAction.h"
 #import "UAActionRegistrar.h"
 #import "UAPushActionArguments.h"
+#import "UAAggregateActionResult.h"
 
 @interface UAActionRunner : NSObject
 

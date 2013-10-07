@@ -25,7 +25,6 @@
 
 #import "UAActionRunner.h"
 #import "UAAction+Internal.h"
-#import "UAAggregateActionResult.h"
 #import "UAActionRegistryEntry.h"
 
 @implementation UAActionRunner
