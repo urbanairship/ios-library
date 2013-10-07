@@ -53,22 +53,13 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 }
 
 - (void)registerAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {
-    // Clear the previous entry
-    UAActionRegistryEntry *previousEntry = [self.registeredActionEntries valueForKey:name];
-    if (previousEntry) {
-        if (previousEntry.alias) {
-            [self.aliases setValue:nil forKey:previousEntry.alias];
-        }
+    // Clear any previous entries for the name
+    [self clearRegistryForName:name];
+    [self clearAlias:name];
 
-        [self.registeredActionEntries setValue:nil forKey:name];
-    }
-
-    // If another entry has the alias, clear it
-    UAActionRegistryEntry *entry = [self registeryEntryForName:alias];
-    if (entry) {
-        entry.alias = nil;
-    }
-    [self.aliases setValue:nil forKey:alias];
+    // Clear any entries that registered under the name of the new alias
+    [self clearRegistryForName:alias];
+    [self clearAlias:alias];
 
     // Register the action if we actually have an action
     if (action) {
@@ -99,6 +90,33 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 - (void)registerDefaultActions {
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
     [self registerAction:incomingPushAction name:kUAIncomingPushActionRegistryName];
+}
+
+- (void)clearRegistryForName:(NSString *)name {
+    if (!name) {
+        return;
+    }
+
+    UAActionRegistryEntry *previousEntry = [self.registeredActionEntries valueForKey:name];
+    if (previousEntry) {
+        if (previousEntry.alias) {
+            [self.aliases setValue:nil forKey:previousEntry.alias];
+        }
+
+        [self.registeredActionEntries setValue:nil forKey:name];
+    }
+}
+
+- (void)clearAlias:(NSString *)alias {
+    if (!alias) {
+        return;
+    }
+
+    UAActionRegistryEntry *entry = [self registeryEntryForName:alias];
+    if (entry) {
+        entry.alias = nil;
+    }
+    [self.aliases setValue:nil forKey:alias];
 }
 
 @end
