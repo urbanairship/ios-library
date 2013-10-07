@@ -52,7 +52,7 @@
         //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
         //message because it doesn't provide any context. should it be up to the
         //action itself to log or somehow provide its reasoning?
-        UA_LINFO("Action %@ is unable to perform with arguments.", [self description]);
+        UA_LINFO("Action %@ does not accept arguments %@.", [self description], [arguments description]);
         completionHandler([UAActionResult none]);
     } else {
         [self willPerformWithArguments:arguments];
@@ -181,7 +181,6 @@
 - (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
-            //Note: do we want errors to prevent the block from executing? probably not?
             if (postExecutionBlock){
                 postExecutionBlock(args, result);
             };
