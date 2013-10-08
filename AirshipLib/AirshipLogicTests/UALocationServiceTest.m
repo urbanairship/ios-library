@@ -346,19 +346,6 @@
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 
-- (void)testForcePromptLocation {
-
-    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(NO)] isLocationServiceEnabledAndAuthorized];
-    id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-    [[mockProvider expect] startReportingLocation];
-
-    _locationService.promptUserForLocationServices = YES;
-    [_locationService startReportingLocationWithProvider:mockProvider];
-    [_mockLocationService verify];
-    [mockProvider verify];
-    [mockProvider stopMocking];
-}
-
 - (void)testLocationTimeoutError {
     _locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
     NSError *locationError = [_locationService locationTimeoutError];
@@ -516,7 +503,7 @@
 
     // Setting this to YES is a quick way to get the startReportingLocationWithProvider: method to
     // allow the location service to be started. 
-    _locationService.promptUserForLocationServices = YES;
+    _locationService.isLocationServiceEnabledAndAuthorized = YES;
 
     _locationService.standardLocationProvider = mockStandard;
     _locationService.significantChangeProvider = mockSignificant;
