@@ -29,7 +29,10 @@ NSDictionary *notification;
 - (void)setUp {
     [super setUp];
 
-    notification = @{ @"aps": @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" }};
+    notification = @{ @"aps":
+                          @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" },
+                      @"someActionKey": @"someActionValue"
+                    };
 
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -784,11 +787,21 @@ NSDictionary *notification;
         if (actions.count < 1) {
             return NO;
         }
-        // TODO: validate other push actions
+
+        // Validate incoming push action is added
         UAActionArguments *args = [actions valueForKey:kUAIncomingPushActionRegistryName];
         if (!args || ![args.situation isEqualToString:expectedSituation]) {
             return NO;
         }
+
+        // Validate other push action is added
+        args = [actions valueForKey:@"someActionKey"];
+        if (!args || (![args.situation isEqualToString:expectedSituation] && ![args.value isEqualToString:@"someActionValue"])) {
+            return NO;
+        }
+
+
+
         return YES;
     };
 
