@@ -161,9 +161,9 @@
     [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]];
     [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
 
-    XCTAssertTrue([[self.dbManager getMessageIDs] containsObject:@"anotherId"], @"getMessageIDs not returning all the added messages");
-    XCTAssertTrue([[self.dbManager getMessageIDs] containsObject:@"anotherMessageId"], @"getMessageIDs not returning all the added messages");
-    XCTAssertEqual((NSUInteger)2, [self.dbManager getMessageIDs].count, @"getMessageIDs should only contain 2 IDs");
+    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherId"], @"messageIDs not returning all the added messages");
+    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherMessageId"], @"messageIDs not returning all the added messages");
+    XCTAssertEqual((NSUInteger)2, [self.dbManager messageIDs].count, @"messageIDs should only contain 2 IDs");
 
 }
 

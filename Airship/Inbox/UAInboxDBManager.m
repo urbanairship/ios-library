@@ -69,7 +69,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     return results ?: [NSArray array];
 }
 
-- (NSSet *)getMessageIDs {
+- (NSSet *)messageIDs {
     NSMutableSet *messageIDs = [NSMutableSet set];
     for (UAInboxMessage *message in [self getMessages]) {
         [messageIDs addObject:message.messageID];

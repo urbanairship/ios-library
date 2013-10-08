@@ -165,7 +165,7 @@
           }
 
           // Delete server side deleted messages
-          NSMutableSet *messagesToDelete = [[inboxDBManager getMessageIDs] mutableCopy];
+          NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
           [messagesToDelete minusSet:responseMessageIDs];
           [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
 

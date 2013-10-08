@@ -85,7 +85,7 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  * Retuns the set of the current message ids in the inbox
  * @return An NSSet of message ids
  */
-- (NSSet *)getMessageIDs;
+- (NSSet *)messageIDs;
 /**
  * Saves any changes to the database
  */
