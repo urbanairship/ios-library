@@ -53,7 +53,7 @@
     UAActionArguments *arguments = [[UAPushActionArguments alloc] init];
     UAActionResult *result = [UAActionResult none];
 
-    UAPushAction *action = [UAPushAction pushActionWithBlock:^(UAPushActionArguments *args, UAActionPushCompletionHandler completionHandler) {
+    UAPushAction *action = [UAPushAction pushActionWithBlock:^(UAPushActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = true;
         XCTAssertEqualObjects(arguments, args, @"performWithArgumnets should pass arguments to performWithPushArguments");
         completionHandler(result);

@@ -109,7 +109,7 @@
                 completionHandler([UAActionResult resultWithValue:nil withFetchResult:(UAActionFetchResult)result]);
             }];
         } else {
-            if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
+            if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
 
                 UA_LWARN(@"Application is configured with background remote notifications."
                          "PushNotificationDelegate shouldimplement receivedForegroundNotification:fetchCompletionHanlder: instead of receivedForegroundNotification:."

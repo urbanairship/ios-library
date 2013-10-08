@@ -49,12 +49,10 @@
 }
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *result){
-        completionHandler(result);
-    }];
+    [self performWithPushArguments:arguments withCompletionHandler:completionHandler];
 }
 
-- (void)performWithArguments:(UAPushActionArguments *)arguments withPushCompletionHandler:(UAActionPushCompletionHandler)completionHandler {
+- (void)performWithPushArguments:(UAPushActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
     }
