@@ -144,6 +144,29 @@
     XCTAssertNoThrow([self.dbManager deleteMessages:invalidArray], @"Deleting invalid messages should not result in an exception");
 }
 
+- (void)testDeleteMessagesWithIDs {
+    // Add 2 messages
+    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]];
+    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
+
+    XCTAssertEqual((NSUInteger)2, [self.dbManager getMessages].count, @"2 messages should of been added");
+
+    [self.dbManager deleteMessagesWithIDs:[NSSet setWithArray:@[@"anotherId"]]];
+    XCTAssertEqual((NSUInteger)1, [self.dbManager getMessages].count, @"Only one of the messages should of been deleted");
+    [self verifyMessage:[[self.dbManager getMessages] lastObject] withDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
+}
+
+- (void)testGetMessageIDs {
+    // Add 2 messages
+    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherId"]];
+    [self.dbManager addMessageFromDictionary:[self createMessageDictionaryWithMessageID:@"anotherMessageId"]];
+
+    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherId"], @"messageIDs not returning all the added messages");
+    XCTAssertTrue([[self.dbManager messageIDs] containsObject:@"anotherMessageId"], @"messageIDs not returning all the added messages");
+    XCTAssertEqual((NSUInteger)2, [self.dbManager messageIDs].count, @"messageIDs should only contain 2 IDs");
+
+}
+
 - (NSDictionary *)createMessageDictionaryWithMessageID:(NSString *)messageID {
     return @{@"message_id": messageID,
       @"title": @"someTitle",
