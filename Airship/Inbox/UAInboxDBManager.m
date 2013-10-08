@@ -224,17 +224,17 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 - (void)updateMessage:(UAInboxMessage *)message withDictionary:(NSDictionary *)dict {
-    message.messageID = [dict objectForKey: @"message_id"];
+    message.messageID = [dict objectForKey:@"message_id"];
     message.contentType = [dict objectForKey:@"content_type"];
-    message.title = [dict objectForKey: @"title"];
-    message.extra = [dict objectForKey: @"extra"];
-    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey: @"message_body_url"]];
-    message.messageURL = [NSURL URLWithString: [dict objectForKey: @"message_url"]];
-    message.unread = [[dict objectForKey: @"unread"] boolValue];
-    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
+    message.title = [dict objectForKey:@"title"];
+    message.extra = [dict objectForKey:@"extra"];
+    message.messageBodyURL = [NSURL URLWithString: [dict objectForKey:@"message_body_url"]];
+    message.messageURL = [NSURL URLWithString: [dict objectForKey:@"message_url"]];
+    message.unread = [[dict objectForKey:@"unread"] boolValue];
+    message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey:@"message_sent"]];
     message.rawMessageObject = dict;
 
-    NSString *messageExpiration = [dict objectForKey: @"message_expiry"];
+    NSString *messageExpiration = [dict objectForKey:@"message_expiry"];
     if (messageExpiration) {
         message.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
     } else {

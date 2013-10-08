@@ -445,5 +445,7 @@
 
     self.message.messageExpiration = [currentDate dateByAddingTimeInterval:-1];
     XCTAssertTrue([self.message isExpired], @"messageExpiration is before the current date");
+
+    [mockDate stopMocking];
 }
 @end
