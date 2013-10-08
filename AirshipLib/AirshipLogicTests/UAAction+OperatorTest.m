@@ -48,7 +48,7 @@
 
 
 /**
- * Test that the continueWith operator
+ * Tests the continueWith operator
  */
 - (void)testContinueWith {
     __block BOOL didContinuationActionRun = NO;
@@ -125,7 +125,7 @@
         result = actionResult;
     }];
 
-    XCTAssertEqualObjects(result.value, @"originalResult", @"Continue with should ignore a nil continue with action and just return the original actions result");
+    XCTAssertEqualObjects(result.value, @"originalResult", @"Continue with should ignore a nil continue with action and just return the original action's result");
 }
 
 /**
@@ -194,7 +194,7 @@
 
     UAAction *takeAction = [action take:10];
 
-    // Run the take action 10 times, should skip each time
+    // Run the take action 10 times, should take each time
     for (int i = 0; i < 10; i++) {
         [takeAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
             XCTAssertEqualObjects(result, expectedResult, @"Take result is unexpected");

@@ -34,9 +34,9 @@
  * Convenience constructor for UAActionArguments.
  *
  * @param value The value.
- * @param state The situation.
- * @param value The name of the action.
- * @param extras The notification payload.
+ * @param situation The situation.
+ * @param name The name of the action.
+ * @param payload The notification payload.
  */
 + (instancetype)argumentsWithValue:(id)value
                      withSituation:(NSString *)situation
