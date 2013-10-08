@@ -32,16 +32,6 @@
 
 @implementation UAPushActionTest
 
-UAPushActionArguments *validPushArguments;
-
-- (void)setUp {
-    [super setUp];
-}
-
-- (void)tearDown {
-    [super tearDown];
-}
-
 /*
  * Tests that UAPushActions only accepts UAPushArguments
  */
