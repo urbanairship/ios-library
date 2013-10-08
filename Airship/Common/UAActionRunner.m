@@ -33,7 +33,7 @@
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registeryEntryForName:actionName];
+    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registryEntryForName:actionName];
 
     if (entry) {
         if (!entry.predicate || entry.predicate(arguments)) {

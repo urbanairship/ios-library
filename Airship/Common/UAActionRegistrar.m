@@ -75,7 +75,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     }
 }
 
-- (UAActionRegistryEntry *)registeryEntryForName:(NSString *)name {
+- (UAActionRegistryEntry *)registryEntryForName:(NSString *)name {
     UAActionRegistryEntry *entry = [self.registeredActionEntries valueForKey:name];
     if (!entry) {
         NSString *nameFromAlias = [self.aliases valueForKey:name];
@@ -86,7 +86,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return entry;
 }
 
-- (NSArray *)registredEntries {
+- (NSArray *)registeredEntries {
     NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
     [entries removeObjectsForKeys:kUAReservedActionKeys];
     return [entries allValues];
@@ -117,7 +117,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
         return;
     }
 
-    UAActionRegistryEntry *entry = [self registeryEntryForName:alias];
+    UAActionRegistryEntry *entry = [self registryEntryForName:alias];
     if (entry) {
         entry.alias = nil;
     }

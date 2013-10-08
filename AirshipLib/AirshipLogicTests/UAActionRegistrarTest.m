@@ -154,15 +154,15 @@ UAActionRegistrar *registrar;
 }
 
 /**
- * Test registeryEntryForName: returns a registry entry whose name or alias matches
+ * Test registryEntryForName: returns a registry entry whose name or alias matches
  */
-- (void)testRegisteryEntryForName {
+- (void)testregistryEntryForName {
     UAAction *action = [[UAAction alloc] init];
     [registrar registerAction:action name:@"name" alias:@"alias"];
 
-    XCTAssertNotNil([registrar registeryEntryForName:@"name"], "RegistryEntry is not returning entries for names");
-    XCTAssertNotNil([registrar registeryEntryForName:@"alias"], "RegistryEntry is not returning entries for aliases");
-    XCTAssertNil([registrar registeryEntryForName:@"blah"], "RegistryEntry is returning entries for unregistered names or aliases");
+    XCTAssertNotNil([registrar registryEntryForName:@"name"], "RegistryEntry is not returning entries for names");
+    XCTAssertNotNil([registrar registryEntryForName:@"alias"], "RegistryEntry is not returning entries for aliases");
+    XCTAssertNil([registrar registryEntryForName:@"blah"], "RegistryEntry is returning entries for unregistered names or aliases");
 
 }
 
@@ -172,7 +172,7 @@ UAActionRegistrar *registrar;
                              alias:(NSString *)alias
                          predicate:(UAActionPredicate)predicate {
 
-    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registeryEntryForName:name];
+    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registryEntryForName:name];
 
     XCTAssertNotNil(entry, @"Action is not registered");
     XCTAssertEqualObjects(entry.action, action, @"Registered entry's action is incorrect");

@@ -36,7 +36,7 @@
     NSString *situation = arguments.situation;
 
     if ([situation isEqualToString:UASituationForegroundPush]) {
-        [self handlForegroundPush:notification completionHandler:completionHandler];
+        [self handleForegroundPush:notification completionHandler:completionHandler];
     } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
         [self handleLaunchedFromPush:notification completionHandler:completionHandler];
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
@@ -64,7 +64,7 @@
 }
 
 
-- (void)handlForegroundPush:(NSDictionary *)notification
+- (void)handleForegroundPush:(NSDictionary *)notification
           completionHandler:(UAActionCompletionHandler)completionHandler {
 
     id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
@@ -116,7 +116,7 @@
             if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
 
                 UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate shouldimplement receivedForegroundNotification:fetchCompletionHanlder: instead of receivedForegroundNotification:."
+                         "PushNotificationDelegate should implement receivedForegroundNotification:fetchCompletionHandler: instead of receivedForegroundNotification:."
                          "receivedForegroundNotification: will still be called.");
 
                 [pushDelegate receivedForegroundNotification:notification];
@@ -148,7 +148,7 @@
             if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
 
                 UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate shouldimplement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:."
+                         "PushNotificationDelegate should implement launchedFromNotification:fetchCompletionHandler: instead of launchedFromNotification:."
                          "launchedFromNotification: will still be called.");
 
                 [pushDelegate launchedFromNotification:notification];
@@ -179,7 +179,7 @@
             if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
 
                 UA_LWARN(@"Application is configured with background remote notifications."
-                         "PushNotificationDelegate shouldimplement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:."
+                         "PushNotificationDelegate should implement receivedBackgroundNotification:fetchCompletionHandler: instead of receivedBackgroundNotification:."
                          "receivedBackgroundNotification: will still be called.");
 
                 [pushDelegate receivedBackgroundNotification:notification];

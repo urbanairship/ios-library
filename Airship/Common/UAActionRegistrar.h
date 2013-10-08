@@ -36,7 +36,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Registers an action with a predicate and an alias.
  * 
  * Previously registered actions with the given name or alias will be overwritten.
- * Registering a nil action will result in any previous actions to be removed 
+ * Registering a nil action will result in any previous actions to be removed from
  * the registrar.
  *
  * @param action Action to be performed
@@ -52,7 +52,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Registers an action with a predicate.
  *
  * Previously registered actions with the given name will be overwritten.
- * Registering a nil action will result in any previous actions to be removed
+ * Registering a nil action will result in any previous actions to be removed from
  * the registrar.
  *
  * @param action Action to be performed
@@ -68,7 +68,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Registers an action with an alias.
  *
  * Previously registered actions with the given name or alias will be overwritten.
- * Registering a nil action will result in any previous actions to be removed
+ * Registering a nil action will result in any previous actions to be removed from
  * the registrar.
  *
  * @param action Action to be performed
@@ -82,7 +82,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Registers an action.
  *
  * Previously registered actions with the given name will be overwritten.
- * Registering a nil action will result in any previous actions to be removed
+ * Registering a nil action will result in any previous actions to be removed from
  * the registrar.
  *
  * @param action Action to be performed
@@ -94,11 +94,11 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Returns a registered action for a given name or alias.
  * 
  * @param name The name or alias of the action
- * @return The UAActionRegistryEntry for the name or alis if registered, 
- nil otherwise.
+ * @return The UAActionRegistryEntry for the name or alias if registered, 
+ * nil otherwise.
  */
--(UAActionRegistryEntry *)registeryEntryForName:(NSString *)name;
+-(UAActionRegistryEntry *)registryEntryForName:(NSString *)name;
 
--(NSArray *)registredEntries;
+-(NSArray *)registeredEntries;
 
 @end
