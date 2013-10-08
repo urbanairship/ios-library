@@ -105,4 +105,12 @@ typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler com
  */
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock;
 
+/**
+ * Factory method for creating anonymous actions
+ *
+ * @param actionBlock A UAActionBlock representing the primary work performed by the action.
+ * @param predicateBlock A UAActionPredicate limiting the scope of the arguments.
+ */
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock;
+
 @end

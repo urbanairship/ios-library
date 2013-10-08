@@ -99,4 +99,10 @@
     return [[UAAction alloc] initWithBlock:actionBlock];
 }
 
++ (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock {
+    UAAction *action = [self actionWithBlock:actionBlock];
+    action.acceptsArgumentsBlock = predicateBlock;
+    return action;
+}
+
 @end
