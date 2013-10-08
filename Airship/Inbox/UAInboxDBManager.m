@@ -245,6 +245,10 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
 }
 
 -(UAInboxMessage *)getMessageWithID:(NSString *)messageID {
+    if (!messageID) {
+        return nil;
+    }
+
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
                                               inManagedObjectContext:self.managedObjectContext];
