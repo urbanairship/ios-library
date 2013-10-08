@@ -29,7 +29,6 @@
 #import "UAirship.h"
 #import "UAPush.h"
 #import "UAAnalytics.h"
-#import "UAPushAction.h"
 
 @implementation SampleAppDelegate
 
