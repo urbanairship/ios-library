@@ -52,5 +52,31 @@ UAPushActionArguments *validPushArguments;
     XCTAssertFalse([action acceptsArguments:[[UAActionArguments alloc] init]], @"Push action should only accept UAPushActionArguments");
 }
 
+/*
+ * Test performWithArguments:withCompletionHandler: calls 
+ * performWithArguments:withCompletionHandler with the push arguments
+ */
+- (void)testPerformWithArguments {
+    __block BOOL didActionRun = false;
+    __block BOOL didCompletionHandlerRun = false;
+
+    UAActionArguments *arguments = [[UAPushActionArguments alloc] init];
+    UAActionResult *result = [UAActionResult none];
+
+    UAPushAction *action = [UAPushAction pushActionWithBlock:^(UAPushActionArguments *args, UAActionPushCompletionHandler completionHandler) {
+        didActionRun = true;
+        XCTAssertEqualObjects(arguments, args, @"performWithArgumnets should pass arguments to performWithPushArguments");
+        completionHandler(result);
+    }];
+
+    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = true;
+        XCTAssertEqualObjects(result, finalResult, @"performWithArgumnets should pass the result to the completion handler");
+    }];
+
+    XCTAssertTrue(didActionRun, @"Action did not perform");
+    XCTAssertTrue(didCompletionHandlerRun, @"Completion handler was not called");
+}
+
 
 @end

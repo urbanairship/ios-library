@@ -49,8 +49,8 @@
 }
 
 - (void)performWithArguments:(id)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *fetchResult){
-        completionHandler([UAActionResult resultWithValue:fetchResult]);
+    [self performWithArguments:arguments withPushCompletionHandler:^(UAActionResult *result){
+        completionHandler(result);
     }];
 }
 
