@@ -46,6 +46,11 @@
     }
 }
 
+- (UAActionResult *)resultForAction:(NSString*)actionName {
+    NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
+    return [resultDictionary valueForKey:actionName];
+}
+
 - (void)mergeFetchResult:(UAActionFetchResult)result {
     if (self.fetchResult == UAActionFetchResultNewData || result == UAActionFetchResultNewData) {
         self.fetchResult = UAActionFetchResultNewData;
