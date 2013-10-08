@@ -830,7 +830,7 @@ NSDictionary *notification;
         XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %@", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
 
-        // Test hanldeNotification:fetchCompletionHandler: for every background fetch result
+        // Test handleNotification:fetchCompletionHandler: for every background fetch result
         for (int fetchResultIndex = 0; fetchResultIndex < 3; fetchResultIndex++) {
             __block BOOL completionHandlerCalled = NO;
             fetchResult = fetchResults[fetchResultIndex];

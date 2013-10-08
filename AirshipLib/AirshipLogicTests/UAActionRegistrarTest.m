@@ -73,7 +73,7 @@ UAActionRegistrar *registrar;
     // Name and alias
     [registrar registerAction:action name:@"some-action" alias:@"alias"];
     XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
-    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the actin should add the alias");
+    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the action should add the alias");
     [self validateActionIsRegistered:action name:@"some-action" alias:@"alias" predicate:nil];
 
     // Name and predicate
@@ -84,7 +84,7 @@ UAActionRegistrar *registrar;
     // Name, alias, and predicate
     [registrar registerAction:action name:@"some-action" alias:@"alias" predicate:predicate];
     XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
-    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the actin should add the alias");
+    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the action should add the alias");
     [self validateActionIsRegistered:action name:@"some-action" alias:@"alias" predicate:predicate];
 
 }
@@ -93,13 +93,14 @@ UAActionRegistrar *registrar;
  * Test that registering a nil action clears the registration for the action
  */
 - (void)testRegisterNilAction {
+    [registrar registerAction:nil name:@"nil"];
     XCTAssertEqual((NSUInteger) 0, registrar.registeredActionEntries.count, @"Registering a nil action should not add an action registry");
 
     // Register an action
     UAAction *action = [[UAAction alloc] init];
     [registrar registerAction:action name:@"some-action" alias:@"alias"];
     XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Should have 1 action registry entries");
-    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the actin should add the alias");
+    XCTAssertNotNil([registrar.aliases valueForKey:@"alias"], "Registering the action should add the alias");
 
     // Clear the action by registering nil for the name
     [registrar registerAction:nil name:@"some-action"];
@@ -112,7 +113,7 @@ UAActionRegistrar *registrar;
 /**
  * Test registering an action with an alias that conflicts with other actions
  */
-- (void)testReigsterActionConflictingAlias {
+- (void)testRegisterActionConflictingAlias {
     UAAction *action = [[UAAction alloc] init];
 
     [registrar registerAction:action name:@"nameOne" alias:@"aliasOne"];
@@ -125,7 +126,7 @@ UAActionRegistrar *registrar;
     // Should still have 3 entries
     XCTAssertEqual((NSUInteger) 3, registrar.registeredActionEntries.count, @"Registering conflicting actions aliases should not remove entries");
 
-    // First and second registration entry should no longer have there aliases
+    // First and second registration entry should no longer have their aliases
     [self validateActionIsRegistered:action name:@"nameOne" alias:nil predicate:nil];
     [self validateActionIsRegistered:action name:@"nameTwo" alias:nil predicate:nil];
 
@@ -134,9 +135,9 @@ UAActionRegistrar *registrar;
 }
 
 /**
- * Test registering an action with an name that conflicts with other actions whose alias
+ * Test registering an action with an name that conflicts with another action's name
  */
-- (void)testReigsterActionConflictingName {
+- (void)testRegisterActionConflictingName {
     UAAction *action = [[UAAction alloc] init];
 
     [registrar registerAction:action name:@"nameOne" alias:@"aliasOne"];
@@ -146,7 +147,7 @@ UAActionRegistrar *registrar;
     // Try to register an action with the name 'nameOne' and alias 'nameTwo'
     [registrar registerAction:action name:@"nameOne" alias:@"nameTwo"];
 
-    // Should only have a one entry
+    // Should only have one entry
     XCTAssertEqual((NSUInteger) 1, registrar.registeredActionEntries.count, @"Registering conflicting actions names should remove entries");
 
     // Verify third registration has the correct names
@@ -176,7 +177,6 @@ UAActionRegistrar *registrar;
 
     XCTAssertNotNil(entry, @"Action is not registered");
     XCTAssertEqualObjects(entry.action, action, @"Registered entry's action is incorrect");
-    XCTAssertEqualObjects(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
     XCTAssertEqualObjects(entry.predicate, predicate, @"Registered entry's predicate is incorrect");
     XCTAssertEqualObjects(entry.name, name, @"Registered entry's name is incorrect");
     XCTAssertEqualObjects(entry.alias, alias, @"Registered entry's alias is incorrect");

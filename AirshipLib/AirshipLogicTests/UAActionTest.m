@@ -64,7 +64,7 @@
     };
 
     XCTAssertFalse([action acceptsArguments:self.emptyArgs], @"Base UAAction should return the acceptsArgumentsBlock if defined");
-    XCTAssertEqual(blockArgs, self.emptyArgs, @"Base acceptsArgumentBlock should have the same arguments paramater as acceptsArguments");
+    XCTAssertEqual(blockArgs, self.emptyArgs, @"Base acceptsArgumentBlock should have the same arguments parameter as acceptsArguments");
 
     action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
         return YES;
@@ -108,7 +108,7 @@
 
     XCTAssertEqualObjects(blockResult.value, @"hi", @"performWithArguments:withCompletionHandler: should call the actionBlock");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNewData, @"performWithArguments:withCompletionHandler: should call the actionBlock");
-    XCTAssertEqual(blockArgs, self.emptyArgs, @"performWithArgumnts block should be passed the same arguments performWithArguments:withCompletionHandler:");
+    XCTAssertEqual(blockArgs, self.emptyArgs, @"performWithArguments block should be passed the same arguments performWithArguments:withCompletionHandler:");
 }
 
 /*

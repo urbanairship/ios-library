@@ -72,7 +72,7 @@ bool backgroundNotificationEnabled;
 
 /*
  * Tests UAIncomingPushAction only accepts push situations and
- * arguments whos value is an NSDictionary
+ * arguments whose value is an NSDictionary
  */
 - (void)testAcceptsArguments {
     NSArray *validSituations = @[UASituationForegroundPush,
@@ -81,7 +81,7 @@ bool backgroundNotificationEnabled;
 
     arguments.value = nil;
 
-    // Should no accept any of the valid situations beceause the value is nil
+    // Should not accept any of the valid situations because the value is nil
     for (NSString *validSituation in validSituations) {
         arguments.situation = validSituation;
         XCTAssertFalse([action acceptsArguments:arguments], @"Should not accept nil value arguments");
@@ -112,15 +112,15 @@ bool backgroundNotificationEnabled;
     }];
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate launchedFromNotification: should be called");
-    XCTAssertNotNil(runResult, @"Incoming push action should still generage a action result");
+    XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
     backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
-    // Expect the notification and call the block with teh delegateResult
+    // Expect the notification and call the block with the delegateResult
     [[mockedPushDelegate expect] launchedFromNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
@@ -133,7 +133,7 @@ bool backgroundNotificationEnabled;
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate launchedFromNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
 
 
@@ -151,15 +151,15 @@ bool backgroundNotificationEnabled;
     }];
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification: should be called");
-    XCTAssertNotNil(runResult, @"Incoming push action should still generage a action result");
+    XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
     backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
-    // Expect the notification and call the block with teh delegateResult
+    // Expect the notification and call the block with the delegateResult
     [[mockedPushDelegate expect] receivedBackgroundNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
@@ -172,7 +172,7 @@ bool backgroundNotificationEnabled;
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
 
 /**
@@ -190,15 +190,15 @@ bool backgroundNotificationEnabled;
     }];
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedForegroundNotification: should be called");
-    XCTAssertNotNil(runResult, @"Incoming push action should still generage a action result");
+    XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
     backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
-    // Expect the notification and call the block with teh delegateResult
+    // Expect the notification and call the block with the delegateResult
     [[mockedPushDelegate expect] receivedForegroundNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
@@ -211,7 +211,7 @@ bool backgroundNotificationEnabled;
 
     XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedForegroundNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
-    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegates fetch result");
+    XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
 
 

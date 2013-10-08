@@ -51,6 +51,9 @@
     XCTAssertEqualObjects([value valueForKey:@"anotherActionName"], anotherResult, @"adding a result should add it to the aggregate action's value");
 }
 
+/**
+ * Test retrieving the result for a particular action
+ */
 - (void)testResultForAction {
     UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
     UAActionResult *result = [UAActionResult none];
@@ -63,6 +66,9 @@
     XCTAssertEqualObjects([aggregateResult resultForAction:@"anotherActionName"], anotherResult, @"result for action is not returning correct result");
 }
 
+/**
+ * Test merging fetch completion values
+ */
 - (void)testMergeFetchCompletionValue {
     UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
     XCTAssertEqual(aggregateResult.fetchResult, UAActionFetchResultNoData, @"fetch result should default to UAActionFetchResultNoData");

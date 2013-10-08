@@ -297,7 +297,7 @@ static Class _uiClass;
 
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)timezone {
     if (!from || !to) {
-        UA_LERR(@"Unable to set quiet time, paramater is nil. From: %@ To: %@", from, to);
+        UA_LERR(@"Unable to set quiet time, parameter is nil. From: %@ To: %@", from, to);
         return;
     }
 

@@ -388,7 +388,7 @@
     }];
 
     action = [action map:^UAActionArguments *(UAActionArguments *originalArgs) {
-        XCTAssertEqualObjects(self.emptyArgs, originalArgs, @"Mappped action is not receiving orignal arguments");
+        XCTAssertEqualObjects(self.emptyArgs, originalArgs, @"Mapped action is not receiving original arguments");
         return mappedArgs;
     }];
 
@@ -436,7 +436,7 @@
 
     action = [action distinctUntilChanged];
     [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(1, performCount, @"Distinct should run if the its the actions first run");
+    XCTAssertEqual(1, performCount, @"Distinct should run if the it's the actions first run");
 
     [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
     XCTAssertEqual(1, performCount, @"Distinct should not run on the same arguments");
@@ -484,7 +484,7 @@
 }
 
 /*
- * Test preExecution operator with a nil block does not hinder the origianl action
+ * Test preExecution operator with a nil block does not hinder the original action
  */
 - (void)testPreExecutionNilBlock {
     __block BOOL didPerform = NO;
@@ -505,7 +505,7 @@
 
 /*
  * Test postExecution operator performs a UAActionPostExecutionBlock after
- * the action is performed but before the completion handler is calleds
+ * the action is performed but before the completion handler is called
  */
 - (void)testPostExecution {
     __block BOOL didPerform = NO;
@@ -529,7 +529,7 @@
     }];
 
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
-        XCTAssertTrue(postExecuteBlock, @"Post execute block is not being called beofre the completion handler is called");
+        XCTAssertTrue(postExecuteBlock, @"Post execute block is not being called before the completion handler is called");
         XCTAssertEqualObjects(result, expectedResult, @"postExecution result is unexpected");
     }];
 
@@ -537,7 +537,7 @@
 }
 
 /*
- * Test postExecution operator with a nil block does not hinder the origianl action
+ * Test postExecution operator with a nil block does not hinder the original action
  */
 - (void)testPostExecutionNilBlock {
     __block BOOL didPerform = NO;

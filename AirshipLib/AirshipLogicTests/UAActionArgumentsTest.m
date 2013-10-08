@@ -47,7 +47,7 @@
 }
 
 /*
- * Test the argumntesWithValue:withSituation factory method sets the values correctly
+ * Test the argumentsWithValue:withSituation factory method sets the values correctly
  */
 - (void)testArgumentsWithValue {
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value" withSituation:@"some-situation"];
@@ -62,7 +62,7 @@
 - (void)testPendingSpringBoardActionArgumentsNoArgs {
     NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
     XCTAssertNotNil(args, @"Empty pending arguments should still return an empty dictionary");
-    XCTAssertEqual((NSUInteger)0, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+    XCTAssertEqual((NSUInteger)0, args.count, @"Empty pending arguments should result in an empty dictionary");
 }
 
 /*
@@ -73,7 +73,7 @@
     [UAActionArguments addPendingSpringBoardAction:@"another-action" value:@"another-action-value"];
 
     NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
-    XCTAssertEqual((NSUInteger)2, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+    XCTAssertEqual((NSUInteger)2, args.count, @"There should be two pending springboard push action arguments");
 
     // Validate the first argument
     UAActionArguments *actionArgument = [args valueForKey:@"action"];
@@ -98,7 +98,7 @@
     [UAActionArguments removePendingSpringBoardAction:@"action"];
 
     NSDictionary *args = [UAActionArguments pendingSpringBoardPushActionArguments];
-    XCTAssertEqual((NSUInteger)1, args.count, @"Empty pending arguments should resullt in an empty dictionary");
+    XCTAssertEqual((NSUInteger)1, args.count, @"There should be one pending springboard argument");
 
     // Validate the second argument is still present
     UAActionArguments *anotherActionArgument = [args valueForKey:@"another-action"];

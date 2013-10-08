@@ -62,10 +62,10 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runAction:action withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
-        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did no receive the acitons results");
+        XCTAssertEqualObjects(result, finalResult, @"Runner completion handler did not receive the action's results");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
 }
 
 /**
@@ -90,7 +90,7 @@ NSString *anotherActionName = @"AnotherActionName";
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertTrue(didActionRun, @"Runner should run action if no predicate is defined");
 }
 
@@ -119,7 +119,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
 }
 
 /**
@@ -147,12 +147,12 @@ NSString *anotherActionName = @"AnotherActionName";
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertTrue(didActionRun, @"Runner should run action if predicate returns YES");
 }
 
 /**
- * Test trying to run an action form a name that is not registered
+ * Test trying to run an action from a name that is not registered
  */
 - (void)testRunActionWithNameNotRegistered {
     __block BOOL didCompletionHandlerRun = NO;
@@ -166,7 +166,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
 }
 
 /**
@@ -178,7 +178,7 @@ NSString *anotherActionName = @"AnotherActionName";
     [UAActionRunner runActions:[NSDictionary dictionary] withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
 
-        // Should return an empty aggregate action result
+        // Should return an aggregate action result
         XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
 
         NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
@@ -188,7 +188,7 @@ NSString *anotherActionName = @"AnotherActionName";
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
 }
 
 /**
@@ -221,7 +221,7 @@ NSString *anotherActionName = @"AnotherActionName";
     [UAActionRunner runActions:actionsToRun withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
 
-        // Should return an empty aggregate action result
+        // Should return an aggregate action result
         XCTAssertTrue([finalResult isKindOfClass:[UAAggregateActionResult class]], @"Running actions should return a UAAggregateActionResult");
 
         NSDictionary *resultDictionary = (NSDictionary  *)finalResult.value;
@@ -229,7 +229,7 @@ NSString *anotherActionName = @"AnotherActionName";
         XCTAssertEqual((NSUInteger) 2, resultDictionary.count, @"Action should have 2 results");
     }];
 
-    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did no run");
+    XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
 
