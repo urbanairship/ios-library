@@ -50,7 +50,7 @@
 
     NSArray *validSituations = @[UASituationForegroundPush,
                                  UASituationBackgroundPush,
-                                 UASituationForegroundPush];
+                                 UASituationLaunchedFromPush];
 
     if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
         return NO;
@@ -91,12 +91,8 @@
 
         // Badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
-        if (badgeNumber) {
-            if ([UAPush shared].autobadgeEnabled) {
-                [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
-            } else if ([pushDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
-                [pushDelegate handleBadgeUpdate:[badgeNumber intValue]];
-			}
+        if (badgeNumber && ![UAPush shared].autobadgeEnabled && [pushDelegate respondsToSelector:@selector(handleBadgeUpdate:)]) {
+            [pushDelegate handleBadgeUpdate:[badgeNumber intValue]];
         }
 
         // Sound

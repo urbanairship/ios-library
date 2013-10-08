@@ -68,5 +68,4 @@
     XCTAssertTrue(didCompletionHandlerRun, @"Completion handler was not called");
 }
 
-
 @end
