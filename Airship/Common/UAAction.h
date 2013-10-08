@@ -36,16 +36,6 @@
 typedef BOOL (^UAActionPredicate)(UAActionArguments *);
 
 /**
- * A block that defines a means of merging two UAActionResult instances into one value.
- */
-typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
-
-/**
- * A block that defines a means of tranforming one UAActionArguments to another
- */
-typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
-
-/**
  * A completion handler that signals that an action has finished executing.
  */
 
@@ -55,21 +45,6 @@ typedef void (^UAActionCompletionHandler)(UAActionResult *);
  * A block that defines the primary work performed by an action.
  */
 typedef void (^UAActionBlock)(UAActionArguments *, UAActionCompletionHandler completionHandler);
-
-/**
- * A simple void/void block typedef.
- */
-typedef void (^UAActionVoidBlock)();
-
-/**
- * A block that defines work that can be done before the action is performed.
- */
-typedef void (^UAActionPreExecutionBlock)(UAActionArguments *);
-
-/**
- * A block that defines work that can be done after the action is performed, before the final completion handler is called.
- */
-typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *);
 
 /**
  * Base class for actions, which define a modular unit of work.

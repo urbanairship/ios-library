@@ -23,8 +23,28 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #import "UAAction.h"
+
+/**
+ * A block that defines work that can be done before the action is performed.
+ */
+typedef void (^UAActionPreExecutionBlock)(UAActionArguments *);
+
+/**
+ * A block that defines work that can be done after the action is performed, before the final completion handler is called.
+ */
+typedef void (^UAActionPostExecutionBlock)(UAActionArguments *, UAActionResult *);
+
+/**
+ * A block that defines a means of merging two UAActionResult instances into one value.
+ */
+typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionResult *);
+
+/**
+ * A block that defines a means of tranforming one UAActionArguments to another
+ */
+typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
+
 
 @interface UAAction (Operators)
 

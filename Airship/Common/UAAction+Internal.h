@@ -23,6 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * A simple void/void block typedef.
+ */
+typedef void (^UAActionVoidBlock)();
 
 #import "UAAction.h"
 
