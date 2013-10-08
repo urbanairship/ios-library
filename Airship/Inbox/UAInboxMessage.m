@@ -123,7 +123,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (BOOL)isExpired {
-    return ([self.messageExpiration compare:[NSDate date]] == NSOrderedAscending);
+    if (self.messageExpiration) {
+        NSComparisonResult result = [self.messageExpiration compare:[NSDate date]];
+        return (result == NSOrderedAscending || result == NSOrderedSame);
+    }
+    
+    return NO;
 }
 
 - (BOOL)markAsRead {

@@ -423,4 +423,27 @@
     self.message.unread = YES;
 }
 
+
+/**
+ * Test isExpired
+ */
+- (void)testIsExpired {
+    NSDate *currentDate = [NSDate date];
+
+    // Mock the date to always return currentDate
+    id mockDate = [OCMockObject mockForClass:[NSDate class]];
+    [[[mockDate stub] andReturn:currentDate] date];
+
+    self.message.messageExpiration = nil;
+    XCTAssertFalse([self.message isExpired], @"A message cannnot expire if the expiration date is nil");
+
+    self.message.messageExpiration = [currentDate dateByAddingTimeInterval:1];
+    XCTAssertFalse([self.message isExpired], @"messageExpiration is after the current date");
+
+    self.message.messageExpiration = currentDate;
+    XCTAssertTrue([self.message isExpired], @"messageExpiration is exactly the current date");
+
+    self.message.messageExpiration = [currentDate dateByAddingTimeInterval:-1];
+    XCTAssertTrue([self.message isExpired], @"messageExpiration is before the current date");
+}
 @end
