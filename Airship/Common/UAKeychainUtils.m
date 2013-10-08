@@ -101,6 +101,12 @@ static NSString *_cachedDeviceID = nil;
 
 + (NSString *)getPassword:(NSString *)identifier {
 
+    if (!identifier)
+    {
+        UALOG(@"Unable to get password. The identifier for the key chain is nil.");
+        return nil;
+    }
+
     // Get password next
     NSMutableDictionary *passwordSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
@@ -127,31 +133,34 @@ static NSString *_cachedDeviceID = nil;
 }
 
 + (NSString *)getUsername:(NSString *)identifier {
+
+    if (!identifier)
+    {
+        UALOG(@"Unable to get username. The identifier for the key chain is nil.");
+        return nil;
+    }
+
+    NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
+
+    // Add search attributes
+    [attributeSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
+
+    // Add search return types
+    [attributeSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
+
+    // Get username first
+    CFDictionaryRef resultDataRef = nil;
+    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
+                                          (CFTypeRef *)&resultDataRef);
+
+    NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
+
     NSString *username = nil;
-
-    if (identifier) {
-        NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
-
-        // Add search attributes
-        [attributeSearch setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
-
-        // Add search return types
-        [attributeSearch setObject:(id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
-
-        // Get username first
-        CFDictionaryRef resultDataRef = nil;
-        OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)attributeSearch,
-                                              (CFTypeRef *)&resultDataRef);
-
-        NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
-
-
-        if (status == errSecSuccess) {
-            NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
-            if (accountValue) {
-                username = [accountValue mutableCopy];
-                //UALOG(@"Loaded Username: %@",username);
-            }
+    if (status == errSecSuccess) {
+        NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
+        if (accountValue) {
+            username = [accountValue mutableCopy];
+            //UALOG(@"Loaded Username: %@",username);
         }
     }
 
