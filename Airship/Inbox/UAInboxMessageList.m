@@ -100,6 +100,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
+    [[UAInboxDBManager shared] deleteExpiredMessages];
     NSMutableArray *savedMessages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;

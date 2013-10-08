@@ -178,6 +178,7 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     [inboxProperties addObject:[self createAttributeDescription:@"title" withType:NSStringAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"unread" withType:NSBooleanAttributeType setOptional:true]];
     [inboxProperties addObject:[self createAttributeDescription:@"messageURL" withType:NSTransformableAttributeType setOptional:true]];
+    [inboxProperties addObject:[self createAttributeDescription:@"messageExpiration" withType:NSDateAttributeType setOptional:true]];
 
     NSAttributeDescription *extraDescription = [self createAttributeDescription:@"extra" withType:NSTransformableAttributeType setOptional:true];
     [extraDescription setValueTransformerName:@"UAJSONValueTransformer"];
@@ -232,6 +233,33 @@ SINGLETON_IMPLEMENTATION(UAInboxDBManager)
     message.unread = [[dict objectForKey: @"unread"] boolValue];
     message.messageSent = [[UAUtils ISODateFormatterUTC] dateFromString:[dict objectForKey: @"message_sent"]];
     message.rawMessageObject = dict;
+
+    NSString *messageExpiration = [dict objectForKey: @"message_expiry"];
+    if (messageExpiration) {
+        message.messageExpiration = [[UAUtils ISODateFormatterUTC] dateFromString:messageExpiration];
+    } else {
+        messageExpiration = nil;
+    }
+}
+
+- (void)deleteExpiredMessages {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"UAInboxMessage"
+                                              inManagedObjectContext:self.managedObjectContext];
+    [request setEntity:entity];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"messageExpiration < %@", [NSDate date]];
+    [request setPredicate:predicate];
+
+    NSError *error = nil;
+    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+
+    for (UAInboxMessage *message in results) {
+        UA_LDEBUG(@"Deleting expired message: %@", message.messageID);
+        [self.managedObjectContext deleteObject:message];
+    }
+
+    [self saveContext];
 }
 
 - (void)deleteOldDatabaseIfExists {

@@ -76,6 +76,10 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 - (BOOL)markAsRead __attribute__((deprecated("As of version 3.0")));
 
 /**
+ * YES if the message is expired, NO otherwise
+ */
+- (BOOL)isExpired;
+/**
  * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
  *
  * This method returns null, but a callback to the UIWebView may be made via
@@ -117,6 +121,13 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 /** The date and time the message was sent (UTC) */
 @property (nonatomic, strong) NSDate *messageSent;
+
+/**
+ * The date and time the message will expire. 
+ *
+ * A nil value indicates it will never expire
+ */
+@property (nonatomic, strong) NSDate *messageExpiration;
 
 /** The message title */
 @property (nonatomic, strong) NSString *title;

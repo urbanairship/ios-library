@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @dynamic title;
 @dynamic messageBodyURL;
 @dynamic messageSent;
+@dynamic messageExpiration;
 @dynamic unread;
 @dynamic messageURL;
 @dynamic messageID;
@@ -119,6 +120,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             [weakDelegate singleMessageMarkAsReadFailed:message];
         }
     }];
+}
+
+- (BOOL)isExpired {
+    return ([self.messageExpiration compare:[NSDate date]] == NSOrderedAscending);
 }
 
 - (BOOL)markAsRead {

@@ -82,6 +82,11 @@ SINGLETON_INTERFACE(UAInboxDBManager);
 - (void)deleteMessagesWithIDs:(NSSet *)messageIDs;
 
 /**
+ * Delete any expired messages
+ */
+- (void)deleteExpiredMessages;
+
+/**
  * Retuns the set of the current message ids in the inbox
  * @return An NSSet of message ids
  */
