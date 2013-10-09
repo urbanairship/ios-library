@@ -520,6 +520,9 @@
 
     [_locationService stopReportingSignificantLocationChanges];
     XCTAssertFalse(_locationService.shouldStartReportingSignificantChange);
+
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+
     [mockStandard stopMocking];
     [mockSignificant stopMocking];
 }
@@ -744,26 +747,26 @@
 }
 
 - (void)swizzleCLLocationClassEnabledAndAuthorized {
-    NSError *locationServicesSizzleError = nil;
+    NSError *locationServicesSwizzleError = nil;
     NSError *authorizationStatusSwizzleError = nil;
 
     [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnYES)];
     [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusAuthorized)];
 
-    XCTAssertNil(locationServicesSizzleError, @"Error swizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    XCTAssertNil(locationServicesSwizzleError, @"Error swizzling locationServicesCall on CLLocation error %@", locationServicesSwizzleError.description);
     XCTAssertNil(authorizationStatusSwizzleError, @"Error swizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
     XCTAssertTrue([CLLocationManager locationServicesEnabled], @"This should be swizzled to YES");
     XCTAssertEqual(kCLAuthorizationStatusAuthorized, [CLLocationManager authorizationStatus], @"this should be kCLAuthorizationStatusAuthorized" );
 }
 
 - (void)swizzleCLLocationClassBackFromEnabledAndAuthorized {
-    NSError *locationServicesSizzleError = nil;
+    NSError *locationServicesSwizzleError = nil;
     NSError *authorizationStatusSwizzleError = nil;
 
     [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusAuthorized) withMethod:@selector(authorizationStatus)];
     [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
 
-    XCTAssertNil(locationServicesSizzleError, @"Error unsizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    XCTAssertNil(locationServicesSwizzleError, @"Error unswizzling locationServicesCall on CLLocation error %@", locationServicesSwizzleError.description);
     XCTAssertNil(authorizationStatusSwizzleError, @"Error unswizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
 }
 
