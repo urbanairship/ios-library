@@ -346,19 +346,6 @@
     [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
 }
 
-- (void)testForcePromptLocation {
-
-    [[[_mockLocationService expect] andReturnValue:OCMOCK_VALUE(NO)] isLocationServiceEnabledAndAuthorized];
-    id mockProvider = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
-    [[mockProvider expect] startReportingLocation];
-
-    _locationService.promptUserForLocationServices = YES;
-    [_locationService startReportingLocationWithProvider:mockProvider];
-    [_mockLocationService verify];
-    [mockProvider verify];
-    [mockProvider stopMocking];
-}
-
 - (void)testLocationTimeoutError {
     _locationService.bestAvailableSingleLocation = [UALocationTestUtils testLocationPDX];
     NSError *locationError = [_locationService locationTimeoutError];
@@ -514,9 +501,11 @@
     id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
 
-    // Setting this to YES is a quick way to get the startReportingLocationWithProvider: method to
-    // allow the location service to be started. 
-    _locationService.promptUserForLocationServices = YES;
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    XCTAssertTrue([UALocationService locationServicesEnabled]);
+    XCTAssertTrue([UALocationService locationServiceAuthorized]);
+    XCTAssertTrue([_locationService isLocationServiceEnabledAndAuthorized]);
 
     _locationService.standardLocationProvider = mockStandard;
     _locationService.significantChangeProvider = mockSignificant;
@@ -531,6 +520,9 @@
 
     [_locationService stopReportingSignificantLocationChanges];
     XCTAssertFalse(_locationService.shouldStartReportingSignificantChange);
+
+    [self swizzleCLLocationClassBackFromEnabledAndAuthorized];
+
     [mockStandard stopMocking];
     [mockSignificant stopMocking];
 }
@@ -755,26 +747,26 @@
 }
 
 - (void)swizzleCLLocationClassEnabledAndAuthorized {
-    NSError *locationServicesSizzleError = nil;
+    NSError *locationServicesSwizzleError = nil;
     NSError *authorizationStatusSwizzleError = nil;
 
     [self swizzleCLLocationClassMethod:@selector(locationServicesEnabled) withMethod:@selector(returnYES)];
     [self swizzleCLLocationClassMethod:@selector(authorizationStatus) withMethod:@selector(returnCLLocationStatusAuthorized)];
 
-    XCTAssertNil(locationServicesSizzleError, @"Error swizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    XCTAssertNil(locationServicesSwizzleError, @"Error swizzling locationServicesCall on CLLocation error %@", locationServicesSwizzleError.description);
     XCTAssertNil(authorizationStatusSwizzleError, @"Error swizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
     XCTAssertTrue([CLLocationManager locationServicesEnabled], @"This should be swizzled to YES");
     XCTAssertEqual(kCLAuthorizationStatusAuthorized, [CLLocationManager authorizationStatus], @"this should be kCLAuthorizationStatusAuthorized" );
 }
 
 - (void)swizzleCLLocationClassBackFromEnabledAndAuthorized {
-    NSError *locationServicesSizzleError = nil;
+    NSError *locationServicesSwizzleError = nil;
     NSError *authorizationStatusSwizzleError = nil;
 
     [self swizzleCLLocationClassMethod:@selector(returnCLLocationStatusAuthorized) withMethod:@selector(authorizationStatus)];
     [self swizzleCLLocationClassMethod:@selector(returnYES) withMethod:@selector(locationServicesEnabled)];
 
-    XCTAssertNil(locationServicesSizzleError, @"Error unsizzling locationServicesCall on CLLocation error %@", locationServicesSizzleError.description);
+    XCTAssertNil(locationServicesSwizzleError, @"Error unswizzling locationServicesCall on CLLocation error %@", locationServicesSwizzleError.description);
     XCTAssertNil(authorizationStatusSwizzleError, @"Error unswizzling authorizationStatus on CLLocation error %@", authorizationStatusSwizzleError.description);
 }
 

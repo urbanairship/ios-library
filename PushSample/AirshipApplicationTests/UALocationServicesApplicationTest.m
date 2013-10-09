@@ -235,7 +235,7 @@
 }
 
 - (void)testReportCurrentLocationShutsDownBackgroundTaskOnError {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"backgound shutdown test"];
+    _locationService = [[UALocationService alloc] initWithPurpose:@"background shutdown test"];
     id mockLocationService = [OCMockObject partialMockForObject:_locationService];
     [[[mockLocationService stub] andReturnValue:OCMOCK_VALUE(YES)] isLocationServiceEnabledAndAuthorized];
     _locationService.singleLocationProvider = [UAStandardLocationProvider providerWithDelegate:_locationService];

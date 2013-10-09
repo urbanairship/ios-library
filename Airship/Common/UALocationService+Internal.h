@@ -111,7 +111,7 @@
 // currently sets the delegate and purpose
 - (void)setCommonPropertiesOnProvider:(id <UALocationProviderProtocol>)locationProvider;
 
-// convienence method for calling enabled and authorized
+// convenience method for calling enabled and authorized
 - (BOOL)isLocationServiceEnabledAndAuthorized;
 
 // UIApplicationState observation
