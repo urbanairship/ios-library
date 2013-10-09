@@ -20,6 +20,9 @@
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
+		1F42314516C19AAC004B52C1 /* libUAirship-3.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-3.0.0.a */; };
+		1F42FDC417F4F2F800C10AE7 /* UAKablamOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FDC317F4F2F800C10AE7 /* UAKablamOverlayController.m */; };
+		1F42FDCB17F4F37C00C10AE7 /* UAKablamAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FDC917F4F37C00C10AE7 /* UAKablamAction.m */; };
 		1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1F54E02A177255780037A20E /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */; };
 		1F54E02B177255780037A20E /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
@@ -129,6 +132,12 @@
 		1D6058910D05DD3D006BFB54 /* InboxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InboxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F2B104B12DCDE700020843D /* AirshipConfig.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; fileEncoding = 4; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		1F42FDC017F4F2D000C10AE7 /* UAKablamOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAKablamOverlayController.h; path = Classes/Shared/UAKablamOverlayController.h; sourceTree = SOURCE_ROOT; };
+		1F42FDC317F4F2F800C10AE7 /* UAKablamOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAKablamOverlayController.m; path = Classes/Shared/UAKablamOverlayController.m; sourceTree = SOURCE_ROOT; };
+		1F42FDC917F4F37C00C10AE7 /* UAKablamAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKablamAction.m; sourceTree = "<group>"; };
+		1F42FDCA17F4F37C00C10AE7 /* UAKablamAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKablamAction.h; sourceTree = "<group>"; };
+		1F42FDCC17F5E9A800C10AE7 /* iOS7-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS7-stop.png"; sourceTree = "<group>"; };
+		1F42FDCE17F5EA4400C10AE7 /* iOS7-stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS7-stop@2x.png"; sourceTree = "<group>"; };
 		1F531D5114201ABC009ABE85 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		1F54E026177255750037A20E /* UABarButtonSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABarButtonSegmentedControl.h; sourceTree = "<group>"; };
 		1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABarButtonSegmentedControl.m; sourceTree = "<group>"; };
@@ -233,6 +242,10 @@
 		18A27C82125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F42FDCA17F4F37C00C10AE7 /* UAKablamAction.h */,
+				1F42FDC917F4F37C00C10AE7 /* UAKablamAction.m */,
+				1F42FDC017F4F2D000C10AE7 /* UAKablamOverlayController.h */,
+				1F42FDC317F4F2F800C10AE7 /* UAKablamOverlayController.m */,
 				18A27C84125EDD6E0045D75B /* InboxSampleAppDelegate.h */,
 				18A27C85125EDD6E0045D75B /* InboxSampleAppDelegate.m */,
 				18A27C86125EDD6E0045D75B /* InboxSampleViewController.h */,
@@ -279,6 +292,8 @@
 		18A27CA1125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				1F42FDCE17F5EA4400C10AE7 /* iOS7-stop@2x.png */,
+				1F42FDCC17F5E9A800C10AE7 /* iOS7-stop.png */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -574,6 +589,7 @@
 				1892249D127A6793000CF8D0 /* InboxSampleViewControlleriPad.xib in Resources */,
 				189224A0127A6795000CF8D0 /* Icon-Small-50.png in Resources */,
 				189224A2127A6795000CF8D0 /* MainWindow_Pad.xib in Resources */,
+				1F42FDCF17F5EA4400C10AE7 /* iOS7-stop@2x.png in Resources */,
 				E9CB35C212B89AC0002E39EA /* check.png in Resources */,
 				E9CB35C312B89AC0002E39EA /* check@2x.png in Resources */,
 				E9CB35C412B89AC0002E39EA /* down.png in Resources */,
@@ -598,6 +614,7 @@
 				1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */,
 				1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */,
 				1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */,
+				1F42FDCD17F5E9A800C10AE7 /* iOS7-stop.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,6 +648,7 @@
 				D5E60C8D12C2A86500E61EC0 /* UAInboxAlertHandler.m in Sources */,
 				1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */,
 				1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */,
+				1F42FDCB17F4F37C00C10AE7 /* UAKablamAction.m in Sources */,
 				1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */,
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
 				1F57820814182188003FA039 /* UAInboxOverlayController.m in Sources */,
@@ -638,6 +656,7 @@
 				1F54E02A177255780037A20E /* UABarButtonSegmentedControl.m in Sources */,
 				1F54E02B177255780037A20E /* UADateUtils.m in Sources */,
 				766DA4221797660C000A2842 /* UIWebView+UAAdditions.m in Sources */,
+				1F42FDC417F4F2F800C10AE7 /* UAKablamOverlayController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
