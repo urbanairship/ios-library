@@ -53,7 +53,10 @@
 #import "UAInboxUI.h"
 #import "UAUtils.h"
 
+#import "UABespokeCloseView.h"
+
 #import "UIWebView+UAAdditions.h"
+#import "UAWebViewTools.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -86,8 +89,9 @@ static NSMutableSet *overlayControllers = nil;
 + (void)showWindowInsideViewController:(UIViewController *)viewController withURL:(NSURL *)url {
     UAKablamOverlayController *overlayController = [[UAKablamOverlayController alloc] initWithParentViewController:viewController andURL:url];
     [overlayControllers addObject:overlayController];
-}
 
+    [overlayController loadURL:url];
+}
 
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
     self = [super init];
@@ -130,7 +134,7 @@ static NSMutableSet *overlayControllers = nil;
                                                  selector:@selector(orientationChanged:) 
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
         
-        [self loadURL:url];
+
     }
     
     return self;
@@ -170,23 +174,29 @@ static NSMutableSet *overlayControllers = nil;
     
     self.bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.bigPanelView.autoresizesSubviews = YES;
-    self.bigPanelView.center = CGPointMake( self.bgView.frame.size.width/2, self.bgView.frame.size.height/2);
+    self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2, self.bgView.frame.size.height/2);
     
     //add the window background
     UIView *background = [[UIView alloc] initWithFrame:CGRectInset
                            (self.bigPanelView.frame, 15, 30)];
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
+
     background.layer.borderColor = [[UIColor blackColor] CGColor];
     background.layer.borderWidth = 0.5;
     background.center = CGPointMake(self.bigPanelView.frame.size.width/2, self.bigPanelView.frame.size.height/2);
     [self.bigPanelView addSubview: background];
-    
+
+
+    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+
     //add the web view
-    int webOffset = 2;
+    int webOffset = 0;
     self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
+    self.webView.scalesPageToFit = YES;
+
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
+
     [self.bigPanelView addSubview: self.webView];
     
     [self.webView addSubview:self.loadingIndicator];
@@ -194,17 +204,25 @@ static NSMutableSet *overlayControllers = nil;
     [self.loadingIndicator show];
     
     //add the close button
-    int closeBtnOffset = 10;
-    UIImage *closeBtnImg = [UIImage imageNamed:@"iOS7-stop.png"];
+    NSUInteger closeBtnOffset = 5;
+    //UIImage *closeBtnImg = [UIImage imageNamed:@"iOS7-stop.png"];
     UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-    [closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
-    [closeBtn setFrame:CGRectMake( background.frame.origin.x + background.frame.size.width - closeBtnImg.size.width - closeBtnOffset, 
-                                  background.frame.origin.y ,
-                                  closeBtnImg.size.width + closeBtnOffset, 
-                                  closeBtnImg.size.height + closeBtnOffset)];
-    [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
-    [self.bigPanelView addSubview: closeBtn];
+
+    //[closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
+
+    [closeBtn addSubview:bespokeCloseButtonView];
+
+    [closeBtn setFrame:CGRectMake(background.frame.origin.x + background.frame.size.width - bespokeCloseButtonView.frame.size.width - closeBtnOffset,
+                                  background.frame.origin.y + closeBtnOffset ,
+                                  bespokeCloseButtonView.frame.size.width + closeBtnOffset,
+                                  bespokeCloseButtonView.frame.size.height + closeBtnOffset)];
+
+    //[bespokeCloseButtonView setFrame:closeBtn.frame];
+
+    [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+
+    [self.bigPanelView addSubview:closeBtn];
     
 }
 
@@ -215,12 +233,12 @@ static NSMutableSet *overlayControllers = nil;
         UIView *fauxView = [[UIView alloc] initWithFrame: self.bgView.bounds];
         fauxView.autoresizesSubviews = YES;
         fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.bgView addSubview: fauxView];
+        [self.bgView addSubview:fauxView];
         
         //animation options
-        UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromRight |
-        UIViewAnimationOptionAllowUserInteraction    |
-        UIViewAnimationOptionBeginFromCurrentState;
+        UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
+                                         UIViewAnimationOptionAllowUserInteraction    |
+                                         UIViewAnimationOptionBeginFromCurrentState;
         
         [self constructWindow];
         
@@ -285,14 +303,14 @@ static NSMutableSet *overlayControllers = nil;
     if ([self shouldTransition]) {
         
         //faux view
-        UIView* fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
-        [self.bgView addSubview: fauxView];
+        UIView *fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
+        [self.bgView addSubview:fauxView];
         
         //run the animation
-        UIViewAnimationOptions options = UIViewAnimationOptionTransitionFlipFromLeft |
-        UIViewAnimationOptionAllowUserInteraction    |
-        UIViewAnimationOptionBeginFromCurrentState;
-                
+        UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
+                                            UIViewAnimationOptionAllowUserInteraction    |
+                                            UIViewAnimationOptionBeginFromCurrentState;
+
         [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
             
             [self removeChildViews];
@@ -313,97 +331,7 @@ static NSMutableSet *overlayControllers = nil;
 #pragma mark UIWebViewDelegate
 
 - (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSURL *url = [request URL];
-    
-    /*
-     ua://callbackArguments:withOptions:/[<arguments>][?<dictionary>]
-     */
-    
-    if ([[url scheme] isEqualToString:@"ua"]) {
-        if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
-            [UAInboxMessage performJSDelegate:wv url:url];
-            return NO;
-        }
-    }
-    
-    // send iTunes/Phobos urls to AppStore.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) &&
-             (([[url host] isEqualToString:@"phobos.apple.com"]) ||
-              ([[url host] isEqualToString:@"itunes.apple.com"]))) {
-
-                 // Set the url scheme to http, as it could be itms which will cause the store to launch twice (undesireable)
-                 NSString *stringURL = [NSString stringWithFormat:@"http://%@%@", url.host, url.path];
-                 return ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:stringURL]];
-             }
-    
-    // send maps.google.com url or maps: to GoogleMaps.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) &&
-             (([[url host] isEqualToString:@"maps.google.com"]) ||
-              ([[url scheme] isEqualToString:@"maps"]))) {
-                 
-                 /* Do any special formatting here, for example:
-                  
-                  NSString *title = @"title";
-                  float latitude = 35.4634;
-                  float longitude = 9.43425;
-                  int zoom = 13;
-                  NSString *stringURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@@%1.6f,%1.6f&z=%d", title, latitude, longitude, zoom];
-                  
-                  */
-                 
-                 return ![[UIApplication sharedApplication] openURL:url];
-             }
-    
-    // send www.youtube.com url to YouTube.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) &&
-             ([[url host] isEqualToString:@"www.youtube.com"])) {
-        return ![[UIApplication sharedApplication] openURL:url];
-    }
-    
-    // send mailto: to Mail.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"mailto"])) {
-        
-        /* Do any special formatting here if you like, for example:
-         
-         NSString *subject = @"Message subject";
-         NSString *body = @"Message body";
-         NSString *address = @"address@domain.com";
-         NSString *cc = @"address@domain.com";
-         NSString *path = [NSString stringWithFormat:@"mailto:%@?cc=%@&subject=%@&body=%@", address, cc, subject, body];
-         NSURL *url = [NSURL URLWithString:[path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-         
-         For complex body text you may want to use CFURLCreateStringByAddingPercentEscapes.
-         
-         */
-        
-        return ![[UIApplication sharedApplication] openURL:url];
-    }
-    
-    // send tel: to Phone.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"tel"])) {
-        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
-    }
-
-    // send sms: to Messages.app
-    else if ((navigationType == UIWebViewNavigationTypeLinkClicked) && ([[url scheme] isEqualToString:@"sms"])) {
-        NSURL *validPhoneUrl = [self createValidPhoneNumberUrlFromUrl:url];
-        return ![[UIApplication sharedApplication] openURL:validPhoneUrl];
-    }
-
-    // load local file and http/https webpages in webview
-    return YES;
-}
-
-- (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url {
-
-    NSString *decodedUrlString = [url.absoluteString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSCharacterSet *characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+-.0123456789"] invertedSet];
-    NSString *strippedNumber = [[decodedUrlString componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
-
-    NSString *scheme = [decodedUrlString hasPrefix:@"sms"] ? @"sms:" : @"tel:";
-
-    return [NSURL URLWithString:[scheme stringByAppendingString:strippedNumber]];
+    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType];
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
