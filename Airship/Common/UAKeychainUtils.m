@@ -101,6 +101,11 @@ static NSString *_cachedDeviceID = nil;
 
 + (NSString *)getPassword:(NSString *)identifier {
 
+    if (!identifier) {
+        UA_LERR(@"Unable to get password. The identifier for the keychain is nil.");
+        return nil;
+    }
+
     // Get password next
     NSMutableDictionary *passwordSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
@@ -127,6 +132,12 @@ static NSString *_cachedDeviceID = nil;
 }
 
 + (NSString *)getUsername:(NSString *)identifier {
+
+    if (!identifier) {
+        UA_LERR(@"Unable to get username. The identifier for the keychain is nil.");
+        return nil;
+    }
+
     NSMutableDictionary *attributeSearch = [UAKeychainUtils searchDictionaryWithIdentifier:identifier];
 
     // Add search attributes
@@ -142,15 +153,15 @@ static NSString *_cachedDeviceID = nil;
 
     NSDictionary *resultDict = (__bridge_transfer NSDictionary *)resultDataRef;
 
-	NSString *username = nil;
-	if (status == errSecSuccess) {
-		NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
-		if (accountValue) {
-			username = [accountValue mutableCopy];
-			//UALOG(@"Loaded Username: %@",username);
-		}
-	}
-	
+    NSString *username = nil;
+    if (status == errSecSuccess) {
+        NSString *accountValue = [resultDict objectForKey:(__bridge id)kSecAttrAccount];
+        if (accountValue) {
+            username = [accountValue mutableCopy];
+            //UALOG(@"Loaded Username: %@",username);
+        }
+    }
+
 	return username;
 }
 

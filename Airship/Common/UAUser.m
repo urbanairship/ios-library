@@ -153,10 +153,14 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
 
     if (!storedUsername) {
+
         // No username object stored in the keychain for this app, so let's create it
         // but only if we indeed have a username and password to store
         if (self.username != nil && self.password != nil) {
-            [UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey];
+            if (![UAKeychainUtils createKeychainValueForUsername:self.username withPassword:self.password forIdentifier:self.appKey]) {
+                UA_LINFO(@"Save failed: unable to create keychain for username.");
+                return;
+            }
         } else {
             UA_LINFO(@"Save failed: must have a username and password.");
             return;
