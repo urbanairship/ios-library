@@ -61,18 +61,14 @@
 
     UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         continuationArguments = args;
+        didContinuationActionRun = YES;
         return completionHandler([UAActionResult resultWithValue:@"continuationResult"]);
     }];
-
-    continuationAction.onRunBlock = ^{
-        didContinuationActionRun = YES;
-    };
 
     action = [action continueWith:continuationAction];
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
-
 
     XCTAssertTrue(didContinuationActionRun, @"The continuation action should be run if the original action does not return an error.");
     XCTAssertEqualObjects(continuationArguments.value, @"originalResult", @"The continuation action should be passed a new argument with the value of the previous result");
@@ -95,10 +91,10 @@
         return completionHandler(errorResult);
     }];
 
-    UAAction *continuationAction = [[UAAction alloc] init];
-    continuationAction.onRunBlock = ^{
+    UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         didContinuationActionRun = YES;
-    };
+        completionHandler([UAActionResult none]);
+    }];
 
     action = [action continueWith:continuationAction];
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
@@ -126,167 +122,6 @@
     }];
 
     XCTAssertEqualObjects(result.value, @"originalResult", @"Continue with should ignore a nil continue with action and just return the original action's result");
-}
-
-/**
- * Tests the skip operator
- */
-- (void)testSkip {
-    __block int performCount = 0;
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler(expectedResult);
-    }];
-
-    UAAction *skipAction = [action skip:10];
-
-    // Run the skip action 10 times, should skip each time
-    for (int i = 0; i < 10; i++) {
-        [skipAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(0, performCount, @"Skip is not skipping");
-
-    // Run it 10 more times
-    for (int i = 0; i < 10; i++) {
-        [skipAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
-            XCTAssertEqualObjects(result, expectedResult, @"Skip result is unexpected");
-        }];
-    }
-
-    XCTAssertEqual(10, performCount, @"Skip should stop skipping after it skipped the n number of times.");
-}
-
-/**
- * Tests the skip operator does not skip if you try to skip 0 times
- */
-- (void)testSkipZeroTimes {
-    __block int performCount = 0;
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler([UAActionResult none]);
-    }];
-
-    UAAction *skipAction = [action skip:0];
-
-    // Run the skip action 10 times, should skip each time
-    for (int i = 0; i < 10; i++) {
-        [skipAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(10, performCount, @"Skip should not skip if its told to skip 0 times");
-}
-
-/**
- * Tests the take operator
- */
-- (void)testTake {
-    __block int performCount = 0;
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler(expectedResult);
-    }];
-
-    UAAction *takeAction = [action take:10];
-
-    // Run the take action 10 times, should take each time
-    for (int i = 0; i < 10; i++) {
-        [takeAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
-            XCTAssertEqualObjects(result, expectedResult, @"Take result is unexpected");
-        }];
-    }
-
-    XCTAssertEqual(10, performCount, @"Take is not taking");
-
-    // Run it 10 more times
-    for (int i = 0; i < 10; i++) {
-        [takeAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(10, performCount, @"Take should stop taking after it took for the n number of times");
-}
-
-/**
- * Tests the take operator never takes if you try to take 0 times
- */
-- (void)testTakeZeroTimes {
-    __block int performCount = 0;
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler([UAActionResult none]);
-    }];
-
-    UAAction *takeAction = [action take:0];
-
-    // Run the take action 10 times
-    for (int i = 0; i < 10; i++) {
-        [takeAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(0, performCount, @"Take should not take if its told to take 0 times");
-}
-
-/**
- * Tests the nth operator
- */
-- (void)testNth {
-    __block int performCount = 0;
-    UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler(expectedResult);
-    }];
-
-    UAAction *nthAction = [action nth:10];
-
-    // Run the nth action 9 times, should skip
-    for (int i = 0; i < 9; i++) {
-        [nthAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(0, performCount, @"Nth should only run on the nth run");
-
-    // Should perform on next run
-    [nthAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {
-        XCTAssertEqualObjects(result, expectedResult, @"Nth result is unexpected");
-    }];
-
-    XCTAssertEqual(1, performCount, @"Nth did not run on the nth run");
-
-    // Run it 10 more times, should skip the rest
-    for (int i = 0; i < 10; i++) {
-        [nthAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(1, performCount, @"Nth should only run once.");
-}
-
-/**
- * Tests the nth operator never runs if n = 0
- */
-- (void)testNthOnZero {
-    __block int performCount = 0;
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler([UAActionResult none]);
-    }];
-
-    UAAction *nthAction = [action nth:0];
-
-    // Run the nth action 10 times, should skip all the things
-    for (int i = 0; i < 10; i++) {
-        [nthAction runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *result) {}];
-    }
-
-    XCTAssertEqual(0, performCount, @"nth should never run on the 0 case");
 }
 
 /**
@@ -419,38 +254,6 @@
     }];
 
     XCTAssertEqualObjects(result, expectedResult, @"Mapped action operator with nil block produces unexpected results");
-}
-
-/**
- * Test distinct operator only runs if the arguments differs from the last run
- */
-- (void)testDistinct {
-    __block int performCount = 0;
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"hi" withSituation:@"some-sit"];
-
-    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        performCount++;
-        return completionHandler([UAActionResult none]);
-    }];
-
-    action = [action distinctUntilChanged];
-    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(1, performCount, @"Distinct should run if the it's the actions first run");
-
-    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(1, performCount, @"Distinct should not run on the same arguments");
-
-    args.value = @"bye";
-    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(2, performCount, @"Distinct should run if the arguments differ from the last run");
-
-    args.value = nil;
-    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(3, performCount, @"Distinct should run if the arguments differ from the last run");
-
-    [action runWithArguments:args withCompletionHandler:^(UAActionResult *actionResult) {}];
-    XCTAssertEqual(4, performCount, @"Distinct should run if the last value was nil");
 }
 
 /*

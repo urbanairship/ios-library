@@ -45,8 +45,48 @@ typedef UAActionResult * (^UAActionFoldResultsBlock)(UAActionResult *, UAActionR
  */
 typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
 
+/**
+ * A block defining a monadic bind operation.
+ */
+typedef UAAction * (^UAActionBindBlock)(UAActionBlock, UAActionPredicate);
+
+/**
+ * A block defining a monadic lift operation on the action block
+ */
+typedef UAActionBlock (^UAActionLiftBlock)(UAActionBlock);
+
+/**
+ * A block defining a monadic lift operation on the predicate block
+ */
+typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
+
 
 @interface UAAction (Operators)
+
+/**
+ * Operator for creating a monadic binding.
+ *
+ * @param bindBlock A UAActionBindBlock
+ * @return A new UAAction wrapping the receiver and binding the passed block.
+ */
+- (instancetype)bind:(UAActionBindBlock)bindBlock;
+
+/**
+ * Operator for lifting block transforming an action block and predicate, into a monadic binding.
+ *
+ * @param actionLiftBlock A UAActionLiftBlock
+ * @param predicateLiftBlock A UAActionPredicteLiftBlock
+ * @return A new UAAction wrapping the receiver, which lifts the passed blocks into a bind operation.
+ */
+- (instancetype)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock;
+
+/**
+ * Operator for lifting a block transforming an action block, into a monadic binding.
+ *
+ * @param liftBlock A UAActionLiftBlock
+ * @return A new UAAction wrapping the receiver, which lifts the passed block into a bind operation.
+ */
+- (instancetype)lift:(UAActionLiftBlock)liftBlock;
 
 /**
  * Operator for chaining two actions together in sequence.
@@ -108,39 +148,5 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @return A new UAAction wrapping the receiver that executes the postExecutionBlock when run, before performing.
  */
 - (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
-
-/**
- * Operator for limiting the number of times an action can be performed.
- *
- * @param n The maximum number of times the action should be performed. After this
- * count has been reached, running the action will no longer have any effect.
- * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
- */
-- (instancetype)take:(NSUInteger)n;
-
-/**
- * Operator for skipping execution in an initial number of runs.
- *
- * @param n The number of times the action should skip performing. Until this
- * count has been reached, running the action will not have any effect.
- * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
- */
-- (instancetype)skip:(NSUInteger)n;
-
-/**
- * Operator for limiting execution to an nth run.
- *
- * @param n The nth run on which the action should be performed, if and only if
- * this count has been reached. Otherwise, running the action will not have any effect.
- * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
- */
-- (instancetype)nth:(NSUInteger)n;
-
-/**
- * Operator for filtering out non-distinct changes in argument values.
- *
- * @return A new UAAction wrapping the receiver that filters out non-distinct changes in argument values.
- */
-- (instancetype)distinctUntilChanged;
 
 @end

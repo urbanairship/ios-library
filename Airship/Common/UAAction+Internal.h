@@ -23,11 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * A simple void/void block typedef.
- */
-typedef void (^UAActionVoidBlock)();
-
 #import "UAAction.h"
 
 @interface UAAction ()
@@ -45,15 +40,6 @@ typedef void (^UAActionVoidBlock)();
  * [UAAction acceptsArguments:]
  */
 @property(nonatomic, copy) UAActionPredicate acceptsArgumentsBlock;
-
-/**
- * A block that will be run at the beginning of
- * [UAAction runWithArguments:withCompletionHandler:]
- *
- * This property is useful for injecting custom behavior into
- * the run method when defining anonymous action operators.
- */
-@property(nonatomic, copy) UAActionVoidBlock onRunBlock;
 
 /**
  * Performs the action, with pre/post execution calls, if it accepts the provided arguments.
