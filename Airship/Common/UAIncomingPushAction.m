@@ -73,21 +73,20 @@
 	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
     if (apsDict) {
-
         // Alert
         id alert = [apsDict valueForKey:@"alert"];
-		if (alert) {
+        if (alert) {
             if ([alert isKindOfClass:[NSString class]] &&
                 [pushDelegate respondsToSelector:@selector(displayNotificationAlert:)]) {
 
                 // The alert is a single string message so we can display it
                 [pushDelegate displayNotificationAlert:alert];
-			} else if ([pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
+            } else if ([pushDelegate respondsToSelector:@selector(displayLocalizedNotificationAlert:)]) {
                 // The alert is a a dictionary with more localization details
                 // This should be customized to fit your message details or usage scenario
                 [pushDelegate displayLocalizedNotificationAlert:alert];
-			}
-		}
+            }
+        }
 
         // Badge
         NSString *badgeNumber = [apsDict valueForKey:@"badge"];
@@ -100,7 +99,7 @@
         if (soundName && [pushDelegate respondsToSelector:@selector(playNotificationSound:)]) {
             [pushDelegate playNotificationSound:[apsDict objectForKey:@"sound"]];
         }
-	}
+    }
 
 
     if (self.useFetchCompletionHandlerDelegates) {
