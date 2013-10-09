@@ -164,7 +164,10 @@
               }
           }
 
-          NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
+          NSInteger unread = [[jsonResponse objectForKey: @"badge"] integerValue];
+          if (unread < 0) {
+              unread = 0;
+          }
 
           // Delete server side deleted messages
           NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
@@ -175,7 +178,7 @@
           [[UAInboxDBManager shared] deleteExpiredMessages];
 
           if (successBlock) {
-             successBlock([[inboxDBManager getMessages] mutableCopy], unread);
+             successBlock([[inboxDBManager getMessages] mutableCopy], (NSUInteger) unread);
           } else {
               UA_LERR(@"missing successBlock");
           }
