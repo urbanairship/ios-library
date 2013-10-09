@@ -125,6 +125,11 @@ static Class _uiClass;
 
     _deviceToken = deviceToken;
 
+    // Log the device token at error level, but without logging
+    // it as an error.
+    if (uaLogLevel >= UALogLevelError) {
+        NSLog(@"Device token: %@", deviceToken);
+    }
 }
 
 #pragma mark -
