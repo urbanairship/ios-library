@@ -501,9 +501,11 @@
     id mockStandard = [OCMockObject niceMockForClass:[UAStandardLocationProvider class]];
     id mockSignificant = [OCMockObject niceMockForClass:[UASignificantChangeProvider class]];
 
-    // Setting this to YES is a quick way to get the startReportingLocationWithProvider: method to
-    // allow the location service to be started. 
-    _locationService.isLocationServiceEnabledAndAuthorized = YES;
+    [UALocationService setAirshipLocationServiceEnabled:YES];
+    [self swizzleCLLocationClassEnabledAndAuthorized];
+    XCTAssertTrue([UALocationService locationServicesEnabled]);
+    XCTAssertTrue([UALocationService locationServiceAuthorized]);
+    XCTAssertTrue([_locationService isLocationServiceEnabledAndAuthorized]);
 
     _locationService.standardLocationProvider = mockStandard;
     _locationService.significantChangeProvider = mockSignificant;
