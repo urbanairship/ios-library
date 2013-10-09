@@ -101,8 +101,7 @@ static NSString *_cachedDeviceID = nil;
 
 + (NSString *)getPassword:(NSString *)identifier {
 
-    if (!identifier)
-    {
+    if (!identifier) {
         UALOG(@"Unable to get password. The identifier for the keychain is nil.");
         return nil;
     }
@@ -134,8 +133,7 @@ static NSString *_cachedDeviceID = nil;
 
 + (NSString *)getUsername:(NSString *)identifier {
 
-    if (!identifier)
-    {
+    if (!identifier) {
         UALOG(@"Unable to get username. The identifier for the keychain is nil.");
         return nil;
     }
