@@ -4,7 +4,7 @@
 - Added Inbox message caching through UAURLProtocol.
 - Added deleting expired Inbox messages even when the device is offline.
 - Added deviceToken validation checks when being set in UAPush.
-- Fixed bug where server side deleted Inbox messages where not being deleted on the client.
+- Fixed bug where server side deleted Inbox messages were not being deleted on the client.
 - Fixed several 64 bit warnings.
 
 --------------------------
