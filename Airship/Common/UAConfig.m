@@ -231,10 +231,10 @@
     // this is useful for testing/detecting simulator
     dispatch_once(&usesProductionPred_, ^{
         if (self.profilePath) {
-            usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
+            self->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
         } else {
-            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", _inProduction);
-            usesProductionPushServer_ = _inProduction;
+            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", self->_inProduction);
+            self->usesProductionPushServer_ = self->_inProduction;
         }
     });
 
