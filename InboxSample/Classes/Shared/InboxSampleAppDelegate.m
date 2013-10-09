@@ -81,7 +81,7 @@
 
 
     UAKablamAction *kablamAction = [[UAKablamAction alloc] init];
-    [[UAActionRegistrar shared] registerAction:kablamAction forName:@"kablam"];
+    [[UAActionRegistrar shared] registerAction:kablamAction name:@"kablam" alias:@"^k"];
 
     [UAPush shared].tags = @[@"kablam"];
 
