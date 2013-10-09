@@ -141,8 +141,6 @@
 		1F42FDC317F4F2F800C10AE7 /* UAKablamOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAKablamOverlayController.m; path = Classes/Shared/UAKablamOverlayController.m; sourceTree = SOURCE_ROOT; };
 		1F42FDC917F4F37C00C10AE7 /* UAKablamAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKablamAction.m; sourceTree = "<group>"; };
 		1F42FDCA17F4F37C00C10AE7 /* UAKablamAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKablamAction.h; sourceTree = "<group>"; };
-		1F42FDCC17F5E9A800C10AE7 /* iOS7-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS7-stop.png"; sourceTree = "<group>"; };
-		1F42FDCE17F5EA4400C10AE7 /* iOS7-stop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS7-stop@2x.png"; sourceTree = "<group>"; };
 		1F531D5114201ABC009ABE85 /* libSystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libSystem.dylib; path = usr/lib/libSystem.dylib; sourceTree = SDKROOT; };
 		1F54E026177255750037A20E /* UABarButtonSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABarButtonSegmentedControl.h; sourceTree = "<group>"; };
 		1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABarButtonSegmentedControl.m; sourceTree = "<group>"; };
@@ -307,8 +305,6 @@
 		18A27CA1125EDD6E0045D75B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				1F42FDCE17F5EA4400C10AE7 /* iOS7-stop@2x.png */,
-				1F42FDCC17F5E9A800C10AE7 /* iOS7-stop.png */,
 				D5A3F5D312C15333009731BE /* iTunesArtwork */,
 				D5C75B6112BC20320041239E /* Default@2x.png */,
 				D5C75B6212BC20320041239E /* Icon.png */,
@@ -604,7 +600,6 @@
 				1892249D127A6793000CF8D0 /* InboxSampleViewControlleriPad.xib in Resources */,
 				189224A0127A6795000CF8D0 /* Icon-Small-50.png in Resources */,
 				189224A2127A6795000CF8D0 /* MainWindow_Pad.xib in Resources */,
-				1F42FDCF17F5EA4400C10AE7 /* iOS7-stop@2x.png in Resources */,
 				E9CB35C212B89AC0002E39EA /* check.png in Resources */,
 				E9CB35C312B89AC0002E39EA /* check@2x.png in Resources */,
 				E9CB35C412B89AC0002E39EA /* down.png in Resources */,
@@ -629,7 +624,6 @@
 				1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */,
 				1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */,
 				1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */,
-				1F42FDCD17F5E9A800C10AE7 /* iOS7-stop.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
