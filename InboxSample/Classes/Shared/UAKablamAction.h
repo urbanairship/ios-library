@@ -6,8 +6,8 @@
 //
 //
 
-#import "UAPushAction.h"
+#import "UAAction.h"
 
-@interface UAKablamAction : UAPushAction
+@interface UAKablamAction : UAAction
 
 @end

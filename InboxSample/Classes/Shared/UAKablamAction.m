@@ -16,6 +16,7 @@
 #import "UAKablamOverlayController.h"
 #import "UAKablamViewController.h"
 #import "UAPushActionArguments.h"
+#import "UAActionRegistrar.h"
 
 @interface UAKablamAction()
 
@@ -37,13 +38,13 @@
     return topController;
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments
+- (void)performWithArguments:(UAPushActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSString *situation = arguments.situation;
     NSURL *kablamURL = [NSURL URLWithString:arguments.value];
 
-    UIViewController *topController = [UAKablamAction topController];//((UIWindow *)[[UIApplication sharedApplication].windows firstObject]).rootViewController;
+    UIViewController *topController = [UAKablamAction topController];
 
     if ([situation isEqualToString:UASituationForegroundPush]) {
 
@@ -67,8 +68,8 @@
 
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
         // pre-cache. set pending-kablam flag
-        //TODO:
-        [UAPushActionArguments deferToSpringBoardLaunch:(UAPushActionArguments *)arguments];
+
+        [UAPushActionArguments addPendingSpringBoardAction:@"kablam" value:arguments.value];
 
         // set cachable url
         [UAURLProtocol addCachableURL:kablamURL];
@@ -81,7 +82,7 @@
     }
 }
 
-- (BOOL)canPerformWithArguments:(UAActionArguments *)arguments {
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
     NSArray *validSituations = @[UASituationForegroundPush,
                                  UASituationLaunchedFromPush,
@@ -97,7 +98,7 @@
         return NO;
     }
 
-    return [super canPerformWithArguments:arguments];
+    return [super acceptsArguments:arguments];
 }
 
 - (void)prefetchURL:(NSURL *)kablamURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -124,18 +125,6 @@
                                                   failureBlock:failureBlock];
      
      [self.connection start];
-}
-
-- (void)kablamNextStartWithURL:(NSURL *)kablamURL {
-
-}
-
-- (void)kablamIfNecessary {
-    // on start, kablam
-}
-
-- (void)removeKablam {
-    // cancel the kablam
 }
 
 @end
