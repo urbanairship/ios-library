@@ -105,7 +105,7 @@
         result = actionResult;
     }];
 
-    XCTAssertFalse(didContinuationActionRun, @"The continuation action should not run if the action original action returns an error.");
+    XCTAssertFalse(didContinuationActionRun, @"The continuation action should not run if the original action returns an error.");
     XCTAssertEqual(result, errorResult, @"Completion handler should be called with the original result if the continuation action is not called.");
 }
 
@@ -327,7 +327,7 @@
 }
 
 /**
- * Test the filter operator behavior when a predicate returns YES
+ * Test the filter operator behavior when a predicate returns NO
  */
 - (void)testFilterNoPredicate {
     __block UAActionResult *result;
