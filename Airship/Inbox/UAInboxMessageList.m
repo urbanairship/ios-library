@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxMessage.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
@@ -100,6 +100,7 @@ static UAInboxMessageList *_messageList = nil;
 #pragma mark Update/Delete/Mark Messages
 
 - (void)loadSavedMessages {
+    [[UAInboxDBManager shared] deleteExpiredMessages];
     NSMutableArray *savedMessages = [[[UAInboxDBManager shared] getMessages] mutableCopy];
     for (UAInboxMessage *msg in savedMessages) {
         msg.inbox = self;

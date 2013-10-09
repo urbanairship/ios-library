@@ -9,7 +9,7 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 
 @interface UAInboxAPIClient()
 
@@ -164,15 +164,21 @@
               }
           }
 
+          NSInteger unread = [[jsonResponse objectForKey: @"badge"] integerValue];
+          if (unread < 0) {
+              unread = 0;
+          }
+
           // Delete server side deleted messages
           NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
           [messagesToDelete minusSet:responseMessageIDs];
           [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
 
-          NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
+          // Delete any expired messages
+          [[UAInboxDBManager shared] deleteExpiredMessages];
 
           if (successBlock) {
-             successBlock([[inboxDBManager getMessages] mutableCopy], unread);
+             successBlock([[inboxDBManager getMessages] mutableCopy], (NSUInteger) unread);
           } else {
               UA_LERR(@"missing successBlock");
           }
