@@ -14,6 +14,7 @@
 #import "UAHTTPConnection.h"
 #import "UAURLProtocol.h"
 #import "UAKablamOverlayController.h"
+#import "UAKablamViewController.h"
 #import "UAPushActionArguments.h"
 
 @interface UAKablamAction()
@@ -47,18 +48,21 @@
     if ([situation isEqualToString:UASituationForegroundPush]) {
 
         // show the widget, then load
-        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
         // show the widget, then load (if not already)
-        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromSpringBoard]) {
 
         // show the widget, then load (if not already)
-        [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
