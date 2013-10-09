@@ -35,6 +35,9 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
+#import "UAKablamAction.h"
+#import "UAActionRegistrar.h"
+
 @interface InboxSampleAppDelegate()
 @property (nonatomic, strong) UAInboxDefaultJSDelegate *jsDelegate;
 @end
@@ -75,7 +78,13 @@
     [UAInboxNavUI shared].inboxParentController = self.navigationController;
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
-    
+
+
+    UAKablamAction *kablamAction = [[UAKablamAction alloc] init];
+    [[UAActionRegistrar shared] registerAction:kablamAction forName:@"kablam"];
+
+    [UAPush shared].tags = @[@"kablam"];
+
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;
