@@ -30,4 +30,11 @@
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong) NSManagedObjectModel *managedObjectModel;
 @property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+
+/**
+ * Delete any expired messages
+ */
+- (void)deleteExpiredMessages;
+
 @end

@@ -9,7 +9,7 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 
 @interface UAInboxAPIClient()
 

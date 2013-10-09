@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
 #import "UAInboxMessage.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAHTTPConnection.h"
