@@ -35,32 +35,43 @@
         return self;
     }
 
-    return bindBlock(^(UAActionArguments *args, UAActionCompletionHandler handler) {
+    UAActionBlock actionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
         [self runWithArguments:args withCompletionHandler:handler];
-    }, ^(UAActionArguments *args){
+    };
+
+    UAActionPredicate acceptsArgumentsBlock = ^(UAActionArguments *args) {
         return [self acceptsArguments:args];
-    });
+    };
+
+    UAAction *action = bindBlock(actionBlock, acceptsArgumentsBlock);
+    return action;
 }
 
 - (UAAction *)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock {
     if (!actionLiftBlock || !predicateLiftBlock) {
         return self;
     }
-    return [self bind:^(UAActionBlock actionBlock, UAActionPredicate predicate){
-        UAAction *aggregate = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
-            actionLiftBlock(actionBlock)(args, handler);
-        } acceptingArguments:^(UAActionArguments *args){
-            return predicateLiftBlock(predicate)(args);
-        }];
+
+    UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
+        UAActionBlock transformedActionBlock = actionLiftBlock(actionBlock);
+        UAActionPredicate transformedAcceptsArgumentsBlock = predicateLiftBlock(predicate);
+
+        UAAction *aggregate = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+            transformedActionBlock(args, handler);
+        } acceptingArguments: transformedAcceptsArgumentsBlock];
+
         return aggregate;
-    }];
+    };
+
+    UAAction *action = [self bind:bindBlock];
+    return action;
 }
 
 - (UAAction *)lift:(UAActionLiftBlock)liftBlock {
     if(!liftBlock) {
         return self;
     }
-    return [self lift:liftBlock transformingPredicate:^(UAActionPredicate predicate){
+    return [self lift:liftBlock transformingPredicate:^(UAActionPredicate predicate) {
         return predicate;
     }];
 }
@@ -69,8 +80,9 @@
     if (!next) {
         return self;
     }
-    return [self lift:^(UAActionBlock actionBlock){
-        return ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
             actionBlock(args, ^(UAActionResult *result){
                 if (!result.error) {
                     UAActionArguments *nextArgs = [UAActionArguments argumentsWithValue:result.value withSituation:args.situation];
@@ -82,64 +94,92 @@
                 }
             });
         };
-    }];
+
+        return transformedActionBlock;
+    };
+
+    return [self lift:liftBlock];
 }
 
 - (UAAction *)filter:(UAActionPredicate)filterBlock {
     if (!filterBlock) {
         return self;
     }
-    return [self lift:^(UAActionBlock actionBlock){
+
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock){
         return actionBlock;
-    } transformingPredicate:^(UAActionPredicate predicate){
-        return ^(UAActionArguments *args) {
+    };
+
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate){
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
             if (!filterBlock(args)) {
                 return NO;
             }
             return predicate(args);
         };
-    }];
+
+        return transformedPredicate;
+    };
+
+    return [self lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 }
 
 - (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
     if (!mapArgumentsBlock) {
         return self;
     }
-    return [self lift:^(UAActionBlock actionBlock){
-        return ^(UAActionArguments *args, UAActionCompletionHandler handler){
+
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
             actionBlock(mapArgumentsBlock(args), handler);
         };
-    } transformingPredicate:^(UAActionPredicate predicate){
-        return ^(UAActionArguments *args){
+
+        return transformedActionBlock;
+    };
+
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate) {
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
             return predicate(mapArgumentsBlock(args));
         };
-    }];
+
+        return transformedPredicate;
+    };
+
+    return [self lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 }
 
 - (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
     if (!preExecutionBlock) {
         return self;
     }
-    return [self lift:^(UAActionBlock actionBlock){
-        return ^(UAActionArguments *args, UAActionCompletionHandler handler){
+
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
             preExecutionBlock(args);
             actionBlock(args, handler);
         };
-    }];
+        return transformedActionBlock;
+    };
+
+    return [self lift:liftBlock];
 }
 
 - (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
     if (!postExecutionBlock) {
         return self;
     }
-    return [self lift:^(UAActionBlock actionBlock){
-        return ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
             actionBlock(args, ^(UAActionResult *result){
                 postExecutionBlock(args, result);
                 handler(result);
             });
         };
-    }];
+        return transformedActionBlock;
+    };
+
+    return [self lift:liftBlock];
 }
 
 @end
