@@ -27,6 +27,13 @@
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
 
+//TODO: additional error codes
+typedef enum  {
+    UAActionErrorCodeArgumentsRejected
+} UAActionErrorCode;
+
+extern NSString * const UAActionErrorDomain;
+
 
 @class UAAction;
 

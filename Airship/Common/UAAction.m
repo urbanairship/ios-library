@@ -28,6 +28,7 @@
 #import "UAActionResult.h"
 #import "UAGlobal.h"
 
+NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
 
 @implementation UAAction
 
@@ -52,8 +53,16 @@
         //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
         //message because it doesn't provide any context. should it be up to the
         //action itself to log or somehow provide its reasoning?
-        UA_LINFO("Action %@ does not accept arguments %@.", [self description], [arguments description]);
-        completionHandler([UAActionResult none]);
+        NSString *errorString = [NSString stringWithFormat:@"Action %@ does not accept arguments %@.",
+                                 [self description], [arguments description]];
+
+        UA_LINFO(@"%@", errorString);
+
+        NSError *error = [NSError errorWithDomain:UAActionErrorDomain
+                                             code:UAActionErrorCodeArgumentsRejected
+                                         userInfo:@{NSLocalizedDescriptionKey : errorString}];
+
+        completionHandler([UAActionResult error:error]);
     } else {
         [self willPerformWithArguments:arguments];
         [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
