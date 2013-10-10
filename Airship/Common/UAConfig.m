@@ -229,12 +229,13 @@
 
     // only test if a profile is available
     // this is useful for testing/detecting simulator
+    __block UAConfig *blockSelf = self;
     dispatch_once(&usesProductionPred_, ^{
         if (self.profilePath) {
-            self->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
+            blockSelf->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
         } else {
-            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", self->_inProduction);
-            self->usesProductionPushServer_ = self->_inProduction;
+            UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", blockSelf->_inProduction);
+            blockSelf->usesProductionPushServer_ = blockSelf->_inProduction;
         }
     });
 
