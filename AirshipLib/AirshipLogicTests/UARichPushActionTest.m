@@ -84,6 +84,9 @@ id mockMessageList;
     arguments.situation = UASituationLaunchedFromPush;
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accepts valid arguments in UASituationLaunchedFromPush situation");
 
+    arguments.value = @[@"RAP-id"];
+    XCTAssertTrue([action acceptsArguments:arguments], @"action should accepts an array that contains a RAP id");
+
     arguments.situation = UASituationBackgroundPush;
     XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument in UASituationBackgroundPush situation");
 
