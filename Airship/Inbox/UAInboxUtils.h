@@ -25,8 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUARichPushMessageIDKey @"_uamid"
-
 /**
  * Rich Push helper methods.
  */
