@@ -170,7 +170,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSArray * queries = [urlQuery componentsSeparatedByString:@"&"];
 
     for (int i = 0; i < [queries count]; i++) {
-        NSArray *optionPair = [[queries objectAtIndex:(unsigned long)i] componentsSeparatedByString:@"="];
+        NSArray *optionPair = [[queries objectAtIndex:(NSUInteger)i] componentsSeparatedByString:@"="];
         NSString *key = [optionPair objectAtIndex:0];
         NSString *object = [optionPair objectAtIndex:1];
         [options setObject:object forKey:key];

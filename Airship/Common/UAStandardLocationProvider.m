@@ -68,10 +68,10 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Standard location manager did update to location %@ from location %@", newLocation, oldLocation);
-    id<UALocationProviderDelegate> delegate = self.delegate;
-    BOOL doesRespond = [delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    id<UALocationProviderDelegate> strongDelegate = self.delegate;
+    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 
