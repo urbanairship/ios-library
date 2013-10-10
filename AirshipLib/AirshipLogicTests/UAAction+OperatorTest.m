@@ -46,6 +46,177 @@
 }
 
 
+/**
+ * Tests the bind operator
+ */
+
+- (void)testBind {
+
+    //we'll store our action results here for assertion
+    __block UAActionResult *blockResult;
+
+    //a completion handler that saves action results in the above variable
+    UAActionCompletionHandler saveBlockResult = ^(UAActionResult *result) {
+        blockResult = result;
+    };
+
+    //this action just finishes immediately with a result whose value is the string @"simpleResult"
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        handler([UAActionResult resultWithValue:@"simpleResult"]);
+    }];
+
+    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
+
+    //a bind block defines a transformation between action blocks, and between predicates, and returns a new action
+    UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate){
+        //the transformed action block calls the original action block, and produces a result value that concatenates
+        //the string @"to the max" on the end of the original result
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+            actionBlock(args, ^(UAActionResult *result){
+                NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
+                handler([UAActionResult resultWithValue:concatenatedValue]);
+            });
+        };
+
+        //for simplicity in this example, the transformed predicate is just the same predicate
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
+            return predicate(args);
+        };
+
+        //construct a new action, passing in the transformed action block and predicate
+        UAAction *aggregate = [UAAction actionWithBlock:transformedActionBlock acceptingArguments:transformedPredicate];
+
+        return aggregate;
+    };
+
+    //construct a new action by binding to the above bind block
+    UAAction *actionToTheMax = [action bind:bindBlock];
+
+    //now when we run the new action, we should see the concatenation in the results
+    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
+
+    //the original result isn't hardcoded into the transformation, we can take anything to the max
+    UAAction *hobo = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        handler([UAActionResult resultWithValue:@"hobo"]);
+    }];
+
+    UAAction *hoboToTheMax = [hobo bind:bindBlock];
+
+    [hoboToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"hobo to the Max!!!!", @"the result value should be 'hobo to the Max!!!!'");
+}
+
+/**
+ * Tests the lift operator
+ */
+
+- (void)testLift {
+
+    //we'll store our action results here for assertion
+    __block UAActionResult *blockResult;
+
+    //a completion handler that saves action results in the above variable
+    UAActionCompletionHandler saveBlockResult = ^(UAActionResult *result) {
+        blockResult = result;
+    };
+
+    //this action just finishes immediately with a result whose value is the string @"simpleResult"
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        handler([UAActionResult resultWithValue:@"simpleResult"]);
+    }];
+
+    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
+
+    //an action lift block defines a transformation between action blocks
+    //note: since lift depends on bind, we don't actually have to explicitly create a new action here
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        //the transformed action block calls the original action block, and produces a result value that concatenates
+        //the string @"to the max" on the end of the original result
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
+            actionBlock(args, ^(UAActionResult *result){
+                NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
+                handler([UAActionResult resultWithValue:concatenatedValue]);
+            });
+        };
+        return transformedActionBlock;
+    };
+
+    //lifting the actionLiftBlock produces a new action derived from the original one.
+    //the simple lift operator here assumes you don't want to change the predicate block, so the
+    //resulting action will inherit the receiver's argument validation logic
+    UAAction *actionToTheMax = [action lift:liftBlock];
+
+    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
+}
+
+- (void)testLiftTransformingPredicate {
+
+    //we'll store our action results here for assertion
+    __block UAActionResult *blockResult;
+
+    //a completion handler that saves action results in the above variable
+    UAActionCompletionHandler saveBlockResult = ^(UAActionResult *result) {
+        blockResult = result;
+    };
+
+    //this action just finishes immediately with a result whose value is the string @"simpleResult".
+    //we're also adding some arbitrary argument validation.  this one will reject arguments whose
+    //value is the string @"foo".
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        handler([UAActionResult resultWithValue:@"simpleResult"]);
+    } acceptingArguments:^(UAActionArguments *args){
+        return (BOOL)![args.value isEqual:@"foo"];
+    }];
+
+    [action performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
+
+    UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:nil];
+
+    XCTAssertFalse([action acceptsArguments:fooArgs], @"action should not accept arguments with value 'foo'");
+
+    //an action lift block defines a transformation between action blocks
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
+        //the transformed action block calls the original action block, and produces a result value that concatenates
+        //the string @"to the max" on the end of the original result
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
+            actionBlock(args, ^(UAActionResult *result){
+                NSString *concatenatedValue = [result.value stringByAppendingString:@" to the Max!!!!"];
+                handler([UAActionResult resultWithValue:concatenatedValue]);
+            });
+        };
+        return transformedActionBlock;
+    };
+
+    //a predicate lift block defines a transformation between predicates.
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate){
+        //this one inherits the logic of the existing predicate, and adds logic that
+        //rejects arguments whose value is the string @"bar".
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
+            BOOL accepts = predicate(args);
+            accepts = accepts && (![args.value isEqual:@"bar"]);
+            return accepts;
+        };
+
+        return transformedPredicate;
+    };
+
+    //lifting the actionLiftBlock and predicateLiftBlock produces a new action derived from the original one.
+    //both the original action and acceptsArguments logic have been preserved but extended.
+    UAAction *actionToTheMax = [action lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
+
+    [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
+
+    UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:nil];
+
+    XCTAssertFalse([actionToTheMax acceptsArguments:fooArgs], @"actionToTheMax should not accept arguments with value 'foo'");
+    XCTAssertFalse([actionToTheMax acceptsArguments:barArgs], @"actionToTheMax should not accept arguments with value 'bar'");
+}
 
 /**
  * Tests the continueWith operator
