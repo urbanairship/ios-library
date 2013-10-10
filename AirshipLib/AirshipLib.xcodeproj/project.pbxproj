@@ -337,6 +337,7 @@
 		CCDD379C1807019000B8866E /* UARichPushAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD37991807019000B8866E /* UARichPushAction.h */; };
 		CCDD379D1807019000B8866E /* UARichPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD379A1807019000B8866E /* UARichPushAction.m */; };
 		CCDD379E1807019000B8866E /* UARichPushAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD379A1807019000B8866E /* UARichPushAction.m */; };
+		CCDD37A51807157500B8866E /* UARichPushActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37A41807157500B8866E /* UARichPushActionTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -549,6 +550,7 @@
 		CCD3158317CFBD5A002E93A1 /* UAPushTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushTest.m; sourceTree = "<group>"; };
 		CCDD37991807019000B8866E /* UARichPushAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichPushAction.h; sourceTree = "<group>"; };
 		CCDD379A1807019000B8866E /* UARichPushAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARichPushAction.m; sourceTree = "<group>"; };
+		CCDD37A41807157500B8866E /* UARichPushActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARichPushActionTest.m; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -992,6 +994,7 @@
 				CC1D229F180374B9005C8393 /* UAAction+OperatorTest.m */,
 				CC1D22A118037DD9005C8393 /* UAAggregateActionResultTest.m */,
 				CC1D22A51804587F005C8393 /* UAIncomingPushActionTest.m */,
+				CCDD37A41807157500B8866E /* UARichPushActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1456,6 +1459,7 @@
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
+				CCDD37A51807157500B8866E /* UARichPushActionTest.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				BBB87D61150574DE00971CEC /* JRSwizzle.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,

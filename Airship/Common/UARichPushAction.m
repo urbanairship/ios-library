@@ -32,6 +32,22 @@
 
 @implementation UARichPushAction
 
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+
+    NSArray *validSituations = @[UASituationForegroundPush,
+                                 UASituationLaunchedFromPush];
+
+
+    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
+        return NO;
+    }
+
+    if (![arguments isKindOfClass:[UAPushActionArguments class]]) {
+        return NO;
+    }
+
+    return [UAInboxUtils getRichPushMessageIDFromValue:arguments.value] != nil;
+}
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
@@ -57,21 +73,6 @@
     completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultNewData]);
 }
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationLaunchedFromPush];
-
-
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
-        return NO;
-    }
-
-    if (![arguments isKindOfClass:[UAPushActionArguments class]]) {
-        return NO;
-    }
-
-    return [UAInboxUtils getRichPushMessageIDFromValue:arguments.value] != nil;
-}
 
 @end
