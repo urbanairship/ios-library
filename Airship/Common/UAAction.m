@@ -33,7 +33,7 @@
 
 #pragma mark init
 
-- (id)initWithBlock:(UAActionBlock)actionBlock {
+- (instancetype)initWithBlock:(UAActionBlock)actionBlock {
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;

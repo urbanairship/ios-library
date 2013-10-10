@@ -27,7 +27,7 @@
 
 @implementation UAActionResult
 
-- (id)initWithValue:(id)value
+- (instancetype)initWithValue:(id)value
                withFetchResult:(UAActionFetchResult)fetchResult {
 
     self = [super init];

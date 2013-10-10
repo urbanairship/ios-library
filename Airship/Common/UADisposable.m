@@ -31,7 +31,7 @@
 
 @implementation UADisposable
 
-- (id)initWithDisposalBlock:(UADisposalBlock)disposalBlock {
+- (instancetype)initWithDisposalBlock:(UADisposalBlock)disposalBlock {
     self = [super init];
 
     if (self) {

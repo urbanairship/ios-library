@@ -27,7 +27,7 @@
 
 @implementation UAActionRegistryEntry
 
-- (id)initWithAction:(UAAction *)action name:(NSString *)name alias:alias predicate:(UAActionPredicate)predicate {
+- (instancetype)initWithAction:(UAAction *)action name:(NSString *)name alias:alias predicate:(UAActionPredicate)predicate {
     self = [super init];
     if (self) {
         self.action = action;

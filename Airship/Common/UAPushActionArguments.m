@@ -27,7 +27,7 @@
 
 @implementation UAPushActionArguments
 
-- (id)initWithValue:(id)value
+- (instancetype)initWithValue:(id)value
                 withSituation:(NSString *)situation
                      withName:(NSString *)name
                   withPayload:(NSDictionary *)payload {
