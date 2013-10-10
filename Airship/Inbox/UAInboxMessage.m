@@ -78,7 +78,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     isBatchUpdating = YES;
 
     __block BOOL isCallbackCancelled = NO;
-    __block int unreadCount = inbox.unreadCount;
+    __block int unreadCount = theInbox.unreadCount;
 
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
