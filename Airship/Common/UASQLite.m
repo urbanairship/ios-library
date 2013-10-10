@@ -222,7 +222,7 @@
     if (columnType == SQLITE_BLOB) {
         int nbytes = sqlite3_column_bytes(stmt, (int)index);
         const char *bytes = sqlite3_column_blob(stmt, (int)index);
-        return [NSData dataWithBytes:bytes length:(unsigned long)nbytes];
+        return [NSData dataWithBytes:bytes length:(NSUInteger)nbytes];
     }
 
     return nil;
@@ -274,7 +274,7 @@
     int i = 1;
     int queryParamCount = sqlite3_bind_parameter_count(sqlStmt);
     for (; i<=queryParamCount; i++)
-        [self bindObject:[args objectAtIndex:(unsigned long)(i - 1)] toColumn:i inStatament:sqlStmt];
+        [self bindObject:[args objectAtIndex:(NSUInteger)(i - 1)] toColumn:i inStatament:sqlStmt];
 
     NSArray *result = [self convertResultSet:sqlStmt];
     sqlite3_finalize(sqlStmt);
@@ -316,7 +316,7 @@
     int i = 1;
     int queryParamCount = sqlite3_bind_parameter_count(sqlStmt);
     for (; i<=queryParamCount; i++)
-        [self bindObject:[args objectAtIndex:(unsigned long)(i - 1)] toColumn:i inStatament:sqlStmt];
+        [self bindObject:[args objectAtIndex:(NSUInteger)(i - 1)] toColumn:i inStatament:sqlStmt];
 
     BOOL success = [self executeStatament:sqlStmt];
 

@@ -141,9 +141,7 @@ UALogLevel uaLogLevel = UALogLevelError;
         return;
     }
 
-    NSString *appKey = _sharedAirship.config.appKey;
-
-    UA_LINFO(@"App Key: %@", appKey);
+    UA_LINFO(@"App Key: %@", _sharedAirship.config.appKey);
     UA_LINFO(@"App Secret: %@", _sharedAirship.config.appSecret);
     UA_LINFO(@"Server: %@", _sharedAirship.config.deviceAPIURL);
 
@@ -177,7 +175,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (config.clearKeychain) {
 
         UA_LDEBUG(@"Deleting the keychain credentials");
-        [UAKeychainUtils deleteKeychainValue:appKey];
+        [UAKeychainUtils deleteKeychainValue:_sharedAirship.config.appKey];
 
         UA_LDEBUG(@"Deleting the UA device ID");
         [UAKeychainUtils deleteKeychainValue:kUAKeychainDeviceIDKey];

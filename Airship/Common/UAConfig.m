@@ -161,8 +161,7 @@
     }
 
     if (![matchPred evaluateWithObject:self.appKey]) {
-        UA_LERR(@"Current App Key (%@) is not valid.", self.appKey
-);
+        UA_LERR(@"Current App Key (%@) is not valid.", self.appKey);
         valid = NO;
     }
 

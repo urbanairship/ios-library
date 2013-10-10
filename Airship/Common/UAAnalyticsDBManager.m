@@ -117,7 +117,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (NSArray *)getEvents:(NSUInteger)max {
     __block NSArray *result = nil;
     dispatch_sync(dbQueue, ^{
-        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInteger:(long)max]];
+        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInteger:(NSInteger)max]];
     });
     return result;
 }
