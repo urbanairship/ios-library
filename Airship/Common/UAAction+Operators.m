@@ -30,7 +30,7 @@
 
 @implementation UAAction (Operators)
 
-- (instancetype)continueWith:(UAAction *)continuationAction {
+- (UAAction *)continueWith:(UAAction *)continuationAction {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
 
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
@@ -57,7 +57,7 @@
     return aggregateAction;
 }
 
-- (instancetype)filter:(UAActionPredicate)filterBlock {
+- (UAAction *)filter:(UAActionPredicate)filterBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:completionHandler];
     }];
@@ -72,7 +72,7 @@
     return aggregateAction;
 }
 
-- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
+- (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
         if (mapArgumentsBlock) {
             [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
@@ -92,7 +92,7 @@
     return aggregateAction;
 }
 
-- (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
+- (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         if (preExecutionBlock) {
             preExecutionBlock(args);
@@ -107,7 +107,7 @@
     return aggregateAction;
 }
 
-- (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
+- (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
             if (postExecutionBlock){
@@ -124,7 +124,7 @@
     return aggregateAction;
 }
 
-- (instancetype)take:(NSUInteger)n {
+- (UAAction *)take:(NSUInteger)n {
     __block NSUInteger count = 0;
 
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
@@ -144,7 +144,7 @@
     return aggregateAction;
 }
 
-- (instancetype)skip:(NSUInteger)n {
+- (UAAction *)skip:(NSUInteger)n {
     __block NSUInteger count = 0;
 
     UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
@@ -164,7 +164,7 @@
     return aggregateAction;
 }
 
-- (instancetype)nth:(NSUInteger)n {
+- (UAAction *)nth:(NSUInteger)n {
     if (n == 0) {
         // Never run
         return [self take:0];
@@ -172,7 +172,7 @@
     return [[self take:1] skip:n-1];
 }
 
-- (instancetype)distinctUntilChanged {
+- (UAAction *)distinctUntilChanged {
     __block id lastValue = nil;
 
     UAAction *aggregateAction = [[self preExecution:^(UAActionArguments *args){

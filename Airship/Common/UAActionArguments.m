@@ -45,7 +45,7 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
 }
 
 + (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation {
-    return [[UAActionArguments alloc] initWithValue:value withSituation:situation];
+    return [[self alloc] initWithValue:value withSituation:situation];
 }
 
 + (NSDictionary *)pendingSpringBoardPushActionArguments {

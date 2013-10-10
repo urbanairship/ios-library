@@ -66,7 +66,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @return A new UAAction wrapping the receiver and the continuationAction, which chains
  * the two together when run.
  */
-- (instancetype)continueWith:(UAAction *)continuationAction;
+- (UAAction *)continueWith:(UAAction *)continuationAction;
 
 /**
  * Operator for limiting the scope of an action with a predicate block.
@@ -77,7 +77,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @param filterBlock A UAActionPredicate block.
  * @return A new UAAction wrapping the receiver and applying the supplied filterBlock to its argument validation logic.
  */
-- (instancetype)filter:(UAActionPredicate)filterBlock;
+- (UAAction *)filter:(UAActionPredicate)filterBlock;
 
 /**
  * Operator for transforming the arguments passed into an action.
@@ -85,7 +85,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @param mapArgumentsBlock A UAActionMapArgumentsBlock
  * @return A new UAAction wrapping the receiver and applying the supplied mapArgumentsBlock as a transformation on the arguments.
  */
-- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock;
+- (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock;
 
 /**
  * Operator for adding additional pre-execution logic to an action.
@@ -96,7 +96,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @param preExecutionBlock A UAActionPreExecutionBlock.
  * @return A new UAAction wrapping the receiver that executes the preExecutionBlock when run, before performing.
  */
-- (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock;
+- (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock;
 
 /**
  * Operator for adding additional post-execution logic to an action.
@@ -107,7 +107,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * @param postExecutionBlock A UAActionPostExecutionBlock.
  * @return A new UAAction wrapping the receiver that executes the postExecutionBlock when run, before performing.
  */
-- (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
+- (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
 
 /**
  * Operator for limiting the number of times an action can be performed.
@@ -116,7 +116,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * count has been reached, running the action will no longer have any effect.
  * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
-- (instancetype)take:(NSUInteger)n;
+- (UAAction *)take:(NSUInteger)n;
 
 /**
  * Operator for skipping execution in an initial number of runs.
@@ -125,7 +125,7 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * count has been reached, running the action will not have any effect.
  * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
-- (instancetype)skip:(NSUInteger)n;
+- (UAAction *)skip:(NSUInteger)n;
 
 /**
  * Operator for limiting execution to an nth run.
@@ -134,13 +134,13 @@ typedef UAActionArguments * (^UAActionMapArgumentsBlock)(UAActionArguments *);
  * this count has been reached. Otherwise, running the action will not have any effect.
  * @return A new UAAction wrapping the receiver with the supplied restrictions in place.
  */
-- (instancetype)nth:(NSUInteger)n;
+- (UAAction *)nth:(NSUInteger)n;
 
 /**
  * Operator for filtering out non-distinct changes in argument values.
  *
  * @return A new UAAction wrapping the receiver that filters out non-distinct changes in argument values.
  */
-- (instancetype)distinctUntilChanged;
+- (UAAction *)distinctUntilChanged;
 
 @end

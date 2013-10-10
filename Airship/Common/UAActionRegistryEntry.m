@@ -40,7 +40,7 @@
 }
 
 + (instancetype)entryForAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {
-    return [[UAActionRegistryEntry alloc] initWithAction:action name:name alias:alias predicate:predicate];
+    return [[self alloc] initWithAction:action name:name alias:alias predicate:predicate];
 }
 
 - (NSString *)description {
