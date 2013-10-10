@@ -27,9 +27,10 @@
 #import <MessageUI/MessageUI.h>
 
 //TODO: additional error codes
-typedef enum  {
+
+NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
     UAMailComposerActionErrorCodeMailDisabled
-} UAMailComposerActionErrorCode;
+};
 
 extern NSString * const UAMailComposerActionErrorDomain;
 

@@ -28,9 +28,10 @@
 #import "UAActionArguments.h"
 
 //TODO: additional error codes
-typedef enum  {
+
+NS_ENUM(NSInteger, UAActionErrorCode) {
     UAActionErrorCodeArgumentsRejected
-} UAActionErrorCode;
+};
 
 extern NSString * const UAActionErrorDomain;
 
