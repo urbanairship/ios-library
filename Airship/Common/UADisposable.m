@@ -51,7 +51,7 @@
 }
 
 + (instancetype) disposableWithBlock:(UADisposalBlock)disposalBlock {
-    return [[UADisposable alloc] initWithDisposalBlock:disposalBlock];
+    return [[self alloc] initWithDisposalBlock:disposalBlock];
 }
 
 @end

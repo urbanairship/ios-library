@@ -27,7 +27,7 @@
 
 @implementation UAPushActionArguments
 
-- (instancetype)initWithValue:(id)value
+- (id)initWithValue:(id)value
                 withSituation:(NSString *)situation
                      withName:(NSString *)name
                   withPayload:(NSDictionary *)payload {
@@ -49,7 +49,7 @@
                           withName:(NSString *)name
                        withPayload:(NSDictionary *)payload {
 
-    return [[UAPushActionArguments alloc] initWithValue:value
+    return [[self alloc] initWithValue:value
                                           withSituation:situation
                                                withName:name
                                             withPayload:payload];

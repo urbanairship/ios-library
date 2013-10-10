@@ -33,7 +33,7 @@
 
 #pragma mark init
 
-- (instancetype)initWithBlock:(UAActionBlock)actionBlock {
+- (id)initWithBlock:(UAActionBlock)actionBlock {
     self = [super init];
     if (self) {
         self.actionBlock = actionBlock;
@@ -96,7 +96,7 @@
 #pragma mark factory methods
 
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock {
-    return [[UAAction alloc] initWithBlock:actionBlock];
+    return [[self alloc] initWithBlock:actionBlock];
 }
 
 + (instancetype)actionWithBlock:(UAActionBlock)actionBlock acceptingArguments:(UAActionPredicate)predicateBlock {
