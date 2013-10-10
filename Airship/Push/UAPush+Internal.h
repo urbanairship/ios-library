@@ -73,6 +73,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 
 /**
+ * Notification that launched the application
+ */
+@property (nonatomic, strong) NSDictionary *launchNotification;
+
+/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
@@ -108,12 +113,6 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 + (void)land;
 
-/**
- * Notifies the push delegate of any foreground notification (alert, badge, sound)
- * for a push
- * @param notification The notification payload
- */
-- (void)notifyForegroundNotification:(NSDictionary *)notification;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are

@@ -324,6 +324,11 @@ SINGLETON_INTERFACE(UAPush);
  */
 @property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
 
+/**
+ * Notification that launched the application
+ */
+@property (nonatomic, readonly, strong) NSDictionary *launchNotification;
+
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
 ///---------------------------------------------------------------------------------------
