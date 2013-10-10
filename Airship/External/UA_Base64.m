@@ -205,12 +205,12 @@ char *UA_NewBase64Encode(
             //
             // Inner loop: turn 48 bytes into 64 base64 characters
             //
-            outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-            outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+            outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+            outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
                 | ((inputBuffer[i + 1] & 0xF0) >> 4)];
-            outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
+            outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i + 1] & 0x0F) << 2)
                 | ((inputBuffer[i + 2] & 0xC0) >> 6)];
-            outputBuffer[j++] = base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
+            outputBuffer[j++] = (char)base64EncodeLookup[inputBuffer[i + 2] & 0x3F];
         }
 
         if (lineEnd == length)
@@ -231,10 +231,10 @@ char *UA_NewBase64Encode(
         //
         // Handle the single '=' case
         //
-        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-        outputBuffer[j++] = base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
+        outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+        outputBuffer[j++] = (char)base64EncodeLookup[((inputBuffer[i] & 0x03) << 4)
             | ((inputBuffer[i + 1] & 0xF0) >> 4)];
-        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
+        outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i + 1] & 0x0F) << 2];
         outputBuffer[j++] =    '=';
     }
     else if (i < length)
@@ -242,8 +242,8 @@ char *UA_NewBase64Encode(
         //
         // Handle the double '=' case
         //
-        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
-        outputBuffer[j++] = base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
+        outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0xFC) >> 2];
+        outputBuffer[j++] = (char)base64EncodeLookup[(inputBuffer[i] & 0x03) << 4];
         outputBuffer[j++] = '=';
         outputBuffer[j++] = '=';
     }

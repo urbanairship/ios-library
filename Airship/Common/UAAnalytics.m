@@ -534,11 +534,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    NSUInteger avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
+    NSUInteger avgEventSize = self.databaseSize / (unsigned long)[[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
     int batchEventCount = 0;
     
-    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
+    NSArray *events = [[UAAnalyticsDBManager shared] getEvents:(unsigned long)self.maxBatchSize/avgEventSize];
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];
 
     for (NSMutableDictionary *event in events) {
@@ -592,7 +592,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
     
     if (batchEventCount < [events count]) {
-        events = [events subarrayWithRange:NSMakeRange(0, batchEventCount)];
+        events = [events subarrayWithRange:NSMakeRange(0, (unsigned long)batchEventCount)];
     }
     
     return events;

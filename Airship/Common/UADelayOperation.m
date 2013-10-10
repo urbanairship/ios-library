@@ -20,7 +20,7 @@
 
         [self addExecutionBlock:^{
             //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC));
+            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, seconds * (long long)NSEC_PER_SEC));
         }];
 
         self.seconds = seconds;

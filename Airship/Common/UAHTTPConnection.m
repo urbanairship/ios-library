@@ -245,11 +245,11 @@
     }
     
     int status;
-    NSMutableData *compressed = [NSMutableData dataWithLength:chunkSize];
+    NSMutableData *compressed = [NSMutableData dataWithLength:(unsigned long)chunkSize];
     do {
 
         if (strm.total_out >= [compressed length]) {
-            [compressed increaseLengthBy: chunkSize];
+            [compressed increaseLengthBy:(unsigned long)chunkSize];
         }
 
         strm.next_out = [compressed mutableBytes] + strm.total_out;
