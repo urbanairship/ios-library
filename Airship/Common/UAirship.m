@@ -36,7 +36,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UAPush.h"
 #import "UAConfig.h"
-#import "UAInboxPushHandler.h"
 
 #import "UABaseAppDelegateSurrogate.h"
 #import "UAAutoAppDelegate.h"
@@ -230,7 +229,6 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (remoteNotification && !skipNotifyPush) {
         [[UAPush shared] handleNotification:remoteNotification
                            applicationState:[UIApplication sharedApplication].applicationState];
-        [UAInboxPushHandler handleNotification:remoteNotification];
     }
 
     // Register now

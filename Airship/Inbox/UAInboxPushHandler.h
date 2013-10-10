@@ -70,12 +70,6 @@
  */
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
 
-/**
- * Handle an incoming in-app notification.  This should typically be called 
- * from the UIApplicationDelegate.
- * @param userInfo the notification as an NSDictionary
- */
-+ (void)handleNotification:(NSDictionary *)userInfo;
 
 /**
  * YES if the most recent rich push launched the app, NO otherwise.
