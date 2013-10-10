@@ -68,13 +68,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
                   withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
 
-    if (!self.unread || self.inbox.isBatchUpdating) {
+    UAInboxMessageList *theInbox = self.inbox;
+    __block BOOL isBatchUpdating = theInbox.isBatchUpdating;
+
+    if (!self.unread || isBatchUpdating) {
         return nil;
     }
 
-    self.inbox.isBatchUpdating = YES;
+    isBatchUpdating = YES;
 
     __block BOOL isCallbackCancelled = NO;
+    __block int unreadCount = inbox.unreadCount;
+
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
     }];
@@ -82,12 +87,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
-             self.inbox.unreadCount = self.inbox.unreadCount - 1;
+             unreadCount = unreadCount - 1;
              self.unread = NO;
              [[UAInboxDBManager shared] saveContext];
          }
 
-         self.inbox.isBatchUpdating = NO;
+         isBatchUpdating = NO;
 
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 
@@ -96,7 +101,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          }
      } onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %ld", self.messageID, (long)request.response.statusCode);
-         self.inbox.isBatchUpdating = NO;
+         isBatchUpdating = NO;
 
          [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 
@@ -170,8 +175,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 
     SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
-    if ([[UAInbox shared].jsDelegate respondsToSelector:selector]) {
-        NSString *script = [[UAInbox shared].jsDelegate callbackArguments:arguments withOptions:options];
+    id<UAInboxJavaScriptDelegate> jsDelegate = [UAInbox shared].jsDelegate;
+    if ([jsDelegate respondsToSelector:selector]) {
+        NSString *script = [jsDelegate callbackArguments:arguments withOptions:options];
         if (script) {
             [webView stringByEvaluatingJavaScriptFromString:script];
         }

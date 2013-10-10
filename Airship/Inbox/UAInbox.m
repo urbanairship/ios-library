@@ -122,12 +122,12 @@ static Class _uiClass;
     self = [super init];
     if (self) {
         self.messageList = [UAInboxMessageList shared];
-        
-        [self.messageList retrieveMessageListWithDelegate:nil];
+
+        [[UAInboxMessageList shared] retrieveMessageListWithDelegate:nil];
 		
 		self.pushHandler = [[UAInboxPushHandler alloc] init];
 
-        [self.messageList addObserver:self.pushHandler];
+        [[UAInboxMessageList shared] addObserver:self.pushHandler];
 
        [[NSNotificationCenter defaultCenter] addObserver:self
                                                 selector:@selector(enterForeground)

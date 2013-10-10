@@ -184,9 +184,10 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     UA_LDEBUG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     self.request.error = error;
-    if ([self.delegate respondsToSelector:self.failureSelector]) {
+    id delegate = self.delegate;
+    if ([delegate respondsToSelector:self.failureSelector]) {
         UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
-            [self.delegate performSelector:self.failureSelector withObject:_request]
+            [delegate performSelector:self.failureSelector withObject:_request]
         );
     }
 
@@ -203,10 +204,11 @@
     
     self.request.response = self.urlResponse;
     self.request.responseData = self.responseData;
+    id delegate = self.delegate;
     
-    if ([self.delegate respondsToSelector:self.successSelector]) {
+    if ([delegate respondsToSelector:self.successSelector]) {
         UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
-            [self.delegate performSelector:self.successSelector withObject:self.request]
+            [delegate performSelector:self.successSelector withObject:self.request]
         );
     }
 

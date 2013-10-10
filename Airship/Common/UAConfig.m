@@ -160,13 +160,15 @@
         UA_LWARN(@"Production App Secret is not valid.");
     }
 
-    if (![matchPred evaluateWithObject:self.appKey]) {
-        UA_LERR(@"Current App Key (%@) is not valid.", self.appKey);
+    NSString *appKey = self.appKey;
+    if (![matchPred evaluateWithObject:appKey]) {
+        UA_LERR(@"Current App Key (%@) is not valid.", appKey);
         valid = NO;
     }
 
-    if (![matchPred evaluateWithObject:self.appSecret]) {
-        UA_LERR(@"Current App Secret (%@) is not valid.", self.appSecret);
+    NSString *appSecret = self.appSecret;
+    if (![matchPred evaluateWithObject:appSecret]) {
+        UA_LERR(@"Current App Secret (%@) is not valid.", appSecret);
         valid = NO;
     }
 
