@@ -231,8 +231,11 @@
 
     // only test if a profile is available
     // this is useful for testing/detecting simulator
-    UAConfig *strongSelf = self;
+
+    __weak UAConfig *weakSelf = self;
+
     dispatch_once(&usesProductionPred_, ^{
+        UAConfig *strongSelf = weakSelf;
         if (self.profilePath) {
             strongSelf->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
         } else {

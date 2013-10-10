@@ -117,12 +117,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
-        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [weakDelegate singleMessageMarkAsReadFinished:message];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
+            [strongDelegate singleMessageMarkAsReadFinished:message];
         }
     } withFailureBlock: ^(UAInboxMessage *message){
-        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
-            [weakDelegate singleMessageMarkAsReadFailed:message];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
+            [strongDelegate singleMessageMarkAsReadFailed:message];
         }
     }];
 }
