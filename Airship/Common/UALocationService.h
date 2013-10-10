@@ -171,10 +171,6 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * This method checks the underlying Core Location service to see if a user
  * will receive a prompt requesting permission for Core Location services to run.
- *
- * @warning On iOS < 4.2 This method's default value is YES until after an initial attempt to start location services
- * has been made by UALocationService. If the user declines location services, that value will be persisted, and future attempts
- * to start location services will require that promptUserForLocationServices be set to YES
  * 
  * @return NO If Core Location services are enabled and the user has explicitly authorized location services
  * @return YES If ANY of the following are true:
@@ -184,19 +180,6 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  *   - The user has not been asked yet to allow location services. (Location services are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
  */
 + (BOOL)coreLocationWillPromptUserForPermissionToRun;
-
-/**
- * This flag will allow UA Location Services to reprompt the user to allow services
- * The user may have explicitly disallowed location services, so reprompting them may not
- * be welcome. A value of NO (default value) will ensure that the user is only prompted in the
- * case where system location services have indicated that the user has not disabled location
- * services and has not been previously prompted for location services.
- *
- * @return YES An attempt to start location services will be made even if this results in prompting
- * the user to allow location services.
- * @return NO Location services will not start if the user has previously disabled location services. 
- */
-@property (nonatomic, assign) BOOL promptUserForLocationServices;
 
 ///--------------------------------------------------------------------------------------
 /// @name Recent Activity

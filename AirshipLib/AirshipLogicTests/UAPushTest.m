@@ -721,6 +721,7 @@ NSDictionary *notification;
     [[UAPush shared] registrationPayload];
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload is not being created with expected values");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadDeviceTagsDisabled {
@@ -736,6 +737,7 @@ NSDictionary *notification;
     [[UAPush shared] registrationPayload];
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not include tags if device tags is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadAutoBadgeDisabled {
@@ -752,6 +754,7 @@ NSDictionary *notification;
 
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not be created with badge if autobadge is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 - (void)testRegistrationPayloadQuietTime {
@@ -771,6 +774,7 @@ NSDictionary *notification;
 
     XCTAssertNoThrow([registrationPayloadClassMock verify],
                      @"registrationPayload should not include quiet time if quiet time is disabled");
+    [registrationPayloadClassMock stopMocking];
 }
 
 /**

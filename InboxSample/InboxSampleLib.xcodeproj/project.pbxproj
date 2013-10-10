@@ -20,7 +20,6 @@
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
-		1F42314516C19AAC004B52C1 /* libUAirship-3.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-3.0.0.a */; };
 		1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1F54E02A177255780037A20E /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */; };
 		1F54E02B177255780037A20E /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
@@ -41,6 +40,7 @@
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
+		7664298F1805F47F00DCE6BF /* libUAirship-iOS5-3.0.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.0.0.a */; };
 		766DA4221797660C000A2842 /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 766DA4211797660C000A2842 /* UIWebView+UAAdditions.m */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
@@ -77,13 +77,6 @@
 			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
 			remoteInfo = fmdb;
 		};
-		1F4230A216C08B6A004B52C1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BB8860A7159A7E9600584445;
-			remoteInfo = AirshipLib;
-		};
 		1FC0E38217E91B8700840A52 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
@@ -97,6 +90,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7BB679061429288D00B877DB;
 			remoteInfo = AirshipLogicTests;
+		};
+		766429901805F48700DCE6BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B6E7F8381239FFD5009BC92D /* AirshipLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1FE0B73F17E2751000856C60;
+			remoteInfo = "AirshipLib-iOS5";
 		};
 		BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -194,8 +194,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7664298F1805F47F00DCE6BF /* libUAirship-iOS5-3.0.0.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
-				1F42314516C19AAC004B52C1 /* libUAirship-3.0.0.a in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
 				1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */,
@@ -477,7 +477,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				1F4230A316C08B6A004B52C1 /* PBXTargetDependency */,
+				766429911805F48700DCE6BF /* PBXTargetDependency */,
 			);
 			name = InboxSample;
 			productName = InboxSample;
@@ -644,10 +644,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1F4230A316C08B6A004B52C1 /* PBXTargetDependency */ = {
+		766429911805F48700DCE6BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = AirshipLib;
-			targetProxy = 1F4230A216C08B6A004B52C1 /* PBXContainerItemProxy */;
+			name = "AirshipLib-iOS5";
+			targetProxy = 766429901805F48700DCE6BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -656,7 +656,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -673,7 +673,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DUADEBUG";
 				OTHER_LDFLAGS = "-ObjC";
@@ -691,7 +691,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -703,7 +703,7 @@
 				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = InboxSample;
@@ -719,6 +719,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;
@@ -752,6 +753,7 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_STATIC_ANALYZER_MODE = deep;

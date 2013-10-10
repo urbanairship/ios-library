@@ -462,7 +462,7 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
 - (void)startReportingLocationWithProvider:(id<UALocationProviderProtocol>)locationProvider {
     BOOL authorizedAndEnabled = [self isLocationServiceEnabledAndAuthorized];
-    if (self.promptUserForLocationServices || authorizedAndEnabled) {
+    if (authorizedAndEnabled) {
         UALOG(@"Starting location service");
         // Delegates are set to nil when the service is shut down
         if(locationProvider.delegate == nil){

@@ -41,7 +41,7 @@
 
 + (instancetype)resultWithValue:(id)value {
 
-    return [[UAActionResult alloc] initWithValue:value
+    return [[self alloc] initWithValue:value
                                   withFetchResult:UAActionFetchResultNoData];
 
 }
@@ -49,12 +49,12 @@
 + (instancetype)resultWithValue:(id)value
                  withFetchResult:(UAActionFetchResult)fetchResult {
 
-    return [[UAActionResult alloc] initWithValue:value
+    return [[self alloc] initWithValue:value
                                   withFetchResult:fetchResult];
 }
 
 + (instancetype)none {
-    return [[UAActionResult alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
+    return [[self alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
 }
 
 + (instancetype)error:(NSError *)error {

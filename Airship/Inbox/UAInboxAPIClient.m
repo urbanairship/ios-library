@@ -9,7 +9,7 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAInboxDBManager.h"
+#import "UAInboxDBManager+Internal.h"
 
 @interface UAInboxAPIClient()
 
@@ -144,25 +144,41 @@
       } retryWhere:^(UAHTTPRequest *request){
           return NO;
       } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay){
+          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
           NSString *responseString = request.responseString;
           NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
-          UA_LTRACE(@"Retrieved message list respose: %@", responseString);
+          UA_LTRACE(@"Retrieved message list response: %@", responseString);
 
-          UAInboxDBManager *inboxDBManager = [UAInboxDBManager shared];
-          
+          NSMutableSet *responseMessageIDs = [NSMutableSet set];
+
           // Convert dictionary to objects for convenience          
           for (NSDictionary *message in [jsonResponse objectForKey:@"messages"]) {
-
               if (![inboxDBManager updateMessageWithDictionary:message]) {
                   UAInboxMessage *tmp = [inboxDBManager addMessageFromDictionary:message];
                   tmp.inbox = [UAInbox shared].messageList;
               }
+
+              NSString *messageID = [message valueForKey:@"message_id"];
+              if (messageID) {
+                  [responseMessageIDs addObject:messageID];
+              }
           }
 
-          NSUInteger unread = [[jsonResponse objectForKey: @"badge"] intValue];
+          NSInteger unread = [[jsonResponse objectForKey: @"badge"] integerValue];
+          if (unread < 0) {
+              unread = 0;
+          }
+
+          // Delete server side deleted messages
+          NSMutableSet *messagesToDelete = [[inboxDBManager messageIDs] mutableCopy];
+          [messagesToDelete minusSet:responseMessageIDs];
+          [inboxDBManager deleteMessagesWithIDs:messagesToDelete];
+
+          // Delete any expired messages
+          [[UAInboxDBManager shared] deleteExpiredMessages];
 
           if (successBlock) {
-             successBlock([[inboxDBManager getMessages] mutableCopy], unread);
+             successBlock([[inboxDBManager getMessages] mutableCopy], (NSUInteger) unread);
           } else {
               UA_LERR(@"missing successBlock");
           }

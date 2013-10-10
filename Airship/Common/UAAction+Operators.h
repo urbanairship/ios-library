@@ -69,7 +69,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param bindBlock A UAActionBindBlock
  * @return A new UAAction wrapping the receiver and binding the passed block.
  */
-- (instancetype)bind:(UAActionBindBlock)bindBlock;
+- (UAAction *)bind:(UAActionBindBlock)bindBlock;
 
 /**
  * Operator for lifting block transforming an action block and predicate, into a monadic binding.
@@ -78,7 +78,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param predicateLiftBlock A UAActionPredicteLiftBlock
  * @return A new UAAction wrapping the receiver, which lifts the passed blocks into a bind operation.
  */
-- (instancetype)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock;
+- (UAAction *)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock;
 
 /**
  * Operator for lifting a block transforming an action block, into a monadic binding.
@@ -86,7 +86,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param liftBlock A UAActionLiftBlock
  * @return A new UAAction wrapping the receiver, which lifts the passed block into a bind operation.
  */
-- (instancetype)lift:(UAActionLiftBlock)liftBlock;
+- (UAAction *)lift:(UAActionLiftBlock)liftBlock;
 
 /**
  * Operator for chaining two actions together in sequence.
@@ -106,7 +106,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @return A new UAAction wrapping the receiver and the continuationAction, which chains
  * the two together when run.
  */
-- (instancetype)continueWith:(UAAction *)continuationAction;
+- (UAAction *)continueWith:(UAAction *)continuationAction;
 
 /**
  * Operator for limiting the scope of an action with a predicate block.
@@ -117,7 +117,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param filterBlock A UAActionPredicate block.
  * @return A new UAAction wrapping the receiver and applying the supplied filterBlock to its argument validation logic.
  */
-- (instancetype)filter:(UAActionPredicate)filterBlock;
+- (UAAction *)filter:(UAActionPredicate)filterBlock;
 
 /**
  * Operator for transforming the arguments passed into an action.
@@ -125,7 +125,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param mapArgumentsBlock A UAActionMapArgumentsBlock
  * @return A new UAAction wrapping the receiver and applying the supplied mapArgumentsBlock as a transformation on the arguments.
  */
-- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock;
+- (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock;
 
 /**
  * Operator for adding additional pre-execution logic to an action.
@@ -136,7 +136,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param preExecutionBlock A UAActionPreExecutionBlock.
  * @return A new UAAction wrapping the receiver that executes the preExecutionBlock when run, before performing.
  */
-- (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock;
+- (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock;
 
 /**
  * Operator for adding additional post-execution logic to an action.
@@ -147,6 +147,6 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
  * @param postExecutionBlock A UAActionPostExecutionBlock.
  * @return A new UAAction wrapping the receiver that executes the postExecutionBlock when run, before performing.
  */
-- (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
+- (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock;
 
 @end

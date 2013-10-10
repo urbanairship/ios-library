@@ -30,7 +30,7 @@
 
 @implementation UAAction (Operators)
 
-- (instancetype)bind:(UAActionBindBlock)bindBlock {
+- (UAAction *)bind:(UAActionBindBlock)bindBlock {
     if (!bindBlock) {
         return self;
     }
@@ -42,7 +42,7 @@
     });
 }
 
-- (instancetype)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock {
+- (UAAction *)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock {
     if (!actionLiftBlock || !predicateLiftBlock) {
         return self;
     }
@@ -56,7 +56,7 @@
     }];
 }
 
-- (instancetype)lift:(UAActionLiftBlock)liftBlock {
+- (UAAction *)lift:(UAActionLiftBlock)liftBlock {
     if(!liftBlock) {
         return self;
     }
@@ -65,7 +65,7 @@
     }];
 }
 
-- (instancetype)continueWith:(UAAction *)next {
+- (UAAction *)continueWith:(UAAction *)next {
     if (!next) {
         return self;
     }
@@ -85,7 +85,7 @@
     }];
 }
 
-- (instancetype)filter:(UAActionPredicate)filterBlock {
+- (UAAction *)filter:(UAActionPredicate)filterBlock {
     if (!filterBlock) {
         return self;
     }
@@ -101,7 +101,7 @@
     }];
 }
 
-- (instancetype)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
+- (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
     if (!mapArgumentsBlock) {
         return self;
     }
@@ -116,7 +116,7 @@
     }];
 }
 
-- (instancetype)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
+- (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
     if (!preExecutionBlock) {
         return self;
     }
@@ -128,7 +128,7 @@
     }];
 }
 
-- (instancetype)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
+- (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
     if (!postExecutionBlock) {
         return self;
     }

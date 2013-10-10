@@ -49,7 +49,7 @@
                           withName:(NSString *)name
                        withPayload:(NSDictionary *)payload {
 
-    return [[UAPushActionArguments alloc] initWithValue:value
+    return [[self alloc] initWithValue:value
                                           withSituation:situation
                                                withName:name
                                             withPayload:payload];
