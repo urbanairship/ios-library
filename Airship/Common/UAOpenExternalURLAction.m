@@ -25,10 +25,15 @@
 
 #import "UAOpenExternalURLAction.h"
 
+NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions.externalurlaction";
+
 @implementation UAOpenExternalURLAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    return [arguments.value isKindOfClass:[NSURL class]] || [arguments.value isKindOfClass:[NSString class]];
+    if ([arguments.value isKindOfClass:[NSString class]]) {
+        return [NSURL URLWithString:arguments.value] != nil;
+    }
+    return [arguments.value isKindOfClass:[NSURL class]];
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
