@@ -37,6 +37,7 @@
 
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
+    self.emptyArgs.name = @"emptyArgs";
 
     [super setUp];
 }
@@ -56,12 +57,12 @@
     __block UAActionArguments *continuationArguments;
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
-        return completionHandler([UAActionResult resultWithValue:@"originalResult"]);
+        completionHandler([UAActionResult resultWithValue:@"originalResult"]);
     }];
 
     UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         continuationArguments = args;
-        return completionHandler([UAActionResult resultWithValue:@"continuationResult"]);
+        completionHandler([UAActionResult resultWithValue:@"continuationResult"]);
     }];
 
     continuationAction.onRunBlock = ^{
@@ -69,13 +70,16 @@
     };
 
     action = [action continueWith:continuationAction];
+
+    UAActionArguments *originalArgs = self.emptyArgs;
+
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult){
         result = actionResult;
     }];
 
-
     XCTAssertTrue(didContinuationActionRun, @"The continuation action should be run if the original action does not return an error.");
     XCTAssertEqualObjects(continuationArguments.value, @"originalResult", @"The continuation action should be passed a new argument with the value of the previous result");
+    XCTAssertEqualObjects(continuationArguments.name, originalArgs.name, @"The continuation action should be passed the original arguments' name in its arguments");
     XCTAssertEqualObjects(result.value, @"continuationResult", @"Running a continuation action should call completion handler with the result from the continuation action");
 }
 

@@ -44,11 +44,6 @@
                        withPayload:(NSDictionary *)payload;
 
 /**
- * The name under which the action is registered.
- */
-@property(nonatomic, copy) NSString *name;
-
-/**
  * The full push payload.
  */
 @property(nonatomic, strong) NSDictionary *payload;
