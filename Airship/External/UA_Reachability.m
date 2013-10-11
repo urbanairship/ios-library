@@ -198,7 +198,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	{
 		retVal = UA_ReachableViaWiFi;	
 	}
-	return (UA_NetworkStatus)retVal;
+	return retVal;
 }
 
 - (NetworkStatus) networkStatusForFlags: (SCNetworkReachabilityFlags) flags
@@ -239,7 +239,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 		//     is using the CFNetwork (CFSocketStream?) APIs.
 		retVal = UA_ReachableViaWWAN;
 	}
-	return (UA_NetworkStatus)retVal;
+	return retVal;
 }
 
 - (BOOL) connectionRequired;

@@ -231,7 +231,7 @@
 
     z_stream strm;
     
-    int chunkSize = 32768;// 32K chunks
+    NSUInteger chunkSize = 32768;// 32K chunks
     
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -245,11 +245,11 @@
     }
     
     int status;
-    NSMutableData *compressed = [NSMutableData dataWithLength:(NSUInteger)chunkSize];
+    NSMutableData *compressed = [NSMutableData dataWithLength:chunkSize];
     do {
 
         if (strm.total_out >= [compressed length]) {
-            [compressed increaseLengthBy:(NSUInteger)chunkSize];
+            [compressed increaseLengthBy:chunkSize];
         }
 
         strm.next_out = [compressed mutableBytes] + strm.total_out;

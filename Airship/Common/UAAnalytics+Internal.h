@@ -28,20 +28,20 @@
 #import "UAAnalytics.h"
 
 //total size in bytes that the event queue is allowed to grow to.
-#define kMaxTotalDBSizeBytes (NSInteger)5*1024*1024 // local max of 5MB
-#define kMinTotalDBSizeBytes (NSInteger)10*1024     // local min of 10KB
+#define kMaxTotalDBSizeBytes (NSUInteger)5*1024*1024 // local max of 5MB
+#define kMinTotalDBSizeBytes (NSUInteger)10*1024     // local min of 10KB
 
 // total size in bytes that a given event post is allowed to send.
-#define kMaxBatchSizeBytes (NSInteger)500*1024      // local max of 500KB
-#define kMinBatchSizeBytes (NSInteger)1024          // local min of 1KB
+#define kMaxBatchSizeBytes (NSUInteger)500*1024      // local max of 500KB
+#define kMinBatchSizeBytes (NSUInteger)1024          // local min of 1KB
 
 // maximum amount of time in seconds that events should queue for
-#define kMaxWaitSeconds (NSInteger)14*24*3600      // local max of 14 days
-#define kMinWaitSeconds (NSInteger)7*24*3600       // local min of 7 days
+#define kMaxWaitSeconds (NSUInteger)14*24*3600      // local max of 14 days
+#define kMinWaitSeconds (NSUInteger)7*24*3600       // local min of 7 days
 
 // The actual amount of time in seconds that elapse between event-server posts
-#define kMinBatchIntervalSeconds (NSInteger)60        // local min of 60s
-#define kMaxBatchIntervalSeconds (NSInteger)7*24*3600  // local max of 7 days
+#define kMinBatchIntervalSeconds (NSUInteger)60        // local min of 60s
+#define kMaxBatchIntervalSeconds (NSUInteger)7*24*3600  // local max of 7 days
 
 // Minimum amount of time between background location events.
 #define kMinBackgroundLocationIntervalSeconds 900 // 900 seconds = 15 minutes
@@ -70,24 +70,24 @@
  * The maximum size in bytes that the event queue is allowed
  * to grow to.
  */
-@property (nonatomic, assign) NSInteger maxTotalDBSize;
+@property (nonatomic, assign) NSUInteger maxTotalDBSize;
 
 /**
  * The maximum size in bytes that a given event post is allowed
  * to send.
  */
-@property (nonatomic, assign) NSInteger maxBatchSize;
+@property (nonatomic, assign) NSUInteger maxBatchSize;
 
 /**
  * The maximum amount of time in seconds that events should queue for.
  */
-@property (nonatomic, assign) NSInteger maxWait;
+@property (nonatomic, assign) NSUInteger maxWait;
 
 /**
  * The actual amount of time in seconds that elapse between
  * event-server posts.
  */
-@property (nonatomic, assign) NSInteger minBatchInterval;
+@property (nonatomic, assign) NSUInteger minBatchInterval;
 
 /**
  * The size of the database.

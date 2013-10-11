@@ -34,7 +34,7 @@
 //Enqueues two operations, first an operation that sleeps for the specified number of seconds, and next
 //a continuation operation with the former as a dependency. Useful for scheduling retries.
 - (void)sleepForSeconds:(NSUInteger)seconds withContinuation:(UAHTTPConnectionOperation *)continuation {
-    UADelayOperation *delay = [UADelayOperation operationWithDelayInSeconds:(NSInteger)seconds];
+    UADelayOperation *delay = [UADelayOperation operationWithDelayInSeconds:seconds];
     [continuation addDependency:delay];
 
     [self.queue addOperation:delay];

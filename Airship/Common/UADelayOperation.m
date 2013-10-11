@@ -2,7 +2,7 @@
 #import "UADelayOperation.h"
 
 @interface UADelayOperation()
-@property(nonatomic, assign) NSInteger seconds;
+@property(nonatomic, assign) NSTimeInterval seconds;
 #if OS_OBJECT_USE_OBJC
 @property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
 #else
@@ -12,7 +12,7 @@
 
 @implementation UADelayOperation
 
-- (id)initWithDelayInSeconds:(NSInteger)seconds {
+- (id)initWithDelayInSeconds:(NSTimeInterval)seconds {
     self = [super init];
     if (self) {
         self.semaphore = dispatch_semaphore_create(0);
@@ -20,7 +20,7 @@
 
         [self addExecutionBlock:^{
             //dispatch time is calculated as nanoseconds delta offset
-            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (int64_t)((unsigned long long)seconds * NSEC_PER_SEC)));
+            dispatch_semaphore_wait(_self.semaphore, dispatch_time(DISPATCH_TIME_NOW, (seconds * NSEC_PER_SEC)));
         }];
 
         self.seconds = seconds;
@@ -40,7 +40,7 @@
     #endif
 }
 
-+ (id)operationWithDelayInSeconds:(NSInteger)seconds {
++ (id)operationWithDelayInSeconds:(NSTimeInterval)seconds {
     return [[UADelayOperation alloc] initWithDelayInSeconds:seconds];
 }
 
