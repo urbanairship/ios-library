@@ -29,8 +29,8 @@
 #import "UAUser.h"
 #import "UAUtils.h"
 #import "UA_Reachability.h"
-#import "UAInboxUtils.h"
 #import "UAPush.h"
+#import "UAInboxUtils.h"
 
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
@@ -252,11 +252,11 @@
 }
 
 - (void)gatherIndividualData:(NSDictionary *)context {
-
-    [UAInboxUtils getRichPushMessageIDFromNotification:context withAction:^(NSString *richPushId){
+    NSString *richPushId = [UAInboxUtils getRichPushMessageIDFromNotification:context];
+    if (richPushId) {
         [self addDataWithValue:richPushId forKey:@"rich_push_id"];
-    }];
-    
+    }
+
     //Add the std push id, if present, else create a UUID
     NSString *pushId = [context objectForKey:@"_"];
     if (pushId) {

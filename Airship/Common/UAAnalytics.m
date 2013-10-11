@@ -176,10 +176,11 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self.session removeObjectForKey:@"launched_from_push_id"];
     }
 
-    [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo withAction:^(NSString *richPushId){
-        [self.session setValue:richPushId forKey:@"launched_from_rich_push_id"];
-    }];
-    
+    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo];
+    if (richPushID) {
+        [self.session setValue:richPushID forKey:@"launched_from_rich_push_id"];
+    }
+
     self.notificationUserInfo = nil;
     
     // check enabled notification types

@@ -26,6 +26,7 @@
 #import "UAActionRegistrar+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
+#import "UAIncomingRichPushAction.h"
 
 @implementation UAActionRegistrar
 
@@ -95,6 +96,9 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 - (void)registerDefaultActions {
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
     [self registerAction:incomingPushAction name:kUAIncomingPushActionRegistryName];
+
+    UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
+    [self registerAction:richPushAction name:kUARichPushMessageIDKey];
 }
 
 - (void)clearRegistryForName:(NSString *)name {

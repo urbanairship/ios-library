@@ -28,7 +28,6 @@
 #import "UAirship.h"
 
 #import "UAInbox.h"
-#import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
@@ -36,36 +35,6 @@
 
 @implementation UAInboxPushHandler
 
-
-+ (BOOL)isApplicationActive {
-    return ([UIApplication sharedApplication].applicationState == UIApplicationStateActive);
-}
-
-+ (void)handleNotification:(NSDictionary *)userInfo{
-
-    UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
-    
-    [UAInboxUtils getRichPushMessageIDFromNotification:userInfo withAction:^(NSString *richPushId){
-        UA_LDEBUG(@"Received push for rich message id %@", richPushId);
-        handler.viewingMessageID = richPushId;
-
-        //if the app is in the foreground, let the UI class decide how it
-        //wants to respond to the incoming push
-        if ([self isApplicationActive]) {
-            [handler.delegate richPushNotificationArrived:userInfo];
-        }
-
-        //otherwise, load the message list
-        else {
-            //this will result in calling loadLaunchMessage on the UI class
-            //once the request is complete
-            handler.hasLaunchMessage = YES;
-            [handler.delegate applicationLaunchedWithRichPushNotification:userInfo];
-        }
-
-        [[UAInbox shared].messageList retrieveMessageListWithDelegate:handler];
-    }];
-}
 
 - (void)messageListLoadSucceeded {
 

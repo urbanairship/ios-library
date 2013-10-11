@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,24 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxUtils.h"
+#import <Foundation/Foundation.h>
+#import "UAAction.h"
 
 #define kUARichPushMessageIDKey @"_uamid"
 
-@implementation UAInboxUtils
-
-+ (NSString *)getRichPushMessageIDFromNotification:(NSDictionary *)notification {
-    // Get the rich push ID, which can be sent as a one-element array or a string
-    return [self getRichPushMessageIDFromValue:[notification objectForKey:kUARichPushMessageIDKey]];
-}
-
-+ (NSString *)getRichPushMessageIDFromValue:(id)richPushValue {
-    id richPushID = richPushValue;
-    if ([richPushID isKindOfClass:[NSArray class]]) {
-        richPushID = [(NSArray *)richPushID firstObject];
-    }
-
-    return [richPushID isKindOfClass:[NSString class]] ? richPushID : nil;
-}
+@interface UAIncomingRichPushAction : UAAction
 
 @end

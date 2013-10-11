@@ -27,7 +27,6 @@
 
 #import "UAGlobal.h"
 #import "UAPush.h"
-#import "UAInboxPushHandler.h"
 
 @implementation UAAutoAppDelegate
 
@@ -44,20 +43,12 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-
     UA_LINFO(@"Received remote notification: %@", userInfo);
-
-    // Fire the handlers for both regular and rich push
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-    [UAInboxPushHandler handleNotification:userInfo];
 }
 
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    if (application.applicationState != UIApplicationStateBackground) {
-        UA_LINFO(@"Received remote notification: %@", userInfo);
-        [UAInboxPushHandler handleNotification:userInfo];
-    }
-
+    UA_LINFO(@"Received remote notification: %@", userInfo);
     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState fetchCompletionHandler:completionHandler];
 }
 
