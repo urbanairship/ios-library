@@ -72,7 +72,7 @@ typedef UAActionPredicate (^UAActionPredicateLiftBlock)(UAActionPredicate);
 - (UAAction *)bind:(UAActionBindBlock)bindBlock;
 
 /**
- * Operator for lifting block transforming an action block and predicate, into a monadic binding.
+ * Operator for lifting a block transforming an action block and predicate, into a monadic binding.
  *
  * @param actionLiftBlock A UAActionLiftBlock
  * @param predicateLiftBlock A UAActionPredicteLiftBlock
