@@ -534,7 +534,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         return nil;
     }
 
-    NSUInteger avgEventSize = self.databaseSize / (NSUInteger)[[UAAnalyticsDBManager shared] eventCount];
+    NSUInteger avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
     int batchEventCount = 0;
     

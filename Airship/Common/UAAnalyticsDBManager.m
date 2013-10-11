@@ -175,7 +175,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     [self deleteBySessionId:sessionId];
 }
 
-- (NSInteger)eventCount {
+- (NSUInteger)eventCount {
     
     __block NSArray *results = nil;
     dispatch_sync(dbQueue, ^{
@@ -189,7 +189,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         if ([count isKindOfClass:[NSNull class]]) {
             return 0;
         }
-        return [count intValue];
+        return [count unsignedIntValue];
     }
 }
 
