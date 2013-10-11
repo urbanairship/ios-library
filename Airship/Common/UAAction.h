@@ -27,6 +27,14 @@
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
 
+//TODO: additional error codes
+
+NS_ENUM(NSInteger, UAActionErrorCode) {
+    UAActionErrorCodeArgumentsRejected
+};
+
+extern NSString * const UAActionErrorDomain;
+
 
 @class UAAction;
 

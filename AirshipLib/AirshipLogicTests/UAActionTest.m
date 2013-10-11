@@ -175,6 +175,8 @@
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNoData, @"runWithArguments:withCompletionHandler: should default to calling completion handler with UAActionFetchResultNoData");
 
     XCTAssertTrue(onRunBlockRan, @"onRunBlock should still be called even if the action is unable to accept the arguments");
+
+    XCTAssertNotNil(blockResult.error, @"runWithArguments:withCompletionHandler: should default to calling completion handler with an error");
 }
 
 @end
