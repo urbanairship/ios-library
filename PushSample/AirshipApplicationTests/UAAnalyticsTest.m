@@ -330,14 +330,14 @@
     _analytics.config.analyticsEnabled = YES;
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)0L)] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)0L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.databaseSize = 0;
     [mockDBManger stopMocking];
 
     mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)5L)] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)5L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     [mockDBManger stopMocking];
 }
@@ -346,7 +346,7 @@
 
     _analytics.config.analyticsURL = @"cats";
     id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSInteger)5L)] eventCount];
+    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)5L)] eventCount];
 
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
