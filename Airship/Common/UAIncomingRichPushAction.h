@@ -26,8 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 
-#define kUARichPushMessageIDKey @"_uamid"
-
 @interface UAIncomingRichPushAction : UAAction
 
 @end

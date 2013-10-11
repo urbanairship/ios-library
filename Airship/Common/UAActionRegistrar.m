@@ -27,8 +27,10 @@
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
 #import "UAIncomingRichPushAction.h"
+#import "UAOpenExternalURLAction.h"
 
 @implementation UAActionRegistrar
+
 
 SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
@@ -94,11 +96,19 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 }
 
 - (void)registerDefaultActions {
+    // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
     [self registerAction:incomingPushAction name:kUAIncomingPushActionRegistryName];
 
+    // Incoming RAP action
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
-    [self registerAction:richPushAction name:kUARichPushMessageIDKey];
+    [self registerAction:richPushAction name:kUAIncomingRichPushActionRegistryName];
+
+    // Open external URL action
+    UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
+    [self registerAction:urlAction
+                    name:kUAOpenExternalURLActionDefaultRegistryName
+                   alias:kUAOpenExternalURLActionDefaultRegistryAlias];
 }
 
 - (void)clearRegistryForName:(NSString *)name {
