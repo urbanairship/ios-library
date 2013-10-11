@@ -45,6 +45,134 @@
     [super tearDown];
 }
 
+/**
+ * Tests that bind conforms to the three monad laws
+ */
+
+- (void)testMonadLaws {
+
+    //we'll store our action results here for assertion
+    //there are two of them so we can compare the results of two different (equivalent) actions
+    __block UAActionResult *blockResult;
+    __block UAActionResult *blockResult2;
+
+    //this action just finishes immediately with a result whose value is the string @"simpleResult"
+    UAActionBlock actionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+        handler([UAActionResult resultWithValue:@"simpleResult"]);
+    };
+
+    //a simple predicate that is always true
+    UAActionPredicate predicate = ^(UAActionArguments *args) {
+        return YES;
+    };
+
+    //since our anonymous action constructor is equivalent to the "wrap" function, define it here as a function
+    typedef UAAction * (^UAActionWrapBlock)(UAActionBlock, UAActionPredicate);
+
+    UAActionWrapBlock wrap = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
+        return [UAAction actionWithBlock:actionBlock acceptingArguments:predicate];
+    };
+
+    /*
+
+     Left unit: wrap acts as neutral element of bind
+
+     i.e. bind(wrap(x), f) == f(x)
+
+     */
+
+    UAAction *action = wrap(actionBlock, predicate);
+
+    UAActionBindBlock bangBindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
+            actionBlock(args, ^(UAActionResult *result){
+                handler([UAActionResult resultWithValue:[result.value stringByAppendingString:@"!"]]);
+            });
+        };
+
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
+            return predicate(args);
+        };
+
+        return [UAAction actionWithBlock:transformedActionBlock acceptingArguments:transformedPredicate];
+    };
+
+    UAAction *foo = [action bind:bangBindBlock];
+
+    [foo runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+        blockResult = result;
+    }];
+
+    UAAction *bar = bangBindBlock(actionBlock, predicate);
+
+    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+        blockResult2 = result;
+    }];
+
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult!", @"the result value of foo should be 'simpleResult!'");
+    XCTAssertEqualObjects(blockResult2.value, @"simpleResult!", @"the result value of bar should be 'simpleResult!'");
+
+    /*
+
+     Right unit: wrap acts as neutral element of bind
+
+     i.e. bind(wrap(x), wrap) == wrap(x)
+
+     */
+
+    blockResult = nil;
+    blockResult2 = nil;
+
+    foo = [wrap(actionBlock, predicate) bind:wrap];
+    bar = wrap(actionBlock, predicate);
+
+    [foo runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+        blockResult = result;
+    }];
+
+    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+        blockResult2 = result;
+    }];
+
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value of foo should be 'simpleResult'");
+    XCTAssertEqualObjects(blockResult2.value, @"simpleResult", @"the result value of bar should be 'simpleResult'");
+
+    /*
+
+     Associative: chaining bind blocks has the same effect as nesting them
+
+     i.e. bind(bind(x, f), g)
+
+     ==
+
+     bind(x, function(y) {
+        return bind(f(y), g)
+     }
+
+     */
+
+    blockResult = nil;
+    blockResult2= nil;
+
+    bar = [[foo bind:bangBindBlock] bind:bangBindBlock];
+
+    UAActionBindBlock nestedBind = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
+        return [bangBindBlock(actionBlock, predicate) bind:bangBindBlock];
+    };
+
+    UAAction *baz = [foo bind:nestedBind];
+
+    [bar runWithArguments:nil withCompletionHandler:^(UAActionResult *result) {
+        blockResult = result;
+    }];
+
+    [baz runWithArguments:nil withCompletionHandler:^(UAActionResult *result) {
+        blockResult2 = result;
+    }];
+
+    XCTAssertEqualObjects(blockResult.value, @"simpleResult!!", @"the result value of foo should be 'simpleResult!!'");
+    XCTAssertEqualObjects(blockResult2.value, @"simpleResult!!", @"the result value of bar should be 'simpleResult!!'");
+}
 
 /**
  * Tests the bind operator
