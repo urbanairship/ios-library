@@ -38,6 +38,7 @@
     if (entry) {
         if (!entry.predicate || entry.predicate(arguments)) {
             UA_LINFO("Running action %@", actionName);
+            arguments.name = actionName;
             [self runAction:entry.action withArguments:arguments withCompletionHandler:completionHandler];
         } else {
             UA_LINFO("Not running action %@ because of predicate.", actionName);
@@ -90,6 +91,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
         };
 
         UAActionArguments *args = [actions objectForKey:actionName];
+        args.name = actionName;
 
         [self runActionWithName:actionName
                       withArguments:args withCompletionHandler:handler];

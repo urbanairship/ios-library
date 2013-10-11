@@ -38,6 +38,7 @@
             if (!selfResult.error && continuationAction) {
                 UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult.value
                                                                               withSituation:args.situation];
+                continuationArgs.name = args.name;
 
                 [continuationAction runWithArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
                     completionHandler(continuationResult);

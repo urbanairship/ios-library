@@ -104,4 +104,9 @@ extern NSString * const UASituationRichPushAction;
  */
 @property(nonatomic, strong) id value;
 
+/**
+ * The name the action was invoked with.
+ */
+@property(nonatomic, copy) NSString *name;
+
 @end
