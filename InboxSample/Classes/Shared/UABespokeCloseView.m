@@ -1,10 +1,27 @@
-//
-//  UICloseView.m
-//  InboxSampleLib
-//
-//  Created by Jeff Towle on 10/3/13.
-//
-//
+/*
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UABespokeCloseView.h"
 
@@ -13,8 +30,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
-        self.opaque = NO;
+        self.opaque = NO;//peek through around the circle!
     }
     return self;
 }
@@ -23,71 +39,43 @@
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
-    // Drawing code
 
-    // Create an oval shape to draw.
-
-    //an iOS7y blue
+    //an iOS7y blue: 0x105efb
     UIColor *funBlue = [UIColor colorWithRed:0.062 green:0.368 blue:0.984 alpha:1.0];
 
-    //105efb
-
+    // draw a circle
     CGContextRef context = UIGraphicsGetCurrentContext();
-//
-//    UIColor *redColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:0.5];
-//
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    //CGContextFillRect(context, self.bounds);
     CGContextFillEllipseInRect(context, self.bounds);
 
-
-
-
+    // the X gets to be a little smaller than the circle
     NSInteger inset = 5;
 
+    CGRect xFrame = CGRectInset(self.bounds, inset, inset);
+
+    //CGRect gymnastics
     UIBezierPath *aPath = [UIBezierPath bezierPath];
-    [aPath moveToPoint:CGPointMake(inset, inset)];
-    [aPath addLineToPoint:CGPointMake(self.bounds.size.width-inset,self.bounds.size.height-inset)];
+    [aPath moveToPoint:xFrame.origin];//minx, miny
+    [aPath addLineToPoint:CGPointMake(CGRectGetMaxX(xFrame), CGRectGetMaxY(xFrame))];
 
     UIBezierPath *bPath = [UIBezierPath bezierPath];
-    [bPath moveToPoint:CGPointMake(self.bounds.size.width-inset, 0.0+inset)];
-    [bPath addLineToPoint:CGPointMake(0.0+inset, self.bounds.size.height-inset)];
-
-//    // Draw the lines.
-//    [aPath addLineToPoint:CGPointMake(20.0, 40.0)];
-//    [aPath addLineToPoint:CGPointMake(16.0, 30.0)];
-//    [aPath addLineToPoint:CGPointMake(40.0, 30.0)];
-//    [aPath addLineToPoint:CGPointMake(0.0, 40.0)];
-
+    [bPath moveToPoint:CGPointMake(CGRectGetMaxX(xFrame), CGRectGetMinY(xFrame))];
+    [bPath addLineToPoint:CGPointMake(CGRectGetMinX(xFrame), CGRectGetMaxY(xFrame))];
 
     // Set the render colors.
     [funBlue setStroke];
-
-    CGContextRef aRef = UIGraphicsGetCurrentContext();
-
-    // If you have content to draw after the shape,
-    // save the current state before changing the transform.
-    //CGContextSaveGState(aRef);
-
-    // Adjust the view's origin temporarily. The oval is
-    // now drawn relative to the new origin point.
-    CGContextTranslateCTM(aRef, 0, 0);
 
     // Adjust the drawing options as needed.
     aPath.lineWidth = 2;
     bPath.lineWidth = 2;
 
+    // Line cap style
     aPath.lineCapStyle = kCGLineCapButt;
     bPath.lineCapStyle = kCGLineCapButt;
 
-    // Fill the path before stroking it so that the fill
-    // color does not obscure the stroked line.
-
+    //draw both strokes
     [aPath stroke];
     [bPath stroke];
-    
-    // Restore the graphics state before drawing any other content.
-    //CGContextRestoreGState(aRef);
 }
 
 
