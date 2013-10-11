@@ -68,17 +68,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
                   withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
 
-    UAInboxMessageList *theInbox = self.inbox;
-    __block BOOL isBatchUpdating = theInbox.isBatchUpdating;
+    UAInboxMessageList *strongInbox = self.inbox;
 
-    if (!self.unread || isBatchUpdating) {
+    if (!self.unread || strongInbox.isBatchUpdating) {
         return nil;
     }
 
-    isBatchUpdating = YES;
+    strongInbox.isBatchUpdating = YES;
 
     __block BOOL isCallbackCancelled = NO;
-    __block int unreadCount = theInbox.unreadCount;
 
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
@@ -87,23 +85,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
-             unreadCount = unreadCount - 1;
+             strongInbox.unreadCount = strongInbox.unreadCount - 1;
              self.unread = NO;
              [[UAInboxDBManager shared] saveContext];
          }
 
-         isBatchUpdating = NO;
+         strongInbox.isBatchUpdating = NO;
 
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 
          if (successBlock && !isCallbackCancelled) {
              successBlock(self);
          }
      } onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %ld", self.messageID, (long)request.response.statusCode);
-         isBatchUpdating = NO;
+         strongInbox.isBatchUpdating = NO;
 
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
+         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 
          if (failureBlock && !isCallbackCancelled) {
              failureBlock(self);
