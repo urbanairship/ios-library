@@ -118,7 +118,6 @@
     __block UAActionArguments *blockPerformArgs;
     __block UAActionArguments *blockAcceptsArgs;
     __block UAActionResult *blockResult;
-    __block BOOL onRunBlockRan = NO;
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         blockPerformArgs = args;
@@ -130,27 +129,20 @@
         return YES;
     };
 
-    action.onRunBlock = ^{
-        onRunBlockRan = YES;
-    };
-
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
-
 
     XCTAssertEqualObjects(blockResult.value, @"hi", @"runWithArguments:withCompletionHandler: did not return the result defined by the action");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNewData, @"runWithArguments:withCompletionHandler: did not return the result defined by the action");
     XCTAssertEqual(blockPerformArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions performWithArguments:withCompletionHandler:");
     XCTAssertEqual(blockAcceptsArgs, self.emptyArgs, @"runWithArguments:withCompletionHandler: is not passing in the run arguments to the actions acceptsArguments:");
-    XCTAssertTrue(onRunBlockRan, @"onRunBlock is not being called");
 }
 
 /*
  * Test running an action when the action does not accept the arguments
  */
 - (void)testRunWithArgumentsInvalidActionArguments {
-    __block BOOL onRunBlockRan = NO;
     __block UAActionResult *blockResult;
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
@@ -162,10 +154,6 @@
         return NO;
     };
 
-    action.onRunBlock = ^{
-        onRunBlockRan = YES;
-    };
-
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
@@ -173,9 +161,6 @@
 
     XCTAssertNil(blockResult.value, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a nil value");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNoData, @"runWithArguments:withCompletionHandler: should default to calling completion handler with UAActionFetchResultNoData");
-
-    XCTAssertTrue(onRunBlockRan, @"onRunBlock should still be called even if the action is unable to accept the arguments");
-
     XCTAssertNotNil(blockResult.error, @"runWithArguments:withCompletionHandler: should default to calling completion handler with an error");
 }
 

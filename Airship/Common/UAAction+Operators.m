@@ -30,159 +30,158 @@
 
 @implementation UAAction (Operators)
 
-- (UAAction *)continueWith:(UAAction *)continuationAction {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
+- (UAAction *)bind:(UAActionBindBlock)bindBlock {
+    if (!bindBlock) {
+        return self;
+    }
 
-        [self runWithArguments:args withCompletionHandler:^(UAActionResult *selfResult){
+    UAActionBlock actionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+        [self runWithArguments:args withCompletionHandler:handler];
+    };
 
-            if (!selfResult.error && continuationAction) {
-                UAActionArguments *continuationArgs = [UAActionArguments argumentsWithValue:selfResult.value
-                                                                              withSituation:args.situation];
-                continuationArgs.name = args.name;
-
-                [continuationAction runWithArguments:continuationArgs withCompletionHandler:^(UAActionResult *continuationResult){
-                    completionHandler(continuationResult);
-                }];
-            } else {
-                //Todo: different log level?
-                UA_LINFO(@"%@", selfResult.error.localizedDescription);
-                completionHandler(selfResult);
-            }
-        }];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
+    UAActionPredicate acceptsArgumentsBlock = ^(UAActionArguments *args) {
         return [self acceptsArguments:args];
     };
 
-    return aggregateAction;
+    UAAction *action = bindBlock(actionBlock, acceptsArgumentsBlock);
+    return action;
+}
+
+- (UAAction *)lift:(UAActionLiftBlock)actionLiftBlock transformingPredicate:(UAActionPredicateLiftBlock)predicateLiftBlock {
+    if (!actionLiftBlock || !predicateLiftBlock) {
+        return self;
+    }
+
+    UAActionBindBlock bindBlock = ^(UAActionBlock actionBlock, UAActionPredicate predicate) {
+        UAActionBlock transformedActionBlock = actionLiftBlock(actionBlock);
+        UAActionPredicate transformedAcceptsArgumentsBlock = predicateLiftBlock(predicate);
+
+        UAAction *aggregate = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler) {
+            transformedActionBlock(args, handler);
+        } acceptingArguments: transformedAcceptsArgumentsBlock];
+
+        return aggregate;
+    };
+
+    UAAction *action = [self bind:bindBlock];
+    return action;
+}
+
+- (UAAction *)lift:(UAActionLiftBlock)liftBlock {
+    if(!liftBlock) {
+        return self;
+    }
+    return [self lift:liftBlock transformingPredicate:^(UAActionPredicate predicate) {
+        return predicate;
+    }];
+}
+
+- (UAAction *)continueWith:(UAAction *)next {
+    if (!next) {
+        return self;
+    }
+
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+            actionBlock(args, ^(UAActionResult *result){
+                if (!result.error) {
+                    UAActionArguments *nextArgs = [UAActionArguments argumentsWithValue:result.value withSituation:args.situation];
+                    nextArgs.name = args.name;
+                    
+                    [next runWithArguments:nextArgs withCompletionHandler:^(UAActionResult *nextResult) {
+                        handler(nextResult);
+                    }];
+                } else {
+                    handler(result);
+                }
+            });
+        };
+
+        return transformedActionBlock;
+    };
+
+    return [self lift:liftBlock];
 }
 
 - (UAAction *)filter:(UAActionPredicate)filterBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:completionHandler];
-    }];
+    if (!filterBlock) {
+        return self;
+    }
 
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        if (filterBlock && !filterBlock(args)) {
-            return NO;
-        }
-        return [self acceptsArguments:args];
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock){
+        return actionBlock;
     };
 
-    return aggregateAction;
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate){
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
+            if (!filterBlock(args)) {
+                return NO;
+            }
+            return predicate(args);
+        };
+
+        return transformedPredicate;
+    };
+
+    return [self lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 }
 
 - (UAAction *)map:(UAActionMapArgumentsBlock)mapArgumentsBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
-        if (mapArgumentsBlock) {
-            [self runWithArguments:mapArgumentsBlock(args) withCompletionHandler:handler];
-        } else {
-            [self runWithArguments:args withCompletionHandler:handler];
-        }
-    }];
+    if (!mapArgumentsBlock) {
+        return self;
+    }
 
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        if (mapArgumentsBlock) {
-            return [self acceptsArguments:mapArgumentsBlock(args)];
-        } else {
-            return [self acceptsArguments:args];
-        }
+    UAActionLiftBlock actionLiftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
+            actionBlock(mapArgumentsBlock(args), handler);
+        };
+
+        return transformedActionBlock;
     };
 
-    return aggregateAction;
+    UAActionPredicateLiftBlock predicateLiftBlock = ^(UAActionPredicate predicate) {
+        UAActionPredicate transformedPredicate = ^(UAActionArguments *args) {
+            return predicate(mapArgumentsBlock(args));
+        };
+
+        return transformedPredicate;
+    };
+
+    return [self lift:actionLiftBlock transformingPredicate:predicateLiftBlock];
 }
 
 - (UAAction *)preExecution:(UAActionPreExecutionBlock)preExecutionBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        if (preExecutionBlock) {
-            preExecutionBlock(args);
-        }
-        [self runWithArguments:args withCompletionHandler:completionHandler];
-    }];
+    if (!preExecutionBlock) {
+        return self;
+    }
 
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        return [self acceptsArguments:args];
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler){
+            preExecutionBlock(args);
+            actionBlock(args, handler);
+        };
+        return transformedActionBlock;
     };
 
-    return aggregateAction;
+    return [self lift:liftBlock];
 }
 
 - (UAAction *)postExecution:(UAActionPostExecutionBlock)postExecutionBlock {
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:^(UAActionResult *result){
-            if (postExecutionBlock){
-                postExecutionBlock(args, result);
-            };
-            completionHandler(result);
-        }];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *args) {
-        return [self acceptsArguments:args];
-    };
-
-    return aggregateAction;
-}
-
-- (UAAction *)take:(NSUInteger)n {
-    __block NSUInteger count = 0;
-
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:completionHandler];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
-        BOOL accepts = [self acceptsArguments:arguments];
-        accepts = accepts && count <= n;
-        return accepts;
-    };
-
-    aggregateAction.onRunBlock = ^{
-        count++;
-    };
-
-    return aggregateAction;
-}
-
-- (UAAction *)skip:(NSUInteger)n {
-    __block NSUInteger count = 0;
-
-    UAAction *aggregateAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
-        [self runWithArguments:args withCompletionHandler:completionHandler];
-    }];
-
-    aggregateAction.acceptsArgumentsBlock = ^(UAActionArguments *arguments){
-        BOOL accepts = [self acceptsArguments:arguments];
-        accepts = accepts && count > n;
-        return accepts;
-    };
-
-    aggregateAction.onRunBlock = ^{
-        count++;
-    };
-
-    return aggregateAction;
-}
-
-- (UAAction *)nth:(NSUInteger)n {
-    if (n == 0) {
-        // Never run
-        return [self take:0];
+    if (!postExecutionBlock) {
+        return self;
     }
-    return [[self take:1] skip:n-1];
-}
 
-- (UAAction *)distinctUntilChanged {
-    __block id lastValue = nil;
+    UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
+        UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
+            actionBlock(args, ^(UAActionResult *result){
+                postExecutionBlock(args, result);
+                handler(result);
+            });
+        };
+        return transformedActionBlock;
+    };
 
-    UAAction *aggregateAction = [[self preExecution:^(UAActionArguments *args){
-        lastValue = args.value;
-    }] filter:^(UAActionArguments *args){
-        return (BOOL)![args.value isEqual:lastValue];
-    }];
-    
-    return aggregateAction;
+    return [self lift:liftBlock];
 }
 
 @end
