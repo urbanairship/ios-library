@@ -25,19 +25,19 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "UARichPushAction.h"
+#import "UAIncomingRichPushAction.h"
 #import "UAPushActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
 
-@interface UARichPushActionTest : XCTestCase
+@interface UAIncomingRichPushActionTest : XCTestCase
 
 @end
 
-@implementation UARichPushActionTest
+@implementation UAIncomingRichPushActionTest
 
-UARichPushAction *action;
+UAIncomingRichPushAction *action;
 UAPushActionArguments *arguments;
 id mockInbox;
 id mockPushHandler;
@@ -47,7 +47,7 @@ id mockMessageList;
 - (void)setUp {
     [super setUp];
 
-    action = [[UARichPushAction alloc] init];
+    action = [[UAIncomingRichPushAction alloc] init];
 
     arguments = [[UAPushActionArguments alloc] init];
     arguments.value = @"rich-push-id";

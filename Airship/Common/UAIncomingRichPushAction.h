@@ -28,6 +28,6 @@
 
 #define kUARichPushMessageIDKey @"_uamid"
 
-@interface UARichPushAction : UAAction
+@interface UAIncomingRichPushAction : UAAction
 
 @end

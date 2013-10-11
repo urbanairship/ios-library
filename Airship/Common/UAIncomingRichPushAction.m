@@ -23,14 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UARichPushAction.h"
+#import "UAIncomingRichPushAction.h"
 #import "UAInboxPushHandler.h"
 #import "UAPushActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
 
-@implementation UARichPushAction
+@implementation UAIncomingRichPushAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
