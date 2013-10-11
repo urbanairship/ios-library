@@ -37,7 +37,6 @@
 UAOpenExternalURLAction *action;
 UAActionArguments *arguments;
 id mockApplication;
-id mockArguments;
 
 - (void)setUp {
     [super setUp];
@@ -47,13 +46,10 @@ id mockArguments;
 
     mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
-
-    mockArguments = [OCMockObject niceMockForClass:[UAActionArguments class]];
 }
 
 - (void)tearDown {
     [mockApplication stopMocking];
-    [mockArguments stopMocking];
 
     [super tearDown];
 }
@@ -67,7 +63,7 @@ id mockArguments;
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accept valid string URLs");
 
     arguments.situation = @"any situation";
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accept any situations");
+    XCTAssertTrue([action acceptsArguments:arguments], @"action should accept any situations that is not UASituationBackgroundPush");
 
     arguments.value = [NSURL URLWithString:@"http://some-valid-url"];
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accept NSURLs");
@@ -80,6 +76,10 @@ id mockArguments;
 
     arguments.value = @"oh hi";
     XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept an invalid url");
+
+    arguments.value = @"http://some-valid-url";
+    arguments.situation = UASituationBackgroundPush;
+    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept arguments with UASituationBackgroundPush situation");
 }
 
 /**
@@ -143,28 +143,6 @@ id mockArguments;
     XCTAssertNotNil(result.error, @"result should have an error if the application failed opens the url");
     XCTAssertEqualObjects(UAOpenExternalURLActionErrorDomain, result.error.domain, @"error domain should be set to UAOpenExternalURLActionErrorDomain");
     XCTAssertEqual(UAOpenExternalURLActionErrorCodeURLFailedToOpen, result.error.code, @"error code should be set to UAOpenExternalURLActionErrorCodeURLFailedToOpen");
-}
-
-/**
- * Test perform in a UASituationBackgroundPush situation add a pending springboard
- * argument
- */
-- (void)testPerformInUASituationBackgroundPush {
-    __block UAActionResult *result;
-
-    arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
-    arguments.situation = UASituationBackgroundPush;
-    arguments.name = @"ACTIONS!";
-
-    [[mockArguments expect] addPendingSpringBoardAction:@"ACTIONS!" value:@"scheme://some-valid-url"];
-
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *performResult) {
-        result = performResult;
-    }];
-
-    XCTAssertEqualObjects(result.value, arguments.value, @"results value should be the url");
-    XCTAssertNil(result.error, @"result should have no error if the application defers to springboard launch");
-    XCTAssertNoThrow([mockArguments verify], @"action should defere arguments to springboard launch");
 }
 
 /**

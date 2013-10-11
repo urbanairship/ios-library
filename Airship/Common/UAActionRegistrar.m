@@ -104,11 +104,17 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
     [self registerAction:richPushAction name:kUAIncomingRichPushActionRegistryName];
 
+    // Open external URL predicate
+    UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
+        return [args.situation isEqualToString:UASituationLaunchedFromPush];
+    };
+
     // Open external URL action
     UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:urlAction
                     name:kUAOpenExternalURLActionDefaultRegistryName
-                   alias:kUAOpenExternalURLActionDefaultRegistryAlias];
+                   alias:kUAOpenExternalURLActionDefaultRegistryAlias
+               predicate:urlPredicate];
 }
 
 - (void)clearRegistryForName:(NSString *)name {
@@ -135,6 +141,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     if (entry) {
         entry.alias = nil;
     }
+
     [self.aliases setValue:nil forKey:alias];
 }
 

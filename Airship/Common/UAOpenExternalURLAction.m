@@ -30,6 +30,10 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 @implementation UAOpenExternalURLAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+        return NO;
+    }
+
     if ([arguments.value isKindOfClass:[NSString class]]) {
         return [NSURL URLWithString:arguments.value] != nil;
     }
@@ -43,10 +47,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
     UAActionResult *result = [UAActionResult resultWithValue:url];
 
-    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
-        // Defer to spring board launch
-        [UAActionArguments addPendingSpringBoardAction:arguments.name value:[url absoluteString]];
-    } else if (![[UIApplication sharedApplication] openURL:url]) {
+    if (![[UIApplication sharedApplication] openURL:url]) {
         // Unable to open url
         result.error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                              code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
