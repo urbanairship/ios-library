@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UADisposable.h"
+#import "UAInbox.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
@@ -57,34 +58,24 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 #pragma mark Create Inbox
 
-static UAInboxMessageList *_messageList = nil;
+- (instancetype)init {
+    self = [super init];
+    @synchronized(self) {
+            self.unreadCount = -1;
+            self.isBatchUpdating = NO;
+            self.client = [[UAInboxAPIClient alloc] init];
+        }
+    return self;
+}
 
 - (void)dealloc {
     self.messages = nil;
 }
 
-+ (void)land {
-    if (_messageList) {
-        if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
-            _messageList.client = nil;
-        }
-        _messageList = nil;
-    }
-}
 
 + (UAInboxMessageList *)shared {
-    
-    @synchronized(self) {
-        if(_messageList == nil) {
-            _messageList = [[UAInboxMessageList alloc] init];
-            _messageList.unreadCount = -1;
-            _messageList.isBatchUpdating = NO;
 
-            _messageList.client = [[UAInboxAPIClient alloc] init];
-        }
-    }
-    
-    return _messageList;
+    return [UAInbox shared].messageList;
 }
 
 #pragma mark NSNotificationCenter helper methods

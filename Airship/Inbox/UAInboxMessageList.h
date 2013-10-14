@@ -74,13 +74,6 @@ typedef enum {
 + (UAInboxMessageList *)shared;
 
 /**
- * Teardown method.  This method is called as appropriate by the library,
- * and thus you will not oridinarlly need to call it directly.
- */
-+ (void)land;
-
-
-/**
  * Fetch new messages from the server. If the associated user has not yet
  * been created, this will be a no-op.
  *
