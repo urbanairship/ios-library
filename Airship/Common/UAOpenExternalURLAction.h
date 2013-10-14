@@ -23,9 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
 #import "UAAction.h"
 
-@interface UAIncomingRichPushAction : UAAction
+NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
+    UAOpenExternalURLActionErrorCodeURLFailedToOpen
+};
+
+extern NSString * const UAOpenExternalURLActionErrorDomain;
+
+@interface UAOpenExternalURLAction : UAAction
 
 @end
