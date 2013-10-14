@@ -202,28 +202,28 @@
 		7BB6794B142930CC00B877DB /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB6794A142930CC00B877DB /* MobileCoreServices.framework */; };
 		BB13C4251575706100541EF3 /* UABase64Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BB13C4241575706100541EF3 /* UABase64Test.m */; };
 		BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2A15910C370097B38C /* UALocationTestUtils.m */; };
-		BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860B3159A7E9600584445 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860B4159A7E9600584445 /* UAObservable.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8F1238462100B7E69F /* UAObservable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = D9FD1C43122DBCEA00522B4E /* UAGlobal.h */; };
+		BB8860B3159A7E9600584445 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; };
+		BB8860B4159A7E9600584445 /* UAObservable.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8F1238462100B7E69F /* UAObservable.h */; };
 		BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */ = {isa = PBXBuildFile; fileRef = B631183B1250925A0014F697 /* UA_Reachability.h */; };
 		BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
-		BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860D2159A7E9600584445 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860D8159A7E9600584445 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B612FC787900057449 /* UAHTTPConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860DA159A7E9600584445 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7BA12FC787900057449 /* UAAnalyticsDBManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0B15057C7F00971CEC /* UALocationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FE43798128B589000D38A14 /* UAKeychainUtils.h */; };
+		BB8860D2159A7E9600584445 /* UAUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC71652129597F9003BDD2B /* UAUser.h */; };
+		BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F23001212B2B7BA001DB898 /* UAAnalytics.h */; };
+		BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F2B10C312DD01B60020843D /* UATagUtils.h */; };
+		BB8860D8159A7E9600584445 /* UASQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B412FC787900057449 /* UASQLite.h */; };
+		BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B612FC787900057449 /* UAHTTPConnection.h */; };
+		BB8860DA159A7E9600584445 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; };
+		BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7BA12FC787900057449 /* UAAnalyticsDBManager.h */; };
+		BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0B15057C7F00971CEC /* UALocationEvent.h */; };
 		BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */; };
-		BB8860E2159A7E9600584445 /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BB8860E2159A7E9600584445 /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; };
+		BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1515057C7F00971CEC /* UASignificantChangeProvider.h */; };
+		BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E1715057C7F00971CEC /* UAStandardLocationProvider.h */; };
+		BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E3515057CF200971CEC /* UABaseLocationProvider.h */; };
+		BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB741509553F00FC4B1B /* UALocationCommonValues.h */; };
+		BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB77150961F800FC4B1B /* UALocationProviderProtocol.h */; };
+		BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BB42FB7A1509622700FC4B1B /* UALocationProviderDelegate.h */; };
 		BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
 		BB8860EE159A7E9600584445 /* UAUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8B1238462100B7E69F /* UAUtils.m */; };
 		BB8860F0159A7E9600584445 /* UAObservable.m in Sources */ = {isa = PBXBuildFile; fileRef = D9983E8E1238462100B7E69F /* UAObservable.m */; };
@@ -1013,31 +1013,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F610DE517835C3A00BCD96E /* UAInboxDBManager.h in Headers */,
+				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
+				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
+				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
+				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
 				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
 				BB8860D6159A7E9600584445 /* UAAnalytics.h in Headers */,
 				BB8860D7159A7E9600584445 /* UATagUtils.h in Headers */,
 				BB8860D8159A7E9600584445 /* UASQLite.h in Headers */,
-				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
 				BB8860D9159A7E9600584445 /* UAHTTPConnection.h in Headers */,
-				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				BB8860B4159A7E9600584445 /* UAObservable.h in Headers */,
-				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
 				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
-				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
 				BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */,
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
-				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
-				1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */,
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				BB8860B3159A7E9600584445 /* UAUtils.h in Headers */,
+				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
+				1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */,
 				1F610DEE17835C3A00BCD96E /* UAInboxMessageList.h in Headers */,
 				1F610DF817835C3A00BCD96E /* UAInboxUtils.h in Headers */,
 				1F610DDF17835C3A00BCD96E /* UAInbox.h in Headers */,
