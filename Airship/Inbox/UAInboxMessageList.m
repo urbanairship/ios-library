@@ -224,6 +224,13 @@ static UAInboxMessageList *_messageList = nil;
         UA_LDEBUG("Deleting messages: %@", updateMessageArray);
         [self.client performBatchDeleteForMessages:updateMessageArray onSuccess:^{
             [self.messages removeObjectsInArray:updateMessageArray];
+
+            for (UAInboxMessage *message in updateMessageArray) {
+                if (message.unread) {
+                    self.unreadCount -= 1;
+                }
+            }
+
             [[UAInboxDBManager shared] deleteMessages:updateMessageArray];
             [self notifyObservers:@selector(batchDeleteFinished)];
             succeed();
