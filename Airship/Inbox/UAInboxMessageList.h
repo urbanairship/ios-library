@@ -70,8 +70,10 @@ typedef enum {
 #pragma clang diagnostic pop
 /**
  * The shared singleton accessor.
+ *
+ * @deprecated As of version 3.1. Replaced with [UAInbox shared].messageList.
  */
-+ (UAInboxMessageList *)shared;
++ (UAInboxMessageList *)shared __attribute__((deprecated("As of version 3.1")));
 
 /**
  * Fetch new messages from the server. If the associated user has not yet
