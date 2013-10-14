@@ -29,7 +29,7 @@
 #import "UAGlobal.h"
 
 #define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
-#define kUAOpenExternalURLActionDefaultRegistryAlias @"^url"
+#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
 
 @interface UAActionRegistrar : NSObject
 
