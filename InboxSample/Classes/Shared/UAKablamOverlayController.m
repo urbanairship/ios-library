@@ -80,7 +80,7 @@ static NSMutableSet *overlayControllers = nil;
 
 // Setup a container for the newly allocated controllers, will be released by OS. 
 + (void)initialize {
-    if (self == [UAKablamOverlayController class]){
+    if (self == [UAKablamOverlayController class]) {
         overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
     }
 }
@@ -133,8 +133,6 @@ static NSMutableSet *overlayControllers = nil;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(orientationChanged:) 
                                                      name:UIDeviceOrientationDidChangeNotification object:nil];
-        
-
     }
     
     return self;
@@ -153,6 +151,8 @@ static NSMutableSet *overlayControllers = nil;
     //TODO: consider adding a hard-coded HTML frame
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
+    // No auth required here:
+    //
     //NSString *auth = [UAUtils userAuthHeaderString];
     //[requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
 
@@ -175,20 +175,26 @@ static NSMutableSet *overlayControllers = nil;
     self.bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.bigPanelView.autoresizesSubviews = YES;
     self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2, self.bgView.frame.size.height/2);
-    
+
+    //on iPad 540.0 x 620.0
+
     //add the window background
-    UIView *background = [[UIView alloc] initWithFrame:CGRectInset
-                           (self.bigPanelView.frame, 15, 30)];
+    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 15, 30)];
+
+    // set size for iPad
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        background.frame = CGRectMake(0.0, 0.0, 540.0, 620.0);
+    }
+
     background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     background.backgroundColor = [UIColor whiteColor];
 
     background.layer.borderColor = [[UIColor blackColor] CGColor];
     background.layer.borderWidth = 0.5;
     background.center = CGPointMake(self.bigPanelView.frame.size.width/2, self.bigPanelView.frame.size.height/2);
-    [self.bigPanelView addSubview: background];
+    [self.bigPanelView addSubview:background];
 
 
-    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
 
     //add the web view
     int webOffset = 0;
@@ -204,29 +210,41 @@ static NSMutableSet *overlayControllers = nil;
     [self.loadingIndicator show];
     
     //add the close button
-    NSUInteger closeBtnOffset = 5;
-    //UIImage *closeBtnImg = [UIImage imageNamed:@"iOS7-stop.png"];
-    UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeBtn.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0, 0, 35, 35)];
+    bespokeCloseButtonView.userInteractionEnabled = NO;
 
-    //[closeBtn setImage:closeBtnImg forState:UIControlStateNormal];
+    NSUInteger closeBtnOffset = 0;
+    UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
 
-    [closeBtn addSubview:bespokeCloseButtonView];
-
-    [closeBtn setFrame:CGRectMake(background.frame.origin.x + background.frame.size.width - bespokeCloseButtonView.frame.size.width - closeBtnOffset,
-                                  background.frame.origin.y + closeBtnOffset ,
+    [closeButton setFrame:CGRectMake(
+                                  background.frame.size.width - bespokeCloseButtonView.frame.size.width - closeBtnOffset,
+                                  closeBtnOffset,
                                   bespokeCloseButtonView.frame.size.width + closeBtnOffset,
                                   bespokeCloseButtonView.frame.size.height + closeBtnOffset)];
 
-    //[bespokeCloseButtonView setFrame:closeBtn.frame];
+    [closeButton addSubview:bespokeCloseButtonView];
+    [closeButton addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
 
-    [closeBtn addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+    [self.webView addSubview:closeButton];
 
-    [self.bigPanelView addSubview:closeBtn];
-    
+    // custom resize mask for iPad. TODO: see if this is also what we want on the iPhone.
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+                                        UIViewAutoresizingFlexibleTopMargin |
+                                        UIViewAutoresizingFlexibleRightMargin |
+                                        UIViewAutoresizingFlexibleBottomMargin;
+
+        background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+                                      UIViewAutoresizingFlexibleTopMargin |
+                                      UIViewAutoresizingFlexibleRightMargin |
+                                      UIViewAutoresizingFlexibleBottomMargin;
+
+        closeButton.autoresizingMask = UIViewAutoresizingNone;
+    }
 }
 
--(void)displayWindow {
+- (void)displayWindow {
     
     if ([self shouldTransition]) {
         //faux view
@@ -251,8 +269,9 @@ static NSMutableSet *overlayControllers = nil;
             shadeView.backgroundColor = [UIColor blackColor];
             shadeView.alpha = 0.3;
             shadeView.tag = kShadeViewTag;
-            [self.bigPanelView addSubview: shadeView];
-            [self.bigPanelView sendSubviewToBack: shadeView];
+
+            [self.bigPanelView addSubview:shadeView];
+            [self.bigPanelView sendSubviewToBack:shadeView];
         }];
     } else {
         [self constructWindow];
@@ -264,7 +283,7 @@ static NSMutableSet *overlayControllers = nil;
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
     
-    if(![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
+    if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
         return;
     }
 
@@ -277,19 +296,18 @@ static NSMutableSet *overlayControllers = nil;
  */
 - (void)closePopupWindow {
     //remove the shade
-    [[self.bigPanelView viewWithTag: kShadeViewTag] removeFromSuperview];
+    [[self.bigPanelView viewWithTag:kShadeViewTag] removeFromSuperview];
     [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];
-    
 }
 
 /**
  * Removes child views from bigPanelView and bgView
  */
 - (void)removeChildViews {
-    for (UIView* child in self.bigPanelView.subviews) {
+    for (UIView *child in self.bigPanelView.subviews) {
         [child removeFromSuperview];
     }
-    for (UIView* child in self.bgView.subviews) {
+    for (UIView *child in self.bgView.subviews) {
         [child removeFromSuperview];
     }
 }
@@ -298,7 +316,7 @@ static NSMutableSet *overlayControllers = nil;
 /**
  * Removes all views from the hierarchy and releases self
  */
--(void)finish {
+- (void)finish {
     
     if ([self shouldTransition]) {
         
@@ -308,19 +326,16 @@ static NSMutableSet *overlayControllers = nil;
         
         //run the animation
         UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
-                                            UIViewAnimationOptionAllowUserInteraction    |
+                                            UIViewAnimationOptionAllowUserInteraction |
                                             UIViewAnimationOptionBeginFromCurrentState;
 
         [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
-            
             [self removeChildViews];
             self.bigPanelView = nil;
             [self.bgView removeFromSuperview];
             [overlayControllers removeObject:self];
         }];
-    }
-    
-    else {
+    } else {
         [self removeChildViews];
         [self.bgView removeFromSuperview];
         [overlayControllers removeObject:self];

@@ -66,21 +66,32 @@
     if ([situation isEqualToString:UASituationForegroundPush]) {
 
         // show the widget, then load
-        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
-        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        if (self.modal) {
+            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        } else {
+            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        }
+
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
         // show the widget, then load (if not already)
-        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
-        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        if (self.modal) {
+            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        } else {
+            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        }
+
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationLaunchedFromSpringBoard]) {
 
-        // show the widget, then load (if not already)
-        //[UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
-        [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        if (self.modal) {
+            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+        } else {
+            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+        }
+
         completionHandler([UAActionResult none]);
 
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
