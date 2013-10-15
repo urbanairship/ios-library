@@ -114,8 +114,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma mark UI
 
 - (void)refreshHeader {
-    NSUInteger count = [[UAInbox shared].messageList messageCount];
-    NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
+    NSUInteger count = [strongMessageList messageCount];
+    NSUInteger index = [strongMessageList indexOfMessage:self.message];
 
     if (index < count) {
         self.title = [NSString stringWithFormat:UA_INBOX_TR(@"UA_Message_Fraction"), index+1, count];
@@ -129,13 +130,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
+    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
+    UAInboxMessage *msg = [strongMessageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
         return;
     }
 
-    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
+    [self loadMessageAtIndex:[strongMessageList indexOfMessage:msg]];
 }
 
 - (void)loadMessageAtIndex:(NSUInteger)index {
@@ -319,7 +321,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)updateMessageNavButtons {
-    NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
+    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
+    NSUInteger index = [strongMessageList indexOfMessage:self.message];
 
     if (self.message == nil || index == NSNotFound) {
         [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
@@ -330,14 +333,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         } else {
             [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
         }
-        if(index >= [[UAInbox shared].messageList messageCount] - 1) {
+        if(index >= [strongMessageList messageCount] - 1) {
             [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
         } else {
             [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
         }
     }
 
-    UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[[UAInbox shared].messageList messageCount]);
+    UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[strongMessageList messageCount]);
 }
 
 #pragma mark NSNotificationCenter callbacks
