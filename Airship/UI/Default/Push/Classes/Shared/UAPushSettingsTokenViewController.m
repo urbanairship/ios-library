@@ -44,7 +44,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.tokenLabel.text = [UAirship shared].deviceToken ? [UAirship shared].deviceToken : @"Unavailable";
+    NSString *strongDeviceToken = [UAirship shared].deviceToken;
+    self.tokenLabel.text = strongDeviceToken ? strongDeviceToken : @"Unavailable";
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

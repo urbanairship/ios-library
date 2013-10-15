@@ -216,9 +216,9 @@ static NSUInteger userRowCount = 1;
         case SectionHelp:
             return HelpSectionRowCount;
         case SectionLocation:
-            return locationRowCount;
+            return (NSInteger)locationRowCount;
         case SectionUser:
-            return userRowCount;
+            return (NSInteger)userRowCount;
         default:
             break;
     }

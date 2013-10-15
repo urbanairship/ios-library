@@ -90,7 +90,7 @@ enum {
     // Return the number of rows in the section.
     switch (section) {
         case SectionSounds:
-            return [self.soundList count];
+            return (NSInteger)[self.soundList count];
         case SectionDesc:
             return DescSectionRowCount;
         default:
@@ -137,7 +137,7 @@ enum {
 
     if (indexPath.section == SectionSounds) {
         SystemSoundID soundID;
-        AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:[self.soundList objectAtIndex:indexPath.row]], &soundID);
+        AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:[self.soundList objectAtIndex:(NSUInteger)indexPath.row]], &soundID);
         AudioServicesPlayAlertSound(soundID);
         
         [tableView deselectRowAtIndexPath:indexPath animated:YES];

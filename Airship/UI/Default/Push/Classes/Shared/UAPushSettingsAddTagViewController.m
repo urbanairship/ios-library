@@ -84,7 +84,7 @@ enum TagSections {
     if (indexPath.section == TagSectionCustom) {
         text = @"Custom Tag";
     } else {
-        text = [self.presetTags objectAtIndex:indexPath.row];
+        text = [self.presetTags objectAtIndex:(NSUInteger)indexPath.row];
     }
 
     CGFloat height = [text sizeWithFont:self.tagField.font
@@ -97,7 +97,7 @@ enum TagSections {
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     if (indexPath.section == TagSectionPreset) {
-        [self.tagDelegate addTag:[self.presetTags objectAtIndex:indexPath.row]];
+        [self.tagDelegate addTag:[self.presetTags objectAtIndex:(NSUInteger)indexPath.row]];
         [view deselectRowAtIndexPath:indexPath animated:YES];
     }
 }
@@ -125,7 +125,7 @@ enum TagSections {
         case TagSectionCustom:
             return 1;
         case TagSectionPreset:
-            return [self.presetTags count];
+            return (NSInteger)[self.presetTags count];
         default:
             break;
     }

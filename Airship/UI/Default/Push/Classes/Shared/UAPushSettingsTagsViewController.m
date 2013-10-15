@@ -93,7 +93,7 @@ enum {
     // Return the number of rows in the section.
     switch (section) {
         case SectionTags:
-            return [[UAPush shared].tags count];
+            return (NSInteger)[[UAPush shared].tags count];
         case SectionDesc:
             return DescSectionRowCount;
         default:
@@ -160,7 +160,7 @@ enum {
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
-        NSString *tagToDelete = [[UAPush shared].tags objectAtIndex:indexPath.row];
+        NSString *tagToDelete = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
         
         // Commit to server
         [[UAPush shared] removeTagFromCurrentDevice:tagToDelete];
@@ -198,7 +198,7 @@ enum {
     if (indexPath.section == SectionDesc) {
         text = self.textLabel.text;
     } else {
-        text = [[UAPush shared].tags objectAtIndex:indexPath.row];
+        text = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
     }
     
     CGFloat height = [text sizeWithFont:self.textLabel.font
@@ -244,8 +244,8 @@ enum {
      [[UAPush shared] setTags:tagUpdate];
 
      // Update the tableview
-     NSInteger index = [[UAPush shared].tags count] -1;
-     NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:SectionTags]];
+     NSUInteger index = [[UAPush shared].tags count] -1;
+     NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:(NSInteger)index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
 
      // Update the registration

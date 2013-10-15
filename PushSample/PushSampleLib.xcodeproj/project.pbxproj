@@ -528,7 +528,7 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.0.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.1.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
 				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.0.a */,
 			);
@@ -785,7 +785,8 @@
 		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-iOS5-3.0.0.a";
+			name = "libUAirship-iOS5-3.0.0.a";
+			path = "libUAirship-iOS5-3.0.1.a";
 			remoteRef = 1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -817,10 +818,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.0.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-3.0.0.a";
+			path = "libUAirship-3.0.1.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1020,6 +1021,9 @@
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1032,6 +1036,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -1053,6 +1058,9 @@
 				BUILD_STYLE = Release;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
@@ -1063,6 +1071,7 @@
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -1388,6 +1397,9 @@
 				BUILD_STYLE = Debug;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1401,6 +1413,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PushSample_Prefix.pch;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "PushSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
