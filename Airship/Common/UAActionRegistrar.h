@@ -29,7 +29,7 @@
 #import "UAGlobal.h"
 
 #define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
-#define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
+#define kUAOpenExternalURLActionDefaultRegistryAlias @"^U"
 
 @interface UAActionRegistrar : NSObject
 
@@ -102,6 +102,37 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  */
 -(UAActionRegistryEntry *)registryEntryForName:(NSString *)name;
 
+
+/**
+ * Adds a situation override action to be used instead of the default
+ * registered action for a given situation.  A nil action will cause the entry
+ * to be cleared.
+ *
+ * @param situation The situation to override
+ * @param name Name or alias of the registered entry
+ * @param action Action to be performed
+ * @return 'YES' if the action was added to the entry for the situation override.
+ * 'NO' if the entry is unable to be found with the given name, if the situation
+ * is nil, or if the entry is registered entry is reserved.
+ */
+- (BOOL)addSituationOverride:(NSString *)situation
+                     forName:(NSString *)name action:(UAAction *)action;
+
+
+/**
+ * Updates the predicate for a registered entry.
+ *
+ * @param predicate Predicate to update or nil to clear the current predicate
+ * @param name Name or alias of the registered entry
+ * @return 'YES' if the predicate was updated for the entry. 'NO' if the entry
+ * is unable to be found with the given name or if the entry is registered entry 
+ * is reserved.
+ */
+- (BOOL)updatePredicate:(UAActionPredicate)predicate forName:(NSString *)name;
+
+/**
+ * An array of the current registered entries
+ */
 -(NSArray *)registeredEntries;
 
 @end

@@ -30,7 +30,14 @@
 #define kUAReservedActionKeys @[kUAIncomingPushActionRegistryName, kUAIncomingRichPushActionRegistryName]
 
 @interface UAActionRegistrar ()
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
-@property(nonatomic, strong) NSMutableDictionary *aliases;
 
+/**
+ * Map of names to a map of situations to entries
+ */
+@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+
+/**
+ * Map of aliases to names
+ */
+@property(nonatomic, strong) NSMutableDictionary *aliases;
 @end
