@@ -27,4 +27,6 @@
 
 @interface UAKablamAction : UAAction
 
+@property (nonatomic, assign) BOOL modal;
+
 @end
