@@ -123,7 +123,7 @@ enum {
         case SectionPushEnabled:
             return PushEnabledSectionRowCount;
         case SectionAirshipLocationEnabled:
-            return AirshipLocationEnabledSectionRowCount;
+            return (NSInteger)AirshipLocationEnabledSectionRowCount;
         case SectionQuietTime:
         {
             if (self.pushEnabledSwitch.on && self.quietTimeSwitch.on) {
@@ -300,7 +300,7 @@ enum {
     [formatter setDateStyle:NSDateFormatterNoStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     
-    NSInteger row = [[self.tableView indexPathForSelectedRow] row];
+    NSInteger row = (NSInteger)[[self.tableView indexPathForSelectedRow] row];
     if (row == QuietTimeSectionStartCell) {
         self.fromCell.detailTextLabel.text = [formatter stringFromDate:date];
         [self.fromCell setNeedsLayout];
@@ -371,7 +371,7 @@ enum {
     NSString *fromString = self.fromCell.detailTextLabel.text;
     NSString *toString = self.toCell.detailTextLabel.text;
 
-    NSInteger row = [[self.tableView indexPathForSelectedRow] row];
+    NSUInteger row = (NSUInteger)[[self.tableView indexPathForSelectedRow] row];
     if (row == 1 && [fromString length] != 0) {
         NSDate *fromDate = [formatter dateFromString:fromString];
         [self.datePicker setDate:fromDate animated:YES];

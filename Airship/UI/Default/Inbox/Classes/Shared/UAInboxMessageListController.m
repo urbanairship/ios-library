@@ -234,7 +234,7 @@
 // indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
 - (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
     NSArray *messages = [[UAInbox shared].messageList messages];
-    return [messages objectAtIndex:indexPath.row];
+    return [messages objectAtIndex:(NSUInteger)indexPath.row];
 }
 
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
@@ -316,7 +316,7 @@
 - (void)batchUpdateButtonPressed:(id)sender {
     NSMutableIndexSet *messageIDs = [NSMutableIndexSet indexSet];
     for (NSIndexPath *indexPath in self.selectedIndexPathsForEditing) {
-        [messageIDs addIndex:indexPath.row];
+        [messageIDs addIndex:(NSUInteger)indexPath.row];
     }
 
     self.cancelItem.enabled = NO;
@@ -370,7 +370,7 @@
 
 - (void)deleteMessageAtIndexPath:(NSIndexPath *)indexPath {
     NSMutableIndexSet *set = [NSMutableIndexSet indexSet];
-    [set addIndex:indexPath.row];
+    [set addIndex:(NSUInteger)indexPath.row];
     [self.selectedIndexPathsForEditing removeAllObjects];
     [self.selectedIndexPathsForEditing addObject:indexPath];
     [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
@@ -389,7 +389,7 @@
         cell = [topLevelObjects objectAtIndex:0];
     }
 
-    [cell setData:[[UAInbox shared].messageList messageAtIndex:indexPath.row]];
+    [cell setData:[[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row]];
 
     cell.editing = tableView.editing;
     if (cell.editing) {
@@ -410,7 +410,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSUInteger messageCount = [[UAInbox shared].messageList messageCount];
     self.editItem.enabled = (messageCount == 0) ? NO : YES;
-    return messageCount;
+    return (NSInteger)messageCount;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -455,7 +455,7 @@
 
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:indexPath.row];
+    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:(NSUInteger)indexPath.row];
     [UAInbox displayMessageWithID:message.messageID inViewController:self.navigationController];
 }
 
@@ -527,7 +527,7 @@
 
 - (void)singleMessageMarkAsReadFinished:(UAInboxMessage *)m {
     NSUInteger row = [[UAInbox shared].messageList indexOfMessage:m];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(NSInteger)row inSection:0];
     UAInboxMessageListCell *cell = (UAInboxMessageListCell *)[self.messageTable cellForRowAtIndexPath:indexPath];
     cell.unreadIndicator.hidden = YES;
     [self updateNavigationTitleText];

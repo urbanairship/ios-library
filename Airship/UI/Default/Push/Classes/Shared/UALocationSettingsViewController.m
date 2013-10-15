@@ -77,10 +77,10 @@
 
 - (void)turnOffLocationDisplay {
     [self.locationDisplay removeObjectsInRange:NSMakeRange(1, ([self.locationDisplay count] -1))];
-    NSUInteger rows = [self.locationTableView numberOfRowsInSection:0];
+    NSUInteger rows = (NSUInteger)[self.locationTableView numberOfRowsInSection:0];
     NSMutableArray *arrayOfDeletes = [NSMutableArray arrayWithCapacity:3];
     for (NSUInteger i=1; i < rows; i++) {
-        NSIndexPath *path = [NSIndexPath indexPathForRow:i inSection:0];
+        NSIndexPath *path = [NSIndexPath indexPathForRow:(NSInteger)i inSection:0];
         [arrayOfDeletes addObject:path];
     }
     [self.locationTableView deleteRowsAtIndexPaths:arrayOfDeletes withRowAnimation:UITableViewRowAnimationFade];
@@ -169,7 +169,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.locationDisplay count];
+    return (NSInteger)[self.locationDisplay count];
 }
 
 #pragma mark -
