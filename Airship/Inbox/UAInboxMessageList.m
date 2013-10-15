@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UADisposable.h"
+#import "UAInbox.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessageListObserver.h"
 #import "UAInboxMessageListDelegate.h"
@@ -57,34 +58,24 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
 
 #pragma mark Create Inbox
 
-static UAInboxMessageList *_messageList = nil;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+            self.unreadCount = -1;
+            self.isBatchUpdating = NO;
+            self.client = [[UAInboxAPIClient alloc] init];
+        }
+    return self;
+}
 
 - (void)dealloc {
     self.messages = nil;
 }
 
-+ (void)land {
-    if (_messageList) {
-        if (_messageList.isRetrieving || _messageList.isBatchUpdating) {
-            _messageList.client = nil;
-        }
-        _messageList = nil;
-    }
-}
 
 + (UAInboxMessageList *)shared {
-    
-    @synchronized(self) {
-        if(_messageList == nil) {
-            _messageList = [[UAInboxMessageList alloc] init];
-            _messageList.unreadCount = -1;
-            _messageList.isBatchUpdating = NO;
 
-            _messageList.client = [[UAInboxAPIClient alloc] init];
-        }
-    }
-    
-    return _messageList;
+    return [UAInbox shared].messageList;
 }
 
 #pragma mark NSNotificationCenter helper methods
@@ -162,12 +153,14 @@ static UAInboxMessageList *_messageList = nil;
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self retrieveMessageListWithSuccessBlock:^{
-        if ([weakDelegate respondsToSelector:@selector(messageListLoadSucceeded)]) {
-            [weakDelegate messageListLoadSucceeded];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(messageListLoadSucceeded)]) {
+            [strongDelegate messageListLoadSucceeded];
         }
     } withFailureBlock:^{
-        if ([weakDelegate respondsToSelector:@selector(messageListLoadFailed)]){
-            [weakDelegate messageListLoadFailed];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(messageListLoadFailed)]){
+            [strongDelegate messageListLoadFailed];
         }
     }];
 }
@@ -267,24 +260,25 @@ static UAInboxMessageList *_messageList = nil;
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self performBatchUpdateCommand:command withMessageIndexSet:messageIndexSet withSuccessBlock:^{
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
         if (command == UABatchDeleteMessages) {
-
-            if ([weakDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
-                [weakDelegate batchDeleteFinished];
+            if ([strongDelegate respondsToSelector:@selector(batchDeleteFinished)]) {
+                [strongDelegate batchDeleteFinished];
             }
         } else if (command == UABatchReadMessages) {
-            if ([weakDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
-                [weakDelegate batchMarkAsReadFinished];
+            if ([strongDelegate respondsToSelector:@selector(batchMarkAsReadFinished)]) {
+                [strongDelegate batchMarkAsReadFinished];
             }
         }
     } withFailureBlock:^{
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
         if (command == UABatchDeleteMessages) {
-            if ([weakDelegate respondsToSelector:@selector(batchDeleteFailed)]) {
-                [weakDelegate batchDeleteFailed];
+            if ([strongDelegate respondsToSelector:@selector(batchDeleteFailed)]) {
+                [strongDelegate batchDeleteFailed];
             }
         } else if (command == UABatchReadMessages) {
-            if ([weakDelegate respondsToSelector:@selector(batchMarkAsReadFailed)]) {
-                [weakDelegate batchMarkAsReadFailed];
+            if ([strongDelegate respondsToSelector:@selector(batchMarkAsReadFailed)]) {
+                [strongDelegate batchMarkAsReadFailed];
             }
         }
     }];

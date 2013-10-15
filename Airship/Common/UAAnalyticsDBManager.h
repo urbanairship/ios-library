@@ -48,7 +48,7 @@ SINGLETON_INTERFACE(UAAnalyticsDBManager);
 - (void)deleteBySessionId:(NSString *)sessionId;
 - (void)deleteOldestSession;
 
-- (NSInteger)eventCount;
+- (NSUInteger)eventCount;
 - (NSInteger)sizeInBytes;
 
 @end

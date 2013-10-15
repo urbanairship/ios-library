@@ -146,10 +146,10 @@
     [self.analytics saveUploadEventSettings];
 
     // Make sure all the expected settings are set to the current analytics properties
-    XCTAssertEqual(self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save to user defaults");
-    XCTAssertEqual(self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save to user defaults");
-    XCTAssertEqual(self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save to user defaults");
-    XCTAssertEqual(self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save to user defaults");
+    XCTAssertEqual((NSInteger)self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save to user defaults");
+    XCTAssertEqual((NSInteger)self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save to user defaults");
+    XCTAssertEqual((NSInteger)self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save to user defaults");
+    XCTAssertEqual((NSInteger)self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save to user defaults");
 }
 
 - (void)testUpdateAnalyticsParameters {
@@ -166,67 +166,67 @@
     [self.analytics updateAnalyticsParametersWithHeaderValues:mockResponse];
 
     // Make sure all the expected settings are set to the current analytics properties
-    XCTAssertEqual(self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save update its value from response header");
-    XCTAssertEqual(self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save update its value from response header");
-    XCTAssertEqual(self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save update its value from response header");
-    XCTAssertEqual(self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
+    XCTAssertEqual((NSInteger)self.analytics.maxTotalDBSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey], @"maxTotalDBSize failed to save update its value from response header");
+    XCTAssertEqual((NSInteger)self.analytics.maxBatchSize, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey], @"maxBatchSize failed to save update its value from response header");
+    XCTAssertEqual((NSInteger)self.analytics.maxWait, [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey], @"maxWait is setting failed to save update its value from response header");
+    XCTAssertEqual((NSInteger)self.analytics.minBatchInterval, [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey], @"minBatchInterval failed to save update its value from response header");
     [mockResponse stopMocking];
 }
 
 - (void)testSetMaxTotalDBSize {
     // Set a value higher then the max, should set to the max
     self.analytics.maxTotalDBSize = kMaxTotalDBSizeBytes + 1;
-    XCTAssertEqual(self.analytics.maxTotalDBSize, (NSInteger)kMaxTotalDBSizeBytes, @"maxTotalDBSize is able to be set above the max value");
+    XCTAssertEqual(self.analytics.maxTotalDBSize, kMaxTotalDBSizeBytes, @"maxTotalDBSize is able to be set above the max value");
 
     // Set a value lower then then min, should set to the min
     self.analytics.maxTotalDBSize = kMinTotalDBSizeBytes - 1;
-    XCTAssertEqual(self.analytics.maxTotalDBSize, (NSInteger)kMinTotalDBSizeBytes, @"maxTotalDBSize is able to be set below the min value");
+    XCTAssertEqual(self.analytics.maxTotalDBSize, kMinTotalDBSizeBytes, @"maxTotalDBSize is able to be set below the min value");
 
     // Set a value between
     self.analytics.maxTotalDBSize = kMinTotalDBSizeBytes + 1;
-    XCTAssertEqual(self.analytics.maxTotalDBSize, (NSInteger)kMinTotalDBSizeBytes + 1, @"maxTotalDBSize is unable to be set to a valid value");
+    XCTAssertEqual(self.analytics.maxTotalDBSize, kMinTotalDBSizeBytes + 1, @"maxTotalDBSize is unable to be set to a valid value");
 }
 
 - (void)testSetMaxBatchSize {
     // Set a value higher then the max, should set to the max
     self.analytics.maxBatchSize = kMaxBatchSizeBytes + 1;
-    XCTAssertEqual(self.analytics.maxBatchSize, (NSInteger)kMaxBatchSizeBytes, @"maxBatchSize is able to be set above the max value");
+    XCTAssertEqual(self.analytics.maxBatchSize, kMaxBatchSizeBytes, @"maxBatchSize is able to be set above the max value");
 
     // Set a value lower then then min, should set to the min
     self.analytics.maxBatchSize = kMinBatchSizeBytes - 1;
-    XCTAssertEqual(self.analytics.maxBatchSize, (NSInteger)kMinBatchSizeBytes, @"maxBatchSize is able to be set below the min value");
+    XCTAssertEqual(self.analytics.maxBatchSize, kMinBatchSizeBytes, @"maxBatchSize is able to be set below the min value");
 
     // Set a value between
     self.analytics.maxBatchSize = kMinBatchSizeBytes + 1;
-    XCTAssertEqual(self.analytics.maxBatchSize, (NSInteger)kMinBatchSizeBytes + 1, @"maxBatchSize is unable to be set to a valid value");
+    XCTAssertEqual(self.analytics.maxBatchSize, kMinBatchSizeBytes + 1, @"maxBatchSize is unable to be set to a valid value");
 }
 
 - (void)testSetMaxWait {
     // Set a value higher then the max, should set to the max
     self.analytics.maxWait = kMaxWaitSeconds + 1;
-    XCTAssertEqual(self.analytics.maxWait, (NSInteger)kMaxWaitSeconds, @"maxWait is able to be set above the max value");
+    XCTAssertEqual(self.analytics.maxWait, kMaxWaitSeconds, @"maxWait is able to be set above the max value");
 
     // Set a value lower then then min, should set to the min
     self.analytics.maxWait = kMinWaitSeconds - 1;
-    XCTAssertEqual(self.analytics.maxWait, (NSInteger)kMinWaitSeconds, @"maxWait is able to be set below the min value");
+    XCTAssertEqual(self.analytics.maxWait, kMinWaitSeconds, @"maxWait is able to be set below the min value");
 
     // Set a value between
     self.analytics.maxWait = kMinWaitSeconds + 1;
-    XCTAssertEqual(self.analytics.maxWait, (NSInteger)kMinWaitSeconds + 1, @"maxWait is unable to be set to a valid value");
+    XCTAssertEqual(self.analytics.maxWait, kMinWaitSeconds + 1, @"maxWait is unable to be set to a valid value");
 }
 
 - (void)testSetMinBatchInterval {
     // Set a value higher then the max, should set to the max
     self.analytics.minBatchInterval = kMaxBatchIntervalSeconds + 1;
-    XCTAssertEqual(self.analytics.minBatchInterval, (NSInteger)kMaxBatchIntervalSeconds, @"minBatchInterval is able to be set above the max value");
+    XCTAssertEqual(self.analytics.minBatchInterval, kMaxBatchIntervalSeconds, @"minBatchInterval is able to be set above the max value");
 
     // Set a value lower then then min, should set to the min
     self.analytics.minBatchInterval = kMinBatchIntervalSeconds - 1;
-    XCTAssertEqual(self.analytics.minBatchInterval, (NSInteger)kMinBatchIntervalSeconds, @"minBatchInterval is able to be set below the min value");
+    XCTAssertEqual(self.analytics.minBatchInterval, kMinBatchIntervalSeconds, @"minBatchInterval is able to be set below the min value");
 
     // Set a value between
     self.analytics.minBatchInterval = kMinBatchIntervalSeconds + 1;
-    XCTAssertEqual(self.analytics.minBatchInterval, (NSInteger)kMinBatchIntervalSeconds + 1, @"minBatchInterval is unable to be set to a valid value");
+    XCTAssertEqual(self.analytics.minBatchInterval, kMinBatchIntervalSeconds + 1, @"minBatchInterval is unable to be set to a valid value");
 }
 
 - (void)testIsEventValid {

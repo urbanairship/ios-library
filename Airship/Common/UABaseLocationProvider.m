@@ -147,9 +147,10 @@
         default:
             break;
     }
-    
-    if ([self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
-        [self.delegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
+
+    id<UALocationProviderDelegate> strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didChangeAuthorizationStatus:)]){
+        [strongDelegate locationProvider:self withLocationManager:self.locationManager didChangeAuthorizationStatus:status];
     }
 }
 
@@ -177,16 +178,18 @@
     }
 
     UALOG(@"UA Location Manager %@ did fail with error %@", [self class], error);
-    if ([self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
-        [self.delegate locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
+    id<UALocationProviderDelegate> strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didFailWithError:)]) {
+        [strongDelegate locationProvider:self withLocationManager:self.locationManager didFailWithError:error];
     }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     UALOG(@"Base location manager did update to location %@ from location %@", newLocation, oldLocation);
-    BOOL doesRespond = [self.delegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
+    id<UALocationProviderDelegate> strongDelegate = self.delegate;
+    BOOL doesRespond = [strongDelegate respondsToSelector:@selector(locationProvider:withLocationManager:didUpdateLocation:fromLocation:)];
     if ([self locationChangeMeetsAccuracyRequirements:newLocation from:oldLocation] && doesRespond) {
-        [self.delegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
+        [strongDelegate locationProvider:self withLocationManager:manager didUpdateLocation:newLocation fromLocation:oldLocation];
     }
 }
 

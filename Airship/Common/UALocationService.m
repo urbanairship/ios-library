@@ -227,8 +227,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(locationProvider != self.standardLocationProvider){
         return;
     }
-    if ([self.delegate respondsToSelector:@selector(locationService:didChangeAuthorizationStatus:)]) {
-        [self.delegate locationService:self didChangeAuthorizationStatus:status];
+    id <UALocationServiceDelegate> strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(locationService:didChangeAuthorizationStatus:)]) {
+        [strongDelegate locationService:self didChangeAuthorizationStatus:status];
     }
 }
 
@@ -245,8 +246,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
         [self stopSingleLocationWithError:error];
         return;
     }
-    if([self.delegate respondsToSelector:@selector(locationService:didFailWithError:)]) {
-        [self.delegate locationService:self didFailWithError:error];
+    id <UALocationServiceDelegate> strongDelegate = self.delegate;
+    if([strongDelegate respondsToSelector:@selector(locationService:didFailWithError:)]) {
+        [strongDelegate locationService:self didFailWithError:error];
     }
 }
 
@@ -296,8 +298,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 - (void)standardLocationDidUpdateToLocation:(CLLocation*)newLocation fromLocation:(CLLocation *)oldLocation {
     if (newLocation.horizontalAccuracy < self.standardLocationProvider.desiredAccuracy || self.standardLocationProvider.desiredAccuracy <= kCLLocationAccuracyBest) {
         [self reportLocationToAnalytics:newLocation fromProvider:self.standardLocationProvider];
-        if ([self.delegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-            [self.delegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+        id <UALocationServiceDelegate> strongDelegate = self.delegate;
+        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+            [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
     }
 }
@@ -333,8 +336,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 // maximum, which is set on the provider as well
 - (void)significantChangeDidUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     [self reportLocationToAnalytics:newLocation fromProvider:self.significantChangeProvider];
-    if ([self.delegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-        [self.delegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+    id <UALocationServiceDelegate> strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+        [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
     }
 }
 
@@ -401,8 +405,9 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 
     // If desiredAccuracy is set at or better than kCLAccuracyBest, send back everything
     if (newLocation.horizontalAccuracy < self.singleLocationProvider.desiredAccuracy) {
-        if ([self.delegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
-            [self.delegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
+        id <UALocationServiceDelegate> strongDelegate = self.delegate;
+        if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)]) {
+            [strongDelegate locationService:self didUpdateToLocation:newLocation fromLocation:oldLocation];
         }
         [self stopSingleLocationWithLocation:newLocation];
     }
@@ -425,18 +430,19 @@ didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
 //Make sure stopSingleLocation is called to shutdown background task
 - (void)stopSingleLocationWithError:(NSError *)locationError {
     UALOG(@"Single location failed with error %@", locationError);
-    if ([self.delegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)] && self.bestAvailableSingleLocation) {
-        [self.delegate locationService:self didUpdateToLocation:self.bestAvailableSingleLocation fromLocation:nil];
+    id <UALocationServiceDelegate> strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(locationService:didUpdateToLocation:fromLocation:)] && self.bestAvailableSingleLocation) {
+        [strongDelegate locationService:self didUpdateToLocation:self.bestAvailableSingleLocation fromLocation:nil];
     }
 
     if (self.bestAvailableSingleLocation) {
         [self reportLocationToAnalytics:self.bestAvailableSingleLocation fromProvider:self.singleLocationProvider];
     }
     
-    BOOL notifyDelegate = [self.delegate respondsToSelector:@selector(locationService:didFailWithError:)];
+    BOOL notifyDelegate = [strongDelegate respondsToSelector:@selector(locationService:didFailWithError:)];
     // Don't notify in case of a background error, there is most likely no way to recover
     if (self.singleLocationBackgroundIdentifier == UIBackgroundTaskInvalid && notifyDelegate) {
-        [self.delegate locationService:self didFailWithError:locationError];
+        [strongDelegate locationService:self didFailWithError:locationError];
     }
     [self stopSingleLocation];  
 }

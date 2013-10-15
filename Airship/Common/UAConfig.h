@@ -42,12 +42,12 @@
 /**
  * The current app key (resolved using the inProduction flag).
  */
-@property (weak, nonatomic, readonly) NSString *appKey;
+@property (nonatomic, readonly) NSString *appKey;
 
 /**
  * The current app secret (resolved using the inProduction flag).
  */
-@property (weak, nonatomic, readonly) NSString *appSecret;
+@property (nonatomic, readonly) NSString *appSecret;
 
 /**
  * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).

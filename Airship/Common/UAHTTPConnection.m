@@ -184,9 +184,10 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     UA_LDEBUG(@"ERROR: connection %@ didFailWithError: %@", self, error);
     self.request.error = error;
-    if ([self.delegate respondsToSelector:self.failureSelector]) {
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:self.failureSelector]) {
         UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
-            [self.delegate performSelector:self.failureSelector withObject:_request]
+            [strongDelegate performSelector:self.failureSelector withObject:_request]
         );
     }
 
@@ -203,10 +204,11 @@
     
     self.request.response = self.urlResponse;
     self.request.responseData = self.responseData;
+    id strongDelegate = self.delegate;
     
-    if ([self.delegate respondsToSelector:self.successSelector]) {
+    if ([strongDelegate respondsToSelector:self.successSelector]) {
         UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(
-            [self.delegate performSelector:self.successSelector withObject:self.request]
+            [strongDelegate performSelector:self.successSelector withObject:self.request]
         );
     }
 
@@ -229,7 +231,7 @@
 
     z_stream strm;
     
-    int chunkSize = 32768;// 32K chunks
+    NSUInteger chunkSize = 32768;// 32K chunks
     
     strm.zalloc = Z_NULL;
     strm.zfree = Z_NULL;
@@ -247,7 +249,7 @@
     do {
 
         if (strm.total_out >= [compressed length]) {
-            [compressed increaseLengthBy: chunkSize];
+            [compressed increaseLengthBy:chunkSize];
         }
 
         strm.next_out = [compressed mutableBytes] + strm.total_out;

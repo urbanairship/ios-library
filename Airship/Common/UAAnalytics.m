@@ -312,10 +312,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)saveUploadEventSettings {
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.maxWait forKey:kMaxWaitUserDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxTotalDBSize forKey:kMaxTotalDBSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxBatchSize forKey:kMaxBatchSizeUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.maxWait forKey:kMaxWaitUserDefaultsKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:(NSInteger)self.minBatchInterval forKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 #pragma mark -
@@ -387,7 +387,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 #pragma mark - 
 #pragma mark Custom Property Setters
-- (void)setMaxTotalDBSize:(NSInteger)maxTotalDBSize {
+- (void)setMaxTotalDBSize:(NSUInteger)maxTotalDBSize {
     if (maxTotalDBSize < kMinTotalDBSizeBytes) {
         _maxTotalDBSize = kMinTotalDBSizeBytes;
     }else if (maxTotalDBSize > kMaxTotalDBSizeBytes) {
@@ -397,7 +397,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (void)setMaxBatchSize:(NSInteger)maxBatchSize {
+- (void)setMaxBatchSize:(NSUInteger)maxBatchSize {
     if (maxBatchSize < kMinBatchSizeBytes) {
         _maxBatchSize = kMinBatchSizeBytes;
     }else if (maxBatchSize > kMaxBatchSizeBytes) {
@@ -407,7 +407,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (void)setMaxWait:(NSInteger)maxWait {
+- (void)setMaxWait:(NSUInteger)maxWait {
     if (maxWait < kMinWaitSeconds) {
         _maxWait = kMinWaitSeconds;
     }else if (maxWait > kMaxWaitSeconds) {
@@ -417,7 +417,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     }
 }
 
-- (void)setMinBatchInterval:(NSInteger)minBatchInterval {
+- (void)setMinBatchInterval:(NSUInteger)minBatchInterval {
     if (minBatchInterval < kMinBatchIntervalSeconds) {
         _minBatchInterval = kMinBatchIntervalSeconds;
     }else if (minBatchInterval > kMaxBatchIntervalSeconds) {
@@ -536,7 +536,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     NSUInteger avgEventSize = self.databaseSize / [[UAAnalyticsDBManager shared] eventCount];
     int actualSize = 0;
-    int batchEventCount = 0;
+    NSUInteger batchEventCount = 0;
     
     NSArray *events = [[UAAnalyticsDBManager shared] getEvents:self.maxBatchSize/avgEventSize];
     NSArray *topLevelKeys = @[@"type", @"time", @"event_id", @"data"];

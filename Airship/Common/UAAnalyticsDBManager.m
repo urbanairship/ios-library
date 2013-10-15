@@ -117,7 +117,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 - (NSArray *)getEvents:(NSUInteger)max {
     __block NSArray *result = nil;
     dispatch_sync(dbQueue, ^{
-        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithInteger:max]];
+        result = [self.db executeQuery:@"SELECT * FROM analytics ORDER BY _id LIMIT ?", [NSNumber numberWithUnsignedInteger:max]];
     });
     return result;
 }
@@ -175,7 +175,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     [self deleteBySessionId:sessionId];
 }
 
-- (NSInteger)eventCount {
+- (NSUInteger)eventCount {
     
     __block NSArray *results = nil;
     dispatch_sync(dbQueue, ^{
@@ -189,7 +189,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         if ([count isKindOfClass:[NSNull class]]) {
             return 0;
         }
-        return [count intValue];
+        return [count unsignedIntegerValue];
     }
 }
 

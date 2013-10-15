@@ -153,7 +153,7 @@ SINGLETON_INTERFACE(UAInbox);
 /**
  * The list of Rich Push Inbox messages.
  */
-@property (nonatomic, weak) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxMessageList *messageList;
 
 /**
  * Handles incoming rich push messages.

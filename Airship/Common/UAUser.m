@@ -51,7 +51,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 + (void)setDefaultUsername:(NSString *)defaultUsername withPassword:(NSString *)defaultPassword {
-    
+
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
     
     // If the keychain username is present a user already exists, if not, save
@@ -149,7 +149,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
  saveUserData - Saves all the existing password and username data to disk.
  */
 - (void)saveUserData {
-        
+
     NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
 
     if (!storedUsername) {

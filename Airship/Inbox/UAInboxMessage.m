@@ -68,13 +68,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
                   withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock {
 
-    if (!self.unread || self.inbox.isBatchUpdating) {
+    UAInboxMessageList *strongInbox = self.inbox;
+
+    if (!self.unread || strongInbox.isBatchUpdating) {
         return nil;
     }
 
-    self.inbox.isBatchUpdating = YES;
+    strongInbox.isBatchUpdating = YES;
 
     __block BOOL isCallbackCancelled = NO;
+
     UADisposable *disposable = [UADisposable disposableWithBlock:^{
         isCallbackCancelled = YES;
     }];
@@ -82,23 +85,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     [self.client
      markMessageRead:self onSuccess:^{
          if (self.unread) {
-             self.inbox.unreadCount = self.inbox.unreadCount - 1;
+             strongInbox.unreadCount = strongInbox.unreadCount - 1;
              self.unread = NO;
              [[UAInboxDBManager shared] saveContext];
          }
 
-         self.inbox.isBatchUpdating = NO;
+         strongInbox.isBatchUpdating = NO;
 
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
+         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFinished:) withObject:self];
 
          if (successBlock && !isCallbackCancelled) {
              successBlock(self);
          }
      } onFailure:^(UAHTTPRequest *request){
          UA_LDEBUG(@"Mark as read failed for message %@ with HTTP status: %ld", self.messageID, (long)request.response.statusCode);
-         self.inbox.isBatchUpdating = NO;
+         strongInbox.isBatchUpdating = NO;
 
-         [self.inbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
+         [strongInbox notifyObservers:@selector(singleMessageMarkAsReadFailed:) withObject:self];
 
          if (failureBlock && !isCallbackCancelled) {
              failureBlock(self);
@@ -112,12 +115,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     __weak id<UAInboxMessageListDelegate> weakDelegate = delegate;
 
     return [self markAsReadWithSuccessBlock:^(UAInboxMessage *message){
-        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
-            [weakDelegate singleMessageMarkAsReadFinished:message];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFinished:)]) {
+            [strongDelegate singleMessageMarkAsReadFinished:message];
         }
     } withFailureBlock: ^(UAInboxMessage *message){
-        if ([weakDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
-            [weakDelegate singleMessageMarkAsReadFailed:message];
+        id<UAInboxMessageListDelegate> strongDelegate = weakDelegate;
+        if ([strongDelegate respondsToSelector:@selector(singleMessageMarkAsReadFailed:)]) {
+            [strongDelegate singleMessageMarkAsReadFailed:message];
         }
     }];
 }
@@ -163,15 +168,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     NSArray * queries = [urlQuery componentsSeparatedByString:@"&"];
 
     for (int i = 0; i < [queries count]; i++) {
-        NSArray *optionPair = [[queries objectAtIndex:i] componentsSeparatedByString:@"="];
+        NSArray *optionPair = [[queries objectAtIndex:(NSUInteger)i] componentsSeparatedByString:@"="];
         NSString *key = [optionPair objectAtIndex:0];
         NSString *object = [optionPair objectAtIndex:1];
         [options setObject:object forKey:key];
     }
 
     SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
-    if ([[UAInbox shared].jsDelegate respondsToSelector:selector]) {
-        NSString *script = [[UAInbox shared].jsDelegate callbackArguments:arguments withOptions:options];
+    id<UAInboxJavaScriptDelegate> jsDelegate = [UAInbox shared].jsDelegate;
+    if ([jsDelegate respondsToSelector:selector]) {
+        NSString *script = [jsDelegate callbackArguments:arguments withOptions:options];
         if (script) {
             [webView stringByEvaluatingJavaScriptFromString:script];
         }

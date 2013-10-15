@@ -43,7 +43,7 @@
 //Note: this is a fairly naive hash combination, but should be sufficient for our purposes, since
 //the types here are asymmetric
 - (NSUInteger)hash {
-    return [self.deviceToken hash] ^ [[self.payload asDictionary] hash] ^ self.pushEnabled;
+    return [self.deviceToken hash] ^ [[self.payload asDictionary] hash] ^ (NSUInteger)self.pushEnabled;
 }
 
 @end

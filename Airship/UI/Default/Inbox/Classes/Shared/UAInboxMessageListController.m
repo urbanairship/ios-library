@@ -233,7 +233,7 @@
 
 // indexPath.row is for use with grouped table views, see NSIndexPath UIKit Additions
 - (UAInboxMessage *)messageForIndexPath:(NSIndexPath *)indexPath {
-    NSArray *messages = [[UAInboxMessageList shared] messages];
+    NSArray *messages = [[UAInbox shared].messageList messages];
     return [messages objectAtIndex:indexPath.row];
 }
 
@@ -280,7 +280,7 @@
     
     self.navigationItem.leftBarButtonItem.enabled = NO;
     
-    if ([UAInboxMessageList shared].isBatchUpdating) {
+    if ([UAInbox shared].messageList.isBatchUpdating) {
         return;
     }
     
@@ -455,7 +455,7 @@
 
 
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UAInboxMessage *message = [[UAInboxMessageList shared] messageAtIndex:indexPath.row];
+    UAInboxMessage *message = [[UAInbox shared].messageList messageAtIndex:indexPath.row];
     [UAInbox displayMessageWithID:message.messageID inViewController:self.navigationController];
 }
 
