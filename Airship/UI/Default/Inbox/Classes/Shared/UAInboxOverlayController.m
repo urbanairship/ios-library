@@ -166,15 +166,14 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)loadMessageForID:(NSString *)mid {
-    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
-    UAInboxMessage *msg = [strongMessageList messageForID:mid];
+    UAInboxMessage *msg = [[UAInbox shared].messageList messageForID:mid];
     if (msg == nil) {
         UALOG(@"Can not find message with ID: %@", mid);
         [self closePopupWindow];
         return;
     }
     
-    [self loadMessageAtIndex:[strongMessageList indexOfMessage:msg]];
+    [self loadMessageAtIndex:[[UAInbox shared].messageList indexOfMessage:msg]];
 }
 
 - (BOOL)shouldTransition {

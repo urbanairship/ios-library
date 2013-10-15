@@ -321,13 +321,12 @@
 
     self.cancelItem.enabled = NO;
 
-    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
     if (sender == self.markAsReadButtonItem) {
-        [strongMessageList performBatchUpdateCommand:UABatchReadMessages
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages
                                             withMessageIndexSet:messageIDs
                                                     withDelegate:self];
     } else {
-        [strongMessageList performBatchUpdateCommand:UABatchDeleteMessages
+        [[UAInbox shared].messageList performBatchUpdateCommand:UABatchDeleteMessages
                                             withMessageIndexSet:messageIDs
                                                    withDelegate:self];
     }

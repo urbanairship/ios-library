@@ -84,9 +84,8 @@
 - (void)applicationWillResignActive:(UIApplication *)application {
     
     // Set the application's badge to the number of unread messages
-    UAInboxMessageList *strongMessageList = [UAInbox shared].messageList;
-    if (strongMessageList.unreadCount >= 0) {
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:strongMessageList.unreadCount];
+    if ([UAInbox shared].messageList.unreadCount >= 0) {
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[UAInbox shared].messageList.unreadCount];
     }
 }
 
