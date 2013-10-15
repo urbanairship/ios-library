@@ -30,7 +30,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.opaque = NO;//peek through around the circle!
+        self.opaque = NO; //peek through around the circle!
     }
     return self;
 }
@@ -46,12 +46,17 @@
     // draw a circle
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    CGContextFillEllipseInRect(context, self.bounds);
+
+
+
+    NSInteger circleInset = 5;
+    CGRect circleRect = CGRectInset(self.bounds, circleInset, circleInset);
+    CGContextFillEllipseInRect(context, circleRect);
 
     // the X gets to be a little smaller than the circle
-    NSInteger inset = 5;
+    NSInteger xInset = 5;
 
-    CGRect xFrame = CGRectInset(self.bounds, inset, inset);
+    CGRect xFrame = CGRectInset(circleRect, xInset, xInset);
 
     //CGRect gymnastics
     UIBezierPath *aPath = [UIBezierPath bezierPath];
