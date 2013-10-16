@@ -63,19 +63,13 @@
 
 //we want to avoid sending duplicate payloads, when possible
 - (BOOL)shouldSendRegistrationWithData:(UADeviceRegistrationData *)data {
-    //if there's already one going out
+
     if (self.pendingRegistration) {
-        //return NO if it's equal to the current data
         return ![self.pendingRegistration isEqual:data];
-    } else {
-        //otherwise if there was a previous successful registration/unregistration
-        if (self.lastSuccessfulRegistration) {
-            //return NO if it's equal to the current data
-            return ![self.lastSuccessfulRegistration isEqual:data];
-        } else {
-            return YES;
-        }
+    } else if (self.lastSuccessfulRegistration) {
+        return ![self.lastSuccessfulRegistration isEqual:data];
     }
+    return YES;
 }
 
 - (void)runRequest:(UAHTTPRequest *)request

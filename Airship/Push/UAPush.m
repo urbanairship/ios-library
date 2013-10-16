@@ -37,6 +37,8 @@
 #import "UAActionRegistrar+Internal.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
+#import "UAChannelRegistrationPayload.h"
+#import "UAUser.h"
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -262,6 +264,29 @@ static Class _uiClass;
     if (self.pushEnabled && self.notificationTypes != UIRemoteNotificationTypeNone) {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
     }
+}
+
+- (UAChannelRegistrationPayload *)channelRegistrationPayload {
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    payload.deviceID = [UAUtils deviceID];
+    payload.userID = [UAUser defaultUser].username;
+    payload.pushAddress = self.deviceToken;
+
+    payload.optedIn = YES;
+
+    payload.setTags = self.deviceTagsEnabled;
+    payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;
+
+    payload.alias = self.alias;
+
+    payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
+
+    if (self.timeZone.name != nil && self.quietTimeEnabled) {
+        payload.timeZone = self.timeZone.name;
+        payload.quietTime = [self.quietTime copy];
+    }
+
+    return payload;
 }
 
 #pragma mark -

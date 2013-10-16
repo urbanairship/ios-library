@@ -38,6 +38,7 @@
 - (id)init {
     self = [super init];
     if (self) {
+        self.channelAPIURL = kAirshipProductionServer;
         self.deviceAPIURL = kAirshipProductionServer;
         self.analyticsURL = kAnalyticsProductionServer;
         self.developmentLogLevel = UALogLevelDebug;
@@ -70,6 +71,7 @@
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
+            "Channel API URL: %@\n"
             "Cache Size: %ld MB\n",
             self.appKey,
             self.appSecret,
@@ -87,6 +89,8 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
+            self.channelAPIURL,
+
             (unsigned long)self.cacheDiskSizeInMB];
 }
 
@@ -315,6 +319,16 @@
         _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
     } else {
         _deviceAPIURL = [deviceAPIURL copy];
+    }
+}
+
+- (void)setChannelAPIURL:(NSString *)channelAPIURL {
+    //Any appending url starts with a beginning /, so make sure the base url does not
+    if ([channelAPIURL hasSuffix:@"/"]) {
+        UA_LWARN(@"Channel API URL ends with a trailing slash, stripping ending slash.");
+        _channelAPIURL = [channelAPIURL substringWithRange:NSMakeRange(0, [channelAPIURL length] - 1)];
+    } else {
+        _channelAPIURL = [channelAPIURL copy];
     }
 }
 #pragma mark -
