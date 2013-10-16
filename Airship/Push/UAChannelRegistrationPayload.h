@@ -44,7 +44,7 @@ extern UAChannelJSONKey UAChannelSetTagsKey;
 extern UAChannelJSONKey UAChannelTagsJSONKey;
 
 
-@interface UAChannelRegistrationPayload : NSObject
+@interface UAChannelRegistrationPayload : NSObject<NSCopying>
 
 
 @property(nonatomic, copy)NSString *userID;
@@ -65,4 +65,6 @@ extern UAChannelJSONKey UAChannelTagsJSONKey;
 
 
 - (NSData *)asJSONData;
+
+- (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload;
 @end

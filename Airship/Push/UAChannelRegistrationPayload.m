@@ -45,14 +45,13 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
 
 @implementation UAChannelRegistrationPayload
 
-
 - (NSData *)asJSONData {
-    return [NSJSONSerialization dataWithJSONObject:[self createPayloadDictionary]
+    return [NSJSONSerialization dataWithJSONObject:[self payloadDictionary]
                                            options:0
                                              error:nil];
 }
 
-- (NSDictionary *)createPayloadDictionary {
+- (NSDictionary *)payloadDictionary {
     NSMutableDictionary *payloadDictionary = [NSMutableDictionary dictionary];
 
     [payloadDictionary setValue:@"ios" forKey:UAChannelDeviceTypeKey];
@@ -60,18 +59,20 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
     [payloadDictionary setValue:[NSNumber numberWithBool:self.optedIn] forKey:UAChannelOptInKey];
     [payloadDictionary setValue:self.pushAddress forKey:UAChannelPushAddressKey];
 
-    NSMutableDictionary *identityHints = [NSMutableDictionary dictionary];
-    [identityHints setValue:self.userID forKey:UAChannelUserIDKey];
-    [identityHints setValue:self.deviceID forKey:UAChannelDeviceIDKey];
-    [payloadDictionary setValue:identityHints forKey:UAChannelIdentityHintsKey];
+    if (self.deviceID || self.userID) {
+        NSMutableDictionary *identityHints = [NSMutableDictionary dictionary];
+        [identityHints setValue:self.userID forKey:UAChannelUserIDKey];
+        [identityHints setValue:self.deviceID forKey:UAChannelDeviceIDKey];
+        [payloadDictionary setValue:identityHints forKey:UAChannelIdentityHintsKey];
+    }
 
-    //if (self.badge || self.quietTime || self.timeZone) {
+    if (self.badge || self.quietTime || self.timeZone) {
         NSMutableDictionary *ios = [NSMutableDictionary dictionary];
         [ios setValue:self.badge forKey:UAChannelBadgeJSONKey];
         [ios setValue:self.quietTime forKey:UAChannelQuietTimeJSONKey];
         [ios setValue:self.timeZone forKey:UAChannelTimeZoneJSONKey];
         [payloadDictionary setValue:ios forKey:UAChanneliOSKey];
-    //}
+    }
 
     [payloadDictionary setValue:self.alias forKey:UAChannelAliasJSONKey];
 
@@ -81,8 +82,37 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
     return payloadDictionary;
 }
 
-- (NSUInteger)hash {
-    return [[self createPayloadDictionary] hash];
+- (id)copyWithZone:(NSZone *)zone {
+    UAChannelRegistrationPayload *copy = [[[self class] alloc] init];
+
+    if (copy) {
+        copy.userID = self.userID;
+        copy.deviceID = self.deviceID;
+        copy.optedIn = self.optedIn;
+        copy.pushAddress = self.pushAddress;
+        copy.setTags = self.setTags;
+        copy.tags = [self.tags copyWithZone:zone];
+        copy.alias = self.alias;
+        copy.quietTime = [self.quietTime copyWithZone:zone];
+        copy.timeZone = self.timeZone;
+        copy.badge = [self.badge copyWithZone:zone];
+    }
+
+    return copy;
 }
+
+- (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload {
+    return (self.optedIn == payload.optedIn &&
+            self.setTags == payload.setTags &&
+            [self.userID isEqualToString:payload.userID] &&
+            [self.deviceID isEqualToString:payload.deviceID] &&
+            [self.pushAddress isEqualToString:payload.pushAddress] &&
+            [self.tags isEqualToArray:payload.tags] &&
+            [self.alias isEqualToString:payload.alias] &&
+            [self.quietTime isEqualToDictionary:payload.quietTime] &&
+            [self.timeZone isEqualToString:payload.timeZone] &&
+            [self.badge isEqualToNumber:payload.badge]);
+}
+
 
 @end

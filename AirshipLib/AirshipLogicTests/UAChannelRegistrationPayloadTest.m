@@ -35,25 +35,6 @@
 @implementation UAChannelRegistrationPayloadTest
 UAChannelRegistrationPayload *payload;
 
-//note: the fact that is even needed suggests we would probably be better off refactoring this outside of UAPush,
-//or at least separating the building of the dictionary from setting UAPush property state.
-- (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
-
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSString *fromStr = [NSString stringWithFormat:@"%ld:%02ld",
-                         (long)[cal components:NSHourCalendarUnit fromDate:startDate].hour,
-                         (long)[cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
-
-    NSString *toStr = [NSString stringWithFormat:@"%ld:%02ld",
-                       (long)[cal components:NSHourCalendarUnit fromDate:endDate].hour,
-                       (long)[cal components:NSMinuteCalendarUnit fromDate:endDate].minute];
-
-    return [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            fromStr, UAPushQuietTimeStartKey,
-            toStr, UAPushQuietTimeEndKey, nil];
-
-}
-
 - (void)setUp {
     [super setUp];
 
@@ -75,34 +56,12 @@ UAChannelRegistrationPayload *payload;
     payload.setTags = YES;
 }
 
-- (void)tearDown {
-
-    [super tearDown];
-}
-
-/**
- * Test that the hash changes when values change on the dictionary
- */
-- (void)testHash {
-    NSUInteger hash = [payload hash];
-    XCTAssertNotEqual(0, hash, @"Hash should not equal zero");
-
-    payload.alias = @"someAlias";
-    XCTAssertNotEqual(hash, [payload hash], @"Hash should change when the payload changes");
-}
-
-
 /**
  * Test that the json has the full expected payload
  */
 - (void)testAsJsonFullPayload {
     NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
-
-    NSString *expectedOutput = @"{\"identity_hints\":{\"user_id\":\fakeUser\",\"device_id\":\"fakeDeviceID\"},\"ios\":{\"quiettime\":{\"start\":\"16:00\",\"end\":\"16:01\"},\"tz\":\"timezone\",\"badge\":1},\"tags\":[\"tagOne\",\"tagTwo\"],\"transport\":\"apns\",\"alias\":\"fakeAlias\",\"device_type\":\"ios\",\"opt-in\":true,\"push-address\":\"FAKEADDRESS\",\"set_tags\":true}";
-
-
-    XCTAssertEqualObjects(jsonString, expectedOutput, @"Unexpected output");
 
     // Top level items here
     XCTAssertEqualObjects(@"ios", [dict valueForKey:UAChannelDeviceTypeKey], @"device type should be present");
@@ -159,24 +118,102 @@ UAChannelRegistrationPayload *payload;
 }
 
 /**
- * Test that an empty indentity hints section is not included
+ * Test that an empty identity hints section is not included
  */
 - (void)testAsJsonEmptyIndentityHints {
+    payload.deviceID = nil;
+    payload.userID = nil;
 
-}
-
-/* tests */
-
-- (void)verifyJsonData:(NSData *)data {
-    NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
-    XCTAssertNotNil(dict, @"dictionary should not be nil");
-    XCTAssertEqualObjects(payload.alias, [dict valueForKey:UAChannelAliasJSONKey], @"alias should be present");
-    XCTAssertEqualObjects(payload.tags, [dict valueForKey:UAChannelTagsJSONKey], @"tags should be present");
-    XCTAssertEqualObjects(payload.timeZone, [dict valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
-    XCTAssertEqualObjects(payload.quietTime, [dict valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(payload.badge, [dict valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
+    XCTAssertNil([dict valueForKey:UAChannelIdentityHintsKey], @"identity hints section should not be included in the JSON");
+}
+
+/**
+ * Test isEqualToPayload is equal to its copy
+ */
+- (void)testIsEqualCopy {
+    UAChannelRegistrationPayload *payloadCopy = [payload copy];
+    XCTAssertTrue([payload isEqualToPayload:payloadCopy], @"A copy should be equal to the original");
+
+    payloadCopy.optedIn = NO;
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.optedIn = payload.optedIn;
+
+    payloadCopy.pushAddress = @"different-value";
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.pushAddress = payload.pushAddress;
+
+    payloadCopy.userID = @"different-value";
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.userID = payload.userID;
+
+    payloadCopy.deviceID = @"different-value";
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.deviceID = payload.deviceID;
+
+    payloadCopy.badge = [NSNumber numberWithInteger:5];;
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.badge = payload.badge;
+
+    payloadCopy.quietTime = [NSDictionary dictionary];
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.quietTime = payload.quietTime;
+
+    payloadCopy.timeZone = @"different-value";
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.timeZone = payload.timeZone;
+
+    payloadCopy.alias = @"different-value";
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.alias = payload.alias;
+
+    payloadCopy.setTags = NO;
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.setTags = payload.setTags;
+
+    payloadCopy.tags = @[@"tagThree", @"tagFour"];;
+    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    payloadCopy.tags = payload.tags;
+
+    // Make sure its equal again
+    XCTAssertTrue([payload isEqualToPayload:payloadCopy], @"A copy should be equal to the original");
+}
+
+/**
+ * Test isEqualToPayload is equal to itself
+ */
+- (void)testIsEqualToPayloadSelf {
+    XCTAssertTrue([payload isEqualToPayload:payload], @"A payload should be equal to itself");
+}
+
+/**
+ * Test isEqualToPayload is equal to an empty payload
+ */
+- (void)testIsEqualToPayloadEmptyPayload {
+    UAChannelRegistrationPayload *emptyPayload = [[UAChannelRegistrationPayload alloc] init];
+    XCTAssertFalse([payload isEqualToPayload:emptyPayload], @"A payload should not be equal to a different payload");
+}
+
+
+// Helpers
+
+- (NSMutableDictionary *)buildQuietTimeWithStartDate:(NSDate *)startDate withEndDate:(NSDate *)endDate {
+
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSString *fromStr = [NSString stringWithFormat:@"%ld:%02ld",
+                         (long)[cal components:NSHourCalendarUnit fromDate:startDate].hour,
+                         (long)[cal components:NSMinuteCalendarUnit fromDate:startDate].minute];
+
+    NSString *toStr = [NSString stringWithFormat:@"%ld:%02ld",
+                       (long)[cal components:NSHourCalendarUnit fromDate:endDate].hour,
+                       (long)[cal components:NSMinuteCalendarUnit fromDate:endDate].minute];
+
+    return [NSMutableDictionary dictionaryWithObjectsAndKeys:
+            fromStr, UAPushQuietTimeStartKey,
+            toStr, UAPushQuietTimeEndKey, nil];
+    
 }
 
 

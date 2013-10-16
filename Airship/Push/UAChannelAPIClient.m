@@ -38,8 +38,8 @@
 
 @interface UAChannelAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
-@property(nonatomic, assign) NSUInteger lastSuccessUpdatePayloadHash;
-@property(nonatomic, assign) NSUInteger pendingUpdatePayloadHash;
+@property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
+@property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
 @end
 
 @implementation UAChannelAPIClient
@@ -109,13 +109,14 @@
         return;
     }
 
+    UAChannelRegistrationPayload *payloadCopy = [payload copy];
     // There should never be a create request with a update request.
     [self.requestEngine cancelAllRequests];
 
     //synchronize here since we're messing with the registration cache
     //the success/failure blocks below will be triggered on the main thread
     @synchronized(self) {
-        self.pendingUpdatePayloadHash = [payload hash];
+        self.pendingPayload = payloadCopy;
     }
 
     UAHTTPRequest *request = [self requestToUpdateWithChannelID:channelID payload:payload];
@@ -130,8 +131,8 @@
         UA_LTRACE(@"Retrieved channel response: %@", request.responseString);
 
         //clear the pending cache,  update last successful cache
-        self.pendingUpdatePayloadHash = 0;
-        self.lastSuccessUpdatePayloadHash = [payload hash];
+        self.pendingPayload = nil;
+        self.lastSuccessfulPayload = payloadCopy;
 
         if (successBlock) {
             successBlock();
@@ -140,7 +141,7 @@
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         //clear the pending cache
-        self.pendingUpdatePayloadHash = 0;
+        self.pendingPayload = nil;
 
         if (failureBlock) {
             failureBlock(request);
@@ -151,9 +152,8 @@
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    NSUInteger hash = [data hash];
-    return !(self.pendingUpdatePayloadHash == hash
-             || self.lastSuccessUpdatePayloadHash == hash);
+    return !([self.pendingPayload isEqualToPayload:data]
+             || [self.lastSuccessfulPayload isEqualToPayload:data]);
 }
 
 - (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
