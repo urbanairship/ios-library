@@ -1,13 +1,9 @@
-//
-//  UAPush+Test.h
-//  AirshipLib
-//
-//  Created by Marc Sciglimpaglia on 10/15/13.
-//
-//
 
 #import "UAPush.h"
 
 @interface UAPush (Test)
+
++ (void)configure:(id)instance;
++ (void)reset;
 
 @end
