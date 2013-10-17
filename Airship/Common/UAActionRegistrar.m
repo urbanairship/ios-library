@@ -100,6 +100,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
     // Don't allow situation overrides on reserved actions
     if (!name || [kUAReservedActionKeys containsObject:name]) {
+        UA_LWARN(@"Unable to override situations for reserved actions. %@ is a reserved action name.", name);
         return NO;
     }
 
