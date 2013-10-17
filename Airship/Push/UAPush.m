@@ -44,11 +44,12 @@ UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
 UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
 UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
+UAPushSettingsKey *const UAPushChannelIDKey = @"UAChannelID";
+
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
 
 UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
 UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
@@ -76,6 +77,7 @@ static Class _uiClass;
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    self.deviceRegistrar.registrarDelegate = nil;
 }
 
 - (id)init {
@@ -95,8 +97,9 @@ static Class _uiClass;
                                               selector:@selector(applicationDidEnterBackground) 
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
-        
-        self.deviceAPIClient = [[UADeviceAPIClient alloc] init];
+
+        self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
+        self.deviceRegistrar.registrarDelegate = self;
         self.deviceTagsEnabled = YES;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
@@ -140,6 +143,22 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Get/Set Methods
+
+- (id<UARegistrationDelegate>)registrationDelegate {
+    return self.deviceRegistrar.registrationDelegate;
+}
+
+- (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
+    self.deviceRegistrar.registrationDelegate = registrationDelegate;
+}
+
+- (void)setChannelID:(NSString *)channelID {
+    [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
+}
+
+- (NSString *)channelID {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+}
 
 - (BOOL)autobadgeEnabled {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushBadgeSettingsKey];
@@ -193,7 +212,6 @@ static Class _uiClass;
             UA_LDEBUG(@"Registering for remote notifications.");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
             //note: we don't want to use the wrapper method here, because otherwise it will blow away the existing notificationTypes
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             [self updateRegistration];
@@ -265,61 +283,6 @@ static Class _uiClass;
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
     }
 }
-
-- (UAChannelRegistrationPayload *)channelRegistrationPayload {
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-    payload.deviceID = [UAUtils deviceID];
-    payload.userID = [UAUser defaultUser].username;
-    payload.pushAddress = self.deviceToken;
-
-    payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
-
-    payload.setTags = self.deviceTagsEnabled;
-    payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;
-
-    payload.alias = self.alias;
-
-    payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
-
-    if (self.timeZone.name && self.quietTimeEnabled) {
-        payload.timeZone = self.timeZone.name;
-        payload.quietTime = [self.quietTime copy];
-    }
-
-    return payload;
-}
-
-#pragma mark -
-#pragma mark UA Device API Payload
-
-- (UADeviceRegistrationPayload *)registrationPayload {
-    NSString *alias =  self.alias;
-    NSArray *tags = self.deviceTagsEnabled ? self.tags : nil;
-    NSNumber *badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
-
-    NSString *tz = nil;
-    NSDictionary *quietTime = nil;
-    if (self.timeZone.name != nil && self.quietTimeEnabled) {
-        tz = self.timeZone.name;
-        quietTime = self.quietTime;
-    }
-
-    return [UADeviceRegistrationPayload payloadWithAlias:alias
-                                                withTags:tags
-                                            withTimeZone:tz
-                                           withQuietTime:quietTime
-                                               withBadge:badge];
-}
-
-#pragma mark -
-#pragma Registration Data Model
-
-- (UADeviceRegistrationData *)registrationData {
-    return [UADeviceRegistrationData dataWithDeviceToken:self.deviceToken
-                                             withPayload:[self registrationPayload]
-                                             pushEnabled:self.pushEnabled];
-}
-
 
 #pragma mark -
 #pragma mark Open APIs - Property Setters
@@ -536,85 +499,32 @@ static Class _uiClass;
 #pragma mark -
 #pragma mark UA Registration Methods
 
-/* 
- * Checks the current application state, bails if in the background with the
- * assumption that next app init or isActive notif will call update.
- * Dispatches a registration request to the server if necessary via
- * the Device API client. PushEnabled -> register, !PushEnabled -> unregister.
- */
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-        
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
-        return;
-    }
-    
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    if (self.pushEnabled) {
-        // If there is no device token, wait for the application delegate to update with one.
-        if (!self.deviceToken) {
-            UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
-            return;
-        }
 
-        //note: we are performing both observer and delegate callbacks here as long as the
-        //registration observer protocol remains in deprecation.
-        [self.deviceAPIClient
-         registerWithData:[self registrationData]
-         onSuccess:^{
-             UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
-             [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
-             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
-                 [self.registrationDelegate registerDeviceTokenSucceeded];
-             }
-         }
-         onFailure:^(UAHTTPRequest *request) {
-             [self notifyObservers:@selector(registerDeviceTokenFailed:)
-                        withObject:request];
-             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenFailed:)]) {
-                 [self.registrationDelegate registerDeviceTokenFailed:request];
-             }
-         }
-         forcefully:forcefully];
-    }
-    else {
-        // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
-        // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
-        // that uses push, the DELETE will fail with a 404.
-        if (!self.deviceToken) {
-            UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
-            return;
-        }
-        // Don't unregister more than once
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering]) {
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    payload.deviceID = [UAUtils deviceID];
+    payload.userID = [UAUser defaultUser].username;
+    payload.pushAddress = self.deviceToken;
 
-            [self.deviceAPIClient
-             unregisterWithData:[self registrationData]
-             onSuccess:^{
-                 // note that unregistration is no longer needed
-                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
-                 UA_LDEBUG(@"Device token unregistered on Urban Airship successfully.");
-                 [self notifyObservers:@selector(unregisterDeviceTokenSucceeded)];
-                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenSucceeded)]) {
-                     [self.registrationDelegate unregisterDeviceTokenSucceeded];
-                 }
-             }
-             onFailure:^(UAHTTPRequest *request) {
-                 [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-                 [self notifyObservers:@selector(unregisterDeviceTokenFailed:)
-                            withObject:request];
-                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenFailed:)]) {
-                     [self.registrationDelegate unregisterDeviceTokenFailed:request];
-                 }
-             }
-             forcefully:forcefully];
-        }
-        else {
-            UA_LDEBUG(@"Device has already been unregistered, no update scheduled.");
-        }
+    payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone && self.pushEnabled;
+
+    payload.setTags = self.deviceTagsEnabled;
+    payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;
+
+    payload.alias = self.alias;
+
+    payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
+
+    if (self.timeZone.name && self.quietTimeEnabled) {
+        payload.timeZone = self.timeZone.name;
+        payload.quietTime = [self.quietTime copy];
     }
+
+    [self.deviceRegistrar updateRegistrationWithChannelID:self.channelID
+                                              withPayload:payload
+                                              pushEnabled:self.pushEnabled
+                                               forcefully:forcefully];
 }
 
 - (void)updateRegistration {
@@ -642,6 +552,10 @@ static Class _uiClass;
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
     [self updateRegistration];
+}
+
+-(void)channelIDCreated:(NSString *)channelID {
+    self.channelID = channelID;
 }
 
 #pragma mark -

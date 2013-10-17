@@ -353,6 +353,10 @@
 		CCDD37F8180E019800B8866E /* UAChannelRegistrationPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37F4180E019800B8866E /* UAChannelRegistrationPayload.m */; };
 		CCDD37FC180EFAAD00B8866E /* UAChannelRegistrationPayloadTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37FB180EFAAD00B8866E /* UAChannelRegistrationPayloadTest.m */; };
 		CCDD37FE180EFABC00B8866E /* UAChannelAPIClientTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD37FD180EFABC00B8866E /* UAChannelAPIClientTest.m */; };
+		CCDD38081810643E00B8866E /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD38061810643E00B8866E /* UADeviceRegistrar.h */; };
+		CCDD38091810643E00B8866E /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD38061810643E00B8866E /* UADeviceRegistrar.h */; };
+		CCDD380A1810643E00B8866E /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD38071810643E00B8866E /* UADeviceRegistrar.m */; };
+		CCDD380B1810643E00B8866E /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD38071810643E00B8866E /* UADeviceRegistrar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -575,6 +579,8 @@
 		CCDD37F4180E019800B8866E /* UAChannelRegistrationPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayload.m; sourceTree = "<group>"; };
 		CCDD37FB180EFAAD00B8866E /* UAChannelRegistrationPayloadTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelRegistrationPayloadTest.m; sourceTree = "<group>"; };
 		CCDD37FD180EFABC00B8866E /* UAChannelAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClientTest.m; sourceTree = "<group>"; };
+		CCDD38061810643E00B8866E /* UADeviceRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrar.h; sourceTree = "<group>"; };
+		CCDD38071810643E00B8866E /* UADeviceRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrar.m; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -785,6 +791,8 @@
 				1F610DDD17835C3A00BCD96E /* UAPush.h */,
 				1F610DDC17835C3A00BCD96E /* UAPush+Internal.h */,
 				1F610DDE17835C3A00BCD96E /* UAPush.m */,
+				CCDD38061810643E00B8866E /* UADeviceRegistrar.h */,
+				CCDD38071810643E00B8866E /* UADeviceRegistrar.m */,
 			);
 			path = Push;
 			sourceTree = "<group>";
@@ -1202,6 +1210,7 @@
 				1FE0B75117E2751000856C60 /* UALocationCommonValues.h in Headers */,
 				1FE0B75217E2751000856C60 /* UAAnalyticsDBManager.h in Headers */,
 				CC8542B417F4B81600D2DE10 /* UAAction.h in Headers */,
+				CCDD38091810643E00B8866E /* UADeviceRegistrar.h in Headers */,
 				1FE0B75317E2751000856C60 /* UALocationProviderProtocol.h in Headers */,
 				1FE0B75417E2751000856C60 /* UALocationProviderDelegate.h in Headers */,
 				1FE0B75517E2751000856C60 /* UAEvent.h in Headers */,
@@ -1314,6 +1323,7 @@
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC8542C717F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
 				1F610DB517835C2200BCD96E /* UAAutoAppDelegate.h in Headers */,
+				CCDD38081810643E00B8866E /* UADeviceRegistrar.h in Headers */,
 				1F610DFE17835C3A00BCD96E /* UADeviceRegistrationData.h in Headers */,
 				1F610DF117835C3A00BCD96E /* UAInboxMessageListObserver.h in Headers */,
 				BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */,
@@ -1499,6 +1509,7 @@
 				1FE0B79217E2751000856C60 /* UALocationService.m in Sources */,
 				1FE0B79317E2751000856C60 /* UAInboxUtils.m in Sources */,
 				1FE0B79417E2751000856C60 /* UAInboxMessage.m in Sources */,
+				CCDD380B1810643E00B8866E /* UADeviceRegistrar.m in Sources */,
 				1FE0B79517E2751000856C60 /* UAInboxDBManager.m in Sources */,
 				1FE0B79617E2751000856C60 /* UASignificantChangeProvider.m in Sources */,
 				CC8542BE17F4B81600D2DE10 /* UAActionRegistrar.m in Sources */,
@@ -1613,6 +1624,7 @@
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				1F610DF917835C3A00BCD96E /* UAInboxUtils.m in Sources */,
 				CCDD37F7180E019800B8866E /* UAChannelRegistrationPayload.m in Sources */,
+				CCDD380A1810643E00B8866E /* UADeviceRegistrar.m in Sources */,
 				4995C62617FE34FC004F8724 /* UAMailComposerAction.m in Sources */,
 				1F610DEC17835C3A00BCD96E /* UAInboxMessage.m in Sources */,
 				1F610DE617835C3A00BCD96E /* UAInboxDBManager.m in Sources */,

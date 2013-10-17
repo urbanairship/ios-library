@@ -49,7 +49,7 @@ typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
-@interface UAPush ()
+@interface UAPush () <UADeviceRegistrarDelegate>
 
 /**
  * Default push handler.
@@ -62,15 +62,18 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, copy) NSString *deviceToken;
 
 /**
+ * Channel ID as a string.
+ */
+@property (nonatomic, copy) NSString *channelID;
+
+/**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
-/**
- * The client for the Urban Airship device registration API.
- */
-@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
+
+@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
 
 /**
  * Notification that launched the application
@@ -81,13 +84,6 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
-
-/**
- * Generate a payload object for the current push settings.
- *
- * @return The current push settings as a UADeviceRegistrationPayload.
- */
-- (UADeviceRegistrationPayload *)registrationPayload;
 
 /**
  * Called on active NSNotificationCenter notifications (on "active" rather than "foreground" so that we
