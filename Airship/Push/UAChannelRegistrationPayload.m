@@ -101,13 +101,8 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
     return copy;
 }
 
-- (BOOL)isEqual:(id)object {
-    if (![object isKindOfClass:[UAChannelRegistrationPayload class]]) {
-        return NO;
-    }
-
-    UAChannelRegistrationPayload *otherPayload = (UAChannelRegistrationPayload *) object;
-    return [[self payloadDictionary] isEqualToDictionary:[otherPayload payloadDictionary]];
+- (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload {
+    return [[self payloadDictionary] isEqualToDictionary:[payload payloadDictionary]];
 }
 
 @end

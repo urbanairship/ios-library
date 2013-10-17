@@ -171,8 +171,8 @@
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    return !([self.pendingPayload isEqual:data]
-             || [self.lastSuccessfulPayload isEqual:data]);
+    return !([self.pendingPayload isEqualToPayload:data]
+             || [self.lastSuccessfulPayload isEqualToPayload:data]);
 }
 
 - (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
