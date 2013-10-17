@@ -272,7 +272,7 @@ static Class _uiClass;
     payload.userID = [UAUser defaultUser].username;
     payload.pushAddress = self.deviceToken;
 
-    payload.optedIn = YES;
+    payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
 
     payload.setTags = self.deviceTagsEnabled;
     payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;

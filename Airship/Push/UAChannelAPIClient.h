@@ -35,13 +35,17 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 @interface UAChannelAPIClient : NSObject
 
--(void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
++ (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
++ (UAChannelAPIClient *)client;
+
+- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
 
--(void)updateChannel:(NSString *)channelID
+- (void)updateChannel:(NSString *)channelID
          withPayload:(UAChannelRegistrationPayload *)payload
            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
+           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
+          forcefully:(BOOL)forcefully;
 
 @end

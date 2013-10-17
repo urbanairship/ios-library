@@ -102,17 +102,7 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
 }
 
 - (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload {
-    return (self.optedIn == payload.optedIn &&
-            self.setTags == payload.setTags &&
-            [self.userID isEqualToString:payload.userID] &&
-            [self.deviceID isEqualToString:payload.deviceID] &&
-            [self.pushAddress isEqualToString:payload.pushAddress] &&
-            [self.tags isEqualToArray:payload.tags] &&
-            [self.alias isEqualToString:payload.alias] &&
-            [self.quietTime isEqualToDictionary:payload.quietTime] &&
-            [self.timeZone isEqualToString:payload.timeZone] &&
-            [self.badge isEqualToNumber:payload.badge]);
+    return [[self payloadDictionary] isEqualToDictionary:[payload payloadDictionary]];
 }
-
 
 @end

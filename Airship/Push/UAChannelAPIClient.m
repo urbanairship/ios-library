@@ -55,7 +55,23 @@
     return self;
 }
 
--(void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
+- (id)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    self = [super init];
+    if (self) {
+        self.requestEngine = requestEngine;
+    }
+    return self;
+}
+
++ (UAChannelAPIClient *)client {
+    return [[UAChannelAPIClient alloc] init];
+}
+
++ (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    return [[UAChannelAPIClient alloc] initWithRequestEngine:requestEngine];
+}
+
+- (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
@@ -66,10 +82,10 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
+        return (BOOL)(status == 201);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(((status >= 500 && status <= 599 && status != 501)|| request.error));
+        return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
 
         NSString *responseString = request.responseString;
@@ -94,17 +110,18 @@
     }];
 }
 
--(void)updateChannel:(NSString *)channelID
+- (void)updateChannel:(NSString *)channelID
          withPayload:(UAChannelRegistrationPayload *)payload
            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
+           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
+          forcefully:(BOOL)forcefully {
 
     if (!channelID) {
         UA_LERR(@"Unable to update a nil channel id.");
         return;
     }
 
-    if (![self shouldSendUpdateWithPayload:payload]) {
+    if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
         UA_LDEBUG(@"Ignoring duplicate update request.");
         return;
     }
@@ -123,7 +140,7 @@
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
+        return (BOOL)(status == 200);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(((status >= 500 && status <= 599)|| request.error));
@@ -161,11 +178,8 @@
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-
-    if (payload) {
-        [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        [request appendBodyData:[payload asJSONData]];
-    }
+    [request addRequestHeader: @"Content-Type" value: @"application/json"];
+    [request appendBodyData:[payload asJSONData]];
 
     return request;
 }
@@ -175,11 +189,8 @@
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-
-    if (payload) {
-        [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        [request appendBodyData:[payload asJSONData]];
-    }
+    [request addRequestHeader: @"Content-Type" value: @"application/json"];
+    [request appendBodyData:[payload asJSONData]];
 
     return request;
 }
