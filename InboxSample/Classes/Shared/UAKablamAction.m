@@ -45,6 +45,7 @@
 
 // A URL: https://sbux-dl-staging.urbanairship.com/binary/public/kwG7rEc3Tz6542jxYJ4eWA/da67242f-a22c-440c-a270-1a78e0917334
 
+// a utility method that grabs the top-most view controller
 + (UIViewController *)topController {
     UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
@@ -138,6 +139,8 @@
          if ([request.response statusCode] == 200) {
              UA_LTRACE(@"Precached KABLAM.");
              completionHandler([UAActionResult none]);//TODO: it actually has data!
+         } else {
+             completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);//TODO: it actually has data!
          }
      };
 

@@ -47,8 +47,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UIWebView+UAAdditions.h"
-
 /**
  * This class provides an overlay window that can be popped over
  * the app's UI without totally obscuring it, and that loads a
@@ -57,16 +55,6 @@
  * without requiring navigation to the inbox.
  */
 @interface UAKablamOverlayController : UIViewController<UIWebViewDelegate>
-
-/**
- * The UIWebView used to display the message content.
- */
-@property(nonatomic, strong) UIWebView *webView;
-
-/**
- * The URL being displayed.
- */
-@property(nonatomic, strong) NSURL *url;
 
 + (void)showWindowInsideViewController:(UIViewController *)viewController withURL:(NSURL *)url;
 
