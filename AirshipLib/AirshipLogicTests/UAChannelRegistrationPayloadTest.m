@@ -131,69 +131,69 @@ UAChannelRegistrationPayload *payload;
 }
 
 /**
- * Test isEqualToPayload is equal to its copy
+ * Test isEqual is equal to its copy
  */
 - (void)testIsEqualCopy {
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
-    XCTAssertTrue([payload isEqualToPayload:payloadCopy], @"A copy should be equal to the original");
+    XCTAssertTrue([payload isEqual:payloadCopy], @"A copy should be equal to the original");
 
     payloadCopy.optedIn = NO;
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.optedIn = payload.optedIn;
 
     payloadCopy.pushAddress = @"different-value";
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.pushAddress = payload.pushAddress;
 
     payloadCopy.userID = @"different-value";
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.userID = payload.userID;
 
     payloadCopy.deviceID = @"different-value";
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.deviceID = payload.deviceID;
 
     payloadCopy.badge = [NSNumber numberWithInteger:5];;
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.badge = payload.badge;
 
     payloadCopy.quietTime = [NSDictionary dictionary];
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.quietTime = payload.quietTime;
 
     payloadCopy.timeZone = @"different-value";
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.timeZone = payload.timeZone;
 
     payloadCopy.alias = @"different-value";
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.alias = payload.alias;
 
     payloadCopy.setTags = NO;
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.setTags = payload.setTags;
 
     payloadCopy.tags = @[@"tagThree", @"tagFour"];;
-    XCTAssertFalse([payload isEqualToPayload:payloadCopy], @"A payload should not be equal after a modification");
+    XCTAssertFalse([payload isEqual:payloadCopy], @"A payload should not be equal after a modification");
     payloadCopy.tags = payload.tags;
 
     // Make sure its equal again
-    XCTAssertTrue([payload isEqualToPayload:payloadCopy], @"A copy should be equal to the original");
+    XCTAssertTrue([payload isEqual:payloadCopy], @"A copy should be equal to the original");
 }
 
 /**
- * Test isEqualToPayload is equal to itself
+ * Test isEqual is equal to itself
  */
-- (void)testIsEqualToPayloadSelf {
-    XCTAssertTrue([payload isEqualToPayload:payload], @"A payload should be equal to itself");
+- (void)testisEqualSelf {
+    XCTAssertTrue([payload isEqual:payload], @"A payload should be equal to itself");
 }
 
 /**
- * Test isEqualToPayload is equal to an empty payload
+ * Test isEqual is equal to an empty payload
  */
-- (void)testIsEqualToPayloadEmptyPayload {
+- (void)testisEqualEmptyPayload {
     UAChannelRegistrationPayload *emptyPayload = [[UAChannelRegistrationPayload alloc] init];
-    XCTAssertFalse([payload isEqualToPayload:emptyPayload], @"A payload should not be equal to a different payload");
+    XCTAssertFalse([payload isEqual:emptyPayload], @"A payload should not be equal to a different payload");
 }
 
 
