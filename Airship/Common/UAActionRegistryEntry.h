@@ -50,7 +50,7 @@
 @property(nonatomic, readonly, copy) NSString *alias;
 
 /**
- * Returns the action for the situation, or the default 
+ * Returns the action for the situation, or the default action if
  * there are no situation overrides.
  *
  * @return UAAction for the situation.

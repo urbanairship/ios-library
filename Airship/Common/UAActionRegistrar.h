@@ -113,7 +113,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @param action Action to be performed
  * @return 'YES' if the action was added to the entry for the situation override.
  * 'NO' if the entry is unable to be found with the given name, if the situation
- * is nil, or if the entry is registered entry is reserved.
+ * is nil, or if the registered entry is reserved.
  */
 - (BOOL)addSituationOverride:(NSString *)situation
                      forName:(NSString *)name action:(UAAction *)action;

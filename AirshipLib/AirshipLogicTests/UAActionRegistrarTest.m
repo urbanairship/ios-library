@@ -175,14 +175,14 @@ UAActionRegistrar *registrar;
     [registrar registerAction:action name:@"name" alias:@"alias"];
 
     UAAction *situationOverrideAction = [[UAAction alloc] init];
-    XCTAssertTrue([registrar addSituationOverride:UASituationForegroundPush forName:@"alias" action:situationOverrideAction], @"Situation return YES on a valid, unrerved situation");
+    XCTAssertTrue([registrar addSituationOverride:UASituationForegroundPush forName:@"alias" action:situationOverrideAction], @"Situation return YES on a valid, unreserved situation");
 
     UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registryEntryForName:@"name"];
     XCTAssertEqual(action, entry.action, @"Original action should be left unharmed");
     XCTAssertEqual(situationOverrideAction, [entry actionForSituation:UASituationForegroundPush], @"Action for the situation should be the situationOverrideAction");
 
     // Remove the situation override
-    XCTAssertTrue([registrar addSituationOverride:UASituationForegroundPush forName:@"name" action:nil], @"Situation return YES on a valid, unrerved situation");
+    XCTAssertTrue([registrar addSituationOverride:UASituationForegroundPush forName:@"name" action:nil], @"Situation return YES on a valid, unreserved situation");
     XCTAssertEqual(action, [entry actionForSituation:UASituationForegroundPush], @"Action for the situation should be the default action");
 }
 
