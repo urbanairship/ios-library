@@ -24,8 +24,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAHTTPRequestEngine.h"
-#import "UAChannelRegistrationPayload.h"
+
+@class UAHTTPRequestEngine;
+@class UAChannelRegistrationPayload;
+@class UAHTTPRequest;
 
 typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID);
 

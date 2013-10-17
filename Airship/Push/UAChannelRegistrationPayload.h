@@ -104,12 +104,4 @@ extern UAChannelJSONKey UAChannelTagsJSONKey;
  */
 - (NSData *)asJSONData;
 
-/**
- * Returns a Boolean value that indicates whether the contents of the receiving
- * payload are equal to the contents of another given payload.
- * @param payload The payload to compare with.
- * @return YES if the contents of the payload are equal to the contents of the
- *         receiving payload, otherwise NO.
- */
-- (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload;
 @end

@@ -160,11 +160,6 @@
 
 
 /**
- * The Urban Airship channel API url. This option is reserved for internal debugging.
- */
-@property (nonatomic, copy) NSString *channelAPIURL;
-
-/**
  * The Urban Airship analytics API url. This option is reserved for internal debugging.
  */
 @property (nonatomic, copy) NSString *analyticsURL;

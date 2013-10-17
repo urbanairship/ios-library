@@ -24,6 +24,8 @@
  */
 
 #import "UAChannelAPIClient.h"
+#import "UAHTTPRequestEngine.h"
+#import "UAChannelRegistrationPayload.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UAirship.h"
 #import "UAConfig.h"
@@ -169,12 +171,12 @@
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    return !([self.pendingPayload isEqualToPayload:data]
-             || [self.lastSuccessfulPayload isEqualToPayload:data]);
+    return !([self.pendingPayload isEqual:data]
+             || [self.lastSuccessfulPayload isEqual:data]);
 }
 
 - (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.channelAPIURL, kUAChannelURLBase, channelID];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase, channelID];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -185,7 +187,7 @@
 }
 
 - (UAHTTPRequest *)requestToCreateWithPayload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.channelAPIURL, kUAChannelURLBase];
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];

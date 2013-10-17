@@ -281,7 +281,7 @@ static Class _uiClass;
 
     payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
 
-    if (self.timeZone.name != nil && self.quietTimeEnabled) {
+    if (self.timeZone.name && self.quietTimeEnabled) {
         payload.timeZone = self.timeZone.name;
         payload.quietTime = [self.quietTime copy];
     }
