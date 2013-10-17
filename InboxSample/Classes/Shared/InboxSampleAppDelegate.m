@@ -79,7 +79,6 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
-
     UAKablamAction *kablamAction = [[UAKablamAction alloc] init];
     [[UAActionRegistrar shared] registerAction:kablamAction name:@"kablam" alias:@"^k"];
 

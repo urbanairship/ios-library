@@ -28,6 +28,11 @@
 #define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
 
 /**
+ * Represents a situation in which the action was invoked manually.
+ */
+extern NSString * const UASituationManualInvocation;
+
+/**
  * Represents a situation in which the application was launched from a push notification.
  */
 extern NSString * const UASituationLaunchedFromPush;

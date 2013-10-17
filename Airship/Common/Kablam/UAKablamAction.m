@@ -64,8 +64,11 @@
 
     UIViewController *topController = [UAKablamAction topController];
 
-    if ([situation isEqualToString:UASituationForegroundPush]) {
-
+    NSArray *displaySituations = @[UASituationForegroundPush,
+                                    UASituationLaunchedFromPush,
+                                    UASituationLaunchedFromSpringBoard,
+                                    UASituationManualInvocation];
+    if ([displaySituations containsObject:situation]) {
         // show the widget, then load
         if (self.modal) {
             [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
@@ -73,28 +76,7 @@
             [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
         }
 
-        completionHandler([UAActionResult none]);
-
-    } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
-        // show the widget, then load (if not already)
-        if (self.modal) {
-            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
-        } else {
-            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
-        }
-
-        completionHandler([UAActionResult none]);
-
-    } else if ([situation isEqualToString:UASituationLaunchedFromSpringBoard]) {
-
-        if (self.modal) {
-            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
-        } else {
-            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
-        }
-
-        completionHandler([UAActionResult none]);
-
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
         // pre-cache. set pending-kablam flag
 
@@ -106,6 +88,7 @@
         // fetch url, then set flag in completion block
         [self prefetchURL:kablamURL withCompletionHandler:completionHandler];
 
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     } else {
         completionHandler([UAActionResult none]);
     }
@@ -117,7 +100,8 @@
                                  UASituationLaunchedFromPush,
                                  UASituationBackgroundPush,
                                  UASituationForegroundPush,
-                                 UASituationLaunchedFromSpringBoard];
+                                 UASituationLaunchedFromSpringBoard,
+                                 UASituationManualInvocation];
 
     if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
         return NO;
