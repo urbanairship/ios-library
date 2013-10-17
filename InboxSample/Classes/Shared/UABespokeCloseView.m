@@ -43,11 +43,9 @@
     //an iOS7y blue: 0x105efb
     UIColor *funBlue = [UIColor colorWithRed:0.062 green:0.368 blue:0.984 alpha:1.0];
 
-    // draw a circle
+    // draw a white circle
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-
-
 
     NSInteger circleInset = 5;
     CGRect circleRect = CGRectInset(self.bounds, circleInset, circleInset);
@@ -82,6 +80,5 @@
     [aPath stroke];
     [bPath stroke];
 }
-
 
 @end

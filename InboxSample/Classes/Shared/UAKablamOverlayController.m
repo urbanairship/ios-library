@@ -47,28 +47,40 @@
 
 #import "UAKablamOverlayController.h"
 
-#import "UAInboxMessage.h"
-#import "UAInboxMessageList.h"
-#import "UAInbox.h"
-#import "UAInboxUI.h"
-#import "UAUtils.h"
-
 #import "UABespokeCloseView.h"
+#import "UABeveledLoadingIndicator.h"
+#import "UAUtils.h"
+#import "UAGlobal.h"
 
 #import "UIWebView+UAAdditions.h"
 #import "UAWebViewTools.h"
 
 #import <QuartzCore/QuartzCore.h>
 
-#define kShadeViewTag 1000
+#define kShadeViewTag (NSInteger)1000
 
 static NSMutableSet *overlayControllers = nil;
 
 @interface UAKablamOverlayController()
 
-- (void)displayWindow;
+
 - (void)closePopupWindow;
 - (void)loadURL:(NSURL *)url;
+- (void)displayWindow;
+- (void)constructWindow;
+- (void)finish;
+- (void)orientationChanged:(NSNotification *)notification;
+- (void)removeChildViews;
+
+/**
+ * The UIWebView used to display the message content.
+ */
+@property(nonatomic, strong) UIWebView *webView;
+
+/**
+ * The URL being displayed.
+ */
+@property(nonatomic, strong) NSURL *url;
 
 @property(nonatomic, strong) UIViewController *parentViewController;
 @property(nonatomic, strong) UIView *bgView;
@@ -101,11 +113,11 @@ static NSMutableSet *overlayControllers = nil;
         self.parentViewController = parent;
         UIView *sview = parent.view;
         
-        self.bgView = [[UIView alloc] initWithFrame: sview.bounds];
+        self.bgView = [[UIView alloc] initWithFrame:sview.bounds];
         self.bgView.autoresizesSubviews = YES;
         self.bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        [sview addSubview: self.bgView];
+        [sview addSubview:self.bgView];
         
         //set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
@@ -148,7 +160,6 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)loadURL:(NSURL *)url {
 
-    //TODO: consider adding a hard-coded HTML frame
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
     // No auth required here:
@@ -174,12 +185,12 @@ static NSMutableSet *overlayControllers = nil;
     
     self.bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.bigPanelView.autoresizesSubviews = YES;
-    self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2, self.bgView.frame.size.height/2);
+    self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2.0, self.bgView.frame.size.height/2.0);
 
     //on iPad 540.0 x 620.0
 
     //add the window background
-    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 15, 30)];
+    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 15.0, 30.0)];
 
     // set size for iPad
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -191,13 +202,13 @@ static NSMutableSet *overlayControllers = nil;
 
     background.layer.borderColor = [[UIColor blackColor] CGColor];
     background.layer.borderWidth = 0.5;
-    background.center = CGPointMake(self.bigPanelView.frame.size.width/2, self.bigPanelView.frame.size.height/2);
+    background.center = CGPointMake(self.bigPanelView.frame.size.width/2.0, self.bigPanelView.frame.size.height/2.0);
     [self.bigPanelView addSubview:background];
 
 
 
     //add the web view
-    int webOffset = 0;
+    NSInteger webOffset = 0;
     self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
     self.webView.scalesPageToFit = YES;
 
@@ -206,11 +217,11 @@ static NSMutableSet *overlayControllers = nil;
     [self.bigPanelView addSubview: self.webView];
     
     [self.webView addSubview:self.loadingIndicator];
-    self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2, self.webView.frame.size.height/2);
+    self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
     [self.loadingIndicator show];
     
     //add the close button
-    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0, 0, 35, 35)];
+    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
     bespokeCloseButtonView.userInteractionEnabled = NO;
 
     NSUInteger closeBtnOffset = 0;
