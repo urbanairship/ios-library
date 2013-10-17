@@ -95,6 +95,31 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return [entries allValues];
 }
 
+- (BOOL)addSituationOverride:(NSString *)situation
+                     forName:(NSString *)name action:(UAAction *)action {
+
+    // Don't allow situation overrides on reserved actions
+    if (!name || [kUAReservedActionKeys containsObject:name]) {
+        UA_LWARN(@"Unable to override situations for reserved actions. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryForName:name];
+    [entry.situationOverrides setValue:action forKey:situation];
+
+    return (entry != nil);
+}
+
+- (BOOL)updatePredicate:(UAActionPredicate)predicate forName:(NSString *)name {
+    // Don't allow situation overrides on reserved actions
+    if (!name || [kUAReservedActionKeys containsObject:name]) {
+        return NO;
+    }
+    UAActionRegistryEntry *entry = [self registryEntryForName:name];
+    entry.predicate = predicate;
+    return (entry != nil);
+}
+
 - (void)registerDefaultActions {
     // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];

@@ -29,12 +29,12 @@
 @interface UAActionRegistryEntry : NSObject
 
 /**
- *  The entry's action.
+ * The entry's action.
  */
 @property(nonatomic, strong) UAAction *action;
 
 /**
- *  The entry's predicate.
+ * The entry's predicate.
  */
 @property(nonatomic, copy) UAActionPredicate predicate;
 
@@ -49,6 +49,13 @@
  */
 @property(nonatomic, readonly, copy) NSString *alias;
 
+/**
+ * Returns the action for the situation, or the default action if
+ * there are no situation overrides.
+ *
+ * @return UAAction for the situation.
+ */
+- (UAAction *)actionForSituation:(NSString *)situation;
 
 /**
  * UAActionRegistryEntry class factory method.

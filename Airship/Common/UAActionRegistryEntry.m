@@ -34,9 +34,14 @@
         self.predicate = predicate;
         self.name = name;
         self.alias = alias;
+        self.situationOverrides = [NSMutableDictionary dictionary];
     }
 
     return self;
+}
+
+- (UAAction *)actionForSituation:(NSString *)situation {
+    return [self.situationOverrides valueForKey:situation] ?: self.action;
 }
 
 + (instancetype)entryForAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {

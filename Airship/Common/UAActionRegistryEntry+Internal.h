@@ -29,5 +29,6 @@
 
 @property(nonatomic, copy) NSString *name;
 @property(nonatomic, copy) NSString *alias;
+@property(nonatomic, strong) NSMutableDictionary *situationOverrides;
 
 @end
