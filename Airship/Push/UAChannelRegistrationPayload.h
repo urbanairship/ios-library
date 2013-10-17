@@ -43,28 +43,73 @@ extern UAChannelJSONKey UAChannelAliasJSONKey;
 extern UAChannelJSONKey UAChannelSetTagsKey;
 extern UAChannelJSONKey UAChannelTagsJSONKey;
 
-
+/**
+ * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.
+ */
 @interface UAChannelRegistrationPayload : NSObject<NSCopying>
 
-
+/**
+ * The user ID.
+ */
 @property(nonatomic, copy)NSString *userID;
+
+/**
+ * The device ID.
+ */
 @property(nonatomic, copy)NSString *deviceID;
 
+/**
+ * This flag indicates that the user is able to receive push notifications.
+ */
 @property(nonatomic, assign)BOOL optedIn;
+
+/**
+ * The address to push notifications to.
+ */
 @property(nonatomic, copy)NSString *pushAddress;
 
+/**
+ * The flag indicates tags in this request should be handled.
+ */
 @property(nonatomic, assign)BOOL setTags;
+
+/**
+ * The tags for this device.
+ */
 @property(nonatomic, strong)NSArray *tags;
 
+/**
+ * The alias for this device.
+ */
 @property(nonatomic, copy)NSString *alias;
 
+/**
+ * Quiet time settings for this device.
+ */
 @property(nonatomic, strong)NSDictionary *quietTime;
+
+/**
+ * The time zone for this device.
+ */
 @property(nonatomic, copy)NSString *timeZone;
 
+/**
+ * The badge for this device.
+ */
 @property(nonatomic, strong)NSNumber *badge;
 
-
+/**
+ * The UAChannelRegistrationPayload as JSON data.
+ * @return The payload as JSON data.
+ */
 - (NSData *)asJSONData;
 
+/**
+ * Returns a Boolean value that indicates whether the contents of the receiving
+ * payload are equal to the contents of another given payload.
+ * @param payload The payload to compare with.
+ * @return YES if the contents of the payload are equal to the contents of the
+ *         receiving payload, otherwise NO.
+ */
 - (BOOL)isEqualToPayload:(UAChannelRegistrationPayload *)payload;
 @end

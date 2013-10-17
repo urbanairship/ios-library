@@ -33,15 +33,51 @@ typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
 typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
+/**
+ * A high level abstraction for performing Channel API creation and updates.
+ */
 @interface UAChannelAPIClient : NSObject
 
+/**
+ * Factory method to create a UAChannelAPIClient.
+ * @param requestEngine The specified UAHTTPRequestEngine.
+ * @return UAChannelAPIClient with the specified requestEngine.
+ */
 + (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
+
+/**
+ * Factory method to create a UAChannelAPIClient.
+ * @return  UAChannelAPIClient with a default requestEngine.
+ */
 + (UAChannelAPIClient *)client;
 
+/**
+ * Create the channel ID.
+ *
+ * @param payload An instance of UAChannelRegistrationPayload.
+ * @param successBlock A UAChannelAPIClientCreateSuccessBlock that will be called
+ *        if the channel ID was created successfully.
+ * @param failureBlock A UAChannelAPIClientFailureBlock that will be called if
+ *        the channel ID creation was unsuccessful.
+ *
+ */
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
 
+/**
+ * Update the channel.
+ *
+ * @param channelID The channel to be updated.
+ * @param payload An instance of UAChannelRegistrationPayload.
+ * @param successBlock A UAChannelAPIClientCreateSuccessBlock that will be called
+ *        if the channel was updated successfully.
+ * @param failureBlock A UAChannelAPIClientFailureBlock that will be called if
+ *        the channel update was unsuccessful.
+ * @param forcefully If NO, the client will cache previous and pending updates,
+ *        ignoring duplicates.
+ *
+ */
 - (void)updateChannel:(NSString *)channelID
          withPayload:(UAChannelRegistrationPayload *)payload
            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
