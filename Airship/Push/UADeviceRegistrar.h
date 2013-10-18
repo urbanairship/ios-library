@@ -99,11 +99,13 @@
 @property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
 @property (nonatomic, assign) id<UADeviceRegistrarDelegate> registrarDelegate;
 
-- (void)updateRegistrationWithChannelID:(NSString *)channelID
-                            withPayload:(UAChannelRegistrationPayload *)payload
-                            pushEnabled:(BOOL)pushEnabled
-                             forcefully:(BOOL)forcefully;
+- (void)registerWithChannelID:(NSString *)channelID
+                  withPayload:(UAChannelRegistrationPayload *)payload
+                   forcefully:(BOOL)forcefully;
 
+- (void)unregisterWithChannelID:(NSString *)channelID
+                    withPayload:(UAChannelRegistrationPayload *)payload
+                     forcefully:(BOOL)forcefully;
 @end
 
 

@@ -30,12 +30,18 @@
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload.h"
 
+NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
+
 @interface UADeviceRegistrar()
 @property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 @property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
 
 @property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
 @property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
+
+// Flag to keep existing behavior of not doing multiple DELETEs on device token
+@property(nonatomic, assign) BOOL deviceTokenRegistered;
+
 @end
 
 
@@ -50,10 +56,9 @@
     return self;
 }
 
-- (void)updateRegistrationWithChannelID:(NSString *)channelID
-                            withPayload:(UAChannelRegistrationPayload *)payload
-                            pushEnabled:(BOOL)pushEnabled
-                             forcefully:(BOOL)forcefully {
+- (void)registerWithChannelID:(NSString *)channelID
+                  withPayload:(UAChannelRegistrationPayload *)payload
+                   forcefully:(BOOL)forcefully {
 
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
 
@@ -71,8 +76,34 @@
         if (channelID) {
             [self updateChannel:channelID withPayload:payload];
         } else {
-            [self createChannelWithPayload:payload pushEnabled:pushEnabled];
+            // Try to create a channel, fall back to registering the device token
+            [self createChannelWithPayload:payload pushEnabled:YES];
         }
+    }
+}
+
+- (void)unregisterWithChannelID:(NSString *)channelID
+                    withPayload:(UAChannelRegistrationPayload *)payload
+                     forcefully:(BOOL)forcefully {
+
+    @synchronized(self) {
+        // if we have a channel id, just update the channel with the payload
+        if (channelID) {
+            [self registerWithChannelID:channelID withPayload:payload forcefully:forcefully];
+            return;
+        }
+
+        // If we dont have a channel, clear the cache and try to register.  If it
+        // falls back to the device client, the deviceTokenRegistered will prevent
+        // us from unregistering the device token twice.
+        self.pendingPayload = nil;
+        self.channelAPIClient = nil;
+
+        [self.deviceAPIClient cancelAllRequests];
+        [self.channelAPIClient cancelAllRequests];
+
+        // Try to create a channel, fall back to unregistering the device token
+        [self createChannelWithPayload:payload pushEnabled:NO];
     }
 }
 
@@ -157,7 +188,12 @@
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UA_LDEBUG(@"Skipping device unregistration. The app is currently backgrounded.");
         [self finish:NO];
+        return;
+    }
 
+    if (!self.deviceTokenRegistered) {
+        UA_LDEBUG(@"Device token already unregistered, skipping.");
+        [self finish:YES];
         return;
     }
 
@@ -166,6 +202,7 @@
     // that uses push, the DELETE will fail with a 404.
     if (!data.deviceToken) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
+        [self finish:YES];
         return;
     }
 
@@ -173,6 +210,8 @@
      unregisterWithData:data
      onSuccess:^{
          UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
+
+         self.deviceTokenRegistered = NO;
          [self finish:YES];
 
          // note that unregistration is no longer needed
@@ -209,6 +248,8 @@
      registerWithData:data
      onSuccess:^{
          UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
+
+         self.deviceTokenRegistered = YES;
          [self finish:YES];
 
          if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
@@ -241,10 +282,18 @@
                                              pushEnabled:pushEnabled];
 }
 
-
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
     return !([self.pendingPayload isEqualToPayload:data]
              || [self.lastSuccessfulPayload isEqualToPayload:data]);
 }
+
+- (BOOL)deviceTokenRegistered {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:UADeviceTokenRegistered];
+}
+
+- (void)setDeviceTokenRegistered:(BOOL)deviceTokenRegistered {
+    [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
+}
+
 
 @end

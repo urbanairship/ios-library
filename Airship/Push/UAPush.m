@@ -479,6 +479,7 @@ static Class _uiClass;
         [self updateRegistration];
     }
 
+
     if (!self.launchNotification) {
         NSDictionary *springBoardActions = [UAActionArguments pendingSpringBoardPushActionArguments];
         [UAActionArguments clearSpringBoardActionArguments];
@@ -521,10 +522,13 @@ static Class _uiClass;
         payload.quietTime = [self.quietTime copy];
     }
 
-    [self.deviceRegistrar updateRegistrationWithChannelID:self.channelID
-                                              withPayload:payload
-                                              pushEnabled:self.pushEnabled
-                                               forcefully:forcefully];
+    if (self.pushEnabled) {
+        [self.deviceRegistrar registerWithChannelID:self.channelID
+                                        withPayload:payload forcefully:forcefully];
+    } else {
+        [self.deviceRegistrar unregisterWithChannelID:self.channelID
+                                          withPayload:payload forcefully:forcefully];
+    }
 }
 
 - (void)updateRegistration {
