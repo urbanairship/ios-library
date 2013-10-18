@@ -39,7 +39,6 @@ extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
 extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
 extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
 extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
-extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 
 extern NSString *const UAPushQuietTimeStartKey;
 extern NSString *const UAPushQuietTimeEndKey;
