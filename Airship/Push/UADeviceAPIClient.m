@@ -6,6 +6,7 @@
 #import "UAUtils.h"
 #import "UAHTTPConnectionOperation.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UADeviceRegistrationPayload.h"
 
 #define kUAPushRetryTimeInitialDelay 60
 #define kUAPushRetryTimeMultiplier 2
@@ -22,7 +23,6 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.shouldRetryOnConnectionError = YES;
         self.requestEngine = [[UAHTTPRequestEngine alloc] init];
         self.requestEngine.initialDelayIntervalInSeconds = kUAPushRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAPushRetryTimeMaxDelay;
@@ -35,25 +35,23 @@
     [self.requestEngine cancelAllRequests];
 }
 
-- (NSString *)deviceTokenURLStringWithRegistrationData:(UADeviceRegistrationData *)registrationData {
-    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, registrationData.deviceToken];
+- (NSString *)deviceUrlWithToken:(NSString *)deviceToken {
+    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, deviceToken];
 }
 
-- (UAHTTPRequest *)requestToRegisterDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {
-    NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
+- (UAHTTPRequest *)requestToRegisterDeviceToken:(NSString *)deviceToken withPayload:(UADeviceRegistrationPayload *)payload {
+    NSString *urlString = [self deviceUrlWithToken:deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
-    if (registrationData.payload != nil) {
-        [request addRequestHeader: @"Content-Type" value: @"application/json"];
-        [request appendBodyData:[registrationData.payload asJSONData]];
-    }
+    [request addRequestHeader: @"Content-Type" value: @"application/json"];
+    [request appendBodyData:[payload asJSONData]];
     return request;
 }
 
-- (UAHTTPRequest *)requestToDeleteDeviceTokenWithData:(UADeviceRegistrationData *)registrationData {
-    NSString *urlString = [self deviceTokenURLStringWithRegistrationData:registrationData];
+- (UAHTTPRequest *)requestToDeleteDeviceToken:(NSString *)deviceToken {
+    NSString *urlString = [self deviceUrlWithToken:deviceToken];
     NSURL *url = [NSURL URLWithString:urlString];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -62,7 +60,6 @@
 }
 
 - (void)runRequest:(UAHTTPRequest *)request
-          withData:(UADeviceRegistrationData *)registrationData
       succeedWhere:(UAHTTPRequestEngineWhereBlock)succeedWhereBlock
         retryWhere:(UAHTTPRequestEngineWhereBlock)retryWhereBlock
          onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
@@ -97,52 +94,52 @@
      }];
 }
 
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
+- (void)registerDeviceToken:(NSString *)deviceToken
+                withPayload:(UADeviceRegistrationPayload *)payload
+                  onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                  onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
 
-    UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithData:registrationData];
+    UAHTTPRequest *putRequest = [self requestToRegisterDeviceToken:deviceToken
+                                                       withPayload:payload];
 
     UA_LDEBUG(@"Running device registration.");
     UA_LTRACE(@"Sending device registration with headers: %@, payload: %@",
               [putRequest.headers descriptionWithLocale:nil indent:1],
-              [NSJSONSerialization stringWithObject:registrationData.payload.asDictionary options:NSJSONWritingPrettyPrinted]);
+              [NSJSONSerialization stringWithObject:payload.asDictionary options:NSJSONWritingPrettyPrinted]);
 
     [self
-     runRequest:putRequest withData:registrationData
+     runRequest:putRequest
      succeedWhere:^(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(status == 200 || status == 201);
      }
      retryWhere:^(UAHTTPRequest *request) {
          NSInteger status = request.response.statusCode;
-         return (BOOL)(((status >= 500 && status <= 599)|| request.error) && self.shouldRetryOnConnectionError);
+         return (BOOL)((status >= 500 && status <= 599)|| request.error);
      }
      onSuccess:successBlock
      onFailure:failureBlock];
 }
 
 
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-                 onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
+- (void)unregisterDeviceToken:(NSString *)deviceToken
+                    onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                    onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
 
-    UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceTokenWithData:registrationData];
+    UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceToken:deviceToken];
 
     UA_LDEBUG(@"Running device unregistration.");
-    UA_LTRACE(@"Sending device unregistration with headers: %@, payload: %@",
-              [deleteRequest.headers descriptionWithLocale:nil indent:1],
-              [NSJSONSerialization stringWithObject:registrationData.payload.asDictionary options:NSJSONWritingPrettyPrinted]);
+    UA_LTRACE(@"Unregistering device token %@", deviceToken);
 
     [self
-     runRequest:deleteRequest withData:registrationData
+     runRequest:deleteRequest
      succeedWhere:^(UAHTTPRequest *request) {
          NSInteger status = request.response.statusCode;
          return (BOOL)(status == 204);
      }
      retryWhere:^(UAHTTPRequest *request) {
          NSInteger status = request.response.statusCode;
-         return (BOOL)(((status >= 500 && status <= 599) || request.error) && self.shouldRetryOnConnectionError);
+         return (BOOL)((status >= 500 && status <= 599) || request.error);
      }
      onSuccess:successBlock
      onFailure:failureBlock];

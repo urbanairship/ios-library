@@ -26,6 +26,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAChannelRegistrationPayload;
+
 typedef NSString *const UAPushJSONKey;
 
 #define kUAPushMultipleTagsJSONKey @"tags"
@@ -54,4 +56,5 @@ typedef NSString *const UAPushJSONKey;
 - (NSString *)asJSONString;
 - (NSData *)asJSONData;
 
++ (id)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload;
 @end

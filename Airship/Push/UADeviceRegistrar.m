@@ -29,6 +29,7 @@
 #import "UAGlobal.h"
 #import "UAUtils.h"
 #import "UAChannelRegistrationPayload.h"
+#import "UADeviceRegistrationPayload.h"
 
 NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
@@ -161,12 +162,11 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         if (request.response.statusCode == 501 || YES) {
             UA_LTRACE(@"Channel api not available, falling back to device token registration");
-            UADeviceRegistrationData *deviceRegistrationData = [self createDeviceRegistrationDataFromChannelPayload:payload
-                                                                                                        pushEnabled:pushEnabled];
             if (pushEnabled) {
-                [self registerDeviceTokenWithData:deviceRegistrationData];
+                UADeviceRegistrationPayload *deviceRegistrationPayload = [UADeviceRegistrationPayload payloadFromChannelRegistrationPayload:payload];
+                [self registerDeviceToken:payload.pushAddress withPayload:deviceRegistrationPayload];
             } else {
-                [self unregisterDeviceTokenWithData:deviceRegistrationData];
+                [self unregisterDeviceToken:payload.pushAddress];
             }
 
         } else {
@@ -183,7 +183,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     [self.channelAPIClient createChannelWithPayload:payload onSuccess:successBlock onFailure:failureBlock];
 }
 
-- (void)unregisterDeviceTokenWithData:(UADeviceRegistrationData *)data {
+- (void)unregisterDeviceToken:(NSString *)deviceToken {
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UA_LDEBUG(@"Skipping device unregistration. The app is currently backgrounded.");
@@ -200,14 +200,14 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
     // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
     // that uses push, the DELETE will fail with a 404.
-    if (!data.deviceToken) {
+    if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
         [self finish:YES];
         return;
     }
 
     [self.deviceAPIClient
-     unregisterWithData:data
+     unregisterDeviceToken:deviceToken
      onSuccess:^{
          UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
 
@@ -215,7 +215,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
          [self finish:YES];
 
          if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:data.deviceToken];
+             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:deviceToken];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
@@ -228,7 +228,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
      }];
 }
 
-- (void)registerDeviceTokenWithData:(UADeviceRegistrationData *)data {
+- (void)registerDeviceToken:(NSString *)deviceToken withPayload:(UADeviceRegistrationPayload *)payload {
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
@@ -237,14 +237,15 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     }
 
     // If there is no device token, wait for the application delegate to update with one.
-    if (!data.deviceToken) {
+    if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
         [self finish:NO];
         return;
     }
 
     [self.deviceAPIClient
-     registerWithData:data
+     registerDeviceToken:deviceToken
+     withPayload:payload
      onSuccess:^{
          UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
 
@@ -252,7 +253,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
          [self finish:YES];
 
          if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:data.deviceToken];
+             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:deviceToken];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
@@ -263,22 +264,6 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
              [self.registrationDelegate registrationFailed];
          }
      }];
-}
-
-- (UADeviceRegistrationData *)createDeviceRegistrationDataFromChannelPayload:(UAChannelRegistrationPayload *)payload
-                                                                 pushEnabled:(BOOL)pushEnabled {
-
-
-    NSArray *tags = payload.setTags ? payload.tags : nil;
-    UADeviceRegistrationPayload *devicePayload = [UADeviceRegistrationPayload payloadWithAlias:payload.alias
-                                                                                      withTags:tags
-                                                                                  withTimeZone:payload.timeZone
-                                                                                 withQuietTime:payload.quietTime
-                                                                                     withBadge:payload.badge];
-
-    return [UADeviceRegistrationData dataWithDeviceToken:payload.pushAddress
-                                             withPayload:devicePayload
-                                             pushEnabled:pushEnabled];
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {

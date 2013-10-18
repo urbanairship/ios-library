@@ -1,6 +1,7 @@
 
 #import "UADeviceRegistrationPayload.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAChannelRegistrationPayload.h"
 
 @interface UADeviceRegistrationPayload()
 @property(nonatomic, strong) NSDictionary *payloadDictionary;
@@ -55,6 +56,15 @@
                                                     withBadge:badge];
 }
 
++ (id)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload {
+    NSArray *tags = payload.setTags ? payload.tags : nil;
+    return [UADeviceRegistrationPayload payloadWithAlias:payload.alias
+                                                withTags:tags
+                                            withTimeZone:payload.timeZone
+                                           withQuietTime:payload.quietTime
+                                               withBadge:payload.badge];
+}
+
 - (NSDictionary *)asDictionary {
     return [self.payloadDictionary copy];
 }
@@ -65,7 +75,7 @@
 
 - (NSData *)asJSONData {
     return [NSJSONSerialization dataWithJSONObject:self.payloadDictionary
-                                           options:NSJSONWritingPrettyPrinted
+                                           options:0
                                              error:nil];
 }
 

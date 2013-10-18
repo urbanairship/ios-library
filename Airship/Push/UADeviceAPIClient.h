@@ -25,7 +25,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UADeviceRegistrationData.h"
+@class UAHTTPRequest;
+@class UADeviceRegistrationPayload;
+
 #import "UAHTTPRequestEngine.h"
 
 typedef void (^UADeviceAPIClientSuccessBlock)(void);
@@ -40,37 +42,35 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Register the device.
  *
- * @param registrationData An instance of UADeviceRegistrationData.
+ * @param deviceToken the device token to register.
+ * @param payload An instance of UADeviceRegistrationPayload.
  * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
  * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration failed.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
+- (void)registerDeviceToken:(NSString *)deviceToken
+                withPayload:(UADeviceRegistrationPayload *)payload
+                  onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                  onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
 
 
 /**
  * Unregister the device.
  *
- * @param registrationData An instance of UADeviceRegistrationData.
+ * @param deviceToken the device token to unregister.
  * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
  * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-                 onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
-
-- (void)cancelAllRequests;
+- (void)unregisterDeviceToken:(NSString *)deviceToken
+                    onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                    onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
 
 /**
- * Indicates whether the client should attempt to automatically retry HTTP connections under recoverable conditions
- * (5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
- * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
+ * Cancels any pending and current requests.
  */
-@property(nonatomic, assign) BOOL shouldRetryOnConnectionError;
+- (void)cancelAllRequests;
 
 @end
