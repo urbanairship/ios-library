@@ -57,7 +57,7 @@
 
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
 
-    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+    @synchronized(self) {
         if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
             UA_LDEBUG(@"Ignoring duplicate update request.");
             return;
@@ -73,16 +73,16 @@
         } else {
             [self createChannelWithPayload:payload pushEnabled:pushEnabled];
         }
-    }];
-
-    [[NSOperationQueue mainQueue] addOperation:blockOperation];
+    }
 }
 
 - (void)finish:(BOOL)isSuccess {
-    if (isSuccess) {
-        self.lastSuccessfulPayload = self.pendingPayload;
+    @synchronized(self) {
+        if (isSuccess) {
+            self.lastSuccessfulPayload = self.pendingPayload;
+        }
+        self.pendingPayload = nil;
     }
-    self.pendingPayload = nil;
 }
 
 - (void)updateChannel:(NSString *)channelID
