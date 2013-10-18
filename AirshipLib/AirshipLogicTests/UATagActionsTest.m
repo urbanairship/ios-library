@@ -33,6 +33,7 @@
 
 - (void)tearDown {
     [UAPush reset];
+    [self.mockPush stopMocking];
     [super tearDown];
 }
 
