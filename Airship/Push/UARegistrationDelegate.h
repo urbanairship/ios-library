@@ -27,19 +27,28 @@
 
 /**
  * Implement this protocol and add as a [UAPush registrationDelegate] to receive
- * device token registration success and failure callbacks.
+ * registration success and failure callbacks
  *
  */
 @protocol UARegistrationDelegate <NSObject>
 @optional
 
 /**
- * Called when the device channel is succesfully registered with Urban Airship.
+ * Called when the device channel and/or device token successfully registers with
+ * Urban Airship.  Successful registrations could be disabling push, enabling push,
+ * or updating the device registration settings.
+ *
+ * A nil channel id indicates the channel creation failed and the old device token 
+ * registration is being used.  
+ *
+ * Device token will only be available once the application successfully registers
+ * with APNS.
  */
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
 /**
- * Called when the device channel failed to register with Urban Airship.
+ * Called when the device channel and/or device token failed to register with
+ * Urban Airship. 
  */
 - (void)registrationFailed;
 

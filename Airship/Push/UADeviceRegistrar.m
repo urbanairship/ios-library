@@ -215,7 +215,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
          [self finish:YES];
 
          if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:nil];
+             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:data.deviceToken];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
