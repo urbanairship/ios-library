@@ -27,6 +27,8 @@
 #import "UARegistrationDelegate.h"
 
 @class UAChannelRegistrationPayload;
+@class UADeviceAPIClient;
+@class UAChannelAPIClient;
 
 //---------------------------------------------------------------------------------------
 // UADeviceRegistrarDelegate Protocol
@@ -42,16 +44,25 @@
 
 @interface UADeviceRegistrar : NSObject
 
-@property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
-@property (nonatomic, assign) id<UADeviceRegistrarDelegate> registrarDelegate;
+@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UADeviceRegistrarDelegate> registrarDelegate;
+
+@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
+@property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
+@property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
+@property (nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
+@property (nonatomic, assign) BOOL deviceTokenRegistered;
 
 - (void)registerWithChannelID:(NSString *)channelID
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully;
 
+/**
+ * Unregisters for push.  This method can be removed once we remove device token
+ * registration fallback. 
+ */
 - (void)unregisterWithChannelID:(NSString *)channelID
                     withPayload:(UAChannelRegistrationPayload *)payload
                      forcefully:(BOOL)forcefully;
 @end
-
 

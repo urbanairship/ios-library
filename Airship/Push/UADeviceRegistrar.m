@@ -33,19 +33,6 @@
 
 NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
-@interface UADeviceRegistrar()
-@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
-@property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
-
-@property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
-@property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
-
-// Flag to keep existing behavior of not doing multiple DELETEs on device token
-@property(nonatomic, assign) BOOL deviceTokenRegistered;
-
-@end
-
-
 @implementation UADeviceRegistrar
 
 -(id)init {
@@ -108,33 +95,17 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     }
 }
 
-- (void)finish:(BOOL)isSuccess {
-    @synchronized(self) {
-        if (isSuccess) {
-            self.lastSuccessfulPayload = self.pendingPayload;
-        }
-        self.pendingPayload = nil;
-    }
-}
-
 - (void)updateChannel:(NSString *)channelID
           withPayload:(UAChannelRegistrationPayload *)payload {
 
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
         UA_LTRACE(@"Channel %@ updated successfully.", channelID);
-        [self finish:YES];
-        if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-            [self.registrationDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
-        }
+        [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"updating channel"];
-        [self finish:NO];
-
-        if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
-            [self.registrationDelegate registrationFailed];
-        }
+        [self failed];
     };
 
     [self.channelAPIClient updateChannel:channelID
@@ -148,19 +119,12 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID){
         UA_LTRACE(@"Channel %@ created successfully.", channelID);
-        [self finish:YES];
-
-        if (self.registrarDelegate) {
-            [self.registrarDelegate channelIDCreated:channelID];
-        }
-
-        if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-            [self.registrationDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
-        }
+        [self channelIDCreated:channelID];
+        [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
-        if (request.response.statusCode == 501 || YES) {
+        if (request.response.statusCode == 501) {
             UA_LTRACE(@"Channel api not available, falling back to device token registration");
             if (pushEnabled) {
                 UADeviceRegistrationPayload *deviceRegistrationPayload = [UADeviceRegistrationPayload payloadFromChannelRegistrationPayload:payload];
@@ -171,29 +135,19 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
         } else {
             [UAUtils logFailedRequest:request withMessage:@"creating channel"];
-            [self finish:NO];
-
-            if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
-                [self.registrationDelegate registrationFailed];
-            }
+            [self failed];
         }
-
     };
 
-    [self.channelAPIClient createChannelWithPayload:payload onSuccess:successBlock onFailure:failureBlock];
+    [self.channelAPIClient createChannelWithPayload:payload
+                                          onSuccess:successBlock
+                                          onFailure:failureBlock];
 }
 
 - (void)unregisterDeviceToken:(NSString *)deviceToken {
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping device unregistration. The app is currently backgrounded.");
-        [self finish:NO];
-        return;
-    }
-
     if (!self.deviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
-        [self finish:YES];
+        [self failed];
         return;
     }
 
@@ -202,68 +156,80 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     // that uses push, the DELETE will fail with a 404.
     if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
-        [self finish:YES];
+        [self failed];
         return;
     }
 
-    [self.deviceAPIClient
-     unregisterDeviceToken:deviceToken
-     onSuccess:^{
-         UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
+    UADeviceAPIClientSuccessBlock successBlock = ^{
+        UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
+        self.deviceTokenRegistered = NO;
+        [self succeededWithChannelID:nil deviceToken:deviceToken];
+    };
 
-         self.deviceTokenRegistered = NO;
-         [self finish:YES];
+    UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
+        [self failed];
+    };
 
-         if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:deviceToken];
-         }
-     }
-     onFailure:^(UAHTTPRequest *request) {
-         [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-         [self finish:NO];
-
-         if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
-             [self.registrationDelegate registrationFailed];
-         }
-     }];
+    [self.deviceAPIClient unregisterDeviceToken:deviceToken
+                                      onSuccess:successBlock
+                                      onFailure:failureBlock];
 }
 
 - (void)registerDeviceToken:(NSString *)deviceToken withPayload:(UADeviceRegistrationPayload *)payload {
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
-        [self finish:NO];
-        return;
-    }
-
     // If there is no device token, wait for the application delegate to update with one.
     if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
-        [self finish:NO];
+        [self failed];
         return;
     }
 
-    [self.deviceAPIClient
-     registerDeviceToken:deviceToken
-     withPayload:payload
-     onSuccess:^{
-         UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
+    UADeviceAPIClientSuccessBlock successBlock = ^{
+        UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
+        self.deviceTokenRegistered = YES;
+        [self succeededWithChannelID:nil deviceToken:deviceToken];
 
-         self.deviceTokenRegistered = YES;
-         [self finish:YES];
+    };
 
-         if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:deviceToken];
-         }
-     }
-     onFailure:^(UAHTTPRequest *request) {
-         [UAUtils logFailedRequest:request withMessage:@"registering device token"];
-         [self finish:NO];
+    UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        [UAUtils logFailedRequest:request withMessage:@"registering device token"];
+        [self failed];
+    };
 
-         if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
-             [self.registrationDelegate registrationFailed];
-         }
-     }];
+    [self.deviceAPIClient registerDeviceToken:deviceToken
+                                  withPayload:payload
+                                    onSuccess:successBlock
+                                    onFailure:failureBlock];
+}
+
+- (void)failed {
+    @synchronized(self) {
+        self.pendingPayload = nil;
+    }
+    
+    id strongDelegate = self.registrationDelegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
+        [strongDelegate registrationFailed];
+    }
+}
+
+- (void)succeededWithChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+    @synchronized(self) {
+        self.lastSuccessfulPayload = self.pendingPayload;
+        self.pendingPayload = nil;
+    }
+
+    id strongDelegate = self.registrationDelegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+        [strongDelegate registrationSucceededForChannelID:channelID deviceToken:deviceToken];
+    }
+}
+
+- (void)channelIDCreated:(NSString *)channelID {
+    id strongDelegate = self.registrarDelegate;
+    if ([strongDelegate respondsToSelector:@selector(channelIDCreated:)]) {
+        [strongDelegate channelIDCreated:channelID];
+    }
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {

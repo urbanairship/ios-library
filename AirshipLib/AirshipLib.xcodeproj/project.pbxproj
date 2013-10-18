@@ -354,6 +354,7 @@
 		CCDD380B1810643E00B8866E /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD38071810643E00B8866E /* UADeviceRegistrar.m */; };
 		CCF178371811B21500C4367B /* UARegistrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF178361811B21500C4367B /* UARegistrationDelegate.h */; };
 		CCF178381811B21500C4367B /* UARegistrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF178361811B21500C4367B /* UARegistrationDelegate.h */; };
+		CCF1783A1811C72D00C4367B /* UADeviceRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF178391811C72D00C4367B /* UADeviceRegistrarTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -575,6 +576,7 @@
 		CCDD38061810643E00B8866E /* UADeviceRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrar.h; sourceTree = "<group>"; };
 		CCDD38071810643E00B8866E /* UADeviceRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrar.m; sourceTree = "<group>"; };
 		CCF178361811B21500C4367B /* UARegistrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegistrationDelegate.h; sourceTree = "<group>"; };
+		CCF178391811C72D00C4367B /* UADeviceRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrarTest.m; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -1041,6 +1043,7 @@
 				CCDD37FF180EFAD600B8866E /* DeviceClient */,
 				CCDD37FA180EFA9600B8866E /* ChannelClient */,
 				CCD3158317CFBD5A002E93A1 /* UAPushTest.m */,
+				CCF178391811C72D00C4367B /* UADeviceRegistrarTest.m */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -1545,6 +1548,7 @@
 				CCA3A4F517FF14F8009C7371 /* UAActionArgumentsTest.m in Sources */,
 				BB13C4251575706100541EF3 /* UABase64Test.m in Sources */,
 				CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */,
+				CCF1783A1811C72D00C4367B /* UADeviceRegistrarTest.m in Sources */,
 				CCA3A4F717FF1506009C7371 /* UAActionRegistrarTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
