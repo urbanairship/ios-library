@@ -23,8 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import "UAModifyTagsAction.h"
 
-@interface UARemoveTagsAction : UAAction
+@interface UARemoveTagsAction : UAModifyTagsAction
 
 @end

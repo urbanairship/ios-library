@@ -32,8 +32,8 @@
 }
 
 - (void)tearDown {
-    [UAPush reset];
     [self.mockPush stopMocking];
+    [UAPush reset];
     [super tearDown];
 }
 
@@ -62,7 +62,6 @@
  * Add/Remove tags should accept strings, empty arrays, and arrays of strings
  */
 - (void)validateArgumentsForAddRemoveTagsAction:(UAAction *)action {
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@[@"hey!"] withSituation:nil];
     [self validateSituationForTagAction:action];
 
     XCTAssertTrue([action acceptsArguments:self.stringArgs], @"strings should be accepted");
@@ -76,7 +75,6 @@
  * Set tags should accept empty arrays, and arrays of strings
  */
 - (void)validateArgumentsForSetTagsAction:(UAAction *)action {
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@[@"foo", @"bar", @"baz"] withSituation:nil];
     [self validateSituationForTagAction:action];
 
     XCTAssertTrue([action acceptsArguments:self.arrayArgs], @"arrays should be accepted");
@@ -96,7 +94,7 @@
     [[self.mockPush expect] addTagToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:[UAActionArguments argumentsWithValue:self.stringArgs withSituation:nil]
+    [action runWithArguments:self.stringArgs
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -104,7 +102,7 @@
     [[self.mockPush expect] addTagsToCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:[UAActionArguments argumentsWithValue:self.arrayArgs withSituation:nil]
+    [action runWithArguments:self.arrayArgs
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -120,7 +118,7 @@
     [[self.mockPush expect] removeTagFromCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:[UAActionArguments argumentsWithValue:self.stringArgs withSituation:nil]
+    [action runWithArguments:self.stringArgs
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -128,7 +126,7 @@
     [[self.mockPush expect] removeTagsFromCurrentDevice:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:[UAActionArguments argumentsWithValue:self.arrayArgs withSituation:nil]
+    [action runWithArguments:self.arrayArgs
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];
@@ -145,7 +143,7 @@
     [[self.mockPush expect] setTags:[OCMArg any]];
     [[self.mockPush expect] updateRegistration];
 
-    [action runWithArguments:[UAActionArguments argumentsWithValue:@[@"hi"] withSituation:nil]
+    [action runWithArguments:self.arrayArgs
        withCompletionHandler:^(UAActionResult *result){
            [self.mockPush verify];
     }];

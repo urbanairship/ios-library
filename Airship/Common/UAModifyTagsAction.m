@@ -25,6 +25,30 @@
 
 #import "UAModifyTagsAction.h"
 
-@interface UAAddTagsAction : UAModifyTagsAction
+@implementation UAModifyTagsAction
+
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    //no background push
+    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+        return NO;
+    };
+
+    //argument value can be a string (one tag)
+    if ([arguments.value isKindOfClass:[NSString class]]) {
+        return YES;;
+    }
+
+    if ([arguments.value isKindOfClass:[NSArray class]]) {
+        //or it can be an array, in which case the elements must all be strings
+        for (id obj in arguments.value) {
+            if (![obj isKindOfClass:[NSString class]]) {
+                return NO;
+            }
+        }
+        return  YES;
+    } else {
+        return NO;
+    }
+}
 
 @end
