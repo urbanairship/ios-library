@@ -14,11 +14,7 @@
 
 
 @interface UADeviceAPIClient()
-
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
-@property(nonatomic, strong) UADeviceRegistrationData *lastSuccessfulRegistration;
-@property(nonatomic, strong) UADeviceRegistrationData *pendingRegistration;
-
 @end
 
 @implementation UADeviceAPIClient
@@ -33,6 +29,10 @@
         self.requestEngine.backoffFactor = kUAPushRetryTimeMultiplier;
     }
     return self;
+}
+
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
 }
 
 - (NSString *)deviceTokenURLStringWithRegistrationData:(UADeviceRegistrationData *)registrationData {
@@ -61,72 +61,45 @@
     return request;
 }
 
-//we want to avoid sending duplicate payloads, when possible
-- (BOOL)shouldSendRegistrationWithData:(UADeviceRegistrationData *)data {
-
-    if (self.pendingRegistration) {
-        return ![self.pendingRegistration isEqual:data];
-    } else if (self.lastSuccessfulRegistration) {
-        return ![self.lastSuccessfulRegistration isEqual:data];
-    }
-    return YES;
-}
-
 - (void)runRequest:(UAHTTPRequest *)request
           withData:(UADeviceRegistrationData *)registrationData
       succeedWhere:(UAHTTPRequestEngineWhereBlock)succeedWhereBlock
         retryWhere:(UAHTTPRequestEngineWhereBlock)retryWhereBlock
          onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-         onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-        forcefully:(BOOL)forcefully {
+         onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
 
-    //if the forcefully flag is set, we don't care about what we haved cached, otherwise make sure it's not a duplicate
-    if (forcefully || [self shouldSendRegistrationWithData:registrationData]) {
+    [self.requestEngine cancelAllRequests];
 
-        [self.requestEngine cancelAllRequests];
 
-        //synchronize here since we're messing with the registration cache
-        //the success/failure blocks below will be triggered on the main thread
-        @synchronized(self) {
-            self.pendingRegistration = registrationData;
-        }
+    [self.requestEngine
+     runRequest:request
+     succeedWhere:succeedWhereBlock
+     retryWhere:retryWhereBlock
+     onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+         UA_LTRACE(@"DeviceAPI request succeeded: responseData=%@, length=%lu", request.responseString, (unsigned long)[request.responseData length]);
 
-        [self.requestEngine
-         runRequest:request
-         succeedWhere:succeedWhereBlock
-         retryWhere:retryWhereBlock
-         onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-             UA_LTRACE(@"DeviceAPI request succeeded: responseData=%@, length=%lu", request.responseString, (unsigned long)[request.responseData length]);
-
-             //clear the pending cache,  update last successful cache
-             self.pendingRegistration = nil;
-             self.lastSuccessfulRegistration = registrationData;
-             if (successBlock) {
-                 successBlock();
-             } else {
-                 UA_LERR(@"missing successBlock");
-             }
+         //clear the pending cache,  update last successful cache
+         if (successBlock) {
+             successBlock();
+         } else {
+             UA_LERR(@"missing successBlock");
          }
-         onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-             UA_LTRACE(@"DeviceAPI request failed");
+     }
+     onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+         UA_LTRACE(@"DeviceAPI request failed");
 
-             //clear the pending cache
-             self.pendingRegistration = nil;
-             if (failureBlock) {
-                 failureBlock(request);
-             } else {
-                 UA_LERR(@"missing failureBlock");
-             }
-         }];
-    } else {
-        UA_LDEBUG(@"Ignoring duplicate request.");
-    }
+         //clear the pending cache
+         if (failureBlock) {
+             failureBlock(request);
+         } else {
+             UA_LERR(@"missing failureBlock");
+         }
+     }];
 }
 
 - (void)registerWithData:(UADeviceRegistrationData *)registrationData
                onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-              forcefully:(BOOL)forcefully {
+               onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
 
     UAHTTPRequest *putRequest = [self requestToRegisterDeviceTokenWithData:registrationData];
 
@@ -146,20 +119,13 @@
          return (BOOL)(((status >= 500 && status <= 599)|| request.error) && self.shouldRetryOnConnectionError);
      }
      onSuccess:successBlock
-     onFailure:failureBlock
-     forcefully:forcefully];
+     onFailure:failureBlock];
 }
 
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
-    [self registerWithData:registrationData onSuccess:successBlock onFailure:failureBlock forcefully:NO];
-}
 
 - (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
                  onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-                forcefully:(BOOL)forcefully {
+                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
 
     UAHTTPRequest *deleteRequest = [self requestToDeleteDeviceTokenWithData:registrationData];
 
@@ -179,15 +145,8 @@
          return (BOOL)(((status >= 500 && status <= 599) || request.error) && self.shouldRetryOnConnectionError);
      }
      onSuccess:successBlock
-     onFailure:failureBlock
-     forcefully:forcefully];
+     onFailure:failureBlock];
 };
-
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock {
-    [self unregisterWithData:registrationData onSuccess:successBlock onFailure:failureBlock forcefully:NO];
-}
 
 
 @end

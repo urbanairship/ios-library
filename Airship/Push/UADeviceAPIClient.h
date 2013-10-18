@@ -36,20 +36,6 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  */
 @interface UADeviceAPIClient : NSObject
 
-/**
- * Register the device.
- * 
- * @param registrationData An instance of UADeviceRegistrationData.
- * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
- * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
- *
- */
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-              forcefully:(BOOL)forcefully;
-
 
 /**
  * Register the device.
@@ -71,26 +57,14 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param registrationData An instance of UADeviceRegistrationData.
  * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
  * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
- *
- */
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-                 onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-                forcefully:(BOOL)forcefully;
-
-/**
- * Unregister the device.
- *
- * @param registrationData An instance of UADeviceRegistrationData.
- * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
- * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
 - (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
                  onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
                  onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
+
+- (void)cancelAllRequests;
 
 /**
  * Indicates whether the client should attempt to automatically retry HTTP connections under recoverable conditions

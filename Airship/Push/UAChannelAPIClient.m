@@ -40,8 +40,6 @@
 
 @interface UAChannelAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
-@property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
-@property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
 @end
 
 @implementation UAChannelAPIClient
@@ -73,12 +71,13 @@
     return [[UAChannelAPIClient alloc] initWithRequestEngine:requestEngine];
 }
 
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
+}
+
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
-
-    // There should never be a create request with a update request.
-    [self.requestEngine cancelAllRequests];
 
     UAHTTPRequest *request = [self requestToCreateWithPayload:payload];
 
@@ -115,27 +114,11 @@
 - (void)updateChannel:(NSString *)channelID
          withPayload:(UAChannelRegistrationPayload *)payload
            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
-          forcefully:(BOOL)forcefully {
+           onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
     if (!channelID) {
         UA_LERR(@"Unable to update a nil channel id.");
         return;
-    }
-
-    if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
-        UA_LDEBUG(@"Ignoring duplicate update request.");
-        return;
-    }
-
-    UAChannelRegistrationPayload *payloadCopy = [payload copy];
-    // There should never be a create request with a update request.
-    [self.requestEngine cancelAllRequests];
-
-    //synchronize here since we're messing with the registration cache
-    //the success/failure blocks below will be triggered on the main thread
-    @synchronized(self) {
-        self.pendingPayload = payloadCopy;
     }
 
     UAHTTPRequest *request = [self requestToUpdateWithChannelID:channelID payload:payload];
@@ -149,30 +132,18 @@
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         UA_LTRACE(@"Retrieved channel response: %@", request.responseString);
 
-        //clear the pending cache,  update last successful cache
-        self.pendingPayload = nil;
-        self.lastSuccessfulPayload = payloadCopy;
-
         if (successBlock) {
             successBlock();
         } else {
             UA_LERR(@"missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //clear the pending cache
-        self.pendingPayload = nil;
-
         if (failureBlock) {
             failureBlock(request);
         } else {
             UA_LERR(@"missing failureBlock");
         }
     }];
-}
-
-- (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    return !([self.pendingPayload isEqualToPayload:data]
-             || [self.lastSuccessfulPayload isEqualToPayload:data]);
 }
 
 - (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {

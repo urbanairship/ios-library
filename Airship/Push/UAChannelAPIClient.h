@@ -81,9 +81,11 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  *
  */
 - (void)updateChannel:(NSString *)channelID
-         withPayload:(UAChannelRegistrationPayload *)payload
-           onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
-          forcefully:(BOOL)forcefully;
+          withPayload:(UAChannelRegistrationPayload *)payload
+            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+            onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
+
+- (void)cancelAllRequests;
+
 
 @end

@@ -33,6 +33,9 @@
 @interface UADeviceRegistrar()
 @property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 @property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
+
+@property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
+@property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
 @end
 
 
@@ -52,25 +55,51 @@
                             pushEnabled:(BOOL)pushEnabled
                              forcefully:(BOOL)forcefully {
 
-    if (channelID) {
-        [self updateChannel:channelID withPayload:payload forcefully:forcefully];
-    } else {
-        [self createChannelWithPayload:payload pushEnabled:pushEnabled forcefully:forcefully];
-    }
+    UAChannelRegistrationPayload *payloadCopy = [payload copy];
+
+    NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
+        if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
+            UA_LDEBUG(@"Ignoring duplicate update request.");
+            return;
+        }
+
+        self.pendingPayload = payloadCopy;
+
+        [self.deviceAPIClient cancelAllRequests];
+        [self.channelAPIClient cancelAllRequests];
+
+        if (channelID) {
+            [self updateChannel:channelID withPayload:payload];
+        } else {
+            [self createChannelWithPayload:payload pushEnabled:pushEnabled];
+        }
+    }];
+
+    [[NSOperationQueue mainQueue] addOperation:blockOperation];
 }
 
+- (void)finish:(BOOL)isSuccess {
+    if (isSuccess) {
+        self.lastSuccessfulPayload = self.pendingPayload;
+    }
+    self.pendingPayload = nil;
+}
 
 - (void)updateChannel:(NSString *)channelID
-          withPayload:(UAChannelRegistrationPayload *)payload
-           forcefully:(BOOL)forcefully {
+          withPayload:(UAChannelRegistrationPayload *)payload {
 
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
+        UA_LTRACE(@"Channel %@ updated successfully.", channelID);
+        [self finish:YES];
         if ([self.registrationDelegate respondsToSelector:@selector(registerChannelSucceeded)]) {
             [self.registrationDelegate registerChannelSucceeded];
         }
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        [UAUtils logFailedRequest:request withMessage:@"updating channel"];
+        [self finish:NO];
+
         if ([self.registrationDelegate respondsToSelector:@selector(registerChannelFailed:)]) {
             [self.registrationDelegate registerChannelFailed:request];
         }
@@ -79,16 +108,15 @@
     [self.channelAPIClient updateChannel:channelID
                              withPayload:payload
                                onSuccess:successBlock
-                               onFailure:failureBlock
-                              forcefully:forcefully];
+                               onFailure:failureBlock];
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
-                     pushEnabled:(BOOL)pushEnabled
-                      forcefully:(BOOL)forcefully {
+                     pushEnabled:(BOOL)pushEnabled {
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID){
         UA_LTRACE(@"Channel %@ created successfully.", channelID);
+        [self finish:YES];
 
         if (self.registrarDelegate) {
             [self.registrarDelegate channelIDCreated:channelID];
@@ -104,18 +132,15 @@
             UA_LTRACE(@"Channel api not available, falling back to device token registration");
             UADeviceRegistrationData *deviceRegistrationData = [self createDeviceRegistrationDataFromChannelPayload:payload
                                                                                                         pushEnabled:pushEnabled];
-            NSBlockOperation *blockOperation = [NSBlockOperation blockOperationWithBlock:^{
-                if (pushEnabled) {
-                    [self registerDeviceWithData:deviceRegistrationData forcefully:forcefully];
-                } else {
-                    [self unregisterDeviceWithData:deviceRegistrationData forcefully:forcefully];
-                }
-            }];
-
-            [[NSOperationQueue mainQueue] addOperation:blockOperation];
+            if (pushEnabled) {
+                [self registerDeviceTokenWithData:deviceRegistrationData];
+            } else {
+                [self unregisterDeviceTokenWithData:deviceRegistrationData];
+            }
 
         } else {
             [UAUtils logFailedRequest:request withMessage:@"creating channel"];
+            [self finish:NO];
 
             if ([self.registrationDelegate respondsToSelector:@selector(registerChannelFailed:)]) {
                 [self.registrationDelegate registerChannelFailed:request];
@@ -127,10 +152,12 @@
     [self.channelAPIClient createChannelWithPayload:payload onSuccess:successBlock onFailure:failureBlock];
 }
 
-- (void)unregisterDeviceWithData:(UADeviceRegistrationData *)data forcefully:(BOOL)forcefully {
+- (void)unregisterDeviceTokenWithData:(UADeviceRegistrationData *)data {
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UA_LDEBUG(@"Skipping device unregistration. The app is currently backgrounded.");
+        [self finish:NO];
+
         return;
     }
 
@@ -146,6 +173,7 @@
      unregisterWithData:data
      onSuccess:^{
          UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
+         [self finish:YES];
 
          // note that unregistration is no longer needed
          if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenSucceeded)]) {
@@ -154,24 +182,26 @@
      }
      onFailure:^(UAHTTPRequest *request) {
          [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
+         [self finish:NO];
+
          if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenFailed:)]) {
              [self.registrationDelegate unregisterDeviceTokenFailed:request];
          }
-     }
-     forcefully:forcefully];
+     }];
 }
 
-
-- (void)registerDeviceWithData:(UADeviceRegistrationData *)data forcefully:(BOOL)forcefully {
+- (void)registerDeviceTokenWithData:(UADeviceRegistrationData *)data {
     // if the application is backgrounded, do not send a registration
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
         UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
+        [self finish:NO];
         return;
     }
 
     // If there is no device token, wait for the application delegate to update with one.
     if (!data.deviceToken) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
+        [self finish:NO];
         return;
     }
 
@@ -179,18 +209,20 @@
      registerWithData:data
      onSuccess:^{
          UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
+         [self finish:YES];
+
          if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
              [self.registrationDelegate registerDeviceTokenSucceeded];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
          [UAUtils logFailedRequest:request withMessage:@"registering device token"];
+         [self finish:NO];
 
          if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenFailed:)]) {
              [self.registrationDelegate registerDeviceTokenFailed:request];
          }
-     }
-     forcefully:forcefully];
+     }];
 }
 
 - (UADeviceRegistrationData *)createDeviceRegistrationDataFromChannelPayload:(UAChannelRegistrationPayload *)payload
@@ -207,6 +239,12 @@
     return [UADeviceRegistrationData dataWithDeviceToken:payload.pushAddress
                                              withPayload:devicePayload
                                              pushEnabled:pushEnabled];
+}
+
+
+- (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
+    return !([self.pendingPayload isEqualToPayload:data]
+             || [self.lastSuccessfulPayload isEqualToPayload:data]);
 }
 
 @end
