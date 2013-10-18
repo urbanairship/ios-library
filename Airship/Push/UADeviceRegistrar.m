@@ -70,9 +70,9 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     }
 }
 
-- (void)unregisterWithChannelID:(NSString *)channelID
-                    withPayload:(UAChannelRegistrationPayload *)payload
-                     forcefully:(BOOL)forcefully {
+- (void)registerPushDisabledWithChannelID:(NSString *)channelID
+                              withPayload:(UAChannelRegistrationPayload *)payload
+                               forcefully:(BOOL)forcefully {
 
     @synchronized(self) {
         // if we have a channel id, just update the channel with the payload

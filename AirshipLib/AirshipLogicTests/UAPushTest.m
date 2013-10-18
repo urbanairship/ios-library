@@ -258,9 +258,9 @@ NSDictionary *notification;
     [UAPush shared].pushEnabled = YES;
 
     // Add a device token so we get a device api callback
-    [[self.mockedDeviceRegistrar expect] unregisterWithChannelID:OCMOCK_ANY
-                                                     withPayload:OCMOCK_ANY
-                                                      forcefully:NO];
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:NO];
 
     [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
 
@@ -566,9 +566,9 @@ NSDictionary *notification;
     [UAPush shared].pushEnabled = NO;
     [UAPush shared].deviceToken = validDeviceToken;
 
-    [[self.mockedDeviceRegistrar expect] unregisterWithChannelID:OCMOCK_ANY
-                                                     withPayload:OCMOCK_ANY
-                                                      forcefully:YES];
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:YES];
 
     [[UAPush shared] updateRegistrationForcefully:YES];
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],

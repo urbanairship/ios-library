@@ -523,10 +523,12 @@ static Class _uiClass;
 
     if (self.pushEnabled) {
         [self.deviceRegistrar registerWithChannelID:self.channelID
-                                        withPayload:payload forcefully:forcefully];
+                                        withPayload:payload
+                                         forcefully:forcefully];
     } else {
-        [self.deviceRegistrar unregisterWithChannelID:self.channelID
-                                          withPayload:payload forcefully:forcefully];
+        [self.deviceRegistrar registerPushDisabledWithChannelID:self.channelID
+                                                    withPayload:payload
+                                                     forcefully:forcefully];
     }
 }
 

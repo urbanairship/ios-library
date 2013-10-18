@@ -58,11 +58,11 @@
                    forcefully:(BOOL)forcefully;
 
 /**
- * Unregisters for push.  This method can be removed once we remove device token
+ * Register that push is disabled. This method can be removed once we remove device token
  * registration fallback. 
  */
-- (void)unregisterWithChannelID:(NSString *)channelID
-                    withPayload:(UAChannelRegistrationPayload *)payload
-                     forcefully:(BOOL)forcefully;
+- (void)registerPushDisabledWithChannelID:(NSString *)channelID
+                              withPayload:(UAChannelRegistrationPayload *)payload
+                               forcefully:(BOOL)forcefully;
 @end
 
