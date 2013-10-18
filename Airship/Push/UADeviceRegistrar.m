@@ -122,8 +122,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
         UA_LTRACE(@"Channel %@ updated successfully.", channelID);
         [self finish:YES];
-        if ([self.registrationDelegate respondsToSelector:@selector(registerChannelSucceeded)]) {
-            [self.registrationDelegate registerChannelSucceeded];
+        if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+            [self.registrationDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
         }
     };
 
@@ -131,8 +131,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         [UAUtils logFailedRequest:request withMessage:@"updating channel"];
         [self finish:NO];
 
-        if ([self.registrationDelegate respondsToSelector:@selector(registerChannelFailed:)]) {
-            [self.registrationDelegate registerChannelFailed:request];
+        if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
+            [self.registrationDelegate registrationFailed];
         }
     };
 
@@ -153,8 +153,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             [self.registrarDelegate channelIDCreated:channelID];
         }
 
-        if ([self.registrationDelegate respondsToSelector:@selector(registerChannelSucceeded)]) {
-            [self.registrationDelegate registerChannelSucceeded];
+        if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+            [self.registrationDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
         }
     };
 
@@ -173,8 +173,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             [UAUtils logFailedRequest:request withMessage:@"creating channel"];
             [self finish:NO];
 
-            if ([self.registrationDelegate respondsToSelector:@selector(registerChannelFailed:)]) {
-                [self.registrationDelegate registerChannelFailed:request];
+            if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
+                [self.registrationDelegate registrationFailed];
             }
         }
 
@@ -214,17 +214,16 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
          self.deviceTokenRegistered = NO;
          [self finish:YES];
 
-         // note that unregistration is no longer needed
-         if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenSucceeded)]) {
-             [self.registrationDelegate unregisterDeviceTokenSucceeded];
+         if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:nil];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
          [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
          [self finish:NO];
 
-         if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenFailed:)]) {
-             [self.registrationDelegate unregisterDeviceTokenFailed:request];
+         if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
+             [self.registrationDelegate registrationFailed];
          }
      }];
 }
@@ -252,16 +251,16 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
          self.deviceTokenRegistered = YES;
          [self finish:YES];
 
-         if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
-             [self.registrationDelegate registerDeviceTokenSucceeded];
+         if ([self.registrationDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+             [self.registrationDelegate registrationSucceededForChannelID:nil deviceToken:data.deviceToken];
          }
      }
      onFailure:^(UAHTTPRequest *request) {
          [UAUtils logFailedRequest:request withMessage:@"registering device token"];
          [self finish:NO];
 
-         if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenFailed:)]) {
-             [self.registrationDelegate registerDeviceTokenFailed:request];
+         if ([self.registrationDelegate respondsToSelector:@selector(registrationFailed)]) {
+             [self.registrationDelegate registrationFailed];
          }
      }];
 }

@@ -24,8 +24,8 @@
  */
 
 #import "UAPush.h"
-#import "UADeviceAPIClient.h"
 #import "UADeviceRegistrationPayload.h"
+#import "UADeviceRegistrar.h"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"

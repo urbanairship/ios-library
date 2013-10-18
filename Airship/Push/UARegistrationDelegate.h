@@ -24,34 +24,23 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UARegistrationDelegate.h"
 
-@class UAChannelRegistrationPayload;
+/**
+ * Implement this protocol and add as a [UAPush registrationDelegate] to receive
+ * device token registration success and failure callbacks.
+ *
+ */
+@protocol UARegistrationDelegate <NSObject>
+@optional
 
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrarDelegate Protocol
-//---------------------------------------------------------------------------------------
+/**
+ * Called when the device channel is succesfully registered with Urban Airship.
+ */
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
-@protocol UADeviceRegistrarDelegate<NSObject>
--(void)channelIDCreated:(NSString *)channelID;
+/**
+ * Called when the device channel failed to register with Urban Airship.
+ */
+- (void)registrationFailed;
+
 @end
-
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrar Interface
-//---------------------------------------------------------------------------------------
-
-@interface UADeviceRegistrar : NSObject
-
-@property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
-@property (nonatomic, assign) id<UADeviceRegistrarDelegate> registrarDelegate;
-
-- (void)registerWithChannelID:(NSString *)channelID
-                  withPayload:(UAChannelRegistrationPayload *)payload
-                   forcefully:(BOOL)forcefully;
-
-- (void)unregisterWithChannelID:(NSString *)channelID
-                    withPayload:(UAChannelRegistrationPayload *)payload
-                     forcefully:(BOOL)forcefully;
-@end
-
-
