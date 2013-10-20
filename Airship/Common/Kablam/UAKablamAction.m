@@ -56,7 +56,7 @@
     return topController;
 }
 
-- (void)performWithArguments:(UAPushActionArguments *)arguments
+- (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSString *situation = arguments.situation;
