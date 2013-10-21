@@ -28,7 +28,7 @@
 #import <OCMock/OCMConstraint.h>
 #import "UADeviceAPIClient.h"
 #import "UAChannelAPIClient.h"
-#import "UADeviceRegistrar.h"
+#import "UADeviceRegistrar+Internal.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAHTTPRequest+Internal.h"
 

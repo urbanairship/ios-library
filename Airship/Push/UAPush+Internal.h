@@ -25,7 +25,7 @@
 
 #import "UAPush.h"
 #import "UADeviceRegistrationPayload.h"
-#import "UADeviceRegistrar.h"
+#import "UADeviceRegistrar+Internal.h"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
@@ -71,7 +71,9 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
-
+/**
+ * The UADeviceRegistrar that handles registering the device with Urban Airship.
+ */
 @property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
 
 /**
@@ -79,9 +81,10 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 @property (nonatomic, strong) NSDictionary *launchNotification;
 
-
+/**
+ * Background task identifier used to do any registration in the background.
+ */
 @property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
-
 
 /**
  * Get the local time zone, considered the default.

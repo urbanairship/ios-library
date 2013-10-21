@@ -567,6 +567,8 @@ static Class _uiClass;
     [self updateRegistration];
 }
 
+#pragma mark -
+#pragma mark UARegistrarDelegate
 - (void)channelIDCreated:(NSString *)channelID {
     self.channelID = channelID;
 }

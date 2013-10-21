@@ -49,7 +49,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Factory method to create a UAChannelAPIClient.
- * @return  UAChannelAPIClient with a default requestEngine.
+ * @return UAChannelAPIClient with a default requestEngine.
  */
 + (UAChannelAPIClient *)client;
 
@@ -72,12 +72,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  *
  * @param channelID The channel to be updated.
  * @param payload An instance of UAChannelRegistrationPayload.
- * @param successBlock A UAChannelAPIClientCreateSuccessBlock that will be called
+ * @param successBlock A UAChannelAPIClientUpdateSuccessBlock that will be called
  *        if the channel was updated successfully.
  * @param failureBlock A UAChannelAPIClientFailureBlock that will be called if
  *        the channel update was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending updates,
- *        ignoring duplicates.
  *
  */
 - (void)updateChannel:(NSString *)channelID
@@ -85,6 +83,9 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
             onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
             onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
 
+/**
+ * Cancel all current and pending requests.
+ */
 - (void)cancelAllRequests;
 
 

@@ -35,7 +35,17 @@
 //---------------------------------------------------------------------------------------
 
 @protocol UADeviceRegistrarDelegate<NSObject>
+
+/**
+ * Called when a channel ID is created.
+ *
+ * @param channelID The newly created channel ID.
+ */
 -(void)channelIDCreated:(NSString *)channelID;
+
+/**
+ * Called when the registrar finishes any registration calls.
+ */
 -(void)registrationFinished;
 @end
 
@@ -45,22 +55,60 @@
 
 @interface UADeviceRegistrar : NSObject
 
+/**
+ * A UARegistrationDelegate delegate.
+ */
 @property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+
+/**
+ * A UADeviceRegistrarDelegate delegate.
+ */
 @property (nonatomic, weak) id<UADeviceRegistrarDelegate> registrarDelegate;
 
+/**
+ * The device API client.
+ */
 @property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
+
+/**
+ * The channel API client.
+ */
 @property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
+
+
+/**
+ * The last successful payload that was registered.
+ */
 @property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
+
+/**
+ * The current payload that is being registered.
+ */
 @property (nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
+
+/**
+ * A flag indicating if the device token has been registered with the
+ * device API client.
+ */
 @property (nonatomic, assign) BOOL deviceTokenRegistered;
 
+/**
+ * Register the device with Urban Airship. 
+ *
+ * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
+ * @param payload The payload for the registration.
+ * @param forcefully To force the registration, skipping duplicate request checks.
+ */
 - (void)registerWithChannelID:(NSString *)channelID
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully;
 
 /**
- * Register that push is disabled. This method can be removed once we remove device token
- * registration fallback. 
+ * Register that push is disabled for the device with Urban Airship.
+ *
+ * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
+ * @param payload The payload for the registration.
+ * @param forcefully To force the registration, skipping duplicate request checks.
  */
 - (void)registerPushDisabledWithChannelID:(NSString *)channelID
                               withPayload:(UAChannelRegistrationPayload *)payload

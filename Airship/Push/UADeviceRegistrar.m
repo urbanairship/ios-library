@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADeviceRegistrar.h"
+#import "UADeviceRegistrar+Internal.h"
 #import "UADeviceAPIClient.h"
 #import "UAChannelAPIClient.h"
 #import "UAGlobal.h"
