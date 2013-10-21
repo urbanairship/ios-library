@@ -79,6 +79,10 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 @property (nonatomic, strong) NSDictionary *launchNotification;
 
+
+@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+
+
 /**
  * Get the local time zone, considered the default.
  */

@@ -880,4 +880,21 @@ NSDictionary *notification;
     XCTAssertNoThrow([self.mockActionRunner verify], @"springboard actions should not be ran if a launchNotification is available");
 }
 
+/**
+ * Test the registrationFinished finishes the backgroundTask if the background
+ * task is valid
+ */
+- (void)testRegistrationFinished {
+    UAPush *push = [UAPush shared];
+
+    // Give push a valid background task identifier
+    push.registrationBackgroundTask = 100;
+
+    [[self.mockedApplication expect] endBackgroundTask:100];
+
+    [push registrationFinished];
+    XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
+    XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
+}
+
 @end

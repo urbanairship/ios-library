@@ -53,6 +53,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     @synchronized(self) {
         if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
             UA_LDEBUG(@"Ignoring duplicate update request.");
+            [self.registrarDelegate registrationFinished];
             return;
         }
 
@@ -119,7 +120,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID){
         UA_LTRACE(@"Channel %@ created successfully.", channelID);
-        [self channelIDCreated:channelID];
+        [self.registrarDelegate channelIDCreated:channelID];
         [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
@@ -211,6 +212,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
     }
+
+    [self.registrarDelegate registrationFinished];
 }
 
 - (void)succeededWithChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
@@ -223,13 +226,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
         [strongDelegate registrationSucceededForChannelID:channelID deviceToken:deviceToken];
     }
-}
 
-- (void)channelIDCreated:(NSString *)channelID {
-    id strongDelegate = self.registrarDelegate;
-    if ([strongDelegate respondsToSelector:@selector(channelIDCreated:)]) {
-        [strongDelegate channelIDCreated:channelID];
-    }
+    [self.registrarDelegate registrationFinished];
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {

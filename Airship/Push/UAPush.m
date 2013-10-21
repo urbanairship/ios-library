@@ -103,6 +103,8 @@ static Class _uiClass;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
                                   |UIRemoteNotificationTypeSound);
+
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
     }
     
     return self;
@@ -494,6 +496,12 @@ static Class _uiClass;
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
+
+    if (!self.channelID) {
+        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [self updateRegistrationForcefully:NO];
+        }];
+    }
 }
 
 #pragma mark -
@@ -559,8 +567,16 @@ static Class _uiClass;
     [self updateRegistration];
 }
 
--(void)channelIDCreated:(NSString *)channelID {
+- (void)channelIDCreated:(NSString *)channelID {
     self.channelID = channelID;
+}
+
+- (void)registrationFinished {
+    // Finish the background task if we have one
+    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+    }
 }
 
 #pragma mark -

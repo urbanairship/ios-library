@@ -36,6 +36,7 @@
 
 @protocol UADeviceRegistrarDelegate<NSObject>
 -(void)channelIDCreated:(NSString *)channelID;
+-(void)registrationFinished;
 @end
 
 //---------------------------------------------------------------------------------------
