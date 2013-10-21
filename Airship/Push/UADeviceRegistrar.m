@@ -33,9 +33,10 @@
 
 NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
-NSString * const UAChannelCreatedNotificationKey = @"channel_id";
+NSString * const UAChannelNotificationKey = @"channel_id";
 
 NSString * const UAChannelCreatedNotification = @"com.urbanairship.notification.channel_created";
+NSString * const UAChannelDeletedNotification = @"com.urbanairship.notification.channel_deleted";
 NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.notification.registration_finished";
 
 @implementation UADeviceRegistrar
@@ -121,7 +122,12 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"updating channel"];
+
         [self failed];
+
+        if (request.response.statusCode == 409) {
+            [self channelDeleted:channelID];
+        }
     };
 
     [self.channelAPIClient updateChannel:channelID
@@ -267,9 +273,17 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)channelCreated:(NSString *)channelID {
-    NSDictionary *userInfo = @{UAChannelCreatedNotificationKey: channelID};
+    NSDictionary *userInfo = @{UAChannelNotificationKey: channelID};
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedNotification
+                                                        object:nil
+                                                      userInfo:userInfo];
+}
+
+- (void)channelDeleted:(NSString *)channelID {
+    NSDictionary *userInfo = @{UAChannelNotificationKey: channelID};
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelDeletedNotification
                                                         object:nil
                                                       userInfo:userInfo];
 }

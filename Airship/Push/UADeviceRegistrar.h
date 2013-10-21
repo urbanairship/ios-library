@@ -28,15 +28,20 @@
 @class UAChannelRegistrationPayload;
 
 /**
- * NSNotification posted when a channel has been created
+ * The key for the channel id in the posted NSNotification's user info
+ * when a channel is created.
+ */
+extern NSString * const UAChannelNotificationKey;
+
+/**
+ * NSNotification posted when a channel has been created.
  */
 extern NSString * const UAChannelCreatedNotification;
 
 /**
- * The key for the channel id in the posted NSNotification's user info
- * when a channel is created.
+ * NSNotification posted when a channel has been deleted.
  */
-extern NSString * const UAChannelCreatedNotificationKey;
+extern NSString * const UAChannelDeletedNotification;
 
 /**
  * NSNotification posted when a device registration finishes.

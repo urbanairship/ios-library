@@ -100,8 +100,13 @@ static Class _uiClass;
                                                 object:[UIApplication sharedApplication]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelIDCreated:)
+                                                 selector:@selector(channelCreated:)
                                                      name:UAChannelCreatedNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelDeleted:)
+                                                     name:UAChannelDeletedNotification
                                                    object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -586,10 +591,19 @@ BOOL deferChannelCreationOnForeground = false;
     [self updateRegistration];
 }
 
-- (void)channelIDCreated:(NSNotification *)channelNotification {
-    self.channelID = [channelNotification.userInfo valueForKey:UAChannelCreatedNotificationKey];
+- (void)channelCreated:(NSNotification *)channelNotification {
+    self.channelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
 }
 
+- (void)channelDeleted:(NSNotification *)channelNotification {
+    NSString *deletedChannel = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
+    if ([deletedChannel isEqualToString:self.channelID]) {
+        self.channelID = nil;
+        [self updateRegistrationForcefully:YES];
+    } else {
+        UA_LERR(@"Channel %@ was deleted, but it does not match the current channel.", deletedChannel);
+    }
+}
 - (void)registrationFinished {
     // Finish the background task if we have one
     if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {

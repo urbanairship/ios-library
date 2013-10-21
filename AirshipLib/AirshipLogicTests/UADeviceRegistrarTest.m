@@ -339,7 +339,7 @@ UADeviceRegistrar *registrar;
 
     [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
                                                        object:nil
-                                                     userInfo:@{UAChannelCreatedNotificationKey : channelCreateSuccessChannelID}];
+                                                     userInfo:@{UAChannelNotificationKey : channelCreateSuccessChannelID}];
 
     [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
@@ -495,7 +495,7 @@ UADeviceRegistrar *registrar;
 
     [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
                                                        object:nil
-                                                     userInfo:@{UAChannelCreatedNotificationKey : channelCreateSuccessChannelID}];
+                                                     userInfo:@{UAChannelNotificationKey : channelCreateSuccessChannelID}];
 
     [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"newChannelID"
                                                                deviceToken:payload.pushAddress];

@@ -36,6 +36,7 @@
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAChannelRegistrationPayload.h"
+#import "UADeviceRegistrar.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -920,6 +921,47 @@ NSDictionary *notification;
     [push registrationFinished];
     XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
     XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
+}
+
+
+/**
+ * Test channel created
+ */
+- (void)testChannelCreated {
+    UAPush *push = [UAPush shared];
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
+                                                                 object:nil
+                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID"}];
+
+    [push channelCreated:notification];
+    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
+}
+
+/**
+ * Test channel deleted
+ */
+- (void)testChannelDeleted {
+    UAPush *push = [UAPush shared];
+    push.pushEnabled = YES; // Set to yes so we can predict the update registration call.
+    push.channelID = @"someChannelID";
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
+                                                                 object:nil
+                                                               userInfo:@{UAChannelNotificationKey: @"someOtherChannelID"}];
+
+
+    [push channelDeleted:notification];
+    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should not clear itself when,"
+                          "the channel deleted does not match the current channel.");
+
+    push.channelID = @"someOtherChannelID";
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:nil withPayload:OCMOCK_ANY forcefully:YES];
+
+    [push channelDeleted:notification];
+    XCTAssertNil(push.channelID, @"Channel id should be cleared when deleted.");
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should be updated forcefully to create a new channel");
 }
 
 @end

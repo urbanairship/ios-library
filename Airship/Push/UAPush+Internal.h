@@ -109,6 +109,20 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 - (void)registrationFinished;
 
 /**
+ * Called when a channel is created.
+ *
+ * @param channelNotification The channel creation notification.
+ */
+- (void)channelCreated:(NSNotification *)channelNotification;
+
+/**
+ * Called when a channel is deleted.
+ *
+ * @param channelNotification The channel deletion notification.
+ */
+- (void)channelDeleted:(NSNotification *)channelNotification;
+
+/**
  * Register the user defaults for this class. You should not need to call this method
  * unless you are bypassing UAirship
  */
