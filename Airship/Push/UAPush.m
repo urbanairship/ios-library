@@ -53,6 +53,9 @@ UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags"
 UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
 UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
 
+UAPushUserInfoKey *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
+
+
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
 
@@ -176,7 +179,6 @@ static Class _uiClass;
 - (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled {
     [[NSUserDefaults standardUserDefaults] setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
 }
-
 
 - (NSString *)alias {
     return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey];
@@ -478,16 +480,23 @@ static Class _uiClass;
 }
 
 
+BOOL deferChannelCreationOnForeground = false;
 
 #pragma mark -
 #pragma mark UIApplication State Observation
 
 - (void)applicationDidBecomeActive {
-    if (self.hasEnteredBackground) {
+
+    // If this is the first run, skip creating the channel ID.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
+    } else if (!self.channelID) {
+        UA_LTRACE(@"Channel ID not created, Updating registration.");
+        [self updateRegistration];
+    } else if (self.hasEnteredBackground) {
         UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
         [self updateRegistration];
     }
-
 
     if (!self.launchNotification) {
         NSDictionary *springBoardActions = [UAActionArguments pendingSpringBoardPushActionArguments];
@@ -611,9 +620,8 @@ static Class _uiClass;
          [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
 
+    NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
 
-    NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
-    [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 
