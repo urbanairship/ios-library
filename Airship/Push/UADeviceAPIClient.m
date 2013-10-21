@@ -35,13 +35,13 @@
     [self.requestEngine cancelAllRequests];
 }
 
-- (NSString *)deviceUrlWithToken:(NSString *)deviceToken {
-    return [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, deviceToken];
+- (NSURL *)deviceUrlWithToken:(NSString *)deviceToken {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAPushDeviceTokensURLBase, deviceToken];
+    return [NSURL URLWithString:urlString];
 }
 
 - (UAHTTPRequest *)requestToRegisterDeviceToken:(NSString *)deviceToken withPayload:(UADeviceRegistrationPayload *)payload {
-    NSString *urlString = [self deviceUrlWithToken:deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSURL *url = [self deviceUrlWithToken:deviceToken];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"PUT"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
@@ -51,8 +51,7 @@
 }
 
 - (UAHTTPRequest *)requestToDeleteDeviceToken:(NSString *)deviceToken {
-    NSString *urlString = [self deviceUrlWithToken:deviceToken];
-    NSURL *url = [NSURL URLWithString:urlString];
+    NSURL *url = [self deviceUrlWithToken:deviceToken];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:url method:@"DELETE"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
