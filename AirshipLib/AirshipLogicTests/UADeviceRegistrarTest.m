@@ -40,7 +40,7 @@
 id mockedDeviceClient;
 id mockedChannelClient;
 id mockedRegistrationDelegate;
-id mockedRegistrarDelegate;
+id mockedNSNotificationCenter;
 
 void (^channelUpdateSuccessDoBlock)(NSInvocation *);
 void (^channelCreateSuccessDoBlock)(NSInvocation *);
@@ -69,12 +69,10 @@ UADeviceRegistrar *registrar;
     mockedChannelClient = [OCMockObject niceMockForClass:[UAChannelAPIClient class]];
 
     mockedRegistrationDelegate = [OCMockObject niceMockForProtocol:@protocol(UARegistrationDelegate)];
-    mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UADeviceRegistrarDelegate)];
 
     registrar = [[UADeviceRegistrar alloc] init];
     registrar.deviceAPIClient = mockedDeviceClient;
     registrar.channelAPIClient = mockedChannelClient;
-    registrar.registrarDelegate = mockedRegistrarDelegate;
     registrar.registrationDelegate = mockedRegistrationDelegate;
 
     payload = [[UAChannelRegistrationPayload alloc] init];
@@ -82,6 +80,9 @@ UADeviceRegistrar *registrar;
 
     channelFailureRequest = [[UAHTTPRequest alloc] init];
     deviceFailureRequest = [[UAHTTPRequest alloc] init];
+
+    mockedNSNotificationCenter = [OCMockObject niceMockForClass:[NSNotificationCenter class]];
+    [[[mockedNSNotificationCenter stub] andReturn:mockedNSNotificationCenter] defaultCenter];
 
     channelUpdateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
@@ -147,7 +148,7 @@ UADeviceRegistrar *registrar;
     [mockedDeviceClient stopMocking];
     [mockedChannelClient stopMocking];
     [mockedRegistrationDelegate stopMocking];
-    [mockedRegistrarDelegate stopMocking];
+    [mockedNSNotificationCenter stopMocking];
 }
 
 /**
@@ -163,7 +164,7 @@ UADeviceRegistrar *registrar;
 
     // Expect the delegate to be called
     [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannel" deviceToken:payload.pushAddress];
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [[mockedDeviceClient expect] cancelAllRequests];
     [[mockedChannelClient expect] cancelAllRequests];
@@ -172,8 +173,7 @@ UADeviceRegistrar *registrar;
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be called on success with the channel ID and device token.");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar delegate should be called on finish.");
-
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 
@@ -193,13 +193,13 @@ UADeviceRegistrar *registrar;
     [[mockedDeviceClient expect] cancelAllRequests];
     [[mockedChannelClient expect] cancelAllRequests];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 
 }
 
@@ -240,12 +240,12 @@ UADeviceRegistrar *registrar;
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
 
     [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is the same as the pending payload should skip registration");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -280,12 +280,11 @@ UADeviceRegistrar *registrar;
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
-
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -300,19 +299,22 @@ UADeviceRegistrar *registrar;
     [[mockedDeviceClient expect] cancelAllRequests];
     [[mockedChannelClient expect] cancelAllRequests];
 
-    [[mockedRegistrarDelegate expect] channelIDCreated:channelCreateSuccessChannelID];
+    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
+                                                       object:nil
+                                                     userInfo:@{UAChannelCreatedNotificationKey : channelCreateSuccessChannelID}];
+
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
+
     [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:channelCreateSuccessChannelID
                                                                deviceToken:payload.pushAddress];
-
-    [[mockedRegistrarDelegate expect] registrationFinished];
 
     [registrar registerWithChannelID:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Device should clear any pending requests");
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar delegate should be notified of the created channel id");
-    
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted for finished registration and creating a channel id.");
+
 }
 
 /**
@@ -331,13 +333,13 @@ UADeviceRegistrar *registrar;
     [[mockedDeviceClient expect] cancelAllRequests];
     [[mockedChannelClient expect] cancelAllRequests];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on success with the channel and device tokens");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -356,13 +358,13 @@ UADeviceRegistrar *registrar;
     [[mockedDeviceClient expect] cancelAllRequests];
     [[mockedChannelClient expect] cancelAllRequests];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -398,12 +400,11 @@ UADeviceRegistrar *registrar;
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is the same as the pending payload should skip registration");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
-
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -437,11 +438,11 @@ UADeviceRegistrar *registrar;
                                       onSuccess:OCMOCK_ANY
                                       onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
@@ -455,17 +456,20 @@ UADeviceRegistrar *registrar;
                                                                                      onFailure:OCMOCK_ANY];
 
 
-    [[mockedRegistrarDelegate expect] channelIDCreated:@"newChannelID"];
+    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
+                                                       object:nil
+                                                     userInfo:@{UAChannelCreatedNotificationKey : channelCreateSuccessChannelID}];
+
     [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"newChannelID"
                                                                deviceToken:payload.pushAddress];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar delegate should be notified of the created channel id");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted for finished registration and creating a channel id.");
 }
 
 /**
@@ -492,31 +496,31 @@ UADeviceRegistrar *registrar;
     [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:nil
                                                                deviceToken:payload.pushAddress];
 
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     [registrar registerPushDisabledWithChannelID:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Device client should be called to unregister the device token");
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should attempt to create a channel id");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 
     // Reject any more unregister calls
     [[mockedDeviceClient reject] unregisterDeviceToken:OCMOCK_ANY
                                              onSuccess:OCMOCK_ANY
                                              onFailure:OCMOCK_ANY];
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     XCTAssertNoThrow([registrar registerPushDisabledWithChannelID:nil withPayload:payload forcefully:NO], @"Registrar should not unregister the device token twice");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 
 
     payload.pushAddress = nil;
     registrar.deviceTokenRegistered  = YES;
-    [[mockedRegistrarDelegate expect] registrationFinished];
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     XCTAssertNoThrow([registrar registerPushDisabledWithChannelID:nil withPayload:payload forcefully:NO], @"Registrar should not try to unregister a nil device token");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registrar should call the registrar delegate's registrationFinished.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**

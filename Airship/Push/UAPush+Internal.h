@@ -48,7 +48,7 @@ typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
-@interface UAPush () <UADeviceRegistrarDelegate>
+@interface UAPush ()
 
 /**
  * Default push handler.
@@ -102,6 +102,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  * app init.
  */
 - (void)applicationDidEnterBackground;
+
+/**
+ * Called when the UADeviceRegistrar finishes any registration call.
+ */
+- (void)registrationFinished;
 
 /**
  * Register the user defaults for this class. You should not need to call this method

@@ -142,7 +142,8 @@ static Class _uiClass;
         if (![[UAUser defaultUser] defaultUserCreated]) {
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(userCreated)
-                                                         name:UAUserCreatedNotification object:nil];
+                                                         name:UAUserCreatedNotification
+                                                       object:nil];
         }
 
         //delete legacy UAInboxCache if present

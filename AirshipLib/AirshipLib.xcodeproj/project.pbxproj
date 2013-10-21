@@ -352,9 +352,9 @@
 		CCDD38091810643E00B8866E /* UADeviceRegistrar+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CCDD38061810643E00B8866E /* UADeviceRegistrar+Internal.h */; };
 		CCDD380A1810643E00B8866E /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD38071810643E00B8866E /* UADeviceRegistrar.m */; };
 		CCDD380B1810643E00B8866E /* UADeviceRegistrar.m in Sources */ = {isa = PBXBuildFile; fileRef = CCDD38071810643E00B8866E /* UADeviceRegistrar.m */; };
-		CCF178371811B21500C4367B /* UARegistrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF178361811B21500C4367B /* UARegistrationDelegate.h */; };
-		CCF178381811B21500C4367B /* UARegistrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF178361811B21500C4367B /* UARegistrationDelegate.h */; };
 		CCF1783A1811C72D00C4367B /* UADeviceRegistrarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CCF178391811C72D00C4367B /* UADeviceRegistrarTest.m */; };
+		CCF1783C1815BE2100C4367B /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF1783B1815BE2100C4367B /* UADeviceRegistrar.h */; };
+		CCF1783D1815BE2100C4367B /* UADeviceRegistrar.h in Headers */ = {isa = PBXBuildFile; fileRef = CCF1783B1815BE2100C4367B /* UADeviceRegistrar.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -575,8 +575,8 @@
 		CCDD37FD180EFABC00B8866E /* UAChannelAPIClientTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAChannelAPIClientTest.m; sourceTree = "<group>"; };
 		CCDD38061810643E00B8866E /* UADeviceRegistrar+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UADeviceRegistrar+Internal.h"; sourceTree = "<group>"; };
 		CCDD38071810643E00B8866E /* UADeviceRegistrar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrar.m; sourceTree = "<group>"; };
-		CCF178361811B21500C4367B /* UARegistrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARegistrationDelegate.h; sourceTree = "<group>"; };
 		CCF178391811C72D00C4367B /* UADeviceRegistrarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADeviceRegistrarTest.m; sourceTree = "<group>"; };
+		CCF1783B1815BE2100C4367B /* UADeviceRegistrar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADeviceRegistrar.h; sourceTree = "<group>"; };
 		D51846AC1300B8C200A40CAC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		D51846B11300B8D900A40CAC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		D51846B61300B8EC00A40CAC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -788,8 +788,8 @@
 				1F610DDC17835C3A00BCD96E /* UAPush+Internal.h */,
 				1F610DDE17835C3A00BCD96E /* UAPush.m */,
 				CCDD38061810643E00B8866E /* UADeviceRegistrar+Internal.h */,
+				CCF1783B1815BE2100C4367B /* UADeviceRegistrar.h */,
 				CCDD38071810643E00B8866E /* UADeviceRegistrar.m */,
-				CCF178361811B21500C4367B /* UARegistrationDelegate.h */,
 			);
 			path = Push;
 			sourceTree = "<group>";
@@ -1204,6 +1204,7 @@
 				1FE0B75117E2751000856C60 /* UALocationCommonValues.h in Headers */,
 				1FE0B75217E2751000856C60 /* UAAnalyticsDBManager.h in Headers */,
 				CC8542B417F4B81600D2DE10 /* UAAction.h in Headers */,
+				CCF1783D1815BE2100C4367B /* UADeviceRegistrar.h in Headers */,
 				CCDD38091810643E00B8866E /* UADeviceRegistrar+Internal.h in Headers */,
 				1FE0B75317E2751000856C60 /* UALocationProviderProtocol.h in Headers */,
 				1FE0B75417E2751000856C60 /* UALocationProviderDelegate.h in Headers */,
@@ -1236,7 +1237,6 @@
 				1FE0B76A17E2751000856C60 /* UAHTTPConnectionOperation.h in Headers */,
 				1FE0B76B17E2751000856C60 /* UAHTTPRequestEngine.h in Headers */,
 				1FE0B76C17E2751000856C60 /* UADelayOperation.h in Headers */,
-				CCF178381811B21500C4367B /* UARegistrationDelegate.h in Headers */,
 				1FE0B76D17E2751000856C60 /* UAPush.h in Headers */,
 				1FE0B76E17E2751000856C60 /* UAInboxDefaultJSDelegate.h in Headers */,
 				1FE0B76F17E2751000856C60 /* UAHTTPConnection+Internal.h in Headers */,
@@ -1317,6 +1317,7 @@
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC8542C717F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
 				1F610DB517835C2200BCD96E /* UAAutoAppDelegate.h in Headers */,
+				CCF1783C1815BE2100C4367B /* UADeviceRegistrar.h in Headers */,
 				CCDD38081810643E00B8866E /* UADeviceRegistrar+Internal.h in Headers */,
 				1F610DF117835C3A00BCD96E /* UAInboxMessageListObserver.h in Headers */,
 				BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */,
@@ -1334,7 +1335,6 @@
 				494BF70D1762789D00B25E12 /* UAUserData.h in Headers */,
 				CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */,
 				76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */,
-				CCF178371811B21500C4367B /* UARegistrationDelegate.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
 				CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */,
 				4903208017BD55E800E03BA1 /* UAInboxMessageListDelegate.h in Headers */,

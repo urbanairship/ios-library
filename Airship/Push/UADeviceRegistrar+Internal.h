@@ -23,47 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UARegistrationDelegate.h"
+#import "UADeviceRegistrar.h"
 
 @class UAChannelRegistrationPayload;
 @class UADeviceAPIClient;
 @class UAChannelAPIClient;
 
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrarDelegate Protocol
-//---------------------------------------------------------------------------------------
+@interface UADeviceRegistrar ()
 
-@protocol UADeviceRegistrarDelegate<NSObject>
-
-/**
- * Called when a channel ID is created.
- *
- * @param channelID The newly created channel ID.
- */
--(void)channelIDCreated:(NSString *)channelID;
-
-/**
- * Called when the registrar finishes any registration calls.
- */
--(void)registrationFinished;
-@end
-
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrar Interface
-//---------------------------------------------------------------------------------------
-
-@interface UADeviceRegistrar : NSObject
-
-/**
- * A UARegistrationDelegate delegate.
- */
-@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
-
-/**
- * A UADeviceRegistrarDelegate delegate.
- */
-@property (nonatomic, weak) id<UADeviceRegistrarDelegate> registrarDelegate;
 
 /**
  * The device API client.
@@ -92,26 +59,5 @@
  */
 @property (nonatomic, assign) BOOL deviceTokenRegistered;
 
-/**
- * Register the device with Urban Airship. 
- *
- * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
- * @param payload The payload for the registration.
- * @param forcefully To force the registration, skipping duplicate request checks.
- */
-- (void)registerWithChannelID:(NSString *)channelID
-                  withPayload:(UAChannelRegistrationPayload *)payload
-                   forcefully:(BOOL)forcefully;
-
-/**
- * Register that push is disabled for the device with Urban Airship.
- *
- * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
- * @param payload The payload for the registration.
- * @param forcefully To force the registration, skipping duplicate request checks.
- */
-- (void)registerPushDisabledWithChannelID:(NSString *)channelID
-                              withPayload:(UAChannelRegistrationPayload *)payload
-                               forcefully:(BOOL)forcefully;
 @end
 

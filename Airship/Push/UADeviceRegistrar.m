@@ -33,6 +33,11 @@
 
 NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
+NSString * const UAChannelCreatedNotificationKey = @"channel_id";
+
+NSString * const UAChannelCreatedNotification = @"com.urbanairship.notification.channel_created";
+NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.notification.registration_finished";
+
 @implementation UADeviceRegistrar
 
 -(id)init {
@@ -53,7 +58,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     @synchronized(self) {
         if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
             UA_LDEBUG(@"Ignoring duplicate update request.");
-            [self.registrarDelegate registrationFinished];
+            [self registrationFinished];
             return;
         }
 
@@ -120,7 +125,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID){
         UA_LTRACE(@"Channel %@ created successfully.", channelID);
-        [self.registrarDelegate channelIDCreated:channelID];
+        [self channelCreated:channelID];
         [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
@@ -148,7 +153,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 - (void)unregisterDeviceToken:(NSString *)deviceToken {
     if (!self.deviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
-        [self failed];
+        [self registrationFinished];
         return;
     }
 
@@ -157,7 +162,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     // that uses push, the DELETE will fail with a 404.
     if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
-        [self failed];
+        [self registrationFinished];
         return;
     }
 
@@ -181,7 +186,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     // If there is no device token, wait for the application delegate to update with one.
     if (!deviceToken) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
-        [self failed];
+        [self registrationFinished];
         return;
     }
 
@@ -212,8 +217,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
     }
-
-    [self.registrarDelegate registrationFinished];
+    [self registrationFinished];
 }
 
 - (void)succeededWithChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
@@ -226,8 +230,8 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
         [strongDelegate registrationSucceededForChannelID:channelID deviceToken:deviceToken];
     }
-
-    [self.registrarDelegate registrationFinished];
+    
+    [self registrationFinished];
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
@@ -243,5 +247,16 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
     [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
 }
 
+- (void)registrationFinished {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
+}
+
+- (void)channelCreated:(NSString *)channelID {
+    NSDictionary *userInfo = @{UAChannelCreatedNotificationKey: channelID};
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedNotification
+                                                        object:nil
+                                                      userInfo:userInfo];
+}
 
 @end

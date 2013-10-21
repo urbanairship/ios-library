@@ -76,7 +76,6 @@ static Class _uiClass;
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.deviceRegistrar.registrarDelegate = nil;
 }
 
 - (id)init {
@@ -97,8 +96,17 @@ static Class _uiClass;
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelIDCreated:)
+                                                     name:UAChannelCreatedNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(registrationFinished)
+                                                     name:UADeviceRegistrationFinishedNotification
+                                                   object:nil];
+
         self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
-        self.deviceRegistrar.registrarDelegate = self;
         self.deviceTagsEnabled = YES;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
@@ -567,10 +575,8 @@ static Class _uiClass;
     [self updateRegistration];
 }
 
-#pragma mark -
-#pragma mark UARegistrarDelegate
-- (void)channelIDCreated:(NSString *)channelID {
-    self.channelID = channelID;
+- (void)channelIDCreated:(NSNotification *)channelNotification {
+    self.channelID = [channelNotification.userInfo valueForKey:UAChannelCreatedNotificationKey];
 }
 
 - (void)registrationFinished {
@@ -604,7 +610,8 @@ static Class _uiClass;
     } else {
          [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
-    
+
+
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
     [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];

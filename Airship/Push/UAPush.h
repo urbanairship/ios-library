@@ -26,7 +26,7 @@
 #import "UAGlobal.h"
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
-#import "UARegistrationDelegate.h"
+#import "UADeviceRegistrar.h"
 
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
