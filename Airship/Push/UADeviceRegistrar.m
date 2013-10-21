@@ -85,7 +85,7 @@ NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         // falls back to the device client, the deviceTokenRegistered will prevent
         // us from unregistering the device token twice.
         self.pendingPayload = nil;
-        self.channelAPIClient = nil;
+        self.lastSuccessfulPayload = nil;
 
         [self.deviceAPIClient cancelAllRequests];
         [self.channelAPIClient cancelAllRequests];
