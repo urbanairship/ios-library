@@ -516,8 +516,10 @@ BOOL deferChannelCreationOnForeground = false;
 
     if (!self.channelID) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self updateRegistrationForcefully:NO];
+            [self.deviceRegistrar cancelAllRequests];
         }];
+
+        [self updateRegistrationForcefully:NO];
     }
 }
 

@@ -62,8 +62,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
         self.pendingPayload = payload;
 
-        [self.deviceAPIClient cancelAllRequests];
-        [self.channelAPIClient cancelAllRequests];
+        [self cancelAllRequests];
 
         if (channelID) {
             [self updateChannel:channelID withPayload:self.pendingPayload];
@@ -91,12 +90,16 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         self.pendingPayload = nil;
         self.lastSuccessfulPayload = nil;
 
-        [self.deviceAPIClient cancelAllRequests];
-        [self.channelAPIClient cancelAllRequests];
+        [self cancelAllRequests];
 
         // Try to create a channel, fall back to unregistering the device token
         [self createChannelWithPayload:payload pushEnabled:NO];
     }
+}
+
+- (void)cancelAllRequests {
+    [self.deviceAPIClient cancelAllRequests];
+    [self.channelAPIClient cancelAllRequests];
 }
 
 - (void)updateChannel:(NSString *)channelID

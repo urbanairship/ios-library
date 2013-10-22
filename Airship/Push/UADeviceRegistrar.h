@@ -114,5 +114,11 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
 - (void)registerPushDisabledWithChannelID:(NSString *)channelID
                               withPayload:(UAChannelRegistrationPayload *)payload
                                forcefully:(BOOL)forcefully;
+
+
+/**
+ * Cancels all pending and current requests.
+ */
+- (void)cancelAllRequests;
 @end
 
