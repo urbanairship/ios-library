@@ -116,11 +116,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 - (void)channelCreated:(NSNotification *)channelNotification;
 
 /**
- * Called when a channel is deleted.
+ * Called when a current channel had a conflict and a new channel is created.
  *
- * @param channelNotification The channel deletion notification.
+ * @param channelNotification The channel notification.
  */
-- (void)channelDeleted:(NSNotification *)channelNotification;
+- (void)channelConflict:(NSNotification *)channelNotification;
 
 /**
  * Register the user defaults for this class. You should not need to call this method

@@ -34,14 +34,21 @@
 extern NSString * const UAChannelNotificationKey;
 
 /**
+ * The key for the replaced channel id in the posted NSNotification's user info
+ * when a channel has a conflict and is replaced.
+ */
+extern NSString * const UAReplacedChannelNotificationKey;
+
+/**
  * NSNotification posted when a channel has been created.
  */
 extern NSString * const UAChannelCreatedNotification;
 
 /**
- * NSNotification posted when a channel has been deleted.
+ * NSNotification posted when a channel update has a conflict and a new
+ * channel is required.
  */
-extern NSString * const UAChannelDeletedNotification;
+extern NSString * const UAChannelConflictNotification;
 
 /**
  * NSNotification posted when a device registration finishes.

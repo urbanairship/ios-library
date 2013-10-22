@@ -939,29 +939,23 @@ NSDictionary *notification;
 }
 
 /**
- * Test channel deleted
+ * Test channel conflict
  */
-- (void)testChannelDeleted {
+- (void)testChannelConflict {
     UAPush *push = [UAPush shared];
-    push.pushEnabled = YES; // Set to yes so we can predict the update registration call.
-    push.channelID = @"someChannelID";
 
-    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
+    NSDictionary *userInfo = @{
+                               UAChannelNotificationKey: @"someNewChannel",
+                               UAReplacedChannelNotificationKey: @"someOldChannel"
+                               };
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelConflictNotification
                                                                  object:nil
-                                                               userInfo:@{UAChannelNotificationKey: @"someOtherChannelID"}];
+                                                               userInfo:userInfo];
 
 
-    [push channelDeleted:notification];
-    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should not clear itself when,"
-                          "the channel deleted does not match the current channel.");
-
-    push.channelID = @"someOtherChannelID";
-
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:nil withPayload:OCMOCK_ANY forcefully:YES];
-
-    [push channelDeleted:notification];
-    XCTAssertNil(push.channelID, @"Channel id should be cleared when deleted.");
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should be updated forcefully to create a new channel");
+    [push channelConflict:notification];
+    XCTAssertEqualObjects(push.channelID, @"someNewChannel", @"The channel should update to the new channel ID.");
 }
 
 @end
