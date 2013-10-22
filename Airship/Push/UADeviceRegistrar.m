@@ -60,9 +60,9 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
             return;
         }
 
-        self.pendingPayload = payload;
-
         [self cancelAllRequests];
+
+        self.pendingPayload = payload;
 
         if (channelID) {
             [self updateChannel:channelID withPayload:self.pendingPayload];
@@ -100,6 +100,15 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 - (void)cancelAllRequests {
     [self.deviceAPIClient cancelAllRequests];
     [self.channelAPIClient cancelAllRequests];
+
+    @synchronized(self) {
+        // If we have a pending payload, its underministic if the request actually
+        // went through to Urban Airship.  Clear both last success and pending.
+        if (self.pendingPayload) {
+            self.pendingPayload = nil;
+            self.lastSuccessfulPayload = nil;
+        }
+    }
 }
 
 - (void)updateChannel:(NSString *)channelID

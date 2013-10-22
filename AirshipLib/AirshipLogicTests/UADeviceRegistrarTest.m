@@ -352,7 +352,6 @@ UADeviceRegistrar *registrar;
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
     XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted for finished registration and creating a channel id.");
-
 }
 
 /**
