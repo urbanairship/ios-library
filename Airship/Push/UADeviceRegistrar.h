@@ -117,7 +117,10 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
 
 
 /**
- * Cancels all pending and current requests.
+ * Cancels all pending and current requests.  
+ *
+ * Note: this may or may not prevent the registration finished event and registration
+ * delegate calls.
  */
 - (void)cancelAllRequests;
 @end

@@ -70,6 +70,9 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Cancels any pending and current requests.
+ *
+ * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
+ * in any current requests.
  */
 - (void)cancelAllRequests;
 

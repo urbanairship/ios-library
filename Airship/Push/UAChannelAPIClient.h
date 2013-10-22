@@ -85,6 +85,9 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Cancel all current and pending requests.
+ *
+ * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
+ * in any current requests.
  */
 - (void)cancelAllRequests;
 
