@@ -81,7 +81,7 @@
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    UAHTTPRequest *request = [self requestToCreateWithPayload:payload];
+    UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
@@ -156,6 +156,13 @@
     }];
 }
 
+/**
+ * Creates an UAHTTPRequest for updating a channel.
+ *
+ * @param location The channel location
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
 - (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
     NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, location];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
@@ -167,7 +174,13 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToCreateWithPayload:(UAChannelRegistrationPayload *)payload {
+/**
+ * Creates an UAHTTPRequest to create a channel.
+ *
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
+- (UAHTTPRequest *)requestToCreateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
     NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelCreateLocation];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
@@ -177,7 +190,5 @@
 
     return request;
 }
-
-
 
 @end
