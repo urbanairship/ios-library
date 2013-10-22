@@ -152,7 +152,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)unregisterDeviceToken:(NSString *)deviceToken {
-    if (!self.deviceTokenRegistered) {
+    if (!self.isDeviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
         [self registrationFinished];
         return;
@@ -245,7 +245,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     return (![self.pendingPayload isEqualToPayload:data]);
 }
 
-- (BOOL)deviceTokenRegistered {
+- (BOOL)isDeviceTokenRegistered {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UADeviceTokenRegistered];
 }
 

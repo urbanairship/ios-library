@@ -516,7 +516,7 @@ UADeviceRegistrar *registrar;
  */
 - (void)testRegisterWithPushDisableNoChannelIDFallback {
     payload.pushAddress = @"some-device-token";
-    registrar.deviceTokenRegistered  = YES;
+    registrar.isDeviceTokenRegistered  = YES;
 
     // Set up failure with 501 so we fallback
     channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:501 HTTPVersion:nil headerFields:nil];
@@ -554,7 +554,7 @@ UADeviceRegistrar *registrar;
 
 
     payload.pushAddress = nil;
-    registrar.deviceTokenRegistered  = YES;
+    registrar.isDeviceTokenRegistered  = YES;
     [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 
     XCTAssertNoThrow([registrar registerPushDisabledWithChannelID:nil withPayload:payload forcefully:NO], @"Registrar should not try to unregister a nil device token");
@@ -567,7 +567,7 @@ UADeviceRegistrar *registrar;
  */
 - (void)testRegisterNoChannelFallback {
     payload.pushAddress = @"some-device-token";
-    registrar.deviceTokenRegistered  = NO;
+    registrar.isDeviceTokenRegistered  = NO;
 
     // Set up failure with 501 so we fallback
     channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:501 HTTPVersion:nil headerFields:nil];
@@ -602,7 +602,7 @@ UADeviceRegistrar *registrar;
 
 
     payload.pushAddress = nil;
-    registrar.deviceTokenRegistered  = NO;
+    registrar.isDeviceTokenRegistered  = NO;
     XCTAssertNoThrow([registrar registerWithChannelID:nil withPayload:payload forcefully:NO], @"Registrar should not try to register a nil device token");
 }
 

@@ -57,7 +57,7 @@
  * A flag indicating if the device token has been registered with the
  * device API client.
  */
-@property (nonatomic, assign) BOOL deviceTokenRegistered;
+@property (nonatomic, assign) BOOL isDeviceTokenRegistered;
 
 @end
 
