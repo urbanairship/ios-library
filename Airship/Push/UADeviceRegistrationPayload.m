@@ -2,13 +2,6 @@
 #import "UADeviceRegistrationPayload.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
-UAPushJSONKey UAPushMultipleTagsJSONKey = @"tags";
-UAPushJSONKey UAPushSingleTagJSONKey = @"tag";
-UAPushJSONKey UAPushAliasJSONKey = @"alias";
-UAPushJSONKey UAPushQuietTimeJSONKey = @"quiettime";
-UAPushJSONKey UAPushTimeZoneJSONKey = @"tz";
-UAPushJSONKey UAPushBadgeJSONKey = @"badge";
-
 @interface UADeviceRegistrationPayload()
 @property(nonatomic, strong) NSDictionary *payloadDictionary;
 @end
@@ -26,23 +19,23 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
         self.payloadDictionary = [NSMutableDictionary dictionary];
 
         if (alias) {
-            [self.payloadDictionary setValue:alias forKey:UAPushAliasJSONKey];
+            [self.payloadDictionary setValue:alias forKey:kUAPushAliasJSONKey];
         }
 
         if (tags) {
-            [self.payloadDictionary setValue:tags forKey:UAPushMultipleTagsJSONKey];
+            [self.payloadDictionary setValue:tags forKey:kUAPushMultipleTagsJSONKey];
         }
 
         if (timeZone) {
-            [self.payloadDictionary setValue:timeZone forKey:UAPushTimeZoneJSONKey];
+            [self.payloadDictionary setValue:timeZone forKey:kUAPushTimeZoneJSONKey];
         }
 
         if (quietTime) {
-            [self.payloadDictionary setValue:quietTime forKey:UAPushQuietTimeJSONKey];
+            [self.payloadDictionary setValue:quietTime forKey:kUAPushQuietTimeJSONKey];
         }
 
         if (badge) {
-            [self.payloadDictionary setValue:badge forKey:UAPushBadgeJSONKey];
+            [self.payloadDictionary setValue:badge forKey:kUAPushBadgeJSONKey];
         }
     }
 

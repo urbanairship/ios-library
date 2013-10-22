@@ -25,23 +25,7 @@
 
 #import "UAChannelRegistrationPayload.h"
 
-UAChannelJSONKey UAChannelDeviceTypeKey = @"device_type";
-UAChannelJSONKey UAChannelTransportKey = @"transport";
-UAChannelJSONKey UAChannelOptInKey = @"opt_in";
-UAChannelJSONKey UAChannelPushAddressKey = @"push-address";
 
-UAChannelJSONKey UAChannelIdentityHintsKey = @"identity_hints";
-UAChannelJSONKey UAChannelUserIDKey = @"user_id";
-UAChannelJSONKey UAChannelDeviceIDKey = @"device_id";
-
-UAChannelJSONKey UAChanneliOSKey = @"ios";
-UAChannelJSONKey UAChannelBadgeJSONKey = @"badge";
-UAChannelJSONKey UAChannelQuietTimeJSONKey = @"quiettime";
-UAChannelJSONKey UAChannelTimeZoneJSONKey = @"tz";
-
-UAChannelJSONKey UAChannelAliasJSONKey = @"alias";
-UAChannelJSONKey UAChannelSetTagsKey = @"set_tags";
-UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
 
 @implementation UAChannelRegistrationPayload
 
@@ -54,30 +38,30 @@ UAChannelJSONKey UAChannelTagsJSONKey = @"tags";
 - (NSDictionary *)payloadDictionary {
     NSMutableDictionary *payloadDictionary = [NSMutableDictionary dictionary];
 
-    [payloadDictionary setValue:@"ios" forKey:UAChannelDeviceTypeKey];
-    [payloadDictionary setValue:@"apns" forKey:UAChannelTransportKey];
-    [payloadDictionary setValue:[NSNumber numberWithBool:self.optedIn] forKey:UAChannelOptInKey];
-    [payloadDictionary setValue:self.pushAddress forKey:UAChannelPushAddressKey];
+    [payloadDictionary setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
+    [payloadDictionary setValue:@"apns" forKey:kUAChannelTransportKey];
+    [payloadDictionary setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
+    [payloadDictionary setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
 
     if (self.deviceID || self.userID) {
         NSMutableDictionary *identityHints = [NSMutableDictionary dictionary];
-        [identityHints setValue:self.userID forKey:UAChannelUserIDKey];
-        [identityHints setValue:self.deviceID forKey:UAChannelDeviceIDKey];
-        [payloadDictionary setValue:identityHints forKey:UAChannelIdentityHintsKey];
+        [identityHints setValue:self.userID forKey:kUAChannelUserIDKey];
+        [identityHints setValue:self.deviceID forKey:kUAChannelDeviceIDKey];
+        [payloadDictionary setValue:identityHints forKey:kUAChannelIdentityHintsKey];
     }
 
     if (self.badge || self.quietTime || self.timeZone) {
         NSMutableDictionary *ios = [NSMutableDictionary dictionary];
-        [ios setValue:self.badge forKey:UAChannelBadgeJSONKey];
-        [ios setValue:self.quietTime forKey:UAChannelQuietTimeJSONKey];
-        [ios setValue:self.timeZone forKey:UAChannelTimeZoneJSONKey];
-        [payloadDictionary setValue:ios forKey:UAChanneliOSKey];
+        [ios setValue:self.badge forKey:kUAChannelBadgeJSONKey];
+        [ios setValue:self.quietTime forKey:kUAChannelQuietTimeJSONKey];
+        [ios setValue:self.timeZone forKey:kUAChannelTimeZoneJSONKey];
+        [payloadDictionary setValue:ios forKey:kUAChanneliOSKey];
     }
 
-    [payloadDictionary setValue:self.alias forKey:UAChannelAliasJSONKey];
+    [payloadDictionary setValue:self.alias forKey:kUAChannelAliasJSONKey];
 
-    [payloadDictionary setValue:[NSNumber numberWithBool:self.setTags] forKey:UAChannelSetTagsKey];
-    [payloadDictionary setValue:self.tags forKey:UAChannelTagsJSONKey];
+    [payloadDictionary setValue:[NSNumber numberWithBool:self.setTags] forKey:kUAChannelSetTagsKey];
+    [payloadDictionary setValue:self.tags forKey:kUAChannelTagsJSONKey];
 
     return payloadDictionary;
 }

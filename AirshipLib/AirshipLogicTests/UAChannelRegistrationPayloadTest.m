@@ -64,26 +64,26 @@ UAChannelRegistrationPayload *payload;
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
     // Top level items here
-    XCTAssertEqualObjects(@"ios", [dict valueForKey:UAChannelDeviceTypeKey], @"device type should be present");
-    XCTAssertEqualObjects(@"apns", [dict valueForKey:UAChannelTransportKey], @"transport type should be present");
-    XCTAssertEqualObjects([NSNumber numberWithBool:payload.optedIn], [dict valueForKey:UAChannelOptInKey], @"opt-in should be present");
-    XCTAssertEqualObjects(payload.pushAddress, [dict valueForKey:UAChannelPushAddressKey], @"push address should be present");
-    XCTAssertEqualObjects(payload.alias, [dict valueForKey:UAChannelAliasJSONKey], @"alias should be present");
-    XCTAssertEqualObjects([NSNumber numberWithBool:payload.setTags], [dict valueForKey:UAChannelSetTagsKey], @"set tags should be present");
-    XCTAssertEqualObjects(payload.tags, [dict valueForKey:UAChannelTagsJSONKey], @"tags should be present");
+    XCTAssertEqualObjects(@"ios", [dict valueForKey:kUAChannelDeviceTypeKey], @"device type should be present");
+    XCTAssertEqualObjects(@"apns", [dict valueForKey:kUAChannelTransportKey], @"transport type should be present");
+    XCTAssertEqualObjects([NSNumber numberWithBool:payload.optedIn], [dict valueForKey:kUAChannelOptInKey], @"opt-in should be present");
+    XCTAssertEqualObjects(payload.pushAddress, [dict valueForKey:kUAChannelPushAddressKey], @"push address should be present");
+    XCTAssertEqualObjects(payload.alias, [dict valueForKey:kUAChannelAliasJSONKey], @"alias should be present");
+    XCTAssertEqualObjects([NSNumber numberWithBool:payload.setTags], [dict valueForKey:kUAChannelSetTagsKey], @"set tags should be present");
+    XCTAssertEqualObjects(payload.tags, [dict valueForKey:kUAChannelTagsJSONKey], @"tags should be present");
 
     // identity hints
-    NSDictionary *identityHints = [dict valueForKey:UAChannelIdentityHintsKey];
+    NSDictionary *identityHints = [dict valueForKey:kUAChannelIdentityHintsKey];
     XCTAssertNotNil(identityHints, @"identity hints should be present");
-    XCTAssertEqualObjects(payload.userID, [identityHints valueForKey:UAChannelUserIDKey], @"user ID should be present");
-    XCTAssertEqualObjects(payload.deviceID, [identityHints valueForKey:UAChannelDeviceIDKey], @"device ID should be present");
+    XCTAssertEqualObjects(payload.userID, [identityHints valueForKey:kUAChannelUserIDKey], @"user ID should be present");
+    XCTAssertEqualObjects(payload.deviceID, [identityHints valueForKey:kUAChannelDeviceIDKey], @"device ID should be present");
 
     // iOS specific items
-    NSDictionary *ios = [dict valueForKey:UAChanneliOSKey];
+    NSDictionary *ios = [dict valueForKey:kUAChanneliOSKey];
     XCTAssertNotNil(ios, @"ios should be present");
-    XCTAssertEqualObjects(payload.badge, [ios valueForKey:UAChannelBadgeJSONKey], @"badge should be present");
-    XCTAssertEqualObjects(payload.quietTime, [ios valueForKey:UAChannelQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(payload.timeZone, [ios valueForKey:UAChannelTimeZoneJSONKey], @"timezone should be present");
+    XCTAssertEqualObjects(payload.badge, [ios valueForKey:kUAChannelBadgeJSONKey], @"badge should be present");
+    XCTAssertEqualObjects(payload.quietTime, [ios valueForKey:kUAChannelQuietTimeJSONKey], @"quiet time should be present");
+    XCTAssertEqualObjects(payload.timeZone, [ios valueForKey:kUAChannelTimeZoneJSONKey], @"timezone should be present");
 }
 
 /**
@@ -94,13 +94,13 @@ UAChannelRegistrationPayload *payload;
 
     NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
-    XCTAssertNil([dict valueForKey:UAChannelTagsJSONKey], @"tags should be nil");
+    XCTAssertNil([dict valueForKey:kUAChannelTagsJSONKey], @"tags should be nil");
 
     // Verify tags is not nil, but an empty nsarray
     payload.tags = @[];
     jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     dict = [NSJSONSerialization objectWithString:jsonString];
-    XCTAssertEqualObjects(payload.tags, [dict valueForKey:UAChannelTagsJSONKey], @"tags should be nil");
+    XCTAssertEqualObjects(payload.tags, [dict valueForKey:kUAChannelTagsJSONKey], @"tags should be nil");
 }
 
 /**
@@ -114,7 +114,7 @@ UAChannelRegistrationPayload *payload;
     NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
-    XCTAssertNil([dict valueForKey:UAChanneliOSKey], @"iOS section should not be included in the JSON");
+    XCTAssertNil([dict valueForKey:kUAChanneliOSKey], @"iOS section should not be included in the JSON");
 }
 
 /**
@@ -127,7 +127,7 @@ UAChannelRegistrationPayload *payload;
     NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
     NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
 
-    XCTAssertNil([dict valueForKey:UAChannelIdentityHintsKey], @"identity hints section should not be included in the JSON");
+    XCTAssertNil([dict valueForKey:kUAChannelIdentityHintsKey], @"identity hints section should not be included in the JSON");
 }
 
 /**

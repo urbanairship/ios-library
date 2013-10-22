@@ -26,22 +26,23 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NSString *const UAChannelJSONKey;
+#define kUAChannelDeviceTypeKey @"device_type"
+#define kUAChannelTransportKey @"transport"
+#define kUAChannelOptInKey @"opt_in"
+#define kUAChannelPushAddressKey @"push-address"
 
-extern UAChannelJSONKey UAChannelDeviceTypeKey;
-extern UAChannelJSONKey UAChannelTransportKey;
-extern UAChannelJSONKey UAChannelOptInKey;
-extern UAChannelJSONKey UAChannelPushAddressKey;
-extern UAChannelJSONKey UAChannelIdentityHintsKey;
-extern UAChannelJSONKey UAChannelUserIDKey;
-extern UAChannelJSONKey UAChannelDeviceIDKey;
-extern UAChannelJSONKey UAChanneliOSKey;
-extern UAChannelJSONKey UAChannelBadgeJSONKey;
-extern UAChannelJSONKey UAChannelQuietTimeJSONKey;
-extern UAChannelJSONKey UAChannelTimeZoneJSONKey;
-extern UAChannelJSONKey UAChannelAliasJSONKey;
-extern UAChannelJSONKey UAChannelSetTagsKey;
-extern UAChannelJSONKey UAChannelTagsJSONKey;
+#define kUAChannelIdentityHintsKey @"identity_hints"
+#define kUAChannelUserIDKey @"user_id"
+#define kUAChannelDeviceIDKey @"device_id"
+
+#define kUAChanneliOSKey @"ios"
+#define kUAChannelBadgeJSONKey @"badge"
+#define kUAChannelQuietTimeJSONKey @"quiettime"
+#define kUAChannelTimeZoneJSONKey @"tz"
+
+#define kUAChannelAliasJSONKey @"alias"
+#define kUAChannelSetTagsKey @"set_tags"
+#define kUAChannelTagsJSONKey @"tags"
 
 /**
  * Model object encapsulating the data relevant to a creation or updates processed by UAChannelAPIClient.

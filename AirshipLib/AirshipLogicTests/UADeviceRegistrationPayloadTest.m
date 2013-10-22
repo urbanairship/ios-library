@@ -119,20 +119,20 @@
 
 - (void)verifyDictionary:(NSDictionary *)dict {
     XCTAssertNotNil(dict, @"dictionary should not be nil");
-    XCTAssertEqualObjects(self.alias, [dict valueForKey:UAPushAliasJSONKey], @"alias should be present");
-    XCTAssertEqualObjects(self.tags, [dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should be present");
-    XCTAssertEqualObjects(self.timeZone, [dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should be present");
-    XCTAssertEqualObjects(self.quietTime, [dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should be present");
-    XCTAssertEqualObjects(self.badge, [dict valueForKey:UAPushBadgeJSONKey], @"badge should be present");
+    XCTAssertEqualObjects(self.alias, [dict valueForKey:kUAPushAliasJSONKey], @"alias should be present");
+    XCTAssertEqualObjects(self.tags, [dict valueForKey:kUAPushMultipleTagsJSONKey], @"tags should be present");
+    XCTAssertEqualObjects(self.timeZone, [dict valueForKey:kUAPushTimeZoneJSONKey], @"timezone should be present");
+    XCTAssertEqualObjects(self.quietTime, [dict valueForKey:kUAPushQuietTimeJSONKey], @"quiet time should be present");
+    XCTAssertEqualObjects(self.badge, [dict valueForKey:kUAPushBadgeJSONKey], @"badge should be present");
 }
 
 //nil arguments to the payload constructor should result in their keys not being present in the resulting dictionary
 - (void)verifyEmptyDictionary:(NSDictionary *)dict {
-    XCTAssertNil([dict valueForKey:UAPushAliasJSONKey], @"alias should not be present");
-    XCTAssertNil([dict valueForKey:UAPushMultipleTagsJSONKey], @"tags should not be present");
-    XCTAssertNil([dict valueForKey:UAPushTimeZoneJSONKey], @"timezone should not be present");
-    XCTAssertNil([dict valueForKey:UAPushQuietTimeJSONKey], @"quiet time should not be present");
-    XCTAssertNil([dict valueForKey:UAPushBadgeJSONKey], @"badge should not be present");
+    XCTAssertNil([dict valueForKey:kUAPushAliasJSONKey], @"alias should not be present");
+    XCTAssertNil([dict valueForKey:kUAPushMultipleTagsJSONKey], @"tags should not be present");
+    XCTAssertNil([dict valueForKey:kUAPushTimeZoneJSONKey], @"timezone should not be present");
+    XCTAssertNil([dict valueForKey:kUAPushQuietTimeJSONKey], @"quiet time should not be present");
+    XCTAssertNil([dict valueForKey:kUAPushBadgeJSONKey], @"badge should not be present");
 }
 
 - (void)testAsDictionary {

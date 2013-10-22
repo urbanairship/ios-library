@@ -28,12 +28,12 @@
 
 typedef NSString *const UAPushJSONKey;
 
-extern UAPushJSONKey UAPushMultipleTagsJSONKey;
-extern UAPushJSONKey UAPushSingleTagJSONKey;
-extern UAPushJSONKey UAPushAliasJSONKey;
-extern UAPushJSONKey UAPushQuietTimeJSONKey;
-extern UAPushJSONKey UAPushTimeZoneJSONKey;
-extern UAPushJSONKey UAPushBadgeJSONKey;
+#define kUAPushMultipleTagsJSONKey @"tags"
+#define kUAPushSingleTagJSONKey @"tag"
+#define kUAPushAliasJSONKey @"alias"
+#define kUAPushQuietTimeJSONKey @"quiettime"
+#define kUAPushTimeZoneJSONKey @"tz"
+#define kUAPushBadgeJSONKey @"badge"
 
 @interface UADeviceRegistrationPayload : NSObject
 
