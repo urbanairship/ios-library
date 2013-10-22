@@ -34,7 +34,10 @@
 NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
 NSString * const UAChannelNotificationKey = @"channel_id";
+NSString * const UAChannelLocationNotificationKey = @"channel_location";
+
 NSString * const UAReplacedChannelNotificationKey = @"replaced_channel_id";
+NSString * const UAReplacedChannelLocationNotificationKey = @"replaced_channel_location";
 
 NSString * const UAChannelCreatedNotification = @"com.urbanairship.notification.channel_created";
 NSString * const UAChannelConflictNotification = @"com.urbanairship.notification.channel_conflict";
@@ -52,6 +55,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)registerWithChannelID:(NSString *)channelID
+              channelLocation:(NSString *)channelLocation
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully {
 
@@ -67,7 +71,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         self.pendingPayload = payload;
 
         if (channelID) {
-            [self updateChannel:channelID withPayload:self.pendingPayload];
+            [self updateChannel:channelID channelLocation:channelLocation withPayload:payload];
         } else {
             // Try to create a channel, fall back to registering the device token
             [self createChannelWithPayload:self.pendingPayload pushEnabled:YES];
@@ -76,13 +80,17 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)registerPushDisabledWithChannelID:(NSString *)channelID
+                          channelLocation:(NSString *)channelLocation
                               withPayload:(UAChannelRegistrationPayload *)payload
                                forcefully:(BOOL)forcefully {
 
     @synchronized(self) {
         // if we have a channel id, just update the channel with the payload
         if (channelID) {
-            [self registerWithChannelID:channelID withPayload:payload forcefully:forcefully];
+            [self registerWithChannelID:channelID
+                        channelLocation:channelLocation
+                            withPayload:payload
+                             forcefully:forcefully];
             return;
         }
 
@@ -114,6 +122,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)updateChannel:(NSString *)channelID
+      channelLocation:(NSString *)location
           withPayload:(UAChannelRegistrationPayload *)payload {
 
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
@@ -129,9 +138,14 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         }
 
         // Conflict with channel id, create a new one
-        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID){
-            UA_LTRACE(@"Channel %@ created successfully.", newChannelID);
-            [self channelConflict:channelID newChannel:newChannelID];
+        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation){
+            UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
+
+            [self channelConflict:channelID
+                  channelLocation:location
+                       newChannel:newChannelID
+               newChannelLocation:newChannelLocation];
+
             [self succeededWithChannelID:newChannelID deviceToken:payload.pushAddress];
         };
 
@@ -145,18 +159,18 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                               onFailure:failureBlock];
     };
 
-    [self.channelAPIClient updateChannel:channelID
-                             withPayload:payload
-                               onSuccess:successBlock
-                               onFailure:failureBlock];
+    [self.channelAPIClient updateChannelWithLocation:location
+                                         withPayload:payload
+                                           onSuccess:successBlock
+                                           onFailure:failureBlock];
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                      pushEnabled:(BOOL)pushEnabled {
 
-    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID){
-        UA_LTRACE(@"Channel %@ created successfully.", channelID);
-        [self channelCreated:channelID];
+    UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation){
+        UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
+        [self channelCreated:channelID channelLocation:channelLocation];
         [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
@@ -287,17 +301,24 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 }
 
-- (void)channelCreated:(NSString *)channelID {
-    NSDictionary *userInfo = @{UAChannelNotificationKey: channelID};
+- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
+    NSDictionary *userInfo = @{UAChannelNotificationKey: channelID,
+                               UAChannelLocationNotificationKey: channelLocation};
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedNotification
                                                         object:nil
                                                       userInfo:userInfo];
 }
 
-- (void)channelConflict:(NSString *)currentChannelID newChannel:(NSString *)newChannelID {
+- (void)channelConflict:(NSString *)currentChannelID
+        channelLocation:(NSString *)currentChannelLocation
+             newChannel:(NSString *)newChannelID
+     newChannelLocation:(NSString *)newChannelLocation {
+
     NSDictionary *userInfo = @{UAChannelNotificationKey: newChannelID,
-                               UAReplacedChannelNotificationKey: currentChannelID};
+                               UAChannelLocationNotificationKey: newChannelLocation,
+                               UAReplacedChannelNotificationKey: currentChannelID,
+                               UAReplacedChannelLocationNotificationKey: currentChannelLocation};
 
     [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelConflictNotification
                                                         object:nil

@@ -66,6 +66,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, copy) NSString *channelID;
 
 /**
+ * Channel location as a string.
+ */
+@property (nonatomic, copy) NSString *channelLocation;
+
+/**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */

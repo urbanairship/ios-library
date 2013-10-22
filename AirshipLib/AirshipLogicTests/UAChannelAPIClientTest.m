@@ -153,11 +153,14 @@ UAChannelAPIClient *client;
  */
 - (void)testCreateChannelOnSuccess {
     __block NSString *channelID;
+    __block NSString *channelLocation;
 
     // Set up a request with a valid response body
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
     NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelId\"}";
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
+
+    request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
 
     // Expect the run request and call the success block
     [[[mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
@@ -168,11 +171,13 @@ UAChannelAPIClient *client;
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client createChannelWithPayload:nil onSuccess:^(NSString *cId) {
+    [client createChannelWithPayload:nil onSuccess:^(NSString *cId, NSString *location) {
         channelID = cId;
+        channelLocation = location;
     } onFailure:nil];
 
     XCTAssertEqualObjects(@"someChannelId", channelID, @"Channel id should match someChannelId from the response");
+    XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
 }
 
 /**
@@ -291,7 +296,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:nil onFailure:nil];
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should call retry on 500 status codes other than 501.");
 }
 
@@ -323,7 +328,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:nil onFailure:nil];
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should succeed on 200 status code.");
 }
 
@@ -347,7 +352,7 @@ UAChannelAPIClient *client;
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:^{
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:^{
         onSuccessCalled = YES;
     } onFailure:nil];
 
@@ -371,7 +376,7 @@ UAChannelAPIClient *client;
         failureBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"someID" withPayload:nil onSuccess:nil onFailure:^(UAHTTPRequest *request) {
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:^(UAHTTPRequest *request) {
         failedRequest = request;
     }];
 
@@ -389,7 +394,7 @@ UAChannelAPIClient *client;
         UAHTTPRequest *request = obj;
 
         // check the url
-        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/someChannelID/"]) {
+        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/someLocation"]) {
             return NO;
         }
 
@@ -422,7 +427,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
     
-    [client updateChannel:@"someChannelID" withPayload:payload onSuccess:nil onFailure:nil];
+    [client updateChannelWithLocation:@"/someLocation" withPayload:payload onSuccess:nil onFailure:nil];
     
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run with the a valid PUT request.");
 }
@@ -437,7 +442,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:nil withPayload:nil onSuccess:nil onFailure:nil];
+    [client updateChannelWithLocation:nil withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should not make a request with an empty ID.");
 }
 

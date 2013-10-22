@@ -285,6 +285,7 @@ NSDictionary *notification;
 
     // Add a device token so we get a device api callback
     [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
                                                                withPayload:OCMOCK_ANY
                                                                 forcefully:NO];
 
@@ -434,6 +435,7 @@ NSDictionary *notification;
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
 
@@ -465,6 +467,7 @@ NSDictionary *notification;
 
     // Reject device api client registration because autobadge is not enabled
     [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
     [[UAPush shared] setBadgeNumber:15];
@@ -484,6 +487,7 @@ NSDictionary *notification;
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
@@ -509,6 +513,7 @@ NSDictionary *notification;
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [[self.mockedAnalytics reject] addEvent:OCMOCK_ANY];
     [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
     [[UAPush shared] registerDeviceToken:token];
@@ -580,8 +585,10 @@ NSDictionary *notification;
     [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
+
     [[UAPush shared] updateRegistrationForcefully:YES];
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"updateRegistration should register with the device registrar if push is enabled.");
@@ -593,6 +600,7 @@ NSDictionary *notification;
     [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
                                                                withPayload:OCMOCK_ANY
                                                                 forcefully:YES];
 
@@ -635,6 +643,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -656,6 +665,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -678,6 +688,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -702,6 +713,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -715,6 +727,7 @@ NSDictionary *notification;
     [UAPush shared].timeZone = nil;
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 

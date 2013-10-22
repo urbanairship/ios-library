@@ -29,7 +29,7 @@
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
 
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID);
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation);
 
 typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
@@ -70,7 +70,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Update the channel.
  *
- * @param channelID The channel to be updated.
+ * @param channelLocation The location of the channel
  * @param payload An instance of UAChannelRegistrationPayload.
  * @param successBlock A UAChannelAPIClientUpdateSuccessBlock that will be called
  *        if the channel was updated successfully.
@@ -78,10 +78,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  *        the channel update was unsuccessful.
  *
  */
-- (void)updateChannel:(NSString *)channelID
-          withPayload:(UAChannelRegistrationPayload *)payload
-            onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-            onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
+- (void)updateChannelWithLocation:(NSString *)channelLocation
+                      withPayload:(UAChannelRegistrationPayload *)payload
+                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
 
 /**
  * Cancel all current and pending requests.
