@@ -605,4 +605,81 @@ UADeviceRegistrar *registrar;
     XCTAssertNoThrow([registrar registerWithChannelID:nil withPayload:payload forcefully:NO], @"Registrar should not try to register a nil device token");
 }
 
+
+/**
+ * Test that a channel update with a 409 status tries to 
+ * create a new channel id and sends a ChannelConflict notification.
+ */
+- (void)testChannelConflictNewChannel {
+    channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
+
+    //Expect the channel client to update channel and call the update block
+    [[[mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannel:@"someChannel"
+                                                                        withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                                          onSuccess:OCMOCK_ANY
+                                                                          onFailure:OCMOCK_ANY];
+
+    // Expect the create channel to be called, make it successful
+    channelCreateSuccessChannelID = @"newChannel";
+    [[[mockedChannelClient expect] andDo:channelCreateSuccessDoBlock] createChannelWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                                                     onSuccess:OCMOCK_ANY
+                                                                                     onFailure:OCMOCK_ANY];
+
+
+
+    // Expect the delegate to be called
+    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"newChannel" deviceToken:OCMOCK_ANY];
+
+
+    // Expected notification user info
+    NSDictionary *userInfo =  @{UAChannelNotificationKey: @"newChannel",
+                                UAReplacedChannelNotificationKey:@"someChannel"};
+
+    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelConflictNotification
+                                                       object:nil
+                                                     userInfo:[OCMArg checkWithSelector:@selector(isEqualToDictionary:) onObject:userInfo]];
+
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
+
+    [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
+    XCTAssertNoThrow([mockedChannelClient verify], @"Conflict with the channel id should create a new channel");
+    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be called with the new channel");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted about the conflict and registration finishing.");
+}
+
+/**
+ * Test that a channel update with a 409 fails to create a new
+ * channel.
+ */
+- (void)testChannelConflictFailed {
+    channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
+
+    //Expect the channel client to update channel and call the update block
+    [[[mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannel:@"someChannel"
+                                                                        withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                                          onSuccess:OCMOCK_ANY
+                                                                          onFailure:OCMOCK_ANY];
+
+    // Expect the create channel to be called, make it fail
+    [[[mockedChannelClient expect] andDo:channelCreateFailureDoBlock] createChannelWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                                                     onSuccess:OCMOCK_ANY
+                                                                                     onFailure:OCMOCK_ANY];
+
+    // Expect the delegate to be called
+    [[mockedRegistrationDelegate expect] registrationFailed];
+
+
+    // Reject a conflict notification
+    [[mockedNSNotificationCenter reject] postNotificationName:UAChannelConflictNotification
+                                                       object:nil
+                                                     userInfo:OCMOCK_ANY];
+
+    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
+
+    [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
+    XCTAssertNoThrow([mockedChannelClient verify], @"Conflict with the channel id should try to create a new channel");
+    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the registration failure.");
+    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"Only a notification should be posted about the device registration finishing.");
+}
+
 @end
