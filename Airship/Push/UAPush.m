@@ -172,6 +172,9 @@ static Class _uiClass;
 
 - (void)setChannelID:(NSString *)channelID {
     [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
+
+    UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
+    [[UAirship shared].analytics addEvent:regEvent];
 }
 
 - (NSString *)channelID {
