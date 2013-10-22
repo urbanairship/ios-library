@@ -51,7 +51,7 @@
 /**
  * The current payload that is being registered.
  */
-@property (nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
+@property (nonatomic, copy) UAChannelRegistrationPayload *pendingPayload;
 
 /**
  * A flag indicating if the device token has been registered with the

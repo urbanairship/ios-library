@@ -53,8 +53,6 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully {
 
-    UAChannelRegistrationPayload *payloadCopy = [payload copy];
-
     @synchronized(self) {
         if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
             UA_LDEBUG(@"Ignoring duplicate update request.");
@@ -62,16 +60,16 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
             return;
         }
 
-        self.pendingPayload = payloadCopy;
+        self.pendingPayload = payload;
 
         [self.deviceAPIClient cancelAllRequests];
         [self.channelAPIClient cancelAllRequests];
 
         if (channelID) {
-            [self updateChannel:channelID withPayload:payload];
+            [self updateChannel:channelID withPayload:self.pendingPayload];
         } else {
             // Try to create a channel, fall back to registering the device token
-            [self createChannelWithPayload:payload pushEnabled:YES];
+            [self createChannelWithPayload:self.pendingPayload pushEnabled:YES];
         }
     }
 }
