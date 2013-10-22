@@ -288,6 +288,44 @@ UADeviceRegistrar *registrar;
 }
 
 /**
+ * Test registerWithChannelID with the same payload as the previous successful
+ * payload but different then the current pending.
+ */
+- (void)testRegisterWithChannelIDSameAsPreviousSuccessPayloadDifferentPending {
+    //Expect the channel client to update channel and call the update block
+    [[[mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannel:@"someChannel"
+                                                                        withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                                          onSuccess:OCMOCK_ANY
+                                                                          onFailure:OCMOCK_ANY];
+    // Add a succesfull request
+    [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
+
+    [[mockedChannelClient expect] updateChannel:OCMOCK_ANY
+                                    withPayload:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+
+    UAChannelRegistrationPayload *previousPayload = [payload copy];
+
+    // modify payload for pending
+    payload.alias =  @"some-alias";
+    [registrar registerWithChannelID:@"someChannel" withPayload:payload forcefully:NO];
+
+    // Expect a different pending payload calls through
+    [[mockedChannelClient expect] updateChannel:OCMOCK_ANY
+                                    withPayload:OCMOCK_ANY
+                                      onSuccess:OCMOCK_ANY
+                                      onFailure:OCMOCK_ANY];
+
+
+    // Register again with the previous payload
+    [registrar registerWithChannelID:@"someChannel" withPayload:previousPayload forcefully:NO];
+
+    XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered, but is different then the current pending should call through.");
+}
+
+/**
  * Test registerWithChannelID where a new channel ID is created successfully.
  */
 - (void)testRegisterNoChannelID {

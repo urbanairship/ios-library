@@ -236,8 +236,13 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    return !([self.pendingPayload isEqualToPayload:data]
-             || [self.lastSuccessfulPayload isEqualToPayload:data]);
+    // If we do not have a pending payload check the last success payload
+    if (!self.pendingPayload && [self.lastSuccessfulPayload isEqualToPayload:data]) {
+        return NO;
+    }
+
+    // Check the current pending payload
+    return (![self.pendingPayload isEqualToPayload:data]);
 }
 
 - (BOOL)deviceTokenRegistered {
