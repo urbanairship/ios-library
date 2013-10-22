@@ -77,12 +77,21 @@ UAChannelAPIClient *client;
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
             request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
 
+            // If shouldRetryOnConnection is NO, never retry
+            client.shouldRetryOnConnectionError = NO;
+            if (retryBlock(request)) {
+                return NO;
+            }
+
+            // Allow it to retry on 5xx and error results
+            client.shouldRetryOnConnectionError = YES;
             BOOL retryResult = retryBlock(request);
 
             // Only retry if its not 501
             if ((retryResult && i != 501) || (!retryResult && i == 501)) {
                 continue;
             }
+
             return NO;
         }
 
@@ -253,6 +262,14 @@ UAChannelAPIClient *client;
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
             request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
 
+            // If shouldRetryOnConnection is NO, never retry
+            client.shouldRetryOnConnectionError = NO;
+            if (retryBlock(request)) {
+                return NO;
+            }
+
+            // Allow it to retry on 5xx and error results
+            client.shouldRetryOnConnectionError = YES;
             if (!retryBlock(request)) {
                 return NO;
             }

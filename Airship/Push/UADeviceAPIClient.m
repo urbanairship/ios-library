@@ -27,6 +27,7 @@
         self.requestEngine.initialDelayIntervalInSeconds = kUAPushRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAPushRetryTimeMaxDelay;
         self.requestEngine.backoffFactor = kUAPushRetryTimeMultiplier;
+        self.shouldRetryOnConnectionError = YES;
     }
     return self;
 }
@@ -113,8 +114,11 @@
         return (BOOL)(status == 200 || status == 201);
      }
      retryWhere:^(UAHTTPRequest *request) {
-         NSInteger status = request.response.statusCode;
-         return (BOOL)((status >= 500 && status <= 599)|| request.error);
+         if (self.shouldRetryOnConnectionError) {
+             NSInteger status = request.response.statusCode;
+             return (BOOL)((status >= 500 && status <= 599) || request.error);
+         }
+         return NO;
      }
      onSuccess:successBlock
      onFailure:failureBlock];
@@ -137,8 +141,11 @@
          return (BOOL)(status == 204);
      }
      retryWhere:^(UAHTTPRequest *request) {
-         NSInteger status = request.response.statusCode;
-         return (BOOL)((status >= 500 && status <= 599) || request.error);
+         if (self.shouldRetryOnConnectionError) {
+             NSInteger status = request.response.statusCode;
+             return (BOOL)((status >= 500 && status <= 599) || request.error);
+         }
+         return NO;
      }
      onSuccess:successBlock
      onFailure:failureBlock];

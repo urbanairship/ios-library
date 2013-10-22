@@ -51,6 +51,7 @@
         self.requestEngine.initialDelayIntervalInSeconds = kUAChannelRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAChannelRetryTimeMaxDelay;
         self.requestEngine.backoffFactor = kUAChannelRetryTimeMultiplier;
+        self.shouldRetryOnConnectionError = YES;
     }
     return self;
 }
@@ -59,6 +60,7 @@
     self = [super init];
     if (self) {
         self.requestEngine = requestEngine;
+        self.shouldRetryOnConnectionError = YES;
     }
     return self;
 }
@@ -85,8 +87,11 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)(status == 201);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+        if (self.shouldRetryOnConnectionError) {
+            NSInteger status = request.response.statusCode;
+            return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+        }
+        return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
 
         NSString *responseString = request.responseString;
@@ -127,8 +132,11 @@
         NSInteger status = request.response.statusCode;
         return (BOOL)(status == 200);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(((status >= 500 && status <= 599)|| request.error));
+        if (self.shouldRetryOnConnectionError) {
+            NSInteger status = request.response.statusCode;
+            return (BOOL)((status >= 500 && status <= 599) || request.error);
+        }
+        return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         UA_LTRACE(@"Retrieved channel response: %@", request.responseString);
 
