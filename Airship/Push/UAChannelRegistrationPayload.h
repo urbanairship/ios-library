@@ -64,7 +64,7 @@ extern UAChannelJSONKey UAChannelTagsJSONKey;
 @property(nonatomic, assign)BOOL optedIn;
 
 /**
- * The address to push notifications to.
+ * The address to push notifications to.  This should be the device token.
  */
 @property(nonatomic, copy)NSString *pushAddress;
 
