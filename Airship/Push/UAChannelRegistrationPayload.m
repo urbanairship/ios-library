@@ -27,7 +27,7 @@
 
 UAChannelJSONKey UAChannelDeviceTypeKey = @"device_type";
 UAChannelJSONKey UAChannelTransportKey = @"transport";
-UAChannelJSONKey UAChannelOptInKey = @"opt-in";
+UAChannelJSONKey UAChannelOptInKey = @"opt_in";
 UAChannelJSONKey UAChannelPushAddressKey = @"push-address";
 
 UAChannelJSONKey UAChannelIdentityHintsKey = @"identity_hints";
