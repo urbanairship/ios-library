@@ -9,7 +9,7 @@
 
 @implementation UADeviceRegistrationPayload
 
-- (id)initWithAlias:(NSString *)alias
+- (instancetype)initWithAlias:(NSString *)alias
            withTags:(NSArray *)tags
        withTimeZone:(NSString *)timeZone
       withQuietTime:(NSDictionary *)quietTime
@@ -43,7 +43,7 @@
     return self;
 }
 
-+ (id)payloadWithAlias:(NSString *)alias
++ (instancetype)payloadWithAlias:(NSString *)alias
               withTags:(NSArray *)tags
           withTimeZone:(NSString *)timeZone
          withQuietTime:(NSDictionary *)quietTime
@@ -56,7 +56,7 @@
                                                     withBadge:badge];
 }
 
-+ (id)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload {
++ (instancetype)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload {
     NSArray *tags = payload.setTags ? payload.tags : nil;
     return [UADeviceRegistrationPayload payloadWithAlias:payload.alias
                                                 withTags:tags

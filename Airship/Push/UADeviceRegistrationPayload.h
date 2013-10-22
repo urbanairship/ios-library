@@ -42,7 +42,7 @@ typedef NSString *const UAPushJSONKey;
  */
 @interface UADeviceRegistrationPayload : NSObject
 
-+ (id)payloadWithAlias:(NSString *)alias
++ (instancetype)payloadWithAlias:(NSString *)alias
               withTags:(NSArray *)tags
           withTimeZone:(NSString *)timeZone
          withQuietTime:(NSDictionary *)quietTime
@@ -56,7 +56,7 @@ typedef NSString *const UAPushJSONKey;
  * @return A UADeviceRegistrationPayload created from the
  * UAChannelRegistrationPayload.
  */
-+ (id)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload;
++ (instancetype)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
  * Gets the payload as an NSDictionary
