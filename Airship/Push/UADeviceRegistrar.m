@@ -141,10 +141,10 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation){
             UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
 
-            [self channelConflict:channelID
-                  channelLocation:location
-                       newChannel:newChannelID
-               newChannelLocation:newChannelLocation];
+            [self notifyChannelConflict:channelID
+                        channelLocation:location
+                             newChannel:newChannelID
+                     newChannelLocation:newChannelLocation];
 
             [self succeededWithChannelID:newChannelID deviceToken:payload.pushAddress];
         };
@@ -170,7 +170,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation){
         UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
-        [self channelCreated:channelID channelLocation:channelLocation];
+        [self notifyChannelCreated:channelID channelLocation:channelLocation];
         [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
     };
 
@@ -301,7 +301,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
 }
 
-- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
+- (void)notifyChannelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
     NSDictionary *userInfo = @{UAChannelNotificationKey: channelID,
                                UAChannelLocationNotificationKey: channelLocation};
 
@@ -310,7 +310,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                                       userInfo:userInfo];
 }
 
-- (void)channelConflict:(NSString *)currentChannelID
+- (void)notifyChannelConflict:(NSString *)currentChannelID
         channelLocation:(NSString *)currentChannelLocation
              newChannel:(NSString *)newChannelID
      newChannelLocation:(NSString *)newChannelLocation {
