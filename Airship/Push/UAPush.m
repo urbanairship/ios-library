@@ -133,7 +133,7 @@ static Class _uiClass;
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
-        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UAPushDeviceTokenKey];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushDeviceTokenKey];
         return;
     }
     
