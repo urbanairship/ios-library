@@ -46,6 +46,18 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
 #pragma mark internal methods
 
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    //wrap the completion handler in one that marshalls the call onto the main queue, if necessary
+    UAActionCompletionHandler marshalledHandler = ^(UAActionResult *result){
+        if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(result);
+            });
+        } else {
+            completionHandler(result);
+        }
+    };
+
     if (![self acceptsArguments:arguments]) {
         //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
         //message because it doesn't provide any context. should it be up to the
@@ -59,7 +71,7 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
                                              code:UAActionErrorCodeArgumentsRejected
                                          userInfo:@{NSLocalizedDescriptionKey : errorString}];
 
-        completionHandler([UAActionResult error:error]);
+        marshalledHandler([UAActionResult error:error]);
     } else {
         [self willPerformWithArguments:arguments];
         [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
@@ -69,7 +81,7 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
             }
 
             [self didPerformWithArguments:arguments withResult:result];
-            completionHandler(result);
+            marshalledHandler(result);
         }];
     }
 }
