@@ -44,6 +44,8 @@ UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
 UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
 UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
 UAPushSettingsKey *const UAPushChannelIDKey = @"UAChannelID";
+UAPushSettingsKey *const UAPushChannelLocationKey = @"UAChannelLocation";
+UAPushSettingsKey *const UAPushDeviceTokenKey = @"UADeviceToken";
 
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
@@ -100,8 +102,13 @@ static Class _uiClass;
                                                 object:[UIApplication sharedApplication]];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelIDCreated:)
+                                                 selector:@selector(channelCreated:)
                                                      name:UAChannelCreatedNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelConflict:)
+                                                     name:UAChannelConflictNotification
                                                    object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -126,7 +133,7 @@ static Class _uiClass;
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
-        _deviceToken = deviceToken;
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushDeviceTokenKey];
         return;
     }
     
@@ -144,13 +151,17 @@ static Class _uiClass;
         UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
     }
 
-    _deviceToken = deviceToken;
+    [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:UAPushDeviceTokenKey];
 
     // Log the device token at error level, but without logging
     // it as an error.
     if (uaLogLevel >= UALogLevelError) {
         NSLog(@"Device token: %@", deviceToken);
     }
+}
+
+- (NSString *)deviceToken {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenKey];
 }
 
 #pragma mark -
@@ -170,6 +181,14 @@ static Class _uiClass;
 
 - (NSString *)channelID {
     return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+}
+
+- (void)setChannelLocation:(NSString *)channelLocation {
+    [[NSUserDefaults standardUserDefaults] setValue:channelLocation forKey:UAPushChannelLocationKey];
+}
+
+- (NSString *)channelLocation {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
 }
 
 - (BOOL)autobadgeEnabled {
@@ -550,10 +569,12 @@ BOOL deferChannelCreationOnForeground = false;
 
     if (self.pushEnabled) {
         [self.deviceRegistrar registerWithChannelID:self.channelID
+                                    channelLocation:self.channelLocation
                                         withPayload:payload
                                          forcefully:forcefully];
     } else {
         [self.deviceRegistrar registerPushDisabledWithChannelID:self.channelID
+                                                channelLocation:self.channelLocation
                                                     withPayload:payload
                                                      forcefully:forcefully];
     }
@@ -586,8 +607,19 @@ BOOL deferChannelCreationOnForeground = false;
     [self updateRegistration];
 }
 
-- (void)channelIDCreated:(NSNotification *)channelNotification {
-    self.channelID = [channelNotification.userInfo valueForKey:UAChannelCreatedNotificationKey];
+- (void)channelCreated:(NSNotification *)channelNotification {
+    self.channelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
+    self.channelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
+}
+
+- (void)channelConflict:(NSNotification *)channelNotification {
+    NSString *newChannelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
+    NSString *newChannelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
+    NSString *currentChannelID = [channelNotification.userInfo valueForKey:UAReplacedChannelNotificationKey];
+
+    UA_LTRACE(@"Channel conflict with %@, new channel: %@", currentChannelID, newChannelID);
+    self.channelID = newChannelID;
+    self.channelLocation = newChannelLocation;
 }
 
 - (void)registrationFinished {

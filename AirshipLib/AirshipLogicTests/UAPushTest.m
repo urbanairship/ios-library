@@ -36,6 +36,8 @@
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAChannelRegistrationPayload.h"
+#import "UADeviceRegistrar.h"
+#import "UAEvent.h"
 
 
 @interface UAPushTest : XCTestCase
@@ -284,6 +286,7 @@ NSDictionary *notification;
 
     // Add a device token so we get a device api callback
     [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
                                                                withPayload:OCMOCK_ANY
                                                                 forcefully:NO];
 
@@ -433,6 +436,7 @@ NSDictionary *notification;
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
 
@@ -464,6 +468,7 @@ NSDictionary *notification;
 
     // Reject device api client registration because autobadge is not enabled
     [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
     [[UAPush shared] setBadgeNumber:15];
@@ -483,6 +488,7 @@ NSDictionary *notification;
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
 
@@ -508,6 +514,7 @@ NSDictionary *notification;
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [[self.mockedAnalytics reject] addEvent:OCMOCK_ANY];
     [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:NO];
     [[UAPush shared] registerDeviceToken:token];
@@ -579,8 +586,10 @@ NSDictionary *notification;
     [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:OCMOCK_ANY
                                                     forcefully:YES];
+
     [[UAPush shared] updateRegistrationForcefully:YES];
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"updateRegistration should register with the device registrar if push is enabled.");
@@ -592,6 +601,7 @@ NSDictionary *notification;
     [UAPush shared].deviceToken = validDeviceToken;
 
     [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
                                                                withPayload:OCMOCK_ANY
                                                                 forcefully:YES];
 
@@ -634,6 +644,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -655,6 +666,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -677,6 +689,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -701,6 +714,7 @@ NSDictionary *notification;
     };
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -714,6 +728,7 @@ NSDictionary *notification;
     [UAPush shared].timeZone = nil;
 
     [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
                                                    withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
                                                     forcefully:YES];
 
@@ -920,6 +935,60 @@ NSDictionary *notification;
     [push registrationFinished];
     XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
     XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
+}
+
+
+/**
+ * Test channel created
+ */
+- (void)testChannelCreated {
+    UAPush *push = [UAPush shared];
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
+                                                                 object:nil
+                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID",
+                                                                          UAChannelLocationNotificationKey:@"someLocation"}];
+
+    [push channelCreated:notification];
+    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
+    XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
+
+}
+
+/**
+ * Test channel conflict
+ */
+- (void)testChannelConflict {
+    UAPush *push = [UAPush shared];
+
+    NSDictionary *userInfo = @{
+                               UAChannelNotificationKey: @"someNewChannel",
+                               UAChannelLocationNotificationKey: @"someNewChannelLocation",
+                               UAReplacedChannelNotificationKey: @"someOldChannel",
+                               UAReplacedChannelLocationNotificationKey: @"someOldLocation"
+                               };
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelConflictNotification
+                                                                 object:nil
+                                                               userInfo:userInfo];
+
+
+    [push channelConflict:notification];
+    XCTAssertEqualObjects(push.channelID, @"someNewChannel", @"The channel should update to the new channel ID.");
+    XCTAssertEqualObjects(push.channelLocation, @"someNewChannelLocation", @"The channel should update to the new channel location.");
+
+}
+
+/**
+ * Test setting the channel ID generates the device registration event with the
+ * channel ID.
+ */
+- (void)testSetChannelID {
+    UAPush *push = [UAPush shared];
+
+    push.channelID = @"someChannelID";
+
+    XCTAssertEqualObjects(@"someChannelID", push.channelID, @"Channel ID is not being set properly");
 }
 
 @end

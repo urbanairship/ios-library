@@ -36,7 +36,7 @@
 #define kUAChannelRetryTimeInitialDelay 60
 #define kUAChannelRetryTimeMultiplier 2
 #define kUAChannelRetryTimeMaxDelay 300
-#define kUAChannelURLBase @"/api/channels/"
+#define kUAChannelCreateLocation @"/api/channels/"
 
 @interface UAChannelAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
@@ -81,7 +81,7 @@
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    UAHTTPRequest *request = [self requestToCreateWithPayload:payload];
+    UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
@@ -98,12 +98,14 @@
         NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
         UA_LTRACE(@"Retrieved channel response: %@", responseString);
 
-
         // Get the channel id from the request
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
 
+        // Channel location from the request
+        NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
+
         if (successBlock) {
-            successBlock(channelID);
+            successBlock(channelID, channelLocation);
         } else {
             UA_LERR(@"missing successBlock");
         }
@@ -116,17 +118,17 @@
     }];
 }
 
-- (void)updateChannel:(NSString *)channelID
-         withPayload:(UAChannelRegistrationPayload *)payload
-           onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
+- (void)updateChannelWithLocation:(NSString *)channelLocation
+                      withPayload:(UAChannelRegistrationPayload *)payload
+                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    if (!channelID) {
-        UA_LERR(@"Unable to update a nil channel id.");
+    if (!channelLocation) {
+        UA_LERR(@"Unable to update a channel with a nil channel location.");
         return;
     }
 
-    UAHTTPRequest *request = [self requestToUpdateWithChannelID:channelID payload:payload];
+    UAHTTPRequest *request = [self requestToUpdateWithChannelLocation:channelLocation payload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
@@ -154,8 +156,15 @@
     }];
 }
 
-- (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase, channelID];
+/**
+ * Creates an UAHTTPRequest for updating a channel.
+ *
+ * @param location The channel location
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
+- (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, location];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -165,8 +174,14 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToCreateWithPayload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase];
+/**
+ * Creates an UAHTTPRequest to create a channel.
+ *
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
+- (UAHTTPRequest *)requestToCreateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelCreateLocation];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -175,7 +190,5 @@
 
     return request;
 }
-
-
 
 @end

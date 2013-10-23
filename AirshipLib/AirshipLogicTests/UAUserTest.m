@@ -13,7 +13,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.user = [UAUser defaultUser];
+    self.user = [[UAUser alloc] init];
 
     // set an app key to allow the keychain utils to look for a username
     self.user.appKey = @"9Q1tVTl0RF16baYKYp8HPQ";

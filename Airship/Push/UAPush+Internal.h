@@ -66,6 +66,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, copy) NSString *channelID;
 
 /**
+ * Channel location as a string.
+ */
+@property (nonatomic, copy) NSString *channelLocation;
+
+/**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
@@ -107,6 +112,20 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  * Called when the UADeviceRegistrar finishes any registration call.
  */
 - (void)registrationFinished;
+
+/**
+ * Called when a channel is created.
+ *
+ * @param channelNotification The channel creation notification.
+ */
+- (void)channelCreated:(NSNotification *)channelNotification;
+
+/**
+ * Called when a current channel had a conflict and a new channel is created.
+ *
+ * @param channelNotification The channel notification.
+ */
+- (void)channelConflict:(NSNotification *)channelNotification;
 
 /**
  * Register the user defaults for this class. You should not need to call this method

@@ -500,6 +500,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Locale-Country" value:[[NSLocale currentLocale] objectForKey: NSLocaleCountryCode]];
     [request addRequestHeader:@"X-UA-Locale-Variant" value:[[NSLocale currentLocale] objectForKey: NSLocaleVariantCode]];
     [request addRequestHeader:@"X-UA-Push-Address" value:[UAPush shared].deviceToken];
+    [request addRequestHeader:@"X-UA-Channel-ID" value:[UAPush shared].channelID];
 
     return request;
 }

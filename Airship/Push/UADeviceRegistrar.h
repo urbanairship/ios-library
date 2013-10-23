@@ -28,15 +28,39 @@
 @class UAChannelRegistrationPayload;
 
 /**
- * NSNotification posted when a channel has been created
+ * The key for the channel id in the posted NSNotification's user info
+ * when a channel is created.
+ */
+extern NSString * const UAChannelNotificationKey;
+
+/**
+ * The key for the channel location in the posted NSNotification's user info
+ * when a channel is created.
+ */
+extern NSString * const UAChannelLocationNotificationKey;
+
+/**
+ * The key for the replaced channel id in the posted NSNotification's user info
+ * when a channel has a conflict and is replaced.
+ */
+extern NSString * const UAReplacedChannelNotificationKey;
+
+/**
+ * The key for the replaced channel location in the posted NSNotification's user info
+ * when a channel has a conflict and is replaced.
+ */
+extern NSString * const UAReplacedChannelLocationNotificationKey;
+
+/**
+ * NSNotification posted when a channel has been created.
  */
 extern NSString * const UAChannelCreatedNotification;
 
 /**
- * The key for the channel id in the posted NSNotification's user info
- * when a channel is created.
+ * NSNotification posted when a channel update has a conflict and a new
+ * channel is required.
  */
-extern NSString * const UAChannelCreatedNotificationKey;
+extern NSString * const UAChannelConflictNotification;
 
 /**
  * NSNotification posted when a device registration finishes.
@@ -97,10 +121,12 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
  * Register the device with Urban Airship.
  *
  * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
+ * @param channelLocation The channel location.  If nil is supplied, a channel will be created.
  * @param payload The payload for the registration.
  * @param forcefully To force the registration, skipping duplicate request checks.
  */
 - (void)registerWithChannelID:(NSString *)channelID
+              channelLocation:(NSString *)channelLocation
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully;
 
@@ -108,10 +134,12 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
  * Register that push is disabled for the device with Urban Airship.
  *
  * @param channelID The channel id to update.  If nil is supplied, a channel will be created.
+ * @param channelLocation The channel location.  If nil is supplied, a channel will be created.
  * @param payload The payload for the registration.
  * @param forcefully To force the registration, skipping duplicate request checks.
  */
 - (void)registerPushDisabledWithChannelID:(NSString *)channelID
+                          channelLocation:(NSString *)channelLocation
                               withPayload:(UAChannelRegistrationPayload *)payload
                                forcefully:(BOOL)forcefully;
 
