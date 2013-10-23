@@ -986,17 +986,9 @@ NSDictionary *notification;
 - (void)testSetChannelID {
     UAPush *push = [UAPush shared];
 
-    [[self.mockedAnalytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isKindOfClass:[UAEventDeviceRegistration class]];
-    }]];
-
     push.channelID = @"someChannelID";
 
     XCTAssertEqualObjects(@"someChannelID", push.channelID, @"Channel ID is not being set properly");
-    XCTAssertNoThrow([self.mockedAnalytics verify],
-                     @"Setting the channel id should add a device registration event to analytics");
-
-
 }
 
 @end
