@@ -409,7 +409,7 @@ static Class _uiClass;
     // if the device token has already been set then
     // we are post-registration and will need to make
     // and update call
-    if (self.autobadgeEnabled && self.deviceToken) {
+    if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
         UA_LDEBUG(@"Sending autobadge update to UA server.");
         [self updateRegistrationForcefully:YES];
     }
@@ -511,10 +511,10 @@ BOOL deferChannelCreationOnForeground = false;
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
     } else if (!self.channelID) {
         UA_LTRACE(@"Channel ID not created, Updating registration.");
-        [self updateRegistration];
+        [self updateRegistrationForcefully:NO];
     } else if (self.hasEnteredBackground) {
         UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
-        [self updateRegistration];
+        [self updateRegistrationForcefully:NO];
     }
 
     if (!self.launchNotification) {
@@ -581,6 +581,12 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistration {
+    if (!self.deviceToken && !self.channelID) {
+        UA_LDEBUG(@"Skipping registration.  Neither channelID or deviceToken is present."
+                  @"Registration will be attemped at a later time.");
+        return;
+    }
+
     [self updateRegistrationForcefully:NO];
 }
 
@@ -651,7 +657,7 @@ BOOL deferChannelCreationOnForeground = false;
     if (!quietTimeEnabled && currentQuietTime) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
     } else {
-         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
 
     NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
