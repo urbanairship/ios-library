@@ -46,6 +46,11 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
 #pragma mark internal methods
 
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    completionHandler = completionHandler ?: ^(UAActionResult *result){
+        //if no completion handler was passed, use an empty block in its place
+    };
+
     if (![self acceptsArguments:arguments]) {
         //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
         //message because it doesn't provide any context. should it be up to the
