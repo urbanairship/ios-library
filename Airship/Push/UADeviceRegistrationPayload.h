@@ -26,8 +26,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NSString *const UAPushJSONKey;
-
 #define kUAPushMultipleTagsJSONKey @"tags"
 #define kUAPushSingleTagJSONKey @"tag"
 #define kUAPushAliasJSONKey @"alias"
