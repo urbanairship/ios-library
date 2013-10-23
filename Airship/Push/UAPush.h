@@ -26,6 +26,7 @@
 #import "UAGlobal.h"
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
+#import "UADeviceRegistrar.h"
 
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
@@ -146,85 +147,6 @@
 
 @end
 
-//---------------------------------------------------------------------------------------
-// UARegistrationDelegate Protocol
-//---------------------------------------------------------------------------------------
-
-/**
- * Implement this protocol and add as a [UAPush registrationDelegate] to receive
- * device token registration success and failure callbacks.
- *
- */
-@protocol UARegistrationDelegate<NSObject>
-@optional
-
-/**
- * Called when the device token is successfully registered with Urban Airship.
- */
-- (void)registerDeviceTokenSucceeded;
-
-/**
- * Called when the device token registration fails.
- *
- * @param request The failed request.
- */
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-
-/**
- * Called when the device token is successfully deactivated with Urban Airship.
- */
-- (void)unregisterDeviceTokenSucceeded;
-
-/**
- * Called when the device token deactivation fails and cannot be retried.
- *
- * @param request The failed request.
- */
-- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
-@end
-
-
-
-//---------------------------------------------------------------------------------------
-// UARegistrationObserver Protocol
-//---------------------------------------------------------------------------------------
-
-/**
- * Implement this protocol and register with the UAPush shared instance to receive
- * device token registration success and failure callbacks.
- *
- * @deprecated As of version 3.0. Replaced with `UARegistrationDelegate` protocol.
- */
-__attribute__((deprecated("As of version 3.0")))
-@protocol UARegistrationObserver
-@optional
-
-/**
- * Called when the device token is successfully registered with Urban Airship.
- */
-- (void)registerDeviceTokenSucceeded;
-
-/**
- * Called when the device token registration fails.
- *
- * @param request The failed request.
- */
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-
-/**
- * Called when the device token is successfully deactivated with Urban Airship.
- */
-- (void)unregisterDeviceTokenSucceeded;
-
-/**
- * Called when the device token deactivation fails and cannot be retried.
- *
- * @param request The failed request.
- */
-- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
-@end
-
-
 
 //---------------------------------------------------------------------------------------
 // UAPush Class
@@ -234,10 +156,7 @@ __attribute__((deprecated("As of version 3.0")))
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface UAPush : UAObservable
-#pragma clang diagnostic pop
-
+@interface UAPush : NSObject
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -296,6 +215,11 @@ SINGLETON_INTERFACE(UAPush);
  * The device token for this device, as a hex string.
  */
 @property (nonatomic, copy, readonly) NSString *deviceToken;
+
+/**
+ * The channel id for this device.
+ */
+@property (nonatomic, copy, readonly) NSString *channelID;
 
 /**
  * Notification types this app will request from APNS. If push is enabled, changes to this value will

@@ -1,13 +1,7 @@
 
 #import "UADeviceRegistrationPayload.h"
 #import "NSJSONSerialization+UAAdditions.h"
-
-UAPushJSONKey UAPushMultipleTagsJSONKey = @"tags";
-UAPushJSONKey UAPushSingleTagJSONKey = @"tag";
-UAPushJSONKey UAPushAliasJSONKey = @"alias";
-UAPushJSONKey UAPushQuietTimeJSONKey = @"quiettime";
-UAPushJSONKey UAPushTimeZoneJSONKey = @"tz";
-UAPushJSONKey UAPushBadgeJSONKey = @"badge";
+#import "UAChannelRegistrationPayload.h"
 
 @interface UADeviceRegistrationPayload()
 @property(nonatomic, strong) NSDictionary *payloadDictionary;
@@ -15,7 +9,7 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 
 @implementation UADeviceRegistrationPayload
 
-- (id)initWithAlias:(NSString *)alias
+- (instancetype)initWithAlias:(NSString *)alias
            withTags:(NSArray *)tags
        withTimeZone:(NSString *)timeZone
       withQuietTime:(NSDictionary *)quietTime
@@ -26,30 +20,30 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
         self.payloadDictionary = [NSMutableDictionary dictionary];
 
         if (alias) {
-            [self.payloadDictionary setValue:alias forKey:UAPushAliasJSONKey];
+            [self.payloadDictionary setValue:alias forKey:kUAPushAliasJSONKey];
         }
 
         if (tags) {
-            [self.payloadDictionary setValue:tags forKey:UAPushMultipleTagsJSONKey];
+            [self.payloadDictionary setValue:tags forKey:kUAPushMultipleTagsJSONKey];
         }
 
         if (timeZone) {
-            [self.payloadDictionary setValue:timeZone forKey:UAPushTimeZoneJSONKey];
+            [self.payloadDictionary setValue:timeZone forKey:kUAPushTimeZoneJSONKey];
         }
 
         if (quietTime) {
-            [self.payloadDictionary setValue:quietTime forKey:UAPushQuietTimeJSONKey];
+            [self.payloadDictionary setValue:quietTime forKey:kUAPushQuietTimeJSONKey];
         }
 
         if (badge) {
-            [self.payloadDictionary setValue:badge forKey:UAPushBadgeJSONKey];
+            [self.payloadDictionary setValue:badge forKey:kUAPushBadgeJSONKey];
         }
     }
 
     return self;
 }
 
-+ (id)payloadWithAlias:(NSString *)alias
++ (instancetype)payloadWithAlias:(NSString *)alias
               withTags:(NSArray *)tags
           withTimeZone:(NSString *)timeZone
          withQuietTime:(NSDictionary *)quietTime
@@ -62,6 +56,15 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
                                                     withBadge:badge];
 }
 
++ (instancetype)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload {
+    NSArray *tags = payload.setTags ? payload.tags : nil;
+    return [UADeviceRegistrationPayload payloadWithAlias:payload.alias
+                                                withTags:tags
+                                            withTimeZone:payload.timeZone
+                                           withQuietTime:payload.quietTime
+                                               withBadge:payload.badge];
+}
+
 - (NSDictionary *)asDictionary {
     return [self.payloadDictionary copy];
 }
@@ -72,7 +75,7 @@ UAPushJSONKey UAPushBadgeJSONKey = @"badge";
 
 - (NSData *)asJSONData {
     return [NSJSONSerialization dataWithJSONObject:self.payloadDictionary
-                                           options:NSJSONWritingPrettyPrinted
+                                           options:0
                                              error:nil];
 }
 
