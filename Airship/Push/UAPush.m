@@ -45,6 +45,7 @@ UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
 UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
 UAPushSettingsKey *const UAPushChannelIDKey = @"UAChannelID";
 UAPushSettingsKey *const UAPushChannelLocationKey = @"UAChannelLocation";
+UAPushSettingsKey *const UAPushDeviceTokenKey = @"UADeviceToken";
 
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
@@ -132,7 +133,7 @@ static Class _uiClass;
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
-        _deviceToken = deviceToken;
+        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UAPushDeviceTokenKey];
         return;
     }
     
@@ -150,13 +151,17 @@ static Class _uiClass;
         UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
     }
 
-    _deviceToken = deviceToken;
+    [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:UAPushDeviceTokenKey];
 
     // Log the device token at error level, but without logging
     // it as an error.
     if (uaLogLevel >= UALogLevelError) {
         NSLog(@"Device token: %@", deviceToken);
     }
+}
+
+- (NSString *)deviceToken {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenKey];
 }
 
 #pragma mark -
