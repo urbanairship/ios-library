@@ -88,7 +88,6 @@
         // fetch url, then set flag in completion block
         [self prefetchURL:kablamURL withCompletionHandler:completionHandler];
 
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     } else {
         completionHandler([UAActionResult none]);
     }
