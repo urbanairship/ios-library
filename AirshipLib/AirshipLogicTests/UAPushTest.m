@@ -946,10 +946,13 @@ NSDictionary *notification;
 
     NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
                                                                  object:nil
-                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID"}];
+                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID",
+                                                                          UAChannelLocationNotificationKey:@"someLocation"}];
 
     [push channelCreated:notification];
     XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
+    XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
+
 }
 
 /**
@@ -960,7 +963,9 @@ NSDictionary *notification;
 
     NSDictionary *userInfo = @{
                                UAChannelNotificationKey: @"someNewChannel",
-                               UAReplacedChannelNotificationKey: @"someOldChannel"
+                               UAChannelLocationNotificationKey: @"someNewChannelLocation",
+                               UAReplacedChannelNotificationKey: @"someOldChannel",
+                               UAReplacedChannelLocationNotificationKey: @"someOldLocation"
                                };
 
     NSNotification *notification = [NSNotification notificationWithName:UAChannelConflictNotification
@@ -970,6 +975,8 @@ NSDictionary *notification;
 
     [push channelConflict:notification];
     XCTAssertEqualObjects(push.channelID, @"someNewChannel", @"The channel should update to the new channel ID.");
+    XCTAssertEqualObjects(push.channelLocation, @"someNewChannelLocation", @"The channel should update to the new channel location.");
+
 }
 
 /**

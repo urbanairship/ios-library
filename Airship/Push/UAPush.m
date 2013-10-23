@@ -185,7 +185,7 @@ static Class _uiClass;
     [[NSUserDefaults standardUserDefaults] setValue:channelLocation forKey:UAPushChannelLocationKey];
 }
 
-- (NSString *)setChannelLocation {
+- (NSString *)channelLocation {
     return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
 }
 
