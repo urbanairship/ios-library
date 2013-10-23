@@ -65,13 +65,6 @@ static NSUInteger userRowCount = 1;
 @implementation UAPushMoreSettingsViewController
 
 - (void)dealloc {
-    [[UAPush shared] removeObserver:self];
-
-
-
-    
-    
-
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
     
@@ -100,7 +93,6 @@ static NSUInteger userRowCount = 1;
 
     [self initCells];
 
-    [[UAPush shared] addObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

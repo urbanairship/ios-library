@@ -65,16 +65,6 @@ UAChannelAPIClient *client;
 }
 
 /**
- * Test create channel cancels all pending requests
- */
-- (void)testCreateChannelCancelsAllRequests {
-    [[mockRequestEngine expect] cancelAllRequests];
-
-    [client createChannelWithPayload:nil onSuccess:nil onFailure:nil];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Create channel should cancel any pending requests.");
-}
-
-/**
  * Test create channel retries on 500 status codes other than 501
  */
 - (void)testCreateChannelRetriesFailedRequests {
@@ -87,12 +77,21 @@ UAChannelAPIClient *client;
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
             request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
 
+            // If shouldRetryOnConnection is NO, never retry
+            client.shouldRetryOnConnectionError = NO;
+            if (retryBlock(request)) {
+                return NO;
+            }
+
+            // Allow it to retry on 5xx and error results
+            client.shouldRetryOnConnectionError = YES;
             BOOL retryResult = retryBlock(request);
 
             // Only retry if its not 501
             if ((retryResult && i != 501) || (!retryResult && i == 501)) {
                 continue;
             }
+
             return NO;
         }
 
@@ -154,11 +153,14 @@ UAChannelAPIClient *client;
  */
 - (void)testCreateChannelOnSuccess {
     __block NSString *channelID;
+    __block NSString *channelLocation;
 
     // Set up a request with a valid response body
     UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
     NSString *response = @"{ \"ok\":true, \"channel_id\": \"someChannelId\"}";
     request.responseData = [response dataUsingEncoding:NSUTF8StringEncoding];
+
+    request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:@{@"Location":@"someChannelLocation"}];
 
     // Expect the run request and call the success block
     [[[mockRequestEngine stub] andDo:^(NSInvocation *invocation) {
@@ -169,11 +171,13 @@ UAChannelAPIClient *client;
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client createChannelWithPayload:nil onSuccess:^(NSString *cId) {
+    [client createChannelWithPayload:nil onSuccess:^(NSString *cId, NSString *location) {
         channelID = cId;
+        channelLocation = location;
     } onFailure:nil];
 
     XCTAssertEqualObjects(@"someChannelId", channelID, @"Channel id should match someChannelId from the response");
+    XCTAssertEqualObjects(@"someChannelLocation", channelLocation, @"Channel location should match location header from the response");
 }
 
 /**
@@ -251,16 +255,6 @@ UAChannelAPIClient *client;
 
 
 /**
- * Test create channel cancels all pending requests
- */
-- (void)testUpdateChannelCancelsAllRequests {
-    [[mockRequestEngine expect] cancelAllRequests];
-
-    [client updateChannel:@"someChannelRequest" withPayload:nil onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Create channel should cancel any pending requests.");
-}
-
-/**
  * Test update channel retries on any 500 status code
  */
 - (void)testUpdateChannelRetriesFailedRequests {
@@ -273,6 +267,14 @@ UAChannelAPIClient *client;
             UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
             request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:i HTTPVersion:nil headerFields:nil];
 
+            // If shouldRetryOnConnection is NO, never retry
+            client.shouldRetryOnConnectionError = NO;
+            if (retryBlock(request)) {
+                return NO;
+            }
+
+            // Allow it to retry on 5xx and error results
+            client.shouldRetryOnConnectionError = YES;
             if (!retryBlock(request)) {
                 return NO;
             }
@@ -294,7 +296,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:nil onFailure:nil forcefully:YES];
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should call retry on 500 status codes other than 501.");
 }
 
@@ -326,7 +328,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:nil onFailure:nil forcefully:YES];
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should succeed on 200 status code.");
 }
 
@@ -350,9 +352,9 @@ UAChannelAPIClient *client;
         successBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"some-channel-id" withPayload:nil onSuccess:^{
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:^{
         onSuccessCalled = YES;
-    } onFailure:nil forcefully:YES];
+    } onFailure:nil];
 
     XCTAssertTrue(onSuccessCalled, @"Update should call the onSuccess block when its successful");
 }
@@ -374,9 +376,9 @@ UAChannelAPIClient *client;
         failureBlock(request, 0);
     }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
 
-    [client updateChannel:@"someID" withPayload:nil onSuccess:nil onFailure:^(UAHTTPRequest *request) {
+    [client updateChannelWithLocation:@"someLocation" withPayload:nil onSuccess:nil onFailure:^(UAHTTPRequest *request) {
         failedRequest = request;
-    } forcefully:NO];
+    }];
 
     XCTAssertEqualObjects(request, failedRequest, @"Failure block should return the failed request");
 }
@@ -392,7 +394,7 @@ UAChannelAPIClient *client;
         UAHTTPRequest *request = obj;
 
         // check the url
-        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/api/channels/someChannelID/"]) {
+        if (![[request.url absoluteString] isEqualToString:@"https://device-api.urbanairship.com/someLocation"]) {
             return NO;
         }
 
@@ -425,7 +427,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
     
-    [client updateChannel:@"someChannelID" withPayload:payload onSuccess:nil onFailure:nil forcefully:YES];
+    [client updateChannelWithLocation:@"/someLocation" withPayload:payload onSuccess:nil onFailure:nil];
     
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run with the a valid PUT request.");
 }
@@ -440,123 +442,8 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
 
-    [client updateChannel:nil withPayload:nil onSuccess:nil onFailure:nil forcefully:YES];
+    [client updateChannelWithLocation:nil withPayload:nil onSuccess:nil onFailure:nil];
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should not make a request with an empty ID.");
-}
-
-/**
- * Test update channel with a request that matches the pending requests does not run
- * unless forcfully is YES
- */
-- (void)testUpdatePendingRequest {
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-
-    // Create a pending request
-    [client updateChannel:@"some-id" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-
-    [[mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    // Force it, should ignore pending request
-    [client updateChannel:@"some-id" withPayload:payload onSuccess:nil onFailure:nil forcefully:YES];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should ignore request if its forced.");
-
-    [[mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    // Modify the payload
-    payload.alias = @"some-alias";
-    [client updateChannel:@"some-id" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should ignore request if its different.");
-
-    // Reject any more run requests
-    [[mockRequestEngine reject] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    [client updateChannel:@"some-id" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should ignore a duplicate request.");
-}
-
-/**
- * Test update channel with a previous request that failed will run the same request the next update.
- */
-- (void)testUpdatePendingPayloadClearsWhenFailed {
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-
-    // Have the request engine call the failure block
-    [[[mockRequestEngine expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:6];
-        UAHTTPRequestEngineFailureBlock failureBlock = (__bridge UAHTTPRequestEngineFailureBlock)arg;
-        failureBlock([[UAHTTPRequest alloc] init], 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
-    // Call the request with a payload
-    [client updateChannel:@"someID" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run the request and fail");
-
-    // Expect it again
-    [[mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    // Call with same payload
-    [client updateChannel:@"someID" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run the same request if the previous request fails.");
-}
-
-/**
- * Test update channel with a request that matches the last succesful request 
- * does not run unless forcefully is YES
- */
-- (void)testUpdatePendingPayloadRun {
-    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
-
-    // Have the request engine call the success block
-    [[[mockRequestEngine expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UAHTTPRequestEngineSuccessBlock successBlock = (__bridge UAHTTPRequestEngineSuccessBlock)arg;
-        successBlock([[UAHTTPRequest alloc] init], 0);
-    }] runRequest:OCMOCK_ANY succeedWhere:OCMOCK_ANY retryWhere:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
-    // Call the request with a payload to seed the last success
-    [client updateChannel:@"someID" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run the request");
-
-    // Expect it again
-    [[mockRequestEngine expect] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    // Call with same payload
-    [client updateChannel:@"someID" withPayload:payload onSuccess:nil onFailure:nil forcefully:YES];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run if its forcefully is YES");
-
-
-    // Reject the next call
-    [[mockRequestEngine reject] runRequest:OCMOCK_ANY
-                              succeedWhere:OCMOCK_ANY
-                                retryWhere:OCMOCK_ANY
-                                 onSuccess:OCMOCK_ANY
-                                 onFailure:OCMOCK_ANY];
-
-    // Call with same payload
-    [client updateChannel:@"someID" withPayload:payload onSuccess:nil onFailure:nil forcefully:NO];
-    XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should not run if same request as last success and forcefully is NO");
 }
 
 @end

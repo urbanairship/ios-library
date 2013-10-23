@@ -24,8 +24,8 @@
  */
 
 #import "UAPush.h"
-#import "UADeviceAPIClient.h"
 #import "UADeviceRegistrationPayload.h"
+#import "UADeviceRegistrar+Internal.h"
 
 #define PUSH_UI_CLASS @"UAPushUI"
 #define PUSH_DELEGATE_CLASS @"UAPushNotificationHandler"
@@ -39,7 +39,6 @@ extern UAPushSettingsKey *const UAPushQuietTimeSettingsKey;
 extern UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey;
 extern UAPushSettingsKey *const UAPushTimeZoneSettingsKey;
 extern UAPushSettingsKey *const UAPushDeviceCanEditTagsKey;
-extern UAPushSettingsKey *const UAPushNeedsUnregistering;
 
 extern NSString *const UAPushQuietTimeStartKey;
 extern NSString *const UAPushQuietTimeEndKey;
@@ -62,15 +61,25 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, copy) NSString *deviceToken;
 
 /**
+ * Channel ID as a string.
+ */
+@property (nonatomic, copy) NSString *channelID;
+
+/**
+ * Channel location as a string.
+ */
+@property (nonatomic, copy) NSString *channelLocation;
+
+/**
  * Indicates that the app has entered the background once
  * Controls the appDidBecomeActive updateRegistration call
  */
 @property (nonatomic, assign) BOOL hasEnteredBackground;
 
 /**
- * The client for the Urban Airship device registration API.
+ * The UADeviceRegistrar that handles registering the device with Urban Airship.
  */
-@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
+@property (nonatomic, strong) UADeviceRegistrar *deviceRegistrar;
 
 /**
  * Notification that launched the application
@@ -78,16 +87,14 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 @property (nonatomic, strong) NSDictionary *launchNotification;
 
 /**
+ * Background task identifier used to do any registration in the background.
+ */
+@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+
+/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
-
-/**
- * Generate a payload object for the current push settings.
- *
- * @return The current push settings as a UADeviceRegistrationPayload.
- */
-- (UADeviceRegistrationPayload *)registrationPayload;
 
 /**
  * Called on active NSNotificationCenter notifications (on "active" rather than "foreground" so that we
@@ -100,6 +107,25 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  * app init.
  */
 - (void)applicationDidEnterBackground;
+
+/**
+ * Called when the UADeviceRegistrar finishes any registration call.
+ */
+- (void)registrationFinished;
+
+/**
+ * Called when a channel is created.
+ *
+ * @param channelNotification The channel creation notification.
+ */
+- (void)channelCreated:(NSNotification *)channelNotification;
+
+/**
+ * Called when a current channel had a conflict and a new channel is created.
+ *
+ * @param channelNotification The channel notification.
+ */
+- (void)channelConflict:(NSNotification *)channelNotification;
 
 /**
  * Register the user defaults for this class. You should not need to call this method

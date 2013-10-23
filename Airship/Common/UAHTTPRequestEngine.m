@@ -127,7 +127,8 @@
                                                          succeedWhere:succeedWhereBlock
                                                            retryWhere:retryWhereBlock
                                                             onSuccess:successBlock
-                                                            onFailure:failureBlock withDelay:delay];
+                                                            onFailure:failureBlock
+                                                            withDelay:delay];
     [self.queue addOperation:operation];
 }
 

@@ -29,7 +29,7 @@
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
 
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID);
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation);
 
 typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
@@ -49,7 +49,7 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Factory method to create a UAChannelAPIClient.
- * @return  UAChannelAPIClient with a default requestEngine.
+ * @return UAChannelAPIClient with a default requestEngine.
  */
 + (UAChannelAPIClient *)client;
 
@@ -70,20 +70,33 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 /**
  * Update the channel.
  *
- * @param channelID The channel to be updated.
+ * @param channelLocation The location of the channel
  * @param payload An instance of UAChannelRegistrationPayload.
- * @param successBlock A UAChannelAPIClientCreateSuccessBlock that will be called
+ * @param successBlock A UAChannelAPIClientUpdateSuccessBlock that will be called
  *        if the channel was updated successfully.
  * @param failureBlock A UAChannelAPIClientFailureBlock that will be called if
  *        the channel update was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending updates,
- *        ignoring duplicates.
  *
  */
-- (void)updateChannel:(NSString *)channelID
-         withPayload:(UAChannelRegistrationPayload *)payload
-           onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
-          forcefully:(BOOL)forcefully;
+- (void)updateChannelWithLocation:(NSString *)channelLocation
+                      withPayload:(UAChannelRegistrationPayload *)payload
+                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock;
+
+/**
+ * Cancel all current and pending requests.
+ *
+ * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
+ * in any current requests.
+ */
+- (void)cancelAllRequests;
+
+
+/**
+ * Indicates whether the client should attempt to automatically retry HTTP connections under recoverable conditions
+ * (most 5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
+ * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
+ */
+@property(nonatomic, assign) BOOL shouldRetryOnConnectionError;
 
 @end

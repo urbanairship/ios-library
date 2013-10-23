@@ -36,12 +36,10 @@
 #define kUAChannelRetryTimeInitialDelay 60
 #define kUAChannelRetryTimeMultiplier 2
 #define kUAChannelRetryTimeMaxDelay 300
-#define kUAChannelURLBase @"/api/channels/"
+#define kUAChannelCreateLocation @"/api/channels/"
 
 @interface UAChannelAPIClient()
 @property(nonatomic, strong) UAHTTPRequestEngine *requestEngine;
-@property(nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
-@property(nonatomic, strong) UAChannelRegistrationPayload *pendingPayload;
 @end
 
 @implementation UAChannelAPIClient
@@ -53,6 +51,7 @@
         self.requestEngine.initialDelayIntervalInSeconds = kUAChannelRetryTimeInitialDelay;
         self.requestEngine.maxDelayIntervalInSeconds = kUAChannelRetryTimeMaxDelay;
         self.requestEngine.backoffFactor = kUAChannelRetryTimeMultiplier;
+        self.shouldRetryOnConnectionError = YES;
     }
     return self;
 }
@@ -61,6 +60,7 @@
     self = [super init];
     if (self) {
         self.requestEngine = requestEngine;
+        self.shouldRetryOnConnectionError = YES;
     }
     return self;
 }
@@ -73,33 +73,39 @@
     return [[UAChannelAPIClient alloc] initWithRequestEngine:requestEngine];
 }
 
+- (void)cancelAllRequests {
+    [self.requestEngine cancelAllRequests];
+}
+
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                       onSuccess:(UAChannelAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    // There should never be a create request with a update request.
-    [self.requestEngine cancelAllRequests];
-
-    UAHTTPRequest *request = [self requestToCreateWithPayload:payload];
+    UAHTTPRequest *request = [self requestToCreateChannelWithPayload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(status == 201);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+        if (self.shouldRetryOnConnectionError) {
+            NSInteger status = request.response.statusCode;
+            return (BOOL)(((status >= 500 && status <= 599 && status != 501) || request.error));
+        }
+        return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
 
         NSString *responseString = request.responseString;
         NSDictionary *jsonResponse = [NSJSONSerialization objectWithString:responseString];
         UA_LTRACE(@"Retrieved channel response: %@", responseString);
 
-
         // Get the channel id from the request
         NSString *channelID = [jsonResponse valueForKey:@"channel_id"];
 
+        // Channel location from the request
+        NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
+
         if (successBlock) {
-            successBlock(channelID);
+            successBlock(channelID, channelLocation);
         } else {
             UA_LERR(@"missing successBlock");
         }
@@ -112,46 +118,29 @@
     }];
 }
 
-- (void)updateChannel:(NSString *)channelID
-         withPayload:(UAChannelRegistrationPayload *)payload
-           onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
-           onFailure:(UAChannelAPIClientFailureBlock)failureBlock
-          forcefully:(BOOL)forcefully {
+- (void)updateChannelWithLocation:(NSString *)channelLocation
+                      withPayload:(UAChannelRegistrationPayload *)payload
+                        onSuccess:(UAChannelAPIClientUpdateSuccessBlock)successBlock
+                        onFailure:(UAChannelAPIClientFailureBlock)failureBlock {
 
-    if (!channelID) {
-        UA_LERR(@"Unable to update a nil channel id.");
+    if (!channelLocation) {
+        UA_LERR(@"Unable to update a channel with a nil channel location.");
         return;
     }
 
-    if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
-        UA_LDEBUG(@"Ignoring duplicate update request.");
-        return;
-    }
-
-    UAChannelRegistrationPayload *payloadCopy = [payload copy];
-    // There should never be a create request with a update request.
-    [self.requestEngine cancelAllRequests];
-
-    //synchronize here since we're messing with the registration cache
-    //the success/failure blocks below will be triggered on the main thread
-    @synchronized(self) {
-        self.pendingPayload = payloadCopy;
-    }
-
-    UAHTTPRequest *request = [self requestToUpdateWithChannelID:channelID payload:payload];
+    UAHTTPRequest *request = [self requestToUpdateWithChannelLocation:channelLocation payload:payload];
 
     [self.requestEngine runRequest:request succeedWhere:^BOOL(UAHTTPRequest *request) {
         NSInteger status = request.response.statusCode;
         return (BOOL)(status == 200);
     } retryWhere:^BOOL(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(((status >= 500 && status <= 599)|| request.error));
+        if (self.shouldRetryOnConnectionError) {
+            NSInteger status = request.response.statusCode;
+            return (BOOL)((status >= 500 && status <= 599) || request.error);
+        }
+        return NO;
     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
         UA_LTRACE(@"Retrieved channel response: %@", request.responseString);
-
-        //clear the pending cache,  update last successful cache
-        self.pendingPayload = nil;
-        self.lastSuccessfulPayload = payloadCopy;
 
         if (successBlock) {
             successBlock();
@@ -159,9 +148,6 @@
             UA_LERR(@"missing successBlock");
         }
     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        //clear the pending cache
-        self.pendingPayload = nil;
-
         if (failureBlock) {
             failureBlock(request);
         } else {
@@ -170,13 +156,15 @@
     }];
 }
 
-- (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    return !([self.pendingPayload isEqualToPayload:data]
-             || [self.lastSuccessfulPayload isEqualToPayload:data]);
-}
-
-- (UAHTTPRequest *)requestToUpdateWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@%@/", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase, channelID];
+/**
+ * Creates an UAHTTPRequest for updating a channel.
+ *
+ * @param location The channel location
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
+- (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, location];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -186,8 +174,14 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToCreateWithPayload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelURLBase];
+/**
+ * Creates an UAHTTPRequest to create a channel.
+ *
+ * @param payload The payload to update the channel.
+ * @return A UAHTTPRequest request.
+ */
+- (UAHTTPRequest *)requestToCreateChannelWithPayload:(UAChannelRegistrationPayload *)payload {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, kUAChannelCreateLocation];
     UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"POST"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
@@ -196,7 +190,5 @@
 
     return request;
 }
-
-
 
 @end

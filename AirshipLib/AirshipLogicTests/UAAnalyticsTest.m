@@ -104,6 +104,13 @@
     XCTAssertEqualObjects([headers objectForKey:@"X-UA-Push-Address"], deviceTokenString, @"Wrong device token in event headers");
 }
 
+- (void)testRequestChannelIDHeader {
+    NSString *channelIDString = @"someChannelID";
+    [UAPush shared].channelID = channelIDString;
+    NSDictionary *headers = [self.analytics analyticsRequest].headers;
+    XCTAssertEqualObjects([headers objectForKey:@"X-UA-Channel-ID"], channelIDString, @"Wrong channel id in event headers");
+}
+
 - (void)restoreSavedUploadEventSettingsEmptyUserDefaults {
     // Clear the settings from the standard user defaults
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMaxTotalDBSizeUserDefaultsKey];
