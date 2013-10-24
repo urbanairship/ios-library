@@ -47,43 +47,51 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
 
 - (void)runWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    //wrap the completion handler in one that marshalls the call onto the main queue, if necessary
-    UAActionCompletionHandler marshalledHandler = ^(UAActionResult *result){
-        if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionHandler(result);
-            });
+    typedef void (^voidBlock)(void);
+
+    void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block){
+        if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+            dispatch_async(dispatch_get_main_queue(), block);
         } else {
-            completionHandler(result);
+            block();
         }
     };
 
-    if (![self acceptsArguments:arguments]) {
-        //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
-        //message because it doesn't provide any context. should it be up to the
-        //action itself to log or somehow provide its reasoning?
-        NSString *errorString = [NSString stringWithFormat:@"Action %@ does not accept arguments %@.",
-                                 [self description], [arguments description]];
+    //wrap the completion handler in one that marshalls the call onto the main queue, if necessary
+    UAActionCompletionHandler marshalledHandler = ^(UAActionResult *result){
+        dispatchMainIfNecessary(^{
+            completionHandler(result);
+        });
+    };
 
-        UA_LINFO(@"%@", errorString);
+    dispatchMainIfNecessary(^{
+        if (![self acceptsArguments:arguments]) {
+            //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
+            //message because it doesn't provide any context. should it be up to the
+            //action itself to log or somehow provide its reasoning?
+            NSString *errorString = [NSString stringWithFormat:@"Action %@ does not accept arguments %@.",
+                                     [self description], [arguments description]];
 
-        NSError *error = [NSError errorWithDomain:UAActionErrorDomain
-                                             code:UAActionErrorCodeArgumentsRejected
-                                         userInfo:@{NSLocalizedDescriptionKey : errorString}];
+            UA_LINFO(@"%@", errorString);
 
-        marshalledHandler([UAActionResult error:error]);
-    } else {
-        [self willPerformWithArguments:arguments];
-        [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
+            NSError *error = [NSError errorWithDomain:UAActionErrorDomain
+                                                 code:UAActionErrorCodeArgumentsRejected
+                                             userInfo:@{NSLocalizedDescriptionKey : errorString}];
 
-            if (!result) {
-                UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
-            }
+            marshalledHandler([UAActionResult error:error]);
+        } else {
+            [self willPerformWithArguments:arguments];
+            [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
 
-            [self didPerformWithArguments:arguments withResult:result];
-            marshalledHandler(result);
-        }];
-    }
+                if (!result) {
+                    UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
+                }
+
+                [self didPerformWithArguments:arguments withResult:result];
+                marshalledHandler(result);
+            }];
+        }
+    });
 }
 
 #pragma mark core methods
