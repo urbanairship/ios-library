@@ -49,21 +49,17 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
 
     typedef void (^voidBlock)(void);
 
+    //execute the passed block directly if we're on the main thread, otherwise
+    //dispatch it to the main queue
     void (^dispatchMainIfNecessary)(voidBlock) = ^(voidBlock block){
-        if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+        if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
             dispatch_async(dispatch_get_main_queue(), block);
         } else {
             block();
         }
     };
 
-    //wrap the completion handler in one that marshalls the call onto the main queue, if necessary
-    UAActionCompletionHandler marshalledHandler = ^(UAActionResult *result){
-        dispatchMainIfNecessary(^{
-            completionHandler(result);
-        });
-    };
-
+    //make sure the initial acceptsArguments/willPerform/perform is executed on the main queue
     dispatchMainIfNecessary(^{
         if (![self acceptsArguments:arguments]) {
             //TODO: this is probably too noisy of a log level, and it's also a fairly unhelpful
@@ -78,17 +74,20 @@ NSString * const UAActionErrorDomain = @"com.urbanairship.actions";
                                                  code:UAActionErrorCodeArgumentsRejected
                                              userInfo:@{NSLocalizedDescriptionKey : errorString}];
 
-            marshalledHandler([UAActionResult error:error]);
+            completionHandler([UAActionResult error:error]);
         } else {
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
+                //make sure the passed completion handler and didPerformWithArguments are executed on the
+                //main queue
+                dispatchMainIfNecessary(^{
+                    if (!result) {
+                        UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
+                    }
 
-                if (!result) {
-                    UA_LWARN("Action %@ called the completion handler with a nil result", [self description]);
-                }
-
-                [self didPerformWithArguments:arguments withResult:result];
-                marshalledHandler(result);
+                    [self didPerformWithArguments:arguments withResult:result];
+                    completionHandler(result);
+                });
             }];
         }
     });
