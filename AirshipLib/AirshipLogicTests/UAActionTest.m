@@ -32,6 +32,14 @@
 
 @implementation UAActionTest
 
+- (void)foo {
+    if ([[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+        NSLog(@"main thread");
+    } else {
+        NSLog(@"background thread");
+    }
+}
+
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
 
@@ -115,13 +123,17 @@
  * Test running an action when the action accepts the arguments
  */
 - (void)testRunWithArguments {
+    [self foo];
     __block UAActionArguments *blockPerformArgs;
     __block UAActionArguments *blockAcceptsArgs;
     __block UAActionResult *blockResult;
 
+
+
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        NSLog(@"WAT");
         blockPerformArgs = args;
-        return completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
+        completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
     }];
 
     action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
@@ -130,6 +142,7 @@
     };
 
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
+        NSLog(@"really?");
         blockResult = actionResult;
     }];
 
@@ -187,6 +200,7 @@
  * Test running an action when the action does not accept the arguments
  */
 - (void)testRunWithArgumentsInvalidActionArguments {
+    [self foo];
     __block UAActionResult *blockResult;
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
