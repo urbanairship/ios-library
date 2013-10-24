@@ -224,7 +224,10 @@ static NSMutableSet *overlayControllers = nil;
     
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
-    [self.loadingIndicator show];
+
+    if (self.webView.isLoading) {
+        [self.loadingIndicator show];
+    }
     
     //add the close button
     UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
