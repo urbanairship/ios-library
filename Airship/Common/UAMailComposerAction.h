@@ -34,6 +34,6 @@ NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
 
 extern NSString * const UAMailComposerActionErrorDomain;
 
-@interface UAMailComposerAction : UAAction <MFMailComposeViewControllerDelegate>
+@interface UAMailComposerAction : UAAction
 
 @end

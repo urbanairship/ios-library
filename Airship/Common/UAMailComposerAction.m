@@ -28,24 +28,22 @@
 
 NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.mailcomposer";
 
-@interface UAMailComposerAction()
+@interface UAMailComposerActionController : NSObject<MFMailComposeViewControllerDelegate>
+
+- (void)displayWithData:(UAMailComposerData *)data withHandler:(UAActionCompletionHandler)handler;
+
 @property(nonatomic, copy) UAActionCompletionHandler handler;
 @property(nonatomic, strong) MFMailComposeViewController *mfViewController;
 @end
 
-@implementation UAMailComposerAction
+@implementation UAMailComposerActionController
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    self.handler = completionHandler;
-
-    UAMailComposerData *data = arguments.value;
-
+- (void)displayWithData:(UAMailComposerData *)data withHandler:(UAActionCompletionHandler)handler {
     if ([MFMailComposeViewController canSendMail]) {
 		self.mfViewController = [[MFMailComposeViewController alloc] init];
 
-        self.mfViewController.mailComposeDelegate = self;
+        __weak id weakSelf = self;
+        self.mfViewController.mailComposeDelegate = weakSelf;
 
         UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
@@ -59,19 +57,51 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
         NSError *error = [NSError errorWithDomain:UAMailComposerActionErrorDomain
                                              code:UAMailComposerActionErrorCodeMailDisabled
                                          userInfo:@{NSLocalizedDescriptionKey : @"mail is disabled"}];
-        completionHandler([UAActionResult error:error]);
+        self.handler([UAActionResult error:error]);
 	}
 }
 
-- (void)didPerformWithArguments:(UAActionArguments *)arguments withResult:(UAActionResult *)result {
-    self.handler = nil;
-    self.mfViewController = nil;
-}
-
-- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+- (void)mailComposeController:(MFMailComposeViewController*)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError*)error {
     //TODO: handle additional error codes? Is it appropriate to continue if we reach an error here?
     [self.mfViewController dismissViewControllerAnimated:YES completion:nil];
     self.handler([UAActionResult none]);
+}
+
+@end
+
+@interface UAMailComposerAction()
+@property(nonatomic, strong) NSMutableArray *controllers;
+@end
+
+
+@implementation UAMailComposerAction
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.controllers = [NSMutableArray array];
+    }
+    return self;
+}
+
+- (void)performWithArguments:(UAActionArguments *)arguments
+       withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    UAMailComposerActionController *controller = [[UAMailComposerActionController alloc] init];
+    __weak UAMailComposerAction *weakSelf = self;
+    __weak UAMailComposerActionController *weakController = controller;
+
+    [self.controllers addObject:controller];
+
+    controller.handler = ^(UAActionResult *result){
+        [weakSelf.controllers removeObject:weakController];
+        completionHandler(result);
+    };
+
+    UAMailComposerData *data = arguments.value;
+    [controller displayWithData:data withHandler:completionHandler];
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
