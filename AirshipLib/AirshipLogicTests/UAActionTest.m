@@ -140,10 +140,32 @@
 }
 
 /*
+ * Test that running the action from a background thread will result in
+ * the action being performed on the UI thread.
+ */
+- (void)testRunOnBackgroundThread {
+    BOOL (^isMainThread)(void) = ^{
+        return [[NSThread currentThread] isEqual:[NSThread mainThread]];
+    };
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+            XCTAssertFalse(isMainThread(), @"we should be on the main thread");
+            handler([UAActionResult none]);
+    }];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        XCTAssertTrue(isMainThread(), @"we should be on a background thread");
+        [action runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+            XCTAssertTrue(isMainThread(), @"we should be on the main thread");
+        }];
+    });
+}
+
+/*
  * Test that calling the completion handler on a background thread will result in
  * the work being marshalled back onto the main thread.
  */
-- (void)testRunOnBackgroundThread {
+- (void)testFinishOnBackgroundThread {
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
