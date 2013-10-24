@@ -31,13 +31,15 @@
 #import "UAChannelRegistrationPayload.h"
 #import "UADeviceRegistrationPayload.h"
 
-NSString *const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
+NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
 NSString * const UAChannelNotificationKey = @"channel_id";
 NSString * const UAChannelLocationNotificationKey = @"channel_location";
 
 NSString * const UAReplacedChannelNotificationKey = @"replaced_channel_id";
 NSString * const UAReplacedChannelLocationNotificationKey = @"replaced_channel_location";
+
+NSString * const UAChannelPayloadNotificationKey = @"channel_payload";
 
 NSString * const UAChannelCreatedNotification = @"com.urbanairship.notification.channel_created";
 NSString * const UAChannelConflictNotification = @"com.urbanairship.notification.channel_conflict";
@@ -50,6 +52,8 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     if (self) {
         self.deviceAPIClient = [[UADeviceAPIClient alloc] init];
         self.channelAPIClient = [[UAChannelAPIClient alloc] init];
+        self.isUsingChannelRegistration = YES;
+        self.isRegistrationInProgress = NO;
     }
     return self;
 }
@@ -59,65 +63,91 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                   withPayload:(UAChannelRegistrationPayload *)payload
                    forcefully:(BOOL)forcefully {
 
+    UAChannelRegistrationPayload *payloadCopy = [payload copy];
     @synchronized(self) {
-        if (![self shouldSendUpdateWithPayload:payload] && !forcefully) {
-            UA_LDEBUG(@"Ignoring duplicate update request.");
-            [self registrationFinished];
+        if (self.isRegistrationInProgress) {
+            UA_LDEBUG(@"Unable to perform registration, one is already in progress.");
             return;
         }
 
-        [self cancelAllRequests];
+        if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:YES]) {
 
-        self.pendingPayload = payload;
+            self.isRegistrationInProgress = YES;
 
-        if (channelID) {
-            [self updateChannel:channelID channelLocation:channelLocation withPayload:payload];
+            // Fallback to old device registration
+            if (!self.isUsingChannelRegistration) {
+                [self registerDeviceTokenWithChannelPayload:payloadCopy];
+                return;
+            }
+
+            if (!channelID) {
+                // Try to create a channel, fall back to registering the device token
+                [self createChannelWithPayload:payloadCopy fallBackBlock:^(UAChannelRegistrationPayload *payload) {
+                    [self registerDeviceTokenWithChannelPayload:payload];
+                }];
+            } else {
+                [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];
+            }
+
         } else {
-            // Try to create a channel, fall back to registering the device token
-            [self createChannelWithPayload:self.pendingPayload pushEnabled:YES];
+            UA_LDEBUG(@"Ignoring duplicate update request.");
+            [self notifyRegistrationFinishedWithPayload:payloadCopy];
         }
     }
 }
 
+
+// TODO: remove this method once we remove device token registration
 - (void)registerPushDisabledWithChannelID:(NSString *)channelID
                           channelLocation:(NSString *)channelLocation
                               withPayload:(UAChannelRegistrationPayload *)payload
                                forcefully:(BOOL)forcefully {
 
+    UAChannelRegistrationPayload *payloadCopy = [payload copy];
     @synchronized(self) {
-        // if we have a channel id, just update the channel with the payload
-        if (channelID) {
-            [self registerWithChannelID:channelID
-                        channelLocation:channelLocation
-                            withPayload:payload
-                             forcefully:forcefully];
+        if (self.isRegistrationInProgress) {
+            UA_LDEBUG(@"Unable to perform registration, one is already in progress.");
             return;
         }
 
-        // If we dont have a channel, clear the cache and try to register.  If it
-        // falls back to the device client, the deviceTokenRegistered will prevent
-        // us from unregistering the device token twice.
-        self.pendingPayload = nil;
-        self.lastSuccessfulPayload = nil;
+        if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:NO]) {
+            self.isRegistrationInProgress = YES;
 
-        [self cancelAllRequests];
+            // Fallback to old device registration
+            if (!self.isUsingChannelRegistration) {
+                [self unregisterDeviceTokenWithChannelPayload:payloadCopy];
+                return;
+            }
 
-        // Try to create a channel, fall back to unregistering the device token
-        [self createChannelWithPayload:payload pushEnabled:NO];
+            if (!channelID) {
+                // Try to create a channel, fall back to unregistering the device token
+                [self createChannelWithPayload:payloadCopy fallBackBlock:^(UAChannelRegistrationPayload *payload) {
+                    [self unregisterDeviceTokenWithChannelPayload:payload];
+                }];
+            } else {
+                [self updateChannel:channelID channelLocation:channelLocation withPayload:payloadCopy];
+            }
+
+        } else {
+            UA_LDEBUG(@"Ignoring duplicate update request.");
+            [self notifyRegistrationFinishedWithPayload:payloadCopy];
+        }
+
     }
 }
 
-- (void)cancelAllRequests {
-    [self.deviceAPIClient cancelAllRequests];
-    [self.channelAPIClient cancelAllRequests];
 
+- (void)cancelAllRequests {
     @synchronized(self) {
-        // If we have a pending payload, its underministic if the request actually
-        // went through to Urban Airship.  Clear both last success and pending.
-        if (self.pendingPayload) {
-            self.pendingPayload = nil;
-            self.lastSuccessfulPayload = nil;
+        [self.deviceAPIClient cancelAllRequests];
+        [self.channelAPIClient cancelAllRequests];
+
+        // If a registration was in progress, its undeterminstic if it succeeded
+        // or not, so just clear the last success payloa
+        if (self.isRegistrationInProgress) {
+            self.lastSuccessPayload = nil;
         }
+        self.isRegistrationInProgress = NO;
     }
 }
 
@@ -127,18 +157,18 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
         UA_LTRACE(@"Channel %@ updated successfully.", channelID);
-        [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
+        [self succeededWithChannelID:channelID payload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         if (request.response.statusCode != 409) {
             [UAUtils logFailedRequest:request withMessage:@"updating channel"];
-            [self failed];
+            [self failedWithPayload:payload];
             return;
         }
 
         // Conflict with channel id, create a new one
-        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation){
+        UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation) {
             UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
 
             [self notifyChannelConflict:channelID
@@ -146,12 +176,12 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                              newChannel:newChannelID
                      newChannelLocation:newChannelLocation];
 
-            [self succeededWithChannelID:newChannelID deviceToken:payload.pushAddress];
+            [self succeededWithChannelID:newChannelID payload:payload];
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
             [UAUtils logFailedRequest:request withMessage:@"creating channel"];
-            [self failed];
+            [self failedWithPayload:payload];
         };
 
         [self.channelAPIClient createChannelWithPayload:payload
@@ -166,27 +196,22 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 }
 
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
-                     pushEnabled:(BOOL)pushEnabled {
+                     fallBackBlock:(void (^)(UAChannelRegistrationPayload *))fallBackBlock {
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation){
         UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
         [self notifyChannelCreated:channelID channelLocation:channelLocation];
-        [self succeededWithChannelID:channelID deviceToken:payload.pushAddress];
+        [self succeededWithChannelID:channelID payload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
-        if (request.response.statusCode == 501) {
+        if (request.response.statusCode == 501 && fallBackBlock) {
             UA_LTRACE(@"Channel api not available, falling back to device token registration");
-            if (pushEnabled) {
-                UADeviceRegistrationPayload *deviceRegistrationPayload = [UADeviceRegistrationPayload payloadFromChannelRegistrationPayload:payload];
-                [self registerDeviceToken:payload.pushAddress withPayload:deviceRegistrationPayload];
-            } else {
-                [self unregisterDeviceToken:payload.pushAddress];
-            }
-
+            self.isUsingChannelRegistration = NO;
+            fallBackBlock(payload);
         } else {
             [UAUtils logFailedRequest:request withMessage:@"creating channel"];
-            [self failed];
+            [self failedWithPayload:payload];
         }
     };
 
@@ -195,98 +220,103 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                           onFailure:failureBlock];
 }
 
-- (void)unregisterDeviceToken:(NSString *)deviceToken {
+
+
+- (void)unregisterDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
     if (!self.isDeviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
-        [self registrationFinished];
+        [self notifyRegistrationFinishedWithPayload:payload];
         return;
     }
 
     // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
     // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
     // that uses push, the DELETE will fail with a 404.
-    if (!deviceToken) {
+    if (!payload.pushAddress) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
-        [self registrationFinished];
+        [self notifyRegistrationFinishedWithPayload:payload];
         return;
     }
 
     UADeviceAPIClientSuccessBlock successBlock = ^{
         UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
         self.deviceTokenRegistered = NO;
-        [self succeededWithChannelID:nil deviceToken:deviceToken];
+        [self succeededWithChannelID:nil payload:payload];
     };
 
     UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-        [self failed];
+        [self failedWithPayload:payload];
     };
 
-    [self.deviceAPIClient unregisterDeviceToken:deviceToken
+    [self.deviceAPIClient unregisterDeviceToken:payload.pushAddress
                                       onSuccess:successBlock
                                       onFailure:failureBlock];
 }
 
-- (void)registerDeviceToken:(NSString *)deviceToken withPayload:(UADeviceRegistrationPayload *)payload {
+- (void)registerDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
     // If there is no device token, wait for the application delegate to update with one.
-    if (!deviceToken) {
+    if (!payload.pushAddress) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
-        [self registrationFinished];
+        [self notifyRegistrationFinishedWithPayload:payload];
         return;
     }
+
+    NSString *deviceToken = payload.pushAddress;
+    UADeviceRegistrationPayload *devicePayload = [UADeviceRegistrationPayload payloadFromChannelRegistrationPayload:payload];
 
     UADeviceAPIClientSuccessBlock successBlock = ^{
         UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
         self.deviceTokenRegistered = YES;
-        [self succeededWithChannelID:nil deviceToken:deviceToken];
-
+        [self succeededWithChannelID:nil payload:payload];
     };
 
     UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request){
         [UAUtils logFailedRequest:request withMessage:@"registering device token"];
-        [self failed];
+        [self failedWithPayload:payload];
     };
 
     [self.deviceAPIClient registerDeviceToken:deviceToken
-                                  withPayload:payload
+                                  withPayload:devicePayload
                                     onSuccess:successBlock
                                     onFailure:failureBlock];
 }
 
-- (void)failed {
+- (void)failedWithPayload:(UAChannelRegistrationPayload *)payload {
     @synchronized(self) {
-        self.pendingPayload = nil;
+        self.isRegistrationInProgress = NO;
     }
-    
+
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
     }
-    [self registrationFinished];
+    [self notifyRegistrationFinishedWithPayload:payload];
 }
 
-- (void)succeededWithChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+- (void)succeededWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
     @synchronized(self) {
-        self.lastSuccessfulPayload = self.pendingPayload;
-        self.pendingPayload = nil;
+        self.lastSuccessPayload = payload;
+        self.isRegistrationInProgress = NO;
     }
 
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-        [strongDelegate registrationSucceededForChannelID:channelID deviceToken:deviceToken];
+        [strongDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
     }
-    
-    [self registrationFinished];
+
+    [self notifyRegistrationFinishedWithPayload:payload];
 }
 
-- (BOOL)shouldSendUpdateWithPayload:(UAChannelRegistrationPayload *)data {
-    // If we do not have a pending payload check the last success payload
-    if (!self.pendingPayload && [self.lastSuccessfulPayload isEqualToPayload:data]) {
-        return NO;
+- (BOOL)shouldRegisterPayload:(UAChannelRegistrationPayload *)payload pushEnabled:(BOOL) pushEnabled {
+    // If we are using old registration, then we need to make sure pushEnabled
+    // matches if the device token is registered because the payload does not track
+    // that.
+    if (!self.isUsingChannelRegistration && pushEnabled != self.isDeviceTokenRegistered) {
+        return YES;
     }
 
-    // Check the current pending payload
-    return (![self.pendingPayload isEqualToPayload:data]);
+    return ![payload isEqualToPayload:self.lastSuccessPayload];
 }
 
 - (BOOL)isDeviceTokenRegistered {
@@ -297,8 +327,10 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
 }
 
-- (void)registrationFinished {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification object:nil];
+- (void)notifyRegistrationFinishedWithPayload:(UAChannelRegistrationPayload *)payload {
+    [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification
+                                                        object:nil
+                                                      userInfo:@{UAChannelPayloadNotificationKey: payload}];
 }
 
 - (void)notifyChannelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {

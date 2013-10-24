@@ -112,7 +112,7 @@ static Class _uiClass;
                                                    object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(registrationFinished)
+                                                 selector:@selector(registrationFinished:)
                                                      name:UADeviceRegistrationFinishedNotification
                                                    object:nil];
 
@@ -545,7 +545,7 @@ BOOL deferChannelCreationOnForeground = false;
 #pragma mark -
 #pragma mark UA Registration Methods
 
-- (void)updateRegistrationForcefully:(BOOL)forcefully {
+- (UAChannelRegistrationPayload *)createChannelPayload {
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
@@ -566,6 +566,19 @@ BOOL deferChannelCreationOnForeground = false;
         payload.timeZone = self.timeZone.name;
         payload.quietTime = [self.quietTime copy];
     }
+    return payload;
+}
+
+- (void)updateRegistrationForcefully:(BOOL)forcefully {
+    [self updateRegistrationForcefully:forcefully withPayload:[self createChannelPayload]];
+}
+
+- (void)updateRegistrationForcefully:(BOOL)forcefully withPayload:(UAChannelRegistrationPayload *)payload{
+
+    // If we have a channel ID or we are not doing channel registration, cancel all requests.
+    if (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration) {
+        [self.deviceRegistrar cancelAllRequests];
+    }
 
     if (self.pushEnabled) {
         [self.deviceRegistrar registerWithChannelID:self.channelID
@@ -581,13 +594,14 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistration {
-    if (!self.deviceToken && !self.channelID) {
-        UA_LDEBUG(@"Skipping registration.  Neither channelID or deviceToken is present."
-                  @"Registration will be attemped at a later time.");
+    if (self.pushEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channelID."
+                  "Registration will perform automatically when a device token is generated,"
+                  "the app is backgrounded, or the next time the app foregrounded.");
         return;
     }
 
-    [self updateRegistrationForcefully:NO];
+    [self updateRegistrationForcefully:NO withPayload:[self createChannelPayload]];
 }
 
 //The new token to register, or nil if updating the existing token 
@@ -610,7 +624,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    [self updateRegistration];
+    [self updateRegistrationForcefully:NO];
 }
 
 - (void)channelCreated:(NSNotification *)channelNotification {
@@ -628,11 +642,29 @@ BOOL deferChannelCreationOnForeground = false;
     self.channelLocation = newChannelLocation;
 }
 
-- (void)registrationFinished {
+- (void)registrationFinished:(NSNotification *)notification {
     // Finish the background task if we have one
     if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+        return;
+    }
+
+    UAChannelRegistrationPayload *payload = [self createChannelPayload];
+    UAChannelRegistrationPayload *notificationPayload = [[notification userInfo]objectForKey:UAChannelPayloadNotificationKey];
+
+    // Register again if we are using old registration, and we have a deviceToken, and if the
+    // device token does not match if push is enabled.
+    //
+    // TODO: remove this check once we remove device token registration
+    if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
+        [self updateRegistrationForcefully:NO withPayload:payload];
+        return;
+    }
+
+    // If the payload does not match the current payload, register
+    if (![notificationPayload isEqualToPayload:payload]) {
+        [self updateRegistrationForcefully:NO withPayload:payload];
     }
 }
 

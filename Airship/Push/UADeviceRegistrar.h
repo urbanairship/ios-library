@@ -28,6 +28,12 @@
 @class UAChannelRegistrationPayload;
 
 /**
+ * The key for the channel payload in the posted NSNotification's user info
+ * when the registration is finished.
+ */
+extern NSString * const UAChannelPayloadNotificationKey;
+
+/**
  * The key for the channel id in the posted NSNotification's user info
  * when a channel is created.
  */
@@ -115,6 +121,7 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
  * A UARegistrationDelegate delegate.
  */
 @property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+
 
 
 /**

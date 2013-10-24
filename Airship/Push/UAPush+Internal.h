@@ -110,8 +110,11 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
 
 /**
  * Called when the UADeviceRegistrar finishes any registration call.
+ *
+ * @param notification The registration notification.
+ *
  */
-- (void)registrationFinished;
+- (void)registrationFinished:(NSNotification *)notification;
 
 /**
  * Called when a channel is created.
