@@ -105,6 +105,12 @@ static NSMutableSet *overlayControllers = nil;
     [overlayController loadURL:url];
 }
 
++ (void)closeAllWindows {
+    for (UAKablamOverlayController *oc in overlayControllers) {
+        [oc closePopupWindow];
+    }
+}
+
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
     self = [super init];
     if (self) {
