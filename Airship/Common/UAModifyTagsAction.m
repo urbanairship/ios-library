@@ -35,7 +35,7 @@
 
     //argument value can be a string (one tag)
     if ([arguments.value isKindOfClass:[NSString class]]) {
-        return YES;;
+        return YES;
     }
 
     if ([arguments.value isKindOfClass:[NSArray class]]) {
