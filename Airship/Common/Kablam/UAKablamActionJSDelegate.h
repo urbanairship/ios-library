@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,28 +23,12 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxDefaultJSDelegate.h"
+#import <Foundation/Foundation.h>
 
+#import "UAInbox.h"
 
-@implementation UAInboxDefaultJSDelegate
+@interface UAKablamActionJSDelegate : NSObject<UAInboxJavaScriptDelegate> {
 
-- (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options {
-    UALOG(@"JS default delegate arguments: %@ \n options: %@", args, options);
-
-    BOOL hasError = NO;
-    
-    // do something with the args and options, set error if necessary
-    // ...
-    
-    // invoke JS callback w/ result
-    NSString *script = nil;
-    if (!hasError) {
-        script = @"UAListener.result = 'Callback from ObjC succeeded'; UAListener.onSuccess();";
-    } else {
-        script = @"UAListener.error = 'Callback from ObjC failed'; UAListener.onError();";
-    }
-    return script;
 }
-
 
 @end

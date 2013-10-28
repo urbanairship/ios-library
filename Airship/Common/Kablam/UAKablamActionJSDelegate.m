@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2012 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,16 +23,35 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAInboxDefaultJSDelegate.h"
+#import "UAKablamActionJSDelegate.h"
+#import "UAActionRunner.h"
 
+#import "UAKablamOverlayController.h"
 
-@implementation UAInboxDefaultJSDelegate
+@implementation UAKablamActionJSDelegate
 
 - (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options {
     UALOG(@"JS default delegate arguments: %@ \n options: %@", args, options);
 
     BOOL hasError = NO;
     
+    NSArray *keys = [options allKeys];
+    
+    for (NSString *action in keys) {
+        NSString *arg = [options valueForKey:action];
+
+        if (action) {
+
+            NSString *decodedArg = [UAKablamActionJSDelegate urlDecodedStringWithString:arg
+                                                                              encoding:NSUTF8StringEncoding];
+            UALOG(@"arg = %@", decodedArg);
+            [UAActionRunner runActionWithName:action
+                                withArguments:[UAActionArguments argumentsWithValue:decodedArg
+                                                                      withSituation:UASituationRichPushAction]
+                        withCompletionHandler:^(UAActionResult *finalResult) { UA_LINFO(@"Rich push action completed!");}];
+        }
+    }
+
     // do something with the args and options, set error if necessary
     // ...
     
@@ -46,5 +65,21 @@
     return script;
 }
 
+//TODO: Move this into Web View Tools / the code that delegates to this object
++ (NSString *)urlDecodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding {
+    /*
+     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
+     */
+
+    CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
+                                                                                 (CFStringRef)string,
+                                                                                 CFSTR(""),
+                                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
+
+    /* autoreleased string */
+    NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
+    
+    return value;
+}
 
 @end
