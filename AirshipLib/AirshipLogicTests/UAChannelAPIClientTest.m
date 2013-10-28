@@ -427,7 +427,7 @@ UAChannelAPIClient *client;
                                  onSuccess:OCMOCK_ANY
                                  onFailure:OCMOCK_ANY];
     
-    [client updateChannelWithLocation:@"/someLocation" withPayload:payload onSuccess:nil onFailure:nil];
+    [client updateChannelWithLocation:@"https://device-api.urbanairship.com/someLocation" withPayload:payload onSuccess:nil onFailure:nil];
     
     XCTAssertNoThrow([mockRequestEngine verify], @"Update channel should run with the a valid PUT request.");
 }
