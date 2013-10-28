@@ -45,7 +45,6 @@
 
 /**
  * The last successful payload that was registered.
- *
  */
 @property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessPayload;
 
@@ -63,8 +62,7 @@
 @property (nonatomic, assign) BOOL isUsingChannelRegistration;
 
 /**
- * A flag indicating if the registrar is using the new channel registration or
- * the old device token registration.
+ * A flag indicating if registration is in progress.
  */
 @property (nonatomic, assign) BOOL isRegistrationInProgress;
 

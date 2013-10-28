@@ -408,7 +408,7 @@ static Class _uiClass;
 
     // if the device token has already been set then
     // we are post-registration and will need to make
-    // and update call
+    // an update call
     if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
         UA_LDEBUG(@"Sending autobadge update to UA server.");
         [self updateRegistrationForcefully:YES];
@@ -597,7 +597,7 @@ BOOL deferChannelCreationOnForeground = false;
     if (self.pushEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
         UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channelID."
                   "Registration will perform automatically when a device token is generated,"
-                  "the app is backgrounded, or the next time the app foregrounded.");
+                  "the app is backgrounded, or the next time the app is foregrounded.");
         return;
     }
 

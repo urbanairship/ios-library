@@ -52,8 +52,8 @@ extern NSString * const UAChannelLocationNotificationKey;
 extern NSString * const UAReplacedChannelNotificationKey;
 
 /**
- * The key for the replaced channel location in the posted NSNotification's user info
- * when a channel has a conflict and is replaced.
+ * The key for the replaced channel location in the posted NSNotification's user
+ * info when a channel has a conflict and is replaced.
  */
 extern NSString * const UAReplacedChannelLocationNotificationKey;
 
@@ -71,7 +71,7 @@ extern NSString * const UAChannelConflictNotification;
 /**
  * NSNotification posted when a device registration finishes.
  *
- * Note: this will be posted at the end of every registration call. Even if
+ * Note: This will be posted at the end of every registration call, even if
  * a registration is skipped.
  */
 extern NSString * const UADeviceRegistrationFinishedNotification;
@@ -83,7 +83,7 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
 
 /**
  * Implement this protocol and add as a [UAPush registrationDelegate] to receive
- * registration success and failure callbacks
+ * registration success and failure callbacks.
  *
  */
 @protocol UARegistrationDelegate <NSObject>
@@ -97,8 +97,8 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
  * A nil channel id indicates the channel creation failed and the old device token
  * registration is being used.
  *
- * Device token will only be available once the application successfully registers
- * with APNS.
+ * The device token will only be available once the application successfully
+ * registers with APNS.
  */
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
@@ -121,8 +121,6 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
  * A UARegistrationDelegate delegate.
  */
 @property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
-
-
 
 /**
  * Register the device with Urban Airship.
@@ -150,13 +148,13 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
                               withPayload:(UAChannelRegistrationPayload *)payload
                                forcefully:(BOOL)forcefully;
 
-
 /**
  * Cancels all pending and current requests.  
  *
- * Note: this may or may not prevent the registration finished event and registration
+ * Note: This may or may not prevent the registration finished event and registration
  * delegate calls.
  */
 - (void)cancelAllRequests;
+
 @end
 
