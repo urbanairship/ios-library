@@ -141,6 +141,12 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  */
 + (void)land;
 
+/**
+ * Creates a UAChannelRegistrationPayload.
+ *
+ * @return A UAChannelRegistrationPayload payload.
+ */
+- (UAChannelRegistrationPayload *)createChannelPayload;
 
 /**
  * Registers or updates the current registration with an API call. If push notifications are
@@ -148,7 +154,8 @@ extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
  *
  * Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
  *
- *@param forcefully Tells the device api client to do any device api call forcefully.
+ * @param forcefully Tells the device api client to do any device api call forcefully.
  */
 - (void)updateRegistrationForcefully:(BOOL)forcefully;
+
 @end
