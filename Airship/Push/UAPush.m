@@ -595,7 +595,7 @@ BOOL deferChannelCreationOnForeground = false;
 
 - (void)updateRegistration {
     if (self.pushEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
-        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channelID."
+        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
                   "Registration will perform automatically when a device token is generated,"
                   "the app is backgrounded, or the next time the app is foregrounded.");
         return;
