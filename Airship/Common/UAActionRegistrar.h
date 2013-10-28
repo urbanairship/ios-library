@@ -30,6 +30,12 @@
 
 #define kUAOpenExternalURLActionDefaultRegistryName @"open_external_url_action"
 #define kUAOpenExternalURLActionDefaultRegistryAlias @"^u"
+#define kUAAddTagsActionDefaultRegistryName @"add_tags_action"
+#define kUAAddTagsActionDefaultRegistryAlias @"^+t"
+#define kUARemoveTagsActionDefaultRegistryName @"remove_tags_action"
+#define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
+#define kUASetTagsActionDefaultRegistryName @"^t"
+#define kUASetTagsActionDefaultRegistryAlias @"set_tags_action"
 
 @interface UAActionRegistrar : NSObject
 
