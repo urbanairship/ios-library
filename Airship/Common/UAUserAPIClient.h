@@ -3,8 +3,8 @@
 #import "UAUserData.h"
 #import "UAHTTPConnection.h"
 
-typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSString *deviceToken);
-typedef void (^UAUserAPIClientUpdateSuccessBlock)(NSString *deviceToken);
+typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
+typedef void (^UAUserAPIClientUpdateSuccessBlock)();
 typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
@@ -19,8 +19,10 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param successBlock A UAUserAPIClientCreateSuccessBlock that will be called if user creation was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if user creation was unsuccessful.
  */
-- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
-                  onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+- (void)createUserWithChannelID:(NSString *)channelID
+                    deviceToken:(NSString *)deviceToken
+                      onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
+                      onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 /**
  * Update a user's associated device token.
@@ -30,9 +32,10 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
-- (void)updateDeviceToken:(NSString *)deviceToken
-              forUsername:(NSString *)username
-                onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
-                onFailure:(UAUserAPIClientFailureBlock)failureBlock;
+- (void)updateUser:(NSString *)username
+       deviceToken:(NSString *)deviceToken
+         channelID:(NSString *)channelID
+         onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+         onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 @end

@@ -39,16 +39,16 @@
 // on the device.
 
 //Device Token Change Listener
-- (void)listenForDeviceTokenReg;
-- (void)cancelListeningForDeviceToken;
-- (void)updateDefaultDeviceToken;
+- (void)registerForDeviceRegistrationChanges;
+- (void)unregisterForDeviceRegistrationChanges;
+- (void)updateUser;
 
 @property(nonatomic, strong) UAUserAPIClient *apiClient;
 @property(nonatomic, assign) BOOL initialized;
 @property(nonatomic, copy) NSString *username;
 @property(nonatomic, copy) NSString *password;
 @property(nonatomic, copy) NSString *url;
-@property(nonatomic, assign) BOOL isObservingDeviceToken;
+@property(nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
 @property(nonatomic, copy) NSString *appKey;
 
 //creation flag

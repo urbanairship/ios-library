@@ -66,7 +66,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 + (void)land {
 
     if (_defaultUser) {
-        [_defaultUser cancelListeningForDeviceToken];
+        [_defaultUser unregisterForDeviceRegistrationChanges];
     }
     
 }
@@ -111,8 +111,9 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         // Boot strap
         [self loadUser];
         
-        [self performSelector:@selector(listenForDeviceTokenReg) withObject:nil afterDelay:0];
-        
+        [self performSelector:@selector(registerForDeviceRegistrationChanges) withObject:nil afterDelay:0];
+
+
         self.initialized = YES;
                 
     }
@@ -220,10 +221,9 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 }
 
 - (void)createUser {
-    
     self.creatingUser = YES;
 
-    [self.apiClient createUserOnSuccess:^(UAUserData *data, NSString *sentDeviceToken) {
+    UAUserAPIClientCreateSuccessBlock success = ^(UAUserData *data, NSDictionary *payload) {
         self.creatingUser = NO;
         self.username = data.username;
         self.password = data.password;
@@ -231,62 +231,74 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
         [self saveUserData];
 
-        //if we didnt send a token up on creation, try updating now
-        if (!sentDeviceToken) {
-            [self updateDefaultDeviceToken];
+        //if we didnt send a device token or a channel on creation, try again
+        if ([payload valueForKey:@"device_tokens"] || [payload valueForKey:@"channel_ids"]) {
+            [self updateUser];
         }
 
         [self sendUserCreatedNotification];
+    };
 
-    } onFailure:^(UAHTTPRequest *request){
-        [UAUtils logFailedRequest:request withMessage:@"UAUser Request"];
+    UAUserAPIClientFailureBlock failure = ^(UAHTTPRequest *request) {
+        UA_LDEBUG(@"Failed to create user");
         self.creatingUser = NO;
-    }];
+    };
+
+
+    [self.apiClient createUserWithChannelID:[UAPush shared].channelID
+                                deviceToken:[UAPush shared].deviceToken
+                                  onSuccess:success
+                                  onFailure:failure];
 }
 
 #pragma mark -
 #pragma mark Update
 
--(void)updateDefaultDeviceToken {
-    if (![UAPush shared].deviceToken || ![self defaultUserCreated]){
-        UA_LDEBUG(@"Skipping device token update: no token, already up to date, or user is being updated.");
+-(void)updateUser {
+
+    NSString *deviceToken = [UAPush shared].deviceToken;
+    NSString *channelID = [UAPush shared].channelID;
+
+    if (![self defaultUserCreated]) {
+        UA_LDEBUG(@"Skipping user update, user not created yet");
         return;
     }
 
-    NSString *deviceToken = [UAPush shared].deviceToken;
+    if (!channelID && !deviceToken) {
+        UA_LDEBUG(@"Skipping user update, no device token or channel");
+        return;
+    }
 
-    [self.apiClient updateDeviceToken:deviceToken forUsername:self.username onSuccess:^(NSString *updatedToken) {
-        UA_LINFO(@"Device token updated to: %@", updatedToken);
-    } onFailure:^(UAHTTPRequest *request) {
-        UA_LDEBUG(@"Device token update failed with status: %ld", (long)request.response.statusCode);
-    }];
+
+
+    [self.apiClient updateUser:self.username
+                   deviceToken:deviceToken
+                     channelID:channelID
+                     onSuccess:^{
+                         UA_LINFO(@"User updated succesfully");
+                     }
+                     onFailure:^(UAHTTPRequest *request) {
+                         UA_LDEBUG(@"Failed to update user");
+                     }];
 }
 
 #pragma mark -
 #pragma mark Device Token Listener
 
-// Ensure the methods that need token are invoked even after inbox was created
-- (void)listenForDeviceTokenReg {
-    if (self.isObservingDeviceToken) {
+- (void)registerForDeviceRegistrationChanges {
+    if (self.isObservingDeviceRegistrationChanges) {
         return;
     }
     
-    // If the device token is already available just update it
-    if([UAPush shared].deviceToken) {
-        [self cancelListeningForDeviceToken];
-        [self updateDefaultDeviceToken];
-        return;
-    }
-    
-    // Listen for changes to the device token
-    self.isObservingDeviceToken = YES;
+    self.isObservingDeviceRegistrationChanges = YES;
+
+    // Listen for changes to the device token and channel ID
     [[UAPush shared] addObserver:self forKeyPath:@"deviceToken" options:0 context:NULL];
-    
-    // Double check here incase we managed to recieve the token the same
-    // moment we registered the KVO
-    if([UAPush shared].deviceToken != nil) {
-        [self cancelListeningForDeviceToken];
-        [self updateDefaultDeviceToken];
+    [[UAPush shared] addObserver:self forKeyPath:@"channelID" options:0 context:NULL];
+
+    // Update the user if we already have a channelID or device token
+    if ([UAPush shared].deviceToken || [UAPush shared].channelID) {
+        [self updateUser];
         return;
     }
 }
@@ -298,15 +310,17 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     
     if ([keyPath isEqualToString:@"deviceToken"]) {
         UA_LTRACE(@"KVO device token modified.");
-        [self cancelListeningForDeviceToken];
-        [self updateDefaultDeviceToken];
+        [self updateUser];
+    } else if ([keyPath isEqualToString:@"channelID"]) {
+        UA_LTRACE(@"KVO channel ID modified.");
+        [self updateUser];
     }
 }
 
--(void)cancelListeningForDeviceToken {
-    if (self.isObservingDeviceToken) {
+-(void)unregisterForDeviceRegistrationChanges {
+    if (self.isObservingDeviceRegistrationChanges) {
         [[UAPush shared] removeObserver:self forKeyPath:@"deviceToken"];
-        self.isObservingDeviceToken = NO;
+        self.isObservingDeviceRegistrationChanges = NO;
     }
 }
 
