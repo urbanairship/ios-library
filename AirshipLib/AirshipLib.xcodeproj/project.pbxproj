@@ -204,6 +204,10 @@
 		49F437531810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		49F437551810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
+		49F4375818188F5100182D06 /* UAMailComposerAction.h in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62317FE34FC004F8724 /* UAMailComposerAction.h */; };
+		49F4375918188F5100182D06 /* UAMailComposerAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62417FE34FC004F8724 /* UAMailComposerAction.m */; };
+		49F4375A18188F5100182D06 /* UAMailComposerData.h in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62717FE3655004F8724 /* UAMailComposerData.h */; };
+		49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62817FE3655004F8724 /* UAMailComposerData.m */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
 		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
@@ -1462,6 +1466,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49F4375818188F5100182D06 /* UAMailComposerAction.h in Sources */,
+				49F4375918188F5100182D06 /* UAMailComposerAction.m in Sources */,
+				49F4375A18188F5100182D06 /* UAMailComposerData.h in Sources */,
+				49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */,
 				CC8542BA17F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				1FE0B77B17E2751000856C60 /* UADeviceRegistrationPayload.m in Sources */,
 				1FE0B77C17E2751000856C60 /* UAUtils.m in Sources */,
