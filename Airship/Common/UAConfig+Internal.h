@@ -48,6 +48,11 @@
 @property (nonatomic, copy) NSString *testingMasterSecret;
 
 /**
+ * Defaults to `YES` if the current device is a simulator. Exposed for testing/mocking purposes.
+ */
+@property (nonatomic, assign) BOOL isSimulator;
+
+/**
  * Determines whether or not the app is currently configured to use the APNS production servers.
  * @return `YES` if using production servers, `NO` if development servers or if the app is not properly
  * configured for push.
