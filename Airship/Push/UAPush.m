@@ -533,7 +533,7 @@ BOOL deferChannelCreationOnForeground = false;
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
 
-    if (!self.channelID) {
+    if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
             [self.deviceRegistrar cancelAllRequests];
         }];
@@ -574,6 +574,11 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistrationForcefully:(BOOL)forcefully withPayload:(UAChannelRegistrationPayload *)payload{
+    // Only allow background registration if we have a background task for it
+    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+    if (inBackground && UIApplicationStateBackground == UIBackgroundTaskInvalid) {
+        return;
+    }
 
     // If we have a channel ID or we are not doing channel registration, cancel all requests.
     if (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration) {
