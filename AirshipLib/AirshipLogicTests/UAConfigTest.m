@@ -73,12 +73,12 @@
 
     // First make sure the simulator string works
     UAConfig *simulatorConfig = [[UAConfig alloc] init];
-    XCTAssertTrue(simulatorConfig.isSimulator, @"The congfiguration init method incorrectly determined the isSimulator value on a simulator.");
+    XCTAssertTrue(simulatorConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a simulator.");
 
     // Now make sure the device model string works
     [[[mockDeviceClass expect] andReturn:@"ARealiPhoneDevice"] model];
     UAConfig *deviceConfig = [[UAConfig alloc] init];
-    XCTAssertFalse(deviceConfig.isSimulator, @"The congfiguration init method incorrectly determined the isSimulator value on a device.");
+    XCTAssertFalse(deviceConfig.isSimulator, @"The configuration init method incorrectly determined the isSimulator value on a device.");
 
     // OK, back to normal
     [mockDeviceClass stopMocking];
