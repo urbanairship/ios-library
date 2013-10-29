@@ -13,9 +13,14 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
 @interface UAUserAPIClient : NSObject
 
 
- /**
+/**
  * Create a user.
  *
+ * If the channel id is available, only it will be used.  If not, the device token
+ * will be used.
+ * 
+ * @param deviceToken The user's device token.
+ * @param channelID The user's channel ID.
  * @param successBlock A UAUserAPIClientCreateSuccessBlock that will be called if user creation was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if user creation was unsuccessful.
  */
@@ -25,10 +30,14 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock;
 
 /**
- * Update a user's associated device token.
+ * Update a user.
  *
- * @param deviceToken The specified device token to be updated.
+ * If the channel id is available, it will add the channel and remove
+ * the device token.  If only the device token is avaialble it will add it to the user.
+ *
  * @param username The specified user to update.
+ * @param deviceToken The user's device token.
+ * @param channelID The user's channel ID.
  * @param successBlock A UAUserAPIClientUpdateSuccessBlock that will be called if the update was successful.
  * @param failureBlock A UAUserAPIClientFailureBlock that will be called if the update was unsuccessful.
  */
