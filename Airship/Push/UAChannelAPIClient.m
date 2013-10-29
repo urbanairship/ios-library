@@ -103,7 +103,6 @@
 
         // Channel location from the request
         NSString *channelLocation = [request.response.allHeaderFields valueForKey:@"Location"];
-
         if (successBlock) {
             successBlock(channelID, channelLocation);
         } else {
@@ -164,8 +163,7 @@
  * @return A UAHTTPRequest request.
  */
 - (UAHTTPRequest *)requestToUpdateWithChannelLocation:(NSString *)location payload:(UAChannelRegistrationPayload *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@", [UAirship shared].config.deviceAPIURL, location];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:urlString] method:@"PUT"];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:[NSURL URLWithString:location] method:@"PUT"];
 
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];

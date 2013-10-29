@@ -924,7 +924,7 @@ NSDictionary *notification;
  * Test the registrationFinished finishes the backgroundTask if the background
  * task is valid
  */
-- (void)testRegistrationFinished {
+- (void)testRegistrationFinishedInBackground {
     UAPush *push = [UAPush shared];
 
     // Give push a valid background task identifier
@@ -932,7 +932,7 @@ NSDictionary *notification;
 
     [[self.mockedApplication expect] endBackgroundTask:100];
 
-    [push registrationFinished];
+    [push registrationFinished:[NSNotification notificationWithName:@"someName" object:nil]];
     XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
     XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
 }

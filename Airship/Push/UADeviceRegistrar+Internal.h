@@ -46,18 +46,25 @@
 /**
  * The last successful payload that was registered.
  */
-@property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessfulPayload;
+@property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessPayload;
 
-/**
- * The current payload that is being registered.
- */
-@property (nonatomic, copy) UAChannelRegistrationPayload *pendingPayload;
 
 /**
  * A flag indicating if the device token has been registered with the
  * device API client.
  */
 @property (nonatomic, assign) BOOL isDeviceTokenRegistered;
+
+/**
+ * A flag indicating if the registrar is using the new channel registration or
+ * the old device token registration.
+ */
+@property (nonatomic, assign) BOOL isUsingChannelRegistration;
+
+/**
+ * A flag indicating if registration is in progress.
+ */
+@property (nonatomic, assign) BOOL isRegistrationInProgress;
 
 @end
 
