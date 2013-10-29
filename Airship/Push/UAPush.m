@@ -533,11 +533,15 @@ BOOL deferChannelCreationOnForeground = false;
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
 
-    if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+    BOOL shouldCreateChannelId = (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration);
+
+    if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
         self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
             [self.deviceRegistrar cancelAllRequests];
         }];
+    }
 
+    if (shouldCreateChannelId) {
         [self updateRegistrationForcefully:NO];
     }
 }
@@ -570,13 +574,10 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-    [self updateRegistrationForcefully:forcefully withPayload:[self createChannelPayload]];
-}
-
-- (void)updateRegistrationForcefully:(BOOL)forcefully withPayload:(UAChannelRegistrationPayload *)payload{
-    // Only allow background registration if we have a background task for it
     BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-    if (inBackground && UIApplicationStateBackground == UIBackgroundTaskInvalid) {
+
+    // Only allow new registrations to happen in the background if we are creating a channel ID
+    if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
         return;
     }
 
@@ -588,12 +589,12 @@ BOOL deferChannelCreationOnForeground = false;
     if (self.pushEnabled) {
         [self.deviceRegistrar registerWithChannelID:self.channelID
                                     channelLocation:self.channelLocation
-                                        withPayload:payload
+                                        withPayload:[self createChannelPayload]
                                          forcefully:forcefully];
     } else {
         [self.deviceRegistrar registerPushDisabledWithChannelID:self.channelID
                                                 channelLocation:self.channelLocation
-                                                    withPayload:payload
+                                                    withPayload:[self createChannelPayload]
                                                      forcefully:forcefully];
     }
 }
@@ -606,7 +607,7 @@ BOOL deferChannelCreationOnForeground = false;
         return;
     }
 
-    [self updateRegistrationForcefully:NO withPayload:[self createChannelPayload]];
+    [self updateRegistrationForcefully:NO];
 }
 
 //The new token to register, or nil if updating the existing token 
@@ -663,13 +664,15 @@ BOOL deferChannelCreationOnForeground = false;
     //
     // TODO: remove this check once we remove device token registration
     if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
-        [self updateRegistrationForcefully:NO withPayload:payload];
+        [self updateRegistrationForcefully:NO];
         return;
     }
 
     // If the payload does not match the current payload, register
+    //
+    // TODO: Move this to device registrar once we remove device token registration
     if (![notificationPayload isEqualToPayload:payload]) {
-        [self updateRegistrationForcefully:NO withPayload:payload];
+        [self updateRegistrationForcefully:NO];
     }
 }
 

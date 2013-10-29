@@ -937,7 +937,107 @@ NSDictionary *notification;
     XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
 }
 
+/*
+ if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
+ self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+ [self.deviceRegistrar cancelAllRequests];
+ }];
+ }
+ */
 
+/**
+ * Test that a background task is created when entering the background and
+ * registration is in progress
+ */
+- (void)testBackgroundTaskCreatedWhenRegistrationInProgress {
+    UAPush *push = [UAPush shared];
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isRegistrationInProgress];
+
+    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
+}
+
+/**
+ * Test that a background task is created when entering the background and
+ * a channel id needs to be created.
+ */
+- (void)testBackgroundTaskCreatedNeedChannelID {
+    UAPush *push = [UAPush shared];
+    push.channelID = nil;
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
+}
+
+/**
+ * Test that a background task is not created when entering the background 
+ * if we dont need a channel id or registrations are not in progress
+ */
+- (void)testBackgroundTaskNotCreated {
+    UAPush *push = [UAPush shared];
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+
+    [[[self.mockedApplication reject] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+}
+
+
+/**
+ * Test that updateRegistration calls in the background only happen
+ * if a channel id needs to be created.
+ */
+- (void)testUpdateRegistrationInBackground {
+    UAPush *push = [UAPush shared];
+    push.pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    // Need a channel id case
+    push.channelID = nil;
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
+
+    [push updateRegistrationForcefully:NO];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Device Registrar should register with channel ID");
+}
+
+/**
+ * Test that updateRegistration does not attempt a registration when we are in the
+ * background and we have a channel id
+ */
+- (void)testUpdateRegistrationInBackgroundIgnores {
+    UAPush *push = [UAPush shared];
+    push.pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    // Need a channel id case
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:OCMOCK_ANY];
+
+    [push updateRegistrationForcefully:NO];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should not be attempted in the background unless its to create a channel ID");
+}
 /**
  * Test channel created
  */
