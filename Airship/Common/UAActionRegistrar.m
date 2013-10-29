@@ -28,6 +28,9 @@
 #import "UAIncomingPushAction.h"
 #import "UAIncomingRichPushAction.h"
 #import "UAOpenExternalURLAction.h"
+#import "UAAddTagsAction.h"
+#import "UARemoveTagsAction.h"
+#import "UASetTagsAction.h"
 
 @implementation UAActionRegistrar
 
@@ -140,6 +143,22 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
                     name:kUAOpenExternalURLActionDefaultRegistryName
                    alias:kUAOpenExternalURLActionDefaultRegistryAlias
                predicate:urlPredicate];
+
+    UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
+    [self registerAction:addTagsAction
+                    name:kUAAddTagsActionDefaultRegistryName
+                   alias:kUAAddTagsActionDefaultRegistryAlias];
+
+    UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
+    [self registerAction:removeTagsAction
+                    name:kUARemoveTagsActionDefaultRegistryName
+                   alias:kUARemoveTagsActionDefaultRegistryAlias];
+
+    UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
+    [self registerAction:setTagsAction
+                    name:kUASetTagsActionDefaultRegistryName
+                   alias:kUASetTagsActionDefaultRegistryAlias];
+
 }
 
 - (void)clearRegistryForName:(NSString *)name {
