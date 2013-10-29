@@ -309,10 +309,13 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
                       context:(void *)context {
     
     if ([keyPath isEqualToString:@"deviceToken"]) {
-        UA_LTRACE(@"KVO device token modified.");
-        [self updateUser];
+        // Only update user if we do not have a channel ID
+        if ([UAPush shared].channelID) {
+            UA_LTRACE(@"KVO device token modified. Updating user.");
+            [self updateUser];
+        }
     } else if ([keyPath isEqualToString:@"channelID"]) {
-        UA_LTRACE(@"KVO channel ID modified.");
+        UA_LTRACE(@"KVO channel ID modified. Updating user.");
         [self updateUser];
     }
 }
