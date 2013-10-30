@@ -423,7 +423,6 @@
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
 		4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListDelegate.h; sourceTree = "<group>"; };
-		494BF701176277E000B25E12 /* UAUserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserTest.h; sourceTree = "<group>"; };
 		494BF702176277E000B25E12 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		494BF7051762789D00B25E12 /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
 		494BF7061762789D00B25E12 /* UAUserAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserAPIClient.h; sourceTree = "<group>"; };
@@ -1107,7 +1106,6 @@
 		CCF0A53C17D139D500098A2B /* User */ = {
 			isa = PBXGroup;
 			children = (
-				494BF701176277E000B25E12 /* UAUserTest.h */,
 				494BF702176277E000B25E12 /* UAUserTest.m */,
 			);
 			name = User;

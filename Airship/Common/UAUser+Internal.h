@@ -49,6 +49,11 @@
 - (void)updateUser;
 
 /**
+ * Creates a user
+ */
+- (void)createUser;
+
+/**
  * The user api client
  */
 @property(nonatomic, strong) UAUserAPIClient *apiClient;

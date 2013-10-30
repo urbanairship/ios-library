@@ -45,89 +45,19 @@
     return self;
 }
 
-
-- (NSDictionary *)createUserDictionaryWithDeviceToken:(NSString *)deviceToken
-                                        withChannelID:(NSString *)channelID {
-
-    //set up basic payload
-    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
-
-    if (channelID.length) {
-        [data setObject:@[channelID] forKey:@"channel_ids"];
-    } else if (deviceToken.length) {
-        [data setObject:@[deviceToken] forKey:@"device_tokens"];
-    }
-
-    return data;
-}
-
-- (NSDictionary *)updateUserDictionaryWithDeviceToken:(NSString *)deviceToken
-                                        withChannelID:(NSString *)channelID {
-
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    if (channelID.length) {
-        [data setValue:@{@"add": @[channelID]} forKey:@"channel_ids"];
-
-        if (deviceToken.length) {
-            [data setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
-        }
-    } else if (deviceToken.length) {
-        [data setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
-    }
-
-    return data;
-}
-
-- (UAHTTPRequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
-    NSString *urlString = [NSString stringWithFormat:@"%@%@",
-                           [UAirship shared].config.deviceAPIURL,
-                           @"/api/user/"];
-
-    NSURL *createUrl = [NSURL URLWithString:urlString];
-    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    UA_LDEBUG(@"Request to create user with body: %@", body);
-
-    return request;
-}
-
-- (UAHTTPRequest *)requestToUpdateWithPaylod:(NSDictionary *)payload
-                                 forUsername:(NSString *)username {
-
-    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
-                                 [UAirship shared].config.deviceAPIURL,
-                                 @"/api/user/",
-                                 username];
-
-    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
-
-    // Now do the user update, and pass out "master list" of deviceTokens back to the server
-    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
-
-    [request addRequestHeader:@"Content-Type" value:@"application/json"];
-    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
-
-    NSString *body = [NSJSONSerialization stringWithObject:payload];
-    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
-
-    UA_LTRACE(@"Request to update user with content: %@", body);
-
-    return request;
-}
-
-
 - (void)createUserWithChannelID:(NSString *)channelID
                     deviceToken:(NSString *)deviceToken
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
                       onFailure:(UAUserAPIClientFailureBlock)failureBlock {
 
-    NSDictionary *payload = [self createUserDictionaryWithDeviceToken:deviceToken withChannelID:channelID];
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
+
+    if (channelID.length) {
+        [payload setObject:@[channelID] forKey:@"channel_ids"];
+    } else if (deviceToken.length) {
+        [payload setObject:@[deviceToken] forKey:@"device_tokens"];
+    }
+
     UAHTTPRequest *request = [self requestToCreateUserWithPayload:payload];
 
     [self.requestEngine
@@ -171,7 +101,18 @@
     UA_LDEBUG(@"Updating user %@.", username);
 
 
-    NSDictionary *payload = [self updateUserDictionaryWithDeviceToken:deviceToken withChannelID:channelID];
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+
+    if (channelID.length) {
+        [payload setValue:@{@"add": @[channelID]} forKey:@"channel_ids"];
+
+        if (deviceToken.length) {
+            [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
+        }
+    } else if (deviceToken.length) {
+        [payload setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
+    }
+
     UAHTTPRequest *request = [self requestToUpdateWithPaylod:payload
                                                  forUsername:username];
 
@@ -196,6 +137,48 @@
             UA_LERR(@"missing failureBlock");
         }
     }];
+}
+
+- (UAHTTPRequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@",
+                           [UAirship shared].config.deviceAPIURL,
+                           @"/api/user/"];
+
+    NSURL *createUrl = [NSURL URLWithString:urlString];
+    UAHTTPRequest *request = [UAUtils UAHTTPRequestWithURL:createUrl method:@"POST"];
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
+
+    NSString *body = [NSJSONSerialization stringWithObject:payload];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UA_LDEBUG(@"Request to create user with body: %@", body);
+
+    return request;
+}
+
+- (UAHTTPRequest *)requestToUpdateWithPaylod:(NSDictionary *)payload
+                                 forUsername:(NSString *)username {
+
+    NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
+                                 [UAirship shared].config.deviceAPIURL,
+                                 @"/api/user/",
+                                 username];
+
+    NSURL *updateUrl = [NSURL URLWithString: updateUrlString];
+
+    // Now do the user update, and pass out "master list" of deviceTokens back to the server
+    UAHTTPRequest *request = [UAUtils UAHTTPUserRequestWithURL:updateUrl method:@"POST"];
+
+    [request addRequestHeader:@"Content-Type" value:@"application/json"];
+    [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
+
+    NSString *body = [NSJSONSerialization stringWithObject:payload];
+    [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
+
+    UA_LTRACE(@"Request to update user with content: %@", body);
+    
+    return request;
 }
 
 
