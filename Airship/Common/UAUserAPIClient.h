@@ -3,6 +3,8 @@
 #import "UAUserData.h"
 #import "UAHTTPConnection.h"
 
+@class UAHTTPRequestEngine;
+
 typedef void (^UAUserAPIClientCreateSuccessBlock)(UAUserData *data, NSDictionary *payload);
 typedef void (^UAUserAPIClientUpdateSuccessBlock)();
 typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
@@ -12,6 +14,19 @@ typedef void (^UAUserAPIClientFailureBlock)(UAHTTPRequest *request);
  */
 @interface UAUserAPIClient : NSObject
 
+
+/**
+ * Factory method to create a UAUserAPIClient.
+ */
++ (instancetype)client;
+
+
+/**
+ * Factory method to create a UAUserAPIClient.
+ *
+ * @param requestEngine The specified UAHTTPRequestEngine.
+ */
++ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
 
 /**
  * Create a user.

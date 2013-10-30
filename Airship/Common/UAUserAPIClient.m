@@ -45,6 +45,22 @@
     return self;
 }
 
+- (id)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    self = [super init];
+    if (self) {
+        self.requestEngine = requestEngine;
+    }
+    return self;
+}
+
++ (instancetype)client {
+    return [[UAUserAPIClient alloc] init];
+}
+
++ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    return [[UAUserAPIClient alloc] initWithRequestEngine:requestEngine];
+}
+
 - (void)createUserWithChannelID:(NSString *)channelID
                     deviceToken:(NSString *)deviceToken
                       onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
@@ -180,7 +196,5 @@
     
     return request;
 }
-
-
 
 @end

@@ -75,7 +75,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     self = [super init];
     if (self) {
         // init
-        self.apiClient = [[UAUserAPIClient alloc] init];
+        self.apiClient = [UAUserAPIClient client];
         self.appKey = [UAirship shared].config.appKey;
     }
     
