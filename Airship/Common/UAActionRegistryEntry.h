@@ -39,15 +39,9 @@
 @property(nonatomic, copy) UAActionPredicate predicate;
 
 /**
- * Registered name
+ * Registered names
  */
-@property(nonatomic, readonly, copy) NSString *name;
-
-
-/**
- * Registered alias
- */
-@property(nonatomic, readonly, copy) NSString *alias;
+- (NSArray *)names;
 
 /**
  * Returns the action for the situation, or the default action if
@@ -60,11 +54,8 @@
 /**
  * UAActionRegistryEntry class factory method.
  * @param action The entry's action.
- * @param name The entry's name.
- * @param alias The entry's alias.
  * @param predicate The entry's predicate.
  */
-+ (instancetype)entryForAction:(UAAction *)action name:(NSString *)name
-                         alias:(NSString *)alias predicate:(UAActionPredicate)predicate;
++ (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate;
 
 @end

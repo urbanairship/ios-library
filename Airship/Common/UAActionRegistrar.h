@@ -42,67 +42,41 @@
 SINGLETON_INTERFACE(UAActionRegistrar);
 
 /**
- * Registers an action with a predicate and an alias.
- * 
- * Previously registered actions with the given name or alias will be overwritten.
- * Registering a nil action will result in any previous actions to be removed from
- * the registrar.
- *
- * @param action Action to be performed
- * @param name Name of the action
- * @param alias Alias of the action
- * @param predicate A predicate that is evaluated to determine if the
- * action should be performed
- */
--(void)registerAction:(UAAction *)action name:(NSString *)name
-                alias:(NSString *)alias predicate:(UAActionPredicate)predicate;
-
-/**
  * Registers an action with a predicate.
- *
- * Previously registered actions with the given name will be overwritten.
- * Registering a nil action will result in any previous actions to be removed from
- * the registrar.
+ * 
+ * If another entry is registered under specified name, it will be removed from that
+ * entry and used for the new action.
  *
  * @param action Action to be performed
  * @param name Name of the action
  * @param predicate A predicate that is evaluated to determine if the
  * action should be performed
+ * @return 'YES' if the action was registered, 'NO' if the action was unable to
+ * be registered.
  */
--(void)registerAction:(UAAction *)action name:(NSString *)name
+-(BOOL)registerAction:(UAAction *)action
+                 name:(NSString *)name
             predicate:(UAActionPredicate)predicate;
 
 
-/**
- * Registers an action with an alias.
- *
- * Previously registered actions with the given name or alias will be overwritten.
- * Registering a nil action will result in any previous actions to be removed from
- * the registrar.
- *
- * @param action Action to be performed
- * @param name Name of the action
- * @param alias Alias of the action
- */
--(void)registerAction:(UAAction *)action name:(NSString *)name
-                alias:(NSString *)alias;
 
 /**
  * Registers an action.
  *
- * Previously registered actions with the given name will be overwritten.
- * Registering a nil action will result in any previous actions to be removed from
- * the registrar.
+ * If another entry is registered under specified name, it will be removed from that
+ * entry and used for the new action.
  *
  * @param action Action to be performed
  * @param name Name of the action
+ * @return 'YES' if the action was registered, 'NO' if the action was unable to
+ * be registered.
  */
--(void)registerAction:(UAAction *)action name:(NSString *)name;
+-(BOOL)registerAction:(UAAction *)action name:(NSString *)name;
 
 /**
- * Returns a registered action for a given name or alias.
+ * Returns a registered action for a given name.
  * 
- * @param name The name or alias of the action
+ * @param name The name of the action
  * @return The UAActionRegistryEntry for the name or alias if registered, 
  * nil otherwise.
  */
@@ -115,7 +89,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * to be cleared.
  *
  * @param situation The situation to override
- * @param name Name or alias of the registered entry
+ * @param name Name of the registered entry
  * @param action Action to be performed
  * @return 'YES' if the action was added to the entry for the situation override.
  * 'NO' if the entry is unable to be found with the given name, if the situation
@@ -129,12 +103,53 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Updates the predicate for a registered entry.
  *
  * @param predicate Predicate to update or nil to clear the current predicate
- * @param name Name or alias of the registered entry
+ * @param name Name of the registered entry
  * @return 'YES' if the predicate was updated for the entry. 'NO' if the entry
- * is unable to be found with the given name or if the entry is registered entry 
+ * is unable to be found with the given name or if the registered entry
  * is reserved.
  */
-- (BOOL)updatePredicate:(UAActionPredicate)predicate forName:(NSString *)name;
+- (BOOL)updatePredicate:(UAActionPredicate)predicate forEntryName:(NSString *)name;
+
+/**
+ * Updates the default action for a registered entry.
+ *
+ * @param action Action to update for the entry
+ * @param name Name of the registered entry
+ * @return 'YES' if the action was updated for the entry. 'NO' if the entry
+ * is unable to be found with the given name or if the registered entry is 
+ * reserved.
+ */
+- (BOOL)updateAction:(UAAction *)action forEntryName:(NSString *)name;
+
+/**
+ * Removes a name for a registered entry.
+ * 
+ * @param name The name to remove
+ * @return 'YES' if the name was removed from a registered entry. 'NO' if the 
+ * name is a reserved action name and is unable to be removed.
+ */
+- (BOOL)removeName:(NSString *)name;
+
+
+/**
+ * Removes an entry and all of its registered names.
+ *
+ * @param name The name of the entry to remove.
+ * @return 'YES' if the entry was removed from a registery. 'NO' if the
+ * entry is a reserved action and is unable to be removed.
+ */
+- (BOOL)removeEntryForName:(NSString *)name;
+
+
+/**
+ * Adds a name to a registered entry.
+ *
+ * @param name The name to add to the registered entry.
+ * @param entryName The name of registered entry.
+ * @return 'YES' if the name was added to the entry.  'NO' if
+ * no entry was found for 'entryName'.
+ */
+- (BOOL)addName:(NSString *)name forEntryName:(NSString *)entryName;
 
 /**
  * An array of the current registered entries

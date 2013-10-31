@@ -27,7 +27,6 @@
 
 #define kUAIncomingRichPushActionRegistryName @"_uamid"
 #define kUAIncomingPushActionRegistryName @"__incoming_push_action"
-#define kUAReservedActionKeys @[kUAIncomingPushActionRegistryName, kUAIncomingRichPushActionRegistryName]
 
 @interface UAActionRegistrar ()
 
@@ -40,4 +39,10 @@
  * Map of aliases to names
  */
 @property(nonatomic, strong) NSMutableDictionary *aliases;
+
+
+@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
+
+- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
+
 @end
