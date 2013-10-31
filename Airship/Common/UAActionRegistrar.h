@@ -59,7 +59,23 @@ SINGLETON_INTERFACE(UAActionRegistrar);
                  name:(NSString *)name
             predicate:(UAActionPredicate)predicate;
 
-
+/**
+ * Registers an action with a predicate.
+ *
+ * If other entries are registered under any of the specified names, they will
+ * be removed from the entry and used for this new action.
+ *
+ * @param action Action to be performed
+ * @param names An array of names for the registry
+ * @param predicate A predicate that is evaluated to determine if the
+ * action should be performed
+ * @return 'YES' if the action was registered, 'NO' if the action was unable to
+ * be registered because one of the names conflicts with a reserved action, 
+ * no names were specified, or the action is nil.
+ */
+-(BOOL)registerAction:(UAAction *)action
+                 names:(NSArray *)names
+            predicate:(UAActionPredicate)predicate;
 
 /**
  * Registers an action.
@@ -74,6 +90,22 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * nil, or the action is nil.
  */
 -(BOOL)registerAction:(UAAction *)action name:(NSString *)name;
+
+
+/**
+ * Registers an action.
+ *
+ * If other entries are registered under any of the specified names, they will
+ * be removed from the entry and used for this new action.
+ *
+ * @param action Action to be performed
+ * @param names An array of names for the registry
+ * @return 'YES' if the action was registered, 'NO' if the action was unable to
+ * be registered because one of the names conflicts with a reserved action,
+ * no names were specified, or the action is nil.
+ */
+-(BOOL)registerAction:(UAAction *)action names:(NSArray *)names;
+
 
 /**
  * Returns a registered action for a given name.
@@ -98,7 +130,8 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * is nil, or if the registered entry is reserved.
  */
 - (BOOL)addSituationOverride:(NSString *)situation
-            forEntryWithName:(NSString *)name action:(UAAction *)action;
+            forEntryWithName:(NSString *)name
+                      action:(UAAction *)action;
 
 
 /**

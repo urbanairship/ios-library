@@ -49,35 +49,55 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return self;
 }
 
+
+-(BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
+    return [self registerAction:action names:names predicate:nil];
+}
+
 - (BOOL)registerAction:(UAAction *)action name:(NSString *)name {
     return [self registerAction:action name:name predicate:nil];
 }
 
-- (BOOL)registerAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
-    if (!name) {
-        UA_LWARN(@"Unable to register action under a nil name.");
-        return NO;
-    }
+- (BOOL)registerAction:(UAAction *)action
+                  name:(NSString *)name
+             predicate:(UAActionPredicate)predicate {
 
-    if ([self.reservedEntryNames containsObject:name]) {
-        UA_LWARN(@"Unable to register action. %@ is a reserved action name.", name);
-        return NO;
-    }
+    return [self registerAction:action names:@[name] predicate:predicate];
+}
+
+-(BOOL)registerAction:(UAAction *)action
+                names:(NSArray *)names
+            predicate:(UAActionPredicate)predicate {
 
     if (!action) {
         UA_LWARN(@"Unable to register a nil action.");
         return NO;
     }
 
-    [self removeName:name];
+    if (!names.count) {
+        UA_LWARN(@"Unable to register action.  A name must be specified.");
+        return NO;
+    }
 
-    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action predicate:predicate];
+    for (NSString *name in names) {
+        if ([self.reservedEntryNames containsObject:name]) {
+            UA_LWARN(@"Unable to register entry. %@ is a reserved action.", name);
+            return NO;
+        }
+    }
 
-    [entry.mutableNames addObject:name];
-    [self.registeredActionEntries setValue:entry forKey:name];
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action
+                                                               predicate:predicate];
 
+    for (NSString *name in names) {
+        [self removeName:name];
+        [entry.mutableNames addObject:name];
+        [self.registeredActionEntries setValue:entry forKey:name];
+    }
+    
     return YES;
 }
+
 
 - (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
     if ([self registerAction:action name:name predicate:predicate]) {
@@ -241,30 +261,23 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     // Open external URL action
     UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:urlAction
-                    name:kUAOpenExternalURLActionDefaultRegistryName
+                    names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
                predicate:urlPredicate];
-
-    [self addName:kUAOpenExternalURLActionDefaultRegistryAlias forEntryWithName:kUAOpenExternalURLActionDefaultRegistryName];
 
 
     UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
     [self registerAction:addTagsAction
-                    name:kUAAddTagsActionDefaultRegistryName];
-    [self addName:kUAAddTagsActionDefaultRegistryAlias forEntryWithName:kUAAddTagsActionDefaultRegistryName];
+                    names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
 
 
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
-                    name:kUARemoveTagsActionDefaultRegistryName];
-    [self addName:kUARemoveTagsActionDefaultRegistryAlias forEntryWithName:kUARemoveTagsActionDefaultRegistryName];
+                    names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
 
 
     UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
     [self registerAction:setTagsAction
-                    name:kUASetTagsActionDefaultRegistryName];
-    [self addName:kUASetTagsActionDefaultRegistryAlias forEntryWithName:kUASetTagsActionDefaultRegistryName];
-
-
+                    names:@[kUASetTagsActionDefaultRegistryName, kUASetTagsActionDefaultRegistryAlias]];
 }
 
 
