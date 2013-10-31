@@ -36,13 +36,14 @@
 @property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
 
 /**
- * Map of aliases to names
+ * An array of the reserved entry names
  */
-@property(nonatomic, strong) NSMutableDictionary *aliases;
-
-
 @property(nonatomic, strong) NSMutableArray *reservedEntryNames;
 
+
+/**
+ * Registers a reserved action.  Reserved actions can not be removed or modified.
+ */
 - (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
 
 @end

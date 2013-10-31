@@ -41,7 +41,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];
-        self.aliases = [[NSMutableDictionary alloc] init];
         self.reservedEntryNames = [NSMutableArray array];
 
         [self registerDefaultActions];
@@ -62,7 +61,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
                   name:(NSString *)name
              predicate:(UAActionPredicate)predicate {
 
-    return [self registerAction:action names:@[name] predicate:predicate];
+    NSArray *names = name ? @[name] : nil;
+    return [self registerAction:action names:names predicate:predicate];
 }
 
 -(BOOL)registerAction:(UAAction *)action
@@ -179,14 +179,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
         return nil;
     }
 
-    UAActionRegistryEntry *entry = [self.registeredActionEntries valueForKey:name];
-    if (!entry) {
-        NSString *nameFromAlias = [self.aliases valueForKey:name];
-        if (nameFromAlias) {
-            entry = [self.registeredActionEntries valueForKey:nameFromAlias];
-        }
-    }
-    return entry;
+    return [self.registeredActionEntries valueForKey:name];
 }
 
 - (NSArray *)registeredEntries {
@@ -229,7 +222,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 }
 
 - (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name {
-    if (!name) {
+    if (!name || !action) {
         return NO;
     }
 
