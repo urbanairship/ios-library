@@ -52,7 +52,8 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @param predicate A predicate that is evaluated to determine if the
  * action should be performed
  * @return 'YES' if the action was registered, 'NO' if the action was unable to
- * be registered.
+ * be registered because the name conflicts with a reserved action, the name is
+ * nil, or the action is nil.
  */
 -(BOOL)registerAction:(UAAction *)action
                  name:(NSString *)name
@@ -69,7 +70,8 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @param action Action to be performed
  * @param name Name of the action
  * @return 'YES' if the action was registered, 'NO' if the action was unable to
- * be registered.
+ * be registered because the name conflicts with a reserved action, the name is 
+ * nil, or the action is nil.
  */
 -(BOOL)registerAction:(UAAction *)action name:(NSString *)name;
 
