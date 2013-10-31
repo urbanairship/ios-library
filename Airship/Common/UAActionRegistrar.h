@@ -80,7 +80,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @return The UAActionRegistryEntry for the name or alias if registered, 
  * nil otherwise.
  */
--(UAActionRegistryEntry *)registryEntryForName:(NSString *)name;
+-(UAActionRegistryEntry *)registryEntryWithName:(NSString *)name;
 
 
 /**
@@ -96,7 +96,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * is nil, or if the registered entry is reserved.
  */
 - (BOOL)addSituationOverride:(NSString *)situation
-                     forName:(NSString *)name action:(UAAction *)action;
+            forEntryWithName:(NSString *)name action:(UAAction *)action;
 
 
 /**
@@ -108,7 +108,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * is unable to be found with the given name or if the registered entry
  * is reserved.
  */
-- (BOOL)updatePredicate:(UAActionPredicate)predicate forEntryName:(NSString *)name;
+- (BOOL)updatePredicate:(UAActionPredicate)predicate forEntryWithName:(NSString *)name;
 
 /**
  * Updates the default action for a registered entry.
@@ -119,7 +119,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * is unable to be found with the given name or if the registered entry is 
  * reserved.
  */
-- (BOOL)updateAction:(UAAction *)action forEntryName:(NSString *)name;
+- (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name;
 
 /**
  * Removes a name for a registered entry.
@@ -138,7 +138,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @return 'YES' if the entry was removed from a registery. 'NO' if the
  * entry is a reserved action and is unable to be removed.
  */
-- (BOOL)removeEntryForName:(NSString *)name;
+- (BOOL)removeEntryWithName:(NSString *)name;
 
 
 /**
@@ -149,7 +149,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @return 'YES' if the name was added to the entry.  'NO' if
  * no entry was found for 'entryName'.
  */
-- (BOOL)addName:(NSString *)name forEntryName:(NSString *)entryName;
+- (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName;
 
 /**
  * An array of the current registered entries
