@@ -36,12 +36,10 @@
     UAAction *action = [[UAAction alloc] init];
     UAActionPredicate predicate = ^(UAActionArguments *args) { return NO; };
 
-    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action name:@"some-name" alias:@"some-alias" predicate:predicate];
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action predicate:predicate];
 
     XCTAssertEqual(entry.action, action, @"UAActionEntry is not setting the action correctly");
     XCTAssertEqual(entry.predicate, predicate, @"UAActionEntry is not setting the predicate correctly");
-    XCTAssertEqualObjects(entry.name, @"some-name", @"UAActionEntry is not setting the name correctly");
-    XCTAssertEqualObjects(entry.alias, @"some-alias", @"UAActionEntry is not setting the alias correctly");
 }
 
 @end
