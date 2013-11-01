@@ -23,17 +23,32 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
-#import <MessageUI/MessageUI.h>
+#import "UAModifyTagsAction.h"
 
-//TODO: additional error codes
+@implementation UAModifyTagsAction
 
-NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
-    UAMailComposerActionErrorCodeMailDisabled
-};
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    //no background push
+    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+        return NO;
+    };
 
-extern NSString * const UAMailComposerActionErrorDomain;
+    //argument value can be a string (one tag)
+    if ([arguments.value isKindOfClass:[NSString class]]) {
+        return YES;
+    }
 
-@interface UAMailComposerAction : UAAction
+    if ([arguments.value isKindOfClass:[NSArray class]]) {
+        //or it can be an array, in which case the elements must all be strings
+        for (id obj in arguments.value) {
+            if (![obj isKindOfClass:[NSString class]]) {
+                return NO;
+            }
+        }
+        return  YES;
+    } else {
+        return NO;
+    }
+}
 
 @end

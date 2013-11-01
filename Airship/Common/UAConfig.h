@@ -137,10 +137,12 @@
 
 
 /**
- * Apps may be set to self-configure based on the APS-environment set in the embedded.mobileprovision file.
+ * Apps may be set to self-configure based on the APS-environment set in the embedded.mobileprovision file,
+ * which is present in development, ad-hoc and enterprise application distributions.
  * If `YES`, the inProduction value will be determined at runtime by reading the provisioning profile. If
  * `NO`, the inProduction flag may be set directly or using the AirshipConfig.plist file. Defaults to
- * `YES` for safety so that the production keys will always be used if the profile cannot be read in a released app.
+ * `YES` for safety so that the production keys will always be used if the profile cannot be read in a
+ * released app running on a real device (as is the case with App Store distributions).
  * Simulator builds do not include profile, so this flag does not have any effect in cases where there is not
  * a profile present. It will fall back to the inProduction property as set in code or a .plist file.
  */

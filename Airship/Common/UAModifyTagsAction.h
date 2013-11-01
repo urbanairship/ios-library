@@ -24,16 +24,7 @@
  */
 
 #import "UAAction.h"
-#import <MessageUI/MessageUI.h>
 
-//TODO: additional error codes
-
-NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
-    UAMailComposerActionErrorCodeMailDisabled
-};
-
-extern NSString * const UAMailComposerActionErrorDomain;
-
-@interface UAMailComposerAction : UAAction
+@interface UAModifyTagsAction : UAAction
 
 @end

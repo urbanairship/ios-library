@@ -23,17 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
-#import <MessageUI/MessageUI.h>
+#import "UAAddTagsAction.h"
+#import "UAPush.h"
 
-//TODO: additional error codes
+@implementation UAAddTagsAction
 
-NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
-    UAMailComposerActionErrorCodeMailDisabled
-};
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if ([arguments.value isKindOfClass:[NSString class]]) {
+        [[UAPush shared] addTagToCurrentDevice:arguments.value];
+    } else {
+        [[UAPush shared] addTagsToCurrentDevice:arguments.value];
+    }
+    [[UAPush shared] updateRegistration];
+    completionHandler([UAActionResult none]);
 
-extern NSString * const UAMailComposerActionErrorDomain;
-
-@interface UAMailComposerAction : UAAction
+}
 
 @end

@@ -23,17 +23,19 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
-#import <MessageUI/MessageUI.h>
+#import "UARemoveTagsAction.h"
+#import "UAPush.h"
 
-//TODO: additional error codes
+@implementation UARemoveTagsAction
 
-NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
-    UAMailComposerActionErrorCodeMailDisabled
-};
-
-extern NSString * const UAMailComposerActionErrorDomain;
-
-@interface UAMailComposerAction : UAAction
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    if ([arguments.value isKindOfClass:[NSString class]]) {
+        [[UAPush shared] removeTagFromCurrentDevice:arguments.value];
+    } else {
+        [[UAPush shared] removeTagsFromCurrentDevice:arguments.value];
+    }
+    [[UAPush shared] updateRegistration];
+    completionHandler([UAActionResult none]);
+}
 
 @end

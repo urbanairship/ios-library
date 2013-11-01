@@ -23,17 +23,35 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
-#import <MessageUI/MessageUI.h>
+#import "UASetTagsAction.h"
+#import "UAPush.h"
 
-//TODO: additional error codes
+@implementation UASetTagsAction
 
-NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
-    UAMailComposerActionErrorCodeMailDisabled
-};
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    //no background push
+    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+        return NO;
+    }
 
-extern NSString * const UAMailComposerActionErrorDomain;
+    if ([arguments.value isKindOfClass:[NSArray class]]) {
+        //array must contain only NSString elements
+        for (id obj in arguments.value) {
+            if (![obj isKindOfClass:[NSString class]]) {
+                return NO;
+            }
+        }
+    } else {
+        return NO;
+    }
 
-@interface UAMailComposerAction : UAAction
+    return YES;
+}
+
+- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+    [UAPush shared].tags = arguments.value;
+    [[UAPush shared] updateRegistration];
+    completionHandler([UAActionResult none]);
+}
 
 @end
