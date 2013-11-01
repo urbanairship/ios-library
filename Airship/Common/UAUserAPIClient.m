@@ -1,10 +1,33 @@
+/*
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAUserAPIClient.h"
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "UAHTTPRequestEngine.h"
 #import "UAUtils.h"
-#import "UAPush.h"
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UAUserAPIClient()
@@ -22,20 +45,117 @@
     return self;
 }
 
-
-- (NSDictionary *)createUserDictionaryWithDeviceToken:(NSString *)deviceToken {
-
-    //set up basic payload
-    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
-
-    if (deviceToken) {
-        [data setObject:@[deviceToken] forKey:@"device_tokens"];
+- (id)initWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    self = [super init];
+    if (self) {
+        self.requestEngine = requestEngine;
     }
-
-    return data;
+    return self;
 }
 
-- (UAHTTPRequest *)requestToCreateUserWithDeviceToken:(NSString *)deviceToken {
++ (instancetype)client {
+    return [[UAUserAPIClient alloc] init];
+}
+
++ (instancetype)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine {
+    return [[UAUserAPIClient alloc] initWithRequestEngine:requestEngine];
+}
+
+- (void)createUserWithChannelID:(NSString *)channelID
+                    deviceToken:(NSString *)deviceToken
+                      onSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
+                      onFailure:(UAUserAPIClientFailureBlock)failureBlock {
+
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
+
+    if (channelID.length) {
+        [payload setObject:@[channelID] forKey:@"channel_ids"];
+    } else if (deviceToken.length) {
+        [payload setObject:@[deviceToken] forKey:@"device_tokens"];
+    }
+
+    UAHTTPRequest *request = [self requestToCreateUserWithPayload:payload];
+
+    [self.requestEngine
+     runRequest:request succeedWhere:^(UAHTTPRequest *request) {
+         NSInteger status = request.response.statusCode;
+         return (BOOL)(status == 201);
+     } retryWhere:^(UAHTTPRequest *request) {
+         NSInteger status = request.response.statusCode;
+         return (BOOL)((status >= 500 && status <= 599) || request.error);
+     } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+
+         NSDictionary *result = [NSJSONSerialization objectWithString:request.responseString];
+
+         NSString *username = [result objectForKey:@"user_id"];
+         NSString *password = [result objectForKey:@"password"];
+         NSString *url = [result objectForKey:@"user_url"];
+
+         UAUserData *data = [UAUserData dataWithUsername:username password:password url:url];
+
+         if (successBlock) {
+             successBlock(data, payload);
+         } else {
+             UA_LERR(@"missing successBlock");
+         }
+     } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+         [UAUtils logFailedRequest:request withMessage:@"creating user"];
+         if (failureBlock) {
+             failureBlock(request);
+         } else {
+             UA_LERR(@"missing failureBlock");
+         }
+     }];
+}
+
+- (void)updateUser:(NSString *)username
+       deviceToken:(NSString *)deviceToken
+         channelID:(NSString *)channelID
+         onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
+         onFailure:(UAUserAPIClientFailureBlock)failureBlock {
+
+    UA_LDEBUG(@"Updating user %@.", username);
+
+
+    NSMutableDictionary *payload = [NSMutableDictionary dictionary];
+
+    if (channelID.length) {
+        [payload setValue:@{@"add": @[channelID]} forKey:@"channel_ids"];
+
+        if (deviceToken.length) {
+            [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
+        }
+    } else if (deviceToken.length) {
+        [payload setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
+    }
+
+    UAHTTPRequest *request = [self requestToUpdateWithPaylod:payload
+                                                 forUsername:username];
+
+    [self.requestEngine runRequest:request succeedWhere:^(UAHTTPRequest *request) {
+        NSInteger status = request.response.statusCode;
+        return (BOOL)(status == 200 || status == 201);
+    } retryWhere:^(UAHTTPRequest *request) {
+        NSInteger status = request.response.statusCode;
+        return (BOOL)((status >= 500 && status <= 599) || request.error);
+    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+        UA_LDEBUG(@"User successfully updated.  Response: %@", request.responseString);
+        if (successBlock) {
+            successBlock();
+        } else {
+            UA_LERR(@"missing successBlock");
+        }
+    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
+        [UAUtils logFailedRequest:request withMessage:@"updating user"];
+        if (failureBlock) {
+            failureBlock(request);
+        } else {
+            UA_LERR(@"missing failureBlock");
+        }
+    }];
+}
+
+- (UAHTTPRequest *)requestToCreateUserWithPayload:(NSDictionary *)payload {
     NSString *urlString = [NSString stringWithFormat:@"%@%@",
                            [UAirship shared].config.deviceAPIURL,
                            @"/api/user/"];
@@ -45,8 +165,7 @@
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
-    NSDictionary *data = [self createUserDictionaryWithDeviceToken:deviceToken];
-    NSString *body = [NSJSONSerialization stringWithObject:data];
+    NSString *body = [NSJSONSerialization stringWithObject:payload];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
     UA_LDEBUG(@"Request to create user with body: %@", body);
@@ -54,9 +173,8 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToUpdateDeviceToken:(NSString *)deviceToken forUsername:(NSString *)username {
-
-    NSDictionary *dict = @{@"device_tokens" :@{@"add" : @[deviceToken]}};
+- (UAHTTPRequest *)requestToUpdateWithPaylod:(NSDictionary *)payload
+                                 forUsername:(NSString *)username {
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
                                  [UAirship shared].config.deviceAPIURL,
@@ -71,109 +189,12 @@
     [request addRequestHeader:@"Content-Type" value:@"application/json"];
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
 
-    NSString *body = [NSJSONSerialization stringWithObject:dict];
+    NSString *body = [NSJSONSerialization stringWithObject:payload];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
     UA_LTRACE(@"Request to update user with content: %@", body);
-
+    
     return request;
 }
-
-- (void)createUserOnSuccess:(UAUserAPIClientCreateSuccessBlock)successBlock
-                  onFailure:(UAUserAPIClientFailureBlock)failureBlock {
-
-    //if APN hasn't finished yet or is not enabled, don't include the deviceToken
-    NSString* deviceToken = [UAPush shared].deviceToken;
-    if (deviceToken && deviceToken.length == 0) {
-            deviceToken = nil;
-    }
-
-    UAHTTPRequest *request = [self requestToCreateUserWithDeviceToken:deviceToken];
-    
-    [self.requestEngine
-      runRequest:request succeedWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 201);
-    } retryWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)((status >= 500 && status <= 599) || request.error);
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-
-        NSDictionary *result = [NSJSONSerialization objectWithString:request.responseString];
-
-        NSString *username = [result objectForKey:@"user_id"];
-        NSString *password = [result objectForKey:@"password"];
-        NSString *url = [result objectForKey:@"user_url"];
-
-        UAUserData *data = [UAUserData dataWithUsername:username password:password url:url];
-
-        if (successBlock) {
-            successBlock(data, deviceToken);
-        } else {
-            UA_LERR(@"missing successBlock");
-        }
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"missing failureBlock");
-        }
-    }];
-}
-
-- (void)updateDeviceToken:(NSString *)deviceToken
-              forUsername:(NSString *)username
-                onSuccess:(UAUserAPIClientUpdateSuccessBlock)successBlock
-                onFailure:(UAUserAPIClientFailureBlock)failureBlock {
-    UA_LDEBUG(@"Updating device token.");
-
-    UAHTTPRequest *request = [self requestToUpdateDeviceToken:deviceToken forUsername:username];
-
-    [self.requestEngine runRequest:request succeedWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)(status == 200 || status == 201);
-    } retryWhere:^(UAHTTPRequest *request) {
-        NSInteger status = request.response.statusCode;
-        return (BOOL)((status >= 500 && status <= 599) || request.error);
-    } onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        // The dictionary for the post body is built as follows in updateDeviceToken
-        //    "device_tokens" =     {
-        //        add =         (
-        //                       a3dce91afd4aa3d2c44a66f2ef7be03b42ac05558ac6bdc2263a60b634f1c78a
-        //                       );
-        //    };
-        // That's what we expect here, an NSDictionary for the key @"device_tokens" with a single NSArray for the key @"add"
-
-        UA_LTRACE(@"Update Device Token succeeded with response: %ld", (long)[request.response statusCode]);
-
-        NSString *rawJson = [[NSString alloc] initWithData:request.body  encoding:NSASCIIStringEncoding];
-
-        // If there is an error, it already failed on the server, and didn't get back here, so no use checking for JSON error
-        NSDictionary *postBody = [NSJSONSerialization objectWithString:rawJson];
-        NSArray *add = [[postBody valueForKey:@"device_tokens"] valueForKey:@"add"];
-        NSString *successfullyUploadedDeviceToken = ([add count] >= 1) ? [add objectAtIndex:0] : nil;
-
-        if (successBlock) {
-            successBlock(successfullyUploadedDeviceToken);
-        } else {
-            UA_LERR(@"missing successBlock");
-        }
-        
-    } onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
-        if (request.response) {
-            // If we got an other than 200/201, that's just odd
-
-            UA_LDEBUG(@"Update request did not succeed with expected response: %ld", (long)[request.response statusCode]);
-        } else {
-            UA_LDEBUG(@"Update request failed");
-        }
-        if (failureBlock) {
-            failureBlock(request);
-        } else {
-            UA_LERR(@"missing failureBlock");
-        }
-    }];
-}
-
 
 @end
