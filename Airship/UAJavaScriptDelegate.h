@@ -7,7 +7,7 @@
  *
  * UADefaultJSDelegate is a reference implementation of this protocol.
  */
-@protocol UAInboxJavaScriptDelegate <NSObject>
+@protocol UAJavaScriptDelegate <NSObject>
 
 /**
  * Delegates must implement this method. Implementations take an array of string arguments

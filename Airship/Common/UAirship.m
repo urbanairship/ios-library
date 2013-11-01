@@ -42,6 +42,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 
+#import "UAInternalJSDelegate.h"
+
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
 //Exceptions
@@ -197,6 +199,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     //create/setup user (begin listening for device token changes)
     [[UAUser defaultUser] initializeUser];
 
+    _sharedAirship.internalJSDelegate = [[UAInternalJSDelegate alloc] init];
 }
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {

@@ -37,7 +37,7 @@
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, assign) BOOL backgroundNotificationEnabled;
 
-
+@property (nonatomic, strong) id<UAJavaScriptDelegate> internalJSDelegate;
 
 /**
  * Should set this user agent up

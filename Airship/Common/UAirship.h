@@ -24,6 +24,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAGlobal.h"
+#import "UAJavaScriptDelegate.h"
 
 @class UAConfig;
 @class UAAnalytics;
@@ -76,6 +77,19 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * UAirship has been initialized and is ready for use.
  */
 @property (nonatomic, assign, readonly) BOOL ready;
+
+/**
+ * A user configurable JavaScript delegate.
+ *
+ * NOTE: this delegate is not retained.
+ */
+@property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
+
+/**
+ * The default (readonly) JavaScript delegate.
+ */
+@property (nonatomic, strong, readonly) id<UAJavaScriptDelegate> defaultJSDelegate;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Services
