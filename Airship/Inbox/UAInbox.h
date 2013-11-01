@@ -165,10 +165,14 @@ SINGLETON_INTERFACE(UAInbox);
 
 
 /**
- * The Javascript delegate.
+ * The user-configurable JavaScript delegate, implementing
+ * the UAInboxJavaScriptDelegate protocol.
  * 
  * NOTE: this delegate is not retained.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property (nonatomic, weak) id<UAInboxJavaScriptDelegate> jsDelegate;
+#pragma clang diagnostic pop
 
 @end
