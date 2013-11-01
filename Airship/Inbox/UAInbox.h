@@ -67,7 +67,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Rich Push messages.
  *
  * UAInboxDefaultJSDelegate is a reference implementation of this protocol.
+ *
+ * @deprecated As of version 3.2. Replaced with UAJavaScriptDelegate.
  */
+__attribute__((deprecated("As of version 3.2")))
 @protocol UAInboxJavaScriptDelegate <NSObject>
 
 /**
