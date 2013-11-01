@@ -188,7 +188,8 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * @param name The name to add to the registered entry.
  * @param entryName The name of registered entry.
  * @return 'YES' if the name was added to the entry.  'NO' if
- * no entry was found for 'entryName'.
+ * no entry was found for 'entryName', the entry is reserved, or the name 
+ * is already used for a reserved entry.
  */
 - (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName;
 

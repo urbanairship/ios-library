@@ -159,6 +159,11 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
         return NO;
     }
 
+    if ([self.reservedEntryNames containsObject:entryName]) {
+        UA_LWARN(@"Unable to add name to a reserved entry. %@ is a reserved action name.", entryName);
+        return NO;
+    }
+
     if ([self.reservedEntryNames containsObject:name]) {
         UA_LWARN(@"Unable to add name for entry. %@ is a reserved action name.", name);
         return NO;

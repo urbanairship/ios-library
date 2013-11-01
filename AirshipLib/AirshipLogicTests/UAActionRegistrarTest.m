@@ -220,9 +220,6 @@ UAActionRegistrar *registrar;
     XCTAssertTrue([registrar addName:@"yetAnotherName" forEntryWithName:@"anotherName"], @"Should be able to add names to any entry.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName"] predicate:nil];
 
-    XCTAssertTrue([registrar addName:@"reservedAlias" forEntryWithName:@"reserved"], @"Should be able to add names to reserved entries.");
-    [self validateActionIsRegistered:action names:@[@"reserved", @"reservedAlias"] predicate:nil];
-
     // Check conflict
     XCTAssertTrue([registrar addName:@"reservedAlias" forEntryWithName:@"name"], @"Should be able to add a non original resereved name to another entry.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
@@ -243,6 +240,8 @@ UAActionRegistrar *registrar;
 
     XCTAssertFalse([registrar addName:@"anotherReserved" forEntryWithName:@"reserved"], @"Should not be able to add a reserved name to another entry.");
     XCTAssertFalse([registrar addName:@"someName" forEntryWithName:@"not found"], @"Should not be able to add a name to a not found entry.");
+    XCTAssertFalse([registrar addName:@"randomName" forEntryWithName:@"reserved"], @"Should not be able to add a name to a reserved entry.");
+
 }
 
 /**
