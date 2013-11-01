@@ -34,4 +34,7 @@
 
 + (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
++ (NSString *)urlDecodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
+
+
 @end

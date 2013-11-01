@@ -186,5 +186,21 @@
     }
 }
 
++ (NSString *)urlDecodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding {
+    /*
+     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
+     */
+
+    CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
+                                                                                 (CFStringRef)string,
+                                                                                 CFSTR(""),
+                                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
+
+    /* autoreleased string */
+    NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
+
+    return value;
+}
+
 
 @end
