@@ -32,8 +32,9 @@
 #import "UARemoveTagsAction.h"
 #import "UASetTagsAction.h"
 
-@implementation UAActionRegistrar
 
+@implementation UAActionRegistrar
+@dynamic registeredEntries;
 
 SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
