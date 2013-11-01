@@ -43,9 +43,9 @@ SINGLETON_INTERFACE(UAActionRegistrar);
 
 
 /**
- * An array of the current registered entries
+ * A set of the current registered entries
  */
-@property(nonatomic, readonly) NSArray *registeredEntries;
+@property(nonatomic, readonly) NSSet *registeredEntries;
 
 /**
  * Registers an action with a predicate.

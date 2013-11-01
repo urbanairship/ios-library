@@ -301,6 +301,19 @@ UAActionRegistrar *registrar;
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
 }
 
+
+/**
+ * Test registeredEntries
+ */
+- (void)testRegisteredEntries {
+    UAAction *action = [[UAAction alloc] init];
+    [registrar registerAction:action names:@[@"name", @"anotherName"]];
+    XCTAssertEqual((NSUInteger)1, [registrar.registeredEntries count], @"Duplicate names should be ignored.");
+
+    [registrar registerReservedAction:action name:@"reserved" predicate:nil];
+    XCTAssertEqual((NSUInteger)1, [registrar.registeredEntries count], @"Reserved entries should be ignored");
+}
+
 - (void)validateActionIsRegistered:(UAAction *)action
                               names:(NSArray *)names
                          predicate:(UAActionPredicate)predicate {

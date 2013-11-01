@@ -188,10 +188,10 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return [self.registeredActionEntries valueForKey:name];
 }
 
-- (NSArray *)registeredEntries {
+- (NSSet *)registeredEntries {
     NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
     [entries removeObjectsForKeys:self.reservedEntryNames];
-    return [entries allValues];
+    return [NSSet setWithArray:[entries allValues]];
 }
 
 - (BOOL)addSituationOverride:(NSString *)situation
