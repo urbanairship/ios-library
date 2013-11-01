@@ -25,6 +25,7 @@
 
 #import "UAWebViewTools.h"
 
+#import "UAInbox.h"
 #import "UAInboxMessage.h"
 
 @implementation UAWebViewTools
