@@ -28,7 +28,10 @@
 @interface UAWebViewTools : NSObject
 
 + (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url;
+
 + (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
  navigationType:(UIWebViewNavigationType)navigationType;
+
++ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
 @end
