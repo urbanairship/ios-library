@@ -25,8 +25,10 @@
 
 #import "UAWebViewTools.h"
 
+#import "UAirship.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
+#import "UAJavaScriptDelegate.h"
 
 @implementation UAWebViewTools
 
@@ -49,7 +51,7 @@
      ua://callbackArguments:withOptions:/[<arguments>][?<dictionary>]
      */
 
-    if ([[url scheme] isEqualToString:@"ua"]) {
+    if ([[url scheme] isEqualToString:@"ua"] || [[url scheme] isEqualToString:@"ua-action"]) {
         if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
             [self performJSDelegate:wv url:url];
             return NO;
@@ -155,10 +157,29 @@
         [options setObject:object forKey:key];
     }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
+#pragma clang diagnostic pop
+    id <UAJavaScriptDelegate> internalJSDelegate = [UAirship shared].internalJSDelegate;
+    id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
+
+    if ([[url scheme] isEqualToString:@"ua-action"]) {
+        [self performJSCallbackWithDelegate:internalJSDelegate withWebView:webView withArguments:arguments withOptions:options];
+    } else if ([[url scheme] isEqualToString:@"ua"]) {
+        [self performJSCallbackWithDelegate:inboxJSDelegate withWebView:webView withArguments:arguments withOptions:options];
+        [self performJSCallbackWithDelegate:userJSDDelegate withWebView:webView withArguments:arguments withOptions:options];
+    }
+}
+
++ (void)performJSCallbackWithDelegate:(id)delegate
+                          withWebView:(UIWebView *)webView
+                        withArguments:(NSArray *)arguments
+                          withOptions:(NSDictionary *)options {
     SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
-    id<UAInboxJavaScriptDelegate> jsDelegate = [UAInbox shared].jsDelegate;
-    if ([jsDelegate respondsToSelector:selector]) {
-        NSString *script = [jsDelegate callbackArguments:arguments withOptions:options];
+    if ([delegate respondsToSelector:selector]) {
+        NSString *script = nil;
+        script = [delegate callbackArguments:arguments withOptions:options];
         if (script) {
             [webView stringByEvaluatingJavaScriptFromString:script];
         }
