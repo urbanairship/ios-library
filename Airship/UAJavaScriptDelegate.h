@@ -28,6 +28,7 @@
  * The default implementation is UAInboxDefaultJSDelegate. It is designed to work with
  * the UACallback.js file that ships with the sample project.
  */
+@required
 - (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options;
 
 @end
