@@ -79,7 +79,7 @@ UAActionRegistrar *registrar;
     [registrar registerReservedAction:action name:@"reserved" predicate:nil];
 
     XCTAssertFalse([registrar registerAction:nil name:@"some-name"], @"Should not be able to register a nil action");
-    XCTAssertFalse([registrar registerAction:action name:nil], @"Should not be able to register a under a nil name.");
+    XCTAssertFalse([registrar registerAction:action name:nil], @"Should not be able to register an entry under a nil name.");
     XCTAssertFalse([registrar registerAction:action name:@"reserved"], @"Should not be able to register a reserved action name.");
 }
 
@@ -97,7 +97,7 @@ UAActionRegistrar *registrar;
     [self validateActionIsRegistered:action names:@[@"another-reserved"] predicate:predicate];
 
     XCTAssertFalse([registrar registerReservedAction:action name:@"reserved" predicate:nil], @"Should not be able to reregister a reserved action");
-    XCTAssertEqual((NSUInteger)0, [registrar registeredEntries].count, @"Reserved actions should not be in the list fo registered entries.");
+    XCTAssertEqual((NSUInteger)0, [registrar registeredEntries].count, @"Reserved actions should not be in the list of registered entries.");
 }
 
 /**

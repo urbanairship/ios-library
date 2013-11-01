@@ -170,7 +170,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * Removes an entry and all of its registered names.
  *
  * @param name The name of the entry to remove.
- * @return 'YES' if the entry was removed from a registery. 'NO' if the
+ * @return 'YES' if the entry was removed from a registry. 'NO' if the
  * entry is a reserved action and is unable to be removed.
  */
 - (BOOL)removeEntryWithName:(NSString *)name;

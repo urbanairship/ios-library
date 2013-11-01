@@ -212,7 +212,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     }
 
     if ([self.reservedEntryNames containsObject:name]) {
-        UA_LWARN(@"Unable to update preidicate. %@ is a reserved action name.", name);
+        UA_LWARN(@"Unable to update predicate. %@ is a reserved action name.", name);
         return NO;
     }
 
