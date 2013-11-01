@@ -225,7 +225,7 @@ UAActionRegistrar *registrar;
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
 
-    // Adding a name to a entry with a name already
+    // Adding a name to an entry with a name already
     XCTAssertTrue([registrar addName:@"reservedAlias" forEntryWithName:@"reservedAlias"], @"Should be able to add a name to the entry who's name is the name you are adding.  Yeah.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
 }
