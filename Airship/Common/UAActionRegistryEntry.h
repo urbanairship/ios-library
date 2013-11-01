@@ -41,7 +41,8 @@
 /**
  * Registered names
  */
-- (NSArray *)names;
+@property(nonatomic, readonly) NSArray *names;
+
 
 /**
  * Returns the action for the situation, or the default action if

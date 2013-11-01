@@ -26,6 +26,7 @@
 #import "UAActionRegistryEntry+Internal.h"
 
 @implementation UAActionRegistryEntry
+@dynamic names;
 
 - (instancetype)initWithAction:(UAAction *)action predicate:(UAActionPredicate)predicate {
     self = [super init];
