@@ -194,6 +194,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                            onFailure:failureBlock];
 }
 
+// TODO: Remove the fallback once device token registration is removed
 - (void)createChannelWithPayload:(UAChannelRegistrationPayload *)payload
                      fallBackBlock:(void (^)(UAChannelRegistrationPayload *))fallBackBlock {
 
@@ -219,6 +220,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                           onFailure:failureBlock];
 }
 
+// TODO: Remove this once device token registration is removed
 - (void)unregisterDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
     if (!self.isDeviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
@@ -251,6 +253,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                                       onFailure:failureBlock];
 }
 
+// TODO: Remove this once device token registration is removed
 - (void)registerDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
     // If there is no device token, wait for the application delegate to update with one.
     if (!payload.pushAddress) {
@@ -309,6 +312,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     // If we are using old registration, then we need to make sure pushEnabled
     // matches if the device token is registered because the payload does not track
     // that.
+    // TODO: Remove this once device token registration is removed
     if (!self.isUsingChannelRegistration && pushEnabled != self.isDeviceTokenRegistered) {
         return YES;
     }
@@ -316,10 +320,12 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     return ![payload isEqualToPayload:self.lastSuccessPayload];
 }
 
+// TODO: Remove this once device token registration is removed
 - (BOOL)isDeviceTokenRegistered {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UADeviceTokenRegistered];
 }
 
+// TODO: Remove this once device token registration is removed
 - (void)setDeviceTokenRegistered:(BOOL)deviceTokenRegistered {
     [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
 }

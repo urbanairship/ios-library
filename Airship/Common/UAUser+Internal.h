@@ -33,25 +33,64 @@
 
 @interface UAUser()
 
-// This device token represents the device token that is assigned to
-// a user and is represented on the UA Servers. It may or may not be in sync
-// with the device token on the UAPush object, which represents the token currently
-// on the device.
+/**
+ * Registers for device registration changes on UAPush
+ */
+- (void)registerForDeviceRegistrationChanges;
 
-//Device Token Change Listener
-- (void)listenForDeviceTokenReg;
-- (void)cancelListeningForDeviceToken;
-- (void)updateDefaultDeviceToken;
+/**
+ * Unregisters for device registration changes on UAPush
+ */
+- (void)unregisterForDeviceRegistrationChanges;
 
+/**
+ * Updates the user's device token and or channel id
+ */
+- (void)updateUser;
+
+/**
+ * Creates a user
+ */
+- (void)createUser;
+
+/**
+ * The user api client
+ */
 @property(nonatomic, strong) UAUserAPIClient *apiClient;
+
+/**
+ * Flag indicating if the user has been initialized
+ */
 @property(nonatomic, assign) BOOL initialized;
+
+/**
+ * The user name.
+ */
 @property(nonatomic, copy) NSString *username;
+
+/**
+ * The user's password.
+ */
 @property(nonatomic, copy) NSString *password;
+
+/**
+ * The user's url.
+ */
 @property(nonatomic, copy) NSString *url;
-@property(nonatomic, assign) BOOL isObservingDeviceToken;
+
+/**
+ * Flag indicating if the device registration changes are being observed or not
+ */
+@property(nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
+
+/**
+ *  The current app key
+ */
 @property(nonatomic, copy) NSString *appKey;
 
-//creation flag
+/**
+ * Flag indicating if the  user is being created
+ */
 @property(nonatomic, assign) BOOL creatingUser;
 
 @end
