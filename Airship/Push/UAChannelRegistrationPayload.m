@@ -45,6 +45,7 @@
         [payloadDictionary setValue:identityHints forKey:kUAChannelIdentityHintsKey];
     }
 
+    // Channel is a top level object containing channel related fields.
     NSMutableDictionary *channel = [NSMutableDictionary dictionary];
     [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
     [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
