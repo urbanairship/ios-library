@@ -61,7 +61,7 @@
         [channel setValue:ios forKey:kUAChanneliOSKey];
     }
 
-    [payloadDictionary setValue:channel forKey:kUAChannelChannelKey];
+    [payloadDictionary setValue:channel forKey:kUAChannelKey];
 
     return payloadDictionary;
 }

@@ -30,7 +30,7 @@
 #define kUAChannelUserIDKey @"user_id"
 #define kUAChannelDeviceIDKey @"device_id"
 
-#define kUAChannelChannelKey @"channel"
+#define kUAChannelKey @"channel"
 #define kUAChannelDeviceTypeKey @"device_type"
 #define kUAChannelOptInKey @"opt_in"
 #define kUAChannelPushAddressKey @"push-address"
