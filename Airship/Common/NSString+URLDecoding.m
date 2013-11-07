@@ -23,35 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "NSString+URLDecoding.h"
 
-@interface UAWebViewTools : NSObject
+@implementation NSString(URLDecoding)
 
-/**
- * Transforms a phone number URL into one that UIApplication can handle.
- *
- * @param url A phone number URL.
- * @return A new, sanitized NSURL instance.
- */
-+ (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url;
+- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding {
+    /*
+     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
+     */
 
-/**
- * Custom URL scheme handling, for app-specific URL navigation and callback logic.
- *
- * @param wv The webview loading the request.
- * @param request The request.
- * @param navigationType An enumeration of UIWebViewNavigationType.
- * @return `YES` if the URL should be loaded by the webView, `NO` otherwise.
- */
-+ (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
- navigationType:(UIWebViewNavigationType)navigationType;
+    CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
+                                                                                 (CFStringRef)self,
+                                                                                 CFSTR(""),
+                                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
 
-/**
- * Used for farming out JavaScript delegate callbacks.
- *
- * @param webView The webview originating the callback.
- * @param url The URL containing the callback arguments/options.
- */
-+ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
+    /* autoreleased string */
+    NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
+
+    return value;
+}
 
 @end

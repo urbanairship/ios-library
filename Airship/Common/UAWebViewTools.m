@@ -51,7 +51,7 @@
      ua://callbackArguments:withOptions:/[<arguments>][?<dictionary>]
      */
 
-    if ([[url scheme] isEqualToString:@"ua"] || [[url scheme] isEqualToString:@"ua-action"]) {
+    if ([[url scheme] isEqualToString:@"ua"]) {
         if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
             [self performJSDelegate:wv url:url];
             return NO;
@@ -164,11 +164,14 @@
     id <UAJavaScriptDelegate> internalJSDelegate = [UAirship shared].internalJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    if ([[url scheme] isEqualToString:@"ua-action"]) {
+    //reserve the run-action argument for ourselves
+    if (arguments.count && [[arguments objectAtIndex:0] isEqualToString:@"run-action"]) {
         [self performJSCallbackWithDelegate:internalJSDelegate withWebView:webView withArguments:arguments withOptions:options];
-    } else if ([[url scheme] isEqualToString:@"ua"]) {
-        [self performJSCallbackWithDelegate:inboxJSDelegate withWebView:webView withArguments:arguments withOptions:options];
+    } else {
+        //user JS delegate, if applicable
         [self performJSCallbackWithDelegate:userJSDDelegate withWebView:webView withArguments:arguments withOptions:options];
+        //deprecated inbox JS delegate, if applicable
+        [self performJSCallbackWithDelegate:inboxJSDelegate withWebView:webView withArguments:arguments withOptions:options];
     }
 }
 
@@ -185,22 +188,5 @@
         }
     }
 }
-
-+ (NSString *)urlDecodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding {
-    /*
-     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
-     */
-
-    CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
-                                                                                 (CFStringRef)string,
-                                                                                 CFSTR(""),
-                                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
-
-    /* autoreleased string */
-    NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
-
-    return value;
-}
-
 
 @end
