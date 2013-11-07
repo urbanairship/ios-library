@@ -26,14 +26,14 @@
 
 #import <Foundation/Foundation.h>
 
-#define kUAChannelDeviceTypeKey @"device_type"
-#define kUAChannelTransportKey @"transport"
-#define kUAChannelOptInKey @"opt_in"
-#define kUAChannelPushAddressKey @"push-address"
-
 #define kUAChannelIdentityHintsKey @"identity_hints"
 #define kUAChannelUserIDKey @"user_id"
 #define kUAChannelDeviceIDKey @"device_id"
+
+#define kUAChannelKey @"channel"
+#define kUAChannelDeviceTypeKey @"device_type"
+#define kUAChannelOptInKey @"opt_in"
+#define kUAChannelPushAddressKey @"push-address"
 
 #define kUAChanneliOSKey @"ios"
 #define kUAChannelBadgeJSONKey @"badge"

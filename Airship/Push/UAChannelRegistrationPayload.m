@@ -38,11 +38,6 @@
 - (NSDictionary *)payloadDictionary {
     NSMutableDictionary *payloadDictionary = [NSMutableDictionary dictionary];
 
-    [payloadDictionary setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
-    [payloadDictionary setValue:@"apns" forKey:kUAChannelTransportKey];
-    [payloadDictionary setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
-    [payloadDictionary setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
-
     if (self.deviceID || self.userID) {
         NSMutableDictionary *identityHints = [NSMutableDictionary dictionary];
         [identityHints setValue:self.userID forKey:kUAChannelUserIDKey];
@@ -50,18 +45,24 @@
         [payloadDictionary setValue:identityHints forKey:kUAChannelIdentityHintsKey];
     }
 
+    // Channel is a top level object containing channel related fields.
+    NSMutableDictionary *channel = [NSMutableDictionary dictionary];
+    [channel setValue:@"ios" forKey:kUAChannelDeviceTypeKey];
+    [channel setValue:[NSNumber numberWithBool:self.optedIn] forKey:kUAChannelOptInKey];
+    [channel setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
+    [channel setValue:self.alias forKey:kUAChannelAliasJSONKey];
+    [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:kUAChannelSetTagsKey];
+    [channel setValue:self.tags forKey:kUAChannelTagsJSONKey];
+
     if (self.badge || self.quietTime || self.timeZone) {
         NSMutableDictionary *ios = [NSMutableDictionary dictionary];
         [ios setValue:self.badge forKey:kUAChannelBadgeJSONKey];
         [ios setValue:self.quietTime forKey:kUAChannelQuietTimeJSONKey];
         [ios setValue:self.timeZone forKey:kUAChannelTimeZoneJSONKey];
-        [payloadDictionary setValue:ios forKey:kUAChanneliOSKey];
+        [channel setValue:ios forKey:kUAChanneliOSKey];
     }
 
-    [payloadDictionary setValue:self.alias forKey:kUAChannelAliasJSONKey];
-
-    [payloadDictionary setValue:[NSNumber numberWithBool:self.setTags] forKey:kUAChannelSetTagsKey];
-    [payloadDictionary setValue:self.tags forKey:kUAChannelTagsJSONKey];
+    [payloadDictionary setValue:channel forKey:kUAChannelKey];
 
     return payloadDictionary;
 }
