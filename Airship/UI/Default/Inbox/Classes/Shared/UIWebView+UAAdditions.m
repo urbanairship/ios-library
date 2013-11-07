@@ -79,10 +79,65 @@
     js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
 
     /*
-     * Define UAirship.handleCustomURL.
+     * Define UAirship.invoke.
      */
     js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
 
+    /*
+     * Define UAirship.callback.
+     */
+
+    //note: there has to be a better way of doing this
+    NSString *callback = @"UAirship.callback = function() { \
+          var args = arguments; \
+          var uri = []; \
+          var dict = null; \
+          \
+          for (var i = 0; i < args.length; i++) { \
+          \
+              var arg = args[i]; \
+          \
+              if (arg == undefined || arg == null) { \
+                  arg = ''; \
+              } \
+          \
+              if (typeof(arg) == 'object') { \
+                  dict = arg; \
+              } else { \
+                  uri.push(encodeURIComponent(arg)); \
+              } \
+          } \
+          \
+          var url = 'ua://callbackArguments:withOptions:/' + uri.join('/'); \
+          \
+          if (dict != null) { \
+              var query_args = []; \
+              for (var name in dict) { \
+                  if (typeof(name) != 'string') { \
+                      continue; \
+                  } \
+                  query_args.push(encodeURIComponent(name) + '=' + encodeURIComponent(dict[name])); \
+              } \
+              \
+              if (query_args.length > 0) { \
+                  url += '?' + query_args.join('&'); \
+              } \
+          } \
+          \
+          UAirship.invoke(url);\
+          };";
+
+    js = [js stringByAppendingString:callback];
+
+    /*
+     * Define UAirship.runAction.
+     */
+    js = [js stringByAppendingString:@"UAirship.runAction = function(actionName, argument) { \
+          var opt = {}; \
+          opt[actionName] = JSON.stringify(argument); \
+          UAirship.callback('run-action', opt); \
+          }" \
+    ];
     /*
      * Execute the JS we just constructed.
      */
