@@ -326,20 +326,17 @@ NSDictionary *notification;
                           @"Quiet time end is not set correctly");
 
 
-    // Test setting timezone to MST (Mountain Standard Time)
+    // Test setting timezone to -5 GMT
     [[UAPush shared] setQuietTimeFrom:start
                                    to:end
-                         withTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"MST"]];
-
-    XCTAssertEqualObjects(@"MST", [[UAPush shared].timeZone abbreviation],
-                          @"Timezone should be set to the timezone in quiet time");
+                         withTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:-3600*5]];
 
     quietTime = [UAPush shared].quietTime;
-    XCTAssertEqualObjects(@"17:01", [quietTime valueForKey:UAPushQuietTimeStartKey],
-                          @"Quiet time start is not set handling timezone correctly");
+    XCTAssertEqualObjects(@"19:01", [quietTime valueForKey:UAPushQuietTimeStartKey],
+                          @"Quiet time start is not set handling timezone to -5 GMT correctly");
 
-    XCTAssertEqualObjects(@"6:00", [quietTime valueForKey:UAPushQuietTimeEndKey],
-                          @"Quiet time end is not set handling timezone correctly");
+    XCTAssertEqualObjects(@"8:00", [quietTime valueForKey:UAPushQuietTimeEndKey],
+                          @"Quiet time end is not set handling timezone to -5 GMT correctly");
 }
 
 - (void)testSetQuietTimeFromToNoTimeZone {
