@@ -1,6 +1,8 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
+
 /**
  * A standard protocol for accessing native Objective-C functionality from webview
  * content.
@@ -29,6 +31,9 @@
  * the UACallback.js file that ships with the sample project.
  */
 @required
-- (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options;
+
+- (void)callbackArguments:(NSArray *)args
+              withOptions:(NSDictionary *)options
+    withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler;
 
 @end

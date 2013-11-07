@@ -40,7 +40,9 @@
     return jsonDecodedArgs;
 }
 
-- (NSString *)callbackArguments:(NSArray *)args withOptions:(NSDictionary *)options {
+- (void)callbackArguments:(NSArray *)args
+                    withOptions:(NSDictionary *)options
+          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     UA_LDEBUG(@"internal js delegate arguments: %@ \n options: %@", args, options);
 
     if (args.count && [[args objectAtIndex:0] isEqualToString:@"run-action"]) {
@@ -83,10 +85,10 @@
         } else {
             script = @"UAListener.error = 'Callback from ObjC failed'; UAListener.onError();";
         }
-        return script;
+        completionHandler(script);
     }
 
-    return nil;
+    completionHandler(nil);
 }
 
 @end
