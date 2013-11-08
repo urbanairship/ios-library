@@ -45,24 +45,11 @@
 
 // A URL: https://sbux-dl-staging.urbanairship.com/binary/public/kwG7rEc3Tz6542jxYJ4eWA/da67242f-a22c-440c-a270-1a78e0917334
 
-// a utility method that grabs the top-most view controller
-+ (UIViewController *)topController {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-
-    while (topController.presentedViewController) {
-        topController = topController.presentedViewController;
-    }
-
-    return topController;
-}
-
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSString *situation = arguments.situation;
     NSURL *kablamURL = [NSURL URLWithString:arguments.value];
-
-    UIViewController *topController = [UAKablamAction topController];
 
     NSArray *displaySituations = @[UASituationForegroundPush,
                                     UASituationLaunchedFromPush,
@@ -71,9 +58,9 @@
     if ([displaySituations containsObject:situation]) {
         // show the widget, then load
         if (self.modal) {
-            [UAKablamViewController showInsideViewController:topController withURL:kablamURL];
+            [UAKablamViewController showURL:kablamURL];
         } else {
-            [UAKablamOverlayController showWindowInsideViewController:topController withURL:kablamURL];
+            [UAKablamOverlayController showURL:kablamURL];
         }
 
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);

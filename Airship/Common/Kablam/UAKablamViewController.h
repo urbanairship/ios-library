@@ -46,7 +46,7 @@
  */
 @property(nonatomic, strong) NSURL *url;
 
-+ (void)showInsideViewController:(UIViewController *)viewController withURL:(NSURL *)url;
++ (void)showURL:(NSURL *)url;
 
 /**
  * Initializer, creates an overlay window and loads the given content within a particular view controller.

@@ -75,14 +75,29 @@ static NSMutableSet *overlayControllers = nil;
 @implementation UAKablamViewController
 
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
-+ (void)showInsideViewController:(UIViewController *)viewController withURL:(NSURL *)url {
-    UAKablamViewController *overlayController = [[UAKablamViewController alloc] initWithParentViewController:viewController andURL:url];
++ (void)showURL:(NSURL *)url {
+
+    UIViewController *topController = [UAKablamViewController topController];
+
+    UAKablamViewController *overlayController = [[UAKablamViewController alloc] initWithParentViewController:topController andURL:url];
 
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:overlayController];
     navController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [viewController presentViewController:navController animated:YES completion:NULL];
+    [topController presentViewController:navController animated:YES completion:NULL];
 
     [overlayController loadURL:url];
+}
+
+
+// a utility method that grabs the top-most view controller
++ (UIViewController *)topController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+
+    return topController;
 }
 
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
