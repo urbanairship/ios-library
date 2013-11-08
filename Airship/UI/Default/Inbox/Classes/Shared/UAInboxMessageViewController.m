@@ -161,7 +161,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL: self.message.messageBodyURL];
     
-    [requestObj setTimeoutInterval:5];
+    [requestObj setTimeoutInterval:60];
     
     NSString *auth = [UAUtils userAuthHeaderString];
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];

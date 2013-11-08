@@ -158,7 +158,7 @@ static NSMutableSet *overlayControllers = nil;
     NSString *auth = [UAUtils userAuthHeaderString];
     
     [requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-    [requestObj setTimeoutInterval:5];
+    [requestObj setTimeoutInterval:60];
     
     [self.webView stopLoading];
     [self.webView loadRequest:requestObj];
