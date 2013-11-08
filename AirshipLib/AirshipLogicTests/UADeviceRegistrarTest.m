@@ -294,7 +294,7 @@ UADeviceRegistrar *registrar;
 
 /**
  * Test that registering when a pending request is in progress does not make
- * a second request
+ * a second request.
  */
 - (void)testRegisterPendingRequest {
     // Expect the channel client to create a channel and not call either block so the
@@ -326,7 +326,7 @@ UADeviceRegistrar *registrar;
 }
 
 /**
- * Test registerPushdDisabledWithChannelID with valid channel ID when the 
+ * Test registerPushDisabledWithChannelID with valid channel ID when the
  * request succeeds.
  */
 - (void)testRegisterPushDisabledWithChannelID {
@@ -355,8 +355,8 @@ UADeviceRegistrar *registrar;
 }
 
 /**
- * Test registerPushdDisabledWithChannelID with valid channel ID when the 
- * request fails
+ * Test registerPushDisabledWithChannelID with valid channel ID when the
+ * request fails.
  */
 - (void)testRegisterPushDisabledWithChannelIDFails {
     [[[mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
@@ -384,7 +384,7 @@ UADeviceRegistrar *registrar;
 
 
 /**
- * Test registerPushdDisabledWithChannelID with the same payload as the
+ * Test registerPushDisabledWithChannelID with the same payload as the
  * previous successful payload.
  */
 - (void)testRegisterPushDisabledWithChannelIDSameAsPreviousSuccessPayload {
@@ -425,13 +425,13 @@ UADeviceRegistrar *registrar;
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
-    XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip");
+    XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip.");
     XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
- * Test registerPushdDisabledWithChannelID without a channel id
- * tries to create a channel
+ * Test registerPushDisabledWithChannelID without a channel id
+ * tries to create a channel.
  */
 - (void)testRegisterPushDisabledNoChannelID {
     //Expect the channel client to create a channel and call success block

@@ -232,7 +232,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         [self saveUserData];
 
         //if we didnt send a device token or a channel on creation, try again
-        if (![payload valueForKey:@"device_tokens"] || ![payload valueForKey:@"channel_ids"]) {
+        if (![payload valueForKey:@"device_tokens"] || ![payload valueForKey:@"ios_channel_ids"]) {
             [self updateUser];
         }
 
