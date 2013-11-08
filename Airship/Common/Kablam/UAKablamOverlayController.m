@@ -72,6 +72,8 @@ static NSMutableSet *overlayControllers = nil;
 - (void)orientationChanged:(NSNotification *)notification;
 - (void)removeChildViews;
 
++ (UIViewController *)topController;
+
 /**
  * The UIWebView used to display the message content.
  */
@@ -97,18 +99,35 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-// While this breaks from convention, it does not actually leak. Turning off analyzer warnings
-+ (void)showWindowInsideViewController:(UIViewController *)viewController withURL:(NSURL *)url {
-    UAKablamOverlayController *overlayController = [[UAKablamOverlayController alloc] initWithParentViewController:viewController andURL:url];
++ (void)showURL:(NSURL *)url {
+
+    //close existing windows
+    [UAKablamOverlayController closeWindow];
+
+    // get the top view controller
+    UIViewController *topController = [UAKablamOverlayController topController];
+
+    UAKablamOverlayController *overlayController = [[UAKablamOverlayController alloc] initWithParentViewController:topController andURL:url];
     [overlayControllers addObject:overlayController];
 
     [overlayController loadURL:url];
 }
 
-+ (void)closeAllWindows {
++ (void)closeWindow {
     for (UAKablamOverlayController *oc in overlayControllers) {
         [oc closePopupWindow];
     }
+}
+
+// a utility method that grabs the top-most view controller
++ (UIViewController *)topController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+
+    return topController;
 }
 
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
@@ -130,7 +149,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
         self.webView.delegate = self;
-        [self.webView setDataDetectorTypes:UIDataDetectorTypeAll];
+        self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
         
         //hack to hide the ugly webview gradient
         for (UIView *subView in [self.webView subviews]) {
@@ -150,7 +169,8 @@ static NSMutableSet *overlayControllers = nil;
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(orientationChanged:) 
-                                                     name:UIDeviceOrientationDidChangeNotification object:nil];
+                                                     name:UIDeviceOrientationDidChangeNotification
+                                                   object:nil];
     }
     
     return self;
@@ -169,19 +189,12 @@ static NSMutableSet *overlayControllers = nil;
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
     // No auth required here:
-    //
-    //NSString *auth = [UAUtils userAuthHeaderString];
-    //[requestObj setValue:auth forHTTPHeaderField:@"Authorization"];
-
+    // TODO: add an auth enum to the overlay, so it can be set by the caller?
     [requestObj setTimeoutInterval:30];
     
     [self.webView stopLoading];
     [self.webView loadRequest:requestObj];
     [self performSelector:@selector(displayWindow) withObject:nil afterDelay:0.1];
-}
-
-- (BOOL)shouldTransition {
-    return [UIView respondsToSelector:@selector(transitionFromView:toView:duration:options:completion:)];
 }
 
 - (void)constructWindow {
@@ -211,8 +224,6 @@ static NSMutableSet *overlayControllers = nil;
     background.center = CGPointMake(self.bigPanelView.frame.size.width/2.0, self.bigPanelView.frame.size.height/2.0);
     [self.bigPanelView addSubview:background];
 
-
-
     //add the web view
     NSInteger webOffset = 0;
     self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
@@ -220,7 +231,7 @@ static NSMutableSet *overlayControllers = nil;
 
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-    [self.bigPanelView addSubview: self.webView];
+    [self.bigPanelView addSubview:self.webView];
     
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
@@ -265,38 +276,34 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)displayWindow {
-    
-    if ([self shouldTransition]) {
-        //faux view
-        UIView *fauxView = [[UIView alloc] initWithFrame: self.bgView.bounds];
-        fauxView.autoresizesSubviews = YES;
-        fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        [self.bgView addSubview:fauxView];
-        
-        //animation options
-        UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
-                                         UIViewAnimationOptionAllowUserInteraction    |
-                                         UIViewAnimationOptionBeginFromCurrentState;
-        
-        [self constructWindow];
-        
-        //run the animation
-        [UIView transitionFromView:fauxView toView:self.bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
-            
-            //dim the contents behind the popup window
-            UIView *shadeView = [[UIView alloc] initWithFrame:self.bigPanelView.bounds];
-            shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            shadeView.backgroundColor = [UIColor blackColor];
-            shadeView.alpha = 0.3;
-            shadeView.tag = kShadeViewTag;
 
-            [self.bigPanelView addSubview:shadeView];
-            [self.bigPanelView sendSubviewToBack:shadeView];
-        }];
-    } else {
-        [self constructWindow];
-        [self.bgView addSubview:self.bigPanelView];
-    }
+    //faux view
+    UIView *fauxView = [[UIView alloc] initWithFrame: self.bgView.bounds];
+    fauxView.autoresizesSubviews = YES;
+    fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.bgView addSubview:fauxView];
+    
+    //animation options
+    UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
+                                     UIViewAnimationOptionAllowUserInteraction    |
+                                     UIViewAnimationOptionBeginFromCurrentState;
+    
+    [self constructWindow];
+    
+    //run the animation
+    [UIView transitionFromView:fauxView toView:self.bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
+        
+        //dim the contents behind the popup window
+        UIView *shadeView = [[UIView alloc] initWithFrame:self.bigPanelView.bounds];
+        shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        shadeView.backgroundColor = [UIColor blackColor];
+        shadeView.alpha = 0.3;
+        shadeView.tag = kShadeViewTag;
+
+        [self.bigPanelView addSubview:shadeView];
+        [self.bigPanelView sendSubviewToBack:shadeView];
+    }];
+
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
@@ -337,29 +344,23 @@ static NSMutableSet *overlayControllers = nil;
  * Removes all views from the hierarchy and releases self
  */
 - (void)finish {
-    
-    if ([self shouldTransition]) {
-        
-        //faux view
-        UIView *fauxView = [[UIView alloc] initWithFrame: CGRectMake(10, 10, 200, 200)];
-        [self.bgView addSubview:fauxView];
-        
-        //run the animation
-        UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
-                                            UIViewAnimationOptionAllowUserInteraction |
-                                            UIViewAnimationOptionBeginFromCurrentState;
 
-        [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
-            [self removeChildViews];
-            self.bigPanelView = nil;
-            [self.bgView removeFromSuperview];
-            [overlayControllers removeObject:self];
-        }];
-    } else {
+    //faux view
+    UIView *fauxView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 200)];
+    [self.bgView addSubview:fauxView];
+    
+    //run the animation
+    UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
+                                        UIViewAnimationOptionAllowUserInteraction |
+                                        UIViewAnimationOptionBeginFromCurrentState;
+
+    [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
         [self removeChildViews];
+        self.bigPanelView = nil;
         [self.bgView removeFromSuperview];
         [overlayControllers removeObject:self];
-    }
+    }];
+
 }
 
 
