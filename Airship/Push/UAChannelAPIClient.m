@@ -169,6 +169,8 @@
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     [request appendBodyData:[payload asJSONData]];
 
+    UA_LTRACE(@"Request to update channel with payload: %@", [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
+
     return request;
 }
 
@@ -185,6 +187,8 @@
     [request addRequestHeader:@"Accept" value:@"application/vnd.urbanairship+json; version=3;"];
     [request addRequestHeader: @"Content-Type" value: @"application/json"];
     [request appendBodyData:[payload asJSONData]];
+
+    UA_LTRACE(@"Request to create channel with payload: %@", [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding]);
 
     return request;
 }
