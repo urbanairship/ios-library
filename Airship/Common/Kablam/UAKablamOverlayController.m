@@ -150,6 +150,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.opaque = NO;
         self.webView.delegate = self;
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
+        self.webView.scalesPageToFit = YES;
         
         //hack to hide the ugly webview gradient
         for (UIView *subView in [self.webView subviews]) {
@@ -377,7 +378,11 @@ static NSMutableSet *overlayControllers = nil;
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [self.loadingIndicator hide];
 
+
     [self.webView injectViewportFix];
+
+
+
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
