@@ -269,9 +269,15 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-    self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [self invalidateUserUpdateBackgroundTask];
-    }];
+    UA_LTRACE(@"user update background task is %lu", (unsigned long)self.userUpdateBackgroundTask);
+
+    if (self.userUpdateBackgroundTask == UIBackgroundTaskInvalid) {
+        self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [self invalidateUserUpdateBackgroundTask];
+        }];
+
+        UA_LTRACE(@"Begin user update background task %lu", (unsigned long)self.userUpdateBackgroundTask);
+    }
 
     [self.apiClient updateUser:self.username
                    deviceToken:deviceToken
