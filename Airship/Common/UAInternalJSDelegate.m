@@ -2,7 +2,8 @@
 #import "UAInternalJSDelegate.h"
 #import "UAGlobal.h"
 
-#import "NSString+URLDecoding.h"
+#import "NSJSONSerialization+UAAdditions.h"
+#import "NSString+URLEncoding.h"
 
 #import "UAActionRunner.h"
 
@@ -41,18 +42,23 @@
 }
 
 - (void)callbackArguments:(NSArray *)args
-                    withOptions:(NSDictionary *)options
-          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+              withOptions:(NSDictionary *)options
+    withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     UA_LDEBUG(@"internal js delegate arguments: %@ \n options: %@", args, options);
 
     if (args.count && [[args objectAtIndex:0] isEqualToString:@"run-action"]) {
 
         NSArray *keys = [options allKeys];
-        NSMutableArray *actions = [NSMutableArray array];
 
-        BOOL hasError = NO;
+        if (keys.count) {
+            NSString *callbackID = [options valueForKey:@"callbackID"];
+            NSString *actionName;
+            if ([[keys objectAtIndex:0] isEqualToString:@"callbackID"]) {
+                actionName = [keys objectAtIndex:1];
+            } else {
+                actionName = [keys objectAtIndex:0];
+            }
 
-        for (NSString *actionName in keys) {
             UAAction *action = [self actionForEncodedName:actionName];
             NSString *encodedArgumentsValue = [options valueForKey:actionName];
             id decodedArgumentsValue;
@@ -65,30 +71,48 @@
             if (action && (decodedArgumentsValue || !encodedArgumentsValue)) {
                 UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                         withSituation:UASituationRichPushAction];
-                [actions addObject:@[action, actionArgs]];
-            } else {
-                hasError = YES;
-            }
-        }
+                [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+                    if (result.error){
+                        UA_LDEBUG(@"action %@ completed with an error", actionName);
+                        if (callbackID) {
+                            NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');", result.error.localizedDescription, callbackID];
+                            completionHandler(script);
+                        }
+                    } else {
+                        UA_LDEBUG(@"action %@ completed successfully", actionName);
+                        if (callbackID) {
+                            NSString *resultString;
+                            if (result.value) {
+                                resultString = [NSJSONSerialization stringWithObject:result.value];
+                            }
 
-        NSString *script = nil;
-        if (!hasError) {
-            for (NSArray *pair in actions) {
-                UAAction *action = [pair objectAtIndex:0];
-                UAActionArguments *args = [pair objectAtIndex:1];
-
-                [UAActionRunner runAction:action withArguments:args withCompletionHandler:^(UAActionResult *result){
-                    UA_LINFO(@"Action completed");
+                            resultString = resultString ?: @"null";
+                            NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
+                            completionHandler(script);
+                        }
+                    }
                 }];
+            } else {
+                //we'll probably eventually want to pass different kinds of errors
+                if (callbackID) {
+                    NSString *errorString;
+                    if (!action) {
+                        errorString = [NSString stringWithFormat:@"Unable to retrieve action named %@", actionName];
+                    } else if (!decodedArgumentsValue) {
+                        errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
+                    }
+                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
+                    completionHandler(script);
+                }
             }
-            script = @"UAListener.result = 'Callback from ObjC succeeded'; UAListener.onSuccess();";
         } else {
-            script = @"UAListener.error = 'Callback from ObjC failed'; UAListener.onError();";
+            UA_LDEBUG(@"Unable to parse options");
         }
-        completionHandler(script);
-    }
 
-    completionHandler(nil);
+    } else {
+        //args not recognized, pass a nil script result
+        completionHandler(nil);
+    }
 }
 
 @end
