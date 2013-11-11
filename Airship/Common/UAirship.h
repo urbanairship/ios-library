@@ -86,9 +86,9 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
 
 /**
- * The default (readonly) JavaScript delegate.
+ * The internal (readonly) JavaScript delegate for running actions.
  */
-@property (nonatomic, strong, readonly) id<UAJavaScriptDelegate> internalJSDelegate;
+@property (nonatomic, strong, readonly) id<UAJavaScriptDelegate> actionJSDelegate;
 
 
 ///---------------------------------------------------------------------------------------

@@ -161,15 +161,18 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
 #pragma clang diagnostic pop
-    id <UAJavaScriptDelegate> internalJSDelegate = [UAirship shared].internalJSDelegate;
+    id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
     //reserve the run-action argument for ourselves
-    if (arguments.count && [[arguments objectAtIndex:0] isEqualToString:@"run-action"]) {
-        [self performAsyncJSCallbackWithDelegate:internalJSDelegate
-                                     withWebView:webView
-                                   withArguments:arguments
-                                     withOptions:options];
+    if (arguments.count){
+        NSString *firstArg = [arguments objectAtIndex:0];
+        if ([firstArg isEqualToString:@"run-action"] || [firstArg isEqualToString:@"basic-action"]) {
+            [self performAsyncJSCallbackWithDelegate:actionJSDelegate
+                                         withWebView:webView
+                                       withArguments:arguments
+                                         withOptions:options];
+        }
     } else {
         //user JS delegate, if applicable
         [self performAsyncJSCallbackWithDelegate:userJSDDelegate

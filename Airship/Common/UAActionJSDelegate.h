@@ -2,6 +2,6 @@
 #import <Foundation/Foundation.h>
 #import "UAJavaScriptDelegate.h"
 
-@interface UAInternalJSDelegate : NSObject<UAJavaScriptDelegate>
+@interface UAActionJSDelegate : NSObject<UAJavaScriptDelegate>
 
 @end
