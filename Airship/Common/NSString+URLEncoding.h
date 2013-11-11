@@ -23,24 +23,11 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSString+URLDecoding.h"
+#import <Foundation/Foundation.h>
 
-@implementation NSString(URLDecoding)
+@interface NSString(URLEncoding)
 
-- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding {
-    /*
-     * Taken from http://madebymany.com/blog/url-encoding-an-nsstring-on-ios
-     */
-
-    CFStringRef result = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL,
-                                                                                 (CFStringRef)self,
-                                                                                 CFSTR(""),
-                                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
-
-    /* autoreleased string */
-    NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
-
-    return value;
-}
+- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding;
+- (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding;
 
 @end
