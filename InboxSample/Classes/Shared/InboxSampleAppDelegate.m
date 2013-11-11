@@ -80,7 +80,7 @@
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
     UAKablamAction *kablamAction = [[UAKablamAction alloc] init];
-    [[UAActionRegistrar shared] registerAction:kablamAction name:@"kablam" alias:@"^k"];
+    [[UAActionRegistrar shared] registerAction:kablamAction names:@[@"kablam", @"^k"]];
 
     [UAPush shared].tags = @[@"kablam"];
 
