@@ -115,7 +115,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
 
 
         self.initialized = YES;
-                
+        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
     }
 }
 
@@ -269,17 +269,30 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         return;
     }
 
-
+    self.userUpdateBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        [self invalidateUserUpdateBackgroundTask];
+    }];
 
     [self.apiClient updateUser:self.username
                    deviceToken:deviceToken
                      channelID:channelID
                      onSuccess:^{
                          UA_LINFO(@"User updated successfully");
+                         [self invalidateUserUpdateBackgroundTask];
                      }
                      onFailure:^(UAHTTPRequest *request) {
                          UA_LDEBUG(@"Failed to update user");
+                         [self invalidateUserUpdateBackgroundTask];
                      }];
+}
+
+- (void)invalidateUserUpdateBackgroundTask {
+    if (self.userUpdateBackgroundTask != UIBackgroundTaskInvalid) {
+        UA_LTRACE(@"Ending user update background task %lu", (unsigned long)self.userUpdateBackgroundTask);
+
+        [[UIApplication sharedApplication] endBackgroundTask:self.userUpdateBackgroundTask];
+        self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
+    }
 }
 
 #pragma mark -
