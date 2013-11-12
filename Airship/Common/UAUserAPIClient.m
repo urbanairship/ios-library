@@ -69,7 +69,7 @@
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
 
     if (channelID.length) {
-        [payload setObject:@[channelID] forKey:@"channel_ids"];
+        [payload setObject:@[channelID] forKey:@"ios_channel_ids"];
     } else if (deviceToken.length) {
         [payload setObject:@[deviceToken] forKey:@"device_tokens"];
     }
@@ -120,7 +120,7 @@
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
     if (channelID.length) {
-        [payload setValue:@{@"add": @[channelID]} forKey:@"channel_ids"];
+        [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channel_ids"];
 
         if (deviceToken.length) {
             [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
@@ -129,7 +129,7 @@
         [payload setValue:@{@"add": @[deviceToken]} forKey:@"device_tokens"];
     }
 
-    UAHTTPRequest *request = [self requestToUpdateWithPaylod:payload
+    UAHTTPRequest *request = [self requestToUpdateUserWithPayload:payload
                                                  forUsername:username];
 
     [self.requestEngine runRequest:request succeedWhere:^(UAHTTPRequest *request) {
@@ -173,7 +173,7 @@
     return request;
 }
 
-- (UAHTTPRequest *)requestToUpdateWithPaylod:(NSDictionary *)payload
+- (UAHTTPRequest *)requestToUpdateUserWithPayload:(NSDictionary *)payload
                                  forUsername:(NSString *)username {
 
     NSString *updateUrlString = [NSString stringWithFormat:@"%@%@%@/",
@@ -192,7 +192,7 @@
     NSString *body = [NSJSONSerialization stringWithObject:payload];
     [request appendBodyData:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    UA_LTRACE(@"Request to update user with content: %@", body);
+    UA_LTRACE(@"Request to update user with body: %@", body);
     
     return request;
 }

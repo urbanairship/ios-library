@@ -33,7 +33,7 @@
 #define kUAChannelKey @"channel"
 #define kUAChannelDeviceTypeKey @"device_type"
 #define kUAChannelOptInKey @"opt_in"
-#define kUAChannelPushAddressKey @"push-address"
+#define kUAChannelPushAddressKey @"push_address"
 
 #define kUAChanneliOSKey @"ios"
 #define kUAChannelBadgeJSONKey @"badge"
