@@ -67,7 +67,9 @@
     } else if ([situation isEqualToString:UASituationBackgroundPush]) {
         // pre-cache. set pending-kablam flag
 
-        [UAPushActionArguments addPendingSpringBoardAction:@"kablam" value:arguments.value];
+        //TODO: plan for this... we may want to schedule for springboard, but cancel it if the displayable view
+        //is launched
+        //[UAPushActionArguments addPendingSpringBoardAction:@"kablam" value:arguments.value];
 
         // set cachable url
         [UAURLProtocol addCachableURL:kablamURL];
