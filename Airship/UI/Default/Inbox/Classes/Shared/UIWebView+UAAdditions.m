@@ -79,65 +79,19 @@
     js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
 
     /*
-     * Define UAirship.invoke.
+     * Define action/native bridge functionality:
+     *
+     * UAirship.callbackURL,
+     * UAirship.invoke,
+     * UAirship.runAction,
+     * UAirship.finishAction
+     *
+     * See Airship/Common/UANativeBridge.js for uniminified, unescaped source
      */
-    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
+    NSString *bridge = @"var id=0;UAirship.callbackURL=function(){var e=arguments;var t=[];var n=null;for(var r=0;r<e.length;r++){var i=e[r];if(i==undefined||i==null){i=\"\"}if(typeof i==\"object\"){n=i}else{t.push(encodeURIComponent(i))}}var s=\"ua://callbackArguments:withOptions:/\"+t.join(\"/\");if(n!=null){var o=[];for(var u in n){if(typeof u!=\"string\"){continue}o.push(encodeURIComponent(u)+\"=\"+encodeURIComponent(n[u]))}if(o.length>0){s+=\"?\"+o.join(\"&\")}}return s};UAirship.invoke=function(e){var t=document.createElement(\"iframe\");t.style.display=\"none\";t.src=e;document.body.appendChild(t);t.parentNode.removeChild(t)};UAirship.runAction=function(e,t,n){function o(e,t){delete window[i];try{n(e,JSON.parse(t))}catch(e){}}var r={};id++;var i=\"ua-cb-\"+id;r[e]=JSON.stringify(t);var s=UAirship.callbackURL(\"run-action\",i,r);window[i]=o;UAirship.invoke(s)};UAirship.finishAction=function(e,t,n){if(n in window){var r=window[n];r(e,t)}}";
 
-    /*
-     * Define UAirship.callback.
-     */
+    js = [js stringByAppendingString:bridge];
 
-    //note: there has to be a better way of doing this
-    NSString *callback = @"UAirship.callback = function() { \
-          var args = arguments; \
-          var uri = []; \
-          var dict = null; \
-          \
-          for (var i = 0; i < args.length; i++) { \
-          \
-              var arg = args[i]; \
-          \
-              if (arg == undefined || arg == null) { \
-                  arg = ''; \
-              } \
-          \
-              if (typeof(arg) == 'object') { \
-                  dict = arg; \
-              } else { \
-                  uri.push(encodeURIComponent(arg)); \
-              } \
-          } \
-          \
-          var url = 'ua://callbackArguments:withOptions:/' + uri.join('/'); \
-          \
-          if (dict != null) { \
-              var query_args = []; \
-              for (var name in dict) { \
-                  if (typeof(name) != 'string') { \
-                      continue; \
-                  } \
-                  query_args.push(encodeURIComponent(name) + '=' + encodeURIComponent(dict[name])); \
-              } \
-              \
-              if (query_args.length > 0) { \
-                  url += '?' + query_args.join('&'); \
-              } \
-          } \
-          \
-          UAirship.invoke(url);\
-          };";
-
-    js = [js stringByAppendingString:callback];
-
-    /*
-     * Define UAirship.runAction.
-     */
-    js = [js stringByAppendingString:@"UAirship.runAction = function(actionName, argument) { \
-          var opt = {}; \
-          opt[actionName] = JSON.stringify(argument); \
-          UAirship.callback('run-action', opt); \
-          }" \
-    ];
     /*
      * Execute the JS we just constructed.
      */
