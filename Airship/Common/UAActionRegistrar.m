@@ -27,10 +27,6 @@
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
 #import "UAIncomingRichPushAction.h"
-#import "UAOpenExternalURLAction.h"
-#import "UAAddTagsAction.h"
-#import "UARemoveTagsAction.h"
-#import "UASetTagsAction.h"
 
 
 @implementation UAActionRegistrar
@@ -251,34 +247,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     // Incoming RAP action
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
     [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
-
-    // Open external URL predicate
-    UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
-        return [args.situation isEqualToString:UASituationLaunchedFromPush];
-    };
-
-    // Open external URL action
-    UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
-    [self registerAction:urlAction
-                    names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
-               predicate:urlPredicate];
-
-
-    UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
-    [self registerAction:addTagsAction
-                    names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
-
-
-    UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
-    [self registerAction:removeTagsAction
-                    names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
-
-
-    UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
-    [self registerAction:setTagsAction
-                    names:@[kUASetTagsActionDefaultRegistryName, kUASetTagsActionDefaultRegistryAlias]];
 }
-
-
 
 @end
