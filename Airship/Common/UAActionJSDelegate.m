@@ -57,8 +57,7 @@
             decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
         }
 
-        //we have enough to work with as long as there's an action to run, and either no encoded args
-        //or properly decoded args
+        //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (action && (decodedArgumentsValue || !encodedArgumentsValue)) {
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationRichPushAction];
@@ -66,7 +65,10 @@
                 if (result.error){
                     UA_LDEBUG(@"action %@ completed with an error", actionName);
                     if (callbackID) {
-                        NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');", result.error.localizedDescription, callbackID];
+                        //pass the error description back into JS wrapped in an Error object
+                        NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');",
+                                            result.error.localizedDescription,
+                                            callbackID];
                         completionHandler(script);
                     }
                 } else {
@@ -74,10 +76,12 @@
                     if (callbackID) {
                         NSString *resultString;
                         if (result.value) {
+                            //if the action completed with a result value, serialize into JSON
                             resultString = [NSJSONSerialization stringWithObject:result.value];
                         }
-
+                        //in the case where there is no result value, pass null
                         resultString = resultString ?: @"null";
+                        //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
                         NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
                         completionHandler(script);
                     }
@@ -103,7 +107,7 @@
 
 - (void)basicActionWithOptions:(NSDictionary *)options
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    
+
     for (NSString *actionName in options) {
         UAAction *action = [self actionForEncodedName:actionName];
         NSString *encodedArgumentsValue = [options objectForKey:actionName];
@@ -111,6 +115,7 @@
 
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationRichPushAction];
 
+        //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (action && (!encodedArgumentsValue || decodedArgumentsValue)) {
             [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.error) {
@@ -126,11 +131,15 @@
 - (void)callbackArguments:(NSArray *)args
               withOptions:(NSDictionary *)options
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    UA_LDEBUG(@"internal js delegate arguments: %@ \n options: %@", args, options);
+    UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", args, options);
 
+    //we need at least one argument
     if (args.count){
+        //run-action is the full js/callback interface
         if ([[args objectAtIndex:0] isEqualToString:@"run-action"]) {
             NSString *callbackID;
+            //the callbackID is optional, if present we can make an async callback
+            //into the JS environment, otherwise we'll just run the action to completion
             if (args.count > 1) {
                 callbackID = [args objectAtIndex:1];
             }
@@ -138,6 +147,8 @@
                               withOptions:options
                     withCompletionHandler:completionHandler];
         } else if ([[args objectAtIndex:0] isEqualToString:@"basic-action"]) {
+            //basic-action is the 'demo-friendly' version with implicit string argument values and
+            //allows multiple simultaneous actions
             [self basicActionWithOptions:options withCompletionHandler:completionHandler];
         }
     } else {
