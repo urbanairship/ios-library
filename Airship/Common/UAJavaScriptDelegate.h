@@ -1,6 +1,10 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * A completion handler used to pass the result of a UAJavaScriptDelegate callback.
+ * The value passed may be nil.
+ */
 typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
 
 /**
@@ -11,9 +15,11 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
  */
 @protocol UAJavaScriptDelegate <NSObject>
 
+@required
+
 /**
  * Delegates must implement this method. Implementations take an array of string arguments
- * and a dictionary of key-value pairs (all strings), process them, and return a string
+ * and a dictionary of key-value pairs (all strings), process them, and pass a string
  * containing Javascript that will be evaluated in a message's UIWebView.
  *
  * To pass information to the delegate from a message, insert links with a "ua" scheme,
@@ -27,11 +33,13 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
  * options {option1:one, option2:two, option3:three}:
  * ua://callback/arg1/arg2/arg3?option1=one&amp;option2=two&amp;option3=three
  *
- * The default implementation is UAInboxDefaultJSDelegate. It is designed to work with
- * the UACallback.js file that ships with the sample project.
+ * The default, internal implementation is UAActionJSDelegate.
+ *
+ * @param args An array of argument values
+ * @param options A dictionary of key/value query parameters
+ * @param completionHandler A completion handler to be called with the resulting
+ * string to be executed back in the JS environment.
  */
-@required
-
 - (void)callbackArguments:(NSArray *)args
               withOptions:(NSDictionary *)options
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler;
