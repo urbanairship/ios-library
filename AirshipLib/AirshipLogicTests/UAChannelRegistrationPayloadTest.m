@@ -106,6 +106,23 @@ UAChannelRegistrationPayload *payload;
 }
 
 /**
+ * Test that tags are not sent when setTags is false
+ */
+- (void)testAsJsonNoTags {
+    payload.setTags = NO;
+
+    NSString *jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
+    NSDictionary *dict = [NSJSONSerialization objectWithString:jsonString];
+    NSDictionary *channel = [dict valueForKey:kUAChannelKey];
+
+    // Verify that tags are not present when setTags is false
+    jsonString = [[NSString alloc] initWithData:[payload asJSONData] encoding:NSUTF8StringEncoding];
+    dict = [NSJSONSerialization objectWithString:jsonString];
+    channel = [dict valueForKey:kUAChannelKey];
+    XCTAssertNil([channel valueForKey:kUAChannelTagsJSONKey], @"tags should be nil");
+}
+
+/**
  * Test that an empty iOS section is not included
  */
 - (void)testAsJsonEmptyiOSSection {
