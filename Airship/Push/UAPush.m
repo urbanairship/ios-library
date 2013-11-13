@@ -217,7 +217,7 @@ static Class _uiClass;
 
 - (NSTimeZone *)timeZone {
     NSString *timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
-    return [NSTimeZone timeZoneWithName:timeZoneName];
+    return [NSTimeZone timeZoneWithName:timeZoneName] ?: [self defaultTimeZoneForQuietTime];
 }
 
 - (void)setTimeZone:(NSTimeZone *)timeZone {
@@ -327,7 +327,28 @@ static Class _uiClass;
                        UAPushQuietTimeEndKey : endTimeStr };
 
     self.timeZone = timezone;
+}
 
+-(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
+                     endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute {
+
+    if (startHour >= 24 || startMinute >= 60) {
+        UA_LWARN(@"Unable to set quiet time, invalid start time: %ld:%02ld", startHour, startMinute);
+        return;
+    }
+
+    if (endHour >= 24 || endMinute >= 60) {
+        UA_LWARN(@"Unable to set quiet time, invalid end time: %ld:%02ld", endHour, endMinute);
+        return;
+    }
+
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",startHour, startMinute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",endHour, endMinute];
+
+    UA_LDEBUG("Setting quiet time: %@ to %@", startTimeStr, endTimeStr);
+
+    self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
+                       UAPushQuietTimeEndKey : endTimeStr };
 }
 
 

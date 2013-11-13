@@ -273,7 +273,52 @@ NSDictionary *notification;
                      @"pushEnabled should make unregister with the device api client");
 }
 
-- (void)testSetQuietTimeFromTo {
+- (void)testSetQuietTime {
+    [[UAPush shared] setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:58];
+
+    NSDictionary *quietTime = [UAPush shared].quietTime;
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPushQuietTimeStartKey],
+                          @"Quiet time start is not set correctly");
+
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPushQuietTimeEndKey],
+                          @"Quiet time end is not set correctly");
+
+    // Change the time zone
+    [UAPush shared].timeZone = [NSTimeZone timeZoneForSecondsFromGMT:-3600*3];
+
+    // Make sure the hour and minutes are still the same
+    quietTime = [UAPush shared].quietTime;
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPushQuietTimeStartKey],
+                          @"Quiet time start is not set correctly");
+
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPushQuietTimeEndKey],
+                          @"Quiet time end is not set correctly");
+
+
+    // Try to set it to an invalid start hour
+    [[UAPush shared] setQuietTimeStartHour:24 startMinute:30 endHour:14 endMinute:58];
+
+    // Make sure the hour and minutes are still the same
+    quietTime = [UAPush shared].quietTime;
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPushQuietTimeStartKey],
+                          @"Quiet time start is not set correctly");
+
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPushQuietTimeEndKey],
+                          @"Quiet time end is not set correctly");
+
+    // Try to set it to an invalid end minute
+    [[UAPush shared] setQuietTimeStartHour:12 startMinute:30 endHour:14 endMinute:60];
+
+    // Make sure the hour and minutes are still the same
+    quietTime = [UAPush shared].quietTime;
+    XCTAssertEqualObjects(@"12:30", [quietTime valueForKey:UAPushQuietTimeStartKey],
+                          @"Quiet time start is not set correctly");
+
+    XCTAssertEqualObjects(@"14:58", [quietTime valueForKey:UAPushQuietTimeEndKey],
+                          @"Quiet time end is not set correctly");
+}
+
+- (void)testSetQuietTimeDeprecated {
     NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
     NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
 
@@ -303,7 +348,7 @@ NSDictionary *notification;
                           @"Quiet time end is not set handling timezone to -5 GMT correctly");
 }
 
-- (void)testSetQuietTimeFromToNoTimeZone {
+- (void)testSetQuietTimeDeprecatedNoTimeZone {
     NSDate *start = [NSDate dateWithTimeIntervalSince1970:60]; // 0:01 GMT
     NSDate *end = [NSDate dateWithTimeIntervalSince1970:60 * 60 * 13]; // 13:00 GMT
 
@@ -331,7 +376,10 @@ NSDictionary *notification;
 
     [UAPush shared].timeZone = nil;
 
-    XCTAssertNil([UAPush shared].timeZone, @"timezone should be able to be cleared");
+    XCTAssertEqualObjects([[UAPush shared].defaultTimeZoneForQuietTime abbreviation],
+                          [[UAPush shared].timeZone abbreviation],
+                          @"Timezone should default to defaultTimeZoneForQuietTime");
+
     XCTAssertNil([[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey],
                  @"timezone should be able to be cleared in standardUserDefaults");
 }
