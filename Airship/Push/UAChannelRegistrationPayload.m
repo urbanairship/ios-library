@@ -52,7 +52,9 @@
     [channel setValue:self.pushAddress forKey:kUAChannelPushAddressKey];
     [channel setValue:self.alias forKey:kUAChannelAliasJSONKey];
     [channel setValue:[NSNumber numberWithBool:self.setTags] forKey:kUAChannelSetTagsKey];
-    [channel setValue:self.tags forKey:kUAChannelTagsJSONKey];
+    if (self.setTags) {
+        [channel setValue:self.tags forKey:kUAChannelTagsJSONKey];
+    }
 
     if (self.badge || self.quietTime || self.timeZone) {
         NSMutableDictionary *ios = [NSMutableDictionary dictionary];
