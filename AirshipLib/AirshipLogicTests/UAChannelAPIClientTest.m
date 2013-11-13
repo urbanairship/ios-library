@@ -116,15 +116,20 @@ UAChannelAPIClient *client;
 }
 
 /**
- * Test create channel succeeds requests if the status is 201
+ * Test create channel succeeds requests if the status is 200 or 201
  */
 - (void)testCreateChannelSucceedsRequest {
     // Check that the retry block returns YES for any 5xx request other than 501
     BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
 
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
@@ -301,15 +306,20 @@ UAChannelAPIClient *client;
 }
 
 /**
- * Test update channel succeeds requests if the status is 200
+ * Test update channel succeeds requests if the status is 200 or 201
  */
 - (void)testUpdateChannelSucceedsRequest {
     // Check that the retry block returns YES for any 5xx request other than 501
     BOOL (^whereBlockCheck)(id obj) = ^(id obj) {
         UAHTTPRequestEngineWhereBlock whereBlock = obj;
         UAHTTPRequest *request = [[UAHTTPRequest alloc] init];
-        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
 
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:200 HTTPVersion:nil headerFields:nil];
+        if (!whereBlock(request)) {
+            return NO;
+        }
+
+        request.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:201 HTTPVersion:nil headerFields:nil];
         if (!whereBlock(request)) {
             return NO;
         }
