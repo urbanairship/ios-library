@@ -10,7 +10,7 @@ UAirship.callbackURL = function() {
 
         var arg = args[i];
 
-        if (arg == undefined || arg == null) {
+        if (arg === undefined || arg === null) {
             arg = '';
         }
 
@@ -25,12 +25,9 @@ UAirship.callbackURL = function() {
     var url = "ua://callbackArguments:withOptions:/" + uri.join("/");
 
     // flatten dictionary into url
-    if (dict != null) {
+    if (dict !== null) {
         var query_args = [];
         for (var name in dict) {
-            if (typeof(name) != 'string') {
-                continue;
-            }
             query_args.push(encodeURIComponent(name) + "=" + encodeURIComponent(dict[name]));
         }
 
