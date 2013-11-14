@@ -34,7 +34,7 @@
                                                           options: NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
                                                             error: nil];
     if (!jsonDecodedArgs) {
-        UA_LDEBUG(@"unable to to json decode action args: %@", urlDecodedArgs);
+        UA_LDEBUG(@"unable to json decode action args: %@", urlDecodedArgs);
     } else {
         UA_LDEBUG(@"action arguments value: %@", jsonDecodedArgs);
     }
