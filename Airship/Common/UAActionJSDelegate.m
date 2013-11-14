@@ -46,62 +46,62 @@
        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     NSArray *keys = [options allKeys];
 
-    if (keys.count) {
-
-        NSString *actionName = [keys objectAtIndex:0];
-
-        UAAction *action = [self actionForEncodedName:actionName];
-        NSString *encodedArgumentsValue = [options valueForKey:actionName];
-        id decodedArgumentsValue;
-        if (encodedArgumentsValue) {
-            decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-        }
-
-        //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (action && (decodedArgumentsValue || !encodedArgumentsValue)) {
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                    withSituation:UASituationRichPushAction];
-            [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.error){
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                    if (callbackID) {
-                        //pass the error description back into JS wrapped in an Error object
-                        NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');",
-                                            result.error.localizedDescription,
-                                            callbackID];
-                        completionHandler(script);
-                    }
-                } else {
-                    UA_LDEBUG(@"action %@ completed successfully", actionName);
-                    if (callbackID) {
-                        NSString *resultString;
-                        if (result.value) {
-                            //if the action completed with a result value, serialize into JSON
-                            resultString = [NSJSONSerialization stringWithObject:result.value];
-                        }
-                        //in the case where there is no result value, pass null
-                        resultString = resultString ?: @"null";
-                        //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
-                        NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
-                        completionHandler(script);
-                    }
-                }
-            }];
-        } else {
-            //we'll probably eventually want to pass different kinds of errors
-            if (callbackID) {
-                NSString *errorString;
-                if (!action) {
-                    errorString = [NSString stringWithFormat:@"Unable to retrieve action named: %@", actionName];
-                } else if (!decodedArgumentsValue) {
-                    errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
-                }
-                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
-                completionHandler(script);
-            }
-        }
-    } else {
+    if (!keys.count) {
         UA_LDEBUG(@"Unable to parse options");
+        return;
+    }
+    
+    NSString *actionName = [keys objectAtIndex:0];
+
+    UAAction *action = [self actionForEncodedName:actionName];
+    NSString *encodedArgumentsValue = [options valueForKey:actionName];
+    id decodedArgumentsValue;
+    if (encodedArgumentsValue) {
+        decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
+    }
+
+    //if we found an action by that name, and there's either no argument or a correctly decoded argument
+    if (action && (decodedArgumentsValue || !encodedArgumentsValue)) {
+        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                withSituation:UASituationRichPushAction];
+        [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+            if (result.error){
+                UA_LDEBUG(@"action %@ completed with an error", actionName);
+                if (callbackID) {
+                    //pass the error description back into JS wrapped in an Error object
+                    NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');",
+                                        result.error.localizedDescription,
+                                        callbackID];
+                    completionHandler(script);
+                }
+            } else {
+                UA_LDEBUG(@"action %@ completed successfully", actionName);
+                if (callbackID) {
+                    NSString *resultString;
+                    if (result.value) {
+                        //if the action completed with a result value, serialize into JSON
+                        resultString = [NSJSONSerialization stringWithObject:result.value];
+                    }
+                    //in the case where there is no result value, pass null
+                    resultString = resultString ?: @"null";
+                    //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
+                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
+                    completionHandler(script);
+                }
+            }
+        }];
+    } else {
+        //we'll probably eventually want to pass different kinds of errors
+        if (callbackID) {
+            NSString *errorString;
+            if (!action) {
+                errorString = [NSString stringWithFormat:@"Unable to retrieve action named: %@", actionName];
+            } else if (!decodedArgumentsValue) {
+                errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
+            }
+            NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
+            completionHandler(script);
+        }
     }
 }
 
