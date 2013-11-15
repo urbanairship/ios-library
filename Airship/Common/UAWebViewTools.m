@@ -167,7 +167,7 @@
     //reserve the run-action argument for ourselves
     if (arguments.count){
         NSString *firstArg = [arguments objectAtIndex:0];
-        if ([firstArg isEqualToString:@"run-action"] || [firstArg isEqualToString:@"basic-action"]) {
+        if ([firstArg isEqualToString:@"run-action"] || [firstArg isEqualToString:@"run-basic-action"]) {
             [self performAsyncJSCallbackWithDelegate:actionJSDelegate
                                          withWebView:webView
                                        withArguments:arguments

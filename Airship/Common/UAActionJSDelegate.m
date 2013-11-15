@@ -105,7 +105,7 @@
     }
 }
 
-- (void)basicActionWithOptions:(NSDictionary *)options
+- (void)runBasicActionWithOptions:(NSDictionary *)options
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
@@ -134,25 +134,23 @@
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", args, options);
 
     //we need at least one argument
-    if (args.count){
-        //run-action is the full js/callback interface
-        if ([[args objectAtIndex:0] isEqualToString:@"run-action"]) {
-            NSString *callbackID;
-            //the callbackID is optional, if present we can make an async callback
-            //into the JS environment, otherwise we'll just run the action to completion
-            if (args.count > 1) {
-                callbackID = [args objectAtIndex:1];
-            }
-            [self runActionWithCallbackID:callbackID
-                              withOptions:options
-                    withCompletionHandler:completionHandler];
-        } else if ([[args objectAtIndex:0] isEqualToString:@"basic-action"]) {
-            //basic-action is the 'demo-friendly' version with implicit string argument values and
-            //allows multiple simultaneous actions
-            [self basicActionWithOptions:options withCompletionHandler:completionHandler];
+    //run-action is the full js/callback interface
+    if ([[args firstObject] isEqualToString:@"run-action"]) {
+        NSString *callbackID;
+        //the callbackID is optional, if present we can make an async callback
+        //into the JS environment, otherwise we'll just run the action to completion
+        if (args.count > 1) {
+            callbackID = [args objectAtIndex:1];
         }
+        [self runActionWithCallbackID:callbackID
+                          withOptions:options
+                withCompletionHandler:completionHandler];
+    } else if ([[args firstObject] isEqualToString:@"run-basic-action"]) {
+        //run-basic-action is the 'demo-friendly' version with implicit string argument values and
+        //allows multiple simultaneous actions
+        [self runBasicActionWithOptions:options withCompletionHandler:completionHandler];
     } else {
-        //args not recognized, pass a nil script result
+        //arguments not recognized, pass a nil script result
         completionHandler(nil);
     }
 }
