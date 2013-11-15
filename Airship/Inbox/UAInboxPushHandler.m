@@ -44,14 +44,16 @@
         UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
 
         //if the notification came in while the app was backgrounded, treat it as a launch message
+        id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
+
         if (self.hasLaunchMessage) {
-            [self.delegate launchRichPushMessageAvailable:message];
+            [strongDelegate launchRichPushMessageAvailable:message];
             self.hasLaunchMessage = NO;
         }
 
         //otherwise, have the UI class display it
         else {
-            [self.delegate richPushMessageAvailable:message];
+            [strongDelegate richPushMessageAvailable:message];
         }
 
         self.viewingMessageID = nil;
