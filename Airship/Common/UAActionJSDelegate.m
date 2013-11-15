@@ -46,12 +46,12 @@
        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     NSArray *keys = [options allKeys];
 
-    if (!keys.count) {
-        UA_LDEBUG(@"Unable to parse options");
+    NSString *actionName = [keys firstObject];
+
+    if (!actionName) {
+        UA_LDEBUG(@"no action name was passed");
         return;
     }
-    
-    NSString *actionName = [keys objectAtIndex:0];
 
     UAAction *action = [self actionForEncodedName:actionName];
     NSString *encodedArgumentsValue = [options valueForKey:actionName];
