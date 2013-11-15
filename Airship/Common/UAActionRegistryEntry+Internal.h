@@ -25,10 +25,9 @@
 
 #import "UAActionRegistryEntry.h"
 
-@interface UAActionRegistryEntry ()
+@interface UAActionRegistryEntry()
 
-@property(nonatomic, copy) NSString *name;
-@property(nonatomic, copy) NSString *alias;
+@property(nonatomic, strong) NSMutableArray *mutableNames;
 @property(nonatomic, strong) NSMutableDictionary *situationOverrides;
 
 @end
