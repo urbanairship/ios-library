@@ -25,7 +25,7 @@
 
 #import "UAWebViewTools.h"
 
-#import "UAirship.h"
+#import "UAirship+Internal.h"
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAJavaScriptDelegate.h"

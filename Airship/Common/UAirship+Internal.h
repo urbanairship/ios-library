@@ -26,6 +26,7 @@
 #import "UAirship.h"
 
 @class UABaseAppDelegateSurrogate;
+@class UAJavaScriptDelegate;
 
 @interface UAirship()
 
