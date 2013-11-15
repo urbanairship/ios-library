@@ -189,7 +189,7 @@
                           withWebView:(UIWebView *)webView
                         withArguments:(NSArray *)arguments
                           withOptions:(NSDictionary *)options {
-    SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:withCompletionHandler:");
+    SEL selector = @selector(callbackArguments:withOptions:withCompletionHandler:);
     if ([delegate respondsToSelector:selector]) {
         __weak UIWebView *weakWebView = webView;
         [delegate callbackArguments:arguments withOptions:options withCompletionHandler:^(NSString *script){
@@ -203,7 +203,8 @@
                           withWebView:(UIWebView *)webView
                         withArguments:(NSArray *)arguments
                           withOptions:(NSDictionary *)options {
-    SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
+    //SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
+    SEL selector = @selector(callbackArguments:withOptions:);
     if ([delegate respondsToSelector:selector]) {
         NSString *script = nil;
         script = [delegate callbackArguments:arguments withOptions:options];
