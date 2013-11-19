@@ -200,7 +200,7 @@
  * Test create user request with a channel ID
  */
 -(void)testCreateUserRequestChannelID {
-    NSDictionary *expectedRequestBody = @{@"ua_device_id": @"deviceID", @"ios_channel_ids": @[@"channelID"]};
+    NSDictionary *expectedRequestBody = @{@"ua_device_id": @"deviceID", @"ios_channels": @[@"channelID"]};
 
     BOOL (^checkRequestBlock)(id)= ^(id obj){
         UAHTTPRequest *request = obj;
@@ -390,7 +390,7 @@
     };
 
     // Verify we add a channel id and remove the device token if they are both present
-    expectedRequestBody = @{@"device_tokens": @{@"remove" : @[@"deviceToken"]}, @"ios_channel_ids": @{@"add" : @[@"channel"]}};
+    expectedRequestBody = @{@"device_tokens": @{@"remove" : @[@"deviceToken"]}, @"ios_channels": @{@"add" : @[@"channel"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
                                      retryWhere:OCMOCK_ANY
@@ -403,7 +403,7 @@
 
     
     // Verify we only add a channel id if there is no device token
-    expectedRequestBody = @{@"ios_channel_ids": @{@"add" : @[@"channel"]}};
+    expectedRequestBody = @{@"ios_channels": @{@"add" : @[@"channel"]}};
     [[self.mockRequestEngine expect] runRequest:[OCMArg checkWithBlock:checkRequestBlock]
                                    succeedWhere:OCMOCK_ANY
                                      retryWhere:OCMOCK_ANY
