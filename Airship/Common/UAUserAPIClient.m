@@ -69,7 +69,7 @@
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"ua_device_id":[UAUtils deviceID]}];
 
     if (channelID.length) {
-        [payload setObject:@[channelID] forKey:@"ios_channel_ids"];
+        [payload setObject:@[channelID] forKey:@"ios_channels"];
     } else if (deviceToken.length) {
         [payload setObject:@[deviceToken] forKey:@"device_tokens"];
     }
@@ -120,7 +120,7 @@
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
 
     if (channelID.length) {
-        [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channel_ids"];
+        [payload setValue:@{@"add": @[channelID]} forKey:@"ios_channels"];
 
         if (deviceToken.length) {
             [payload setValue:@{@"remove": @[deviceToken]} forKey:@"device_tokens"];
