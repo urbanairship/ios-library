@@ -23,13 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAutoAppDelegate.h"
+#import "UAAppDelegate.h"
 
 #import "UAGlobal.h"
 #import "UAPush.h"
 #import "UAInboxPushHandler.h"
 
-@implementation UAAutoAppDelegate
+@implementation UAAppDelegate
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UA_LTRACE(@"APNS device token: %@", deviceToken);
