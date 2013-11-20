@@ -37,8 +37,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAPush.h"
 #import "UAConfig.h"
 
-#import "UABaseAppDelegateSurrogate.h"
-#import "UAAutoAppDelegate.h"
+#import "UAAppDelegateProxy.h"
+#import "UAAppDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAURLProtocol.h"
 
@@ -147,12 +147,12 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     if (config.automaticSetupEnabled) {
 
-        _sharedAirship.appDelegate = [[UABaseAppDelegateSurrogate alloc ]init];
+        _sharedAirship.appDelegate = [[UAAppDelegateProxy alloc ]init];
 
         //swap pointers with the initial app delegate
         @synchronized ([UIApplication sharedApplication]) {
-            _sharedAirship.appDelegate.defaultAppDelegate = [UIApplication sharedApplication].delegate;
-            _sharedAirship.appDelegate.surrogateDelegate = [[UAAutoAppDelegate alloc] init];
+            _sharedAirship.appDelegate.originalAppDelegate = [UIApplication sharedApplication].delegate;
+            _sharedAirship.appDelegate.airshipAppDelegate = [[UAAppDelegate alloc] init];
             [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate;
         }
     }
@@ -254,7 +254,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (_sharedAirship.config.automaticSetupEnabled) {
         // swap pointers back to the initial app delegate
         @synchronized ([UIApplication sharedApplication]) {
-            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate.defaultAppDelegate;
+            [UIApplication sharedApplication].delegate = _sharedAirship.appDelegate.originalAppDelegate;
         }
     }
 
@@ -315,7 +315,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     if (self.backgroundNotificationEnabled) {
 
         if (self.config.automaticSetupEnabled) {
-            id delegate = self.appDelegate.defaultAppDelegate;
+            id delegate = self.appDelegate.originalAppDelegate;
 
             // If its automatic setup up, make sure if they are implementing their own app delegates, that they are
             // also implementing the new application:didReceiveRemoteNotification:fetchCompletionHandler: call.
