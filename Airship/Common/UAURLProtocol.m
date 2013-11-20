@@ -49,10 +49,10 @@ static NSURLCache *cache = nil;
     // The following conditions will return NO:
     // If the request header field contains kUASkipProtocolHeader
     // If the request HTTPMethod is not 'GET'
-    // If the request URL does not begin with 'http:' or 'https:'
+    // If the request URL scheme is not 'http' or 'https'
     if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]
-        || !([[[request.URL absoluteString] lowercaseString] hasPrefix:@"http:"] ||
-             [[[request.URL absoluteString] lowercaseString] hasPrefix:@"https:"])) {
+        || !([[[request.URL scheme] lowercaseString] isEqualToString:@"http"] ||
+             [[[request.URL scheme] lowercaseString] isEqualToString:@"https"])) {
         return NO;
     }
 

@@ -122,14 +122,14 @@
 
 /*
  * Test that the protocol does not respond
- * to requests with non 'http:' or 'https:' prefix in the URL
+ * to requests where the URL scheme is not 'http' or 'https'
  */
 - (void)testCanInitWithRequestNonHttp {
 
     NSURL *nonHttp = [NSURL URLWithString:@"data:image/gif;base64,ABCDEFGHIJKLMNOP"];
     NSURLRequest *request = [NSURLRequest requestWithURL:nonHttp];
 
-    XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should not init with a non 'http:' or 'https:' prefix URL request.");
+    XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should not init when the URL scheme is not 'http' or 'https' request.");
 }
 
 /*
