@@ -46,7 +46,7 @@ static NSURLCache *cache = nil;
 
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
-
+    // If the URL scheme does not begin with 'http' or 'https' then return NO.
     if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]
         || !([[[request.URL scheme] lowercaseString] hasPrefix:@"http"])) {
         return NO;
