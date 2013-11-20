@@ -123,6 +123,12 @@ static Class _uiClass;
                                   |UIRemoteNotificationTypeSound);
 
         self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+
+        // Log the channel ID at error level, but without logging
+        // it as an error.
+        if (self.channelID && uaLogLevel >= UALogLevelError) {
+            NSLog(@"Channel ID: %@", self.channelID);
+        }
     }
     
     return self;
@@ -177,6 +183,11 @@ static Class _uiClass;
 
 - (void)setChannelID:(NSString *)channelID {
     [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
+    // Log the channel ID at error level, but without logging
+    // it as an error.
+    if (uaLogLevel >= UALogLevelError) {
+        NSLog(@"Channel ID: %@", channelID);
+    }
 }
 
 - (NSString *)channelID {
