@@ -306,6 +306,21 @@ typedef void (^MethodBlock)(NSInvocation *);
     }];
 }
 
+- (void)testAirshipDelegateDoesNotReceiveNSObjectMessages {
+
+    SEL selector = @selector(performSelectorOnMainThread:withObject:waitUntilDone:);
+
+    // Set up a mocked invocation that expects to be invoked with both delegates
+    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
+    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(selector)] selector];
+    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
+    [[mockedInvocation reject] invokeWithTarget:self.airshipDelegate];
+
+    [self.baseDelegate forwardInvocation:mockedInvocation];
+    XCTAssertNoThrow([mockedInvocation verify],
+                     @"UAAppDelegateProxy did send NSObject methods only to the original app delegate");
+}
+
 @end
 
 
