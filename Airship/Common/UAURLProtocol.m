@@ -48,7 +48,7 @@ static NSURLCache *cache = nil;
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
 
     if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]
-        || !([[request.URL scheme] hasPrefix:@"http"])) {
+        || !([[[request.URL scheme] lowercaseString] hasPrefix:@"http"])) {
         return NO;
     }
 

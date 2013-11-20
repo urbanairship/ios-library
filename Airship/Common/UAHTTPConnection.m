@@ -159,7 +159,7 @@
 
     self.responseData = [[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error] mutableCopy];
 
-    if (![response isKindOfClass:[NSURLResponse class]]) {
+    if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
         UA_LWARN(@"Response not set because it is not an NSURLResponse type.");
         return NO;
     }
