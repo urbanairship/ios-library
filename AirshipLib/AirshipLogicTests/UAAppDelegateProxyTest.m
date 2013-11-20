@@ -34,7 +34,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 }
 
 /*
- * Test that responds to selector checks airshipDelegate, defaultAppDelegate, and its
+ * Test that responds to selector checks airshipDelegate, originalAppDelegate, and its
  * self for a given selector.
  */
 - (void)testRespondsToSelector {
@@ -50,9 +50,9 @@ typedef void (^MethodBlock)(NSInvocation *);
     XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someRandomMethod")],
                   @"respondsToSelector does not respond for its surrgoteDelegate methods");
 
-    // Verify that it responds to methods that the defaultAppDelegate responds to
+    // Verify that it responds to methods that the originalAppDelegate responds to
     XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someOtherRandomMethod")],
-                  @"respondsToSelector does not respond for its defaultAppDelegate methods");
+                  @"respondsToSelector does not respond for its originalAppDelegate methods");
 
     // Verify it doesnt just respond to everything
     XCTAssertFalse([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someUndefinedMethod")],
@@ -61,7 +61,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
 /*
  * Test that application:didReceiveRemoteNotification:fetchCompletionHandler: only responds if background push is enabled
- * or the defaultAppDelegate responds
+ * or the originalAppDelegate responds
  */
 - (void)testRespondsToSelectorApplicationDidReceiveRemoteNotificationFetchCompletionHandler {
     id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
@@ -70,7 +70,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
     // Verify it does not respond when background notifications is disabled and the app delegate does not respond
     XCTAssertFalse([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
-                   @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and defaultAppDelegate does not respond");
+                   @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and originalAppDelegate does not respond");
 
     // Verify it does respond when background notifications is enabled
     [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(YES)] backgroundNotificationEnabled];
@@ -93,7 +93,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 /*
  * Tests that an exception is raised if the defualtAppDelegate is nil
  */
-- (void)testForwardInvocationNoDefaultAppDelegate {
+- (void)testForwardInvocationNooriginalAppDelegate {
     self.baseDelegate.originalAppDelegate = nil;
 
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
@@ -106,10 +106,10 @@ typedef void (^MethodBlock)(NSInvocation *);
 
 /*
  * Tests that it neither of the delegates respond, it still forwards
- * the invocation to the defaultAppDelegate
+ * the invocation to the originalAppDelegate
  */
 - (void)testForwardInvocationNoResponse {
-    // Set up a mocked invocation that expects to be invoked with the defaultAppDelegate
+    // Set up a mocked invocation that expects to be invoked with the originalAppDelegate
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
     [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someRandomMethod"))] selector];
     [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
@@ -200,12 +200,12 @@ typedef void (^MethodBlock)(NSInvocation *);
     for (int i = 0; i < 3; i++) {
 
         // Set the defualtDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
-        __block UIBackgroundFetchResult defaultAppDelegateResult = allBackgroundFetchResults[i];
+        __block UIBackgroundFetchResult originalAppDelegateResult = allBackgroundFetchResults[i];
         [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
             void *arg;
             [invocation getArgument:&arg atIndex:4];
             void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-            handler(defaultAppDelegateResult);
+            handler(originalAppDelegateResult);
         } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
 
         for (int j = 0; j < 3; j++) {
@@ -223,10 +223,10 @@ typedef void (^MethodBlock)(NSInvocation *);
             __block UIBackgroundFetchResult expectedResult = expectedResults[i][j];
             [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
                 XCTAssertEqual(expectedResult, result,
-                               @"application:didReceiveRemoteNotification:fetchCompletionHandler should return %@ when surrogateDelate returns %@ and defaultAppDelegate returns %@",
+                               @"application:didReceiveRemoteNotification:fetchCompletionHandler should return %@ when surrogateDelate returns %@ and originalAppDelegate returns %@",
                                [self stringFromBackgroundFetchResult:expectedResult],
                                [self stringFromBackgroundFetchResult:surrogateDelagateResult],
-                               [self stringFromBackgroundFetchResult:defaultAppDelegateResult]);
+                               [self stringFromBackgroundFetchResult:originalAppDelegateResult]);
             }];
         }
     }
