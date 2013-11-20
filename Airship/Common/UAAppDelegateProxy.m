@@ -38,7 +38,7 @@
 
     // Throw the exception here to make debugging easier. We are going to forward the invocation to the
     // originalAppDelegate without checking if it responds for the purpose of crashing the app in the right place
-    // if the delegate does not respond which would be expected behavior. If the defaultAppDelegate is nil, we
+    // if the delegate does not respond which would be expected behavior. If the originalAppDelegate is nil, we
     // need to exception here, and not fail silently.
     if (!self.originalAppDelegate) {
         NSString *errorMsg = @"UAAppDelegateProxy originalAppDelegate was nil while forwarding an invocation";
