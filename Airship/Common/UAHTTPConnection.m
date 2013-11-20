@@ -154,11 +154,17 @@
         return NO;
     }
 
-    NSHTTPURLResponse *response = nil;
+    NSURLResponse *response = nil;
     NSError *error = nil;
+
     self.responseData = [[NSURLConnection sendSynchronousRequest:urlRequest returningResponse:&response error:&error] mutableCopy];
 
-    self.request.response = self.urlResponse = response;
+    if (![response isKindOfClass:[NSURLResponse class]]) {
+        UA_LWARN(@"Response not set because it is not an NSURLResponse type.");
+        return NO;
+    }
+
+    self.request.response = self.urlResponse = (NSHTTPURLResponse *)response;
     self.request.responseData = self.responseData;
     self.request.error = error;
 

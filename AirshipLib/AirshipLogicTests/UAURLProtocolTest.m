@@ -106,7 +106,6 @@
  */
 - (void)testCanInitWithRequest {
     NSURLRequest *request = [NSURLRequest requestWithURL:self.cachableURL];
-
     XCTAssertTrue([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should be able to init with a cachable url request.");
 }
 
@@ -119,6 +118,18 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:self.uncachableURL];
 
     XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should ignore requests whose url or mainDocumentURl is not added as cachable URL.");
+}
+
+/*
+ * Test that the protocol does not respond
+ * to requests without an 'http' prefix in the URL
+ */
+- (void)testCanInitWithRequestNonHttp {
+
+    NSURL *nonHttp = [NSURL URLWithString:@"data:image/gif;base64,ABCDEFGHIJKLMNOP"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:nonHttp];
+
+    XCTAssertFalse([UAURLProtocol canInitWithRequest:request], @"UAURLProtocol should not init with a non http URL request.");
 }
 
 /*
