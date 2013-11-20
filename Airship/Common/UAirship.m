@@ -221,10 +221,10 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 
     // If the device is running iOS7 or greater, and the app delegate responds to
-    // application:handleEventsForBackgroundURLSession:completionHandler:, it will
+    // application:didReceiveRemoteNotification:fetchCompletionHandler:, it will
     // call the app delegate right after launch.
     
-    BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:handleEventsForBackgroundURLSession:completionHandler:)]
+    BOOL skipNotifyPush = [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)]
     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
 
     if (remoteNotification && !skipNotifyPush) {
