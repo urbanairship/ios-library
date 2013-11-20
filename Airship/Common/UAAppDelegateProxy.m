@@ -89,7 +89,7 @@
     }
 
     // If this isn't a selector we normally respond to, say we do as long as either delegate does
-    return [self.originalAppDelegate respondsToSelector:selector] || [self.airshipAppDelegate respondsToSelector:selector];
+    return [self.originalAppDelegate respondsToSelector:selector] || [self airshipDelegateRespondsToSelector:selector];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
