@@ -46,8 +46,13 @@ static NSURLCache *cache = nil;
 
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request {
-
-    if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]) {
+    // The following conditions will return NO:
+    // If the request header field contains kUASkipProtocolHeader
+    // If the request HTTPMethod is not 'GET'
+    // If the request URL scheme is not 'http' or 'https'
+    if ([request valueForHTTPHeaderField:kUASkipProtocolHeader] || ![request.HTTPMethod isEqual:@"GET"]
+        || !([[[request.URL scheme] lowercaseString] isEqualToString:@"http"] ||
+             [[[request.URL scheme] lowercaseString] isEqualToString:@"https"])) {
         return NO;
     }
 
