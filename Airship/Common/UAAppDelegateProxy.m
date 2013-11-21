@@ -23,10 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UABaseAppDelegateSurrogate.h"
+#import "UAAppDelegateProxy.h"
 #import "UAirship.h"
 
-@implementation UABaseAppDelegateSurrogate
+@implementation UAAppDelegateProxy
 
 - (id)init {
     //NSProxy has no default init method, so [super init] is unnecessary
@@ -37,68 +37,73 @@
     SEL selector = [invocation selector];
 
     // Throw the exception here to make debugging easier. We are going to forward the invocation to the
-    // defaultAppDelegate without checking if it responds for the purpose of crashing the app in the right place
-    // if the delegate does not respond which would be expected behavior. If the defaultAppDelegate is nil, we
+    // originalAppDelegate without checking if it responds for the purpose of crashing the app in the right place
+    // if the delegate does not respond which would be expected behavior. If the originalAppDelegate is nil, we
     // need to exception here, and not fail silently.
-    if (!self.defaultAppDelegate) {
-        NSString *errorMsg = @"UABaseAppDelegateSurrogate defaultAppDelegate was nil while forwarding an invocation";
-        NSException *defaultAppDelegateNil = [NSException exceptionWithName:@"UAMissingDefaultDelegate"
+    if (!self.originalAppDelegate) {
+        NSString *errorMsg = @"UAAppDelegateProxy originalAppDelegate was nil while forwarding an invocation";
+        NSException *exception = [NSException exceptionWithName:@"UAMissingOriginalDelegate"
                                                                      reason:errorMsg
                                                                    userInfo:nil];
-        [defaultAppDelegateNil raise];
+        [exception raise];
     }
 
     BOOL responds = NO;
 
     /*
-     Give the surrogate and default app delegates an opportunity to handle the message
+     Give the airship and original app delegates an opportunity to handle the message
 
      NOTE: The order here is crucial. NSInvocation sets a return value after being invoked,
-     which is the value returned to the original sender. Since our surrogateDelegate does not
-     implement any methods with return values, we want to make sure that the defaultAppDelegate
+     which is the value returned to the original sender. Since our airshipAppDelegate does not
+     implement any methods with return values, we want to make sure that the originalAppDelegate
      always wins, which means it should be invoked last.
      */
-    if ([self.surrogateDelegate respondsToSelector:selector]) {
+    if ([self airshipDelegateRespondsToSelector:selector]) {
         responds = YES;
-        [invocation invokeWithTarget:self.surrogateDelegate];
+        [invocation invokeWithTarget:self.airshipAppDelegate];
     }
 
-    if ([self.defaultAppDelegate respondsToSelector:selector]) {
+    if ([self.originalAppDelegate respondsToSelector:selector]) {
         responds = YES;
-        [invocation invokeWithTarget:self.defaultAppDelegate];
+        [invocation invokeWithTarget:self.originalAppDelegate];
     }
 
     if (!responds) {
         //In the off chance that neither app delegate responds, forward the message
-        //to the default app delegate anyway.  this will likely result in a crash,
+        //to the original app delegate anyway.  this will likely result in a crash,
         //but that way the exception will come from the expected location
-        [invocation invokeWithTarget:self.defaultAppDelegate];
+        [invocation invokeWithTarget:self.originalAppDelegate];
     }
+}
+
+- (BOOL)airshipDelegateRespondsToSelector:(SEL)selector {
+    return [self.airshipAppDelegate respondsToSelector:selector] &&
+        ![[NSObject class] instancesRespondToSelector:selector];
 }
 
 - (BOOL)respondsToSelector:(SEL)selector {
     // We only want to respond to the new notification delegate if background push is
     // enabled or the default app delegate responds to it.
     if ([NSStringFromSelector(selector) isEqualToString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"]) {
-        return [UAirship shared].backgroundNotificationEnabled || [self.defaultAppDelegate respondsToSelector:selector];
+        return [UAirship shared].backgroundNotificationEnabled || [self.originalAppDelegate respondsToSelector:selector];
     }
 
     // If this isn't a selector we normally respond to, say we do as long as either delegate does
-    return [self.defaultAppDelegate respondsToSelector:selector] || [self.surrogateDelegate respondsToSelector:selector];
+    return [self.originalAppDelegate respondsToSelector:selector] || [self airshipDelegateRespondsToSelector:selector];
 }
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
     NSMethodSignature *signature = nil;
 
     // First non nil method signature returns
-    signature = [self.surrogateDelegate methodSignatureForSelector:selector];
+    signature = [self.airshipAppDelegate methodSignatureForSelector:selector];
     if (signature) return signature;
 
-    signature = [self.defaultAppDelegate methodSignatureForSelector:selector];
+    signature = [self.originalAppDelegate methodSignatureForSelector:selector];
     if (signature) return signature;
 
     // If none of the above classes return a non nil method signature, this will likely crash
-    return signature;
+    return [self.airshipAppDelegate methodSignatureForSelector:selector];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
@@ -109,11 +114,11 @@
     __block UIBackgroundFetchResult fetchResult = UIBackgroundFetchResultNoData;
 
     NSMutableArray *delegates = [NSMutableArray array];
-    if ([self.surrogateDelegate respondsToSelector:selector]) {
-        [delegates addObject:self.surrogateDelegate];
+    if ([self airshipDelegateRespondsToSelector:selector]) {
+        [delegates addObject:self.airshipAppDelegate];
     }
-    if ([self.defaultAppDelegate respondsToSelector:selector]) {
-        [delegates addObject:self.defaultAppDelegate];
+    if ([self.originalAppDelegate respondsToSelector:selector]) {
+        [delegates addObject:self.originalAppDelegate];
     }
 
     // if we have no delegates that respond to the selector, return early
