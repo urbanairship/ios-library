@@ -10,7 +10,7 @@ allow you to build the library files and all sample projects. If you just want t
 include the library in your app, you can download the latest ``libUAirship.zip``
 These zips contain two pre-compiled universal libraries: an armv7/armv7s/arm64/i386/x86_64
 version (``libUAirship-x.y.z.a``), which includes 32 and 64-bit binaries and can be used with
-iOS7+, and a 32-bit only package (``libUAirship-iOS5-x.y.z.a``) which can be used with iOS5+
+iOS5.1.1+, and a 32-bit only package (``libUAirship-iOS5-x.y.z.a``) which can be used with iOS5+
 application targets.
 
 Resources
