@@ -55,6 +55,10 @@
                                     UASituationLaunchedFromPush,
                                     UASituationLaunchedFromSpringBoard,
                                     UASituationManualInvocation];
+
+    // set cachable url
+    [UAURLProtocol addCachableURL:kablamURL];
+
     if ([displaySituations containsObject:situation]) {
         // show the widget, then load
         if (self.modal) {
@@ -71,8 +75,6 @@
         //is launched
         //[UAPushActionArguments addPendingSpringBoardAction:@"kablam" value:arguments.value];
 
-        // set cachable url
-        [UAURLProtocol addCachableURL:kablamURL];
 
         // fetch url, then set flag in completion block
         [self prefetchURL:kablamURL withCompletionHandler:completionHandler];

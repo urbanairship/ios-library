@@ -378,11 +378,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [self.loadingIndicator hide];
 
-
     [self.webView injectViewportFix];
-
-
-
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
@@ -393,7 +389,7 @@ static NSMutableSet *overlayControllers = nil;
         return;
     }
 
-    UALOG(@"Failed to load message: %@", error);
+    UALOG(@"Failed to load message: %@", [error localizedDescription]);
 
 }
 

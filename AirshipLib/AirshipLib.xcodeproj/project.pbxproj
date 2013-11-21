@@ -12,6 +12,10 @@
 		1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62217FA3D71004F8724 /* UAAction+Internal.h */; };
 		1F4EDB3D183183AF00F77343 /* UAMailComposerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62317FE34FC004F8724 /* UAMailComposerAction.h */; };
 		1F4EDB3E183183B600F77343 /* UAMailComposerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62717FE3655004F8724 /* UAMailComposerData.h */; };
+		1F559518183AEE480083E85D /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F559516183AEE480083E85D /* UAWalletAction.h */; };
+		1F559519183AEE480083E85D /* UAWalletAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F559516183AEE480083E85D /* UAWalletAction.h */; };
+		1F55951A183AEE480083E85D /* UAWalletAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F559517183AEE480083E85D /* UAWalletAction.m */; };
+		1F55951B183AEE480083E85D /* UAWalletAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F559517183AEE480083E85D /* UAWalletAction.m */; };
 		1F55FB3518106066002AA192 /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB2D18106066002AA192 /* UABespokeCloseView.h */; };
 		1F55FB3618106066002AA192 /* UABespokeCloseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB2E18106066002AA192 /* UABespokeCloseView.m */; };
 		1F55FB3718106066002AA192 /* UAKablamAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB2F18106066002AA192 /* UAKablamAction.h */; };
@@ -423,6 +427,8 @@
 		1F2B10C312DD01B60020843D /* UATagUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATagUtils.h; sourceTree = "<group>"; };
 		1F2B10C412DD01B60020843D /* UATagUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagUtils.m; sourceTree = "<group>"; };
 		1F31E8FC15F14C5500DC63BA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		1F559516183AEE480083E85D /* UAWalletAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWalletAction.h; sourceTree = "<group>"; };
+		1F559517183AEE480083E85D /* UAWalletAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWalletAction.m; sourceTree = "<group>"; };
 		1F55FB2D18106066002AA192 /* UABespokeCloseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABespokeCloseView.h; sourceTree = "<group>"; };
 		1F55FB2E18106066002AA192 /* UABespokeCloseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABespokeCloseView.m; sourceTree = "<group>"; };
 		1F55FB2F18106066002AA192 /* UAKablamAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKablamAction.h; sourceTree = "<group>"; };
@@ -822,6 +828,8 @@
 		1F55FB2C18106066002AA192 /* Kablam */ = {
 			isa = PBXGroup;
 			children = (
+				1F559516183AEE480083E85D /* UAWalletAction.h */,
+				1F559517183AEE480083E85D /* UAWalletAction.m */,
 				1F55FB2D18106066002AA192 /* UABespokeCloseView.h */,
 				1F55FB2E18106066002AA192 /* UABespokeCloseView.m */,
 				1F55FB2F18106066002AA192 /* UAKablamAction.h */,
@@ -1291,6 +1299,7 @@
 				1FE0B74E17E2751000856C60 /* UAStandardLocationProvider.h in Headers */,
 				1FE0B75017E2751000856C60 /* UABaseLocationProvider.h in Headers */,
 				1FE0B75117E2751000856C60 /* UALocationCommonValues.h in Headers */,
+				1F559519183AEE480083E85D /* UAWalletAction.h in Headers */,
 				1FE0B75217E2751000856C60 /* UAAnalyticsDBManager.h in Headers */,
 				1FE0B75317E2751000856C60 /* UALocationProviderProtocol.h in Headers */,
 				1FE0B75417E2751000856C60 /* UALocationProviderDelegate.h in Headers */,
@@ -1389,6 +1398,7 @@
 				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
 				1F55FB3B18106066002AA192 /* UAKablamViewController.h in Headers */,
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
+				1F559518183AEE480083E85D /* UAWalletAction.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
@@ -1626,6 +1636,7 @@
 				CC85427C17F2130700D2DE10 /* UAURLProtocol.m in Sources */,
 				CCDD379E1807019000B8866E /* UAIncomingRichPushAction.m in Sources */,
 				1FE0B79817E2751000856C60 /* UABaseLocationProvider.m in Sources */,
+				1F55951B183AEE480083E85D /* UAWalletAction.m in Sources */,
 				4995C643180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,
 				CCDD37CB18089E5700B8866E /* UAOpenExternalURLAction.m in Sources */,
 				4995C63D180DBBC9004F8724 /* UAAddTagsAction.m in Sources */,
@@ -1754,6 +1765,7 @@
 				1F610DEC17835C3A00BCD96E /* UAInboxMessage.m in Sources */,
 				1F610DE617835C3A00BCD96E /* UAInboxDBManager.m in Sources */,
 				1F55FB3618106066002AA192 /* UABespokeCloseView.m in Sources */,
+				1F55951A183AEE480083E85D /* UAWalletAction.m in Sources */,
 				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,
 				CC8542BD17F4B81600D2DE10 /* UAActionRegistrar.m in Sources */,
 				1FA5639B181EDE940049494E /* UIWebView+UAAdditions.m in Sources */,
