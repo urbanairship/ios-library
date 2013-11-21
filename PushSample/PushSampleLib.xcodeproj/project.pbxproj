@@ -37,7 +37,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4A5165C2D4F008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4A4165C2D4F008526E3 /* Default-568h@2x.png */; };
-		1F4EDB491831B2E700F77343 /* libUAirship-3.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.1.a */; };
+		1F4EDB491831B2E700F77343 /* libUAirship-3.1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBC923F515AC8F6000EE7C2A /* libUAirship-3.1.0.a */; };
 		1F6DA58712F9F61E00496A5C /* UAPushNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */; };
 		1F6DA58912F9FEC800496A5C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F6DA58812F9FEC800496A5C /* AudioToolbox.framework */; };
 		1F79711312DE3BFB00D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
@@ -59,6 +59,8 @@
 		4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
+		762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */; };
+		762F81E0183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */; };
 		76811EED17EBA63700874D1F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
 		76811EEE17EBA63700874D1F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		76811EEF17EBA63700874D1F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -244,6 +246,9 @@
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
+		762F81DA183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsChannelInfoViewController.h; sourceTree = "<group>"; };
+		762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsChannelInfoViewController.m; sourceTree = "<group>"; };
+		762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsChannelInfoViewController.xib; sourceTree = "<group>"; };
 		76811ED217EBA60100874D1F /* PushSampleKIFTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PushSampleKIFTests-Info.plist"; sourceTree = "<group>"; };
 		76811ED417EBA60100874D1F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		76811ED617EBA60100874D1F /* PushSampleKIFTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PushSampleKIFTests.m; sourceTree = "<group>"; };
@@ -301,7 +306,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB491831B2E700F77343 /* libUAirship-3.0.1.a in Frameworks */,
+				1F4EDB491831B2E700F77343 /* libUAirship-3.1.0.a in Frameworks */,
 				CC523FCF17BA8E7300233005 /* CoreData.framework in Frameworks */,
 				BB75D9AD151BEAAC00F4241E /* MapKit.framework in Frameworks */,
 				BBEFB0111507F37200976645 /* CoreLocation.framework in Frameworks */,
@@ -420,6 +425,8 @@
 				1F6DA58612F9F61E00496A5C /* UAPushNotificationHandler.m */,
 				4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */,
 				4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */,
+				762F81DA183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.h */,
+				762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -447,6 +454,7 @@
 				1F7FD3F812F79AFF00317B96 /* UAPushSettingsTagsViewController.xib */,
 				1F7FD45412F8956900317B96 /* UAPushSettingsAddTagViewController.xib */,
 				1F7FD5EE12F8DE2200317B96 /* UAPushSettingsSoundsViewController.xib */,
+				762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */,
 				1890BA1A1251B5E900E6EBF1 /* UAPushSettingsTokenView.xib */,
 				1890BA1B1251B5E900E6EBF1 /* UAPushSettingsView.xib */,
 				4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */,
@@ -528,9 +536,9 @@
 		18C02963124F21B800D49CD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.1.a */,
+				BBC923F515AC8F6000EE7C2A /* libUAirship-3.1.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
-				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.1.a */,
+				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.1.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -782,10 +790,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.0.1.a */ = {
+		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.1.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-iOS5-3.0.1.a";
+			path = "libUAirship-iOS5-3.1.0.a";
 			remoteRef = 1FC0E37A17E919FE00840A52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -817,10 +825,10 @@
 			remoteRef = 7B909D3F142935C900D0AB36 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BBC923F515AC8F6000EE7C2A /* libUAirship-3.0.1.a */ = {
+		BBC923F515AC8F6000EE7C2A /* libUAirship-3.1.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-3.0.1.a";
+			path = "libUAirship-3.1.0.a";
 			remoteRef = BBC923F415AC8F6000EE7C2A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -852,6 +860,7 @@
 				D5C75CB912BC24150041239E /* iPadDefault-Landscape.png in Resources */,
 				D5C75CBA12BC24150041239E /* iPadDefault-Portrait.png in Resources */,
 				D5C75CBC12BC24210041239E /* Icon-Small@2x.png in Resources */,
+				762F81E0183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib in Resources */,
 				D5C75CBF12BC242F0041239E /* Default@2x.png in Resources */,
 				D5C75CC012BC242F0041239E /* Icon.png in Resources */,
 				D5A3F63512C15636009731BE /* Icon@2x.png in Resources */,
@@ -928,6 +937,7 @@
 			files = (
 				18C02958124F216B00D49CD5 /* main.m in Sources */,
 				18C02959124F216B00D49CD5 /* SampleViewController.m in Sources */,
+				762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */,
 				1890BABE1251B5E900E6EBF1 /* UAPushMoreSettingsViewController.m in Sources */,
 				1890BABF1251B5E900E6EBF1 /* UAPushSettingsAliasViewController.m in Sources */,
 				1890BAC01251B5E900E6EBF1 /* UAPushSettingsTokenViewController.m in Sources */,
