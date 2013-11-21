@@ -99,8 +99,6 @@
 
 - (void)dealloc {
     [UAInbox shared].jsDelegate = nil;
-    
-    
 }
 
 - (void)failIfSimulator {

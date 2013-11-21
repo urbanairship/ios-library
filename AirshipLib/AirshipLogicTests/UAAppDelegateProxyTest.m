@@ -1,5 +1,5 @@
 #import <XCTest/XCTest.h>
-#import "UABaseAppDelegateSurrogate.h"
+#import "UAAppDelegateProxy.h"
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
 #import "UAirship.h"
@@ -11,22 +11,22 @@ typedef void (^MethodBlock)(NSInvocation *);
 - (void)addMethodBlock:(MethodBlock)methodBlock forSelectorString:(NSString *)selector;
 @end
 
-@interface UABaseAppDelegateSurrogate_Test : XCTestCase
-@property(nonatomic, strong) UABaseAppDelegateSurrogate *baseDelegate;
-@property(nonatomic, strong) TestAppDelegateSurrogate *surrogateDelegate;
-@property(nonatomic, strong) TestAppDelegateSurrogate *defaultDelegate;
+@interface UAAppDelegateProxyTest : XCTestCase
+@property(nonatomic, strong) UAAppDelegateProxy *baseDelegate;
+@property(nonatomic, strong) TestAppDelegateSurrogate *airshipDelegate;
+@property(nonatomic, strong) TestAppDelegateSurrogate *originalDelegate;
 @end
 
-@implementation UABaseAppDelegateSurrogate_Test
+@implementation UAAppDelegateProxyTest
 
 - (void)setUp {
     [super setUp];
-    self.baseDelegate = [[UABaseAppDelegateSurrogate alloc] init];
-    self.surrogateDelegate = [[TestAppDelegateSurrogate alloc] init];
-    self.defaultDelegate = [[TestAppDelegateSurrogate alloc] init];
+    self.baseDelegate = [[UAAppDelegateProxy alloc] init];
+    self.airshipDelegate = [[TestAppDelegateSurrogate alloc] init];
+    self.originalDelegate = [[TestAppDelegateSurrogate alloc] init];
 
-    self.baseDelegate.surrogateDelegate = self.surrogateDelegate;
-    self.baseDelegate.defaultAppDelegate = self.defaultDelegate;
+    self.baseDelegate.airshipAppDelegate = self.airshipDelegate;
+    self.baseDelegate.originalAppDelegate = self.originalDelegate;
 }
 
 - (void)tearDown {
@@ -34,25 +34,25 @@ typedef void (^MethodBlock)(NSInvocation *);
 }
 
 /*
- * Test that responds to selector checks surrogateDelegate, defaultAppDelegate, and its
+ * Test that responds to selector checks airshipDelegate, originalAppDelegate, and its
  * self for a given selector.
  */
 - (void)testRespondsToSelector {
-    // Add a method that only the surrogateDelegate responds to
-    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    // Add a method that only the airshipDelegate responds to
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
                          forSelectorString:@"someRandomMethod"];
 
-    // Add a method that only the defaultDelegate responds to
-    [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    // Add a method that only the originalDelegate responds to
+    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
                        forSelectorString:@"someOtherRandomMethod"];
 
-    // Verify that it responds to methods that the surrogateDelegate responds to
+    // Verify that it responds to methods that the airshipDelegate responds to
     XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someRandomMethod")],
-                  @"respondsToSelector does not respond for its surrgoteDelegate methods");
+                  @"respondsToSelector does not respond for its airshipAppDelegate methods");
 
-    // Verify that it responds to methods that the defaultAppDelegate responds to
+    // Verify that it responds to methods that the originalAppDelegate responds to
     XCTAssertTrue([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someOtherRandomMethod")],
-                  @"respondsToSelector does not respond for its defaultAppDelegate methods");
+                  @"respondsToSelector does not respond for its originalAppDelegate methods");
 
     // Verify it doesnt just respond to everything
     XCTAssertFalse([self.baseDelegate respondsToSelector:NSSelectorFromString(@"someUndefinedMethod")],
@@ -61,7 +61,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
 /*
  * Test that application:didReceiveRemoteNotification:fetchCompletionHandler: only responds if background push is enabled
- * or the defaultAppDelegate responds
+ * or the originalAppDelegate responds
  */
 - (void)testRespondsToSelectorApplicationDidReceiveRemoteNotificationFetchCompletionHandler {
     id mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
@@ -70,7 +70,7 @@ typedef void (^MethodBlock)(NSInvocation *);
 
     // Verify it does not respond when background notifications is disabled and the app delegate does not respond
     XCTAssertFalse([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
-                   @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and defaultAppDelegate does not respond");
+                   @"respondsToSelector should not respond to application:didReceiveRemoteNotification:fetchCompletionHandler: when background push is disabled and originalAppDelegate does not respond");
 
     // Verify it does respond when background notifications is enabled
     [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(YES)] backgroundNotificationEnabled];
@@ -81,7 +81,7 @@ typedef void (^MethodBlock)(NSInvocation *);
     // Verify it responds when background notifications is disabled but the app delegate responds
     [[[mockAirship expect] andReturnValue:OCMOCK_VALUE(NO)] backgroundNotificationEnabled];
 
-    [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
                        forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
 
      XCTAssertTrue([self.baseDelegate respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)],
@@ -91,32 +91,32 @@ typedef void (^MethodBlock)(NSInvocation *);
 }
 
 /*
- * Tests that an exception is raised if the defualtAppDelegate is nil
+ * Tests that an exception is raised if the originalAppDelegate is nil
  */
-- (void)testForwardInvocationNoDefaultAppDelegate {
-    self.baseDelegate.defaultAppDelegate = nil;
+- (void)testForwardInvocationNoOriginalAppDelegate {
+    self.baseDelegate.originalAppDelegate = nil;
 
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
     [mockedInvocation setSelector:NSSelectorFromString(@"someRandomMethod")];
 
     XCTAssertThrows([self.baseDelegate forwardInvocation:mockedInvocation],
-                    @"UABaseAppDelegateSurrogate should raise an exception if the default app delegate is nil");
+                    @"UAAppDelegateProxy should raise an exception if the original app delegate is nil");
     [mockedInvocation stopMocking];
 }
 
 /*
  * Tests that it neither of the delegates respond, it still forwards
- * the invocation to the defaultAppDelegate
+ * the invocation to the originalAppDelegate
  */
 - (void)testForwardInvocationNoResponse {
-    // Set up a mocked invocation that expects to be invoked with the defaultAppDelegate
+    // Set up a mocked invocation that expects to be invoked with the originalAppDelegate
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
     [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someRandomMethod"))] selector];
-    [[mockedInvocation expect] invokeWithTarget:self.defaultDelegate];
+    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
 
     [self.baseDelegate forwardInvocation:mockedInvocation];
     XCTAssertNoThrow([mockedInvocation verify],
-                     @"UABaseAppDelegate should still forward invocations to the base app delegate if neither delegate responds");
+                     @"UAAppDelegateProxy should still forward invocations to the original app delegate if neither delegate responds");
 
     [mockedInvocation stopMocking];
 }
@@ -127,21 +127,21 @@ typedef void (^MethodBlock)(NSInvocation *);
  */
 - (void)testForwardInvocationOneDelegateResponds {
     // Add a method block that only one the surrgateDelegate will respond to
-    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
                          forSelectorString:@"someOtherRandomMethod"];
 
     // Set up a mocked invocation that expects to be invoked with only one delegate
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
     [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someOtherRandomMethod"))] selector];
-    [[mockedInvocation reject] invokeWithTarget:self.defaultDelegate];
-    [[mockedInvocation expect] invokeWithTarget:self.surrogateDelegate];
+    [[mockedInvocation reject] invokeWithTarget:self.originalDelegate];
+    [[mockedInvocation expect] invokeWithTarget:self.airshipDelegate];
 
-    // Verify only the surrogateDelegate was invoked
+    // Verify only the airshipDelegate was invoked
     XCTAssertNoThrow([self.baseDelegate forwardInvocation:mockedInvocation],
-                     @"UABaseAppDelegate is invoking with both delegates when it should only be with the surrogateDelegate");
+                     @"UAAppDelegateProxy is invoking with both delegates when it should only be sending to the airship app delegate");
 
     XCTAssertNoThrow([mockedInvocation verify],
-                     @"UABaseAppDelegate did not only the surrogate delegate");
+                     @"UAAppDelegateProxy should only send to the airship app delegate");
 
     [mockedInvocation stopMocking];
 }
@@ -152,22 +152,22 @@ typedef void (^MethodBlock)(NSInvocation *);
  */
 - (void)testForwardInvocationBothDelegatesResponds {
     // Add same method blocks to the sub delegates so they will respond to different selectors
-    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) { }
                          forSelectorString:@"someRandomMethod"];
 
-    [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) { }
+    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) { }
                        forSelectorString:@"someRandomMethod"];
 
     // Set up a mocked invocation that expects to be invoked with both delegates
     id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
     [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(NSSelectorFromString(@"someRandomMethod"))] selector];
-    [[mockedInvocation expect] invokeWithTarget:self.defaultDelegate];
-    [[mockedInvocation expect] invokeWithTarget:self.surrogateDelegate];
+    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
+    [[mockedInvocation expect] invokeWithTarget:self.airshipDelegate];
 
     // Verify both delegates are invoked with the invocation
     [self.baseDelegate forwardInvocation:mockedInvocation];
     XCTAssertNoThrow([mockedInvocation verify],
-                     @"UABaseAppDelegate did not invoke both delegates");
+                     @"UAAppDelegateProxy did not invoke both delegates");
 
     [mockedInvocation stopMocking];
 }
@@ -200,19 +200,19 @@ typedef void (^MethodBlock)(NSInvocation *);
     for (int i = 0; i < 3; i++) {
 
         // Set the defualtDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
-        __block UIBackgroundFetchResult defaultAppDelegateResult = allBackgroundFetchResults[i];
-        [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) {
+        __block UIBackgroundFetchResult originalAppDelegateResult = allBackgroundFetchResults[i];
+        [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
             void *arg;
             [invocation getArgument:&arg atIndex:4];
             void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
-            handler(defaultAppDelegateResult);
+            handler(originalAppDelegateResult);
         } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
 
         for (int j = 0; j < 3; j++) {
 
-            // Set the surrogateDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
+            // Set the airshipDelegate to return a result for application:didReceiveRemoteNotification:fetchCompletionHandler:
             __block UIBackgroundFetchResult surrogateDelagateResult = allBackgroundFetchResults[j];
-            [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) {
+            [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
                 void *arg;
                 [invocation getArgument:&arg atIndex:4];
                 void (^handler)(UIBackgroundFetchResult result) = (__bridge void (^)(UIBackgroundFetchResult))arg;
@@ -223,10 +223,10 @@ typedef void (^MethodBlock)(NSInvocation *);
             __block UIBackgroundFetchResult expectedResult = expectedResults[i][j];
             [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
                 XCTAssertEqual(expectedResult, result,
-                               @"application:didReceiveRemoteNotification:fetchCompletionHandler should return %@ when surrogateDelate returns %@ and defaultAppDelegate returns %@",
+                               @"application:didReceiveRemoteNotification:fetchCompletionHandler should return %@ when airship app delegate returns %@ and original app delegate returns %@",
                                [self stringFromBackgroundFetchResult:expectedResult],
                                [self stringFromBackgroundFetchResult:surrogateDelagateResult],
-                               [self stringFromBackgroundFetchResult:defaultAppDelegateResult]);
+                               [self stringFromBackgroundFetchResult:originalAppDelegateResult]);
             }];
         }
     }
@@ -252,7 +252,7 @@ typedef void (^MethodBlock)(NSInvocation *);
  * responds with the results of the single delegate that responds
  */
 - (void)testDidReceiveRemoteNotificationOneSubDelegateResponse {
-    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) {
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
         void *arg;
         // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
         [invocation getArgument:&arg atIndex:4];
@@ -278,7 +278,7 @@ typedef void (^MethodBlock)(NSInvocation *);
     // Define application:didReceiveRemoteNotification:fetchCompletionHandler: that calls the completion
     // handler multiple times on both delegates.
     
-    [self.surrogateDelegate addMethodBlock:^(NSInvocation *invocation) {
+    [self.airshipDelegate addMethodBlock:^(NSInvocation *invocation) {
         void *arg;
         // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
         [invocation getArgument:&arg atIndex:4];
@@ -289,7 +289,7 @@ typedef void (^MethodBlock)(NSInvocation *);
         handler(UIBackgroundFetchResultNewData);
     } forSelectorString:@"application:didReceiveRemoteNotification:fetchCompletionHandler:"];
 
-    [self.defaultDelegate addMethodBlock:^(NSInvocation *invocation) {
+    [self.originalDelegate addMethodBlock:^(NSInvocation *invocation) {
         void *arg;
         // Do magic to get the block from the NSInvocation.  Index 4 because the first 2 arguments are hidden arguments - self and command
         [invocation getArgument:&arg atIndex:4];
@@ -304,6 +304,21 @@ typedef void (^MethodBlock)(NSInvocation *);
     [self.baseDelegate application:nil didReceiveRemoteNotification:nil fetchCompletionHandler:^(UIBackgroundFetchResult result){
         XCTAssertEqual(UIBackgroundFetchResultNoData, result, @"application:didReceiveRemoteNotification:fetchCompletionHandler should ignore multiple calls to the completion handler");
     }];
+}
+
+- (void)testAirshipDelegateDoesNotReceiveNSObjectMessages {
+
+    SEL selector = @selector(performSelectorOnMainThread:withObject:waitUntilDone:);
+
+    // Set up a mocked invocation that expects to be invoked with both delegates
+    id mockedInvocation = [OCMockObject niceMockForClass:[NSInvocation class]];
+    [[[mockedInvocation stub] andReturnValue:OCMOCK_VALUE(selector)] selector];
+    [[mockedInvocation expect] invokeWithTarget:self.originalDelegate];
+    [[mockedInvocation reject] invokeWithTarget:self.airshipDelegate];
+
+    [self.baseDelegate forwardInvocation:mockedInvocation];
+    XCTAssertNoThrow([mockedInvocation verify],
+                     @"UAAppDelegateProxy did send NSObject methods only to the original app delegate");
 }
 
 @end

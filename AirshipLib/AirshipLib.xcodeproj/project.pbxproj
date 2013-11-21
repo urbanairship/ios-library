@@ -37,10 +37,10 @@
 		1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
 		1F55FB70181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
 		1F55FB71181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
-		1F610DB517835C2200BCD96E /* UAAutoAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAD17835C2200BCD96E /* UAAutoAppDelegate.h */; };
-		1F610DB617835C2200BCD96E /* UAAutoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DAE17835C2200BCD96E /* UAAutoAppDelegate.m */; };
-		1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAF17835C2200BCD96E /* UABaseAppDelegateSurrogate.h */; };
-		1F610DB917835C2200BCD96E /* UABaseAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UABaseAppDelegateSurrogate.m */; };
+		1F610DB517835C2200BCD96E /* UAAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAD17835C2200BCD96E /* UAAppDelegate.h */; };
+		1F610DB617835C2200BCD96E /* UAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DAE17835C2200BCD96E /* UAAppDelegate.m */; };
+		1F610DB817835C2200BCD96E /* UAAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAF17835C2200BCD96E /* UAAppDelegateProxy.h */; };
+		1F610DB917835C2200BCD96E /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		1F610DBB17835C2200BCD96E /* UAConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB117835C2200BCD96E /* UAConfig.m */; };
 		1F610DBD17835C2200BCD96E /* UAirship.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DB217835C2200BCD96E /* UAirship.h */; };
 		1F610DBE17835C2200BCD96E /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB317835C2200BCD96E /* UAirship.m */; };
@@ -117,7 +117,7 @@
 		1FE0B75517E2751000856C60 /* UAEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = D5BED7B812FC787900057449 /* UAEvent.h */; };
 		1FE0B75617E2751000856C60 /* UAConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610E0817835C6700BCD96E /* UAConfig.h */; };
 		1FE0B75717E2751000856C60 /* UALocationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0B15057C7F00971CEC /* UALocationEvent.h */; };
-		1FE0B75817E2751000856C60 /* UABaseAppDelegateSurrogate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAF17835C2200BCD96E /* UABaseAppDelegateSurrogate.h */; };
+		1FE0B75817E2751000856C60 /* UAAppDelegateProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAF17835C2200BCD96E /* UAAppDelegateProxy.h */; };
 		1FE0B75917E2751000856C60 /* UALocationService.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0E15057C7F00971CEC /* UALocationService.h */; };
 		1FE0B75A17E2751000856C60 /* UAUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = D9983E8C1238462100B7E69F /* UAUtils.h */; };
 		1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DCC17835C3A00BCD96E /* UAInboxMessageList.h */; };
@@ -130,7 +130,7 @@
 		1FE0B76217E2751000856C60 /* UAInboxAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DC417835C3A00BCD96E /* UAInboxAPIClient.h */; };
 		1FE0B76317E2751000856C60 /* UA_Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = B69DB4C812533B280037AF7F /* UA_Base64.h */; };
 		1FE0B76417E2751000856C60 /* UALocationService+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BBB87E0D15057C7F00971CEC /* UALocationService+Internal.h */; };
-		1FE0B76517E2751000856C60 /* UAAutoAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAD17835C2200BCD96E /* UAAutoAppDelegate.h */; };
+		1FE0B76517E2751000856C60 /* UAAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAD17835C2200BCD96E /* UAAppDelegate.h */; };
 		1FE0B76617E2751000856C60 /* UADeviceRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DD817835C3A00BCD96E /* UADeviceRegistrationData.h */; };
 		1FE0B76717E2751000856C60 /* UAInboxMessageListObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DCE17835C3A00BCD96E /* UAInboxMessageListObserver.h */; };
 		1FE0B76817E2751000856C60 /* UAAnalytics+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BB926B3C1540D1D000003975 /* UAAnalytics+Internal.h */; };
@@ -157,11 +157,11 @@
 		1FE0B77E17E2751000856C60 /* UADeviceAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DD717835C3A00BCD96E /* UADeviceAPIClient.m */; };
 		1FE0B77F17E2751000856C60 /* UAInboxPushHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DD017835C3A00BCD96E /* UAInboxPushHandler.m */; };
 		1FE0B78017E2751000856C60 /* UAirship.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB317835C2200BCD96E /* UAirship.m */; };
-		1FE0B78117E2751000856C60 /* UABaseAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UABaseAppDelegateSurrogate.m */; };
+		1FE0B78117E2751000856C60 /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		1FE0B78217E2751000856C60 /* UADeviceRegistrationData.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DD917835C3A00BCD96E /* UADeviceRegistrationData.m */; };
 		1FE0B78317E2751000856C60 /* UA_Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = B631183C1250925A0014F697 /* UA_Reachability.m */; };
 		1FE0B78417E2751000856C60 /* NSJSONSerialization+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */; };
-		1FE0B78517E2751000856C60 /* UAAutoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DAE17835C2200BCD96E /* UAAutoAppDelegate.m */; };
+		1FE0B78517E2751000856C60 /* UAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DAE17835C2200BCD96E /* UAAppDelegate.m */; };
 		1FE0B78617E2751000856C60 /* UA_Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B69DB4C912533B280037AF7F /* UA_Base64.m */; };
 		1FE0B78717E2751000856C60 /* UAKeychainUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FE43799128B589000D38A14 /* UAKeychainUtils.m */; };
 		1FE0B78817E2751000856C60 /* UAUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FC71653129597F9003BDD2B /* UAUser.m */; };
@@ -330,7 +330,7 @@
 		CC1D22A0180374B9005C8393 /* UAAction+OperatorTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D229F180374B9005C8393 /* UAAction+OperatorTest.m */; };
 		CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D22A118037DD9005C8393 /* UAAggregateActionResultTest.m */; };
 		CC1D22A61804587F005C8393 /* UAIncomingPushActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D22A51804587F005C8393 /* UAIncomingPushActionTest.m */; };
-		CC4C2A1017CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4C2A0F17CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m */; };
+		CC4C2A1017CE50E4003B9A55 /* UAAppDelegateProxyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4C2A0F17CE50E4003B9A55 /* UAAppDelegateProxyTest.m */; };
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
 		CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC523FC217BA8AC200233005 /* CoreData.framework */; };
@@ -439,10 +439,10 @@
 		1F55FB3418106066002AA192 /* UAKablamViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKablamViewController.m; sourceTree = "<group>"; };
 		1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
 		1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
-		1F610DAD17835C2200BCD96E /* UAAutoAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutoAppDelegate.h; sourceTree = "<group>"; };
-		1F610DAE17835C2200BCD96E /* UAAutoAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutoAppDelegate.m; sourceTree = "<group>"; };
-		1F610DAF17835C2200BCD96E /* UABaseAppDelegateSurrogate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABaseAppDelegateSurrogate.h; sourceTree = "<group>"; };
-		1F610DB017835C2200BCD96E /* UABaseAppDelegateSurrogate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABaseAppDelegateSurrogate.m; sourceTree = "<group>"; };
+		1F610DAD17835C2200BCD96E /* UAAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAppDelegate.h; sourceTree = "<group>"; };
+		1F610DAE17835C2200BCD96E /* UAAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegate.m; sourceTree = "<group>"; };
+		1F610DAF17835C2200BCD96E /* UAAppDelegateProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAppDelegateProxy.h; sourceTree = "<group>"; };
+		1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateProxy.m; sourceTree = "<group>"; };
 		1F610DB117835C2200BCD96E /* UAConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAConfig.m; sourceTree = "<group>"; };
 		1F610DB217835C2200BCD96E /* UAirship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAirship.h; sourceTree = "<group>"; };
 		1F610DB317835C2200BCD96E /* UAirship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAirship.m; sourceTree = "<group>"; };
@@ -603,7 +603,7 @@
 		CC1D229F180374B9005C8393 /* UAAction+OperatorTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAAction+OperatorTest.m"; sourceTree = "<group>"; };
 		CC1D22A118037DD9005C8393 /* UAAggregateActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAggregateActionResultTest.m; sourceTree = "<group>"; };
 		CC1D22A51804587F005C8393 /* UAIncomingPushActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingPushActionTest.m; sourceTree = "<group>"; };
-		CC4C2A0F17CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UABaseAppDelegateSurrogate+Test.m"; sourceTree = "<group>"; };
+		CC4C2A0F17CE50E4003B9A55 /* UAAppDelegateProxyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateProxyTest.m; sourceTree = "<group>"; };
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
 		CC523FC217BA8AC200233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -902,10 +902,10 @@
 		1F610E0C17835C8300BCD96E /* AppDelegates */ = {
 			isa = PBXGroup;
 			children = (
-				1F610DAD17835C2200BCD96E /* UAAutoAppDelegate.h */,
-				1F610DAE17835C2200BCD96E /* UAAutoAppDelegate.m */,
-				1F610DAF17835C2200BCD96E /* UABaseAppDelegateSurrogate.h */,
-				1F610DB017835C2200BCD96E /* UABaseAppDelegateSurrogate.m */,
+				1F610DAD17835C2200BCD96E /* UAAppDelegate.h */,
+				1F610DAE17835C2200BCD96E /* UAAppDelegate.m */,
+				1F610DAF17835C2200BCD96E /* UAAppDelegateProxy.h */,
+				1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */,
 			);
 			name = AppDelegates;
 			sourceTree = "<group>";
@@ -1076,7 +1076,7 @@
 		CC4C2A0E17CE50C7003B9A55 /* AppDelegates */ = {
 			isa = PBXGroup;
 			children = (
-				CC4C2A0F17CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m */,
+				CC4C2A0F17CE50E4003B9A55 /* UAAppDelegateProxyTest.m */,
 			);
 			name = AppDelegates;
 			sourceTree = "<group>";
@@ -1315,7 +1315,7 @@
 				1F4EDB3D183183AF00F77343 /* UAMailComposerAction.h in Headers */,
 				CC8542B417F4B81600D2DE10 /* UAAction.h in Headers */,
 				1FE0B75617E2751000856C60 /* UAConfig.h in Headers */,
-				1FE0B75817E2751000856C60 /* UABaseAppDelegateSurrogate.h in Headers */,
+				1FE0B75817E2751000856C60 /* UAAppDelegateProxy.h in Headers */,
 				CC8542C017F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */,
 				1FE0B75C17E2751000856C60 /* UAInboxUtils.h in Headers */,
@@ -1333,7 +1333,7 @@
 				CCA3A4EC17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				1F4EDB3E183183B600F77343 /* UAMailComposerData.h in Headers */,
 				CC8542C817F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
-				1FE0B76517E2751000856C60 /* UAAutoAppDelegate.h in Headers */,
+				1FE0B76517E2751000856C60 /* UAAppDelegate.h in Headers */,
 				CCA3A5051803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
 				1FE0B76617E2751000856C60 /* UADeviceRegistrationData.h in Headers */,
 				1FE0B76717E2751000856C60 /* UAInboxMessageListObserver.h in Headers */,
@@ -1411,7 +1411,7 @@
 				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
 				CCA3A50117FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */,
 				1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */,
-				1F610DB817835C2200BCD96E /* UABaseAppDelegateSurrogate.h in Headers */,
+				1F610DB817835C2200BCD96E /* UAAppDelegateProxy.h in Headers */,
 				49F437521810B5B400182D06 /* UAModifyTagsAction.h in Headers */,
 				CC8542BF17F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1F610DEE17835C3A00BCD96E /* UAInboxMessageList.h in Headers */,
@@ -1432,7 +1432,7 @@
 				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				CC8542C717F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
-				1F610DB517835C2200BCD96E /* UAAutoAppDelegate.h in Headers */,
+				1F610DB517835C2200BCD96E /* UAAppDelegate.h in Headers */,
 				1F610DFE17835C3A00BCD96E /* UADeviceRegistrationData.h in Headers */,
 				1F610DF117835C3A00BCD96E /* UAInboxMessageListObserver.h in Headers */,
 				BB8860EA159A7E9600584445 /* UAAnalytics+Internal.h in Headers */,
@@ -1598,13 +1598,13 @@
 				CCA3A4EE17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */,
 				1FE0B77F17E2751000856C60 /* UAInboxPushHandler.m in Sources */,
 				1FE0B78017E2751000856C60 /* UAirship.m in Sources */,
-				1FE0B78117E2751000856C60 /* UABaseAppDelegateSurrogate.m in Sources */,
+				1FE0B78117E2751000856C60 /* UAAppDelegateProxy.m in Sources */,
 				1FE0B78217E2751000856C60 /* UADeviceRegistrationData.m in Sources */,
 				1FE0B78317E2751000856C60 /* UA_Reachability.m in Sources */,
 				CC8542CE17F4B81600D2DE10 /* UAIncomingPushAction.m in Sources */,
 				1FE0B78417E2751000856C60 /* NSJSONSerialization+UAAdditions.m in Sources */,
-				1FE0B78517E2751000856C60 /* UAAutoAppDelegate.m in Sources */,
 				1F55FB421810618C002AA192 /* UAKablamOverlayController.m in Sources */,
+				1FE0B78517E2751000856C60 /* UAAppDelegate.m in Sources */,
 				1FE0B78617E2751000856C60 /* UA_Base64.m in Sources */,
 				1FE0B78717E2751000856C60 /* UAKeychainUtils.m in Sources */,
 				CC8542C217F4B81600D2DE10 /* UAActionResult.m in Sources */,
@@ -1685,7 +1685,7 @@
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
-				CC4C2A1017CE50E4003B9A55 /* UABaseAppDelegateSurrogate+Test.m in Sources */,
+				CC4C2A1017CE50E4003B9A55 /* UAAppDelegateProxyTest.m in Sources */,
 				495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */,
 				1FA56393181EDBA20049494E /* UAWebViewTools.m in Sources */,
 				495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */,
@@ -1732,13 +1732,13 @@
 				CCA3A4ED17FCB3A8009C7371 /* UAActionRegistryEntry.m in Sources */,
 				1F610DF317835C3A00BCD96E /* UAInboxPushHandler.m in Sources */,
 				1F610DBE17835C2200BCD96E /* UAirship.m in Sources */,
-				1F610DB917835C2200BCD96E /* UABaseAppDelegateSurrogate.m in Sources */,
+				1F610DB917835C2200BCD96E /* UAAppDelegateProxy.m in Sources */,
 				1F610DFF17835C3A00BCD96E /* UADeviceRegistrationData.m in Sources */,
 				BB886103159A7E9600584445 /* UA_Reachability.m in Sources */,
 				CC8542CD17F4B81600D2DE10 /* UAIncomingPushAction.m in Sources */,
 				CCBFA2DB17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				1F55FB3C18106066002AA192 /* UAKablamViewController.m in Sources */,
-				1F610DB617835C2200BCD96E /* UAAutoAppDelegate.m in Sources */,
+				1F610DB617835C2200BCD96E /* UAAppDelegate.m in Sources */,
 				BB886104159A7E9600584445 /* UA_Base64.m in Sources */,
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
