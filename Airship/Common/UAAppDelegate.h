@@ -27,9 +27,13 @@
 
 /**
  * This class is a replacement app delegate that handles incoming push notifications and registration
- * callbacks. When used with UABaseAppDelegateSurrogate, both this class and the original app delegate
+ * callbacks. When used with UAAppDelegateProxy, both this class and the original app delegate
  * can receive and respond to messages sent to the default app delegate.
+ *
+ * Note: Do not extend any other class other than NSObject.  In the UAAppDelegateProxy,
+ * it will not forward any of the base NSObject invocations, instead it will only forward
+ * invocations for methods that this class directly implements. 
  */
-@interface UAAutoAppDelegate : NSObject<UIApplicationDelegate>
+@interface UAAppDelegate : NSObject<UIApplicationDelegate>
 
 @end
