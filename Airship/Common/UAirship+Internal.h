@@ -27,11 +27,12 @@
 
 @class UABaseAppDelegateSurrogate;
 @class UAJavaScriptDelegate;
+@class UAAppDelegateProxy;
 
 @interface UAirship()
 
 // Setters for public readonly-getters
-@property (nonatomic, strong) UABaseAppDelegateSurrogate *appDelegate;
+@property (nonatomic, strong) UAAppDelegateProxy *appDelegate;
 @property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, assign) BOOL ready;
 @property (nonatomic, strong) UAConfig *config;
