@@ -706,6 +706,7 @@
 				76811EE817EBA63600874D1F /* Sources */,
 				76811EE917EBA63600874D1F /* Frameworks */,
 				76811EEA17EBA63600874D1F /* Resources */,
+				765C936D183FD80500227D02 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -926,7 +927,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
+			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"";
+		};
+		765C936D183FD80500227D02 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
