@@ -1,0 +1,82 @@
+
+#import <XCTest/XCTest.h>
+#import <OCMock/OCMock.h>
+#import "UAInbox.h"
+#import "UAirship+Internal.h"
+#import "UAActionJSDelegate.h"
+#import "UAJavaScriptDelegate.h"
+#import "UAWebViewTools.h"
+#import "UAWebViewCallbackData.h"
+
+@interface UAWebViewToolsTest : XCTestCase
+@property(nonatomic, strong) id mockInboxJSDelegate;
+@property(nonatomic, strong) id mockActionJSDelegate;
+@property(nonatomic, strong) id mockUserDefinedJSDelegate;
+@property(nonatomic, strong) id mockAirship;
+@property(nonatomic, strong) NSURL *basicActionURL;
+@property(nonatomic, strong) NSURL *regularActionURL;
+@property(nonatomic, strong) NSURL *otherURL;
+@end
+
+@implementation UAWebViewToolsTest
+
+- (void)setUp {
+    [super setUp];
+
+    self.mockInboxJSDelegate = [OCMockObject mockForProtocol:@protocol(UAInboxJavaScriptDelegate)];
+    self.mockActionJSDelegate = [OCMockObject mockForProtocol:@protocol(UAJavaScriptDelegate)];
+    self.mockUserDefinedJSDelegate = [OCMockObject mockForProtocol:@protocol(UAJavaScriptDelegate)];
+    self.mockAirship = [OCMockObject niceMockForClass:[UAirship class]];
+
+    [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
+    [[[self.mockAirship stub] andReturn:self.mockActionJSDelegate] actionJSDelegate];
+    [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
+    [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
+
+    self.basicActionURL = [NSURL URLWithString:@"ua://whatever/run-basic-action?foo=bar&baz=boz"];
+    self.regularActionURL = [NSURL URLWithString:@"ua://whatever/run-action/some-callback-id?foo=bar"];
+    self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
+}
+
+- (void)tearDown {
+    [self.mockActionJSDelegate stopMocking];
+    [self.mockInboxJSDelegate stopMocking];
+    [self.mockUserDefinedJSDelegate stopMocking];
+
+    [UAirship shared].jsDelegate = nil;
+    [UAirship shared].actionJSDelegate = nil;
+
+    [super tearDown];
+}
+
+- (void)testCallbackDataForURL {
+    UAWebViewCallbackData *data = [UAWebViewTools callbackDataForURL:self.regularActionURL];
+    XCTAssertNotNil(data, @"data should be non-nil");
+    XCTAssertEqual(data.arguments.count, (NSUInteger)2, @"data should have two arguments");
+    XCTAssertEqualObjects([data.arguments firstObject], @"run-action", @"first arg should be 'run-action'");
+    XCTAssertEqualObjects([data.arguments objectAtIndex:1], @"some-callback-id", @"second arg should be 'some-callback-id'");
+    XCTAssertEqualObjects([data.options objectForKey:@"foo"], @"bar", @"key 'foo' should index 'bar'");
+}
+
+- (void)testPerformJSDelegate {
+
+    //a run-action argument should result in the the callback being dispatched to our internal action JS delegate
+    [[self.mockActionJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegate:nil url:self.regularActionURL];
+    [self.mockActionJSDelegate verify];
+
+    //same for run-basic-action
+    [[self.mockActionJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegate:nil url:self.basicActionURL];
+    [self.mockActionJSDelegate verify];
+
+    //everything else should be dispatched to the (deprecated) inbox js delegate and the new user js delegate
+    [[self.mockInboxJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any]];
+    [[self.mockUserDefinedJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+
+    [UAWebViewTools performJSDelegate:nil url:self.otherURL];
+    [self.mockInboxJSDelegate verify];
+    [self.mockUserDefinedJSDelegate verify];
+}
+
+@end

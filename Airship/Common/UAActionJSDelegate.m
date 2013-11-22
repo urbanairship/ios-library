@@ -29,10 +29,9 @@
         UA_LDEBUG(@"unable to url decode action args: %@", arguments);
         return nil;
     }
-    //use NSJSONSerialization directly here, so we can allow the reading of fragments
-    id jsonDecodedArgs = [NSJSONSerialization JSONObjectWithData: [urlDecodedArgs dataUsingEncoding:NSUTF8StringEncoding]
-                                                          options: NSJSONReadingMutableContainers | NSJSONReadingAllowFragments
-                                                            error: nil];
+    //allow the reading of fragments so we can parse lower level JSON values
+    id jsonDecodedArgs = [NSJSONSerialization objectWithString:urlDecodedArgs
+                                                       options: NSJSONReadingMutableContainers | NSJSONReadingAllowFragments];
     if (!jsonDecodedArgs) {
         UA_LDEBUG(@"unable to json decode action args: %@", urlDecodedArgs);
     } else {
@@ -80,13 +79,16 @@
                     NSString *resultString;
                     if (result.value) {
                         //if the action completed with a result value, serialize into JSON
-                        resultString = [NSJSONSerialization stringWithObject:result.value];
+                        //accept fragments so we can write lower level JSON values
+                        resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES];
                     }
                     //in the case where there is no result value, pass null
                     resultString = resultString ?: @"null";
                     //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
                     NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
                     completionHandler(script);
+                } else {
+                    completionHandler(nil);
                 }
             }
         }];
@@ -101,6 +103,8 @@
             }
             NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
             completionHandler(script);
+        } else {
+            completionHandler(nil);
         }
     }
 }
@@ -126,6 +130,8 @@
             }];
         }
     }
+
+    completionHandler(nil);
 }
 
 - (void)callbackArguments:(NSArray *)args

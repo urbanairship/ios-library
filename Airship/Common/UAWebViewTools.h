@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAWebViewCallbackData;
+
 @interface UAWebViewTools : NSObject
 
 /**
@@ -45,6 +47,14 @@
  */
 + (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
  navigationType:(UIWebViewNavigationType)navigationType;
+
+/**
+ * Processes a custom URL into associated callback data.
+ *
+ * @param url The URL to be processed.
+ * @return An instance of UAWebViewCallbackData.
+ */
++ (UAWebViewCallbackData *)callbackDataForURL:(NSURL *)url;
 
 /**
  * Used for farming out JavaScript delegate callbacks.
