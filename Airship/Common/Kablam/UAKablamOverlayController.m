@@ -115,6 +115,7 @@ static NSMutableSet *overlayControllers = nil;
 
 + (void)closeWindow {
     for (UAKablamOverlayController *oc in overlayControllers) {
+        UA_LDEBUG(@"Closing Kablam overlay controller: %@", [oc.url absoluteString]);
         [oc closePopupWindow];
     }
 }

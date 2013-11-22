@@ -48,6 +48,8 @@
 
 + (void)showURL:(NSURL *)url;
 
++ (void)closeWindow;
+
 /**
  * Initializer, creates an overlay window and loads the given content within a particular view controller.
  * @param viewController the view controller to display the overlay in

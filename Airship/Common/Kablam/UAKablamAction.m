@@ -59,6 +59,10 @@
     // set cachable url
     [UAURLProtocol addCachableURL:kablamURL];
 
+    //close any existing windows
+    [UAKablamViewController closeWindow];
+    [UAKablamOverlayController closeWindow];
+
     if ([displaySituations containsObject:situation]) {
         // show the widget, then load
         if (self.modal) {

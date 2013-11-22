@@ -77,6 +77,8 @@ static NSMutableSet *overlayControllers = nil;
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showURL:(NSURL *)url {
 
+    [UAKablamViewController closeWindow];
+
     UIViewController *topController = [UAKablamViewController topController];
 
     UAKablamViewController *overlayController = [[UAKablamViewController alloc] initWithParentViewController:topController andURL:url];
@@ -98,6 +100,16 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     return topController;
+}
+
++ (void)closeWindow {
+
+    // It's the top view controller with a child root view controller
+    UIViewController *topController = [UAKablamViewController topController];
+    UAKablamViewController *possibleKablamController = [[topController childViewControllers] firstObject];
+    if ([possibleKablamController isKindOfClass:[UAKablamViewController class]]) {
+        [possibleKablamController finish];
+    }
 }
 
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
