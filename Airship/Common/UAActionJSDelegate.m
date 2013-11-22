@@ -79,7 +79,7 @@
                     NSString *resultString;
                     if (result.value) {
                         //if the action completed with a result value, serialize into JSON
-                        //accept fragments so we can write lower level JSON values
+                        //accepting fragments so we can write lower level JSON values
                         resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES];
                     }
                     //in the case where there is no result value, pass null
