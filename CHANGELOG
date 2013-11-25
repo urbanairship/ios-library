@@ -8,6 +8,14 @@
   - Fixed duplicate notification handling on background push applications.
   - Fixed possible crash with auto app integration when sending performSelector methods to the app delegate.
 
+-------------------------
+3.0.2 - November 21, 2013
+-------------------------
+- Moved headers to project level.
+- Fixed possible crash on iOS5 when opening rich push messages with embedded images.
+- Fixed duplicate notification handling on background push applications.
+- Fixed possible crash with auto app integration when sending performSelector methods to the app delegate.
+
 --------------------------------------------
 3.1.0 (Internal Release) - November 14, 2013
 --------------------------------------------
