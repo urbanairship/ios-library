@@ -88,6 +88,7 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
+
             (unsigned long)self.cacheDiskSizeInMB];
 }
 
@@ -323,6 +324,7 @@
         _deviceAPIURL = [deviceAPIURL copy];
     }
 }
+
 #pragma mark -
 #pragma KVC Overrides
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {

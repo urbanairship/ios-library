@@ -1,3 +1,28 @@
+/*
+ Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ 2. Redistributions in binaryform must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided withthe distribution.
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
@@ -8,17 +33,23 @@
 #import "UAirship+Internal.h"
 #import "UAActionRunner.h"
 #import "UAActionRegistrar+Internal.h"
+#import "UAUtils.h"
+#import "UAUser.h"
+#import "UAChannelRegistrationPayload.h"
+#import "UADeviceRegistrar.h"
+#import "UAEvent.h"
 
 
 @interface UAPushTest : XCTestCase
 @property(nonatomic, strong) id mockedApplication;
-@property(nonatomic, strong) id mockedDeviceAPIClient;
+@property(nonatomic, strong) id mockedDeviceRegistrar;
 @property(nonatomic, strong) id mockedAirshipClass;
 @property(nonatomic, strong) id mockedAnalytics;
 @property(nonatomic, strong) id mockedPushDelegate;
 @property(nonatomic, strong) id mockRegistrationDelegate;
-@property(nonatomic, strong) id mockRegistrationObserver;
 @property(nonatomic, strong) id mockActionRunner;
+@property(nonatomic, strong) id mockUAUtils;
+@property(nonatomic, strong) id mockUAUser;
 
 @end
 
@@ -39,7 +70,7 @@ NSDictionary *notification;
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
 
     // Set up a mocked device api client
-    self.mockedDeviceAPIClient = [OCMockObject partialMockForObject:[UAPush shared].deviceAPIClient];
+    self.mockedDeviceRegistrar = [OCMockObject partialMockForObject:[UAPush shared].deviceRegistrar];
 
     self.mockedAnalytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
 
@@ -51,16 +82,18 @@ NSDictionary *notification;
     [UAPush shared].pushNotificationDelegate = self.mockedPushDelegate;
 
     self.mockRegistrationDelegate = [OCMockObject mockForProtocol:@protocol(UARegistrationDelegate)];
-    self.mockRegistrationObserver = [OCMockObject mockForProtocol:@protocol(UARegistrationObserver)];
 
     self.mockActionRunner = [OCMockObject mockForClass:[UAActionRunner class]];
 
-    [UAPush shared].registrationDelegate = self.mockRegistrationDelegate;
+    self.mockUAUtils = [OCMockObject niceMockForClass:[UAUtils class]];
+    [[[self.mockUAUtils stub] andReturn:@"someDeviceID"] deviceID];
 
-    //remove all existing observers before adding our mock registration observer,
-    //so we don't end up with angry zombie mocks between cases
-    [[UAPush shared] removeObservers];
-    [[UAPush shared] addObserver:self.mockRegistrationObserver];
+    self.mockUAUser = [OCMockObject niceMockForClass:[UAUser class]];
+    [[[self.mockUAUser stub] andReturn:self.mockUAUser] defaultUser];
+    [[[self.mockUAUser stub] andReturn:@"someUser"] username];
+
+
+    [UAPush shared].registrationDelegate = self.mockRegistrationDelegate;
 }
 
 - (void)tearDown {
@@ -69,13 +102,14 @@ NSDictionary *notification;
     [UAPush shared].registrationDelegate = nil;
 
     [self.mockedApplication stopMocking];
-    [self.mockedDeviceAPIClient stopMocking];
+    [self.mockedDeviceRegistrar stopMocking];
     [self.mockedAnalytics stopMocking];
     [self.mockedAirshipClass stopMocking];
     [self.mockedPushDelegate stopMocking];
     [self.mockRegistrationDelegate stopMocking];
-    [self.mockRegistrationObserver stopMocking];
     [self.mockActionRunner stopMocking];
+    [self.mockUAUtils stopMocking];
+    [self.mockUAUser stopMocking];
 }
 
 - (void)testSetDeviceToken {
@@ -251,12 +285,13 @@ NSDictionary *notification;
     [UAPush shared].pushEnabled = YES;
 
     // Add a device token so we get a device api callback
-    [[self.mockedDeviceAPIClient expect] unregisterWithData:OCMOCK_ANY
-                                                  onSuccess:OCMOCK_ANY
-                                                  onFailure:OCMOCK_ANY
-                                                 forcefully:NO];
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:NO];
 
     [[self.mockedApplication expect] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
+
 
     [UAPush shared].pushEnabled = NO;
 
@@ -269,7 +304,7 @@ NSDictionary *notification;
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"pushEnabled should unregister for remote notifications");
 
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"pushEnabled should make unregister with the device api client");
 }
 
@@ -289,6 +324,7 @@ NSDictionary *notification;
                           @"Quiet time start is not set correctly");
     XCTAssertEqualObjects(@"13:00", [quietTime valueForKey:UAPushQuietTimeEndKey],
                           @"Quiet time end is not set correctly");
+
 
     // Test setting timezone to -5 GMT
     [[UAPush shared] setQuietTimeFrom:start
@@ -396,16 +432,16 @@ NSDictionary *notification;
     [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
-    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY
-                                                onSuccess:OCMOCK_ANY
-                                                onFailure:OCMOCK_ANY
-                                               forcefully:YES];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:YES];
 
     [[UAPush shared] setBadgeNumber:15];
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should update application icon badge number when its different");
 
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should update registration so autobadge works");
 }
 
@@ -428,13 +464,15 @@ NSDictionary *notification;
     [[self.mockedApplication expect] setApplicationIconBadgeNumber:15];
 
     // Reject device api client registration because autobadge is not enabled
-    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
-
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:YES];
     [[UAPush shared] setBadgeNumber:15];
     XCTAssertNoThrow([self.mockedApplication verify],
                      @"should update application icon badge number when its different");
 
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should not update registration because autobadge is disabled");
 }
 
@@ -446,22 +484,24 @@ NSDictionary *notification;
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
 
-    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY
-                                                onSuccess:OCMOCK_ANY
-                                                onFailure:OCMOCK_ANY
-                                               forcefully:NO];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
 
     [[UAPush shared] registerDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should add device registration event to analytics");
 
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should update registration on registering device token");
 
     // 736f6d652d746f6b656e = "some-token" in hex
     XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
 }
+
+
 
 - (void)testRegisterDeviceTokenNoNotificationTypes {
     [UAPush shared].notificationTypes = 0;
@@ -470,14 +510,16 @@ NSDictionary *notification;
 
     NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
     [[self.mockedAnalytics reject] addEvent:OCMOCK_ANY];
-    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
-
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
     [[UAPush shared] registerDeviceToken:token];
 
     XCTAssertNoThrow([self.mockedAnalytics verify],
                      @"should not do anything if notificationTypes are not set");
 
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"should not do anything if notificationTypes are not set");
 }
 
@@ -540,238 +582,159 @@ NSDictionary *notification;
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].deviceToken = validDeviceToken;
 
-    [[self.mockedDeviceAPIClient expect] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:YES];
+
     [[UAPush shared] updateRegistrationForcefully:YES];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should update registration when it has a valid token and the app is not in the background");
-
-    // Verify it skips registration if device token is nil
-    [UAPush shared].deviceToken = nil;
-
-    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
-    [[UAPush shared] updateRegistrationForcefully:YES];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should skip registering if device token is nil");
-
-
-    // Verify it skips registration application state is background
-    [UAPush shared].deviceToken = @"some-token";
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-    [[self.mockedDeviceAPIClient reject] registerWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
-    [[UAPush shared] updateRegistrationForcefully:YES];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should skip registering if app is in the background");
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"updateRegistration should register with the device registrar if push is enabled.");
 }
+
 
 - (void)testUpdateRegistrationForcefullyPushDisabled {
     [UAPush shared].pushEnabled = NO;
     [UAPush shared].deviceToken = validDeviceToken;
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
 
-    [[self.mockedDeviceAPIClient expect] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
-    [[UAPush shared] updateRegistrationForcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should unregister when it has a valid token and the app is not in the background");
+    [[self.mockedDeviceRegistrar expect] registerPushDisabledWithChannelID:OCMOCK_ANY
+                                                           channelLocation:OCMOCK_ANY
+                                                               withPayload:OCMOCK_ANY
+                                                                forcefully:YES];
 
-    // Verify it skips unregistering if UAPushNeedsUnregistering is NO
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
-
-    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
-    [[UAPush shared] updateRegistrationForcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should skip unregistering UAPushNeedsUnregistering is NO");
-
-    // Verify it skips registration if device token is nil
-    [UAPush shared].deviceToken = nil;
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
-
-    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:YES];
-    [[UAPush shared] updateRegistrationForcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify],
-                     @"updateRegistration should skip unregistering if device token is nil");
-
-
-    // Verify it skips registration application state is background
-    [UAPush shared].deviceToken = @"some-token";
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-    [[self.mockedDeviceAPIClient reject] unregisterWithData:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY forcefully:NO];
-    [[UAPush shared] updateRegistrationForcefully:NO];
-    XCTAssertNoThrow([self.mockedDeviceAPIClient verify], @"updateRegistration should skip unregistering if app is in the background");
+    [[UAPush shared] updateRegistrationForcefully:YES];
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"updateRegistration should unregister with the device registrar if push is disabled.");
 }
-
-//when push is enabled, updateRegistration should result in a registerDeviceTokenSucceeded callback
-//to the observer and delegate on success
-- (void)testUpdateRegistrationPushEnabledSuccess {
-
-    //the device api client should receive a registration call.
-    //in this case, we'll call the success block immediately.
-    [[[self.mockedDeviceAPIClient expect] andDo:^(NSInvocation *invocation){
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UADeviceAPIClientSuccessBlock successBlock = (__bridge UADeviceAPIClientSuccessBlock) arg;
-        successBlock();
-    }] registerWithData:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any] forcefully:NO];
-
-    //we should get success callbacks on both the delegate and observer
-    [[self.mockRegistrationDelegate expect] registerDeviceTokenSucceeded];
-    [[self.mockRegistrationObserver expect] registerDeviceTokenSucceeded];
-
-    //enable push without calling custom setter
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushEnabledSettingsKey];
-    [[UAPush shared] updateRegistration];
-}
-
-//when push is enabled, updateRegistration should result in a registerDeviceTokenFailed callback
-//to the observer and delegate on failure
-- (void)testUpdateRegistrationCallbacksPushEnabledFailure {
-
-    //the device api client should receive an registration call.
-    //in this case, we'll call the failure block immediately.
-    [[[self.mockedDeviceAPIClient expect] andDo:^(NSInvocation *invocation){
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UADeviceAPIClientFailureBlock failureBlock = (__bridge UADeviceAPIClientFailureBlock) arg;
-        //passing nil here instead of the usual UAHTTPRequest argument for convenience
-        failureBlock(nil);
-    }] registerWithData:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any] forcefully:NO];
-
-    //we should get failure callbacks on both the delegate and observer
-    [[self.mockRegistrationDelegate expect] registerDeviceTokenFailed:[OCMArg any]];
-    [[self.mockRegistrationObserver expect] registerDeviceTokenFailed:[OCMArg any]];
-
-    //enable push without calling custom setter
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushEnabledSettingsKey];
-    [[UAPush shared] updateRegistration];
-}
-
-//when push is disabled, updateRegistration should result in a unregisterDeviceTokenSucceeded callback
-//to the observer and delegate on success
-- (void)testUpdateRegistrationCallbacksPushDisabledSuccess {
-
-    //the device api client should receive an unregistration call.
-    //in this case, we'll call the success block immediately.
-    [[[self.mockedDeviceAPIClient expect] andDo:^(NSInvocation *invocation){
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UADeviceAPIClientSuccessBlock successBlock = (__bridge UADeviceAPIClientSuccessBlock) arg;
-        successBlock();
-    }] unregisterWithData:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any] forcefully:NO];
-
-    //we should get success callbacks on both the delegate and observer
-    [[self.mockRegistrationDelegate expect] unregisterDeviceTokenSucceeded];
-    [[self.mockRegistrationObserver expect] unregisterDeviceTokenSucceeded];
-
-    //disable push without calling custom setter
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
-    [[UAPush shared] updateRegistration];
-}
-
-//when push is disabled, updateRegistration should result in a unregisterDeviceTokenFailed callback
-//to the observer and delegate on failure
-- (void)testUpdateRegistrationCallbacksPushDisabledFailure {
-
-    //the device api client should receive an unregistration call.
-    //in this case, we'll call the failure block immediately.
-    [[[self.mockedDeviceAPIClient expect] andDo:^(NSInvocation *invocation){
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UADeviceAPIClientFailureBlock failureBlock = (__bridge UADeviceAPIClientFailureBlock) arg;
-        //passing nil here instead of the usual UAHTTPRequest argument for convenience
-        failureBlock(nil);
-    }] unregisterWithData:[OCMArg any] onSuccess:[OCMArg any] onFailure:[OCMArg any] forcefully:NO];
-
-    //we should get failure callbacks on both the delegate and observer
-    [[self.mockRegistrationDelegate expect] unregisterDeviceTokenFailed:[OCMArg any]];
-    [[self.mockRegistrationObserver expect] unregisterDeviceTokenFailed:[OCMArg any]];
-
-    //disable push without calling custom setter
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushEnabledSettingsKey];
-    [[UAPush shared] updateRegistration];
-}
-
 
 - (void)testRegistrationPayload {
-    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+    // Set up UAPush to give a full, opted in payload
+    [UAPush shared].deviceToken = validDeviceToken;
     [UAPush shared].alias = @"ALIAS";
     [UAPush shared].deviceTagsEnabled = YES;
     [UAPush shared].tags = @[@"tag-one"];
-
-    // Set up badge
-    [UAPush shared].autobadgeEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
-
-    // Set quiet time
-    [[UAPush shared] setQuietTimeEnabled:YES];
+    [UAPush shared].autobadgeEnabled = NO;
+    [UAPush shared].quietTimeEnabled = YES;
     [[UAPush shared] setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
                                    to:[NSDate dateWithTimeIntervalSince1970:10]
                          withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
 
+    // Opt in requirements
+    [UAPush shared].pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
 
-    [[registrationPayloadClassMock expect] payloadWithAlias:@"ALIAS"
-                                                   withTags:@[@"tag-one"]
-                                               withTimeZone:@"Pacific/Auckland"
-                                              withQuietTime:[UAPush shared].quietTime
-                                                  withBadge:@30];
-    [[UAPush shared] registrationPayload];
-    XCTAssertNoThrow([registrationPayloadClassMock verify],
-                     @"registrationPayload is not being created with expected values");
-    [registrationPayloadClassMock stopMocking];
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.deviceID = @"someDeviceID";
+    expectedPayload.userID = @"someUser";
+    expectedPayload.pushAddress = validDeviceToken;
+    expectedPayload.optedIn = true;
+    expectedPayload.tags = @[@"tag-one"];
+    expectedPayload.setTags = YES;
+    expectedPayload.alias = @"ALIAS";
+    expectedPayload.badge = nil;
+    expectedPayload.quietTime = @{@"end":@"12:00", @"start":@"12:00"};
+    expectedPayload.timeZone = @"Pacific/Auckland";
+
+    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
+        UAChannelRegistrationPayload *payload = obj;
+        return [payload isEqualToPayload:expectedPayload];
+    };
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                    forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload is not being created with expected values");
 }
 
 - (void)testRegistrationPayloadDeviceTagsDisabled {
-    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
+    [UAPush shared].pushEnabled = YES;
     [UAPush shared].deviceTagsEnabled = NO;
     [UAPush shared].tags = @[@"tag-one"];
 
-    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
-                                                   withTags:nil
-                                               withTimeZone:OCMOCK_ANY
-                                              withQuietTime:OCMOCK_ANY
-                                                  withBadge:OCMOCK_ANY];
-    [[UAPush shared] registrationPayload];
-    XCTAssertNoThrow([registrationPayloadClassMock verify],
-                     @"registrationPayload should not include tags if device tags is disabled");
-    [registrationPayloadClassMock stopMocking];
+    // Check that the payload setTags is NO and the tags is nil
+    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
+        UAChannelRegistrationPayload *payload = obj;
+        return (BOOL)(!payload.setTags && payload.tags == nil);
+    };
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                    forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload is including tags when device tags is NO");
+
 }
 
-- (void)testRegistrationPayloadAutoBadgeDisabled {
-    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
-    [UAPush shared].autobadgeEnabled = NO;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(30)] applicationIconBadgeNumber];
+- (void)testRegistrationPayloadAutoBadgeEnabled {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].autobadgeEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSInteger)30)] applicationIconBadgeNumber];
 
-    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
-                                                   withTags:OCMOCK_ANY
-                                               withTimeZone:OCMOCK_ANY
-                                              withQuietTime:OCMOCK_ANY
-                                                  withBadge:nil];
-    [[UAPush shared] registrationPayload];
+    // Check that the payload setTags is NO and the tags is nil
+    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
+        UAChannelRegistrationPayload *payload = obj;
+        return (BOOL)([payload.badge integerValue] == 30);
+    };
 
-    XCTAssertNoThrow([registrationPayloadClassMock verify],
-                     @"registrationPayload should not be created with badge if autobadge is disabled");
-    [registrationPayloadClassMock stopMocking];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                    forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload is not including the correct badge when auto badge is enabled");
 }
 
-- (void)testRegistrationPayloadQuietTime {
-    id registrationPayloadClassMock = [OCMockObject mockForClass:[UADeviceRegistrationPayload class]];
-
-    [[UAPush shared] setQuietTimeEnabled:NO];
+- (void)testRegistrationPayloadNoQuietTime {
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].quietTimeEnabled = NO;
     [[UAPush shared] setQuietTimeFrom:[NSDate dateWithTimeIntervalSince1970:0]
                                    to:[NSDate dateWithTimeIntervalSince1970:10]
                          withTimeZone:[NSTimeZone timeZoneWithName:@"Pacific/Auckland"]];
 
-    [[registrationPayloadClassMock expect] payloadWithAlias:OCMOCK_ANY
-                                                   withTags:OCMOCK_ANY
-                                               withTimeZone:nil
-                                              withQuietTime:nil
-                                                  withBadge:OCMOCK_ANY];
-    [[UAPush shared] registrationPayload];
 
-    XCTAssertNoThrow([registrationPayloadClassMock verify],
-                     @"registrationPayload should not include quiet time if quiet time is disabled");
-    [registrationPayloadClassMock stopMocking];
+    // Check that the payload does not include a quiet time
+    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
+        UAChannelRegistrationPayload *payload = obj;
+        return (BOOL)(payload.quietTime == nil);
+    };
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                    forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload should not include quiet time if quiet time is disabled");
+
+
+    [UAPush shared].quietTimeEnabled = YES;
+    [UAPush shared].timeZone = nil;
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
+                                                    forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload should not include quiet time if timezone is nil");
 }
+
 
 /**
  * Test handleNotification: and handleNotification:fetchCompletionHandler:
@@ -952,6 +915,177 @@ NSDictionary *notification;
     [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
     [push applicationDidBecomeActive];
     XCTAssertNoThrow([self.mockActionRunner verify], @"springboard actions should not be ran if a launchNotification is available");
+}
+
+/**
+ * Test the registrationFinished finishes the backgroundTask if the background
+ * task is valid
+ */
+- (void)testRegistrationFinishedInBackground {
+    UAPush *push = [UAPush shared];
+
+    // Give push a valid background task identifier
+    push.registrationBackgroundTask = 100;
+
+    [[self.mockedApplication expect] endBackgroundTask:100];
+
+    [push registrationFinished:[NSNotification notificationWithName:@"someName" object:nil]];
+    XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
+    XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
+}
+
+/*
+ if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
+ self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+ [self.deviceRegistrar cancelAllRequests];
+ }];
+ }
+ */
+
+/**
+ * Test that a background task is created when entering the background and
+ * registration is in progress
+ */
+- (void)testBackgroundTaskCreatedWhenRegistrationInProgress {
+    UAPush *push = [UAPush shared];
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isRegistrationInProgress];
+
+    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
+}
+
+/**
+ * Test that a background task is created when entering the background and
+ * a channel id needs to be created.
+ */
+- (void)testBackgroundTaskCreatedNeedChannelID {
+    UAPush *push = [UAPush shared];
+    push.channelID = nil;
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
+}
+
+/**
+ * Test that a background task is not created when entering the background 
+ * if we dont need a channel id or registrations are not in progress
+ */
+- (void)testBackgroundTaskNotCreated {
+    UAPush *push = [UAPush shared];
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+
+    [[[self.mockedApplication reject] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    [push applicationDidEnterBackground];
+
+    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+}
+
+
+/**
+ * Test that updateRegistration calls in the background only happen
+ * if a channel id needs to be created.
+ */
+- (void)testUpdateRegistrationInBackground {
+    UAPush *push = [UAPush shared];
+    push.pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    // Need a channel id case
+    push.channelID = nil;
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
+
+    [push updateRegistrationForcefully:NO];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Device Registrar should register with channel ID");
+}
+
+/**
+ * Test that updateRegistration does not attempt a registration when we are in the
+ * background and we have a channel id
+ */
+- (void)testUpdateRegistrationInBackgroundIgnores {
+    UAPush *push = [UAPush shared];
+    push.pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    // Need a channel id case
+    push.channelID = @"some-channel";
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:OCMOCK_ANY];
+
+    [push updateRegistrationForcefully:NO];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should not be attempted in the background unless its to create a channel ID");
+}
+/**
+ * Test channel created
+ */
+- (void)testChannelCreated {
+    UAPush *push = [UAPush shared];
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
+                                                                 object:nil
+                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID",
+                                                                          UAChannelLocationNotificationKey:@"someLocation"}];
+
+    [push channelCreated:notification];
+    XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
+    XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
+
+}
+
+/**
+ * Test channel conflict
+ */
+- (void)testChannelConflict {
+    UAPush *push = [UAPush shared];
+
+    NSDictionary *userInfo = @{
+                               UAChannelNotificationKey: @"someNewChannel",
+                               UAChannelLocationNotificationKey: @"someNewChannelLocation",
+                               UAReplacedChannelNotificationKey: @"someOldChannel",
+                               UAReplacedChannelLocationNotificationKey: @"someOldLocation"
+                               };
+
+    NSNotification *notification = [NSNotification notificationWithName:UAChannelConflictNotification
+                                                                 object:nil
+                                                               userInfo:userInfo];
+
+
+    [push channelConflict:notification];
+    XCTAssertEqualObjects(push.channelID, @"someNewChannel", @"The channel should update to the new channel ID.");
+    XCTAssertEqualObjects(push.channelLocation, @"someNewChannelLocation", @"The channel should update to the new channel location.");
+
+}
+
+/**
+ * Test setting the channel ID generates the device registration event with the
+ * channel ID.
+ */
+- (void)testSetChannelID {
+    UAPush *push = [UAPush shared];
+
+    push.channelID = @"someChannelID";
+
+    XCTAssertEqualObjects(@"someChannelID", push.channelID, @"Channel ID is not being set properly");
 }
 
 @end

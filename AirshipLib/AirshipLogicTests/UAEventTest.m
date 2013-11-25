@@ -1,17 +1,17 @@
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,38 +23,33 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
-#import <OCMock/OCMock.h>
-#import <OCMock/OCMConstraint.h>
-
-#import "UAUser.h"
-#import "UAUser+Internal.h"
-#import "UAPush.h"
+#import <XCTest/XCTest.h>
 #import "UAPush+Internal.h"
+#import "UAUser+Internal.h"
+#import "UAEvent.h"
 
-
-@interface UAUserTests : SenTestCase
+@interface UAEventTest : XCTestCase
 
 @end
 
+@implementation UAEventTest
 
-@implementation UAUserTests
 
-- (void)testSetDeviceTokenUpdatedTokenDidChange {
-    NSString *deviceToken = [[NSUserDefaults standardUserDefaults] stringForKey:kLastDeviceTokenKey];
-    [[UAUser defaultUser] setDeviceToken:@"cats"];
-    STAssertTrue([UAUser defaultUser].deviceTokenHasChanged, @"deviceTokenHasChanged should equal YES");
-    [[NSUserDefaults standardUserDefaults] setValue:deviceToken forKey:kLastDeviceTokenKey];
-}
+/**
+ * Test device registration event
+ */
+- (void)testRegistrationEvent {
+    [UAPush shared].deviceToken = @"a12312ad";
+    [UAPush shared].channelID = @"someChannelID";
+    [UAUser defaultUser].username = @"someUserID";
 
-- (void)testKVONotificationsForUAPushDeviceToken {
-    [UAPush shared].deviceToken = nil;
-    [[UAUser defaultUser] listenForDeviceTokenReg];
-    id mockUser = [OCMockObject partialMockForObject:[UAUser defaultUser]];
-    [[mockUser expect] cancelListeningForDeviceToken];
-    [[mockUser expect] updateDefaultDeviceToken];
-    [UAPush shared].deviceToken = @"cats";
-    [mockUser verify];
+    NSDictionary *expectedData = @{ @"device_token":@"a12312ad",
+                                    @"channel_id":@"someChannelID",
+                                    @"user_id":@"someUserID" };
+
+    UAEventDeviceRegistration *deviceRegistration = [[UAEventDeviceRegistration alloc] init];
+    [deviceRegistration gatherData:@{}];
+    XCTAssertEqualObjects(deviceRegistration.data, expectedData, @"Event data is unexpected.");
 }
 
 

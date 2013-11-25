@@ -1,4 +1,3 @@
-
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
@@ -24,43 +23,48 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import "UADeviceRegistrationPayload.h"
+#import "UADeviceRegistrar.h"
+
+@class UAChannelRegistrationPayload;
+@class UADeviceAPIClient;
+@class UAChannelAPIClient;
+
+@interface UADeviceRegistrar ()
+
 
 /**
- * Model object encapsulating the data relevant to a registration or unregistration processed by UADeviceAPIClient.
+ * The device API client.
  */
-@interface UADeviceRegistrationData : NSObject
+@property (nonatomic, strong) UADeviceAPIClient *deviceAPIClient;
 
 /**
- * UADeviceRegistrationData initializer.
- *
- * @param token A device token string.
- * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param enabled A BOOL indicating whether push is currently enabled.
+ * The channel API client.
  */
-- (id)initWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
+@property (nonatomic, strong) UAChannelAPIClient *channelAPIClient;
+
 
 /**
- * Autoreleased UADeviceRegistrationData class factory method.
- *
- * @param token A device token string.
- * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param enabled A BOOL indicating whether push is currently enabled.
+ * The last successful payload that was registered.
  */
-+ (id)dataWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
+@property (nonatomic, strong) UAChannelRegistrationPayload *lastSuccessPayload;
+
 
 /**
- * The device token.
+ * A flag indicating if the device token has been registered with the
+ * device API client.
  */
-@property(nonatomic, copy, readonly) NSString *deviceToken;
+@property (nonatomic, assign) BOOL isDeviceTokenRegistered;
+
 /**
- * The request payload as an NSDictionary.
+ * A flag indicating if the registrar is using the new channel registration or
+ * the old device token registration.
  */
-@property(nonatomic, strong, readonly) UADeviceRegistrationPayload *payload;
+@property (nonatomic, assign) BOOL isUsingChannelRegistration;
+
 /**
- * Indicates whether push was enabled at the time the object was constructed.
+ * A flag indicating if registration is in progress.
  */
-@property(nonatomic, assign, readonly) BOOL pushEnabled;
+@property (nonatomic, assign) BOOL isRegistrationInProgress;
 
 @end
+

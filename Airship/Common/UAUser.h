@@ -57,13 +57,20 @@ extern NSString * const UAUserCreatedNotification;
  * The user name.
  */
 @property (nonatomic, readonly, copy) NSString *username;
+
 /**
  * The user password.
  */
 @property (nonatomic, readonly, copy) NSString *password;
+
 /**
  * The user url.
  */
 @property (nonatomic, readonly, copy) NSString *url;
+
+/**
+ * Background task identifier used to perform user updates in the background.
+ */
+@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
 
 @end

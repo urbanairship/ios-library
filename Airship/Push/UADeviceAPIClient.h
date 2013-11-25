@@ -25,7 +25,9 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UADeviceRegistrationData.h"
+@class UAHTTPRequest;
+@class UADeviceRegistrationPayload;
+
 #import "UAHTTPRequestEngine.h"
 
 typedef void (^UADeviceAPIClientSuccessBlock)(void);
@@ -36,64 +38,47 @@ typedef void (^UADeviceAPIClientFailureBlock)(UAHTTPRequest *request);
  */
 @interface UADeviceAPIClient : NSObject
 
-/**
- * Register the device.
- * 
- * @param registrationData An instance of UADeviceRegistrationData.
- * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
- * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
- *
- */
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-              forcefully:(BOOL)forcefully;
-
-/**
- * Unregister the device.
- *
- * @param registrationData An instance of UADeviceRegistrationData.
- * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
- * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
- * @param forcefully If NO, the client will cache previous and pending registrations, ignoring duplicates.
- *
- */
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-                 onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock
-                forcefully:(BOOL)forcefully;
 
 /**
  * Register the device.
  *
- * @param registrationData An instance of UADeviceRegistrationData.
+ * @param deviceToken the device token to register.
+ * @param payload An instance of UADeviceRegistrationPayload.
  * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the registration was successful.
  * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the registration failed.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
-- (void)registerWithData:(UADeviceRegistrationData *)registrationData
-               onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-               onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
+- (void)registerDeviceToken:(NSString *)deviceToken
+                withPayload:(UADeviceRegistrationPayload *)payload
+                  onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                  onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
 
 
 /**
  * Unregister the device.
  *
- * @param registrationData An instance of UADeviceRegistrationData.
+ * @param deviceToken the device token to unregister.
  * @param successBlock A UADeviceAPIClientSuccessBlock that will be called if the unregistration was successful.
  * @param failureBlock A UADeviceAPIClientFailureBlock that will be called if the unregistration was unsuccessful.
  *
  * Previous and pending registration data will be cached, and duplicates will be ignored.
  */
-- (void)unregisterWithData:(UADeviceRegistrationData *)registrationData
-                 onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
-                 onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
+- (void)unregisterDeviceToken:(NSString *)deviceToken
+                    onSuccess:(UADeviceAPIClientSuccessBlock)successBlock
+                    onFailure:(UADeviceAPIClientFailureBlock)failureBlock;
+
+/**
+ * Cancels any pending and current requests.
+ *
+ * Note: This could prevent the onSuccess and onFailure callbacks from being triggered
+ * in any current requests.
+ */
+- (void)cancelAllRequests;
 
 /**
  * Indicates whether the client should attempt to automatically retry HTTP connections under recoverable conditions
- * (5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
+ * (most 5xx status codes, reachability errors, etc). In this case, the client will perform exponential backoff and schedule
  * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
  */
 @property(nonatomic, assign) BOOL shouldRetryOnConnectionError;
