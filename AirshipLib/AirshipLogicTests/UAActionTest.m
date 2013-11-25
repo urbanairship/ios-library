@@ -28,17 +28,26 @@
 
 @interface UAActionTest : XCTestCase
 @property (nonatomic, strong)UAActionArguments *emptyArgs;
+#if OS_OBJECT_USE_OBJC
+@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+#else
+@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
+#endif
 @end
 
 @implementation UAActionTest
 
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
+    self.semaphore = dispatch_semaphore_create(0);
 
     [super setUp];
 }
 
 - (void)tearDown {
+#if !OS_OBJECT_USE_OBJC
+    dispatch_release(self.semaphore);
+#endif
     [super tearDown];
 }
 
@@ -146,21 +155,33 @@
  * the action being performed on the UI thread.
  */
 - (void)testRunOnBackgroundThread {
+
+    __block BOOL ran = NO;
+
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
     };
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
-            XCTAssertFalse(isMainThread(), @"we should be on the main thread");
+            XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             handler([UAActionResult none]);
     }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        XCTAssertTrue(isMainThread(), @"we should be on a background thread");
+        XCTAssertFalse(isMainThread(), @"we should be on a background thread");
         [action runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
+            ran = YES;
+            dispatch_semaphore_signal(self.semaphore);
         }];
     });
+
+    //wait on the semaphore with a 2 second timeout
+    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    }
+
+    XCTAssertTrue(ran, @"action should have been run");
 }
 
 /*
@@ -168,6 +189,8 @@
  * the work being marshalled back onto the main thread.
  */
 - (void)testFinishOnBackgroundThread {
+
+    __block BOOL ran = NO;
 
     BOOL (^isMainThread)(void) = ^{
         return [[NSThread currentThread] isEqual:[NSThread mainThread]];
@@ -177,12 +200,21 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
             handler([UAActionResult none]);
+            dispatch_semaphore_signal(self.semaphore);
         });
     }];
 
     [action runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
+        ran = YES;
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
     }];
+
+    //wait on the semaphore with a 2 second timeout
+    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:2]];
+    }
+
+    XCTAssertTrue(ran, @"action should have been run");
 }
 
 /*
