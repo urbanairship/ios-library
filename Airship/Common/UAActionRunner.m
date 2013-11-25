@@ -47,6 +47,11 @@
         }
     } else {
         UA_LINFO("No action found with name %@, skipping action.", actionName);
+        //log a warning if the name begins with a carat prefix.
+        if ([actionName hasPrefix:@"^"]) {
+            UA_LWARN(@"Extra names beggining with the carat (^) character are reserved by Urban Airship \
+                     and may be subject to future use.");
+        }
         completionHandler([UAActionResult none]);
     }
 }
