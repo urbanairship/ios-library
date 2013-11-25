@@ -27,6 +27,8 @@
 #import "UAAction+Internal.h"
 #import "UAActionRegistryEntry.h"
 
+NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
+
 @implementation UAActionRunner
 
 + (void)runActionWithName:(NSString *)actionName
@@ -42,12 +44,20 @@
             UAAction *action = [entry actionForSituation:arguments.situation];
             [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
         } else {
-            UA_LINFO("Not running action %@ because of predicate.", actionName);
-            completionHandler([UAActionResult none]);
+            NSString *msg = [NSString stringWithFormat:@"Not running action %@ because of predicate.", actionName];
+            UA_LINFO(@"%@", msg);
+            NSError *err = [NSError errorWithDomain:UAActionRunnerErrorDomain
+                                               code:UAActionRunnerErrorCodePredicateRejected
+                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
+            completionHandler([UAActionResult error:err]);
         }
     } else {
-        UA_LINFO("No action found with name %@, skipping action.", actionName);
-        completionHandler([UAActionResult none]);
+        NSString *msg = [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName];
+        UA_LINFO("%@", msg);
+        NSError *err = [NSError errorWithDomain:UAActionRunnerErrorDomain
+                                           code:UAActionRunnerErrorCodeActionNotFound
+                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
+        completionHandler([UAActionResult error:err]);
     }
 }
 

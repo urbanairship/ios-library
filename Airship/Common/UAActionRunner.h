@@ -29,6 +29,13 @@
 #import "UAPushActionArguments.h"
 #import "UAAggregateActionResult.h"
 
+extern NSString * const UAActionRunnerErrorDomain;
+
+NS_ENUM(NSInteger, UAActionRunnerErrorCode) {
+    UAActionRunnerErrorCodeActionNotFound,
+    UAActionRunnerErrorCodePredicateRejected
+};
+
 @interface UAActionRunner : NSObject
 
 /**
