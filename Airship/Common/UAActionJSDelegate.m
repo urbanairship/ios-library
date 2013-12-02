@@ -9,6 +9,13 @@
 
 @implementation UAActionJSDelegate
 
+/**
+ * Returns an action matching a URL-encoded name.
+ *
+ * @param name A URL-encoded action name.
+ * @return A UAAction registered for that name, or nil if decoding or retrieval fails.
+ *
+ */
 - (UAAction *)actionForEncodedName:(NSString *)name {
     NSString *decodedName = [name urlDecodedStringWithEncoding:NSUTF8StringEncoding];
     if (!decodedName) {
@@ -23,6 +30,12 @@
     return action;
 }
 
+/**
+ * Returns a foundation object matching a JSON and URL-encoded argument string.
+ *
+ * @param arguments A JSON and URL-encoded string representing an action argument.
+ * @return A foundation object decoded from the passed string, or nil if decoding fails.
+ */
 - (id)objectForEncodedArguments:(NSString *)arguments {
     NSString *urlDecodedArgs = [arguments urlDecodedStringWithEncoding:NSUTF8StringEncoding];
     if (!urlDecodedArgs) {
@@ -40,6 +53,17 @@
     return jsonDecodedArgs;
 }
 
+/**
+ * Handles the run-action JS callback.
+ *
+ * This supports async callbacks into JS functions, as well the passing of
+ * arbitrary argument objects through JSON serialization of core types.  It is best
+ * used from JavaScript, but can be used entirely through URL loading as well.
+ *
+ * @param callbackID A callback identifier generated in the JS layer. This can be nil.
+ * @param options The options passed in the JS delegate callback.
+ * @param completionHandler The completion handler passed in the JS delegate callback.
+ */
 - (void)runActionWithCallbackID:(NSString *)callbackID
                     withOptions:(NSDictionary *)options
        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
@@ -109,6 +133,16 @@
     }
 }
 
+/**
+ * Handles the run-basic-action callback.
+ *
+ * This does not support callbacks into the JS layer, and only allows
+ * for passing string arguments to actions.  For convenience, multiple actions can
+ * be passed in the query options, in which case they will all be run at once.
+ *
+ * @param options The options passed in the JS delegate callback.
+ * @param completionHandler The completion handler passed in the JS delegate callback.
+ */
 - (void)runBasicActionWithOptions:(NSDictionary *)options
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
