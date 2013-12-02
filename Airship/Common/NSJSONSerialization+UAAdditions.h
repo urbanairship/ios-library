@@ -66,7 +66,7 @@
 /**
  * Create a Foundation object from JSON string
  * @param jsonString the JSON NSString to convert
- * @param jsonString NSJSONReadingOptions
+ * @param opt NSJSONReadingOptions
  * @return A Foundation object, or nil if an error occurs.
  */
 + (id)objectWithString:(NSString *)jsonString options:(NSJSONReadingOptions)opt;
