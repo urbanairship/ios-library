@@ -35,10 +35,10 @@
     XCTAssertEqualObjects(@"%22yes%22", [quote urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
 
     NSString *pound = @"xy#z";
-    XCTAssertEqualObjects(@"xy%23z", [pound urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
+    XCTAssertEqualObjects(@"xy%23z", [pound urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"# test failed");
 
     NSString *dollar = @"$100";
-    XCTAssertEqualObjects(@"%24100", [dollar urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
+    XCTAssertEqualObjects(@"%24100", [dollar urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"$ test failed");
 
     NSString *percent = @"ab%c";
     XCTAssertEqualObjects(@"ab%25c", [percent urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"percent test failed");
@@ -107,10 +107,10 @@
     XCTAssertEqualObjects(@"\"yes\"", [quote urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
 
     NSString *pound = @"xy%23z";
-    XCTAssertEqualObjects(@"xy#z", [pound urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
+    XCTAssertEqualObjects(@"xy#z", [pound urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"# test failed");
 
     NSString *dollar = @"%24100";
-    XCTAssertEqualObjects(@"$100", [dollar urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"\" test failed");
+    XCTAssertEqualObjects(@"$100", [dollar urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"$ test failed");
 
     NSString *percent = @"ab%25c";
     XCTAssertEqualObjects(@"ab%c", [percent urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"percent test failed");
