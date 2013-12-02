@@ -49,15 +49,6 @@
     [super tearDown];
 }
 
-- (void)testCallbackDataForURL {
-    UAWebViewCallbackData *data = [UAWebViewTools callbackDataForURL:self.regularActionURL];
-    XCTAssertNotNil(data, @"data should be non-nil");
-    XCTAssertEqual(data.arguments.count, (NSUInteger)2, @"data should have two arguments");
-    XCTAssertEqualObjects([data.arguments firstObject], @"run-action", @"first arg should be 'run-action'");
-    XCTAssertEqualObjects([data.arguments objectAtIndex:1], @"some-callback-id", @"second arg should be 'some-callback-id'");
-    XCTAssertEqualObjects([data.options objectForKey:@"foo"], @"bar", @"key 'foo' should index 'bar'");
-}
-
 - (void)testPerformJSDelegate {
 
     //a run-action argument should result in the the callback being dispatched to our internal action JS delegate

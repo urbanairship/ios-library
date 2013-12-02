@@ -90,6 +90,9 @@
 
     NSString *underscore = @"a_tag";
     XCTAssertEqualObjects(@"a_tag", [underscore urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"_ test failed");
+
+    NSString *snowman = @"☃";
+    XCTAssertEqualObjects(@"%E2%98%83", [snowman urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"snowman test failed");
 }
 
 - (void)testURLDecoding {
@@ -162,5 +165,8 @@
 
     NSString *underscore = @"a_tag";
     XCTAssertEqualObjects(@"a_tag", [underscore urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"_ test failed");
+
+    NSString *snowman = @"%E2%98%83";
+    XCTAssertEqualObjects(@"☃", [snowman urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"snowman test failed");
 }
 @end
