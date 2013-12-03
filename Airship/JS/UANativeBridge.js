@@ -66,7 +66,7 @@ UAirship.runAction = function(actionName, argument, callback) {
         try {
             callback(err, JSON.parse(data));
         } catch(err) {
-            // do something here!
+            return callback(new Error("could not decode response"));
         }
     }
 
