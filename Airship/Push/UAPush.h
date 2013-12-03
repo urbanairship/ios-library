@@ -356,9 +356,10 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, copy, readonly) NSDictionary *quietTime;
 
 /**
- * Time Zone for quiet time.
+ * Time Zone for quiet time.  If the time zone is not set, the current
+ * local time zone is returned.
  */
-@property (nonatomic, strong) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
+@property (nonatomic, strong) NSTimeZone *timeZone;
 
 /**
  * Enables/Disables quiet time
@@ -378,8 +379,29 @@ SINGLETON_INTERFACE(UAPush);
  * @param from Date for start of quiet time (HH:MM are used)
  * @param to Date for end of quiet time (HH:MM are used)
  * @param tz The time zone for the from and to dates
+ * @deprecated As of version 3.2.  Replaced with 
+ * setQuietTimeStartHour:startMinute:endHour:endMinute:
  */
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
+
+/**
+ * Sets the quiet time start and end time.  The start and end time does not change
+ * if the time zone changes.  To set the time zone, see 'timeZone'.
+ *
+ * Update the server after making changes to the quiet time with the
+ * `updateRegistration` call. Batching these calls improves API and client performance.
+ *
+ * @warning This method does not automatically enable quiet time and does not
+ * automatically update the server. Please refer to `quietTimeEnabled` and 
+ * `updateRegistration` methods for more information.
+ *
+ * @param startHour Quiet time start hour. Only 0-23 is valid.
+ * @param startMinute Quiet time start minute. Only 0-59 is valid.
+ * @param endHour Quiet time end hour. Only 0-23 is valid.
+ * @param endMinute Quiet time end minute. Only 0-59 is valid.
+ */
+-(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
+                     endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute;
 
 
 ///---------------------------------------------------------------------------------------
