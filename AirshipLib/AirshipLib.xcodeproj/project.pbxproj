@@ -211,6 +211,8 @@
 		4995C648180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
 		4995C649180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
 		4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */; };
+		49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
+		49C67200184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
 		49C811AC180DE93500AB15CD /* UAPush+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C811AB180DE93500AB15CD /* UAPush+Test.m */; };
 		49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */; };
 		49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */; };
@@ -506,6 +508,7 @@
 		4995C644180DBBF7004F8724 /* UASetTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASetTagsAction.h; sourceTree = "<group>"; };
 		4995C645180DBBF7004F8724 /* UASetTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASetTagsAction.m; sourceTree = "<group>"; };
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
+		49C671FE184EAB640088F210 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = JS/UANativeBridge.h; sourceTree = "<group>"; };
 		49C811AA180DE93500AB15CD /* UAPush+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPush+Test.h"; sourceTree = "<group>"; };
 		49C811AB180DE93500AB15CD /* UAPush+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAPush+Test.m"; sourceTree = "<group>"; };
 		49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperation.h; sourceTree = "<group>"; };
@@ -957,6 +960,14 @@
 			name = HTTP;
 			sourceTree = "<group>";
 		};
+		49C671F2184EA8F90088F210 /* JS */ = {
+			isa = PBXGroup;
+			children = (
+				49C671FE184EAB640088F210 /* UANativeBridge.h */,
+			);
+			name = JS;
+			sourceTree = "<group>";
+		};
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1175,6 +1186,7 @@
 		D9FD1C3A122DBCEA00522B4E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				49C671F2184EA8F90088F210 /* JS */,
 				CC85429E17F4B7F900D2DE10 /* Actions */,
 				1F4230C216C16F1B004B52C1 /* Analytics */,
 				1F610E0C17835C8300BCD96E /* AppDelegates */,
@@ -1270,6 +1282,7 @@
 				CC8542C017F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */,
 				1FE0B75C17E2751000856C60 /* UAInboxUtils.h in Headers */,
+				49C67200184EAB640088F210 /* UANativeBridge.h in Headers */,
 				1FE0B75D17E2751000856C60 /* UAInbox.h in Headers */,
 				CC8542C417F4B81600D2DE10 /* UAActionRunner.h in Headers */,
 				1FE0B75E17E2751000856C60 /* UAirship+Internal.h in Headers */,
@@ -1371,6 +1384,7 @@
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
 				CC8542BB17F4B81600D2DE10 /* UAActionRegistrar.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
+				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
 				4995C62917FE3655004F8724 /* UAMailComposerData.h in Headers */,
 				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
