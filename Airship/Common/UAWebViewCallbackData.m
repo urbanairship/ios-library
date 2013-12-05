@@ -33,6 +33,8 @@
     }
 
     UAWebViewCallbackData *data = [[UAWebViewCallbackData alloc] init];
+
+    data.name = url.host;
     data.arguments = arguments;
     data.options = options;
 

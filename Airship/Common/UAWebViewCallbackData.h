@@ -15,6 +15,12 @@
 + (UAWebViewCallbackData *)callbackDataForURL:(NSURL *)url;
 
 /**
+ * A name, derived from the host passed in the callback URL.
+ * This is typically the name of a directive or procedure.
+ */
+@property(nonatomic, strong) NSString *name;
+
+/**
  * The argument strings passed in the callback.
  */
 @property(nonatomic, strong) NSArray *arguments;
