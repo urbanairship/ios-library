@@ -139,7 +139,7 @@ UAChannelRegistrationPayload *payload;
 /**
  * Test that an empty identity hints section is not included
  */
-- (void)testAsJsonEmptyIndentityHints {
+- (void)testAsJsonEmptyIdentityHints {
     payload.deviceID = nil;
     payload.userID = nil;
 
