@@ -25,14 +25,35 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAInbox.h"
+@class UAWebViewCallbackData;
+
+@interface UAWebViewTools : NSObject
 
 /**
- * The reference implementation of the UAInboxJavaScriptDelegate protocol.
+ * Transforms a phone number URL into one that UIApplication can handle.
+ *
+ * @param url A phone number URL.
+ * @return A new, sanitized NSURL instance.
  */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate>
-#pragma clang diagnostic pop
++ (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url;
+
+/**
+ * Custom URL scheme handling, for app-specific URL navigation and callback logic.
+ *
+ * @param wv The webview loading the request.
+ * @param request The request.
+ * @param navigationType An enumeration of UIWebViewNavigationType.
+ * @return `YES` if the URL should be loaded by the webView, `NO` otherwise.
+ */
++ (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
+ navigationType:(UIWebViewNavigationType)navigationType;
+
+/**
+ * Used for farming out JavaScript delegate callbacks.
+ *
+ * @param webView The webview originating the callback.
+ * @param url The URL containing the callback arguments/options.
+ */
++ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
 @end

@@ -25,14 +25,23 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAInbox.h"
+/**
+ * Category extensions for URL encoding and decoding of strings.
+ */
+@interface NSString(URLEncoding)
 
 /**
- * The reference implementation of the UAInboxJavaScriptDelegate protocol.
+ * URL decodes the receiver.
+ * @param encoding The desired NSStringEncoding for the result.
+ * @return A URL decoded NSString, or nil if decoding failed.
  */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate>
-#pragma clang diagnostic pop
+- (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding;
+
+/**
+ * URL encodes the receiver.
+ * @param encoding The desired NSStringEncoding for the result.
+ * @return A URL decoded NSString, or nil if decoding failed.
+ */
+- (NSString *)urlEncodedStringWithEncoding:(NSStringEncoding)encoding;
 
 @end

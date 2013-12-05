@@ -45,6 +45,7 @@
 
         //if the notification came in while the app was backgrounded, treat it as a launch message
         id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
+
         if (self.hasLaunchMessage) {
             [strongDelegate launchRichPushMessageAvailable:message];
             self.hasLaunchMessage = NO;

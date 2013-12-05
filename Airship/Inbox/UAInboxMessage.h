@@ -79,18 +79,6 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  * YES if the message is expired, NO otherwise
  */
 - (BOOL)isExpired;
-/**
- * Invokes the UAInbox Javascript delegate from within a message's UIWebView.
- *
- * This method returns null, but a callback to the UIWebView may be made via
- * [UIWebView stringByEvaluatingJavaScriptFromString:] if the delegate returns
- * a Javascript string for evaluation.
- *
- * @param webView The UIWebView generating the request
- * @param url The URL requested by the webView
- */
-+ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
-
 
 ///---------------------------------------------------------------------------------------
 /// @name Message Properties

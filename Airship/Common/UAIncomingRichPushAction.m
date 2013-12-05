@@ -62,6 +62,7 @@
     handler.viewingMessageID = richPushID;
 
     id<UAInboxPushHandlerDelegate> strongDelegate = handler.delegate;
+
     if ([situation isEqualToString:UASituationForegroundPush]) {
         [strongDelegate richPushNotificationArrived:pushArgs.payload];
     } else {
