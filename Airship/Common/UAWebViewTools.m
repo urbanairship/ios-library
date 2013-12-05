@@ -139,9 +139,7 @@
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    NSString *firstArg = [data.arguments firstObject];
-
-    if ([firstArg isEqualToString:@"run-action"] || [firstArg isEqualToString:@"run-basic-action"]) {
+    if ([data.name isEqualToString:@"run-action"] || [data.name isEqualToString:@"run-basic-action"]) {
         [self performAsyncJSCallbackWithDelegate:actionJSDelegate
                                      withWebView:webView
                                         withData:data];
