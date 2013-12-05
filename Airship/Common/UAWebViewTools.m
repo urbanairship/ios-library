@@ -158,10 +158,10 @@
 + (void)performAsyncJSCallbackWithDelegate:(id<UAJavaScriptDelegate>)delegate
                                withWebView:(UIWebView *)webView
                              withData:(UAWebViewCallbackData *)data {
-    SEL selector = @selector(callbackArguments:withOptions:withCompletionHandler:);
+    SEL selector = @selector(callbackWithData:withCompletionHandler:);
     if ([delegate respondsToSelector:selector]) {
         __weak UIWebView *weakWebView = webView;
-        [delegate callbackArguments:data.arguments withOptions:data.options withCompletionHandler:^(NSString *script){
+        [delegate callbackWithData:data withCompletionHandler:^(NSString *script){
             [weakWebView stringByEvaluatingJavaScriptFromString:script];
         }];
     }
