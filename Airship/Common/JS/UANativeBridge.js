@@ -1,7 +1,18 @@
 var callbackID = 0;
 
 UAirship.callbackURL = function() {
-    var args = arguments;
+    if (!arguments.length) {
+      throw new Error("UAirship.callbackURL expects at least one function argument");
+    }
+
+    var argumentsArray = Array.prototype.slice.call(arguments);
+
+    //treat the first arguments as the callback name
+    var name = argumentsArray[0];
+
+    //the rest are path arguments and query options
+    var args = argumentsArray.slice(1);
+
     var uri = [];
     var dict = null;
 
@@ -22,7 +33,7 @@ UAirship.callbackURL = function() {
     }
 
     // flatten arguments into url
-    var url = "ua://callbackArguments:withOptions:/" + uri.join("/");
+    var url = "ua://" + name + "/" + uri.join("/");
 
     // flatten dictionary into url
     if (dict !== null) {

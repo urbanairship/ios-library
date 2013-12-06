@@ -23,6 +23,7 @@
         UA_LDEBUG(@"unable to url decode action name: %@", name);
     }
     UAAction *action = [[UAActionRegistrar shared] registryEntryWithName:decodedName].action;
+
     if (!action) {
         UA_LDEBUG(@"no registry entry found for action name: %@", decodedName);
     } else {
