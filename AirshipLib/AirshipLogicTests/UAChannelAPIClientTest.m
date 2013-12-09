@@ -154,7 +154,7 @@ UAChannelAPIClient *client;
 
 /**
  * Test create channel calls the onSuccessBlock with the response channel id
- * when the request is succesfull.
+ * when the request is successful.
  */
 - (void)testCreateChannelOnSuccess {
     __block NSString *channelID;
@@ -343,7 +343,7 @@ UAChannelAPIClient *client;
 }
 
 /**
- * Test update channel calls the onSuccessBlock when the request is succesfull.
+ * Test update channel calls the onSuccessBlock when the request is successful.
  */
 - (void)testUpdateChannelOnSuccess {
     __block BOOL  onSuccessCalled = NO;

@@ -223,7 +223,7 @@ UADeviceRegistrar *registrar;
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
 
-    // Add a succesful request
+    // Add a successful request
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
     // Expect it again when we call run it forcefully
@@ -395,7 +395,7 @@ UADeviceRegistrar *registrar;
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
 
-    // Add a succesful request
+    // Add a successful request
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
     // Expect it again when we call run it forcefully
