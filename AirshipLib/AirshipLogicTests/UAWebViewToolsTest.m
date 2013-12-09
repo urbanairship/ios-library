@@ -33,8 +33,8 @@
     [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
     [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
 
-    self.basicActionURL = [NSURL URLWithString:@"ua://whatever/run-basic-action?foo=bar&baz=boz"];
-    self.regularActionURL = [NSURL URLWithString:@"ua://whatever/run-action/some-callback-id?foo=bar"];
+    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action?foo=bar&baz=boz"];
+    self.regularActionURL = [NSURL URLWithString:@"ua://run-action/some-callback-id?foo=bar"];
     self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }
 
@@ -52,18 +52,18 @@
 - (void)testPerformJSDelegate {
 
     //a run-action argument should result in the the callback being dispatched to our internal action JS delegate
-    [[self.mockActionJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockActionJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.regularActionURL];
     [self.mockActionJSDelegate verify];
 
     //same for run-basic-action
-    [[self.mockActionJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockActionJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.basicActionURL];
     [self.mockActionJSDelegate verify];
 
     //everything else should be dispatched to the (deprecated) inbox js delegate and the new user js delegate
     [[self.mockInboxJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any]];
-    [[self.mockUserDefinedJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockUserDefinedJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
 
     [UAWebViewTools performJSDelegate:nil url:self.otherURL];
     [self.mockInboxJSDelegate verify];

@@ -767,20 +767,6 @@ NSDictionary *notification;
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"payload should not include quiet time if quiet time is disabled");
-
-
-    [UAPush shared].quietTimeEnabled = YES;
-    [UAPush shared].timeZone = nil;
-
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
-
-    [[UAPush shared] updateRegistrationForcefully:YES];
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"payload should not include quiet time if timezone is nil");
 }
 
 
