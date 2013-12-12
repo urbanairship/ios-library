@@ -46,6 +46,27 @@
     XCTAssertNil([NSJSONSerialization stringWithObject:nil], @"stringWithObject should return nil if the object is nil");
 }
 
+- (void)testStringWithStringObject {
+    NSString *string = @"gosh folks, you sure look swell";
+    NSString *jsonString = [NSJSONSerialization stringWithObject:string acceptingFragments:YES];
+    XCTAssertEqualObjects(jsonString, @"\"gosh folks, you sure look swell\"", @"method should accept strings as fragment objects");
+}
+
+- (void)testStringWithNumberObject {
+    NSString *jsonString = [NSJSONSerialization stringWithObject:[NSNumber numberWithFloat:3.3] acceptingFragments:YES];
+    XCTAssertEqualObjects(jsonString, @"3.3", @"method should accept NSNumbers as fragment objects");
+}
+
+- (void)testStringWithNullObject {
+    NSString *jsonString = [NSJSONSerialization stringWithObject:[NSNull null] acceptingFragments:YES];
+    XCTAssertEqualObjects(jsonString, @"null", @"method should accept NSNulls as fragment objects");
+}
+
+- (void)testStringWithBoolObject {
+    NSString *jsonString = [NSJSONSerialization stringWithObject:[NSNumber numberWithBool:YES] acceptingFragments:YES];
+    XCTAssertEqualObjects(jsonString, @"true", @"method should accept bool NSNumbers as fragment objects, and convert to JSON boolean values");
+}
+
 - (void)testobjectWithString {
     NSString *jsonString = @"{\"stringKey\":\"stringValue\",\"intKey\":1}";
     NSDictionary *jsonDictionary = [NSJSONSerialization objectWithString:jsonString];

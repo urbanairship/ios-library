@@ -99,7 +99,7 @@ id mockApplication;
 
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, [NSURL URLWithString:arguments.value], @"results value should be the url");
-    XCTAssertNil(result.error, @"result should have no error if the application succesfully opens the url");
+    XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
 }
 
 
@@ -120,7 +120,7 @@ id mockApplication;
 
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, arguments.value, @"results value should be the url");
-    XCTAssertNil(result.error, @"result should have no error if the application succesfully opens the url");
+    XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
 }
 
 /**

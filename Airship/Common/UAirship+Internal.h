@@ -25,6 +25,8 @@
 
 #import "UAirship.h"
 
+@class UABaseAppDelegateSurrogate;
+@class UAJavaScriptDelegate;
 @class UAAppDelegateProxy;
 
 @interface UAirship()
@@ -37,7 +39,7 @@
 @property (nonatomic, strong) UAAnalytics *analytics;
 @property (nonatomic, assign) BOOL backgroundNotificationEnabled;
 
-
+@property (nonatomic, strong) id<UAJavaScriptDelegate> actionJSDelegate;
 
 /**
  * Should set this user agent up

@@ -236,6 +236,7 @@
 
 - (void)gatherIndividualData:(NSDictionary *)context {
     [self addDataWithValue:[UAPush shared].deviceToken forKey:@"device_token"];
+    [self addDataWithValue:[UAPush shared].channelID forKey:@"channel_id"];
     [self addDataWithValue:[UAUser defaultUser].username forKey:@"user_id"];
 }
 
