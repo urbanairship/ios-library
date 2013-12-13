@@ -25,6 +25,12 @@
 
 #import "UAModifyTagsAction.h"
 
+/**
+ * Removes tags. This Action is registered under the
+ * names ^-t and "remove_tags_action".
+ *
+ * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
+ */
 @interface UARemoveTagsAction : UAModifyTagsAction
 
 @end

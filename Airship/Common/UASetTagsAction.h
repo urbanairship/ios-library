@@ -25,6 +25,12 @@
 
 #import "UAAction.h"
 
+/**
+ * Sets tags in whole. This Action is registered under the
+ * names ^t and "set_tags_action".
+ *
+ * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
+ */
 @interface UASetTagsAction : UAAction
 
 @end
