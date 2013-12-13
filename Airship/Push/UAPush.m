@@ -362,17 +362,17 @@ static Class _uiClass;
                      endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute {
 
     if (startHour >= 24 || startMinute >= 60) {
-        UA_LWARN(@"Unable to set quiet time, invalid start time: %ld:%02ld", startHour, startMinute);
+        UA_LWARN(@"Unable to set quiet time, invalid start time: %ld:%02ld", (unsigned long)startHour, (unsigned long)startMinute);
         return;
     }
 
     if (endHour >= 24 || endMinute >= 60) {
-        UA_LWARN(@"Unable to set quiet time, invalid end time: %ld:%02ld", endHour, endMinute);
+        UA_LWARN(@"Unable to set quiet time, invalid end time: %ld:%02ld", (unsigned long)endHour, (unsigned long)endMinute);
         return;
     }
 
-    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",startHour, startMinute];
-    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",endHour, endMinute];
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(unsigned long)startHour, (unsigned long)startMinute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(unsigned long)endHour, (unsigned long)endMinute];
 
     UA_LDEBUG("Setting quiet time: %@ to %@", startTimeStr, endTimeStr);
 
@@ -539,14 +539,14 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)applicationDidBecomeActive {
 
     // If this is the first run, skip creating the channel ID.
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
-    } else if (!self.channelID) {
-        UA_LTRACE(@"Channel ID not created, Updating registration.");
-        [self updateRegistrationForcefully:NO];
-    } else if (self.hasEnteredBackground) {
-        UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
-        [self updateRegistrationForcefully:NO];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
+        if (!self.channelID) {
+            UA_LTRACE(@"Channel ID not created, Updating registration.");
+            [self updateRegistrationForcefully:NO];
+        } else if (self.hasEnteredBackground) {
+            UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
+            [self updateRegistrationForcefully:NO];
+        }
     }
 
     if (!self.launchNotification) {
@@ -561,6 +561,10 @@ BOOL deferChannelCreationOnForeground = false;
 - (void)applicationDidEnterBackground {
     self.hasEnteredBackground = YES;
     self.launchNotification = nil;
+
+    // Set the UAPushChannelCreationOnForeground after first run
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
@@ -589,7 +593,11 @@ BOOL deferChannelCreationOnForeground = false;
     payload.userID = [UAUser defaultUser].username;
     payload.pushAddress = self.deviceToken;
 
-    payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone && self.pushEnabled;
+    if (self.pushEnabled && self.deviceToken) {
+        payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+    } else {
+        payload.optedIn = NO;
+    }
 
     payload.setTags = self.deviceTagsEnabled;
     payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;

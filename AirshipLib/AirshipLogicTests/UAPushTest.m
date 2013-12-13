@@ -699,6 +699,39 @@ NSDictionary *notification;
                      @"payload is not being created with expected values");
 }
 
+- (void)testRegistrationPayloadNoDeviceToken {
+    // Set up UAPush to give minimum payload
+    [UAPush shared].deviceToken = nil;
+    [UAPush shared].alias = nil;
+    [UAPush shared].deviceTagsEnabled = NO;
+    [UAPush shared].autobadgeEnabled = NO;
+    [UAPush shared].quietTimeEnabled = NO;
+
+    // Opt in requirements
+    [UAPush shared].pushEnabled = YES;
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIRemoteNotificationTypeAlert)] enabledRemoteNotificationTypes];
+
+    // Verify opt in is false when device token is nil
+    UAChannelRegistrationPayload *expectedPayload = [[UAChannelRegistrationPayload alloc] init];
+    expectedPayload.deviceID = @"someDeviceID";
+    expectedPayload.userID = @"someUser";
+    expectedPayload.optedIn = false;
+    expectedPayload.setTags = NO;
+
+    BOOL (^checkPayloadBlock)(id obj) = ^(id obj) {
+        UAChannelRegistrationPayload *payload = obj;
+        return [payload isEqualToPayload:expectedPayload];
+    };
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:[OCMArg checkWithBlock:checkPayloadBlock] forcefully:YES];
+
+    [[UAPush shared] updateRegistrationForcefully:YES];
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"payload is not being created with expected values");
+
+}
+
 - (void)testRegistrationPayloadDeviceTagsDisabled {
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].deviceTagsEnabled = NO;
@@ -767,20 +800,6 @@ NSDictionary *notification;
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
                      @"payload should not include quiet time if quiet time is disabled");
-
-
-    [UAPush shared].quietTimeEnabled = YES;
-    [UAPush shared].timeZone = nil;
-
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:[OCMArg checkWithBlock:checkPayloadBlock]
-                                                    forcefully:YES];
-
-    [[UAPush shared] updateRegistrationForcefully:YES];
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"payload should not include quiet time if timezone is nil");
 }
 
 
@@ -915,7 +934,7 @@ NSDictionary *notification;
 
 /**
  * Test applicationDidEnterBackground clears the notification and sets 
- * the hasEneteredBackground flag
+ * the hasEnteredBackground flag
  */
 - (void)testApplicationDidEnterBackground {
     UAPush *push = [UAPush shared];
@@ -925,6 +944,7 @@ NSDictionary *notification;
     [push applicationDidEnterBackground];
     XCTAssertTrue(push.hasEnteredBackground, @"applicationDidEnterBackground should set hasEnteredBackground to true");
     XCTAssertNil(push.launchNotification, @"applicationDidEnterBackground should clear the launch notification");
+    XCTAssertTrue([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground], @"applicationDidEnterBackground should set channelCreationOnForeground to true");
 }
 
 /**
@@ -981,14 +1001,6 @@ NSDictionary *notification;
     XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
     XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
 }
-
-/*
- if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
- self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
- [self.deviceRegistrar cancelAllRequests];
- }];
- }
- */
 
 /**
  * Test that a background task is created when entering the background and
@@ -1083,6 +1095,7 @@ NSDictionary *notification;
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should not be attempted in the background unless its to create a channel ID");
 }
+
 /**
  * Test channel created
  */
