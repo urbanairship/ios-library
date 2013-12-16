@@ -111,7 +111,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
 - (void)testSetAlias {
     NSLog(@"-----------------------------------------------------------------------------------------------");
-    NSLog(@"Test that an alias can be set and we can receive a push");
+    NSLog(@"Test that an alias can be set and we can receive a push.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
     NSString *uniqueAlias = [[UAUtils UUID] lowercaseString];
