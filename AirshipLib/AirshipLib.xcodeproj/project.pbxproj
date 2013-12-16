@@ -1589,7 +1589,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

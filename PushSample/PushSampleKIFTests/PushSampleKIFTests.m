@@ -111,7 +111,7 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
 
 - (void)testSetAlias {
     NSLog(@"-----------------------------------------------------------------------------------------------");
-    NSLog(@"Test that an alias can be set and we can receive a push");
+    NSLog(@"Test that an alias can be set and we can receive a push.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
     NSString *uniqueAlias = [[UAUtils UUID] lowercaseString];
@@ -123,6 +123,8 @@ static NSObject<UAPushNotificationDelegate> *pushDelegate;
     [tester enterText:uniqueAlias intoViewWithAccessibilityLabel:@"Edit Alias"];
 
     // save the alias and go back
+    // in iOS 7+, we need to tap the keyboard's done button
+    [tester tapViewWithAccessibilityLabel:@"done" traits:UIAccessibilityTraitKeyboardKey];
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
