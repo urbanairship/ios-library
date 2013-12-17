@@ -40,7 +40,7 @@
 
     NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
     if (!decodedActionName) {
-        UA_LDEBUG(@"unabled to decode action name");
+        UA_LDEBUG(@"unable to decode action name");
         completionHandler(nil);
         return;
     }
