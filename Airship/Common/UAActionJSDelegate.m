@@ -9,33 +9,6 @@
 
 @implementation UAActionJSDelegate
 
-/**
- * Returns an action matching a URL-encoded name.
- *
- * @param name A URL-encoded action name.
- * @return A UAAction registered for that name, or nil if decoding or retrieval fails.
- *
- */
-- (UAAction *)actionForEncodedName:(NSString *)name {
-    NSString *decodedName = [name urlDecodedStringWithEncoding:NSUTF8StringEncoding];
-    if (!decodedName) {
-        UA_LDEBUG(@"unable to url decode action name: %@", name);
-    }
-    UAAction *action = [[UAActionRegistrar shared] registryEntryWithName:decodedName].action;
-    if (!action) {
-        UA_LDEBUG(@"no registry entry found for action name: %@", decodedName);
-    } else {
-        UA_LDEBUG(@"action name: %@", decodedName);
-    }
-    return action;
-}
-
-/**
- * Returns a foundation object matching a JSON and URL-encoded argument string.
- *
- * @param arguments A JSON and URL-encoded string representing an action argument.
- * @return A foundation object decoded from the passed string, or nil if decoding fails.
- */
 - (id)objectForEncodedArguments:(NSString *)arguments {
     NSString *urlDecodedArgs = [arguments urlDecodedStringWithEncoding:NSUTF8StringEncoding];
     if (!urlDecodedArgs) {
@@ -70,13 +43,19 @@
     NSArray *keys = [options allKeys];
 
     NSString *actionName = [keys firstObject];
-
     if (!actionName) {
         UA_LDEBUG(@"no action name was passed");
+        completionHandler(nil);
         return;
     }
 
-    UAAction *action = [self actionForEncodedName:actionName];
+    NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+    if (!decodedActionName) {
+        UA_LDEBUG(@"unable to decode action name");
+        completionHandler(nil);
+        return;
+    }
+
     NSString *encodedArgumentsValue = [options valueForKey:actionName];
     id decodedArgumentsValue;
     if (encodedArgumentsValue) {
@@ -84,18 +63,20 @@
     }
 
     //if we found an action by that name, and there's either no argument or a correctly decoded argument
-    if (action && (decodedArgumentsValue || !encodedArgumentsValue)) {
+    if (decodedArgumentsValue || !encodedArgumentsValue) {
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                 withSituation:UASituationRichPushAction];
-        [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+        [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
             if (result.error){
-                UA_LDEBUG(@"action %@ completed with an error", actionName);
+                UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
                 if (callbackID) {
                     //pass the error description back into JS wrapped in an Error object
-                    NSString *script = [NSString stringWithFormat:@"var err = new Error('%@');UAirship.finishAction(err, null, '%@');",
+                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
                                         result.error.localizedDescription,
                                         callbackID];
                     completionHandler(script);
+                } else {
+                    completionHandler(nil);
                 }
             } else {
                 UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -117,14 +98,8 @@
             }
         }];
     } else {
-        //we'll probably eventually want to pass different kinds of errors
         if (callbackID) {
-            NSString *errorString;
-            if (!action) {
-                errorString = [NSString stringWithFormat:@"Unable to retrieve action named: %@", actionName];
-            } else if (!decodedArgumentsValue) {
-                errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
-            }
+            NSString *errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
             NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
             completionHandler(script);
         } else {
@@ -147,15 +122,20 @@
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
-        UAAction *action = [self actionForEncodedName:actionName];
+        NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        if (!decodedActionName) {
+            UA_LDEBUG(@"unable to decode action name");
+            completionHandler(nil);
+            return;
+        }
         NSString *encodedArgumentsValue = [options objectForKey:actionName];
         NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationRichPushAction];
 
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (action && (!encodedArgumentsValue || decodedArgumentsValue)) {
-            [UAActionRunner runAction:action withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+        if (!encodedArgumentsValue || decodedArgumentsValue) {
+            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.error) {
                     UA_LDEBUG(@"action %@ completed with an error", actionName);
                 } else {
