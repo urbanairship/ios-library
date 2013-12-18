@@ -540,7 +540,7 @@ BOOL deferChannelCreationOnForeground = false;
 
     // If this is the first run, skip creating the channel ID.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
-        if (!self.channelID) {
+        if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
             UA_LTRACE(@"Channel ID not created, Updating registration.");
             [self updateRegistrationForcefully:NO];
         } else if (self.hasEnteredBackground) {

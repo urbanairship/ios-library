@@ -92,6 +92,33 @@ NSString *anotherActionName = @"AnotherActionName";
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertTrue(didActionRun, @"Runner should run action if no predicate is defined");
+
+    didActionRun = NO;
+    didCompletionHandlerRun = NO;
+
+    [UAActionRunner runActionWithName:@"nopenopenopenopenope"
+                        withArguments:nil
+                withCompletionHandler:^(UAActionResult *result){
+                    XCTAssertNotNil(result.error, @"a bad action name should result in an error");
+                    XCTAssertNil(result.value, @"a bad action name should result in a nil value");
+                    didCompletionHandlerRun = YES;
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
+
+    didCompletionHandlerRun = NO;
+
+    //re-register the action with a predicate guaranteed to fail
+    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^(UAActionArguments *args){
+        return NO;
+    }];
+
+    [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
+        didCompletionHandlerRun = YES;
+    }];
+
+    XCTAssertTrue(didCompletionHandlerRun, @"completion handler should have run");
+    XCTAssertFalse(didActionRun, @"action should not have run");
 }
 
 /**
