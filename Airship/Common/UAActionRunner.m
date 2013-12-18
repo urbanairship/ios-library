@@ -57,6 +57,12 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
         NSError *err = [NSError errorWithDomain:UAActionRunnerErrorDomain
                                            code:UAActionRunnerErrorCodeActionNotFound
                                        userInfo:@{NSLocalizedDescriptionKey:msg}];
+        //log a warning if the name begins with a carat prefix.
+        if ([actionName hasPrefix:@"^"]) {
+            UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Urban Airship \
+                     and may be subject to future use.");
+        }
+
         completionHandler([UAActionResult error:err]);
     }
 }
