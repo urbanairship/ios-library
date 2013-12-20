@@ -43,9 +43,14 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
 
 /**
  * Opens a URL, either in safari or using custom URL schemes. This action is 
- * registerd under the names ^u and open_external_url_action.
+ * registered under the names ^u and open_external_url_action.
  *
  * Expected argument values: NSString
+ *
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationLaunchedFromSpringBoard,
+ * UASituationRichPush
+ *
+ * Result values: An NSURL representation of the input, with an additional NSError if the URL could not be opened.
  */
 @interface UAOpenExternalURLAction : UAAction
 

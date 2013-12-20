@@ -26,6 +26,16 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 
+/**
+ * Action class used for handing incoming rich push messages and performing delegate callbacks. 
+ *
+ * Expected arguments: An instance of UAPushActionArguments.
+ *
+ * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
+ * `UASituationRichPushAction`
+ *
+ * Result values: nil, with an additional UAActionFetchResult when handling background pushes.
+ */
 @interface UAIncomingRichPushAction : UAAction
 
 @end

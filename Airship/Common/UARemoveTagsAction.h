@@ -30,6 +30,11 @@
  * names ^-t and "remove_tags_action".
  *
  * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
+ *
+ * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
+ * `UASituationRichPushAction`, `UASituationLaunchedFromSpringBoard`
+ *
+ * Result values: nil
  */
 @interface UARemoveTagsAction : UAModifyTagsAction
 

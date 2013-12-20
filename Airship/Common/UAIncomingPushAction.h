@@ -25,6 +25,19 @@
 
 #import "UAAction.h"
 
+/**
+ * Action class used for handing incoming push data, performing delegate callbacks and
+ * running push actions. This action is used by the library and should not normally be
+ * used directly.
+ *
+ * Expected argument values: An APNS NSDictionary.
+ *
+ * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
+ * `UASituationRichPushAction`
+ *
+ * Result values: nil, with an additional UAActionFetchResult when handling background pushes.
+ */
+
 @interface UAIncomingPushAction : UAAction
 
 @end
