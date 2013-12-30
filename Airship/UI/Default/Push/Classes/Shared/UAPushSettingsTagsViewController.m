@@ -220,13 +220,13 @@ enum {
     }
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.addTagController];
-    [[self navigationController] presentModalViewController:navigationController animated:YES];
+    [[self navigationController] presentViewController:navigationController animated:YES completion:NULL];
 }
 
 
  - (void)addTag:(NSString *)tag {
      
-     [[self navigationController] dismissModalViewControllerAnimated:YES];
+     [[self navigationController] dismissViewControllerAnimated:YES completion:NULL];
      
      if ([[UAPush shared].tags containsObject:tag]) {
          UALOG(@"Tag %@ already exists.", tag);
@@ -239,12 +239,12 @@ enum {
      }
 
      // Add a tag to the end of the existing set of tags
-     NSMutableArray* tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
+     NSMutableArray *tagUpdate = [NSMutableArray arrayWithArray:[[UAPush shared] tags]];
      [tagUpdate addObject:tag];
      [[UAPush shared] setTags:tagUpdate];
 
      // Update the tableview
-     NSUInteger index = [[UAPush shared].tags count] -1;
+     NSUInteger index = [[UAPush shared].tags count] - 1;
      NSArray *indexArray = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:(NSInteger)index inSection:SectionTags]];
      [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationTop];
 
@@ -253,7 +253,7 @@ enum {
  }
  
  - (void)cancelAddTag {
-     [[self navigationController] dismissModalViewControllerAnimated:YES];
+     [[self navigationController] dismissViewControllerAnimated:YES completion:NULL];
  }
      
 #pragma mark -
