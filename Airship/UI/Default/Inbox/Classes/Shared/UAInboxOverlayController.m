@@ -265,10 +265,17 @@ static NSMutableSet *overlayControllers = nil;
 - (void)orientationChanged:(NSNotification *)notification {
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
-    
-    if(![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
+
+    // due to some new APIs and deprecated APIs, we need to call the appropriate rotation authority
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
+    if (![self.parentViewController shouldAutorotateToInterfaceOrientation:]) {
         return;
     }
+#else
+    if (([self.parentViewController supportedInterfaceOrientations] & (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
+        return;
+    }
+#endif
 
     // This will inject the current device orientation
     [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
