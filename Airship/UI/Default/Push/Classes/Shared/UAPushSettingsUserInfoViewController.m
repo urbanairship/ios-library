@@ -134,8 +134,8 @@
         [mfViewController setSubject:@"Username"];
         [mfViewController setMessageBody:messageBody isHTML:NO];
 
-		[self presentViewController:mfViewController animated:YES completion:NULL];
-	}else {
+        [self presentViewController:mfViewController animated:YES completion:NULL];
+    } else {
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
 
 		[alert show];
