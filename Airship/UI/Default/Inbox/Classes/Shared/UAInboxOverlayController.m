@@ -268,7 +268,7 @@ static NSMutableSet *overlayControllers = nil;
 
     // due to some new APIs and deprecated APIs, we need to call the appropriate rotation authority
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
-    if (![self.parentViewController shouldAutorotateToInterfaceOrientation:]) {
+    if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
         return;
     }
 #else
