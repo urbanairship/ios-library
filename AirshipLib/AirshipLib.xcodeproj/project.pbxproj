@@ -236,6 +236,12 @@
 		4995C648180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
 		4995C649180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
 		4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */; };
+		49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
+		49C67200184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
+		49C67204184EB9120088F210 /* UANativeBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 49C67203184EB9120088F210 /* UANativeBridge.c */; };
+		49C67205184EB9120088F210 /* UANativeBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 49C67203184EB9120088F210 /* UANativeBridge.c */; };
+		49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C6721B1857CB040088F210 /* UANativeBridgeTest.m */; };
+		49C6721E1857CE840088F210 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49C6721D1857CE840088F210 /* JavaScriptCore.framework */; };
 		49C811AC180DE93500AB15CD /* UAPush+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C811AB180DE93500AB15CD /* UAPush+Test.m */; };
 		49D11C02171E00980058E7C3 /* UAHTTPConnectionOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */; };
 		49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D11C01171E00980058E7C3 /* UAHTTPConnectionOperation.m */; };
@@ -559,6 +565,10 @@
 		4995C644180DBBF7004F8724 /* UASetTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASetTagsAction.h; sourceTree = "<group>"; };
 		4995C645180DBBF7004F8724 /* UASetTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASetTagsAction.m; sourceTree = "<group>"; };
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
+		49C671FE184EAB640088F210 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = JS/UANativeBridge.h; sourceTree = "<group>"; };
+		49C67203184EB9120088F210 /* UANativeBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = UANativeBridge.c; path = JS/UANativeBridge.c; sourceTree = "<group>"; };
+		49C6721B1857CB040088F210 /* UANativeBridgeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANativeBridgeTest.m; sourceTree = "<group>"; };
+		49C6721D1857CE840088F210 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		49C811AA180DE93500AB15CD /* UAPush+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPush+Test.h"; sourceTree = "<group>"; };
 		49C811AB180DE93500AB15CD /* UAPush+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAPush+Test.m"; sourceTree = "<group>"; };
 		49D11C00171E00980058E7C3 /* UAHTTPConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperation.h; sourceTree = "<group>"; };
@@ -734,6 +744,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49C6721E1857CE840088F210 /* JavaScriptCore.framework in Frameworks */,
 				760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */,
 				CC523FC317BA8AC200233005 /* CoreData.framework in Frameworks */,
 				1F4230C016C09876004B52C1 /* libUAirship-3.2.0.a in Frameworks */,
@@ -795,6 +806,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49C6721D1857CE840088F210 /* JavaScriptCore.framework */,
 				760D14B917C2C9E600BBE6E6 /* XCTest.framework */,
 				CC523FC217BA8AC200233005 /* CoreData.framework */,
 				BBB87E5015057EEA00971CEC /* libOCMock.a */,
@@ -1049,6 +1061,15 @@
 			name = HTTP;
 			sourceTree = "<group>";
 		};
+		49C671F2184EA8F90088F210 /* JS */ = {
+			isa = PBXGroup;
+			children = (
+				49C67203184EB9120088F210 /* UANativeBridge.c */,
+				49C671FE184EAB640088F210 /* UANativeBridge.h */,
+			);
+			name = JS;
+			sourceTree = "<group>";
+		};
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -1218,6 +1239,7 @@
 		CCA3A4F117FF14C0009C7371 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				49C6721B1857CB040088F210 /* UANativeBridgeTest.m */,
 				CCDD37CC18089E6F00B8866E /* UAOpenExternalURLActionTest.m */,
 				CCA3A4F217FF14DF009C7371 /* UAActionTest.m */,
 				CCA3A4F417FF14F8009C7371 /* UAActionArgumentsTest.m */,
@@ -1309,6 +1331,7 @@
 			children = (
 				1F55FB6A181A34B7002AA192 /* UI */,
 				1F55FB2C18106066002AA192 /* Kablam */,
+				49C671F2184EA8F90088F210 /* JS */,
 				CC85429E17F4B7F900D2DE10 /* Actions */,
 				1F4230C216C16F1B004B52C1 /* Analytics */,
 				1F610E0C17835C8300BCD96E /* AppDelegates */,
@@ -1417,6 +1440,7 @@
 				CC8542C017F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */,
 				1FE0B75C17E2751000856C60 /* UAInboxUtils.h in Headers */,
+				49C67200184EAB640088F210 /* UANativeBridge.h in Headers */,
 				1FE0B75D17E2751000856C60 /* UAInbox.h in Headers */,
 				CC8542C417F4B81600D2DE10 /* UAActionRunner.h in Headers */,
 				1F55FB431810618C002AA192 /* UAKablamViewController.h in Headers */,
@@ -1529,6 +1553,7 @@
 				1F610DFB17835C3A00BCD96E /* UADeviceAPIClient.h in Headers */,
 				CC8542BB17F4B81600D2DE10 /* UAActionRegistrar.h in Headers */,
 				1F610DE217835C3A00BCD96E /* UAInboxAPIClient.h in Headers */,
+				49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */,
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
 				CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
 				4995C62917FE3655004F8724 /* UAMailComposerData.h in Headers */,
@@ -1574,6 +1599,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1FE0B7AD17E2751000856C60 /* Build configuration list for PBXNativeTarget "AirshipLib-iOS5" */;
 			buildPhases = (
+				49C67202184EB47F0088F210 /* ShellScript */,
 				1FE0B74017E2751000856C60 /* Headers */,
 				1FE0B77A17E2751000856C60 /* Sources */,
 				1FE0B7A617E2751000856C60 /* Frameworks */,
@@ -1594,7 +1620,7 @@
 				7BB679011429288D00B877DB /* Sources */,
 				7BB679021429288D00B877DB /* Frameworks */,
 				7BB679031429288D00B877DB /* Resources */,
-				7BB679041429288D00B877DB /* ShellScript */,
+				7BB679041429288D00B877DB /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -1610,6 +1636,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BB886129159A7E9600584445 /* Build configuration list for PBXNativeTarget "AirshipLib" */;
 			buildPhases = (
+				49C67201184EB2E50088F210 /* Run Script */,
 				BB8860B0159A7E9600584445 /* Headers */,
 				BB8860EB159A7E9600584445 /* Sources */,
 				BB88611C159A7E9600584445 /* Frameworks */,
@@ -1673,7 +1700,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		7BB679041429288D00B877DB /* ShellScript */ = {
+		49C67201184EB2E50088F210 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/../Airship/Common/JS/\"\nxxd -i UANativeBridge.js UANativeBridge.c";
+		};
+		49C67202184EB47F0088F210 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1684,7 +1725,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "cd \"$SRCROOT/../Airship/Common/JS/\"\nxxd -i UANativeBridge.js UANativeBridge.c";
+		};
+		7BB679041429288D00B877DB /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# XCTest bundles must be codesigned the same way an app is if it wants access to the main bundle's features\ncodesign --verify --force --sign \"$CODE_SIGN_IDENTITY\" \"$CODESIGNING_FOLDER_PATH\"\n\n# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1709,6 +1764,7 @@
 				CC7DC948183E977100E95BB8 /* UAChannelRegistrationPayload.m in Sources */,
 				1FE0B78417E2751000856C60 /* NSJSONSerialization+UAAdditions.m in Sources */,
 				1F55FB421810618C002AA192 /* UAKablamOverlayController.m in Sources */,
+				49C67205184EB9120088F210 /* UANativeBridge.c in Sources */,
 				1FE0B78517E2751000856C60 /* UAAppDelegate.m in Sources */,
 				1FE0B78617E2751000856C60 /* UA_Base64.m in Sources */,
 				1FE0B78717E2751000856C60 /* UAKeychainUtils.m in Sources */,
@@ -1795,6 +1851,7 @@
 				CC7DC959183E97D000E95BB8 /* UADeviceRegistrarTest.m in Sources */,
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
+				49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */,
 				CCBFA2DC17B5436500F97E1D /* NSJSONSerialization+UAAdditions.m in Sources */,
 				495526B217D95552009BC301 /* UAInboxMessageTest.m in Sources */,
 				CC4C2A1017CE50E4003B9A55 /* UAAppDelegateProxyTest.m in Sources */,
@@ -1894,6 +1951,7 @@
 				CC8542D517F4B81600D2DE10 /* UAPushActionArguments.m in Sources */,
 				BB88611B159A7E9600584445 /* UALocationCommonValues.m in Sources */,
 				4905C4E718246339001D48E3 /* NSString+URLEncoding.m in Sources */,
+				49C67204184EB9120088F210 /* UANativeBridge.c in Sources */,
 				49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */,
 				49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */,
 				CC8542C917F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */,

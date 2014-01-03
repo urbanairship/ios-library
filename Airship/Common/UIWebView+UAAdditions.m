@@ -26,6 +26,7 @@
 #import "UIWebView+UAAdditions.h"
 #import "UAUser.h"
 #import "UAUtils.h"
+#import "UANativeBridge.h"
 
 @implementation UIWebView (UAAdditions)
 
@@ -86,11 +87,11 @@
      * UAirship.runAction,
      * UAirship.finishAction
      *
-     * See Airship/Common/UANativeBridge.js for uniminified, unescaped source
+     * See Airship/Common/JS/UANativeBridge.js for human-readable source
      */
-    NSString *bridge = @"var callbackID=0;UAirship.callbackURL=function(){var e=arguments;var t=[];var n=null;for(var r=0;r<e.length;r++){var i=e[r];if(i===undefined||i===null){i=\"\"}if(typeof i==\"object\"){n=i}else{t.push(encodeURIComponent(i))}}var s=\"ua://callbackArguments:withOptions:/\"+t.join(\"/\");if(n!==null){var o=[];for(var u in n){o.push(encodeURIComponent(u)+\"=\"+encodeURIComponent(n[u]))}if(o.length>0){s+=\"?\"+o.join(\"&\")}}return s};UAirship.invoke=function(e){var t=document.createElement(\"iframe\");t.style.display=\"none\";t.src=e;document.body.appendChild(t);t.parentNode.removeChild(t)};UAirship.runAction=function(e,t,n){function o(e,t){delete window[i];try{n(e,JSON.parse(t))}catch(e){return n(new Error(\"could not decode response\"))}}var r={};callbackID++;var i=\"ua-cb-\"+callbackID;r[e]=JSON.stringify(t);var s=UAirship.callbackURL(\"run-action\",i,r);window[i]=o;UAirship.invoke(s)};UAirship.finishAction=function(e,t,n){if(n in window){var r=window[n];r(e,t)}}";
 
-    js = [js stringByAppendingString:bridge];
+    js = [js stringByAppendingString:[NSString stringWithCString:(const char *)UANativeBridge_js
+                                                        encoding:NSUTF8StringEncoding]];
 
     /*
      * Execute the JS we just constructed.
