@@ -47,6 +47,7 @@ extern NSString *const UAPushQuietTimeEndKey;
 typedef NSString UAPushUserInfoKey;
 extern UAPushUserInfoKey *const UAPushUserInfoRegistration;
 extern UAPushUserInfoKey *const UAPushUserInfoPushEnabled;
+extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 
 @interface UAPush ()
 

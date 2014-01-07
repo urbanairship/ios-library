@@ -60,7 +60,7 @@
         result = script;
     }];
 
-    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('Unable to retrieve action named: bogus_action'), null, 'some-callback-ID');",@"resulting script should pass an action retrieval error, a null result value, and the provided callback ID");
+    XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('No action found with name bogus_action, skipping action.'), null, 'some-callback-ID');",@"resulting script should pass an action retrieval error, a null result value, and the provided callback ID");
 
     data.arguments = @[];
 

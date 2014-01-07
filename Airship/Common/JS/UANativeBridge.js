@@ -74,11 +74,17 @@ UAirship.runAction = function(actionName, argument, callback) {
     function onready(err, data) {
         delete window[callbackKey];
 
-        try {
-            callback(err, JSON.parse(data));
-        } catch(err) {
-            return callback(new Error("could not decode response"));
+        if(err) {
+            return callback(err);
         }
+
+        try {
+            data = JSON.parse(data);
+        } catch(err) {
+            return callback(new Error('could not decode response: ' + data));
+        }
+
+        callback(null, data);
     }
 
     UAirship.invoke(url);
