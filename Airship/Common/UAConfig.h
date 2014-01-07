@@ -137,12 +137,14 @@
 
 
 /**
- * Apps may be set to self-configure based on the APS-environment set in the embedded.mobileprovision file.
- * If `YES`, the inProduction value will be determined at runtime by reading the provisioning profile. If
- * `NO`, the inProduction flag may be set directly or using the AirshipConfig.plist file. Defaults to
- * `YES` for safety so that the production keys will always be used if the profile cannot be read in a released app.
- * Simulator builds do not include profile, so this flag does not have any effect in cases where there is not
- * a profile present. It will fall back to the inProduction property as set in code or a .plist file.
+ * Apps may be set to self-configure based on the APS-environment set in the embedded.mobileprovision file 
+ * by using detectProvisioningMode. If detectProvisioningMode is set to 'YES', the inProduction value will 
+ * be determined at runtime by reading the provisioning profile. If it is set to 'NO' (the default), the 
+ * inProduction flag may be set directly or by using the AirshipConfig.plist file. The inProduction flag defaults 
+ * to 'YES' for safety so that the production keys will always be used if the profile cannot be read in a 
+ * released app. Simulator builds do not include the profile, and the detectProvisioningMode flag does not have any 
+ * effect in cases where a profile is not present. When a provisioning file is not present, the app will fall back 
+ * to the inProduction property as set in code or the AirshipConfig.plist file.
  */
 @property (nonatomic, assign) BOOL detectProvisioningMode;
 
