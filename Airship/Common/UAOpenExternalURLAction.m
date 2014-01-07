@@ -47,14 +47,19 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
     UAActionResult *result = [UAActionResult resultWithValue:url];
 
-    if (![[UIApplication sharedApplication] openURL:url]) {
-        // Unable to open url
-        result.error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
-                                             code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
-                                         userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
-    }
+    // do this in the background in case we're opening our own app!
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        if (![[UIApplication sharedApplication] openURL:url]) {
+            // Unable to open url
+            result.error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                                code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                            userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+        }
 
-    completionHandler(result);
+        completionHandler(result);
+    });
+
+
 }
 
 - (NSURL *)createURLFromValue:(id)value {
@@ -74,6 +79,25 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     }
 
     return url;
+}
+
+- (BOOL)currentApplicationHandlesURL:(NSURL *)url {
+    NSArray *schemes = [self supportedSchemes];
+    return  [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:sourceApplication:annotation:)]
+                && [schemes containsObject:[url scheme]];
+}
+
+- (NSArray *)supportedSchemes {
+
+    NSMutableArray *schemes = [NSMutableArray array];
+
+    // Look at our plist
+    NSArray *bundleURLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+    [bundleURLTypes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [schemes addObjectsFromArray:[bundleURLTypes[idx] objectForKey:@"CFBundleURLSchemes"]];
+    }];
+
+    return schemes;
 }
 
 @end
