@@ -60,8 +60,8 @@
     [UAURLProtocol addCachableURL:kablamURL];
 
     //close any existing windows
-    [UAKablamViewController closeWindow];
-    [UAKablamOverlayController closeWindow];
+    [UAKablamViewController closeWindow:NO];
+    [UAKablamOverlayController closeWindow:NO];
 
     if ([displaySituations containsObject:situation]) {
         // show the widget, then load

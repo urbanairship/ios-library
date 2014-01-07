@@ -102,7 +102,7 @@ static NSMutableSet *overlayControllers = nil;
 + (void)showURL:(NSURL *)url {
 
     //close existing windows
-    [UAKablamOverlayController closeWindow];
+    [UAKablamOverlayController closeWindow:NO];
 
     // get the top view controller
     UIViewController *topController = [UAKablamOverlayController topController];
@@ -113,9 +113,10 @@ static NSMutableSet *overlayControllers = nil;
     [overlayController loadURL:url];
 }
 
-+ (void)closeWindow {
++ (void)closeWindow:(BOOL)animated {
     for (UAKablamOverlayController *oc in overlayControllers) {
         UA_LDEBUG(@"Closing Kablam overlay controller: %@", [oc.url absoluteString]);
+        //TODO: toggle animations
         [oc closePopupWindow];
     }
 }
@@ -138,7 +139,7 @@ static NSMutableSet *overlayControllers = nil;
         
         self.parentViewController = parent;
         UIView *sview = parent.view;
-        
+
         self.bgView = [[UIView alloc] initWithFrame:sview.bounds];
         self.bgView.autoresizesSubviews = YES;
         self.bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -187,6 +188,8 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)loadURL:(NSURL *)url {
+
+    self.url = url;
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
@@ -326,7 +329,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)closePopupWindow {
     //remove the shade
     [[self.bigPanelView viewWithTag:kShadeViewTag] removeFromSuperview];
-    [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];//todo:replace this with a block
 }
 
 /**
@@ -346,6 +349,8 @@ static NSMutableSet *overlayControllers = nil;
  * Removes all views from the hierarchy and releases self
  */
 - (void)finish {
+
+//TODO: add animation toggle
 
     //faux view
     UIView *fauxView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 200)];

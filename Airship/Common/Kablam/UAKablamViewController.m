@@ -77,7 +77,7 @@ static NSMutableSet *overlayControllers = nil;
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showURL:(NSURL *)url {
 
-    [UAKablamViewController closeWindow];
+    [UAKablamViewController closeWindow:NO];
 
     UIViewController *topController = [UAKablamViewController topController];
 
@@ -102,13 +102,14 @@ static NSMutableSet *overlayControllers = nil;
     return topController;
 }
 
-+ (void)closeWindow {
++ (void)closeWindow:(BOOL)animated {
 
     // It's the top view controller with a child root view controller
     UIViewController *topController = [UAKablamViewController topController];
     UAKablamViewController *possibleKablamController = [[topController childViewControllers] firstObject];
     if ([possibleKablamController isKindOfClass:[UAKablamViewController class]]) {
-        [possibleKablamController finish];
+        UA_LDEBUG(@"Dismissing kablam modal.");
+        [possibleKablamController.presentingViewController dismissViewControllerAnimated:animated completion:NULL];
     }
 }
 
@@ -200,7 +201,7 @@ static NSMutableSet *overlayControllers = nil;
  * Removes all views from the hierarchy and releases self
  */
 - (void)finish {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 #pragma mark -
