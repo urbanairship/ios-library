@@ -4,7 +4,7 @@
 /**
  * Model object for holding JS callback argument and option data.
  */
-@interface UAWebViewCallbackData : NSObject
+@interface UAWebViewCallData : NSObject
 
 /**
  * Processes a custom callback URL into associated callback data.
@@ -12,7 +12,7 @@
  * @param url The URL to be processed.
  * @return An instance of UAWebViewCallbackData.
  */
-+ (UAWebViewCallbackData *)callbackDataForURL:(NSURL *)url;
++ (UAWebViewCallData *)callbackDataForURL:(NSURL *)url;
 
 /**
  * A name, derived from the host passed in the callback URL.

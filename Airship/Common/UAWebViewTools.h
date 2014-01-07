@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UAWebViewCallbackData;
+@class UAWebViewCallData;
 
 @interface UAWebViewTools : NSObject
 

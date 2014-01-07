@@ -29,7 +29,7 @@
 #import "UAInbox.h"
 #import "UAInboxMessage.h"
 #import "UAJavaScriptDelegate.h"
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @implementation UAWebViewTools
 
@@ -130,7 +130,7 @@
 
 + (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
 
-    UAWebViewCallbackData *data = [UAWebViewCallbackData callbackDataForURL:url];
+    UAWebViewCallData *data = [UAWebViewCallData callbackDataForURL:url];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -140,37 +140,37 @@
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
     if ([data.name isEqualToString:@"run-action"] || [data.name isEqualToString:@"run-basic-action"]) {
-        [self performAsyncJSCallbackWithDelegate:actionJSDelegate
+        [self performAsyncJSCallWithDelegate:actionJSDelegate
                                      withWebView:webView
                                         withData:data];
     } else {
         //user JS delegate, if applicable
-        [self performAsyncJSCallbackWithDelegate:userJSDDelegate
+        [self performAsyncJSCallWithDelegate:userJSDDelegate
                                      withWebView:webView
                                         withData:data];
         //deprecated inbox JS delegate, if applicable
-        [self performDeprecatedJSCallbackWithDelegate:inboxJSDelegate
+        [self performDeprecatedJSCallWithDelegate:inboxJSDelegate
                                           withWebView:webView
                                              withData:data];
     }
 }
 
-+ (void)performAsyncJSCallbackWithDelegate:(id<UAJavaScriptDelegate>)delegate
++ (void)performAsyncJSCallWithDelegate:(id<UAJavaScriptDelegate>)delegate
                                withWebView:(UIWebView *)webView
-                             withData:(UAWebViewCallbackData *)data {
-    SEL selector = @selector(callbackWithData:withCompletionHandler:);
+                             withData:(UAWebViewCallData *)data {
+    SEL selector = @selector(callWithData:withCompletionHandler:);
     if ([delegate respondsToSelector:selector]) {
         __weak UIWebView *weakWebView = webView;
-        [delegate callbackWithData:data withCompletionHandler:^(NSString *script){
+        [delegate callWithData:data withCompletionHandler:^(NSString *script){
             [weakWebView stringByEvaluatingJavaScriptFromString:script];
         }];
     }
 }
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-+ (void)performDeprecatedJSCallbackWithDelegate:(id<UAInboxJavaScriptDelegate>)delegate
++ (void)performDeprecatedJSCallWithDelegate:(id<UAInboxJavaScriptDelegate>)delegate
                                     withWebView:(UIWebView *)webView
-                                       withData:(UAWebViewCallbackData *)data {
+                                       withData:(UAWebViewCallData *)data {
     //SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
     SEL selector = @selector(callbackArguments:withOptions:);
     if ([delegate respondsToSelector:selector]) {

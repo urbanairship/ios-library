@@ -1,6 +1,6 @@
 
 #import <XCTest/XCTest.h>
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @interface UAWebViewCallbackDataTest : XCTestCase
 
@@ -20,7 +20,7 @@
 }
 
 - (void)testCallbackDataForURL {
-    UAWebViewCallbackData *data = [UAWebViewCallbackData callbackDataForURL:self.callbackURL];
+    UAWebViewCallData *data = [UAWebViewCallData callbackDataForURL:self.callbackURL];
     XCTAssertNotNil(data, @"data should be non-nil");
     XCTAssertEqual(data.arguments.count, (NSUInteger)2, @"data should have two arguments");
     XCTAssertEqualObjects([data.arguments firstObject], @"argument-one", @"first arg should be 'argument-one'");

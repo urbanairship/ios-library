@@ -1,9 +1,9 @@
 
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
-@implementation UAWebViewCallbackData
+@implementation UAWebViewCallData
 
-+ (UAWebViewCallbackData *)callbackDataForURL:(NSURL *)url {
++ (UAWebViewCallData *)callbackDataForURL:(NSURL *)url {
     NSString *urlPath = [url path];
     if ([urlPath hasPrefix:@"/"]) {
         urlPath = [urlPath substringFromIndex:1]; //trim the leading slash
@@ -32,7 +32,7 @@
         [options setObject:object forKey:key];
     }
 
-    UAWebViewCallbackData *data = [[UAWebViewCallbackData alloc] init];
+    UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
 
     data.name = url.host;
     data.arguments = arguments;

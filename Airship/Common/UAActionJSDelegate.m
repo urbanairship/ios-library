@@ -6,7 +6,7 @@
 #import "NSString+URLEncoding.h"
 
 #import "UAActionRunner.h"
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @implementation UAActionJSDelegate
 
@@ -170,7 +170,7 @@
     completionHandler(nil);
 }
 
-- (void)callbackWithData:(UAWebViewCallbackData *)data
+- (void)callWithData:(UAWebViewCallData *)data
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 

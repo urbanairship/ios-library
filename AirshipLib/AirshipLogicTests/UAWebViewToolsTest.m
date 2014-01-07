@@ -6,7 +6,7 @@
 #import "UAActionJSDelegate.h"
 #import "UAJavaScriptDelegate.h"
 #import "UAWebViewTools.h"
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @interface UAWebViewToolsTest : XCTestCase
 @property(nonatomic, strong) id mockInboxJSDelegate;
@@ -52,18 +52,18 @@
 - (void)testPerformJSDelegate {
 
     //a run-action argument should result in the the callback being dispatched to our internal action JS delegate
-    [[self.mockActionJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.regularActionURL];
     [self.mockActionJSDelegate verify];
 
     //same for run-basic-action
-    [[self.mockActionJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.basicActionURL];
     [self.mockActionJSDelegate verify];
 
     //everything else should be dispatched to the (deprecated) inbox js delegate and the new user js delegate
     [[self.mockInboxJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any]];
-    [[self.mockUserDefinedJSDelegate expect] callbackWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockUserDefinedJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
 
     [UAWebViewTools performJSDelegate:nil url:self.otherURL];
     [self.mockInboxJSDelegate verify];

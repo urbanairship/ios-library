@@ -4,7 +4,7 @@
 #import "UAActionRegistrar.h"
 #import "UAActionJSDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @interface UAActionJSDelegateTest : XCTestCase
 @property(nonatomic, strong) UAActionJSDelegate *jsDelegate;
@@ -33,13 +33,13 @@
 
     [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
 
-    UAWebViewCallbackData *data = [[UAWebViewCallbackData alloc] init];
+    UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
     data.arguments = @[@"some-callback-ID"];
     data.options = @{@"test_action":@"%22hi%22"};
     data.name = @"run-action";
 
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
@@ -48,7 +48,7 @@
     //these are invalid arguments because they are not properly JSON encoded
     data.options = @{@"test_action":@"blah"};
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
@@ -56,7 +56,7 @@
 
     data.options = @{@"bogus_action":@"%22hi%22"};
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
@@ -64,7 +64,7 @@
 
     data.arguments = @[];
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
@@ -93,12 +93,12 @@
     [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
     [[UAActionRegistrar shared] registerAction:alsoTest name:@"also_test_action"];
 
-    UAWebViewCallbackData *data = [[UAWebViewCallbackData alloc] init];
+    UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
     //bare argument strings are allowed (and in fact the only allowed argument type) for run-basic-action
     data.options = @{@"test_action":@"hi", @"also_test_action":@"yo"};
     data.name = @"run-basic-action";
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
@@ -111,7 +111,7 @@
 
     data.options = @{@"bogus_action":@"blah"};
 
-    [self.jsDelegate callbackWithData:data withCompletionHandler:^(NSString *script){
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
