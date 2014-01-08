@@ -28,7 +28,7 @@
 }
 
 /**
- * Handles the run-action JS callback.
+ * Handles the run-action command.
  *
  * This supports async callbacks into JS functions, as well the passing of
  * arbitrary argument objects through JSON serialization of core types.  It is best
@@ -36,7 +36,7 @@
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
  * @param options The options passed in the JS delegate callback.
- * @param completionHandler The completion handler passed in the JS delegate callback.
+ * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
                     withOptions:(NSDictionary *)options

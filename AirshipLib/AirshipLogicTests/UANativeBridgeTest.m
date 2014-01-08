@@ -42,7 +42,7 @@
     XCTAssertFalse([value.toString isEqualToString:@"undefined"], @"UAirship.finishAction should not be undefined");
 }
 
-// UAirship.delegateCallURL is a pure function that builds UA callback URLs out of the passed arguments
+// UAirship.delegateCallURL is a pure function that builds JS delegate call URLs out of the passed arguments
 - (void)testdelegateCallURL {
     JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 3)"];
     XCTAssertEqualObjects(value.toString, @"ua://foo/3");

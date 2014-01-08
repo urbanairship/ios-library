@@ -49,7 +49,7 @@
     NSURL *url = [request URL];
 
     /*
-     ua://callbackArguments:withOptions:/[<arguments>][?<dictionary>]
+     ua://command/[<arguments>][?<dictionary>]
      */
 
     if ([[url scheme] isEqualToString:@"ua"]) {
