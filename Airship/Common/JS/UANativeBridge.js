@@ -1,11 +1,22 @@
 var callbackID = 0;
 
-UAirship.callbackURL = function() {
-    var args = arguments;
+UAirship.delegateCallURL = function() {
+    if (!arguments.length) {
+      throw new Error("UAirship.delegateCallURL expects at least one function argument");
+    }
+
+    var argumentsArray = Array.prototype.slice.call(arguments);
+
+    //treat the first arguments as the command name
+    var name = argumentsArray[0];
+
+    //the rest are path arguments and query options
+    var args = argumentsArray.slice(1);
+
     var uri = [];
     var dict = null;
 
-    // get iPhone callback arguments and dictionary
+    // get arguments and dictionary
     for (var i = 0; i < args.length; i++) {
 
         var arg = args[i];
@@ -22,7 +33,7 @@ UAirship.callbackURL = function() {
     }
 
     // flatten arguments into url
-    var url = "ua://callbackArguments:withOptions:/" + uri.join("/");
+    var url = "ua://" + name + "/" + uri.join("/");
 
     // flatten dictionary into url
     if (dict !== null) {
@@ -56,7 +67,7 @@ UAirship.runAction = function(actionName, argument, callback) {
 
     opt[actionName] = JSON.stringify(argument);
 
-    var url = UAirship.callbackURL('run-action', callbackKey, opt);
+    var url = UAirship.delegateCallURL('run-action', callbackKey, opt);
 
     window[callbackKey] = onready;
 

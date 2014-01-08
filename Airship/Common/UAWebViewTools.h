@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class UAWebViewCallbackData;
+@class UAWebViewCallData;
 
 @interface UAWebViewTools : NSObject
 
@@ -38,7 +38,7 @@
 + (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url;
 
 /**
- * Custom URL scheme handling, for app-specific URL navigation and callback logic.
+ * Custom URL scheme handling, for app-specific URL navigation and JS delegate call logic.
  *
  * @param wv The webview loading the request.
  * @param request The request.
@@ -49,10 +49,10 @@
  navigationType:(UIWebViewNavigationType)navigationType;
 
 /**
- * Used for farming out JavaScript delegate callbacks.
+ * Used for farming out JavaScript delegate calls.
  *
- * @param webView The webview originating the callback.
- * @param url The URL containing the callback arguments/options.
+ * @param webView The webview originating the call.
+ * @param url The URL containing the call data.
  */
 + (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
