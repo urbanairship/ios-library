@@ -33,7 +33,7 @@
     [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
     [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
 
-    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action?foo=bar&baz=boz"];
+    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action/?foo=bar&baz=boz"];
     self.regularActionURL = [NSURL URLWithString:@"ua://run-action/some-callback-id?foo=bar"];
     self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }

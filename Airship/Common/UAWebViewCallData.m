@@ -3,7 +3,7 @@
 
 @implementation UAWebViewCallData
 
-+ (UAWebViewCallData *)callbackDataForURL:(NSURL *)url {
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url {
     NSString *urlPath = [url path];
     if ([urlPath hasPrefix:@"/"]) {
         urlPath = [urlPath substringFromIndex:1]; //trim the leading slash

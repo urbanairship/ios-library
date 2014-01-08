@@ -130,7 +130,7 @@
 
 + (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
 
-    UAWebViewCallData *data = [UAWebViewCallData callbackDataForURL:url];
+    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url];
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

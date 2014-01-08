@@ -2,31 +2,31 @@
 #import <Foundation/Foundation.h>
 
 /**
- * Model object for holding JS callback argument and option data.
+ * Model object for holding data associated with JS delegate calls 
  */
 @interface UAWebViewCallData : NSObject
 
 /**
- * Processes a custom callback URL into associated callback data.
+ * Processes a custom delegate call URL into associated call data.
  *
  * @param url The URL to be processed.
- * @return An instance of UAWebViewCallbackData.
+ * @return An instance of UAWebViewCallData.
  */
-+ (UAWebViewCallData *)callbackDataForURL:(NSURL *)url;
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url;
 
 /**
- * A name, derived from the host passed in the callback URL.
- * This is typically the name of a directive or procedure.
+ * A name, derived from the host passed in the delegate call URL.
+ * This is typically the name of a command.
  */
 @property(nonatomic, strong) NSString *name;
 
 /**
- * The argument strings passed in the callback.
+ * The argument strings passed in the call.
  */
 @property(nonatomic, strong) NSArray *arguments;
 
 /**
- * The query options passed in the callback.
+ * The query options passed in the call.
  */
 @property(nonatomic, strong) NSDictionary *options;
 
