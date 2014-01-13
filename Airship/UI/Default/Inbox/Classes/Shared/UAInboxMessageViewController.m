@@ -41,10 +41,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshHeader;
 - (void)updateMessageNavButtons;
 
-@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activity;
-@property (nonatomic, weak) IBOutlet UIView *statusBar;
-@property (nonatomic, weak) IBOutlet UILabel *statusBarTitle;
-@property (nonatomic, strong) UISegmentedControl *messageNav;
+
+@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activity;
+@property (nonatomic, strong) IBOutlet UIView *statusBar;
+@property (nonatomic, strong) IBOutlet UILabel *statusBarTitle;
+
+@property (nonatomic, strong) UIBarButtonItem *upButtonItem;
+@property (nonatomic, strong) UIBarButtonItem *downButtonItem;
+
 /**
  * The UIWebView used to display the message content.
  */
@@ -65,25 +69,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
         self.title = UA_INBOX_TR(@"UA_Message");
 
-        // "Segmented" up/down control to the right
-        UISegmentedControl *segmentedControl = [[UISegmentedControl alloc] initWithItems:
-                                                 [NSArray arrayWithObjects:
-                                                  [UIImage imageNamed:@"up.png"],
-                                                  [UIImage imageNamed:@"down.png"],
-                                                  nil]];
-        [segmentedControl addTarget:self action:@selector(segmentAction:) forControlEvents:UIControlEventValueChanged];
-        segmentedControl.frame = CGRectMake(0, 0, 90, 30);
-        segmentedControl.segmentedControlStyle = UISegmentedControlStyleBar;
-        segmentedControl.momentary = YES;
-        self.messageNav = segmentedControl;
+        self.upButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:103 target:self action:@selector(navigationAction:)];
+        self.downButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:104 target:self action:@selector(navigationAction:)];
+        self.navigationItem.rightBarButtonItems = @[self.upButtonItem, self.downButtonItem];
 
-        UIBarButtonItem *segmentBarItem = [[UIBarButtonItem alloc] initWithCustomView:segmentedControl];
-        self.navigationItem.rightBarButtonItem = segmentBarItem;
         self.shouldShowAlerts = YES;
 
         // make our existing layout work in iOS7
         if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
             self.edgesForExtendedLayout = UIRectEdgeNone;
+            self.navigationController.navigationBar.translucent = NO;
+            self.navigationController.navigationBar.opaque = YES;
         }
     }
 
@@ -178,7 +174,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self.statusBar setHidden: NO];
+    //[self.statusBar setHidden: NO];
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
     
@@ -218,13 +214,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma mark Message Nav
 
-- (IBAction)segmentAction:(id)sender {
-    UISegmentedControl *segmentedControl = (UISegmentedControl *)sender;
+- (IBAction)navigationAction:(id)sender {
+
     NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
-    if(segmentedControl.selectedSegmentIndex == kMessageUp) {
+    if (self.upButtonItem == sender) {
         [self loadMessageAtIndex:index-1];
-    } else if(segmentedControl.selectedSegmentIndex == kMessageDown) {
+    } else if(self.downButtonItem == sender) {
         [self loadMessageAtIndex:index+1];
     }
 }
@@ -232,20 +228,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)updateMessageNavButtons {
     NSUInteger index = [[UAInbox shared].messageList indexOfMessage:self.message];
 
-    if (self.message == nil || index == NSNotFound) {
-        [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
-        [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
+    if (!self.message || index == NSNotFound) {
+        self.upButtonItem.enabled = NO;
+        self.downButtonItem.enabled = NO;
     } else {
-        if(index <= 0) {
-            [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageUp];
-        } else {
-            [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageUp];
-        }
-        if(index >= [[UAInbox shared].messageList messageCount] - 1) {
-            [self.messageNav setEnabled: NO forSegmentAtIndex: kMessageDown];
-        } else {
-            [self.messageNav setEnabled: YES forSegmentAtIndex: kMessageDown];
-        }
+        self.upButtonItem.enabled = (index > 0);
+        self.downButtonItem.enabled = (index < ([[UAInbox shared].messageList messageCount] - 1));
     }
 
     UALOG(@"update nav %lu, of %lu", (unsigned long)index, (unsigned long)[[UAInbox shared].messageList messageCount]);
