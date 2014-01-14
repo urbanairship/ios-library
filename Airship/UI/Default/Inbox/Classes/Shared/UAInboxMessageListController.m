@@ -36,7 +36,7 @@
 
 #define kUAPlaceholderIconImage @"list-image-placeholder.png"
 #define kUAIconImageCacheMaxCount 100
-#define kUAIconImageCacheMaxByteCost (1 << 20) /* 1MB */
+#define kUAIconImageCacheMaxByteCost (1024 * 1024) /* 1MB */
 
 @interface UAInboxMessageListController()
 
@@ -133,12 +133,8 @@
         self.iconCache.totalCostLimit = kUAIconImageCacheMaxByteCost;
         self.currentIconURLRequests = [NSMutableDictionary dictionary];
 
-//        // make our existing layout work in iOS7
-//        if ([self respondsToSelector:NSSelectorFromString(@"edgesForExtendedLayout")]) {
-//            self.edgesForExtendedLayout = UIRectEdgeNone;
-//            self.navigationController.navigationBar.o
-//        }
     }
+
     return self;
 }
 
