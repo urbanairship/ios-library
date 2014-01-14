@@ -123,9 +123,7 @@
 
     NSString *js = @"var metaTag = document.createElement('meta');"
     "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; user-scalable=no;';"
-    "document.getElementsByTagName('head')[0].appendChild(metaTag);"
-    "document.getElementsByTagName('body')[0].style.minWidth = '240px';";
+    "metaTag.content = 'width=device-width; user-scalable=no;';";
 
     [self stringByEvaluatingJavaScriptFromString:js];
 }
