@@ -2,7 +2,7 @@
 #import <XCTest/XCTest.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "UANativeBridge.h"
-#import "UAWebViewCallbackData.h"
+#import "UAWebViewCallData.h"
 
 @interface UANativeBridgeTest : XCTestCase
 @property(nonatomic, strong) JSContext *jsc;
@@ -32,7 +32,7 @@
 
 // Make sure that the functions defined in UANativeBridge.js are at least parsing
 - (void)testNativeBridgeParsed {
-    JSValue *value = [self.jsc evaluateScript:@"UAirship.callbackURL"];
+    JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL"];
     XCTAssertFalse([value.toString isEqualToString:@"undefined"], @"UAirship.runAction should not be undefined");
     value = [self.jsc evaluateScript:@"UAirship.invoke"];
     XCTAssertFalse([value.toString isEqualToString:@"undefined"], @"UAirship.invoke should not be undefined");
@@ -42,16 +42,14 @@
     XCTAssertFalse([value.toString isEqualToString:@"undefined"], @"UAirship.finishAction should not be undefined");
 }
 
-// UAirship.callbackURL is a pure function that builds UA callback URLs out of the passed arguments
-- (void)testCallbackURL {
-    JSValue *value = [self.jsc evaluateScript:@"UAirship.callbackURL('foo', 3)"];
-    XCTAssertEqualObjects(value.toString, @"ua://callbackArguments:withOptions:/foo/3");
-    value = [self.jsc evaluateScript:@"UAirship.callbackURL({'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://callbackArguments:withOptions:/?baz=boz");
-    value = [self.jsc evaluateScript:@"UAirship.callbackURL('foo', 'bar', {'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://callbackArguments:withOptions:/foo/bar?baz=boz");
-    value = [self.jsc evaluateScript:@"UAirship.callbackURL({'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://callbackArguments:withOptions:/?baz=boz");
+// UAirship.delegateCallURL is a pure function that builds JS delegate call URLs out of the passed arguments
+- (void)testdelegateCallURL {
+    JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 3)"];
+    XCTAssertEqualObjects(value.toString, @"ua://foo/3");
+    value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', {'baz':'boz'})"];
+    XCTAssertEqualObjects(value.toString, @"ua://foo/?baz=boz");
+    value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 'bar', {'baz':'boz'})"];
+    XCTAssertEqualObjects(value.toString, @"ua://foo/bar?baz=boz");
 }
 
 // Test that UAirship.invoke attaches and removes an iframe from the DOM
@@ -109,8 +107,8 @@
 
     //mock UAirship.invoke that immediately calls UAirship.finishAction with a result string and the passed callback ID
     self.jsc[@"UAirship"][@"invoke"] = ^(NSString *url) {
-        UAWebViewCallbackData *data = [UAWebViewCallbackData callbackDataForURL:[NSURL URLWithString:url]];
-        NSString *cbID = [data.arguments objectAtIndex:1];
+        UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url]];
+        NSString *cbID = [data.arguments firstObject];
         invoked = YES;
         NSString *callFinishAction = [NSString stringWithFormat:@"UAirship.finishAction(null,'\"done\"', '%@')",cbID];
         [weakContext evaluateScript:callFinishAction];

@@ -5,8 +5,8 @@
 /**
  * Library-internal implementation of UAJavaScriptDelegate.
  *
- * This class exclusively handles UIWebView JS callbacks with the
- * run-action and run-basic-action arguments.
+ * This class exclusively handles UAJavaScriptDelegate calls with the
+ * run-action and run-basic-action commands.
  */
 @interface UAActionJSDelegate : NSObject<UAJavaScriptDelegate>
 

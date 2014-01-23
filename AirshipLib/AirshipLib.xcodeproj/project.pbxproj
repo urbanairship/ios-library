@@ -169,7 +169,7 @@
 		4905C4E618246339001D48E3 /* NSString+URLEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4E318246339001D48E3 /* NSString+URLEncoding.h */; };
 		4905C4E718246339001D48E3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+URLEncoding.m */; };
 		4905C4E818246339001D48E3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+URLEncoding.m */; };
-		490710BC184D3EAB00E494AF /* UAWebViewCallbackDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallbackDataTest.m */; };
+		490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */; };
 		494BF703176277E000B25E12 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF702176277E000B25E12 /* UAUserTest.m */; };
 		494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7051762789D00B25E12 /* UAUser+Internal.h */; };
 		494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7061762789D00B25E12 /* UAUserAPIClient.h */; };
@@ -220,10 +220,10 @@
 		49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; };
 		49DCFAC11831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */; };
 		49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */; };
-		49E9C9C1183AD42300B7BCFF /* UAWebViewCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallbackData.h */; };
-		49E9C9C2183AD42300B7BCFF /* UAWebViewCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallbackData.h */; };
-		49E9C9C3183AD42300B7BCFF /* UAWebViewCallbackData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallbackData.m */; };
-		49E9C9C4183AD42300B7BCFF /* UAWebViewCallbackData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallbackData.m */; };
+		49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
+		49E9C9C2183AD42300B7BCFF /* UAWebViewCallData.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */; };
+		49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */; };
+		49E9C9C4183AD42300B7BCFF /* UAWebViewCallData.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */; };
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
 		49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECA8917CBD4BC00DE0AFB /* UADisposable.h */; };
 		49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */; };
@@ -472,7 +472,7 @@
 		1F675958175900BC00C062E0 /* AirshipConfig-Valid.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AirshipConfig-Valid.plist"; path = "Support/AirshipConfig-Valid.plist"; sourceTree = "<group>"; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
 		1FC71653129597F9003BDD2B /* UAUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUser.m; sourceTree = "<group>"; };
-		1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.0.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libUAirship-iOS5-3.0.1.a"; path = "libUAirship-iOS5-3.1.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.1.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libUAirship-iOS5-3.1.1.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FE43798128B589000D38A14 /* UAKeychainUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAKeychainUtils.h; sourceTree = "<group>"; };
 		1FE43799128B589000D38A14 /* UAKeychainUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAKeychainUtils.m; sourceTree = "<group>"; };
 		4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListDelegate.h; sourceTree = "<group>"; };
@@ -482,8 +482,7 @@
 		4905C4DE182458AC001D48E3 /* UAActionJSDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegate.m; sourceTree = "<group>"; };
 		4905C4E318246339001D48E3 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
 		4905C4E418246339001D48E3 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
-		490710BB184D3EAB00E494AF /* UAWebViewCallbackDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallbackDataTest.m; sourceTree = "<group>"; };
-		494BF701176277E000B25E12 /* UAUserTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserTest.h; sourceTree = "<group>"; };
+		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		494BF702176277E000B25E12 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		494BF7051762789D00B25E12 /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
 		494BF7061762789D00B25E12 /* UAUserAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserAPIClient.h; sourceTree = "<group>"; };
@@ -534,8 +533,8 @@
 		49D11C1117270C6E0058E7C3 /* UAHTTPRequestEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequestEngine.m; sourceTree = "<group>"; };
 		49DCFABF1831B580002CD5FB /* UAJavaScriptDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJavaScriptDelegate.h; sourceTree = "<group>"; };
 		49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewToolsTest.m; sourceTree = "<group>"; };
-		49E9C9BF183AD42300B7BCFF /* UAWebViewCallbackData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallbackData.h; sourceTree = "<group>"; };
-		49E9C9C0183AD42300B7BCFF /* UAWebViewCallbackData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallbackData.m; sourceTree = "<group>"; };
+		49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAWebViewCallData.h; sourceTree = "<group>"; };
+		49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallData.m; sourceTree = "<group>"; };
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
 		49EECA8917CBD4BC00DE0AFB /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADisposable.h; sourceTree = "<group>"; };
 		49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisposable.m; sourceTree = "<group>"; };
@@ -742,7 +741,7 @@
 			children = (
 				7BB679061429288D00B877DB /* AirshipLogicTests.xctest */,
 				BB88612C159A7E9600584445 /* libUAirship-3.1.1.a */,
-				1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.0.1.a */,
+				1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.1.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -917,8 +916,8 @@
 				1FE43799128B589000D38A14 /* UAKeychainUtils.m */,
 				4905C4E318246339001D48E3 /* NSString+URLEncoding.h */,
 				4905C4E418246339001D48E3 /* NSString+URLEncoding.m */,
-				49E9C9BF183AD42300B7BCFF /* UAWebViewCallbackData.h */,
-				49E9C9C0183AD42300B7BCFF /* UAWebViewCallbackData.m */,
+				49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */,
+				49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -1238,7 +1237,7 @@
 				7BB679141429288D00B877DB /* UAUtilsTest.m */,
 				497B0EA91836AB8700DA65BB /* NSString_URLEncodingTest.m */,
 				49E9C9BD1836EBAB00B7BCFF /* UAWebViewToolsTest.m */,
-				490710BB184D3EAB00E494AF /* UAWebViewCallbackDataTest.m */,
+				490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -1368,7 +1367,7 @@
 				1FE0B76317E2751000856C60 /* UA_Base64.h in Headers */,
 				1FE0B76417E2751000856C60 /* UALocationService+Internal.h in Headers */,
 				CC7DC946183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
-				49E9C9C2183AD42300B7BCFF /* UAWebViewCallbackData.h in Headers */,
+				49E9C9C2183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				CCA3A4EC17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
 				1F4EDB3E183183B600F77343 /* UAMailComposerData.h in Headers */,
 				CC8542C817F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
@@ -1433,7 +1432,7 @@
 				BB8860E7159A7E9600584445 /* UALocationProviderProtocol.h in Headers */,
 				CC7DC94C183E978A00E95BB8 /* UADeviceRegistrar.h in Headers */,
 				BB8860E8159A7E9600584445 /* UALocationProviderDelegate.h in Headers */,
-				49E9C9C1183AD42300B7BCFF /* UAWebViewCallbackData.h in Headers */,
+				49E9C9C1183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				BB8860DA159A7E9600584445 /* UAEvent.h in Headers */,
 				BB8860E0159A7E9600584445 /* UALocationEvent.h in Headers */,
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
@@ -1515,7 +1514,7 @@
 			);
 			name = "AirshipLib-iOS5";
 			productName = AirshipLib;
-			productReference = 1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.0.1.a */;
+			productReference = 1FE0B7B117E2751000856C60 /* libUAirship-iOS5-3.1.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		7BB679051429288D00B877DB /* AirshipLogicTests */ = {
@@ -1714,7 +1713,7 @@
 				CC8542CA17F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */,
 				1FE0B79D17E2751000856C60 /* UAInbox.m in Sources */,
 				1FE0B79E17E2751000856C60 /* UAInboxMessageList.m in Sources */,
-				49E9C9C4183AD42300B7BCFF /* UAWebViewCallbackData.m in Sources */,
+				49E9C9C4183AD42300B7BCFF /* UAWebViewCallData.m in Sources */,
 				1FE0B79F17E2751000856C60 /* UADelayOperation.m in Sources */,
 				1FE0B7A017E2751000856C60 /* UAInboxAPIClient.m in Sources */,
 				1FE0B7A117E2751000856C60 /* UAUserAPIClient.m in Sources */,
@@ -1777,7 +1776,7 @@
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
-				490710BC184D3EAB00E494AF /* UAWebViewCallbackDataTest.m in Sources */,
+				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1847,7 +1846,7 @@
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
-				49E9C9C3183AD42300B7BCFF /* UAWebViewCallbackData.m in Sources */,
+				49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */,
 				CC1D229D180373E0005C8393 /* UAAction+Operators.m in Sources */,
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,

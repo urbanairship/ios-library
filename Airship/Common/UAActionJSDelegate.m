@@ -6,6 +6,7 @@
 #import "NSString+URLEncoding.h"
 
 #import "UAActionRunner.h"
+#import "UAWebViewCallData.h"
 
 @implementation UAActionJSDelegate
 
@@ -27,7 +28,7 @@
 }
 
 /**
- * Handles the run-action JS callback.
+ * Handles the run-action command.
  *
  * This supports async callbacks into JS functions, as well the passing of
  * arbitrary argument objects through JSON serialization of core types.  It is best
@@ -35,7 +36,7 @@
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
  * @param options The options passed in the JS delegate callback.
- * @param completionHandler The completion handler passed in the JS delegate callback.
+ * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
                     withOptions:(NSDictionary *)options
@@ -148,27 +149,24 @@
     completionHandler(nil);
 }
 
-- (void)callbackArguments:(NSArray *)args
-              withOptions:(NSDictionary *)options
+- (void)callWithData:(UAWebViewCallData *)data
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
-    UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", args, options);
+    UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 
     //we need at least one argument
     //run-action is the full js/callback interface
-    if ([[args firstObject] isEqualToString:@"run-action"]) {
-        NSString *callbackID;
+    if ([data.name isEqualToString:@"run-action"]) {
         //the callbackID is optional, if present we can make an async callback
         //into the JS environment, otherwise we'll just run the action to completion
-        if (args.count > 1) {
-            callbackID = [args objectAtIndex:1];
-        }
+
+        NSString *callbackID = [data.arguments firstObject];
         [self runActionWithCallbackID:callbackID
-                          withOptions:options
+                          withOptions:data.options
                 withCompletionHandler:completionHandler];
-    } else if ([[args firstObject] isEqualToString:@"run-basic-action"]) {
+    } else if ([data.name isEqualToString:@"run-basic-action"]) {
         //run-basic-action is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
-        [self runBasicActionWithOptions:options withCompletionHandler:completionHandler];
+        [self runBasicActionWithOptions:data.options withCompletionHandler:completionHandler];
     } else {
         //arguments not recognized, pass a nil script result
         completionHandler(nil);
