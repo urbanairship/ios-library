@@ -26,14 +26,38 @@
 #import "UAAction.h"
 #import <MessageUI/MessageUI.h>
 
-//TODO: additional error codes
-
+/**
+ * Represents the possible error conditions when running a `UAMailComposerAction`.
+ */
 NS_ENUM(NSInteger, UAMailComposerActionErrorCode) {
+    /**
+     * Indicates that the mail composer could not be displayed because mail is disabled.
+     */
     UAMailComposerActionErrorCodeMailDisabled
 };
 
+/**
+ * The domain for errors encountered when running a `UAMailComposerAction`.
+ */
 extern NSString * const UAMailComposerActionErrorDomain;
 
+/**
+ * Displays the default mail composer, allowing the user to send a message.
+ * The address, subject and body sections of the mail composer may be optionally filled in
+ * with default values.
+ *
+ * Expected argument values: NSDictionary or UAMailComposerData.
+ * NSDictionary arguments values must be KVC compliant representations of the `UAMailComposerData` class.
+ *
+ * Valid situations: `UASituationForegroundPush`, `UASituationLaunchedFromPush`, `UASituationLaunchedFromSpringBoard`,
+ * `UASituationRichPush`.
+ *
+ * Result value: nil
+ *
+ * Error: `UAMailComposerActionErrorCodeMailDisabled` if mail is disabled
+ *
+ * Fetch result: UAActionFetchResultNone
+ */
 @interface UAMailComposerAction : UAAction
 
 @end
