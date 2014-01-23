@@ -34,7 +34,11 @@
  * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
  * `UASituationRichPushAction`
  *
- * Result values: nil, with an additional UAActionFetchResult when handling background pushes.
+ * Result value: nil
+ *
+ * Error: nil
+ *
+ * Fetch result: UAActionFetchResultNewData
  */
 @interface UAIncomingRichPushAction : UAAction
 

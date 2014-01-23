@@ -52,7 +52,11 @@ extern NSString * const UAMailComposerActionErrorDomain;
  * Valid situations: `UASituationForegroundPush`, `UASituationLaunchedFromPush`, `UASituationLaunchedFromSpringBoard`,
  * `UASituationRichPush`.
  *
- * Result values: nil, with an additional NSError* in erroneous circumstances.
+ * Result value: nil
+ *
+ * Error: `UAMailComposerActionErrorCodeMailDisabled` if mail is disabled
+ *
+ * Fetch result: UAActionFetchResultNone
  */
 @interface UAMailComposerAction : UAAction
 

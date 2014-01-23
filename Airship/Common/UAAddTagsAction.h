@@ -34,7 +34,11 @@
  * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
  * `UASituationRichPushAction`, `UASituationLaunchedFromSpringBoard`
  *
- * Result values: nil
+ * Result value: nil
+ *
+ * Error: nil
+ *
+ * Fetch result: UAActionFetchResultNone
  */
 @interface UAAddTagsAction : UAModifyTagsAction
 

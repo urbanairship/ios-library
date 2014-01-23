@@ -50,7 +50,11 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationLaunchedFromSpringBoard,
  * UASituationRichPush
  *
- * Result values: An NSURL representation of the input, with an additional NSError if the URL could not be opened.
+ * Result value: An NSURL representation of the input
+ *
+ * Error: `UAOpenExternalURLActionErrorCodeURLFailedToOpen` if the URL could not be opened
+ *
+ * Fetch result: UAActionFetchResultNone
  */
 @interface UAOpenExternalURLAction : UAAction
 
