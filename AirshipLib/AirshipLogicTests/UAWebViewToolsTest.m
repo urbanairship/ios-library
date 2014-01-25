@@ -15,6 +15,7 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) NSURL *basicActionURL;
 @property(nonatomic, strong) NSURL *regularActionURL;
+@property(nonatomic, strong) NSURL *callbackActionURL;
 @property(nonatomic, strong) NSURL *otherURL;
 @end
 
@@ -34,7 +35,8 @@
     [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
 
     self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action/?foo=bar&baz=boz"];
-    self.regularActionURL = [NSURL URLWithString:@"ua://run-action/some-callback-id?foo=bar"];
+    self.regularActionURL = [NSURL URLWithString:@"ua://run-action/?foo=bar&baz=boz"];
+    self.callbackActionURL = [NSURL URLWithString:@"ua://run-action-cb/some-callback-id?foo=bar"];
     self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }
 

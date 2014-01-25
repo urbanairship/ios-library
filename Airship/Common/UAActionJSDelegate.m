@@ -28,14 +28,14 @@
 }
 
 /**
- * Handles the run-action command.
+ * Handles the run-action-cb command.
  *
  * This supports async callbacks into JS functions, as well the passing of
  * arbitrary argument objects through JSON serialization of core types.  It is best
  * used from JavaScript, but can be used entirely through URL loading as well.
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
- * @param options The options passed in the JS delegate callback.
+ * @param options The options passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
@@ -110,6 +110,54 @@
 }
 
 /**
+ * Handles the run-action command.
+ *
+ * This supports async callbacks into JS functions, as well the passing of
+ * arbitrary argument objects through JSON serialization of core types.  It is best
+ * used from JavaScript, but can be used entirely through URL loading as well.
+ *
+ * @param options The options passed in the JS delegate call.
+ * @param completionHandler The completion handler passed in the JS delegate call.
+ */
+- (void)runActionwithOptions:(NSDictionary *)options
+          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+
+    for (NSString *actionName in options) {
+
+        NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        if (!decodedActionName) {
+            UA_LDEBUG(@"unable to decode action name");
+            completionHandler(nil);
+            return;
+        }
+
+        NSString *encodedArgumentsValue = [options valueForKey:actionName];
+        id decodedArgumentsValue;
+        if (encodedArgumentsValue) {
+            decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
+        }
+
+        //if we found an action by that name, and there's either no argument or a correctly decoded argument
+        if (decodedArgumentsValue || !encodedArgumentsValue) {
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationRichPushAction];
+            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+                if (result.error){
+                    UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
+                } else {
+                    UA_LDEBUG(@"action %@ completed successfully", actionName);
+                }
+            }];
+        } else {
+            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+        }
+    }
+
+    completionHandler(nil);
+}
+
+
+/**
  * Handles the run-basic-action callback.
  *
  * This does not support callbacks into the JS layer, and only allows
@@ -143,6 +191,8 @@
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
                 }
             }];
+        } else {
+            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
         }
     }
 
@@ -154,8 +204,8 @@
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 
     //we need at least one argument
-    //run-action is the full js/callback interface
-    if ([data.name isEqualToString:@"run-action"]) {
+    //run-action is the full js/callback interface, and only runs one action at a time
+    if ([data.name isEqualToString:@"run-action-cb"]) {
         //the callbackID is optional, if present we can make an async callback
         //into the JS environment, otherwise we'll just run the action to completion
 
@@ -163,6 +213,10 @@
         [self runActionWithCallbackID:callbackID
                           withOptions:data.options
                 withCompletionHandler:completionHandler];
+    } else if ([data.name isEqualToString:@"run-action"]){
+        //run-action is the 'complex' version with JSON-encoded string arguments, and
+        //allows multiple simultaneous actions
+        [self runActionwithOptions:data.options withCompletionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-basic-action"]) {
         //run-basic-action is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
