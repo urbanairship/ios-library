@@ -30,6 +30,7 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		1F3CC4D0165C48AD008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */; };
 		1F79711612DE3C1000D4937F /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711512DE3C1000D4937F /* AirshipConfig.plist */; };
+		1F9D1830187355BF00345FA4 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 76149E871843B0B400398008 /* UAPushSettingsChannelInfoViewController.m */; };
 		1FD26EBF13FB318700DBC45F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FD26EBE13FB318700DBC45F /* libz.dylib */; };
 		1FE0B7FC17E27CBC00856C60 /* checkConfig.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0D2E051611AA61F300C4CD8A /* checkConfig.sh */; };
 		1FE0B7FD17E27CBC00856C60 /* MainWindow_Pad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18C0294D124F216B00D49CD5 /* MainWindow_Pad.xib */; };
@@ -180,7 +181,7 @@
 		1F3CC4CF165C48AD008526E3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1F79711512DE3C1000D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FD26EBE13FB318700DBC45F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		1FE0B84817E27CBC00856C60 /* PushSample copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PushSample copy.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FE0B84817E27CBC00856C60 /* PushSample copy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "PushSample copy.app"; path = "PushSample-iOS5.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FE0B84A17E27D7900856C60 /* libUAirship-iOS5-3.1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-iOS5-3.1.1.a"; path = "../Airship/libUAirship-iOS5-3.1.1.a"; sourceTree = "<group>"; };
 		1FE3959C177A25DC00388531 /* SampleAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SampleAppDelegate.m; sourceTree = "<group>"; };
 		1FE3959D177A25DC00388531 /* SampleAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleAppDelegate.h; sourceTree = "<group>"; };
@@ -763,6 +764,7 @@
 			files = (
 				1FE0B82317E27CBC00856C60 /* main.m in Sources */,
 				1FE0B82417E27CBC00856C60 /* SampleViewController.m in Sources */,
+				1F9D1830187355BF00345FA4 /* UAPushSettingsChannelInfoViewController.m in Sources */,
 				1FE0B82517E27CBC00856C60 /* UAPushMoreSettingsViewController.m in Sources */,
 				1FE0B82617E27CBC00856C60 /* UAPushSettingsAliasViewController.m in Sources */,
 				1FE0B82717E27CBC00856C60 /* UAPushSettingsTokenViewController.m in Sources */,

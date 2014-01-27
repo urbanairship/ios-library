@@ -28,11 +28,6 @@
 
 #import <AudioToolbox/AudioServices.h>
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED < 60000
-// This is available in iOS 6.0 and later, define it for older versions
-#define NSLineBreakByWordWrapping 0
-#endif
-
 enum {
     SectionDesc     = 0,
     SectionSounds   = 1,
