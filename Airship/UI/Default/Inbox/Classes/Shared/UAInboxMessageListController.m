@@ -34,6 +34,9 @@
 
 #import "UAURLProtocol.h"
 
+/*
+ * List-view image controls: default image path and cache values
+ */
 #define kUAPlaceholderIconImage @"list-image-placeholder.png"
 #define kUAIconImageCacheMaxCount 100
 #define kUAIconImageCacheMaxByteCost (1024 * 1024) /* 1MB */
@@ -57,6 +60,9 @@
 
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath;
 
+/**
+ * Returns the number of unread messages in the specified set of index paths for the current table view.
+ */
 - (NSUInteger)countOfUnreadMessagesInIndexPaths:(NSArray *)paths;
 
 //
@@ -117,16 +123,12 @@
 
 @implementation UAInboxMessageListController
 
-
-- (void)initNibNames {
-    self.cellReusableId = @"UAInboxMessageListCell";
-    self.cellNibName = @"UAInboxMessageListCell";
-}
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        [self initNibNames];
-        
+
+        self.cellReusableId = @"UAInboxMessageListCell";
+        self.cellNibName = @"UAInboxMessageListCell";
+
         self.shouldShowAlerts = YES;
         self.iconCache = [[NSCache alloc] init];
         self.iconCache.countLimit = kUAIconImageCacheMaxCount;
@@ -219,7 +221,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
 
-    // This is next bit is optional. You may want to clear the cache when the view disappears, though you can also
+    // NOTE: This is next bit is optional. You may want to clear the cache when the view disappears, though you can also
     // just clear the cache on low memory warning (as implemented)
 
     // [self.iconCache removeAllObjects]; // Remove all the objects - they can be repopulated from the URL cache
@@ -269,15 +271,18 @@
 
 - (void)refreshAfterBatchUpdate {
 
-    self.cancelItem.enabled = YES;//ends editing
-
+    // end editing
+    self.cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
 
+    // reset selection
     UITableView *strongMessageTable = self.messageTable;
     [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
 
+    // reset current operation set
     self.currentBatchUpdateIndexPaths = nil;
 
+    // force button update
     [self refreshBatchUpdateButtons];
 }
 
@@ -315,7 +320,7 @@
 
 - (void)updateSetOfUnreadMessagesWithMessage:(UAInboxMessage *)message atIndexPath:(NSIndexPath *)indexPath {
 
-    if (message.unread){
+    if (message.unread) {
         [self.setOfUnreadMessagesInSelection addObject:indexPath];
     } else {
         [self.setOfUnreadMessagesInSelection removeObject:indexPath];
@@ -327,7 +332,7 @@
     NSUInteger count = 0;
     for (NSIndexPath *path in indexPaths) {
         if ([self.setOfUnreadMessagesInSelection containsObject:path]) {
-            count++;
+            ++count;
         }
     }
     return count;
@@ -436,14 +441,16 @@
 
     } else {
         self.deleteItem.title = [NSString stringWithFormat:@"%@ (%lu)", deleteStr, (unsigned long)count];
-        NSUInteger ureadCountInSelection = [self countOfUnreadMessagesInIndexPaths:strongMessageTable.indexPathsForSelectedRows];
-        self.markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)ureadCountInSelection];
+
+        NSUInteger unreadCountInSelection = [self countOfUnreadMessagesInIndexPaths:strongMessageTable.indexPathsForSelectedRows];
+        self.markAsReadButtonItem.title = [NSString stringWithFormat:@"%@ (%lu)", markReadStr, (unsigned long)unreadCountInSelection];
+
         if ([UAInbox shared].messageList.isBatchUpdating) {
             self.deleteItem.enabled = NO;
             self.markAsReadButtonItem.enabled = NO;
         } else {
             self.deleteItem.enabled = YES;
-            if (ureadCountInSelection != 0) {
+            if (unreadCountInSelection != 0) {
                 self.markAsReadButtonItem.enabled = YES;
             } else {
                 self.markAsReadButtonItem.enabled = NO;
@@ -706,7 +713,7 @@
     }
 
     NSURL *iconListURL = [NSURL URLWithString:iconListURLString];
-    [UAURLProtocol addCachableURL:iconListURL];
+    [UAURLProtocol addCachableURL:iconListURL];// Tell the UA cache to keep this data
 
     // Let's not download if the app already has the decoded icon
     if (![self.iconCache objectForKey:iconListURLString]) {
