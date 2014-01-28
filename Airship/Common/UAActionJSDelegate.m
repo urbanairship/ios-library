@@ -204,7 +204,7 @@
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 
     //we need at least one argument
-    //run-action-cb is the full js/callback interface, and only runs one action at a time
+    //run-action-cb is the full JS callback interface, and only runs one action at a time
     if ([data.name isEqualToString:@"run-action-cb"]) {
         //the callbackID is optional, if present we can make an async callback
         //into the JS environment, otherwise we'll just run the action to completion
