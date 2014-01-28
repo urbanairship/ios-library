@@ -94,13 +94,13 @@
 
     UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
     data.options = @{@"test_action":@"%22hi%22", @"also_test_action":@"%22yo%22"};
-    data.name = @"run-action";
+    data.name = @"run-actions";
 
     [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
-    XCTAssertNil(result, @"run-basic-action should not produce a script result");
+    XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
 
@@ -150,15 +150,15 @@
     [[UAActionRegistrar shared] registerAction:alsoTest name:@"also_test_action"];
 
     UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
-    //bare argument strings are allowed (and in fact the only allowed argument type) for run-basic-action
+    //bare argument strings are allowed (and in fact the only allowed argument type) for run-basic-actions
     data.options = @{@"test_action":@"hi", @"also_test_action":@"yo"};
-    data.name = @"run-basic-action";
+    data.name = @"run-basic-actions";
 
     [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
-    XCTAssertNil(result, @"run-basic-action should not produce a script result");
+    XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
 

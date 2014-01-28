@@ -110,7 +110,7 @@
 }
 
 /**
- * Handles the run-action command.
+ * Handles the run-actions command.
  *
  * This supports async callbacks into JS functions, as well the passing of
  * arbitrary argument objects through JSON serialization of core types.  It is best
@@ -158,7 +158,7 @@
 
 
 /**
- * Handles the run-basic-action callback.
+ * Handles the run-basic-actions callback.
  *
  * This does not support callbacks into the JS layer, and only allows
  * for passing string arguments to actions.  For convenience, multiple actions can
@@ -204,7 +204,7 @@
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 
     //we need at least one argument
-    //run-action is the full js/callback interface, and only runs one action at a time
+    //run-action-cb is the full js/callback interface, and only runs one action at a time
     if ([data.name isEqualToString:@"run-action-cb"]) {
         //the callbackID is optional, if present we can make an async callback
         //into the JS environment, otherwise we'll just run the action to completion
@@ -213,12 +213,12 @@
         [self runActionWithCallbackID:callbackID
                           withOptions:data.options
                 withCompletionHandler:completionHandler];
-    } else if ([data.name isEqualToString:@"run-action"]){
-        //run-action is the 'complex' version with JSON-encoded string arguments, and
+    } else if ([data.name isEqualToString:@"run-actions"]){
+        //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
         [self runActionwithOptions:data.options withCompletionHandler:completionHandler];
-    } else if ([data.name isEqualToString:@"run-basic-action"]) {
-        //run-basic-action is the 'demo-friendly' version with implicit string argument values and
+    } else if ([data.name isEqualToString:@"run-basic-actions"]) {
+        //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
         [self runBasicActionWithOptions:data.options withCompletionHandler:completionHandler];
     } else {
