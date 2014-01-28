@@ -17,8 +17,6 @@
     NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
     self.nativeBridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-    NSLog(@"WAT %@", self.nativeBridge);
-
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 
     //UAirship and window are only used for storage – the former is injected when setting up a UIWebView,
