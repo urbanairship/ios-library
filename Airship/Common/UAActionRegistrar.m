@@ -254,7 +254,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
-        return [args.situation isEqualToString:UASituationLaunchedFromPush];
+        return (BOOL)([args.situation isEqualToString:UASituationLaunchedFromPush] ||
+                      [args.situation isEqualToString:UASituationRichPushAction]);
     };
 
     // Open external URL action
