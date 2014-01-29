@@ -127,7 +127,7 @@
 
         // Let the UI finish launching first so it doesn't complain about the lack of a root view controller
         // Delay execution of the block for 1/2 second.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_current_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             [someError show];
         });
 

@@ -25,6 +25,21 @@
 
 #import "UAAction.h"
 
+/**
+ * Sets tags in whole. This Action is registered under the
+ * names ^t and "set_tags_action".
+ *
+ * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
+ *
+ * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
+ * `UASituationRichPushAction`, `UASituationLaunchedFromSpringBoard`
+ *
+ * Result value: nil
+ *
+ * Error: nil
+ *
+ * Fetch result: UAActionFetchResultNone
+ */
 @interface UASetTagsAction : UAAction
 
 @end
