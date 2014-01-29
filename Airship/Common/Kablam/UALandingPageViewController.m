@@ -45,7 +45,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#import "UAKablamViewController.h"
+#import "UALandingPageViewController.h"
 
 #import "UAInboxMessage.h"
 #import "UAInboxMessageList.h"
@@ -64,7 +64,7 @@
 
 static NSMutableSet *overlayControllers = nil;
 
-@interface UAKablamViewController()
+@interface UALandingPageViewController()
 
 - (void)loadURL:(NSURL *)url;
 
@@ -72,16 +72,16 @@ static NSMutableSet *overlayControllers = nil;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
 @end
 
-@implementation UAKablamViewController
+@implementation UALandingPageViewController
 
 // While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showURL:(NSURL *)url {
 
-    [UAKablamViewController closeWindow:NO];
+    [UALandingPageViewController closeWindow:NO];
 
-    UIViewController *topController = [UAKablamViewController topController];
+    UIViewController *topController = [UALandingPageViewController topController];
 
-    UAKablamViewController *overlayController = [[UAKablamViewController alloc] initWithParentViewController:topController andURL:url];
+    UALandingPageViewController *overlayController = [[UALandingPageViewController alloc] initWithParentViewController:topController andURL:url];
 
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:overlayController];
     navController.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -105,9 +105,9 @@ static NSMutableSet *overlayControllers = nil;
 + (void)closeWindow:(BOOL)animated {
 
     // It's the top view controller with a child root view controller
-    UIViewController *topController = [UAKablamViewController topController];
-    UAKablamViewController *possibleKablamController = [[topController childViewControllers] firstObject];
-    if ([possibleKablamController isKindOfClass:[UAKablamViewController class]]) {
+    UIViewController *topController = [UALandingPageViewController topController];
+    UALandingPageViewController *possibleKablamController = [[topController childViewControllers] firstObject];
+    if ([possibleKablamController isKindOfClass:[UALandingPageViewController class]]) {
         UA_LDEBUG(@"Dismissing kablam modal.");
         [possibleKablamController.presentingViewController dismissViewControllerAnimated:animated completion:NULL];
     }

@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,35 +23,10 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* UAInboxOverlayController is based on MTPopupWindow by
- * Marin Todorov https://github.com/icanzilb + http://www.touch-code-magazine.com/
- *
- * Latest MTPopupWindow code: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios6-modernized-tutorial-code-download/
- *
- * (Original version: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/ )
- *
- */
+#import "UAAction.h"
 
-#import <Foundation/Foundation.h>
+@interface UALandingPageAction : UAAction
 
-/**
- * This class provides an overlay window that can be popped over
- * the app's UI without totally obscuring it, and that loads a
- * given rich push message in an embedded UIWebView.  It is used
- * in the reference UI implementation for displaying in-app messages
- * without requiring navigation to the inbox.
- */
-@interface UAKablamOverlayController : UIViewController<UIWebViewDelegate>
-
-+ (void)showURL:(NSURL *)url;
-
-+ (void)closeWindow:(BOOL)animated;
-
-/**
- * Initializer, creates an overlay window and loads the given content within a particular view controller.
- * @param viewController the view controller to display the overlay in
- * @param messageID the message ID of the rich push message to display
- */
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url;
+@property (nonatomic, assign) BOOL modal;
 
 @end

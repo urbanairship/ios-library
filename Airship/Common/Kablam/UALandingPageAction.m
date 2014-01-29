@@ -23,25 +23,25 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAKablamAction.h"
+#import "UALandingPageAction.h"
 
 
 #import "UAGlobal.h"
 #import "UAInboxUI.h"
 #import "UAHTTPConnection.h"
 #import "UAURLProtocol.h"
-#import "UAKablamOverlayController.h"
-#import "UAKablamViewController.h"
+#import "UALandingPageOverlayController.h"
+#import "UALandingPageViewController.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRegistrar.h"
 
-@interface UAKablamAction()
+@interface UALandingPageAction()
 
 @property(nonatomic, strong) UAHTTPConnection *connection;
 
 @end
 
-@implementation UAKablamAction
+@implementation UALandingPageAction
 
 // A URL: https://sbux-dl-staging.urbanairship.com/binary/public/kwG7rEc3Tz6542jxYJ4eWA/da67242f-a22c-440c-a270-1a78e0917334
 
@@ -60,15 +60,15 @@
     [UAURLProtocol addCachableURL:kablamURL];
 
     //close any existing windows
-    [UAKablamViewController closeWindow:NO];
-    [UAKablamOverlayController closeWindow:NO];
+    [UALandingPageViewController closeWindow:NO];
+    [UALandingPageOverlayController closeWindow:NO];
 
     if ([displaySituations containsObject:situation]) {
         // show the widget, then load
         if (self.modal) {
-            [UAKablamViewController showURL:kablamURL];
+            [UALandingPageViewController showURL:kablamURL];
         } else {
-            [UAKablamOverlayController showURL:kablamURL];
+            [UALandingPageOverlayController showURL:kablamURL];
         }
 
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);

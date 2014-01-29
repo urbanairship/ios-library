@@ -23,10 +23,38 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import <Foundation/Foundation.h>
 
-@interface UAKablamAction : UAAction
+#import "UIWebView+UAAdditions.h"
 
-@property (nonatomic, assign) BOOL modal;
+/**
+ * This class provides an overlay window that can be popped over
+ * the app's UI without totally obscuring it, and that loads a
+ * given rich push message in an embedded UIWebView.  It is used
+ * in the reference UI implementation for displaying in-app messages
+ * without requiring navigation to the inbox.
+ */
+@interface UALandingPageViewController : UIViewController<UIWebViewDelegate>
+
+/**
+ * The UIWebView used to display the message content.
+ */
+@property(nonatomic, strong) UIWebView *webView;
+
+/**
+ * The URL being displayed.
+ */
+@property(nonatomic, strong) NSURL *url;
+
++ (void)showURL:(NSURL *)url;
+
++ (void)closeWindow:(BOOL)animated;
+
+/**
+ * Initializer, creates an overlay window and loads the given content within a particular view controller.
+ * @param viewController the view controller to display the overlay in
+ * @param messageID the message ID of the rich push message to display
+ */
+- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url;
 
 @end

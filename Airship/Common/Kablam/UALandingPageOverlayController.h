@@ -1,16 +1,16 @@
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
-
+ 
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
-
+ 
  2. Redistributions in binaryform must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
@@ -23,9 +23,16 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+/* UAInboxOverlayController is based on MTPopupWindow by
+ * Marin Todorov https://github.com/icanzilb + http://www.touch-code-magazine.com/
+ *
+ * Latest MTPopupWindow code: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios6-modernized-tutorial-code-download/
+ *
+ * (Original version: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/ )
+ *
+ */
 
-#import "UIWebView+UAAdditions.h"
+#import <Foundation/Foundation.h>
 
 /**
  * This class provides an overlay window that can be popped over
@@ -34,17 +41,7 @@
  * in the reference UI implementation for displaying in-app messages
  * without requiring navigation to the inbox.
  */
-@interface UAKablamViewController : UIViewController<UIWebViewDelegate>
-
-/**
- * The UIWebView used to display the message content.
- */
-@property(nonatomic, strong) UIWebView *webView;
-
-/**
- * The URL being displayed.
- */
-@property(nonatomic, strong) NSURL *url;
+@interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate>
 
 + (void)showURL:(NSURL *)url;
 

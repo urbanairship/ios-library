@@ -45,7 +45,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#import "UAKablamOverlayController.h"
+#import "UALandingPageOverlayController.h"
 
 #import "UABespokeCloseView.h"
 #import "UABeveledLoadingIndicator.h"
@@ -61,7 +61,7 @@
 
 static NSMutableSet *overlayControllers = nil;
 
-@interface UAKablamOverlayController()
+@interface UALandingPageOverlayController()
 
 
 - (void)closePopupWindow;
@@ -90,11 +90,11 @@ static NSMutableSet *overlayControllers = nil;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
 @end
 
-@implementation UAKablamOverlayController
+@implementation UALandingPageOverlayController
 
 // Setup a container for the newly allocated controllers, will be released by OS. 
 + (void)initialize {
-    if (self == [UAKablamOverlayController class]) {
+    if (self == [UALandingPageOverlayController class]) {
         overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
     }
 }
@@ -102,19 +102,19 @@ static NSMutableSet *overlayControllers = nil;
 + (void)showURL:(NSURL *)url {
 
     //close existing windows
-    [UAKablamOverlayController closeWindow:NO];
+    [UALandingPageOverlayController closeWindow:NO];
 
     // get the top view controller
-    UIViewController *topController = [UAKablamOverlayController topController];
+    UIViewController *topController = [UALandingPageOverlayController topController];
 
-    UAKablamOverlayController *overlayController = [[UAKablamOverlayController alloc] initWithParentViewController:topController andURL:url];
+    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:topController andURL:url];
     [overlayControllers addObject:overlayController];
 
     [overlayController loadURL:url];
 }
 
 + (void)closeWindow:(BOOL)animated {
-    for (UAKablamOverlayController *oc in overlayControllers) {
+    for (UALandingPageOverlayController *oc in overlayControllers) {
         UA_LDEBUG(@"Closing Kablam overlay controller: %@", [oc.url absoluteString]);
         //TODO: toggle animations
         [oc closePopupWindow];
