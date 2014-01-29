@@ -69,8 +69,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         
         self.title = UA_INBOX_TR(@"UA_Message");
 
-        self.upButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:103 target:self action:@selector(navigationAction:)];
-        self.downButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:104 target:self action:@selector(navigationAction:)];
+        self.upButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:103/* system 'up' bitmap */
+                                                                          target:self
+                                                                          action:@selector(navigationAction:)];
+        self.downButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:104/* system 'down' bitmap */
+                                                                            target:self
+                                                                            action:@selector(navigationAction:)];
         self.navigationItem.rightBarButtonItems = @[self.upButtonItem, self.downButtonItem];
 
         self.shouldShowAlerts = YES;
@@ -174,7 +178,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    //[self.statusBar setHidden: NO];
+    [self.statusBar setHidden: NO];
     [self.activity startAnimating];
     self.statusBarTitle.text = self.message.title;
     
