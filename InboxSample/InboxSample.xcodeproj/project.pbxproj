@@ -70,7 +70,6 @@
 		1FE0B7DF17E27BA800856C60 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821414182289003FA039 /* UAInboxMessageViewController.m */; };
 		1FE0B7E017E27BA800856C60 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821614182289003FA039 /* UAInboxNavUI.m */; };
 		1FE0B7E117E27BA800856C60 /* UAInboxOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821814182289003FA039 /* UAInboxOverlayController.m */; };
-		1FE0B7E217E27BA800856C60 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
 		1FE0B7E317E27BA800856C60 /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E0211772555F0037A20E /* UABarButtonSegmentedControl.m */; };
 		1FE0B7E417E27BA800856C60 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E0231772555F0037A20E /* UADateUtils.m */; };
 		1FE0B7E717E27BA800856C60 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
@@ -86,7 +85,6 @@
 		1FE0B7F217E27BA800856C60 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.1.1.a */; };
 		1FE0B85717E8D7D800856C60 /* libUAirship-3.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B7F817E27C1D00856C60 /* libUAirship-3.1.1.a */; };
-		4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
 		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -172,8 +170,6 @@
 		1FE0B7F817E27C1D00856C60 /* libUAirship-3.1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-3.1.1.a"; path = "../Airship/libUAirship-3.1.1.a"; sourceTree = "<group>"; };
 		1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.1.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-iOS5-3.1.1.a"; path = "../Airship/libUAirship-iOS5-3.1.1.a"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
-		4977C18B141ECF31009263FA /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
-		4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
 		49E001AF154F6535009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -449,8 +445,6 @@
 				1F54E0211772555F0037A20E /* UABarButtonSegmentedControl.m */,
 				1F54E0221772555F0037A20E /* UADateUtils.h */,
 				1F54E0231772555F0037A20E /* UADateUtils.m */,
-				4977C18B141ECF31009263FA /* UABeveledLoadingIndicator.h */,
-				4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */,
 				1F57821114182289003FA039 /* UAInboxMessageListController.h */,
 				1F57821214182289003FA039 /* UAInboxMessageListController.m */,
 				1F57821314182289003FA039 /* UAInboxMessageViewController.h */,
@@ -705,7 +699,6 @@
 				1F57821C14182289003FA039 /* UAInboxMessageViewController.m in Sources */,
 				1F57821D14182289003FA039 /* UAInboxNavUI.m in Sources */,
 				1F57821E14182289003FA039 /* UAInboxOverlayController.m in Sources */,
-				4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */,
 				1F54E0241772555F0037A20E /* UABarButtonSegmentedControl.m in Sources */,
 				1F54E0251772555F0037A20E /* UADateUtils.m in Sources */,
 			);
@@ -725,7 +718,6 @@
 				1FE0B7DF17E27BA800856C60 /* UAInboxMessageViewController.m in Sources */,
 				1FE0B7E017E27BA800856C60 /* UAInboxNavUI.m in Sources */,
 				1FE0B7E117E27BA800856C60 /* UAInboxOverlayController.m in Sources */,
-				1FE0B7E217E27BA800856C60 /* UABeveledLoadingIndicator.m in Sources */,
 				1FE0B7E317E27BA800856C60 /* UABarButtonSegmentedControl.m in Sources */,
 				1FE0B7E417E27BA800856C60 /* UADateUtils.m in Sources */,
 			);
