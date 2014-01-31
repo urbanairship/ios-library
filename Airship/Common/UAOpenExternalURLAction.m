@@ -89,7 +89,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
  * URL handlers. To support a URL, the scheme must be declared in the application's Info.plist, and
  * the proper handlers must be provided in the application delegate.
  *
- * @return <code>YES</code> if the current application can handle the URL, otherwise <code>NO</code>.
+ * @return `YES` if the current application can handle the URL, otherwise `NO`.
  *
  */
 - (BOOL)currentApplicationHandlesURL:(NSURL *)url {
