@@ -51,7 +51,7 @@ static Class _uiClass;
     if (_uiClass == nil) {
         UALOG(@"Inbox UI class not found.");
     }
-	
+
     return _uiClass;
 }
 
@@ -129,8 +129,8 @@ static Class _uiClass;
         self.messageList = [[UAInboxMessageList alloc] init];
 
         [self.messageList retrieveMessageListWithDelegate:nil];
-		
-		self.pushHandler = [[UAInboxPushHandler alloc] init];
+
+        self.pushHandler = [[UAInboxPushHandler alloc] init];
 
         [self.messageList addObserver:self.pushHandler];
 

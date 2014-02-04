@@ -70,7 +70,7 @@
     id<UAPushNotificationDelegate> pushDelegate = [UAPush shared].pushNotificationDelegate;
 
     // Please refer to the following Apple documentation for full details on handling the userInfo payloads
-	// http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
+    // http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW1
     NSDictionary *apsDict = [notification objectForKey:@"aps"];
     if (apsDict) {
         // Alert

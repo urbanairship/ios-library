@@ -33,21 +33,21 @@
 - (void)displayNotificationAlert:(NSString *)alertMessage {
 
     UA_LDEBUG(@"Received an alert in the foreground.");
-    
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle: UA_PU_TR(@"UA_Notification_Title")
                                                     message: alertMessage
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
                                           otherButtonTitles: nil];
-	[alert show];
+    [alert show];
 }
 
 - (void)displayLocalizedNotificationAlert:(NSDictionary *)alertDict {
-	
-	// The alert is a a dictionary with more details, let's just get the message without localization
-	// This should be customized to fit your message details or usage scenario
-	//message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
-	
+
+    // The alert is a a dictionary with more details, let's just get the message without localization
+    // This should be customized to fit your message details or usage scenario
+    //message = [[alertDict valueForKey:@"alert"] valueForKey:@"body"];
+
     UA_LDEBUG(@"Received an alert in the foreground with a body.");
     
     NSString *body = [alertDict valueForKey:@"body"];
@@ -57,7 +57,7 @@
                                                    delegate: nil
                                           cancelButtonTitle: @"OK"
                                           otherButtonTitles: nil];
-	[alert show];
+    [alert show];
 }
 
 - (void)playNotificationSound:(NSString *)sound {
@@ -92,10 +92,10 @@
 }
 
 - (void)handleBadgeUpdate:(NSInteger)badgeNumber {
-	UA_LDEBUG(@"Received an alert in the foreground with a new badge");
+    UA_LDEBUG(@"Received an alert in the foreground with a new badge");
 
     // Sets the application badge to the value in the notification
-	[[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 }
 
 - (void)receivedForegroundNotification:(NSDictionary *)notification {

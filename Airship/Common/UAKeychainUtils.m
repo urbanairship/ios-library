@@ -162,7 +162,7 @@ static NSString *_cachedDeviceID = nil;
         }
     }
 
-	return username;
+    return username;
 }
 
 + (NSMutableDictionary *)searchDictionaryWithIdentifier:(NSString *)identifier {
