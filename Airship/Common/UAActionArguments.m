@@ -27,6 +27,7 @@
 
 @implementation UAActionArguments
 
+NSString * const UASituationManualInvocation = @"com.urbanairship.situation.manual_invocation";
 NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
 NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
 NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
