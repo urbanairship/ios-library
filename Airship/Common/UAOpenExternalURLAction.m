@@ -81,43 +81,4 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
     return url;
 }
 
-#pragma mark -
-#pragma mark Internal (Unused - TODO) Utilities for Testing URL Support
-
-/**
- * Tests whether or not a given URL can be handled by the current application via the UIApplicationDelegate
- * URL handlers. To support a URL, the scheme must be declared in the application's Info.plist, and
- * the proper handlers must be provided in the application delegate.
- *
- * @return `YES` if the current application can handle the URL, otherwise `NO`.
- *
- */
-- (BOOL)currentApplicationHandlesURL:(NSURL *)url {
-    NSArray *schemes = [self supportedSchemes];
-    return  [[UIApplication sharedApplication].delegate respondsToSelector:@selector(application:openURL:sourceApplication:annotation:)]
-                && [schemes containsObject:[url scheme]];
-}
-
-/**
- * Returns the array of URI schemes that this application will handle for other applications.
- *
- * @return An NSArray of schemes, as NSString. Empty if no schemes are supported.
- */
-- (NSArray *)supportedSchemes {
-
-    // TODO: needs tests using a mock plist
-
-    NSMutableArray *schemes = [NSMutableArray array];
-
-    // Look at our plist
-    // CFBundleURLTypes contains an array of actions, each containing a dictionary with the details.
-    // We care about the nested CFBundleURLSchemes array, which contains a list of schemes
-    NSArray *bundleURLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
-    [bundleURLTypes enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [schemes addObjectsFromArray:[bundleURLTypes[idx] objectForKey:@"CFBundleURLSchemes"]];
-    }];
-
-    return schemes;
-}
-
 @end
