@@ -20,7 +20,7 @@
 		18A27CB8125EDD6E0045D75B /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 18A27CA3125EDD6E0045D75B /* Icon-Small.png */; };
 		1F2B104C12DCDE700020843D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F2B104B12DCDE700020843D /* AirshipConfig.plist */; };
 		1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F3CC4C6165C41D0008526E3 /* Default-568h@2x.png */; };
-		1F4EDB411831ABB100F77343 /* libUAirship-3.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-3.0.1.a */; };
+		1F4EDB411831ABB100F77343 /* libUAirship-3.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB5EBCB6159B7AF600F2A716 /* libUAirship-3.1.1.a */; };
 		1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F531D5114201ABC009ABE85 /* libSystem.dylib */; settings = {ATTRIBUTES = (Weak, ); }; };
 		1F54E02A177255780037A20E /* UABarButtonSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */; };
 		1F54E02B177255780037A20E /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E029177255770037A20E /* UADateUtils.m */; };
@@ -36,12 +36,10 @@
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1FF574121367788300FEA1FD /* UAInboxMessageListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */; };
 		1FF57415136778A100FEA1FD /* UAInboxMessageListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */; };
-		4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */; };
 		49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001A8154F63F3009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
 		63C51F0711D30F870078DED4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AB3B21D10A0063D0035E6BD /* SystemConfiguration.framework */; };
-		766DA4221797660C000A2842 /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 766DA4211797660C000A2842 /* UIWebView+UAAdditions.m */; };
 		9A465ED40FF4AB1800DCABE9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FBB90FCB114B0007E1BE /* CoreGraphics.framework */; };
 		9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAE80FCA81810007E1BE /* CFNetwork.framework */; };
 		9A50FAEF0FCA81A40007E1BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A50FAEE0FCA81A40007E1BE /* Foundation.framework */; };
@@ -152,12 +150,8 @@
 		1FF57413136778A100FEA1FD /* UAInboxMessageListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageListCell.h; sourceTree = "<group>"; };
 		1FF57414136778A100FEA1FD /* UAInboxMessageListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListCell.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
-		4952F9BA141E77D200FE280C /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
-		4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
 		49E001A8154F63F3009305B7 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		63CB54BB1247107C00DF2EBC /* InboxTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InboxTests-Info.plist"; sourceTree = "<group>"; };
-		766DA4201797660C000A2842 /* UIWebView+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+UAAdditions.h"; sourceTree = "<group>"; };
-		766DA4211797660C000A2842 /* UIWebView+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+UAAdditions.m"; sourceTree = "<group>"; };
 		9A50FAE80FCA81810007E1BE /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		9A50FAEE0FCA81A40007E1BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A50FAF50FCA81BD0007E1BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -194,7 +188,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F4EDB411831ABB100F77343 /* libUAirship-3.0.1.a in Frameworks */,
+				1F4EDB411831ABB100F77343 /* libUAirship-3.1.1.a in Frameworks */,
 				CC523FAC17B9856900233005 /* CoreData.framework in Frameworks */,
 				49E001A9154F63F3009305B7 /* CoreLocation.framework in Frameworks */,
 				1F531D5214201ABC009ABE85 /* libSystem.dylib in Frameworks */,
@@ -356,9 +350,9 @@
 		B6E7F8391239FFD5009BC92D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BB5EBCB6159B7AF600F2A716 /* libUAirship-3.0.1.a */,
+				BB5EBCB6159B7AF600F2A716 /* libUAirship-3.1.1.a */,
 				49422BA2142BA678009770C6 /* AirshipLogicTests.xctest */,
-				1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.0.1.a */,
+				1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.1.1.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -408,8 +402,6 @@
 		E9CB359612B89AC0002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				766DA4201797660C000A2842 /* UIWebView+UAAdditions.h */,
-				766DA4211797660C000A2842 /* UIWebView+UAAdditions.m */,
 				1F54E026177255750037A20E /* UABarButtonSegmentedControl.h */,
 				1F54E027177255760037A20E /* UABarButtonSegmentedControl.m */,
 				1F54E028177255760037A20E /* UADateUtils.h */,
@@ -428,8 +420,6 @@
 				D5E60C8C12C2A86500E61EC0 /* UAInboxAlertHandler.m */,
 				E9CB359B12B89AC0002E39EA /* UAInboxUI.h */,
 				E9CB359C12B89AC0002E39EA /* UAInboxUI.m */,
-				4952F9BA141E77D200FE280C /* UABeveledLoadingIndicator.h */,
-				4952F9BB141E77D200FE280C /* UABeveledLoadingIndicator.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -538,10 +528,10 @@
 			remoteRef = 0D962FED11699572008D18A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.0.1.a */ = {
+		1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-iOS5-3.0.1.a";
+			path = "libUAirship-iOS5-3.1.1.a";
 			remoteRef = 1FC0E38217E91B8700840A52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -552,10 +542,10 @@
 			remoteRef = 49422BA1142BA678009770C6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		BB5EBCB6159B7AF600F2A716 /* libUAirship-3.0.1.a */ = {
+		BB5EBCB6159B7AF600F2A716 /* libUAirship-3.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-3.0.1.a";
+			path = "libUAirship-3.1.1.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -634,10 +624,8 @@
 				1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */,
 				1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */,
 				1F57820814182188003FA039 /* UAInboxOverlayController.m in Sources */,
-				4952F9BC141E77D200FE280C /* UABeveledLoadingIndicator.m in Sources */,
 				1F54E02A177255780037A20E /* UABarButtonSegmentedControl.m in Sources */,
 				1F54E02B177255780037A20E /* UADateUtils.m in Sources */,
-				766DA4221797660C000A2842 /* UIWebView+UAAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
