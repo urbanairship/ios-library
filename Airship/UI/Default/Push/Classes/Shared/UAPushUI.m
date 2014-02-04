@@ -40,7 +40,7 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
         self.localizationBundle = [NSBundle bundleWithPath:path];
     
     }
-	return self;
+    return self;
 }
 
 - (UIViewController *)apnsSettingsViewController {

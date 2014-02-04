@@ -117,8 +117,8 @@
 - (IBAction)emailChannelID {
 
     if ([MFMailComposeViewController canSendMail]) {
-		MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
-		mfViewController.mailComposeDelegate = self;
+        MFMailComposeViewController *mfViewController = [[MFMailComposeViewController alloc] init];
+        mfViewController.mailComposeDelegate = self;
 
 
 
@@ -128,35 +128,35 @@
         [mfViewController setMessageBody:messageBody isHTML:NO];
 
         [self presentViewController:mfViewController animated:YES completion:NULL];
-	}else {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Your device is not currently configured to send mail." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
 
-		[alert show];
-	}
+        [alert show];
+    }
 }
 
 #pragma mark -
 #pragma mark MFMailComposeViewControllerDelegate Methods
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message Status" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Message Status" message:@"" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 
-	switch (result) {
-		case MFMailComposeResultCancelled:
-			//alert.message = @"Canceled";
-			break;
-		case MFMailComposeResultSaved:
-			//alert.message = @"Saved";
-			break;
-		case MFMailComposeResultSent:
-			alert.message = @"Sent";
+    switch (result) {
+        case MFMailComposeResultCancelled:
+            //alert.message = @"Canceled";
+            break;
+        case MFMailComposeResultSaved:
+            //alert.message = @"Saved";
+            break;
+        case MFMailComposeResultSent:
+            alert.message = @"Sent";
             [alert show];
-			break;
-		case MFMailComposeResultFailed:
-			//alert.message = @"Message Failed";
-			break;
-		default:
-			//alert.message = @"Message Not Sent";
+            break;
+        case MFMailComposeResultFailed:
+            //alert.message = @"Message Failed";
+            break;
+        default:
+            //alert.message = @"Message Not Sent";
             break;
     }
 

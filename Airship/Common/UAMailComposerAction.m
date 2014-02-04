@@ -40,7 +40,7 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
 
 - (void)displayWithData:(UAMailComposerData *)data withHandler:(UAActionCompletionHandler)handler {
     if ([MFMailComposeViewController canSendMail]) {
-		self.mfViewController = [[MFMailComposeViewController alloc] init];
+        self.mfViewController = [[MFMailComposeViewController alloc] init];
 
         __weak id weakSelf = self;
         self.mfViewController.mailComposeDelegate = weakSelf;
@@ -51,14 +51,14 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
         [self.mfViewController setMessageBody:data.body?:@"" isHTML:NO];
         [self.mfViewController setToRecipients:data.recipients];
 
-		[rootViewController presentViewController:self.mfViewController animated:YES completion:nil];
+        [rootViewController presentViewController:self.mfViewController animated:YES completion:nil];
 
-	} else {
+    } else {
         NSError *error = [NSError errorWithDomain:UAMailComposerActionErrorDomain
                                              code:UAMailComposerActionErrorCodeMailDisabled
                                          userInfo:@{NSLocalizedDescriptionKey : @"mail is disabled"}];
         self.handler([UAActionResult error:error]);
-	}
+    }
 }
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller
