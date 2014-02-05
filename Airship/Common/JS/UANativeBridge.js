@@ -67,7 +67,7 @@ UAirship.runAction = function(actionName, argument, callback) {
 
     opt[actionName] = JSON.stringify(argument);
 
-    var url = UAirship.delegateCallURL('run-action', callbackKey, opt);
+    var url = UAirship.delegateCallURL('run-action-cb', callbackKey, opt);
 
     window[callbackKey] = onready;
 

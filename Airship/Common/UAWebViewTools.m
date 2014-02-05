@@ -143,7 +143,10 @@
     BOOL isUsingDeprecatedScheme = [url.scheme isEqualToString:@"ua"];
 
     if (isUsingNewScheme) {
-        if ([data.name isEqualToString:@"run-action"] || [data.name isEqualToString:@"run-basic-action"]) {
+        if ([data.name isEqualToString:@"run-actions"] ||
+            [data.name isEqualToString:@"run-basic-actions"] ||
+            [data.name isEqualToString:@"run-action-cb"]) {
+
             [self performAsyncJSCallWithDelegate:actionJSDelegate
                                      withWebView:webView
                                         withData:data];
