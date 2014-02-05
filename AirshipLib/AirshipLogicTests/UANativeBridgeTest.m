@@ -45,11 +45,11 @@
 // UAirship.delegateCallURL is a pure function that builds JS delegate call URLs out of the passed arguments
 - (void)testdelegateCallURL {
     JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 3)"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/3");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/3");
     value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', {'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/?baz=boz");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/?baz=boz");
     value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 'bar', {'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/bar?baz=boz");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/bar?baz=boz");
 }
 
 // Test that UAirship.invoke attaches and removes an iframe from the DOM
@@ -61,7 +61,7 @@
     __block NSDictionary *appendedChild;
     __block NSDictionary *removedChild;
 
-    NSString *url = @"ua://foo/bar";
+    NSString *url = @"uaairship://foo/bar";
 
     //this will be the document.body object
     NSDictionary *body = @{@"appendChild":^(id child){

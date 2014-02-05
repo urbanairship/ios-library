@@ -33,7 +33,7 @@ UAirship.delegateCallURL = function() {
     }
 
     // flatten arguments into url
-    var url = "ua://" + name + "/" + uri.join("/");
+    var url = "uairship://" + name + "/" + uri.join("/");
 
     // flatten dictionary into url
     if (dict !== null) {

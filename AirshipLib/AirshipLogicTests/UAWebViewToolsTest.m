@@ -16,6 +16,7 @@
 @property(nonatomic, strong) NSURL *basicActionURL;
 @property(nonatomic, strong) NSURL *regularActionURL;
 @property(nonatomic, strong) NSURL *otherURL;
+@property(nonatomic, strong) NSURL *deprecatedOtherURL;
 @end
 
 @implementation UAWebViewToolsTest
@@ -33,9 +34,10 @@
     [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
     [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
 
-    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action/?foo=bar&baz=boz"];
-    self.regularActionURL = [NSURL URLWithString:@"ua://run-action/some-callback-id?foo=bar"];
-    self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
+    self.basicActionURL = [NSURL URLWithString:@"uairship://run-basic-action/?foo=bar&baz=boz"];
+    self.regularActionURL = [NSURL URLWithString:@"uairship://run-action/some-callback-id?foo=bar"];
+    self.otherURL = [NSURL URLWithString:@"uairship://whatever/something-else?yep=nope"];
+    self.deprecatedOtherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }
 
 - (void)tearDown {
@@ -61,13 +63,21 @@
     [UAWebViewTools performJSDelegate:nil url:self.basicActionURL];
     [self.mockActionJSDelegate verify];
 
-    //everything else should be dispatched to the (deprecated) inbox js delegate and the new user js delegate
+    //ua urls should be dispatched to the (deprecated) inbox js delegate
     [[self.mockInboxJSDelegate expect] callbackArguments:[OCMArg any] withOptions:[OCMArg any]];
-    [[self.mockUserDefinedJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
 
     [UAWebViewTools performJSDelegate:nil url:self.otherURL];
     [self.mockInboxJSDelegate verify];
     [self.mockUserDefinedJSDelegate verify];
+
+    //otherwise uairship urls should be dispatched to the the new user js delegate
+    [[self.mockUserDefinedJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [[self.mockUserDefinedJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+
+    [UAWebViewTools performJSDelegate:nil url:self.deprecatedOtherURL];
+    [self.mockInboxJSDelegate verify];
+    [self.mockUserDefinedJSDelegate verify];
+
 }
 
 @end

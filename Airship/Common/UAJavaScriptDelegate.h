@@ -33,12 +33,12 @@ typedef void (^UAJavaScriptDelegateCompletionHandler)(NSString *script);
  * portion of the URL is treated as the command name.
  *
  * The basic URL format:
- * ua://command-name/<args>?<key/value options>
+ * uairship://command-name/<args>?<key/value options>
  *
  * For example, to invoke a command named "foo", and pass in three args (arg1, arg2 and arg3)
  * and three key-value options {option1:one, option2:two, option3:three}:
  *
- * ua://foo/arg1/arg2/arg3?option1=one&amp;option2=two&amp;option3=three
+ * uairship://foo/arg1/arg2/arg3?option1=one&amp;option2=two&amp;option3=three
  *
  * The default, internal implementation of this protocol is UAActionJSDelegate.
  * UAActionJSDelegate reserves command names associated with running Actions, and
