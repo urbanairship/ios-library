@@ -119,7 +119,7 @@
  * @param options The options passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
-- (void)runActionwithOptions:(NSDictionary *)options
+- (void)runActionsWithOptions:(NSDictionary *)options
           withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
@@ -167,7 +167,7 @@
  * @param options The options passed in the JS delegate callback.
  * @param completionHandler The completion handler passed in the JS delegate callback.
  */
-- (void)runBasicActionWithOptions:(NSDictionary *)options
+- (void)runBasicActionsWithOptions:(NSDictionary *)options
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
@@ -216,11 +216,11 @@
     } else if ([data.name isEqualToString:@"run-actions"]){
         //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
-        [self runActionwithOptions:data.options withCompletionHandler:completionHandler];
+        [self runActionsWithOptions:data.options withCompletionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-basic-actions"]) {
         //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
-        [self runBasicActionWithOptions:data.options withCompletionHandler:completionHandler];
+        [self runBasicActionsWithOptions:data.options withCompletionHandler:completionHandler];
     } else {
         //arguments not recognized, pass a nil script result
         completionHandler(nil);
