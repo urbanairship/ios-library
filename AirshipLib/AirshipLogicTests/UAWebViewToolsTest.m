@@ -38,6 +38,7 @@
     self.basicActionsURL = [NSURL URLWithString:@"uairship://run-basic-actions/?foo=bar&baz=boz"];
     self.regularActionsURL = [NSURL URLWithString:@"uairship://run-actions/some-callback-id?foo=bar"];
     self.otherURL = [NSURL URLWithString:@"uairship://whatever/something-else?yep=nope"];
+    self.callbackActionURL = [NSURL URLWithString:@"uairship://run-action-cb/someCallbackID?foo=bar"];
     self.deprecatedOtherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }
 
