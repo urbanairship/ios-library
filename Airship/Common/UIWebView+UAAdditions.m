@@ -90,8 +90,9 @@
      * See Airship/Common/JS/UANativeBridge.js for human-readable source
      */
 
-    js = [js stringByAppendingString:[NSString stringWithCString:(const char *)UANativeBridge_js
-                                                        encoding:NSUTF8StringEncoding]];
+    NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
+    NSString *bridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    js = [js stringByAppendingString:bridge];
 
     /*
      * Execute the JS we just constructed.

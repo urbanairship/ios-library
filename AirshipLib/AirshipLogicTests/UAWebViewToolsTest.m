@@ -15,6 +15,7 @@
 @property(nonatomic, strong) id mockAirship;
 @property(nonatomic, strong) NSURL *basicActionURL;
 @property(nonatomic, strong) NSURL *regularActionURL;
+@property(nonatomic, strong) NSURL *callbackActionURL;
 @property(nonatomic, strong) NSURL *otherURL;
 @end
 
@@ -33,8 +34,9 @@
     [[[self.mockAirship stub] andReturn:self.mockUserDefinedJSDelegate] jsDelegate];
     [UAInbox shared].jsDelegate = self.mockInboxJSDelegate;
 
-    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-action/?foo=bar&baz=boz"];
-    self.regularActionURL = [NSURL URLWithString:@"ua://run-action/some-callback-id?foo=bar"];
+    self.basicActionURL = [NSURL URLWithString:@"ua://run-basic-actions/?foo=bar&baz=boz"];
+    self.regularActionURL = [NSURL URLWithString:@"ua://run-actions/?foo=bar&baz=boz"];
+    self.callbackActionURL = [NSURL URLWithString:@"ua://run-action-cb/some-callback-id?foo=bar"];
     self.otherURL = [NSURL URLWithString:@"ua://whatever/something-else?yep=nope"];
 }
 
@@ -51,14 +53,19 @@
 
 - (void)testPerformJSDelegate {
 
-    //a run-action argument should result in the the callback being dispatched to our internal action JS delegate
+    //a run-actions argument should result in the the callback being dispatched to our internal action JS delegate
     [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.regularActionURL];
     [self.mockActionJSDelegate verify];
 
-    //same for run-basic-action
+    //same for run-basic-actions
     [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
     [UAWebViewTools performJSDelegate:nil url:self.basicActionURL];
+    [self.mockActionJSDelegate verify];
+
+    //same for run-action-cb
+    [[self.mockActionJSDelegate expect] callWithData:[OCMArg any] withCompletionHandler:[OCMArg any]];
+    [UAWebViewTools performJSDelegate:nil url:self.callbackActionURL];
     [self.mockActionJSDelegate verify];
 
     //everything else should be dispatched to the (deprecated) inbox js delegate and the new user js delegate

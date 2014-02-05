@@ -14,7 +14,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.nativeBridge = [NSString stringWithCString:(const char *)UANativeBridge_js encoding:NSUTF8StringEncoding];
+    NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
+    self.nativeBridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 
@@ -98,6 +99,8 @@
 
     //set to YES if UAirship.invoke is called
     __block BOOL invoked = NO;
+
+    __block NSString *command;
     //set to YES if the callback passed into UAirship.runAction executes
     __block BOOL finished = NO;
     //the result value passed through the runAction callback
@@ -110,6 +113,7 @@
         UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url]];
         NSString *cbID = [data.arguments firstObject];
         invoked = YES;
+        command = data.name;
         NSString *callFinishAction = [NSString stringWithFormat:@"UAirship.finishAction(null,'\"done\"', '%@')",cbID];
         [weakContext evaluateScript:callFinishAction];
     };
@@ -130,6 +134,7 @@
         };"];
 
     XCTAssertTrue(invoked, @"UAirship.invoke should have been called");
+    XCTAssertEqualObjects(command, @"run-action-cb", @"delegate command should be 'run-action-cb'");
     XCTAssertTrue(finished, @"finishTest should have been run in the action callback");
     XCTAssertEqualObjects(finishResult, @"done", @"result of finishTest should be 'done'");
 }
