@@ -55,7 +55,6 @@
 		1F680E7A189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */; };
 		1F680E7B189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */; };
 		1F680E7C189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */; };
-		1F680E7D189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */; };
 		1F680E7E189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */; };
 		1F680E7F189B1ECF00991E57 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */; };
 		1F680E80189B1ECF00991E57 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */; };
@@ -180,6 +179,7 @@
 		4905C4E718246339001D48E3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+URLEncoding.m */; };
 		4905C4E818246339001D48E3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+URLEncoding.m */; };
 		490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */; };
+		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
 		494BF703176277E000B25E12 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF702176277E000B25E12 /* UAUserTest.m */; };
 		494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7051762789D00B25E12 /* UAUser+Internal.h */; };
 		494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7061762789D00B25E12 /* UAUserAPIClient.h */; };
@@ -350,7 +350,6 @@
 		CC85427917F2130700D2DE10 /* UAURLProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85427617F2130700D2DE10 /* UAURLProtocol.h */; };
 		CC85427A17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
 		CC85427C17F2130700D2DE10 /* UAURLProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427717F2130700D2DE10 /* UAURLProtocol.m */; };
-		CC85427E17F2164500D2DE10 /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
 		CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
 		CC8542B417F4B81600D2DE10 /* UAAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CC85429F17F4B81600D2DE10 /* UAAction.h */; };
 		CC8542B517F4B81600D2DE10 /* UAAction.m in Sources */ = {isa = PBXBuildFile; fileRef = CC8542A017F4B81600D2DE10 /* UAAction.m */; };
@@ -1753,6 +1752,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
@@ -1794,8 +1794,6 @@
 				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
 				CC1D22A61804587F005C8393 /* UAIncomingPushActionTest.m in Sources */,
 				CC7DC956183E97C300E95BB8 /* UAChannelAPIClientTest.m in Sources */,
-				1F680E7D189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */,
-				CC85427E17F2164500D2DE10 /* UAURLProtocolTest.m in Sources */,
 				CC1D22A0180374B9005C8393 /* UAAction+OperatorTest.m in Sources */,
 				CC7DC95D183E97E900E95BB8 /* UAUserAPIClientTest.m in Sources */,
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
