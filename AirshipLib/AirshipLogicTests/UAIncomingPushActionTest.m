@@ -75,25 +75,27 @@ bool backgroundNotificationEnabled;
  * arguments whose value is an NSDictionary
  */
 - (void)testAcceptsArguments {
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationBackgroundPush,
-                                 UASituationLaunchedFromPush];
+    UASituation validSituations[3] = {
+        UASituationForegroundPush,
+        UASituationBackgroundPush,
+        UASituationLaunchedFromPush
+    };
 
     arguments.value = nil;
 
     // Should not accept any of the valid situations because the value is nil
-    for (NSString *validSituation in validSituations) {
-        arguments.situation = validSituation;
+    for (int i = 0; i < 3; i++) {
+        arguments.situation = validSituations[i];
         XCTAssertFalse([action acceptsArguments:arguments], @"Should not accept nil value arguments");
     }
 
     arguments.value = [NSDictionary dictionary];
-    arguments.situation = @"some-invalid-situation";
+    arguments.situation = UASituationWebViewInvocation;
     XCTAssertFalse([action acceptsArguments:arguments], @"Should not accept invalid situations");
 
     // Arguments should be valid
-    for (NSString *validSituation in validSituations) {
-        arguments.situation = validSituation;
+    for (int i = 0; i < 3; i++) {
+        arguments.situation = validSituations[i];
         XCTAssertTrue([action acceptsArguments:arguments], @"Should accept valid situation");
     }
 }

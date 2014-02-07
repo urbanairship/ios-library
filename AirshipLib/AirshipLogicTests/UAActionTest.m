@@ -38,7 +38,7 @@
 @implementation UAActionTest
 
 - (void)setUp {
-    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
+    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
     self.semaphore = dispatch_semaphore_create(0);
 
     [super setUp];
@@ -56,7 +56,7 @@
  */
 - (void)testAcceptsArguments {
     UAAction *action = [[UAAction alloc] init];
-    XCTAssertTrue([action acceptsArguments:[UAActionArguments argumentsWithValue:nil withSituation:nil]], @"Base UAAction should accept all arguments.");
+    XCTAssertTrue([action acceptsArguments:[UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation]], @"Base UAAction should accept all arguments.");
 }
 
 /*

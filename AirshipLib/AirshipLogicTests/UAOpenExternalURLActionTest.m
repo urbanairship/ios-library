@@ -62,7 +62,7 @@ id mockApplication;
     arguments.value = @"http://some-valid-url";
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accept valid string URLs");
 
-    arguments.situation = @"any situation";
+    arguments.situation = UASituationManualInvocation;
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accept any situations that is not UASituationBackgroundPush");
 
     arguments.value = [NSURL URLWithString:@"http://some-valid-url"];

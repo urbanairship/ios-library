@@ -105,6 +105,11 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    //no background push
+    if (arguments.situation == UASituationBackgroundPush) {
+        return NO;
+    };
+    
     return (BOOL)[arguments.value isKindOfClass:[UAMailComposerData class]];
 }
 

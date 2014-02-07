@@ -33,13 +33,12 @@
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     NSDictionary *notification = arguments.value;
-    NSString *situation = arguments.situation;
 
-    if ([situation isEqualToString:UASituationForegroundPush]) {
+    if (arguments.situation == UASituationForegroundPush) {
         [self handleForegroundPush:notification completionHandler:completionHandler];
-    } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
+    } else if (arguments.situation == UASituationLaunchedFromPush) {
         [self handleLaunchedFromPush:notification completionHandler:completionHandler];
-    } else if ([situation isEqualToString:UASituationBackgroundPush]) {
+    } else if (arguments.situation == UASituationBackgroundPush) {
         [self handleBackgroundPush:notification completionHandler:completionHandler];
     } else {
         completionHandler([UAActionResult none]);
@@ -47,12 +46,10 @@
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (arguments.situation != UASituationBackgroundPush &&
+        arguments.situation != UASituationForegroundPush &&
+        arguments.situation != UASituationLaunchedFromPush) {
 
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationBackgroundPush,
-                                 UASituationLaunchedFromPush];
-
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
         return NO;
     }
 

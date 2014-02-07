@@ -27,14 +27,7 @@
 
 @implementation UAActionArguments
 
-NSString * const UASituationManualInvocation = @"com.urbanairship.situation.manual_invocation";
-NSString * const UASituationLaunchedFromPush = @"com.urbanairship.situation.launched_from_push";
-NSString * const UASituationForegroundPush = @"com.urbanairship.situation.foreground_push";
-NSString * const UASituationBackgroundPush = @"com.urbanairship.situation.background_push";
-NSString * const UASituationLaunchedFromSpringBoard = @"com.urbanairship.situation.launched_from_springboard";
-NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_push";
-
-- (instancetype)initWithValue:(id)value withSituation:(NSString *)situation {
+- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation {
 
     self = [super init];
     if (self) {
@@ -45,7 +38,7 @@ NSString * const UASituationRichPushAction = @"com.urbanairship.situation.rich_p
     return self;
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation {
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 

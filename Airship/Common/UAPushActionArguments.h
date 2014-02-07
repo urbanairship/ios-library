@@ -39,7 +39,7 @@
  * @param payload The notification payload.
  */
 + (instancetype)argumentsWithValue:(id)value
-                     withSituation:(NSString *)situation
+                     withSituation:(UASituation)situation
                           withName:(NSString *)name
                        withPayload:(NSDictionary *)payload;
 

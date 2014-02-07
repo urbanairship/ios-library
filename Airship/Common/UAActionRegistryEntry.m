@@ -25,6 +25,10 @@
 
 #import "UAActionRegistryEntry+Internal.h"
 
+@interface UAActionRegistryEntry()
+@property(nonatomic, strong) NSMutableDictionary *situationOverrides;
+@end
+
 @implementation UAActionRegistryEntry
 @dynamic names;
 
@@ -40,8 +44,16 @@
     return self;
 }
 
-- (UAAction *)actionForSituation:(NSString *)situation {
-    return [self.situationOverrides valueForKey:situation] ?: self.action;
+- (UAAction *)actionForSituation:(UASituation)situation {
+    return [self.situationOverrides objectForKey:[NSNumber numberWithInt:situation]] ?: self.action;
+}
+
+- (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action {
+    if (action) {
+        [self.situationOverrides setObject:action forKey:[NSNumber numberWithInt:situation]];
+    } else {
+        [self.situationOverrides removeObjectForKey:[NSNumber numberWithInt:situation]];
+    }
 }
 
 + (instancetype)entryForAction:(UAAction *)action predicate:(UAActionPredicate)predicate {

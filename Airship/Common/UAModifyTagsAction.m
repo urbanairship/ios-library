@@ -29,7 +29,7 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     //no background push
-    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+    if (arguments.situation == UASituationBackgroundPush) {
         return NO;
     };
 

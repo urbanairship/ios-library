@@ -809,7 +809,7 @@ NSDictionary *notification;
  * analytics
  */
 - (void)testHandleNotification {
-    __block NSString *expectedSituation;
+    __block UASituation expectedSituation;
     __block UAActionFetchResult fetchResult = UAActionFetchResultNoData;
 
     BOOL (^runActionsCheck)(id obj) = ^(id obj) {
@@ -820,13 +820,13 @@ NSDictionary *notification;
 
         // Validate incoming push action is added
         UAActionArguments *args = [actions valueForKey:kUAIncomingPushActionRegistryName];
-        if (!args || ![args.situation isEqualToString:expectedSituation]) {
+        if (!args || args.situation != expectedSituation) {
             return NO;
         }
 
         // Validate other push action is added
         args = [actions valueForKey:@"someActionKey"];
-        if (!args || (![args.situation isEqualToString:expectedSituation] && ![args.value isEqualToString:@"someActionValue"])) {
+        if (!args || (args.situation != expectedSituation || ![args.value isEqualToString:@"someActionValue"])) {
             return NO;
         }
 
@@ -846,10 +846,10 @@ NSDictionary *notification;
     // Create arrays of the expected results
     UAActionFetchResult fetchResults[] = {UAActionFetchResultFailed, UAActionFetchResultNewData, UAActionFetchResultNoData};
     UIApplicationState applicationStates[] = {UIApplicationStateBackground, UIApplicationStateInactive, UIApplicationStateActive};
-    NSArray *situations = @[UASituationBackgroundPush, UASituationLaunchedFromPush, UASituationForegroundPush];
+    UASituation situations[] = {UASituationBackgroundPush, UASituationLaunchedFromPush, UASituationForegroundPush};
 
     for(NSInteger stateIndex = 0; stateIndex < 3; stateIndex++) {
-        expectedSituation = [situations objectAtIndex:stateIndex];
+        expectedSituation = situations[stateIndex];
         UIApplicationState applicationState = applicationStates[stateIndex];
 
         // Test handleNotification: first
@@ -857,7 +857,7 @@ NSDictionary *notification;
         [[self.mockedAnalytics expect] handleNotification:notification inApplicationState:applicationState];
         [[UAPush shared] handleNotification:notification applicationState:applicationState];
 
-        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %@", expectedSituation);
+        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
 
         // Test handleNotification:fetchCompletionHandler: for every background fetch result
@@ -875,7 +875,7 @@ NSDictionary *notification;
             }];
 
             XCTAssertTrue(completionHandlerCalled, @"handleNotification should call fetch completion handler");
-            XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %@", expectedSituation);
+            XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
             XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
         }
     }
@@ -967,7 +967,7 @@ NSDictionary *notification;
 
         UAActionArguments *args = [actions valueForKey:@"some-action"];
         return (BOOL)(args != nil
-                      && [args.situation isEqualToString:UASituationLaunchedFromSpringBoard]
+                      && args.situation == UASituationLaunchedFromSpringBoard
                       && [args.value isEqualToString:@"some-value"]);
     };
 

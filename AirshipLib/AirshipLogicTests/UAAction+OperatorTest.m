@@ -36,7 +36,7 @@
 @implementation UAAction_OperatorTest
 
 - (void)setUp {
-    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
+    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
     self.emptyArgs.name = @"emptyArgs";
 
     [super setUp];
@@ -304,7 +304,7 @@
     [action performWithArguments:nil withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
-    UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:nil];
+    UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
 
     XCTAssertFalse([action acceptsArguments:fooArgs], @"action should not accept arguments with value 'foo'");
 
@@ -341,7 +341,7 @@
     [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
-    UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:nil];
+    UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:UASituationManualInvocation];
 
     XCTAssertFalse([actionToTheMax acceptsArguments:fooArgs], @"actionToTheMax should not accept arguments with value 'foo'");
     XCTAssertFalse([actionToTheMax acceptsArguments:barArgs], @"actionToTheMax should not accept arguments with value 'bar'");
@@ -514,7 +514,7 @@
 - (void)testMap {
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
     UAActionArguments *mappedArgs = [UAActionArguments argumentsWithValue:@"map-value"
-                                                            withSituation:@"mapuation"];
+                                                            withSituation:UASituationManualInvocation];
 
     __block UAActionResult *result;
 

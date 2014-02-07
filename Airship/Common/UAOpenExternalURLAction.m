@@ -30,13 +30,14 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 @implementation UAOpenExternalURLAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+    if (arguments.situation == UASituationBackgroundPush) {
         return NO;
     }
 
     if ([arguments.value isKindOfClass:[NSString class]]) {
         return [NSURL URLWithString:arguments.value] != nil;
     }
+    
     return [arguments.value isKindOfClass:[NSURL class]];
 }
 

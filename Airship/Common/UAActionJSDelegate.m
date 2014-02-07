@@ -66,7 +66,7 @@
     //if we found an action by that name, and there's either no argument or a correctly decoded argument
     if (decodedArgumentsValue || !encodedArgumentsValue) {
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                withSituation:UASituationRichPushAction];
+                                                                withSituation:UASituationWebViewInvocation];
         [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
             if (result.error){
                 UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
@@ -140,7 +140,7 @@
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (decodedArgumentsValue || !encodedArgumentsValue) {
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                    withSituation:UASituationRichPushAction];
+                                                                    withSituation:UASituationWebViewInvocation];
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.error){
                     UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
@@ -180,7 +180,7 @@
         NSString *encodedArgumentsValue = [options objectForKey:actionName];
         NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationRichPushAction];
+        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation];
 
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (!encodedArgumentsValue || decodedArgumentsValue) {

@@ -90,7 +90,7 @@ id mockMessageList;
     arguments.situation = UASituationBackgroundPush;
     XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument in UASituationBackgroundPush situation");
 
-    arguments.situation = @"invalid-situation";
+    arguments.situation = UASituationWebViewInvocation;
     XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument in an invalid situation");
 
     arguments.situation = UASituationForegroundPush;

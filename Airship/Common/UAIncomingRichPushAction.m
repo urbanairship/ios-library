@@ -34,11 +34,8 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationLaunchedFromPush];
-
-
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
+    if (arguments.situation != UASituationForegroundPush &&
+        arguments.situation != UASituationLaunchedFromPush) {
         return NO;
     }
 
@@ -55,7 +52,6 @@
     UAPushActionArguments *pushArgs = (UAPushActionArguments *)arguments;
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *situation = pushArgs.situation;
     NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushArgs.value];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
@@ -63,7 +59,7 @@
 
     id<UAInboxPushHandlerDelegate> strongDelegate = handler.delegate;
 
-    if ([situation isEqualToString:UASituationForegroundPush]) {
+    if (arguments.situation == UASituationForegroundPush) {
         [strongDelegate richPushNotificationArrived:pushArgs.payload];
     } else {
         handler.hasLaunchMessage = YES;
