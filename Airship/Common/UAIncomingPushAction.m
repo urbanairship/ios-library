@@ -31,33 +31,31 @@
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    NSDictionary *notification = arguments.value;
-
-    if (arguments.situation == UASituationForegroundPush) {
-        [self handleForegroundPush:notification completionHandler:completionHandler];
-    } else if (arguments.situation == UASituationLaunchedFromPush) {
-        [self handleLaunchedFromPush:notification completionHandler:completionHandler];
-    } else if (arguments.situation == UASituationBackgroundPush) {
-        [self handleBackgroundPush:notification completionHandler:completionHandler];
-    } else {
-        completionHandler([UAActionResult none]);
+    switch (arguments.situation) {
+        case UASituationForegroundPush:
+            [self handleForegroundPush:arguments.value completionHandler:completionHandler];
+            break;
+        case UASituationLaunchedFromPush:
+            [self handleLaunchedFromPush:arguments.value completionHandler:completionHandler];
+            break;
+        case UASituationBackgroundPush:
+            [self handleBackgroundPush:arguments.value completionHandler:completionHandler];
+            break;
+        default:
+            completionHandler([UAActionResult none]);
+            break;
     }
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if (arguments.situation != UASituationBackgroundPush &&
-        arguments.situation != UASituationForegroundPush &&
-        arguments.situation != UASituationLaunchedFromPush) {
-
-        return NO;
+    switch (arguments.situation) {
+        case UASituationBackgroundPush:
+        case UASituationLaunchedFromPush:
+        case UASituationForegroundPush:
+            return [arguments.value isKindOfClass:[NSDictionary class]];
+        default:
+            return NO;
     }
-
-    if (![arguments.value isKindOfClass:[NSDictionary class]]) {
-        return NO;
-    }
-
-    return YES;
 }
 
 

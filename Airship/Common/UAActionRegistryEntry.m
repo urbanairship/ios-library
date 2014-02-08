@@ -50,9 +50,9 @@
 
 - (void)addSituationOverride:(UASituation)situation withAction:(UAAction *)action {
     if (action) {
-        [self.situationOverrides setObject:action forKey:[NSNumber numberWithInt:situation]];
+        [self.situationOverrides setObject:action forKey:@(situation)];
     } else {
-        [self.situationOverrides removeObjectForKey:[NSNumber numberWithInt:situation]];
+        [self.situationOverrides removeObjectForKey:@(situation)];
     }
 }
 
