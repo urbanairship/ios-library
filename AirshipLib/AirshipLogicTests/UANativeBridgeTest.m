@@ -62,7 +62,7 @@
     __block NSDictionary *appendedChild;
     __block NSDictionary *removedChild;
 
-    NSString *url = @"uaairship://foo/bar";
+    NSString *url = @"uairship://foo/bar";
 
     //this will be the document.body object
     NSDictionary *body = @{@"appendChild":^(id child){
