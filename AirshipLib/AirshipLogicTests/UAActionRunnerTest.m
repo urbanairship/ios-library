@@ -87,7 +87,8 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -143,7 +144,7 @@ NSString *anotherActionName = @"AnotherActionName";
         didCompletionHandlerRun = YES;
         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
-
+        XCTAssertEqual(finalResult.status, UAActionStatusArgumentsRejected, @"Rejected arguments should return UAActionStatusArgumentsRejected status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -171,7 +172,8 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -190,6 +192,7 @@ NSString *anotherActionName = @"AnotherActionName";
         didCompletionHandlerRun = YES;
         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusActionNotFound, @"Not found action should return UAActionStatusActionNotFound status");
 
     }];
 

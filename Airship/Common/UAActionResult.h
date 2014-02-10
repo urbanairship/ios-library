@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
 @property(nonatomic, strong, readonly) NSError *error;
 
 /**
- * The actions run status.
+ * The action's run status.
  */
 @property(nonatomic, assign, readonly) UAActionStatus status;
 

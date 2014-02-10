@@ -46,7 +46,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
         } else {
             UA_LINFO(@"Not running action %@ because of predicate.", actionName);
-            completionHandler([UAActionResult actionNotFound]);
+            completionHandler([UAActionResult rejectedArguments]);
         }
     } else {
         UA_LINFO(@"No action found with name %@, skipping action.", actionName);
