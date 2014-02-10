@@ -68,20 +68,16 @@
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                 withSituation:UASituationWebViewInvocation];
         [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-            if (result.error){
-                UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
-                if (callbackID) {
-                    //pass the error description back into JS wrapped in an Error object
-                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                                        result.error.localizedDescription,
-                                        callbackID];
-                    completionHandler(script);
-                } else {
-                    completionHandler(nil);
-                }
-            } else {
-                UA_LDEBUG(@"action %@ completed successfully", actionName);
-                if (callbackID) {
+            UA_LDEBUG("Action %@ finished executing with status %ld", actionName, result.status);
+            if (!callbackID) {
+                completionHandler(nil);
+                return;
+            }
+
+            NSString *script = nil;
+            switch (result.status) {
+                case UAActionStatusCompleted:
+                {
                     NSString *resultString;
                     if (result.value) {
                         //if the action completed with a result value, serialize into JSON
@@ -91,12 +87,27 @@
                     //in the case where there is no result value, pass null
                     resultString = resultString ?: @"null";
                     //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
-                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
-                    completionHandler(script);
-                } else {
-                    completionHandler(nil);
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
+                    break;
                 }
+                case UAActionStatusActionNotFound:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                              [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName],
+                              callbackID];
+                    break;
+                case UAActionStatusError:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                               result.error.localizedDescription,
+                               callbackID];
+                    break;
+                case UAActionStatusArgumentsRejected:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                              [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName],
+                              callbackID];
+                    break;
             }
+
+            completionHandler(script);
         }];
     } else {
         if (callbackID) {
@@ -142,10 +153,10 @@
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation];
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.error){
-                    UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
-                } else {
+                if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
+                } else {
+                    UA_LDEBUG(@"action %@ completed with an error", actionName);
                 }
             }];
         } else {
@@ -185,10 +196,10 @@
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (!encodedArgumentsValue || decodedArgumentsValue) {
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.error) {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                } else {
+                if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
+                } else {
+                    UA_LDEBUG(@"action %@ completed with an error", actionName);
                 }
             }];
         } else {

@@ -239,7 +239,7 @@
 
     XCTAssertNil(blockResult.value, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a nil value");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNoData, @"runWithArguments:withCompletionHandler: should default to calling completion handler with UAActionFetchResultNoData");
-    XCTAssertNotNil(blockResult.error, @"runWithArguments:withCompletionHandler: should default to calling completion handler with an error");
+    XCTAssertEqual(blockResult.status, UAActionStatusArgumentsRejected, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a rejected arguments result");
 }
 
 @end

@@ -27,7 +27,6 @@
 
 #define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
 
-
 typedef NS_ENUM(NSInteger, UASituation) {
     /**
      * Represents a situation in which the action was invoked manually.

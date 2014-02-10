@@ -46,16 +46,17 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
     NSURL *url = [self createURLFromValue:arguments.value];
 
-    UAActionResult *result = [UAActionResult resultWithValue:url];
-
     if (![[UIApplication sharedApplication] openURL:url]) {
         // Unable to open url
-        result.error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+        NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
                                              code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
                                          userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+
+        completionHandler([UAActionResult error:error]);
+    } else {
+        completionHandler([UAActionResult resultWithValue:url]);
     }
 
-    completionHandler(result);
 }
 
 - (NSURL *)createURLFromValue:(id)value {

@@ -30,6 +30,9 @@
 
 @implementation UAAction (Operators)
 
+NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operator";
+
+
 - (UAAction *)bind:(UAActionBindBlock)bindBlock {
     if (!bindBlock) {
         return self;
@@ -84,16 +87,31 @@
     UAActionLiftBlock liftBlock = ^(UAActionBlock actionBlock) {
         UAActionBlock transformedActionBlock = ^(UAActionArguments *args, UAActionCompletionHandler handler) {
             actionBlock(args, ^(UAActionResult *result){
-                if (!result.error) {
-                    UAActionArguments *nextArgs = [UAActionArguments argumentsWithValue:result.value withSituation:args.situation];
-                    nextArgs.name = args.name;
-                    
-                    [next runWithArguments:nextArgs withCompletionHandler:^(UAActionResult *nextResult) {
-                        handler(nextResult);
-                    }];
-                } else {
-                    handler(result);
+                switch (result.status) {
+                    case UAActionStatusCompleted:
+                    {
+                        UAActionArguments *nextArgs = [UAActionArguments argumentsWithValue:result.value withSituation:args.situation];
+                        nextArgs.name = args.name;
+
+                        [next runWithArguments:nextArgs withCompletionHandler:^(UAActionResult *nextResult) {
+                            handler(nextResult);
+                        }];
+
+                        break;
+                    }
+                    case UAActionStatusArgumentsRejected:
+                    {
+                        NSError *error = [NSError errorWithDomain:UAActionOperatorErrorDomain
+                                                            code:UAActionOperatorErrorCodeChildActionRejectedArgs
+                                                        userInfo:@{NSLocalizedDescriptionKey : @"Internal action rejected arguments"}];
+                        handler([UAActionResult error:error]);
+                        break;
+                    }
+                    default:
+                        handler(result);
+                        break;
                 }
+
             });
         };
 

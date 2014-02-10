@@ -99,7 +99,7 @@ NSString *anotherActionName = @"AnotherActionName";
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
                         withArguments:nil
                 withCompletionHandler:^(UAActionResult *result){
-                    XCTAssertNotNil(result.error, @"a bad action name should result in an error");
+                    XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
                     XCTAssertNil(result.value, @"a bad action name should result in a nil value");
                     didCompletionHandlerRun = YES;
     }];

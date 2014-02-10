@@ -23,41 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAggregateActionResult.h"
-#import "UAActionResult+Internal.h"
+#import "UAActionResult.h"
 
-@implementation UAAggregateActionResult
+@interface UAActionResult ()
 
-- (instancetype)init {
+/**
+ * Creates an action result that indicates the arguments were rejected.
+ */
++ (instancetype)rejectedArguments;
 
-    self = [super init];
-    if (self) {
-        self.value = [NSMutableDictionary dictionary];
-        self.fetchResult = UAActionFetchResultNoData;
-    }
+/**
+ * Creates an action result that indicates the action was not found.
+ */
++ (instancetype)actionNotFound;
 
-    return self;
-}
 
-- (void)addResult:(UAActionResult *)result forAction:(NSString*)actionName {
-    @synchronized(self) {
-        NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
-        [resultDictionary setValue:result forKey:actionName];
-        [self mergeFetchResult:result.fetchResult];
-    }
-}
+/**
+ * The result value produced when running an action (can be nil).
+ */
+@property(nonatomic, strong) id value;
 
-- (UAActionResult *)resultForAction:(NSString*)actionName {
-    NSMutableDictionary *resultDictionary = (NSMutableDictionary *)self.value;
-    return [resultDictionary valueForKey:actionName];
-}
+/**
+ * An optional UAActionFetchResult that can be set if the action performed a background fetch.
+ */
+@property(nonatomic, assign) UAActionFetchResult fetchResult;
 
-- (void)mergeFetchResult:(UAActionFetchResult)result {
-    if (self.fetchResult == UAActionFetchResultNewData || result == UAActionFetchResultNewData) {
-        self.fetchResult = UAActionFetchResultNewData;
-    } else if (self.fetchResult == UAActionFetchResultFailed || result == UAActionFetchResultFailed) {
-        self.fetchResult = UAActionFetchResultFailed;
-    }
-}
+/**
+ * An optional error value that can be set if the action was unable to perform its work successfully.
+ */
+@property(nonatomic, strong) NSError *error;
+
+/**
+ * The actions run status.
+ */
+@property(nonatomic, assign) UAActionStatus status;
+
 
 @end
+

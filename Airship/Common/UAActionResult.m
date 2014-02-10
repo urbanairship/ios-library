@@ -23,44 +23,56 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionResult.h"
+#import "UAActionResult+Internal.h"
 
 @implementation UAActionResult
 
 - (instancetype)initWithValue:(id)value
-               withFetchResult:(UAActionFetchResult)fetchResult {
+              withFetchResult:(UAActionFetchResult)fetchResult
+                   withStatus:(UAActionStatus) status {
 
     self = [super init];
     if (self) {
         self.value = value;
         self.fetchResult = fetchResult;
+        self.status = status;
     }
 
     return self;
 }
 
 + (instancetype)resultWithValue:(id)value {
-
-    return [[self alloc] initWithValue:value
-                                  withFetchResult:UAActionFetchResultNoData];
-
+    return [self resultWithValue:value withFetchResult:UAActionFetchResultNoData];
 }
 
 + (instancetype)resultWithValue:(id)value
                  withFetchResult:(UAActionFetchResult)fetchResult {
-
     return [[self alloc] initWithValue:value
-                                  withFetchResult:fetchResult];
+                       withFetchResult:fetchResult
+                            withStatus:UAActionStatusCompleted];
 }
 
 + (instancetype)none {
-    return [[self alloc] initWithValue:nil withFetchResult:UAActionFetchResultNoData];
+    return [self resultWithValue:nil withFetchResult:UAActionFetchResultNoData];
 }
 
 + (instancetype)error:(NSError *)error {
-    UAActionResult *result = [self none];
+    UAActionResult *result = [[self alloc] initWithValue:nil
+                                         withFetchResult:UAActionFetchResultNoData
+                                              withStatus:UAActionStatusError];
     result.error = error;
     return result;
 }
 
++ (instancetype)rejectedArguments {
+    return [[self alloc] initWithValue:nil
+                       withFetchResult:UAActionFetchResultNoData
+                            withStatus:UAActionStatusArgumentsRejected];
+}
+
++ (instancetype)actionNotFound {
+    return [[self alloc] initWithValue:nil
+                       withFetchResult:UAActionFetchResultNoData
+                            withStatus:UAActionStatusActionNotFound];
+}
 @end
