@@ -1,4 +1,10 @@
 
+/*
+ Note: this sample code is deprecated. See the documentation on Actions and
+ UAJavaScriptDelegate for more information.
+*/
+
+
 // UAListener is the object that communicates with the UAInboxDefaultJSDelegate.
 // The name UAListener is hard-coded into that sample.
 UAListener = {
