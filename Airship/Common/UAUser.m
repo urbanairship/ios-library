@@ -45,6 +45,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     @synchronized(self) {
         if(_defaultUser == nil) {
             _defaultUser = [[UAUser alloc] init];
+            UA_LTRACE(@"Initialized default user.");
         }
     }
     return _defaultUser;
