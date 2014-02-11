@@ -76,7 +76,6 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
     if (self) {
         // init
         self.apiClient = [UAUserAPIClient client];
-        self.appKey = [UAirship shared].config.appKey;
     }
     
     return self;
@@ -151,7 +150,7 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
  */
 - (void)saveUserData {
 
-    NSString *storedUsername = [UAKeychainUtils getUsername:[UAirship shared].config.appKey];
+    NSString *storedUsername = [UAKeychainUtils getUsername:self.appKey];
 
     if (!storedUsername) {
 
@@ -299,6 +298,10 @@ NSString * const UAUserCreatedNotification = @"com.urbanairship.notification.use
         [[UIApplication sharedApplication] endBackgroundTask:self.userUpdateBackgroundTask];
         self.userUpdateBackgroundTask = UIBackgroundTaskInvalid;
     }
+}
+
+- (NSString *)appKey {
+    return [UAirship shared].config.appKey;
 }
 
 #pragma mark -

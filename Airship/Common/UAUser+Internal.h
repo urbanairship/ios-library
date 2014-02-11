@@ -59,6 +59,11 @@
 - (void)invalidateUserUpdateBackgroundTask;
 
 /**
+ * Get the current app key.
+ */
+- (NSString *)appKey;
+
+/**
  * The user api client
  */
 @property(nonatomic, strong) UAUserAPIClient *apiClient;
@@ -92,11 +97,6 @@
  * Flag indicating if the device registration changes are being observed or not
  */
 @property(nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
-
-/**
- *  The current app key
- */
-@property(nonatomic, copy) NSString *appKey;
 
 /**
  * Flag indicating if the  user is being created
