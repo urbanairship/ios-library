@@ -26,34 +26,54 @@
 #import <XCTest/XCTest.h>
 #import "UAOpenExternalURLAction.h"
 #import <OCMock/OCMock.h>
+#import "UAAction+Operators.h"
 
 @interface UAOpenExternalURLActionTest : XCTestCase
+
+@property (nonatomic, strong)UAActionArguments *emptyArgs;
+#if OS_OBJECT_USE_OBJC
+@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
+#else
+@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
+#endif
 
 @end
 
 
 @implementation UAOpenExternalURLActionTest
 
-UAOpenExternalURLAction *action;
+UAAction *action;
 UAActionArguments *arguments;
 id mockApplication;
 
 - (void)setUp {
     [super setUp];
 
-    arguments = [[UAActionArguments alloc] init];
-    action = [[UAOpenExternalURLAction alloc] init];
+    self.semaphore = dispatch_semaphore_create(0);
 
+    arguments = [[UAActionArguments alloc] init];
+    action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+        dispatch_semaphore_signal(self.semaphore);
+    }];
     mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
 }
 
 - (void)tearDown {
     [mockApplication stopMocking];
-
+#if !OS_OBJECT_USE_OBJC
+    dispatch_release(self.semaphore);
+#endif
     [super tearDown];
 }
 
+- (void)semaphoreWait {
+    NSDate *timeout = [NSDate dateWithTimeIntervalSinceNow:1];
+    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)  && [timeout timeIntervalSinceNow] > 0) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+}
 
 /**
 * Test accepts valid arguments
@@ -97,6 +117,8 @@ id mockApplication;
         result = performResult;
     }];
 
+    [self semaphoreWait];
+
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, [NSURL URLWithString:arguments.value], @"results value should be the url");
     XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
@@ -118,6 +140,8 @@ id mockApplication;
         result = performResult;
     }];
 
+    [self semaphoreWait];
+
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, arguments.value, @"results value should be the url");
     XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
@@ -138,6 +162,8 @@ id mockApplication;
         result = performResult;
     }];
 
+    [self semaphoreWait];
+
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, arguments.value, @"results value should be the url");
     XCTAssertNotNil(result.error, @"result should have an error if the application failed opens the url");
@@ -156,12 +182,17 @@ id mockApplication;
         result = performResult;
     }];
 
+    [self semaphoreWait];
+
     XCTAssertEqualObjects([result.value absoluteString], @"sms:+15415553219522412313", @"results value should be normalized phone number");
 
     arguments.value = @"tel://+1541555adfasdfa%2032195%202241%202313";
     [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
+
+    [self semaphoreWait];
+
     XCTAssertEqualObjects([result.value absoluteString], @"tel:+15415553219522412313", @"results value should be normalized phone number");
 }
 
@@ -176,12 +207,17 @@ id mockApplication;
         result = performResult;
     }];
 
+    [self semaphoreWait];
+
     XCTAssertEqualObjects([result.value absoluteString], @"http://itunes.apple.com/some-app", @"results value should be http iTunes link");
 
     arguments.value = @"app://phobos.apple.com/some-app";
     [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
+
+    [self semaphoreWait];
+
     XCTAssertEqualObjects([result.value absoluteString], @"http://phobos.apple.com/some-app", @"results value should be http iTunes link");
 }
 @end
