@@ -15,12 +15,13 @@
     return self;
 }
 
-- (void)wait {
+- (BOOL)wait {
     NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:self.timeoutInterval];
     while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)  && [timeoutDate timeIntervalSinceNow] > 0) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:self.runLoopInterval]];
     }
+    return [timeoutDate timeIntervalSinceNow] > 0;
 }
 
 - (void)continue {

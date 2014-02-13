@@ -29,8 +29,10 @@
 /**
  * Spin the run loop iteratively until either a completion signal is delivered,
  * or the timeout is reached.
+ *
+ * @return `NO` if the timeout was reached, `YES` otherwise.
  */
-- (void)wait;
+- (BOOL)wait;
 
 /**
  * Delivers a completion signal on the semaphore.

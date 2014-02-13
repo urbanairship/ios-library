@@ -55,19 +55,19 @@
 - (void)testSuccessCase {
     [UAHTTPConnection succeed];
     [self.operation start];
-    [self.sync wait];
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
 }
 
 - (void)testFailureCase {
     [UAHTTPConnection fail];
     [self.operation start];
-    [self.sync wait];
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
 }
 
 - (void)testStart {
     [self.operation start];
-    [self.sync wait];
-    
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
+
     XCTAssertEqual(self.operation.isExecuting, NO, @"the operation should no longer be executing");
     XCTAssertEqual(self.operation.isFinished, YES, @"the operation should be finished");
 }
