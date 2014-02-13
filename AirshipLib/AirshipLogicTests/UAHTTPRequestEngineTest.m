@@ -85,7 +85,7 @@
          [self.sync continue];
      }];
 
-    [self.sync wait];
+    XCTAssertTrue([self.sync wait], "timeout should not be reached");
 }
 
 - (void)testMaxDelayInterval {
@@ -106,7 +106,7 @@
          [self.sync continue];
      }];
 
-    [self.sync wait];
+    XCTAssertTrue([self.sync wait], "timeout should not be reached");
 }
 
 - (void)testBackoffFactor {
@@ -127,7 +127,7 @@
          [self.sync continue];
      }];
 
-    [self.sync wait];
+    XCTAssertTrue([self.sync wait], "timeout should not be reached");
 }
 
 @end
