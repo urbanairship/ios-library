@@ -69,7 +69,7 @@
             //action itself to log or somehow provide its reasoning?
             UA_LINFO(@"Action %@ does not accept arguments %@.",
                      [self description], [arguments description]);
-            completionHandler([UAActionResult rejectedArguments]);
+            completionHandler([UAActionResult rejectedArgumentsResult]);
         } else {
             [self willPerformWithArguments:arguments];
             [self performWithArguments:arguments withCompletionHandler:^(UAActionResult *result){
@@ -105,7 +105,7 @@
     if (self.actionBlock) {
         self.actionBlock(arguments, completionHandler);
     } else {
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 

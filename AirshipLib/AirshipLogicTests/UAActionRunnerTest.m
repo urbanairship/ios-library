@@ -53,7 +53,7 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-    UAActionResult *result = [UAActionResult none];
+    UAActionResult *result = [UAActionResult emptyResult];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
@@ -80,7 +80,7 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName];
@@ -132,7 +132,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
@@ -162,7 +162,7 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
@@ -233,7 +233,7 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {

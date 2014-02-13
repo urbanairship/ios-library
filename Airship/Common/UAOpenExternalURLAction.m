@@ -52,7 +52,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
                                              code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
                                          userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
 
-        completionHandler([UAActionResult error:error]);
+        completionHandler([UAActionResult resultWithError:error]);
     } else {
         completionHandler([UAActionResult resultWithValue:url]);
     }

@@ -117,7 +117,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * Creates an "empty" UAActionResult with the value, fetch result and error set to
  * nil, UAActionFetchResultNone, and nil, respectively.
  */
-+ (instancetype)none;
++ (instancetype)emptyResult;
 
 /**
  * Creates a UAActionResult with the value and fetch result set to
@@ -126,6 +126,6 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  *
  * @param An instance of NSError.
  */
-+ (instancetype)error:(NSError *)error;
++ (instancetype)resultWithError:(NSError *)error;
 
 @end

@@ -30,12 +30,12 @@
 /**
  * Creates an action result that indicates the arguments were rejected.
  */
-+ (instancetype)rejectedArguments;
++ (instancetype)rejectedArgumentsResult;
 
 /**
  * Creates an action result that indicates the action was not found.
  */
-+ (instancetype)actionNotFound;
++ (instancetype)actionNotFoundResult;
 
 
 /**

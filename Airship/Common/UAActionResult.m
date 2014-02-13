@@ -52,11 +52,11 @@
                             withStatus:UAActionStatusCompleted];
 }
 
-+ (instancetype)none {
++ (instancetype)emptyResult {
     return [self resultWithValue:nil withFetchResult:UAActionFetchResultNoData];
 }
 
-+ (instancetype)error:(NSError *)error {
++ (instancetype)resultWithError:(NSError *)error {
     UAActionResult *result = [[self alloc] initWithValue:nil
                                          withFetchResult:UAActionFetchResultNoData
                                               withStatus:UAActionStatusError];
@@ -64,13 +64,13 @@
     return result;
 }
 
-+ (instancetype)rejectedArguments {
++ (instancetype)rejectedArgumentsResult {
     return [[self alloc] initWithValue:nil
                        withFetchResult:UAActionFetchResultNoData
                             withStatus:UAActionStatusArgumentsRejected];
 }
 
-+ (instancetype)actionNotFound {
++ (instancetype)actionNotFoundResult {
     return [[self alloc] initWithValue:nil
                        withFetchResult:UAActionFetchResultNoData
                             withStatus:UAActionStatusActionNotFound];

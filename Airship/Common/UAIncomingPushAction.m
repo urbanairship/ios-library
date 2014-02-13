@@ -42,7 +42,7 @@
             [self handleBackgroundPush:arguments.value completionHandler:completionHandler];
             break;
         default:
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
             break;
     }
 }
@@ -112,14 +112,14 @@
                 [pushDelegate receivedForegroundNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
             [pushDelegate receivedForegroundNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 
 }
@@ -144,14 +144,14 @@
                 [pushDelegate launchedFromNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
             [pushDelegate launchedFromNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 
@@ -175,14 +175,14 @@
                 [pushDelegate receivedBackgroundNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
             [pushDelegate receivedBackgroundNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 
