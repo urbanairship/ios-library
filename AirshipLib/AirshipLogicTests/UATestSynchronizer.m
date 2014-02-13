@@ -10,18 +10,34 @@
         //default to 0.1 seconds per run loop spin
         self.runLoopInterval = 0.1;
         //default to a 2 second timeout
-        self.timeoutInterval = 2;
+        self.defaultTimeoutInterval = 2;
     }
     return self;
 }
 
-- (BOOL)wait {
-    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:self.timeoutInterval];
+- (NSString *)foobar {
+    return @"foobar";
+}
+
+- (id)valueForKey:(NSString *)key {
+    return [super valueForKey:key];
+}
+
+- (id)valueForKeyPath:(NSString *)keyPath {
+    return [super valueForKeyPath:keyPath];
+}
+
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval {
+    NSDate *timeoutDate = [NSDate dateWithTimeIntervalSinceNow:interval];
     while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)  && [timeoutDate timeIntervalSinceNow] > 0) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
                                  beforeDate:[NSDate dateWithTimeIntervalSinceNow:self.runLoopInterval]];
     }
     return [timeoutDate timeIntervalSinceNow] > 0;
+}
+
+- (BOOL)wait {
+    return [self waitWithTimeoutInterval:self.defaultTimeoutInterval];
 }
 
 - (void)continue {

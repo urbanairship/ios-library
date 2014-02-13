@@ -24,7 +24,7 @@
  * How long to wait for a completion signal before timing out.
  * Default is 2 seconds.
  */
-@property(nonatomic, assign) NSTimeInterval timeoutInterval;
+@property(nonatomic, assign) NSTimeInterval defaultTimeoutInterval;
 
 /**
  * Spin the run loop iteratively until either a completion signal is delivered,
@@ -33,6 +33,15 @@
  * @return `NO` if the timeout was reached, `YES` otherwise.
  */
 - (BOOL)wait;
+
+/**
+ * Sping the run loop iteratively until either a completion signal is delivered,
+ * or the timeout is reached.
+ *
+ * @param interval The desired timeout interval.
+ * @return `NO` if the timeout was reached, `YES` otherwise.
+ */
+- (BOOL)waitWithTimeoutInterval:(NSTimeInterval)interval;
 
 /**
  * Delivers a completion signal on the semaphore.

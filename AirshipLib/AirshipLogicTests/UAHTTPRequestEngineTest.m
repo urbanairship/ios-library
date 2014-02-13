@@ -127,7 +127,8 @@
          [self.sync continue];
      }];
 
-    XCTAssertTrue([self.sync wait], "timeout should not be reached");
+    //give this one a little more time to finish
+    XCTAssertTrue([self.sync waitWithTimeoutInterval:5], "timeout should not be reached");
 }
 
 @end
