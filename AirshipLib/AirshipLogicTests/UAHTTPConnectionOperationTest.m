@@ -91,7 +91,7 @@
     [queue addOperation:delayOperation];
     [queue addOperation:self.operation];
 
-    UAKVOCancellationBlock unsubscribe = [queue observeAtKeyPath:@"operationCount" withBlock:^(id value){
+    UADisposable *subscription = [queue observeAtKeyPath:@"operationCount" withBlock:^(id value){
         //stop spinning once the operationCount has reached zero
         if ([value isEqual:@0]) {
             [self.sync continue];
@@ -106,7 +106,7 @@
     //we should have an operation count of zero
     XCTAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
 
-    unsubscribe();
+    [subscription dispose];
 }
 
 - (void)testInFlightCancel {

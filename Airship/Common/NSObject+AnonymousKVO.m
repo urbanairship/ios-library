@@ -34,7 +34,7 @@
 
 @dynamic anonymousObservers;
 
-- (UAKVOCancellationBlock)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block {
+- (UADisposable *)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block {
     UAAnonymousObserver *obs = [UAAnonymousObserver new];
 
     @synchronized(self) {
@@ -47,18 +47,14 @@
 
     [obs observe:self atKeypath:keyPath withBlock:block];
 
-    __block BOOL removed = NO;
     __weak NSObject *weakSelf = self;
-    return ^{
-        if (!removed) {
-            NSObject *strongSelf = weakSelf;
-            [strongSelf removeObserver:obs forKeyPath:keyPath];
-            @synchronized(self) {
-                [strongSelf.anonymousObservers removeObject:obs];
-            }
-            removed = YES;
+    return [UADisposable disposableWithBlock:^{
+        NSObject *strongSelf = weakSelf;
+        [strongSelf removeObserver:obs forKeyPath:keyPath];
+        @synchronized(self) {
+            [strongSelf.anonymousObservers removeObject:obs];
         }
-    };
+    }];
 }
 
 - (void)setAnonymousObservers:(NSSet *)anonymousObservers {

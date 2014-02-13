@@ -1,15 +1,11 @@
 #import "NSObject+AnonymousKVO.h"
 #import <Foundation/Foundation.h>
+#import "UADisposable.h"
 
 /**
  * Typedef for blocks passing KVO values.
  */
 typedef void (^UAAnonymousKVOBlock)(id value);
-
-/**
- * Typedef for blocks that unsusbscribe anonymous observers.
- */
-typedef void (^UAKVOCancellationBlock)(void);
 
 /**
  * Observer class facilitating block-based KVO.
@@ -50,7 +46,8 @@ typedef void (^UAKVOCancellationBlock)(void);
  *
  * @param keyPath the desired key path.
  * @param block A block that will be executed when the object passes new values.
+ * @return A UADisposable used for cancellation.
  */
-- (UAKVOCancellationBlock)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block;
+- (UADisposable *)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block;
 
 @end
