@@ -1,5 +1,6 @@
 
 #import "NSObject+AnonymousKVO.h"
+#import "UAGlobal.h"
 #import <objc/runtime.h>
 
 @interface UAAnonymousObserver()
@@ -16,6 +17,10 @@
 @implementation UAAnonymousObserver
 
 - (void)observe:(id)obj atKeypath:(NSString *)path withBlock:(UAAnonymousKVOBlock)block {
+    if (!block) {
+        UA_LINFO(@"KVO block must be non-null");
+        return;
+    }
     self.object = obj;
     self.block = block;
     [obj addObserver:self forKeyPath:path options:0 context:nil];
@@ -35,6 +40,12 @@
 @dynamic anonymousObservers;
 
 - (UADisposable *)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block {
+
+    if (!block) {
+        UA_LINFO(@"KVO block must be non-null");
+        return nil;
+    }
+
     UAAnonymousObserver *obs = [UAAnonymousObserver new];
 
     @synchronized(self) {
