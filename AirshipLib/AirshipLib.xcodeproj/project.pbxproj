@@ -237,6 +237,9 @@
 		49E9C9C6183C28E900B7BCFF /* UAActionJSDelegateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */; };
 		49EECA8B17CBD4BC00DE0AFB /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECA8917CBD4BC00DE0AFB /* UADisposable.h */; };
 		49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */; };
+		49F2122918AC0DD800136622 /* UATestSynchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F2122818AC0DD800136622 /* UATestSynchronizer.m */; };
+		49F2122C18AC5BE100136622 /* NSObject+AnonymousKVO.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F2122A18AC5BE100136622 /* NSObject+AnonymousKVO.h */; };
+		49F2122D18AC5BE100136622 /* NSObject+AnonymousKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F2122B18AC5BE100136622 /* NSObject+AnonymousKVO.m */; };
 		49F437521810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437531810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
@@ -551,6 +554,10 @@
 		49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAActionJSDelegateTest.m; sourceTree = "<group>"; };
 		49EECA8917CBD4BC00DE0AFB /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADisposable.h; sourceTree = "<group>"; };
 		49EECA8A17CBD4BC00DE0AFB /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADisposable.m; sourceTree = "<group>"; };
+		49F2122718AC0DD800136622 /* UATestSynchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UATestSynchronizer.h; sourceTree = "<group>"; };
+		49F2122818AC0DD800136622 /* UATestSynchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATestSynchronizer.m; sourceTree = "<group>"; };
+		49F2122A18AC5BE100136622 /* NSObject+AnonymousKVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+AnonymousKVO.h"; sourceTree = "<group>"; };
+		49F2122B18AC5BE100136622 /* NSObject+AnonymousKVO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+AnonymousKVO.m"; sourceTree = "<group>"; };
 		49F437501810B5B400182D06 /* UAModifyTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAModifyTagsAction.h; sourceTree = "<group>"; };
 		49F437511810B5B400182D06 /* UAModifyTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAModifyTagsAction.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -931,6 +938,8 @@
 				4905C4E418246339001D48E3 /* NSString+URLEncoding.m */,
 				49E9C9BF183AD42300B7BCFF /* UAWebViewCallData.h */,
 				49E9C9C0183AD42300B7BCFF /* UAWebViewCallData.m */,
+				49F2122A18AC5BE100136622 /* NSObject+AnonymousKVO.h */,
+				49F2122B18AC5BE100136622 /* NSObject+AnonymousKVO.m */,
 			);
 			name = Util;
 			sourceTree = "<group>";
@@ -1020,6 +1029,8 @@
 				7BB679661429357100B877DB /* Frameworks */,
 				1FF8221017A1D0B60092F812 /* JRSwizzle */,
 				7BB6790D1429288D00B877DB /* Supporting Files */,
+				49F2122718AC0DD800136622 /* UATestSynchronizer.h */,
+				49F2122818AC0DD800136622 /* UATestSynchronizer.m */,
 			);
 			path = AirshipLogicTests;
 			sourceTree = "<group>";
@@ -1473,6 +1484,7 @@
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
 				4995C646180DBBF7004F8724 /* UASetTagsAction.h in Headers */,
+				49F2122C18AC5BE100136622 /* NSObject+AnonymousKVO.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
 				4905C4DF182458AC001D48E3 /* UAActionJSDelegate.h in Headers */,
 				CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
@@ -1771,6 +1783,7 @@
 				CCA3A4FB17FF1521009C7371 /* UAActionRunnerTest.m in Sources */,
 				CCA3A4F717FF1506009C7371 /* UAActionRegistrarTest.m in Sources */,
 				CC7DC959183E97D000E95BB8 /* UADeviceRegistrarTest.m in Sources */,
+				49F2122918AC0DD800136622 /* UATestSynchronizer.m in Sources */,
 				4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */,
 				BB484B2B15910C370097B38C /* UALocationTestUtils.m in Sources */,
 				49C6721C1857CB040088F210 /* UANativeBridgeTest.m in Sources */,
@@ -1812,6 +1825,7 @@
 				4995C62A17FE3655004F8724 /* UAMailComposerData.m in Sources */,
 				4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,
 				1F610E0217835C3A00BCD96E /* UADeviceRegistrationPayload.m in Sources */,
+				49F2122D18AC5BE100136622 /* NSObject+AnonymousKVO.m in Sources */,
 				CCDD37CA18089E5700B8866E /* UAOpenExternalURLAction.m in Sources */,
 				BB8860EE159A7E9600584445 /* UAUtils.m in Sources */,
 				BB8860F0159A7E9600584445 /* UAObservable.m in Sources */,
