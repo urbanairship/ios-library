@@ -102,8 +102,8 @@ NSString * const UAActionOperatorErrorDomain = @"com.urbanairship.actions.operat
                     case UAActionStatusArgumentsRejected:
                     {
                         NSError *error = [NSError errorWithDomain:UAActionOperatorErrorDomain
-                                                            code:UAActionOperatorErrorCodeChildActionRejectedArgs
-                                                        userInfo:@{NSLocalizedDescriptionKey : @"Internal action rejected arguments"}];
+                                                             code:UAActionOperatorErrorCodeChildActionRejectedArgs
+                                                         userInfo:@{NSLocalizedDescriptionKey : @"Internal action rejected arguments"}];
                         handler([UAActionResult resultWithError:error]);
                         break;
                     }
