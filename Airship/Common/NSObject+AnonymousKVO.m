@@ -36,17 +36,28 @@
 
 - (UAKVOCancellationBlock)observeAtKeyPath:(NSString *)keyPath withBlock:(UAAnonymousKVOBlock)block {
     UAAnonymousObserver *obs = [UAAnonymousObserver new];
-    if (!self.anonymousObservers) {
-        self.anonymousObservers = [NSMutableSet setWithObject:obs];
-    } else {
-        [self.anonymousObservers addObject:obs];
+
+    @synchronized(self) {
+        if (!self.anonymousObservers) {
+            self.anonymousObservers = [NSMutableSet setWithObject:obs];
+        } else {
+            [self.anonymousObservers addObject:obs];
+        }
     }
 
     [obs observe:self atKeypath:keyPath withBlock:block];
 
+    __block BOOL removed = NO;
+    __weak NSObject *weakSelf = self;
     return ^{
-        [self removeObserver:obs forKeyPath:keyPath];
-        [self.anonymousObservers removeObject:obs];
+        if (!removed) {
+            NSObject *strongSelf = weakSelf;
+            [strongSelf removeObserver:obs forKeyPath:keyPath];
+            @synchronized(self) {
+                [strongSelf.anonymousObservers removeObject:obs];
+            }
+            removed = YES;
+        }
     };
 }
 
