@@ -23,32 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAModifyTagsAction.h"
+#import "UAActionResult.h"
 
-@implementation UAModifyTagsAction
+@interface UAActionResult ()
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    //no background push
-    if (arguments.situation == UASituationBackgroundPush) {
-        return NO;
-    };
+/**
+ * Creates an action result that indicates the arguments were rejected.
+ */
++ (instancetype)rejectedArgumentsResult;
 
-    //argument value can be a string (one tag)
-    if ([arguments.value isKindOfClass:[NSString class]]) {
-        return YES;
-    }
+/**
+ * Creates an action result that indicates the action was not found.
+ */
++ (instancetype)actionNotFoundResult;
 
-    if ([arguments.value isKindOfClass:[NSArray class]]) {
-        //or it can be an array, in which case the elements must all be strings
-        for (id obj in arguments.value) {
-            if (![obj isKindOfClass:[NSString class]]) {
-                return NO;
-            }
-        }
-        return  YES;
-    } else {
-        return NO;
-    }
-}
+
+/**
+ * The result value produced when running an action (can be nil).
+ */
+@property(nonatomic, strong) id value;
+
+/**
+ * An optional UAActionFetchResult that can be set if the action performed a background fetch.
+ */
+@property(nonatomic, assign) UAActionFetchResult fetchResult;
+
+/**
+ * An optional error value that can be set if the action was unable to perform its work successfully.
+ */
+@property(nonatomic, strong) NSError *error;
+
+/**
+ * The actions run status.
+ */
+@property(nonatomic, assign) UAActionStatus status;
+
 
 @end
+

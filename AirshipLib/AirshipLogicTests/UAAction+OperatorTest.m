@@ -36,7 +36,7 @@
 @implementation UAAction_OperatorTest
 
 - (void)setUp {
-    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:nil];
+    self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
     self.emptyArgs.name = @"emptyArgs";
 
     [super setUp];
@@ -304,7 +304,7 @@
     [action performWithArguments:nil withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult", @"the result value should be 'simpleResult'");
 
-    UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:nil];
+    UAActionArguments *fooArgs = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
 
     XCTAssertFalse([action acceptsArguments:fooArgs], @"action should not accept arguments with value 'foo'");
 
@@ -341,7 +341,7 @@
     [actionToTheMax performWithArguments:nil withCompletionHandler:saveBlockResult];
     XCTAssertEqualObjects(blockResult.value, @"simpleResult to the Max!!!!", @"the result value should be 'simpleResult to the Max!!!!'");
 
-    UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:nil];
+    UAActionArguments *barArgs = [UAActionArguments argumentsWithValue:@"bar" withSituation:UASituationManualInvocation];
 
     XCTAssertFalse([actionToTheMax acceptsArguments:fooArgs], @"actionToTheMax should not accept arguments with value 'foo'");
     XCTAssertFalse([actionToTheMax acceptsArguments:barArgs], @"actionToTheMax should not accept arguments with value 'bar'");
@@ -384,7 +384,7 @@
     __block BOOL didContinuationActionRun = NO;
     __block UAActionResult *result;
 
-    UAActionResult *errorResult = [UAActionResult error:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
+    UAActionResult *errorResult = [UAActionResult resultWithError:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
 
 
     // Set up action to return an error result
@@ -394,7 +394,7 @@
 
     UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         didContinuationActionRun = YES;
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action continueWith:continuationAction];
@@ -470,7 +470,7 @@
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"When filter returns NO, it should not perform the original action");
-        return completionHandler([UAActionResult none]);
+        return completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action filter:^BOOL(UAActionArguments *args) {
@@ -514,7 +514,7 @@
 - (void)testMap {
     UAActionResult *expectedResult = [UAActionResult resultWithValue:@"some-value"];
     UAActionArguments *mappedArgs = [UAActionArguments argumentsWithValue:@"map-value"
-                                                            withSituation:@"mapuation"];
+                                                            withSituation:UASituationManualInvocation];
 
     __block UAActionResult *result;
 

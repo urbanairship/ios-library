@@ -30,7 +30,7 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     //no background push
-    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+    if (arguments.situation == UASituationBackgroundPush) {
         return NO;
     }
 
@@ -51,7 +51,7 @@
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     [UAPush shared].tags = arguments.value;
     [[UAPush shared] updateRegistration];
-    completionHandler([UAActionResult none]);
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

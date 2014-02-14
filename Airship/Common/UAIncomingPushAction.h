@@ -32,8 +32,8 @@
  *
  * Expected argument values: An APNS NSDictionary.
  *
- * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
- * `UASituationRichPushAction`
+ * Valid situations: UASituationForegroundPush, UASituationBackgroundPush, 
+ * and UASituationLaunchedFromPush
  *
  * Result value: nil
  *

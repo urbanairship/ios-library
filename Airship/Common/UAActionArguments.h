@@ -27,37 +27,39 @@
 
 #define kPendingPushActionDefaultsKey @"com.urbanairship.action.pending"
 
-/**
- * Represents a situation in which the action was invoked manually.
- */
-extern NSString * const UASituationManualInvocation;
+typedef NS_ENUM(NSInteger, UASituation) {
+    /**
+     * Represents a situation in which the action was invoked manually.
+     */
+    UASituationManualInvocation,
 
-/**
- * Represents a situation in which the application was launched from a push notification.
- */
-extern NSString * const UASituationLaunchedFromPush;
+    /**
+     * Represents a situation in which the application was launched from a push notification.
+     */
+    UASituationLaunchedFromPush,
 
-/**
- * Represents a situation in which a push notification was received in the foreground.
- */
-extern NSString * const UASituationForegroundPush;
+    /**
+     * Represents a situation in which a push notification was received in the foreground.
+     */
+    UASituationForegroundPush,
 
-/**
- * Represents a situation in which a push notification was received in the background.
- */
-extern NSString * const UASituationBackgroundPush;
+    /**
+     * Represents a situation in which a push notification was received in the background.
+     */
+    UASituationBackgroundPush,
 
-/**
- * Represents a situation in which the action was triggered from the application
- * being launched from the springboard.
- */
-extern NSString * const UASituationLaunchedFromSpringBoard;
+    /**
+     * Represents a situation in which the action was triggered from the application
+     * being launched from the springboard.
+     */
+    UASituationLaunchedFromSpringBoard,
 
-/**
- * Represents a situation in which the action was triggered from a
- * rich push message.
- */
-extern NSString * const UASituationRichPushAction;
+    /**
+     * Represents a situation in which the action was triggered from a
+     * web view
+     */
+    UASituationWebViewInvocation
+};
 
 /**
  * Contains the arguments passed into an action during execution.
@@ -70,7 +72,7 @@ extern NSString * const UASituationRichPushAction;
  * @param value The value associated with the arguments.
  * @param situation The situation of the action.
  */
-+ (instancetype)argumentsWithValue:(id)value withSituation:(NSString *)situation;
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation;
 
 /**
  * Returns pending springboard actions and arguments.
@@ -102,7 +104,7 @@ extern NSString * const UASituationRichPushAction;
 /**
  * Situation of the action
  */
-@property(nonatomic, copy) NSString *situation;
+@property(nonatomic, assign) UASituation situation;
 
 /**
  * The value associated with the action

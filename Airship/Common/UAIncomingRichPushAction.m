@@ -34,19 +34,14 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationLaunchedFromPush];
-
-
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
-        return NO;
+    switch (arguments.situation) {
+        case UASituationLaunchedFromPush:
+        case UASituationForegroundPush:
+            return ([arguments isKindOfClass:[UAPushActionArguments class]]
+                    && [UAInboxUtils getRichPushMessageIDFromValue:arguments.value]);
+        default:
+            return NO;
     }
-
-    if (![arguments isKindOfClass:[UAPushActionArguments class]]) {
-        return NO;
-    }
-
-    return [UAInboxUtils getRichPushMessageIDFromValue:arguments.value] != nil;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
@@ -55,7 +50,6 @@
     UAPushActionArguments *pushArgs = (UAPushActionArguments *)arguments;
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *situation = pushArgs.situation;
     NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushArgs.value];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
@@ -63,15 +57,19 @@
 
     id<UAInboxPushHandlerDelegate> strongDelegate = handler.delegate;
 
-    if ([situation isEqualToString:UASituationForegroundPush]) {
-        [strongDelegate richPushNotificationArrived:pushArgs.payload];
-    } else {
-        handler.hasLaunchMessage = YES;
-        [strongDelegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
+    switch (arguments.situation) {
+        case UASituationForegroundPush:
+            [strongDelegate richPushNotificationArrived:pushArgs.payload];
+            break;
+        case UASituationLaunchedFromPush:
+            handler.hasLaunchMessage = YES;
+            [strongDelegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
+            break;
+        default:
+            break;
     }
 
     [[UAInbox shared].messageList retrieveMessageListWithDelegate:handler];
-
     completionHandler([UAActionResult resultWithValue:richPushID withFetchResult:UAActionFetchResultNewData]);
 }
 

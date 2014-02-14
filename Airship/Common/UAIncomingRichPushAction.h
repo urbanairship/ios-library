@@ -31,8 +31,7 @@
  *
  * Expected arguments: An instance of UAPushActionArguments.
  *
- * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
- * `UASituationRichPushAction`
+ * Valid situations: UASituationForegroundPush and UASituationBackgroundPush
  *
  * Result value: nil
  *

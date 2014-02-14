@@ -39,8 +39,8 @@
  */
 - (void)testAddResult {
     UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-    UAActionResult *result = [UAActionResult none];
-    UAActionResult *anotherResult = [UAActionResult none];
+    UAActionResult *result = [UAActionResult emptyResult];
+    UAActionResult *anotherResult = [UAActionResult emptyResult];
 
     [aggregateResult addResult:result forAction:@"actionName"];
     [aggregateResult addResult:anotherResult forAction:@"anotherActionName"];
@@ -56,8 +56,8 @@
  */
 - (void)testResultForAction {
     UAAggregateActionResult *aggregateResult = [[UAAggregateActionResult alloc] init];
-    UAActionResult *result = [UAActionResult none];
-    UAActionResult *anotherResult = [UAActionResult none];
+    UAActionResult *result = [UAActionResult emptyResult];
+    UAActionResult *anotherResult = [UAActionResult emptyResult];
 
     [aggregateResult addResult:result forAction:@"actionName"];
     [aggregateResult addResult:anotherResult forAction:@"anotherActionName"];

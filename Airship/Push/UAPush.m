@@ -462,7 +462,7 @@ static Class _uiClass;
 
     [[UAirship shared].analytics handleNotification:notification inApplicationState:state];
 
-    NSString *situation = nil;
+    UASituation situation;
     switch(state) {
         case UIApplicationStateActive:
             UA_LTRACE(@"Received a notification when application state is UIApplicationStateActive");
@@ -506,7 +506,7 @@ static Class _uiClass;
 }
 
 - (NSMutableDictionary *)createActionsFromNotification:(NSDictionary *)notification
-                                         withSituation:(NSString *)situation{
+                                         withSituation:(UASituation)situation{
 
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 

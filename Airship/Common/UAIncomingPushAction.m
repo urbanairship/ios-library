@@ -31,36 +31,31 @@
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-    NSDictionary *notification = arguments.value;
-    NSString *situation = arguments.situation;
-
-    if ([situation isEqualToString:UASituationForegroundPush]) {
-        [self handleForegroundPush:notification completionHandler:completionHandler];
-    } else if ([situation isEqualToString:UASituationLaunchedFromPush]) {
-        [self handleLaunchedFromPush:notification completionHandler:completionHandler];
-    } else if ([situation isEqualToString:UASituationBackgroundPush]) {
-        [self handleBackgroundPush:notification completionHandler:completionHandler];
-    } else {
-        completionHandler([UAActionResult none]);
+    switch (arguments.situation) {
+        case UASituationForegroundPush:
+            [self handleForegroundPush:arguments.value completionHandler:completionHandler];
+            break;
+        case UASituationLaunchedFromPush:
+            [self handleLaunchedFromPush:arguments.value completionHandler:completionHandler];
+            break;
+        case UASituationBackgroundPush:
+            [self handleBackgroundPush:arguments.value completionHandler:completionHandler];
+            break;
+        default:
+            completionHandler([UAActionResult emptyResult]);
+            break;
     }
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationBackgroundPush,
-                                 UASituationLaunchedFromPush];
-
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
-        return NO;
+    switch (arguments.situation) {
+        case UASituationBackgroundPush:
+        case UASituationLaunchedFromPush:
+        case UASituationForegroundPush:
+            return [arguments.value isKindOfClass:[NSDictionary class]];
+        default:
+            return NO;
     }
-
-    if (![arguments.value isKindOfClass:[NSDictionary class]]) {
-        return NO;
-    }
-
-    return YES;
 }
 
 
@@ -117,14 +112,14 @@
                 [pushDelegate receivedForegroundNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(receivedForegroundNotification:)]) {
             [pushDelegate receivedForegroundNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 
 }
@@ -149,14 +144,14 @@
                 [pushDelegate launchedFromNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(launchedFromNotification:)]) {
             [pushDelegate launchedFromNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 
@@ -180,14 +175,14 @@
                 [pushDelegate receivedBackgroundNotification:notification];
             }
 
-            completionHandler([UAActionResult none]);
+            completionHandler([UAActionResult emptyResult]);
         }
     } else {
         if ([pushDelegate respondsToSelector:@selector(receivedBackgroundNotification:)]) {
             [pushDelegate receivedBackgroundNotification:notification];
         }
 
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 

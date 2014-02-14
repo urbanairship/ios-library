@@ -194,7 +194,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return [NSSet setWithArray:[entries allValues]];
 }
 
-- (BOOL)addSituationOverride:(NSString *)situation
+- (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name action:(UAAction *)action {
     if (!name) {
         return NO;
@@ -207,7 +207,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     }
 
     UAActionRegistryEntry *entry = [self registryEntryWithName:name];
-    [entry.situationOverrides setValue:action forKey:situation];
+    [entry addSituationOverride:situation withAction:action];
 
     return (entry != nil);
 }
@@ -254,8 +254,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
-        return (BOOL)([args.situation isEqualToString:UASituationLaunchedFromPush] ||
-                      [args.situation isEqualToString:UASituationRichPushAction]);
+        return (BOOL)(args.situation == UASituationLaunchedFromPush ||
+                      args.situation == UASituationWebViewInvocation);
     };
 
     // Open external URL action

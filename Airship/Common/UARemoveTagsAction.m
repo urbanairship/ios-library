@@ -35,7 +35,7 @@
         [[UAPush shared] removeTagsFromCurrentDevice:arguments.value];
     }
     [[UAPush shared] updateRegistration];
-    completionHandler([UAActionResult none]);
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

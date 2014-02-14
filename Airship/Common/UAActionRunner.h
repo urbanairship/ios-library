@@ -30,25 +30,6 @@
 #import "UAAggregateActionResult.h"
 
 /**
- * Indicates the domain for NSErrors originating from UAActionRunner.
- */
-extern NSString * const UAActionRunnerErrorDomain;
-
-/**
- * The possible error states encountered when running actions.
- */
-NS_ENUM(NSInteger, UAActionRunnerErrorCode) {
-    /**
-     * No action was found registered under the provided name.
-     */
-    UAActionRunnerErrorCodeActionNotFound,
-    /**
-     * The action was not run because the registered predicate rejected its arguments.
-     */
-    UAActionRunnerErrorCodePredicateRejected
-};
-
-/**
  * A helper class for running actions by name or by reference.
  */
 @interface UAActionRunner : NSObject

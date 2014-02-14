@@ -30,13 +30,14 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 @implementation UAOpenExternalURLAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if ([arguments.situation isEqualToString:UASituationBackgroundPush]) {
+    if (arguments.situation == UASituationBackgroundPush) {
         return NO;
     }
 
     if ([arguments.value isKindOfClass:[NSString class]]) {
         return [NSURL URLWithString:arguments.value] != nil;
     }
+    
     return [arguments.value isKindOfClass:[NSURL class]];
 }
 
@@ -45,21 +46,20 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
     NSURL *url = [self createURLFromValue:arguments.value];
 
-    UAActionResult *result = [UAActionResult resultWithValue:url];
-
     // do this in the background in case we're opening our own app!
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         if (![[UIApplication sharedApplication] openURL:url]) {
             // Unable to open url
-            result.error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
-                                                code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
-                                            userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+            NSError *error =  [NSError errorWithDomain:UAOpenExternalURLActionErrorDomain
+                                                  code:UAOpenExternalURLActionErrorCodeURLFailedToOpen
+                                              userInfo:@{NSLocalizedDescriptionKey : @"Unable to open URL"}];
+
+            completionHandler([UAActionResult resultWithError:error]);
+        } else {
+            completionHandler([UAActionResult resultWithValue:url]);
         }
 
-        completionHandler(result);
     });
-
-
 }
 
 - (NSURL *)createURLFromValue:(id)value {

@@ -26,6 +26,7 @@
 #import "UAActionRunner.h"
 #import "UAAction+Internal.h"
 #import "UAActionRegistryEntry.h"
+#import "UAActionResult+Internal.h"
 
 NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
 
@@ -44,26 +45,18 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             UAAction *action = [entry actionForSituation:arguments.situation];
             [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
         } else {
-            NSString *msg = [NSString stringWithFormat:@"Not running action %@ because of predicate.", actionName];
-            UA_LINFO(@"%@", msg);
-            NSError *err = [NSError errorWithDomain:UAActionRunnerErrorDomain
-                                               code:UAActionRunnerErrorCodePredicateRejected
-                                           userInfo:@{NSLocalizedDescriptionKey:msg}];
-            completionHandler([UAActionResult error:err]);
+            UA_LINFO(@"Not running action %@ because of predicate.", actionName);
+            completionHandler([UAActionResult rejectedArgumentsResult]);
         }
     } else {
-        NSString *msg = [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName];
-        UA_LINFO("%@", msg);
-        NSError *err = [NSError errorWithDomain:UAActionRunnerErrorDomain
-                                           code:UAActionRunnerErrorCodeActionNotFound
-                                       userInfo:@{NSLocalizedDescriptionKey:msg}];
+        UA_LINFO(@"No action found with name %@, skipping action.", actionName);
+
         //log a warning if the name begins with a carat prefix.
         if ([actionName hasPrefix:@"^"]) {
             UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Urban Airship \
                      and may be subject to future use.");
         }
-
-        completionHandler([UAActionResult error:err]);
+        completionHandler([UAActionResult actionNotFoundResult]);
     }
 }
 

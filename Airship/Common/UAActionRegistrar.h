@@ -135,7 +135,7 @@ SINGLETON_INTERFACE(UAActionRegistrar);
  * 'NO' if the entry is unable to be found with the given name, if the situation
  * is nil, or if the registered entry is reserved.
  */
-- (BOOL)addSituationOverride:(NSString *)situation
+- (BOOL)addSituationOverride:(UASituation)situation
             forEntryWithName:(NSString *)name
                       action:(UAAction *)action;
 

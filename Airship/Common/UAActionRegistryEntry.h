@@ -50,7 +50,7 @@
  *
  * @return UAAction for the situation.
  */
-- (UAAction *)actionForSituation:(NSString *)situation;
+- (UAAction *)actionForSituation:(UASituation)situation;
 
 /**
  * UAActionRegistryEntry class factory method.

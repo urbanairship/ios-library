@@ -53,7 +53,7 @@ NSString *anotherActionName = @"AnotherActionName";
     __block BOOL didCompletionHandlerRun = NO;
 
     UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
-    UAActionResult *result = [UAActionResult none];
+    UAActionResult *result = [UAActionResult emptyResult];
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
@@ -80,14 +80,15 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName];
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -99,7 +100,7 @@ NSString *anotherActionName = @"AnotherActionName";
     [UAActionRunner runActionWithName:@"nopenopenopenopenope"
                         withArguments:nil
                 withCompletionHandler:^(UAActionResult *result){
-                    XCTAssertNotNil(result.error, @"a bad action name should result in an error");
+                    XCTAssertEqual(result.status, UAActionStatusActionNotFound, "action should not be found");
                     XCTAssertNil(result.value, @"a bad action name should result in a nil value");
                     didCompletionHandlerRun = YES;
     }];
@@ -131,7 +132,7 @@ NSString *anotherActionName = @"AnotherActionName";
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"Action should not run if the predicate returns NO");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
@@ -143,7 +144,7 @@ NSString *anotherActionName = @"AnotherActionName";
         didCompletionHandlerRun = YES;
         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
-
+        XCTAssertEqual(finalResult.status, UAActionStatusArgumentsRejected, @"Rejected arguments should return UAActionStatusArgumentsRejected status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -161,7 +162,7 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         didActionRun = YES;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
@@ -171,7 +172,8 @@ NSString *anotherActionName = @"AnotherActionName";
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
-        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusCompleted, @"Action should of ran and returned UAActionStatusCompleted status");
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
@@ -190,6 +192,7 @@ NSString *anotherActionName = @"AnotherActionName";
         didCompletionHandlerRun = YES;
         XCTAssertNil(finalResult.value, @"Action that did not run should return a nil value result");
         XCTAssertEqual(finalResult.fetchResult, UAActionFetchResultNoData, @"Action that did not run should return a UAActionFetchResultNoData fetch result");
+        XCTAssertEqual(finalResult.status, UAActionStatusActionNotFound, @"Not found action should return UAActionStatusActionNotFound status");
 
     }];
 
@@ -230,7 +233,7 @@ NSString *anotherActionName = @"AnotherActionName";
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         actionRunCount++;
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
