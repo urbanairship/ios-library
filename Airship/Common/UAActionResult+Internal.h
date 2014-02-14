@@ -23,19 +23,41 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UARemoveTagsAction.h"
-#import "UAPush.h"
+#import "UAActionResult.h"
 
-@implementation UARemoveTagsAction
+@interface UAActionResult ()
 
-- (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-    if ([arguments.value isKindOfClass:[NSString class]]) {
-        [[UAPush shared] removeTagFromCurrentDevice:arguments.value];
-    } else {
-        [[UAPush shared] removeTagsFromCurrentDevice:arguments.value];
-    }
-    [[UAPush shared] updateRegistration];
-    completionHandler([UAActionResult emptyResult]);
-}
+/**
+ * Creates an action result that indicates the arguments were rejected.
+ */
++ (instancetype)rejectedArgumentsResult;
+
+/**
+ * Creates an action result that indicates the action was not found.
+ */
++ (instancetype)actionNotFoundResult;
+
+
+/**
+ * The result value produced when running an action (can be nil).
+ */
+@property(nonatomic, strong) id value;
+
+/**
+ * An optional UAActionFetchResult that can be set if the action performed a background fetch.
+ */
+@property(nonatomic, assign) UAActionFetchResult fetchResult;
+
+/**
+ * An optional error value that can be set if the action was unable to perform its work successfully.
+ */
+@property(nonatomic, strong) NSError *error;
+
+/**
+ * The actions run status.
+ */
+@property(nonatomic, assign) UAActionStatus status;
+
 
 @end
+

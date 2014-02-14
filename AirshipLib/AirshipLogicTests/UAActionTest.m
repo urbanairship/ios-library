@@ -164,7 +164,7 @@
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
         XCTAssertTrue(isMainThread(), @"we should be on the main thread");
-        handler([UAActionResult none]);
+        handler([UAActionResult emptyResult]);
     }];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
@@ -199,7 +199,7 @@
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
-            handler([UAActionResult none]);
+            handler([UAActionResult emptyResult]);
             dispatch_semaphore_signal(self.semaphore);
         });
     }];
@@ -225,7 +225,7 @@
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"performWithArguments:withCompletionHandler: should not be called if the action cannot accept the arguments");
-        return completionHandler([UAActionResult none]);
+        return completionHandler([UAActionResult emptyResult]);
     }];
 
     action.acceptsArgumentsBlock = ^(UAActionArguments *args) {
@@ -239,7 +239,7 @@
 
     XCTAssertNil(blockResult.value, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a nil value");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNoData, @"runWithArguments:withCompletionHandler: should default to calling completion handler with UAActionFetchResultNoData");
-    XCTAssertNotNil(blockResult.error, @"runWithArguments:withCompletionHandler: should default to calling completion handler with an error");
+    XCTAssertEqual(blockResult.status, UAActionStatusArgumentsRejected, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a rejected arguments result");
 }
 
 @end

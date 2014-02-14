@@ -384,7 +384,7 @@
     __block BOOL didContinuationActionRun = NO;
     __block UAActionResult *result;
 
-    UAActionResult *errorResult = [UAActionResult error:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
+    UAActionResult *errorResult = [UAActionResult resultWithError:[NSError errorWithDomain:@"some-domian" code:10 userInfo:nil]];
 
 
     // Set up action to return an error result
@@ -394,7 +394,7 @@
 
     UAAction *continuationAction = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler){
         didContinuationActionRun = YES;
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action continueWith:continuationAction];
@@ -470,7 +470,7 @@
 
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         XCTFail(@"When filter returns NO, it should not perform the original action");
-        return completionHandler([UAActionResult none]);
+        return completionHandler([UAActionResult emptyResult]);
     }];
 
     action = [action filter:^BOOL(UAActionArguments *args) {

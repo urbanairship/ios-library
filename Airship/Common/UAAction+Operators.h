@@ -25,6 +25,15 @@
 
 #import "UAAction.h"
 
+NS_ENUM(NSInteger, UAActionOperatorErrorCode) {
+    UAActionOperatorErrorCodeChildActionRejectedArgs,
+};
+
+/**
+ * The domain for errors encountered during an action operator.
+ */
+extern NSString * const UAActionOperatorErrorDomain;
+
 /**
  * A block that defines work that can be done before the action is performed.
  */

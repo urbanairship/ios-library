@@ -51,7 +51,7 @@
 - (void)performWithArguments:(UAActionArguments *)arguments withCompletionHandler:(UAActionCompletionHandler)completionHandler {
     [UAPush shared].tags = arguments.value;
     [[UAPush shared] updateRegistration];
-    completionHandler([UAActionResult none]);
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end

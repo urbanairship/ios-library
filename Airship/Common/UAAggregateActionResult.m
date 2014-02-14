@@ -24,6 +24,7 @@
  */
 
 #import "UAAggregateActionResult.h"
+#import "UAActionResult+Internal.h"
 
 @implementation UAAggregateActionResult
 

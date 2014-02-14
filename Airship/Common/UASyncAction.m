@@ -33,7 +33,7 @@
 
 - (UAActionResult *)performWithArguments:(id)arguments {
     //override
-    return [UAActionResult none];
+    return [UAActionResult emptyResult];
 }
 
 @end

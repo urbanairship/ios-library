@@ -57,7 +57,7 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
         NSError *error = [NSError errorWithDomain:UAMailComposerActionErrorDomain
                                              code:UAMailComposerActionErrorCodeMailDisabled
                                          userInfo:@{NSLocalizedDescriptionKey : @"mail is disabled"}];
-        self.handler([UAActionResult error:error]);
+        self.handler([UAActionResult resultWithError:error]);
     }
 }
 
@@ -66,7 +66,7 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
                         error:(NSError*)error {
     //TODO: handle additional error codes? Is it appropriate to continue if we reach an error here?
     [self.mfViewController dismissViewControllerAnimated:YES completion:nil];
-    self.handler([UAActionResult none]);
+    self.handler([UAActionResult emptyResult]);
 }
 
 @end
