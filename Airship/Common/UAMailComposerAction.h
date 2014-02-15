@@ -49,8 +49,9 @@ extern NSString * const UAMailComposerActionErrorDomain;
  * Expected argument values: NSDictionary or UAMailComposerData.
  * NSDictionary arguments values must be KVC compliant representations of the `UAMailComposerData` class.
  *
- * Valid situations: `UASituationForegroundPush`, `UASituationLaunchedFromPush`, `UASituationLaunchedFromSpringBoard`,
- * `UASituationRichPush`.
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
+ * UASituationWebViewInvocation, UASituationLaunchedFromSpringBoard,
+ * and UASituationManualInvocation
  *
  * Result value: nil
  *

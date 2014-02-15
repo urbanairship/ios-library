@@ -49,10 +49,10 @@
     NSURL *url = [request URL];
 
     /*
-     ua://command/[<arguments>][?<dictionary>]
+     uairship://command/[<arguments>][?<dictionary>]
      */
 
-    if ([[url scheme] isEqualToString:@"ua"]) {
+    if ([[url scheme] isEqualToString:@"uairship"] || [[url scheme] isEqualToString:@"ua"]) {
         if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
             [self performJSDelegate:wv url:url];
             return NO;
@@ -139,19 +139,28 @@
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    if ([data.name isEqualToString:@"run-action"] || [data.name isEqualToString:@"run-basic-action"]) {
-        [self performAsyncJSCallWithDelegate:actionJSDelegate
+    BOOL isUsingNewScheme = [url.scheme isEqualToString:@"uairship"];
+    BOOL isUsingDeprecatedScheme = [url.scheme isEqualToString:@"ua"];
+
+    if (isUsingNewScheme) {
+        if ([data.name isEqualToString:@"run-actions"] ||
+            [data.name isEqualToString:@"run-basic-actions"] ||
+            [data.name isEqualToString:@"run-action-cb"]) {
+
+            [self performAsyncJSCallWithDelegate:actionJSDelegate
                                      withWebView:webView
                                         withData:data];
-    } else {
-        //user JS delegate, if applicable
-        [self performAsyncJSCallWithDelegate:userJSDDelegate
+
+        } else {
+            [self performAsyncJSCallWithDelegate:userJSDDelegate
                                      withWebView:webView
                                         withData:data];
+        }
+    } else if (isUsingDeprecatedScheme) {
         //deprecated inbox JS delegate, if applicable
         [self performDeprecatedJSCallWithDelegate:inboxJSDelegate
-                                          withWebView:webView
-                                             withData:data];
+                                      withWebView:webView
+                                         withData:data];
     }
 }
 

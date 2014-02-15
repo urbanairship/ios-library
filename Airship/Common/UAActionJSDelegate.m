@@ -28,14 +28,14 @@
 }
 
 /**
- * Handles the run-action command.
+ * Handles the run-action-cb command.
  *
  * This supports async callbacks into JS functions, as well the passing of
  * arbitrary argument objects through JSON serialization of core types.  It is best
  * used from JavaScript, but can be used entirely through URL loading as well.
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
- * @param options The options passed in the JS delegate callback.
+ * @param options The options passed in the JS delegate call.
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
@@ -66,22 +66,18 @@
     //if we found an action by that name, and there's either no argument or a correctly decoded argument
     if (decodedArgumentsValue || !encodedArgumentsValue) {
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                withSituation:UASituationRichPushAction];
+                                                                withSituation:UASituationWebViewInvocation];
         [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-            if (result.error){
-                UA_LDEBUG(@"action %@ completed with an error", decodedActionName);
-                if (callbackID) {
-                    //pass the error description back into JS wrapped in an Error object
-                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                                        result.error.localizedDescription,
-                                        callbackID];
-                    completionHandler(script);
-                } else {
-                    completionHandler(nil);
-                }
-            } else {
-                UA_LDEBUG(@"action %@ completed successfully", actionName);
-                if (callbackID) {
+            UA_LDEBUG("Action %@ finished executing with status %ld", actionName, result.status);
+            if (!callbackID) {
+                completionHandler(nil);
+                return;
+            }
+
+            NSString *script = nil;
+            switch (result.status) {
+                case UAActionStatusCompleted:
+                {
                     NSString *resultString;
                     if (result.value) {
                         //if the action completed with a result value, serialize into JSON
@@ -91,12 +87,27 @@
                     //in the case where there is no result value, pass null
                     resultString = resultString ?: @"null";
                     //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
-                    NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
-                    completionHandler(script);
-                } else {
-                    completionHandler(nil);
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
+                    break;
                 }
+                case UAActionStatusActionNotFound:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                              [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName],
+                              callbackID];
+                    break;
+                case UAActionStatusError:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                               result.error.localizedDescription,
+                               callbackID];
+                    break;
+                case UAActionStatusArgumentsRejected:
+                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                              [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName],
+                              callbackID];
+                    break;
             }
+
+            completionHandler(script);
         }];
     } else {
         if (callbackID) {
@@ -110,7 +121,55 @@
 }
 
 /**
- * Handles the run-basic-action callback.
+ * Handles the run-actions command.
+ *
+ * This supports async callbacks into JS functions, as well the passing of
+ * arbitrary argument objects through JSON serialization of core types.  It is best
+ * used from JavaScript, but can be used entirely through URL loading as well.
+ *
+ * @param options The options passed in the JS delegate call.
+ * @param completionHandler The completion handler passed in the JS delegate call.
+ */
+- (void)runActionsWithOptions:(NSDictionary *)options
+          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+
+    for (NSString *actionName in options) {
+
+        NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+        if (!decodedActionName) {
+            UA_LDEBUG(@"unable to decode action name");
+            completionHandler(nil);
+            return;
+        }
+
+        NSString *encodedArgumentsValue = [options valueForKey:actionName];
+        id decodedArgumentsValue;
+        if (encodedArgumentsValue) {
+            decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
+        }
+
+        //if we found an action by that name, and there's either no argument or a correctly decoded argument
+        if (decodedArgumentsValue || !encodedArgumentsValue) {
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationWebViewInvocation];
+            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+                if (result.status == UAActionStatusCompleted) {
+                    UA_LDEBUG(@"action %@ completed successfully", actionName);
+                } else {
+                    UA_LDEBUG(@"action %@ completed with an error", actionName);
+                }
+            }];
+        } else {
+            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+        }
+    }
+
+    completionHandler(nil);
+}
+
+
+/**
+ * Handles the run-basic-actions callback.
  *
  * This does not support callbacks into the JS layer, and only allows
  * for passing string arguments to actions.  For convenience, multiple actions can
@@ -119,7 +178,7 @@
  * @param options The options passed in the JS delegate callback.
  * @param completionHandler The completion handler passed in the JS delegate callback.
  */
-- (void)runBasicActionWithOptions:(NSDictionary *)options
+- (void)runBasicActionsWithOptions:(NSDictionary *)options
          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
@@ -132,17 +191,19 @@
         NSString *encodedArgumentsValue = [options objectForKey:actionName];
         NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationRichPushAction];
+        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation];
 
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (!encodedArgumentsValue || decodedArgumentsValue) {
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.error) {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                } else {
+                if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
+                } else {
+                    UA_LDEBUG(@"action %@ completed with an error", actionName);
                 }
             }];
+        } else {
+            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
         }
     }
 
@@ -154,8 +215,8 @@
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
 
     //we need at least one argument
-    //run-action is the full js/callback interface
-    if ([data.name isEqualToString:@"run-action"]) {
+    //run-action-cb is the full JS callback interface, and only runs one action at a time
+    if ([data.name isEqualToString:@"run-action-cb"]) {
         //the callbackID is optional, if present we can make an async callback
         //into the JS environment, otherwise we'll just run the action to completion
 
@@ -163,10 +224,14 @@
         [self runActionWithCallbackID:callbackID
                           withOptions:data.options
                 withCompletionHandler:completionHandler];
-    } else if ([data.name isEqualToString:@"run-basic-action"]) {
-        //run-basic-action is the 'demo-friendly' version with implicit string argument values and
+    } else if ([data.name isEqualToString:@"run-actions"]){
+        //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
-        [self runBasicActionWithOptions:data.options withCompletionHandler:completionHandler];
+        [self runActionsWithOptions:data.options withCompletionHandler:completionHandler];
+    } else if ([data.name isEqualToString:@"run-basic-actions"]) {
+        //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
+        //allows multiple simultaneous actions
+        [self runBasicActionsWithOptions:data.options withCompletionHandler:completionHandler];
     } else {
         //arguments not recognized, pass a nil script result
         completionHandler(nil);

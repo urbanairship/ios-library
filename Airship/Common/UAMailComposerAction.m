@@ -40,7 +40,7 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
 
 - (void)displayWithData:(UAMailComposerData *)data withHandler:(UAActionCompletionHandler)handler {
     if ([MFMailComposeViewController canSendMail]) {
-		self.mfViewController = [[MFMailComposeViewController alloc] init];
+        self.mfViewController = [[MFMailComposeViewController alloc] init];
 
         __weak id weakSelf = self;
         self.mfViewController.mailComposeDelegate = weakSelf;
@@ -51,14 +51,14 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
         [self.mfViewController setMessageBody:data.body?:@"" isHTML:NO];
         [self.mfViewController setToRecipients:data.recipients];
 
-		[rootViewController presentViewController:self.mfViewController animated:YES completion:nil];
+        [rootViewController presentViewController:self.mfViewController animated:YES completion:nil];
 
-	} else {
+    } else {
         NSError *error = [NSError errorWithDomain:UAMailComposerActionErrorDomain
                                              code:UAMailComposerActionErrorCodeMailDisabled
                                          userInfo:@{NSLocalizedDescriptionKey : @"mail is disabled"}];
-        self.handler([UAActionResult error:error]);
-	}
+        self.handler([UAActionResult resultWithError:error]);
+    }
 }
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller
@@ -66,7 +66,7 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
                         error:(NSError*)error {
     //TODO: handle additional error codes? Is it appropriate to continue if we reach an error here?
     [self.mfViewController dismissViewControllerAnimated:YES completion:nil];
-    self.handler([UAActionResult none]);
+    self.handler([UAActionResult emptyResult]);
 }
 
 @end
@@ -105,6 +105,11 @@ NSString * const UAMailComposerActionErrorDomain = @"com.urbanairship.actions.ma
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    //no background push
+    if (arguments.situation == UASituationBackgroundPush) {
+        return NO;
+    };
+    
     return (BOOL)[arguments.value isKindOfClass:[UAMailComposerData class]];
 }
 

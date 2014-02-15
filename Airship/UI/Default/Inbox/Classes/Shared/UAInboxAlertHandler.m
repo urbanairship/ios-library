@@ -59,7 +59,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 
-	if (buttonIndex != alertView.cancelButtonIndex) {
+    if (buttonIndex != alertView.cancelButtonIndex) {
         self.viewBlock();
     }
 
@@ -73,7 +73,7 @@
     self.notificationAlert = nil;
 
     /* display a new alert */
-	self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
+    self.notificationAlert = [[UIAlertView alloc] initWithTitle:UA_INBOX_TR(@"UA_New_Message_Available_Title")
                                                         message:message
                                                        delegate:self
                                               cancelButtonTitle:UA_INBOX_TR(@"UA_OK")

@@ -33,7 +33,7 @@ UAirship.delegateCallURL = function() {
     }
 
     // flatten arguments into url
-    var url = "ua://" + name + "/" + uri.join("/");
+    var url = "uairship://" + name + "/" + uri.join("/");
 
     // flatten dictionary into url
     if (dict !== null) {
@@ -67,7 +67,7 @@ UAirship.runAction = function(actionName, argument, callback) {
 
     opt[actionName] = JSON.stringify(argument);
 
-    var url = UAirship.delegateCallURL('run-action', callbackKey, opt);
+    var url = UAirship.delegateCallURL('run-action-cb', callbackKey, opt);
 
     window[callbackKey] = onready;
 

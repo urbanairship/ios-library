@@ -166,7 +166,7 @@ SINGLETON_INTERFACE(UAInbox);
 
 /**
  * The user-configurable JavaScript delegate, implementing
- * the UAInboxJavaScriptDelegate protocol.
+ * the deprecated UAInboxJavaScriptDelegate protocol.
  * 
  * NOTE: this delegate is not retained.
  */

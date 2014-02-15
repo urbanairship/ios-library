@@ -50,9 +50,9 @@
  * Test the argumentsWithValue:withSituation factory method sets the values correctly
  */
 - (void)testArgumentsWithValue {
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value" withSituation:@"some-situation"];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"some-value" withSituation:UASituationBackgroundPush];
     XCTAssertEqualObjects(@"some-value", args.value, @"argumentsWithValue:withSituation: is not setting the value correctly");
-    XCTAssertEqualObjects(@"some-situation", args.situation, @"argumentsWithValue:withSituation: is not setting the situation correctly");
+    XCTAssertEqual(UASituationBackgroundPush, args.situation, @"argumentsWithValue:withSituation: is not setting the situation correctly");
 }
 
 /*

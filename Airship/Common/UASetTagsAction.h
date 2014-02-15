@@ -31,8 +31,9 @@
  *
  * Expected argument values: NSString (single tag) and NSArray (single or multiple tags)
  *
- * Valid situations: `UASituationForegroundPush`, `UASituationBackgroundPush`, `UASituationLaunchedFromPush`
- * `UASituationRichPushAction`, `UASituationLaunchedFromSpringBoard`
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
+ * UASituationWebViewInvocation, UASituationLaunchedFromSpringBoard,
+ * and UASituationManualInvocation
  *
  * Result value: nil
  *

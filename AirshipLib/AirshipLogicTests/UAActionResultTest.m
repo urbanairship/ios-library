@@ -58,7 +58,7 @@
  * Test the none factory method
  */
 - (void)testNone {
-    UAActionResult *result = [UAActionResult none];
+    UAActionResult *result = [UAActionResult emptyResult];
 
     XCTAssertNil(result.error, @"none should create a result with a nil error");
     XCTAssertNil(result.value, @"none should create a result with a nil value");
@@ -70,7 +70,7 @@
  */
 - (void)testError {
     NSError *error = [NSError errorWithDomain:@"some-domain" code:200 userInfo:nil];
-    UAActionResult *result = [UAActionResult error:error];
+    UAActionResult *result = [UAActionResult resultWithError:error];
 
     XCTAssertEqualObjects(error, result.error, @"Result's error is not being set correctly");
     XCTAssertNil(result.value, @"error should create a result with a nil value");

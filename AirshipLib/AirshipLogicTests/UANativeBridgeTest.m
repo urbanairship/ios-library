@@ -14,7 +14,8 @@
 - (void)setUp {
     [super setUp];
 
-    self.nativeBridge = [NSString stringWithCString:(const char *)UANativeBridge_js encoding:NSUTF8StringEncoding];
+    NSData *data = [NSData dataWithBytes:(const char *)UANativeBridge_js length:UANativeBridge_js_len];
+    self.nativeBridge = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
     self.jsc = [[JSContext alloc] initWithVirtualMachine:[[JSVirtualMachine alloc] init]];
 
@@ -45,11 +46,11 @@
 // UAirship.delegateCallURL is a pure function that builds JS delegate call URLs out of the passed arguments
 - (void)testdelegateCallURL {
     JSValue *value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 3)"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/3");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/3");
     value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', {'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/?baz=boz");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/?baz=boz");
     value = [self.jsc evaluateScript:@"UAirship.delegateCallURL('foo', 'bar', {'baz':'boz'})"];
-    XCTAssertEqualObjects(value.toString, @"ua://foo/bar?baz=boz");
+    XCTAssertEqualObjects(value.toString, @"uairship://foo/bar?baz=boz");
 }
 
 // Test that UAirship.invoke attaches and removes an iframe from the DOM
@@ -61,7 +62,7 @@
     __block NSDictionary *appendedChild;
     __block NSDictionary *removedChild;
 
-    NSString *url = @"ua://foo/bar";
+    NSString *url = @"uairship://foo/bar";
 
     //this will be the document.body object
     NSDictionary *body = @{@"appendChild":^(id child){
@@ -98,6 +99,8 @@
 
     //set to YES if UAirship.invoke is called
     __block BOOL invoked = NO;
+
+    __block NSString *command;
     //set to YES if the callback passed into UAirship.runAction executes
     __block BOOL finished = NO;
     //the result value passed through the runAction callback
@@ -110,6 +113,7 @@
         UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url]];
         NSString *cbID = [data.arguments firstObject];
         invoked = YES;
+        command = data.name;
         NSString *callFinishAction = [NSString stringWithFormat:@"UAirship.finishAction(null,'\"done\"', '%@')",cbID];
         [weakContext evaluateScript:callFinishAction];
     };
@@ -130,6 +134,7 @@
         };"];
 
     XCTAssertTrue(invoked, @"UAirship.invoke should have been called");
+    XCTAssertEqualObjects(command, @"run-action-cb", @"delegate command should be 'run-action-cb'");
     XCTAssertTrue(finished, @"finishTest should have been run in the action callback");
     XCTAssertEqualObjects(finishResult, @"done", @"result of finishTest should be 'done'");
 }

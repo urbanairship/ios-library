@@ -23,11 +23,11 @@
 - (void)setUp {
     [super setUp];
     self.mockPush = [OCMockObject niceMockForClass:[UAPush class]];
-    self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:nil];
-    self.arrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @"there"] withSituation:nil];
-    self.emptyArrayArgs = [UAActionArguments argumentsWithValue:@[] withSituation:nil];
-    self.badArrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @10] withSituation:nil];
-    self.numberArgs = [UAActionArguments argumentsWithValue:@10 withSituation:nil];
+    self.stringArgs = [UAActionArguments argumentsWithValue:@"hi" withSituation:UASituationWebViewInvocation];
+    self.arrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @"there"] withSituation:UASituationManualInvocation];
+    self.emptyArrayArgs = [UAActionArguments argumentsWithValue:@[] withSituation:UASituationForegroundPush];
+    self.badArrayArgs = [UAActionArguments argumentsWithValue:@[@"hi", @10] withSituation:UASituationLaunchedFromPush];
+    self.numberArgs = [UAActionArguments argumentsWithValue:@10 withSituation:UASituationWebViewInvocation];
     [UAPush configure:self.mockPush];
 }
 
@@ -41,21 +41,28 @@
  * Makes sure that the passed action rejects the background situation
  */
 - (void)validateSituationForTagAction:(UAAction *)action {
+    UASituation situations[4] = {
+        UASituationLaunchedFromPush,
+        UASituationForegroundPush,
+        UASituationLaunchedFromSpringBoard,
+        UASituationWebViewInvocation
+    };
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:@[@"hey!"] withSituation:nil];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@[@"hey!"] withSituation:UASituationLaunchedFromPush];
 
     XCTAssertTrue([action acceptsArguments:args], @"nil situation should be acceptable");
 
-    for (NSString *situation in @[UASituationLaunchedFromPush, UASituationForegroundPush, UASituationLaunchedFromSpringBoard, UASituationRichPushAction]) {
-        args.situation = situation;
-        NSLog(@"situation!: %@", args.situation);
+
+    for (NSInteger i = 0; i < 4; i++) {
+        args.situation = situations[i];
+        NSLog(@"situation!: %ld", args.situation);
         XCTAssertTrue([action acceptsArguments:args], @"any non-background situation should be valid");
     }
 
     args.situation = UASituationBackgroundPush;
     XCTAssertFalse([action acceptsArguments:args], @"background situation should be invalid");
 
-    args.situation = nil;
+    args.situation = UASituationLaunchedFromPush;
 }
 
 /**

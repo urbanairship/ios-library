@@ -59,7 +59,7 @@ static BOOL runiPhoneTargetOniPad = NO;
     if (self) {
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"UAInboxLocalization.bundle"];
         self.localizationBundle = [NSBundle bundleWithPath:path];
-		
+
         self.useOverlay = NO;
         self.isVisible = NO;
         
@@ -133,19 +133,19 @@ static BOOL runiPhoneTargetOniPad = NO;
             [UAInboxNavUI displayInboxInViewController:parentViewController animated:NO];
         }
     }
-	
+
     // If the message view is already open, just load the first message.
     if ([parentViewController isKindOfClass:[UINavigationController class]]) {
-		
+
         // For iPhone
         UINavigationController *navController = (UINavigationController *)parentViewController;
-        
-		if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
+
+        if ([navController.topViewController class] == [UAInboxMessageViewController class]) {
             [[UAInboxNavUI shared].messageViewController loadMessageForID:messageID];
         } else {
-			
+
             [UAInboxNavUI shared].messageViewController = 
-                [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];			
+                [[UAInboxMessageViewController alloc] initWithNibName:@"UAInboxMessageViewController" bundle:nil];
             [[UAInboxNavUI shared].messageViewController loadMessageForID:messageID];
             [navController pushViewController:[UAInboxNavUI shared].messageViewController animated:YES];
         }

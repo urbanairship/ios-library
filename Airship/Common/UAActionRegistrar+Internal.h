@@ -31,7 +31,7 @@
 @interface UAActionRegistrar ()
 
 /**
- * Map of names to a map of situations to entries
+ * Map of names to action entries
  */
 @property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
 

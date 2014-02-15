@@ -27,13 +27,6 @@
 #import "UAActionResult.h"
 #import "UAActionArguments.h"
 
-NS_ENUM(NSInteger, UAActionErrorCode) {
-    UAActionErrorCodeArgumentsRejected
-};
-
-extern NSString * const UAActionErrorDomain;
-
-
 @class UAAction;
 
 /**

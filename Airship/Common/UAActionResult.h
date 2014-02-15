@@ -44,6 +44,31 @@ typedef enum  {
 } UAActionFetchResult;
 
 
+typedef NS_ENUM(NSInteger, UAActionStatus) {
+    /**
+     * The action accepted the arguments and executed without an error.
+     */
+    UAActionStatusCompleted,
+
+    /**
+     * The action was not performed because the arguments were rejected by
+     * either the predicate in the registry or the action.
+     */
+    UAActionStatusArgumentsRejected,
+
+    /**
+     * The action was not performed because the action was not found
+     * in the registry. This value is only possible if trying to run an
+     * action by name through the runner.
+     */
+    UAActionStatusActionNotFound,
+
+    /**
+     * The action encountered an error during execution.
+     */
+    UAActionStatusError
+};
+
 /**
  * A class that holds the results of running an action, with optional metadata.
  */
@@ -52,17 +77,22 @@ typedef enum  {
 /**
  * The result value produced when running an action (can be nil).
  */
-@property(nonatomic, strong) id value;
+@property(nonatomic, strong, readonly) id value;
 
 /**
  * An optional UAActionFetchResult that can be set if the action performed a background fetch.
  */
-@property(nonatomic, assign) UAActionFetchResult fetchResult;
+@property(nonatomic, assign, readonly) UAActionFetchResult fetchResult;
 
 /**
  * An optional error value that can be set if the action was unable to perform its work successfully.
  */
-@property(nonatomic, strong) NSError *error;
+@property(nonatomic, strong, readonly) NSError *error;
+
+/**
+ * The action's run status.
+ */
+@property(nonatomic, assign, readonly) UAActionStatus status;
 
 /**
  * Creates a UAActionResult with the supplied value. The `fetchResult` and `error` properties
@@ -86,9 +116,8 @@ typedef enum  {
 /**
  * Creates an "empty" UAActionResult with the value, fetch result and error set to
  * nil, UAActionFetchResultNone, and nil, respectively.
- *
  */
-+ (instancetype)none;
++ (instancetype)emptyResult;
 
 /**
  * Creates a UAActionResult with the value and fetch result set to
@@ -97,6 +126,6 @@ typedef enum  {
  *
  * @param An instance of NSError.
  */
-+ (instancetype)error:(NSError *)error;
++ (instancetype)resultWithError:(NSError *)error;
 
 @end
