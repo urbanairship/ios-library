@@ -81,6 +81,8 @@
 		769AFD0018AD4D9B006696A9 /* ChannelRegistrationKIFTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */; };
 		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
 		76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
+		76C69E9618AEC27900572214 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 76C69E9518AEC27900572214 /* JRSwizzle.m */; };
+		76C69E9918AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
 		BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB6B828B15892C0D00C42B03 /* TagTest.plist */; };
@@ -290,6 +292,10 @@
 		769AFCEC18AD4B1B006696A9 /* ChannelRegistrationKIFTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ChannelRegistrationKIFTest-Prefix.pch"; sourceTree = "<group>"; };
 		769AFCFE18AD4D9B006696A9 /* ChannelRegistrationKIFTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelRegistrationKIFTest.h; sourceTree = "<group>"; };
 		769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelRegistrationKIFTest.m; sourceTree = "<group>"; };
+		76C69E9418AEC27900572214 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
+		76C69E9518AEC27900572214 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
+		76C69E9718AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+UAAdditions.h"; sourceTree = "<group>"; };
+		76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAChannelRegistrationPayload+UAAdditions.m"; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
@@ -699,6 +705,10 @@
 			children = (
 				769AFCFE18AD4D9B006696A9 /* ChannelRegistrationKIFTest.h */,
 				769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */,
+				76C69E9718AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.h */,
+				76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */,
+				76C69E9418AEC27900572214 /* JRSwizzle.h */,
+				76C69E9518AEC27900572214 /* JRSwizzle.m */,
 				769AFCE518AD4B1B006696A9 /* Supporting Files */,
 			);
 			path = ChannelRegistrationKIFTest;
@@ -1092,6 +1102,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76C69E9618AEC27900572214 /* JRSwizzle.m in Sources */,
+				76C69E9918AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m in Sources */,
 				769AFD0018AD4D9B006696A9 /* ChannelRegistrationKIFTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
