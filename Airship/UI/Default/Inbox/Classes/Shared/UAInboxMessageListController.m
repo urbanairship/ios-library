@@ -183,6 +183,7 @@
     self.markAsReadButtonItem = nil;
 }
 
+// for iOS5
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
 }

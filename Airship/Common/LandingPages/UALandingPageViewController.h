@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -24,31 +24,37 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UAGlobal.h"
+
+#import "UIWebView+UAAdditions.h"
 
 /**
- * This class is designed to take the place of the default application delegate and forward messages
- * to both a surrogate delegate and the original delegate. This is useful for intercepting messages
- * sent to the app delegate that do not have corresponding NSNotificationCenter events (such as 
- * application:didReceiveRemoteNotification: and other APNS-related calls).
- *
- * @note Delegates are typically not retained, but in this case we will take responsibility for them
- * as we're essentially a man in the middle and we don't want to lose them.
+ * This class provides an overlay window that can be popped over
+ * the app's UI without totally obscuring it, and that loads a
+ * given rich push message in an embedded UIWebView.  It is used
+ * in the reference UI implementation for displaying in-app messages
+ * without requiring navigation to the inbox.
  */
-@interface UABaseAppDelegateSurrogate : NSProxy<UIApplicationDelegate>
-
-//NSProxy has no default init method, we have to declare it to satisfy the compiler
-- (id)init;
+@interface UALandingPageViewController : UIViewController<UIWebViewDelegate>
 
 /**
- * The surrogate delegate. This delegate will receive all messages initially destined for
- * the original app delegate (defaultAppDelegate).
+ * The UIWebView used to display the message content.
  */
-@property(nonatomic, strong) NSObject<UIApplicationDelegate> *surrogateDelegate;
+@property(nonatomic, strong) UIWebView *webView;
 
 /**
- * The original app delegate.
+ * The URL being displayed.
  */
-@property(nonatomic, strong) NSObject<UIApplicationDelegate> *defaultAppDelegate;
+@property(nonatomic, strong) NSURL *url;
+
++ (void)showURL:(NSURL *)url;
+
++ (void)closeWindow:(BOOL)animated;
+
+/**
+ * Initializer, creates an overlay window and loads the given content within a particular view controller.
+ * @param viewController the view controller to display the overlay in
+ * @param messageID the message ID of the rich push message to display
+ */
+- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url;
 
 @end

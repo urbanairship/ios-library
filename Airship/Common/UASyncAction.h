@@ -25,6 +25,11 @@
 
 #import "UAAction.h"
 
+/**
+ * Derivative of UAAction that defines a variant of the performWithArguments method
+ * that returns a UAActionResult synchronously. This is a convenience class intended
+ * for scenarios where an asynchronous completion handler is unnecessary.
+ */
 @interface UASyncAction : UAAction
 
 /**

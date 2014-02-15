@@ -32,17 +32,20 @@
 #import "UAPushSettingsTagsViewController.h"
 #import "UAPushSettingsSoundsViewController.h"
 #import "UAPushSettingsUserInfoViewController.h"
+#import "UAPushSettingsChannelInfoViewController.h"
 #import "UALocationSettingsViewController.h"
 #import "UAUser.h"
 
 #define kUAPushDeviceTokenPath @"deviceToken"
+#define kUAPushChannelIDPath @"channelID"
 
 enum {
     SectionDeviceToken = 0,
     SectionUser        = 1,
     SectionHelp        = 2,
     SectionLocation    = 3,
-    SectionCount       = 4
+    SectionChannel     = 4,
+    SectionCount       = 5
 };
 
 enum {
@@ -61,17 +64,11 @@ enum {
 
 static NSUInteger locationRowCount = 1;
 static NSUInteger userRowCount = 1;
+static NSUInteger channelRowCount = 1;
 
 @implementation UAPushMoreSettingsViewController
 
 - (void)dealloc {
-    [[UAPush shared] removeObserver:self];
-
-
-
-    
-    
-
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.userCreatedObserver name:UAUserCreatedNotification object:nil];
     
@@ -100,13 +97,13 @@ static NSUInteger userRowCount = 1;
 
     [self initCells];
 
-    [[UAPush shared] addObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
     [[UAPush shared] addObserver:self forKeyPath:kUAPushDeviceTokenPath options:NSKeyValueObservingOptionNew context:nil];
+    [[UAPush shared] addObserver:self forKeyPath:kUAPushChannelIDPath options:NSKeyValueObservingOptionNew context:nil];
 
     [self updateCellValues];
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
@@ -115,6 +112,7 @@ static NSUInteger userRowCount = 1;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:NO];
     [[UAPush shared] removeObserver:self forKeyPath:kUAPushDeviceTokenPath];
+    [[UAPush shared] removeObserver:self forKeyPath:kUAPushChannelIDPath];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -138,6 +136,7 @@ static NSUInteger userRowCount = 1;
     self.helpSoundsCell = nil;
     self.helpLogCell = nil;
     self.locationCell = nil;
+    self.channelCell = nil;
 
     self.footerImageView = nil;
     self.tableView = nil;
@@ -167,6 +166,11 @@ static NSUInteger userRowCount = 1;
     self.deviceTokenTagsCell.textLabel.text = @"Tags";
     self.deviceTokenTagsCell.accessibilityLabel = @"Tags";
     self.deviceTokenTagsCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+    self.channelCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
+    self.channelCell.textLabel.text = @"Channel ID";
+    self.channelCell.accessibilityLabel = @"Channel ID";
+    self.channelCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     self.usernameCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:nil];
     self.usernameCell.textLabel.text = @"Username";
@@ -219,6 +223,8 @@ static NSUInteger userRowCount = 1;
             return (NSInteger)locationRowCount;
         case SectionUser:
             return (NSInteger)userRowCount;
+        case SectionChannel:
+            return (NSInteger)channelRowCount;
         default:
             break;
     }
@@ -236,6 +242,8 @@ static NSUInteger userRowCount = 1;
             return @"Location";
         case SectionUser:
             return @"User Info";
+        case SectionChannel:
+            return @"Channel Info";
         default:
             break;
     }
@@ -266,6 +274,8 @@ static NSUInteger userRowCount = 1;
                 break;
         }
         
+    } else if (indexPath.section == SectionChannel) {
+        cell = self.channelCell;
     } else if (indexPath.section == SectionUser) {
         cell = self.usernameCell ;
     } else if (indexPath.section == SectionHelp) {
@@ -316,6 +326,12 @@ static NSUInteger userRowCount = 1;
         } else {
             [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
         }
+    } else if (indexPath.section == SectionChannel) {
+        if (!self.channelInfoViewController ) {
+            self.channelInfoViewController = [[UAPushSettingsChannelInfoViewController alloc]
+                                              initWithNibName:@"UAPushSettingsChannelInfoViewController" bundle:nil];
+        }
+        [self.navigationController pushViewController:self.channelInfoViewController animated:YES];
     } else if (indexPath.section == SectionUser) {
         if (!self.userInfoViewController ) {
             self.userInfoViewController = [[UAPushSettingsUserInfoViewController alloc] initWithNibName:@"UAPushSettingsUserInfoView" bundle:nil];
@@ -350,7 +366,7 @@ static NSUInteger userRowCount = 1;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-    if ([keyPath isEqualToString:kUAPushDeviceTokenPath]) {
+    if ([keyPath isEqualToString:kUAPushDeviceTokenPath] || [keyPath isEqualToString:kUAPushChannelIDPath]) {
         [self updateCellValues];
 
         [self.deviceTokenCell setNeedsLayout];
@@ -358,6 +374,7 @@ static NSUInteger userRowCount = 1;
         [self.deviceTokenDisabledTypesCell setNeedsLayout];
         [self.deviceTokenAliasCell setNeedsLayout];
         [self.deviceTokenTagsCell setNeedsLayout];
+        [self.channelCell setNeedsLayout];
     }
 }
 
@@ -378,6 +395,7 @@ static NSUInteger userRowCount = 1;
         self.deviceTokenTagsCell.detailTextLabel.text = @"None";
     }
 
+    self.channelCell.detailTextLabel.text = [UAPush shared].channelID ? [UAPush shared].channelID : @"Unavailable";
     self.usernameCell.detailTextLabel.text = [UAUser defaultUser].username ?: @"Unavailable";
 }
 

@@ -23,13 +23,18 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 
-/**
- * This class is a replacement app delegate that handles incoming push notifications and registration
- * callbacks. When used with UABaseAppDelegateSurrogate, both this class and the original app delegate
- * can receive and respond to messages sent to the default app delegate.
- */
-@interface UAAutoAppDelegate : NSObject<UIApplicationDelegate>
+@interface UAPushSettingsChannelInfoViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, MFMailComposeViewControllerDelegate>
+
+@property (nonatomic, copy) NSString *text;
+//note: naming this property copyButton will confuse cocoa's getter naming conventions with respect to memory management
+@property (nonatomic, strong) IBOutlet UIButton *cpyButton;
+@property (nonatomic, strong) IBOutlet UIButton *emailButton;
+@property (nonatomic, strong) IBOutlet UILabel *channelIDLabel;
+
+- (IBAction)copyChannelID;
+- (IBAction)emailChannelID;
 
 @end

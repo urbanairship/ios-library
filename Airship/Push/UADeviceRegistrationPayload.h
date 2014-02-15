@@ -26,32 +26,55 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NSString *const UAPushJSONKey;
+@class UAChannelRegistrationPayload;
 
-extern UAPushJSONKey UAPushMultipleTagsJSONKey;
-extern UAPushJSONKey UAPushSingleTagJSONKey;
-extern UAPushJSONKey UAPushAliasJSONKey;
-extern UAPushJSONKey UAPushQuietTimeJSONKey;
-extern UAPushJSONKey UAPushTimeZoneJSONKey;
-extern UAPushJSONKey UAPushBadgeJSONKey;
+#define kUAPushMultipleTagsJSONKey @"tags"
+#define kUAPushSingleTagJSONKey @"tag"
+#define kUAPushAliasJSONKey @"alias"
+#define kUAPushQuietTimeJSONKey @"quiettime"
+#define kUAPushTimeZoneJSONKey @"tz"
+#define kUAPushBadgeJSONKey @"badge"
 
+/**
+ * The device registration payload.
+ */
 @interface UADeviceRegistrationPayload : NSObject
 
-- (id)initWithAlias:(NSString *)alias
-           withTags:(NSArray *)tags
-       withTimeZone:(NSString *)timeZone
-      withQuietTime:(NSDictionary *)quietTime
-          withBadge:(NSNumber *)badge;
-
-+ (id)payloadWithAlias:(NSString *)alias
++ (instancetype)payloadWithAlias:(NSString *)alias
               withTags:(NSArray *)tags
           withTimeZone:(NSString *)timeZone
          withQuietTime:(NSDictionary *)quietTime
              withBadge:(NSNumber *)badge;
 
-//autoreleased copy
+/**
+ * Factory method to create a device registration payload from a 
+ * channel registration payload.
+ *
+ * @param payload An instance of a UAChannelRegistrationPayload
+ * @return A UADeviceRegistrationPayload created from the
+ * UAChannelRegistrationPayload.
+ */
++ (instancetype)payloadFromChannelRegistrationPayload:(UAChannelRegistrationPayload *)payload;
+
+/**
+ * Gets the payload as an NSDictionary
+ *
+ * @return The payload represented as an NSDictionary.
+ */
 - (NSDictionary *)asDictionary;
+
+/**
+ * Gets the payload as a JSON NSString
+ *
+ * @return The payload represented as a JSON NSString.
+ */
 - (NSString *)asJSONString;
+
+/**
+ * Gets the payload as a JSON NSData.
+ *
+ * @return The payload as JSON NSData.
+ */
 - (NSData *)asJSONData;
 
 @end

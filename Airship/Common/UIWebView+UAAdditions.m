@@ -26,6 +26,7 @@
 #import "UIWebView+UAAdditions.h"
 #import "UAUser.h"
 #import "UAUtils.h"
+#import "UANativeBridge.h"
 
 @implementation UIWebView (UAAdditions)
 
@@ -79,9 +80,18 @@
     js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
 
     /*
-     * Define UAirship.handleCustomURL.
+     * Define action/native bridge functionality:
+     *
+     * UAirship.callbackURL,
+     * UAirship.invoke,
+     * UAirship.runAction,
+     * UAirship.finishAction
+     *
+     * See Airship/Common/JS/UANativeBridge.js for human-readable source
      */
-    js = [js stringByAppendingString:@"UAirship.invoke = function(url) { location = url; };"];
+
+    js = [js stringByAppendingString:[NSString stringWithCString:(const char *)UANativeBridge_js
+                                                        encoding:NSUTF8StringEncoding]];
 
     /*
      * Execute the JS we just constructed.
@@ -110,10 +120,10 @@
 }
 
 - (void)injectViewportFix {
+
     NSString *js = @"var metaTag = document.createElement('meta');"
     "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; initial-scale=1.0; maximum-scale=1.0;';"
-    "document.getElementsByTagName('head')[0].appendChild(metaTag);";
+    "metaTag.content = 'width=device-width; user-scalable=no;';";
 
     [self stringByEvaluatingJavaScriptFromString:js];
 }

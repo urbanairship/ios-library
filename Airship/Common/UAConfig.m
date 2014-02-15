@@ -48,6 +48,7 @@
         self.analyticsEnabled = YES;
         self.profilePath = [[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"];
         usesProductionPushServer_ = NO;
+        self.isSimulator = ([[[UIDevice currentDevice] model] rangeOfString:@"Simulator"].location != NSNotFound);
         self.cacheDiskSizeInMB = 100;
     }
     return self;
@@ -87,6 +88,7 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
+
             (unsigned long)self.cacheDiskSizeInMB];
 }
 
@@ -233,6 +235,11 @@
     dispatch_once(&usesProductionPred_, ^{
         if (self.profilePath) {
             self->usesProductionPushServer_ = [UAConfig isProductionProvisioningProfile:self.profilePath];
+        } else if (!self.isSimulator) {
+            // This appears to be the case for production apps distributed by the app store.
+            // The embedded.mobileprovision is stripped during Apple's re-signing/deployment process.
+            UA_LDEBUG(@"No profile found, but not a simulator: inProduction = YES");
+            self->usesProductionPushServer_ = YES;
         } else {
             UA_LERR(@"No profile found. Unable to automatically detect provisioning mode in the simulator. Falling back to inProduction as set: %d", self->_inProduction);
             self->usesProductionPushServer_ = self->_inProduction;
@@ -317,6 +324,7 @@
         _deviceAPIURL = [deviceAPIURL copy];
     }
 }
+
 #pragma mark -
 #pragma KVC Overrides
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {

@@ -28,9 +28,13 @@
 #import "UAIncomingPushAction.h"
 #import "UAIncomingRichPushAction.h"
 #import "UAOpenExternalURLAction.h"
+#import "UAAddTagsAction.h"
+#import "UARemoveTagsAction.h"
+#import "UASetTagsAction.h"
+
 
 @implementation UAActionRegistrar
-
+@dynamic registeredEntries;
 
 SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
@@ -38,136 +42,244 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     self = [super init];
     if (self) {
         self.registeredActionEntries = [[NSMutableDictionary alloc] init];
-        self.aliases = [[NSMutableDictionary alloc] init];
+        self.reservedEntryNames = [NSMutableArray array];
 
         [self registerDefaultActions];
     }
     return self;
 }
 
-- (void)registerAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias {
-    [self registerAction:action name:name alias:alias predicate:nil];
+
+-(BOOL)registerAction:(UAAction *)action names:(NSArray *)names {
+    return [self registerAction:action names:names predicate:nil];
 }
 
-- (void)registerAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
-    [self registerAction:action name:name alias:nil predicate:predicate];
+- (BOOL)registerAction:(UAAction *)action name:(NSString *)name {
+    return [self registerAction:action name:name predicate:nil];
 }
 
-- (void)registerAction:(UAAction *)action name:(NSString *)name {
-    [self registerAction:action name:name alias:nil predicate:nil];
+- (BOOL)registerAction:(UAAction *)action
+                  name:(NSString *)name
+             predicate:(UAActionPredicate)predicate {
+
+    NSArray *names = name ? @[name] : nil;
+    return [self registerAction:action names:names predicate:predicate];
 }
 
-- (void)registerAction:(UAAction *)action name:(NSString *)name alias:(NSString *)alias predicate:(UAActionPredicate)predicate {
-    // Clear any previous entries for the name
-    [self clearRegistryForName:name];
-    [self clearAlias:name];
+-(BOOL)registerAction:(UAAction *)action
+                names:(NSArray *)names
+            predicate:(UAActionPredicate)predicate {
 
-    // Clear any entries that registered under the name of the new alias
-    [self clearRegistryForName:alias];
-    [self clearAlias:alias];
-
-    // Register the action if we actually have an action
-    if (action) {
-        id newEntry = [UAActionRegistryEntry entryForAction:action name:name
-                                                      alias:alias predicate:predicate];
-        [self.registeredActionEntries setValue:newEntry forKey:name];
-
-        if (alias) {
-            [self.aliases setValue:name forKey:alias];
-        }
-    }
-}
-
-- (UAActionRegistryEntry *)registryEntryForName:(NSString *)name {
-    UAActionRegistryEntry *entry = [self.registeredActionEntries valueForKey:name];
-    if (!entry) {
-        NSString *nameFromAlias = [self.aliases valueForKey:name];
-        if (nameFromAlias) {
-            entry = [self.registeredActionEntries valueForKey:nameFromAlias];
-        }
-    }
-    return entry;
-}
-
-- (NSArray *)registeredEntries {
-    NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
-    [entries removeObjectsForKeys:kUAReservedActionKeys];
-    return [entries allValues];
-}
-
-- (BOOL)addSituationOverride:(NSString *)situation
-                     forName:(NSString *)name action:(UAAction *)action {
-
-    // Don't allow situation overrides on reserved actions
-    if (!name || [kUAReservedActionKeys containsObject:name]) {
-        UA_LWARN(@"Unable to override situations for reserved actions. %@ is a reserved action name.", name);
+    if (!action) {
+        UA_LWARN(@"Unable to register a nil action.");
         return NO;
     }
 
-    UAActionRegistryEntry *entry = [self registryEntryForName:name];
+    if (!names.count) {
+        UA_LWARN(@"Unable to register action.  A name must be specified.");
+        return NO;
+    }
+
+    for (NSString *name in names) {
+        if ([self.reservedEntryNames containsObject:name]) {
+            UA_LWARN(@"Unable to register entry. %@ is a reserved action.", name);
+            return NO;
+        }
+    }
+
+    UAActionRegistryEntry *entry = [UAActionRegistryEntry entryForAction:action
+                                                               predicate:predicate];
+
+    for (NSString *name in names) {
+        [self removeName:name];
+        [entry.mutableNames addObject:name];
+        [self.registeredActionEntries setValue:entry forKey:name];
+    }
+    
+    return YES;
+}
+
+
+- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate {
+    if ([self registerAction:action name:name predicate:predicate]) {
+        [self.reservedEntryNames addObject:name];
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)removeName:(NSString *)name {
+    if (!name) {
+        return YES;
+    }
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable remove name for action. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
+    if (entry) {
+        [entry.mutableNames removeObject:name];
+        [self.registeredActionEntries removeObjectForKey:name];
+    }
+
+    return YES;
+}
+
+- (BOOL)removeEntryWithName:(NSString *)name {
+    if (!name) {
+        return YES;
+    }
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to remove entry. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
+
+    for (NSString *entryName in entry.mutableNames) {
+        if ([self.reservedEntryNames containsObject:entryName]) {
+            UA_LWARN(@"Unable to remove entry. %@ is a reserved action.", name);
+            return NO;
+        }
+    }
+
+    for (NSString *entryName in entry.mutableNames) {
+        [self.registeredActionEntries removeObjectForKey:name];
+    }
+
+    return YES;
+}
+
+- (BOOL)addName:(NSString *)name forEntryWithName:(NSString *)entryName {
+    if (!name) {
+        UA_LWARN(@"Unable to add a nil name for entry.");
+        return NO;
+    }
+
+    if ([self.reservedEntryNames containsObject:entryName]) {
+        UA_LWARN(@"Unable to add name to a reserved entry. %@ is a reserved action name.", entryName);
+        return NO;
+    }
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to add name for entry. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:entryName];
+    if (entry && name) {
+        [self removeName:name];
+        [entry.mutableNames addObject:name];
+        [self.registeredActionEntries setValue:entry forKey:name];
+        return YES;
+    }
+
+    return NO;
+}
+
+- (UAActionRegistryEntry *)registryEntryWithName:(NSString *)name {
+    if (!name) {
+        return nil;
+    }
+
+    return [self.registeredActionEntries valueForKey:name];
+}
+
+- (NSSet *)registeredEntries {
+    NSMutableDictionary *entries = [NSMutableDictionary dictionaryWithDictionary:self.registeredActionEntries];
+    [entries removeObjectsForKeys:self.reservedEntryNames];
+    return [NSSet setWithArray:[entries allValues]];
+}
+
+- (BOOL)addSituationOverride:(NSString *)situation
+            forEntryWithName:(NSString *)name action:(UAAction *)action {
+    if (!name) {
+        return NO;
+    }
+
+    // Don't allow situation overrides on reserved actions
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to override situations. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
     [entry.situationOverrides setValue:action forKey:situation];
 
     return (entry != nil);
 }
 
-- (BOOL)updatePredicate:(UAActionPredicate)predicate forName:(NSString *)name {
-    // Don't allow situation overrides on reserved actions
-    if (!name || [kUAReservedActionKeys containsObject:name]) {
+- (BOOL)updatePredicate:(UAActionPredicate)predicate forEntryWithName:(NSString *)name {
+    if (!name) {
         return NO;
     }
-    UAActionRegistryEntry *entry = [self registryEntryForName:name];
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to update predicate. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
     entry.predicate = predicate;
     return (entry != nil);
 }
 
+- (BOOL)updateAction:(UAAction *)action forEntryWithName:(NSString *)name {
+    if (!name || !action) {
+        return NO;
+    }
+
+    if ([self.reservedEntryNames containsObject:name]) {
+        UA_LWARN(@"Unable to update action. %@ is a reserved action name.", name);
+        return NO;
+    }
+
+    UAActionRegistryEntry *entry = [self registryEntryWithName:name];
+    entry.action = action;
+    return (entry != nil);
+}
+
+
 - (void)registerDefaultActions {
     // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
-    [self registerAction:incomingPushAction name:kUAIncomingPushActionRegistryName];
+    [self registerReservedAction:incomingPushAction name:kUAIncomingPushActionRegistryName predicate:nil];
 
     // Incoming RAP action
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
-    [self registerAction:richPushAction name:kUAIncomingRichPushActionRegistryName];
+    [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
 
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
-        return [args.situation isEqualToString:UASituationLaunchedFromPush];
+        return (BOOL)([args.situation isEqualToString:UASituationLaunchedFromPush] ||
+                      [args.situation isEqualToString:UASituationRichPushAction]);
     };
 
     // Open external URL action
     UAOpenExternalURLAction *urlAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:urlAction
-                    name:kUAOpenExternalURLActionDefaultRegistryName
-                   alias:kUAOpenExternalURLActionDefaultRegistryAlias
+                    names:@[kUAOpenExternalURLActionDefaultRegistryName, kUAOpenExternalURLActionDefaultRegistryAlias]
                predicate:urlPredicate];
+
+
+    UAAddTagsAction *addTagsAction = [[UAAddTagsAction alloc] init];
+    [self registerAction:addTagsAction
+                    names:@[kUAAddTagsActionDefaultRegistryName, kUAAddTagsActionDefaultRegistryAlias]];
+
+
+    UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
+    [self registerAction:removeTagsAction
+                    names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
+
+
+    UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
+    [self registerAction:setTagsAction
+                    names:@[kUASetTagsActionDefaultRegistryName, kUASetTagsActionDefaultRegistryAlias]];
 }
 
-- (void)clearRegistryForName:(NSString *)name {
-    if (!name) {
-        return;
-    }
 
-    UAActionRegistryEntry *previousEntry = [self.registeredActionEntries valueForKey:name];
-    if (previousEntry) {
-        if (previousEntry.alias) {
-            [self.aliases setValue:nil forKey:previousEntry.alias];
-        }
-
-        [self.registeredActionEntries setValue:nil forKey:name];
-    }
-}
-
-- (void)clearAlias:(NSString *)alias {
-    if (!alias) {
-        return;
-    }
-
-    UAActionRegistryEntry *entry = [self registryEntryForName:alias];
-    if (entry) {
-        entry.alias = nil;
-    }
-
-    [self.aliases setValue:nil forKey:alias];
-}
 
 @end

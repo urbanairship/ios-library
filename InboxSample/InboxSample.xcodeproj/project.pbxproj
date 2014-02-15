@@ -85,8 +85,8 @@
 		1FE0B7EF17E27BA800856C60 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1872674C1287C6200064C41B /* Security.framework */; };
 		1FE0B7F017E27BA800856C60 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		1FE0B7F217E27BA800856C60 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CB326512B85A87002E39EA /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.0.1.a */; };
-		1FE0B85717E8D7D800856C60 /* libUAirship-3.0.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B7F817E27C1D00856C60 /* libUAirship-3.0.1.a */; };
+		1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a */; };
+		1FE0B85717E8D7D800856C60 /* libUAirship-3.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FE0B7F817E27C1D00856C60 /* libUAirship-3.2.0.a */; };
 		4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
 		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
@@ -171,8 +171,8 @@
 		1F69B12813BD1DF4002CA606 /* UAInboxMessageListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAInboxMessageListCell.xib; sourceTree = "<group>"; };
 		1F79710012DE3B7100D4937F /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		1FE0B7F617E27BA800856C60 /* InboxSample-iOS5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "InboxSample-iOS5.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1FE0B7F817E27C1D00856C60 /* libUAirship-3.0.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-3.0.1.a"; path = "../Airship/libUAirship-3.0.1.a"; sourceTree = "<group>"; };
-		1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.0.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-iOS5-3.0.1.a"; path = "../Airship/libUAirship-iOS5-3.0.1.a"; sourceTree = "<group>"; };
+		1FE0B7F817E27C1D00856C60 /* libUAirship-3.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-3.2.0.a"; path = "../Airship/libUAirship-3.2.0.a"; sourceTree = "<group>"; };
+		1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-iOS5-3.2.0.a"; path = "../Airship/libUAirship-iOS5-3.2.0.a"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* InboxSample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InboxSample_Prefix.pch; sourceTree = "<group>"; };
 		4977C18B141ECF31009263FA /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
 		4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
@@ -221,7 +221,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FE0B85717E8D7D800856C60 /* libUAirship-3.0.1.a in Frameworks */,
+				1FE0B85717E8D7D800856C60 /* libUAirship-3.2.0.a in Frameworks */,
 				49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */,
 				1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
@@ -240,7 +240,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.0.1.a in Frameworks */,
+				1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a in Frameworks */,
 				1FE0B7E717E27BA800856C60 /* CoreLocation.framework in Frameworks */,
 				1FE0B7E817E27BA800856C60 /* libz.dylib in Frameworks */,
 				1FE0B7E917E27BA800856C60 /* CFNetwork.framework in Frameworks */,
@@ -269,8 +269,8 @@
 		184E3F3A129E4C0D004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				1FE0B7F817E27C1D00856C60 /* libUAirship-3.0.1.a */,
-				1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.0.1.a */,
+				1FE0B7F817E27C1D00856C60 /* libUAirship-3.2.0.a */,
+				1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -758,7 +758,6 @@
 				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -787,7 +786,6 @@
 				GCC_PREFIX_HEADER = InboxSample_Prefix.pch;
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INFOPLIST_FILE = "InboxSample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

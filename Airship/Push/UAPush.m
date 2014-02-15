@@ -30,26 +30,33 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UAEvent.h"
-#import "UADeviceRegistrationData.h"
 #import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 #import "UAActionRegistrar+Internal.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
+#import "UAChannelRegistrationPayload.h"
+#import "UAUser.h"
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
 UAPushSettingsKey *const UAPushTagsSettingsKey = @"UAPushTags";
 UAPushSettingsKey *const UAPushBadgeSettingsKey = @"UAPushBadge";
+UAPushSettingsKey *const UAPushChannelIDKey = @"UAChannelID";
+UAPushSettingsKey *const UAPushChannelLocationKey = @"UAChannelLocation";
+UAPushSettingsKey *const UAPushDeviceTokenKey = @"UADeviceToken";
+
 UAPushSettingsKey *const UAPushQuietTimeSettingsKey = @"UAPushQuietTime";
 UAPushSettingsKey *const UAPushQuietTimeEnabledSettingsKey = @"UAPushQuietTimeEnabled";
 UAPushSettingsKey *const UAPushTimeZoneSettingsKey = @"UAPushTimeZone";
 UAPushSettingsKey *const UAPushDeviceCanEditTagsKey = @"UAPushDeviceCanEditTags";
-UAPushSettingsKey *const UAPushNeedsUnregistering = @"UAPushNeedsUnregistering";
 
 UAPushUserInfoKey *const UAPushUserInfoRegistration = @"Registration";
 UAPushUserInfoKey *const UAPushUserInfoPushEnabled = @"PushEnabled";
+
+UAPushUserInfoKey *const UAPushChannelCreationOnForeground = @"UAPushChannelCreationOnForeground";
+
 
 NSString *const UAPushQuietTimeStartKey = @"start";
 NSString *const UAPushQuietTimeEndKey = @"end";
@@ -93,12 +100,35 @@ static Class _uiClass;
                                               selector:@selector(applicationDidEnterBackground) 
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
-        
-        self.deviceAPIClient = [[UADeviceAPIClient alloc] init];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelCreated:)
+                                                     name:UAChannelCreatedNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(channelConflict:)
+                                                     name:UAChannelConflictNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(registrationFinished:)
+                                                     name:UADeviceRegistrationFinishedNotification
+                                                   object:nil];
+
+        self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
         self.deviceTagsEnabled = YES;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
                                   |UIRemoteNotificationTypeSound);
+
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+
+        // Log the channel ID at error level, but without logging
+        // it as an error.
+        if (self.channelID && uaLogLevel >= UALogLevelError) {
+            NSLog(@"Channel ID: %@", self.channelID);
+        }
     }
     
     return self;
@@ -109,7 +139,7 @@ static Class _uiClass;
 
 - (void)setDeviceToken:(NSString *)deviceToken {
     if (deviceToken == nil) {
-        _deviceToken = deviceToken;
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:UAPushDeviceTokenKey];
         return;
     }
     
@@ -127,7 +157,7 @@ static Class _uiClass;
         UA_LWARN(@"Device token %@ should be only 32 bytes (64 characters) long", deviceToken);
     }
 
-    _deviceToken = deviceToken;
+    [[NSUserDefaults standardUserDefaults] setObject:deviceToken forKey:UAPushDeviceTokenKey];
 
     // Log the device token at error level, but without logging
     // it as an error.
@@ -136,8 +166,41 @@ static Class _uiClass;
     }
 }
 
+- (NSString *)deviceToken {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushDeviceTokenKey];
+}
+
 #pragma mark -
 #pragma mark Get/Set Methods
+
+- (id<UARegistrationDelegate>)registrationDelegate {
+    return self.deviceRegistrar.registrationDelegate;
+}
+
+- (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
+    self.deviceRegistrar.registrationDelegate = registrationDelegate;
+}
+
+- (void)setChannelID:(NSString *)channelID {
+    [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
+    // Log the channel ID at error level, but without logging
+    // it as an error.
+    if (uaLogLevel >= UALogLevelError) {
+        NSLog(@"Channel ID: %@", channelID);
+    }
+}
+
+- (NSString *)channelID {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelIDKey];
+}
+
+- (void)setChannelLocation:(NSString *)channelLocation {
+    [[NSUserDefaults standardUserDefaults] setValue:channelLocation forKey:UAPushChannelLocationKey];
+}
+
+- (NSString *)channelLocation {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushChannelLocationKey];
+}
 
 - (BOOL)autobadgeEnabled {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UAPushBadgeSettingsKey];
@@ -146,7 +209,6 @@ static Class _uiClass;
 - (void)setAutobadgeEnabled:(BOOL)autobadgeEnabled {
     [[NSUserDefaults standardUserDefaults] setBool:autobadgeEnabled forKey:UAPushBadgeSettingsKey];
 }
-
 
 - (NSString *)alias {
     return [[NSUserDefaults standardUserDefaults] stringForKey:UAPushAliasSettingsKey];
@@ -191,7 +253,6 @@ static Class _uiClass;
             UA_LDEBUG(@"Registering for remote notifications.");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:self.notificationTypes];
         } else {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushNeedsUnregistering];
             //note: we don't want to use the wrapper method here, because otherwise it will blow away the existing notificationTypes
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
             [self updateRegistration];
@@ -217,7 +278,7 @@ static Class _uiClass;
 
 - (NSTimeZone *)timeZone {
     NSString *timeZoneName = [[NSUserDefaults standardUserDefaults] stringForKey:UAPushTimeZoneSettingsKey];
-    return [NSTimeZone timeZoneWithName:timeZoneName];
+    return [NSTimeZone timeZoneWithName:timeZoneName] ?: [self defaultTimeZoneForQuietTime];
 }
 
 - (void)setTimeZone:(NSTimeZone *)timeZone {
@@ -265,38 +326,6 @@ static Class _uiClass;
 }
 
 #pragma mark -
-#pragma mark UA Device API Payload
-
-- (UADeviceRegistrationPayload *)registrationPayload {
-    NSString *alias =  self.alias;
-    NSArray *tags = self.deviceTagsEnabled ? self.tags : nil;
-    NSNumber *badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
-
-    NSString *tz = nil;
-    NSDictionary *quietTime = nil;
-    if (self.timeZone.name != nil && self.quietTimeEnabled) {
-        tz = self.timeZone.name;
-        quietTime = self.quietTime;
-    }
-
-    return [UADeviceRegistrationPayload payloadWithAlias:alias
-                                                withTags:tags
-                                            withTimeZone:tz
-                                           withQuietTime:quietTime
-                                               withBadge:badge];
-}
-
-#pragma mark -
-#pragma Registration Data Model
-
-- (UADeviceRegistrationData *)registrationData {
-    return [UADeviceRegistrationData dataWithDeviceToken:self.deviceToken
-                                             withPayload:[self registrationPayload]
-                                             pushEnabled:self.pushEnabled];
-}
-
-
-#pragma mark -
 #pragma mark Open APIs - Property Setters
 
 
@@ -327,7 +356,28 @@ static Class _uiClass;
                        UAPushQuietTimeEndKey : endTimeStr };
 
     self.timeZone = timezone;
+}
 
+-(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
+                     endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute {
+
+    if (startHour >= 24 || startMinute >= 60) {
+        UA_LWARN(@"Unable to set quiet time, invalid start time: %ld:%02ld", (unsigned long)startHour, (unsigned long)startMinute);
+        return;
+    }
+
+    if (endHour >= 24 || endMinute >= 60) {
+        UA_LWARN(@"Unable to set quiet time, invalid end time: %ld:%02ld", (unsigned long)endHour, (unsigned long)endMinute);
+        return;
+    }
+
+    NSString *startTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(unsigned long)startHour, (unsigned long)startMinute];
+    NSString *endTimeStr = [NSString stringWithFormat:@"%ld:%02ld",(unsigned long)endHour, (unsigned long)endMinute];
+
+    UA_LDEBUG("Setting quiet time: %@ to %@", startTimeStr, endTimeStr);
+
+    self.quietTime = @{UAPushQuietTimeStartKey : startTimeStr,
+                       UAPushQuietTimeEndKey : endTimeStr };
 }
 
 
@@ -390,8 +440,8 @@ static Class _uiClass;
 
     // if the device token has already been set then
     // we are post-registration and will need to make
-    // and update call
-    if (self.autobadgeEnabled && self.deviceToken) {
+    // an update call
+    if (self.autobadgeEnabled && (self.deviceToken || self.channelID)) {
         UA_LDEBUG(@"Sending autobadge update to UA server.");
         [self updateRegistrationForcefully:YES];
     }
@@ -481,14 +531,22 @@ static Class _uiClass;
 }
 
 
+BOOL deferChannelCreationOnForeground = false;
 
 #pragma mark -
 #pragma mark UIApplication State Observation
 
 - (void)applicationDidBecomeActive {
-    if (self.hasEnteredBackground) {
-        UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
-        [self updateRegistration];
+
+    // If this is the first run, skip creating the channel ID.
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushChannelCreationOnForeground]) {
+        if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+            UA_LTRACE(@"Channel ID not created, Updating registration.");
+            [self updateRegistrationForcefully:NO];
+        } else if (self.hasEnteredBackground) {
+            UA_LTRACE(@"App transitioning from background to foreground.  Updating registration.");
+            [self updateRegistrationForcefully:NO];
+        }
     }
 
     if (!self.launchNotification) {
@@ -503,96 +561,92 @@ static Class _uiClass;
 - (void)applicationDidEnterBackground {
     self.hasEnteredBackground = YES;
     self.launchNotification = nil;
+
+    // Set the UAPushChannelCreationOnForeground after first run
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushChannelCreationOnForeground];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self 
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
+
+    BOOL shouldCreateChannelId = (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration);
+
+    if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
+        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [self.deviceRegistrar cancelAllRequests];
+        }];
+    }
+
+    if (shouldCreateChannelId) {
+        [self updateRegistrationForcefully:NO];
+    }
 }
 
 #pragma mark -
 #pragma mark UA Registration Methods
 
-/* 
- * Checks the current application state, bails if in the background with the
- * assumption that next app init or isActive notif will call update.
- * Dispatches a registration request to the server if necessary via
- * the Device API client. PushEnabled -> register, !PushEnabled -> unregister.
- */
+- (UAChannelRegistrationPayload *)createChannelPayload {
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    UAChannelRegistrationPayload *payload = [[UAChannelRegistrationPayload alloc] init];
+    payload.deviceID = [UAUtils deviceID];
+    payload.userID = [UAUser defaultUser].username;
+    payload.pushAddress = self.deviceToken;
+
+    if (self.pushEnabled && self.deviceToken) {
+        payload.optedIn = [UIApplication sharedApplication].enabledRemoteNotificationTypes != UIRemoteNotificationTypeNone;
+    } else {
+        payload.optedIn = NO;
+    }
+
+    payload.setTags = self.deviceTagsEnabled;
+    payload.tags = self.deviceTagsEnabled ? [self.tags copy]: nil;
+
+    payload.alias = self.alias;
+
+    payload.badge = self.autobadgeEnabled ? [NSNumber numberWithInteger:[[UIApplication sharedApplication] applicationIconBadgeNumber]] : nil;
+
+    if (self.timeZone.name && self.quietTimeEnabled) {
+        payload.timeZone = self.timeZone.name;
+        payload.quietTime = [self.quietTime copy];
+    }
+    return payload;
+}
+
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-        
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
+    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+
+    // Only allow new registrations to happen in the background if we are creating a channel ID
+    if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
         return;
     }
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    if (self.pushEnabled) {
-        // If there is no device token, wait for the application delegate to update with one.
-        if (!self.deviceToken) {
-            UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time");
-            return;
-        }
 
-        //note: we are performing both observer and delegate callbacks here as long as the
-        //registration observer protocol remains in deprecation.
-        [self.deviceAPIClient
-         registerWithData:[self registrationData]
-         onSuccess:^{
-             UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
-             [self notifyObservers:@selector(registerDeviceTokenSucceeded)];
-             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenSucceeded)]) {
-                 [self.registrationDelegate registerDeviceTokenSucceeded];
-             }
-         }
-         onFailure:^(UAHTTPRequest *request) {
-             [self notifyObservers:@selector(registerDeviceTokenFailed:)
-                        withObject:request];
-             if ([self.registrationDelegate respondsToSelector:@selector(registerDeviceTokenFailed:)]) {
-                 [self.registrationDelegate registerDeviceTokenFailed:request];
-             }
-         }
-         forcefully:forcefully];
+    // If we have a channel ID or we are not doing channel registration, cancel all requests.
+    if (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration) {
+        [self.deviceRegistrar cancelAllRequests];
     }
-    else {
-        // If there is no device token, and push has been enabled then disabled, which occurs in certain circumstances,
-        // most notably when a developer registers for UIRemoteNotificationTypeNone and this is the first install of an app
-        // that uses push, the DELETE will fail with a 404.
-        if (!self.deviceToken) {
-            UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered");
-            return;
-        }
-        // Don't unregister more than once
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:UAPushNeedsUnregistering]) {
 
-            [self.deviceAPIClient
-             unregisterWithData:[self registrationData]
-             onSuccess:^{
-                 // note that unregistration is no longer needed
-                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushNeedsUnregistering];
-                 UA_LDEBUG(@"Device token unregistered on Urban Airship successfully.");
-                 [self notifyObservers:@selector(unregisterDeviceTokenSucceeded)];
-                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenSucceeded)]) {
-                     [self.registrationDelegate unregisterDeviceTokenSucceeded];
-                 }
-             }
-             onFailure:^(UAHTTPRequest *request) {
-                 [UAUtils logFailedRequest:request withMessage:@"unregistering device token"];
-                 [self notifyObservers:@selector(unregisterDeviceTokenFailed:)
-                            withObject:request];
-                 if ([self.registrationDelegate respondsToSelector:@selector(unregisterDeviceTokenFailed:)]) {
-                     [self.registrationDelegate unregisterDeviceTokenFailed:request];
-                 }
-             }
-             forcefully:forcefully];
-        }
-        else {
-            UA_LDEBUG(@"Device has already been unregistered, no update scheduled.");
-        }
+    if (self.pushEnabled) {
+        [self.deviceRegistrar registerWithChannelID:self.channelID
+                                    channelLocation:self.channelLocation
+                                        withPayload:[self createChannelPayload]
+                                         forcefully:forcefully];
+    } else {
+        [self.deviceRegistrar registerPushDisabledWithChannelID:self.channelID
+                                                channelLocation:self.channelLocation
+                                                    withPayload:[self createChannelPayload]
+                                                     forcefully:forcefully];
     }
 }
 
 - (void)updateRegistration {
+    if (self.pushEnabled && !self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
+        UA_LDEBUG(@"Push is enabled but we have not yet tried to generate a channel ID. "
+                  "Registration will perform automatically when a device token is generated,"
+                  "the app is backgrounded, or the next time the app is foregrounded.");
+        return;
+    }
+
     [self updateRegistrationForcefully:NO];
 }
 
@@ -616,7 +670,62 @@ static Class _uiClass;
 
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    [self updateRegistration];
+    [self updateRegistrationForcefully:NO];
+}
+
+- (void)channelCreated:(NSNotification *)channelNotification {
+    self.channelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
+    self.channelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
+}
+
+- (void)channelConflict:(NSNotification *)channelNotification {
+    NSString *newChannelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
+    NSString *newChannelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
+    NSString *currentChannelID = [channelNotification.userInfo valueForKey:UAReplacedChannelNotificationKey];
+
+    UA_LTRACE(@"Channel conflict with %@, new channel: %@", currentChannelID, newChannelID);
+    self.channelID = newChannelID;
+    self.channelLocation = newChannelLocation;
+}
+
+- (void)registrationFinished:(NSNotification *)notification {
+    // Dispatch on the main queue so we dont have a race condition with
+    // creating and invalidating the background task
+    [self dispatchBlockToMainIfNecessary:^{
+        // Finish the background task if we have one
+        if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
+            self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+            return;
+        }
+
+        UAChannelRegistrationPayload *payload = [self createChannelPayload];
+        UAChannelRegistrationPayload *notificationPayload = [[notification userInfo]objectForKey:UAChannelPayloadNotificationKey];
+
+        // Register again if we are using old registration, and we have a deviceToken, and if the
+        // device token does not match if push is enabled.
+        //
+        // TODO: remove this check once we remove device token registration
+        if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
+            [self updateRegistrationForcefully:NO];
+            return;
+        }
+
+        // If the payload does not match the current payload, register
+        //
+        // TODO: Move this to device registrar once we remove device token registration
+        if (![notificationPayload isEqualToPayload:payload]) {
+            [self updateRegistrationForcefully:NO];
+        }
+    }];
+}
+
+-(void) dispatchBlockToMainIfNecessary:(void (^)())block {
+    if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
+        dispatch_async(dispatch_get_main_queue(), block);
+    } else {
+        block();
+    }
 }
 
 #pragma mark -
@@ -640,11 +749,11 @@ static Class _uiClass;
     if (!quietTimeEnabled && currentQuietTime) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:UAPushQuietTimeEnabledSettingsKey];
     } else {
-         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:UAPushQuietTimeEnabledSettingsKey];
     }
-    
-    NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithCapacity:2];
-    [defaults setValue:[NSNumber numberWithBool:YES] forKey:UAPushEnabledSettingsKey];
+
+    NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
+
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
 }
 

@@ -65,22 +65,24 @@ SINGLETON_IMPLEMENTATION(UAPushUI)
 
 + (void)openApnsSettings:(UIViewController *)viewController
                 animated:(BOOL)animated {
-    [viewController presentModalViewController:[UAPushUI shared].apnsSettingsViewController
-                                      animated:animated];
+    [viewController presentViewController:[UAPushUI shared].apnsSettingsViewController
+                                 animated:animated
+                               completion:NULL];
 }
 
 + (void)openTokenSettings:(UIViewController *)viewController
                  animated:(BOOL)animated {
-    [viewController presentModalViewController:[UAPushUI shared].tokenSettingsViewController
-                                      animated:animated];
+    [viewController presentViewController:[UAPushUI shared].tokenSettingsViewController
+                                 animated:animated
+                               completion:NULL];
 }
 
 + (void)closeApnsSettingsAnimated:(BOOL)animated {
-    [[UAPushUI shared].apnsSettingsViewController dismissModalViewControllerAnimated:animated];
+    [[UAPushUI shared].apnsSettingsViewController dismissViewControllerAnimated:animated completion:NULL];
 }
 
 + (void)closeTokenSettingsAnimated:(BOOL)animated {
-    [[UAPushUI shared].tokenSettingsViewController dismissModalViewControllerAnimated:animated];
+    [[UAPushUI shared].tokenSettingsViewController dismissViewControllerAnimated:animated completion:NULL];
 }
 
 

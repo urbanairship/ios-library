@@ -25,10 +25,35 @@
 
 #import <Foundation/Foundation.h>
 
+@class UAWebViewCallData;
+
 @interface UAWebViewTools : NSObject
 
+/**
+ * Transforms a phone number URL into one that UIApplication can handle.
+ *
+ * @param url A phone number URL.
+ * @return A new, sanitized NSURL instance.
+ */
 + (NSURL *)createValidPhoneNumberUrlFromUrl:(NSURL *)url;
+
+/**
+ * Custom URL scheme handling, for app-specific URL navigation and JS delegate call logic.
+ *
+ * @param wv The webview loading the request.
+ * @param request The request.
+ * @param navigationType An enumeration of UIWebViewNavigationType.
+ * @return `YES` if the URL should be loaded by the webView, `NO` otherwise.
+ */
 + (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request
-                                            navigationType:(UIWebViewNavigationType)navigationType;
+ navigationType:(UIWebViewNavigationType)navigationType;
+
+/**
+ * Used for farming out JavaScript delegate calls.
+ *
+ * @param webView The webview originating the call.
+ * @param url The URL containing the call data.
+ */
++ (void)performJSDelegate:(UIWebView *)webView url:(NSURL *)url;
 
 @end

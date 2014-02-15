@@ -25,12 +25,37 @@
 
 #import "UAAction.h"
 
+/**
+ * Represents the possible error conditions
+ * when running a `UAOpenExternalURLAction`.
+ */
 NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
+    /**
+     * Indicates that the URL failed to open.
+     */
     UAOpenExternalURLActionErrorCodeURLFailedToOpen
 };
 
+/**
+ * The domain for errors encountered when running a `UAOpenExternalURLAction`.
+ */
 extern NSString * const UAOpenExternalURLActionErrorDomain;
 
+/**
+ * Opens a URL, either in safari or using custom URL schemes. This action is 
+ * registered under the names ^u and open_external_url_action.
+ *
+ * Expected argument values: NSString
+ *
+ * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationLaunchedFromSpringBoard,
+ * UASituationRichPush
+ *
+ * Result value: An NSURL representation of the input
+ *
+ * Error: `UAOpenExternalURLActionErrorCodeURLFailedToOpen` if the URL could not be opened
+ *
+ * Fetch result: UAActionFetchResultNone
+ */
 @interface UAOpenExternalURLAction : UAAction
 
 @end

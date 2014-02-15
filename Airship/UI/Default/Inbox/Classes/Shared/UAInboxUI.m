@@ -87,11 +87,7 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     // Optionally specify a custom modal transition
     inboxViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
 
-    if ([parentViewController respondsToSelector:@selector(presentViewController:animated:completion:)]) { // iOS5+
-        [parentViewController presentViewController:inboxViewController animated:animated completion:nil];
-    } else { //4.x
-        [parentViewController presentModalViewController:inboxViewController animated:animated];
-    }
+    [parentViewController presentViewController:inboxViewController animated:animated completion:NULL];
 }
 
 + (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController {
@@ -152,16 +148,9 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     }
     
     self.isVisible = NO;
-    
-    //added iOS 5 parent/presenting view getter
-    UIViewController *con;
-    if ([self.rootViewController respondsToSelector:@selector(presentingViewController)]) {
-        con = [self.rootViewController presentingViewController];
-    } else {
-        con = self.rootViewController.parentViewController;
-    }
-    
-    [con dismissModalViewControllerAnimated:YES];
+
+    UIViewController *con = [self.rootViewController presentingViewController];
+    [con dismissViewControllerAnimated:YES completion:NULL];
     
     // BUG: Workaround. ModalViewController does not handle resizing correctly if
     // dismissed in landscape when status bar is visible

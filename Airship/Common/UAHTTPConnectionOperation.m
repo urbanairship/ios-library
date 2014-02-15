@@ -102,6 +102,12 @@
 
 - (void)cancelConnectionOnMainThread {
     [self.connection cancel];
+
+    @synchronized(self) {
+        if (self.isExecuting) {
+            [self finish];
+        }
+    }
 }
 
 - (void)cancel {

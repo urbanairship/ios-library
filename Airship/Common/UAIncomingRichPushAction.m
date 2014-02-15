@@ -61,11 +61,13 @@
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
     handler.viewingMessageID = richPushID;
 
+    id<UAInboxPushHandlerDelegate> strongDelegate = handler.delegate;
+
     if ([situation isEqualToString:UASituationForegroundPush]) {
-        [handler.delegate richPushNotificationArrived:pushArgs.payload];
+        [strongDelegate richPushNotificationArrived:pushArgs.payload];
     } else {
         handler.hasLaunchMessage = YES;
-        [handler.delegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
+        [strongDelegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
     }
 
     [[UAInbox shared].messageList retrieveMessageListWithDelegate:handler];

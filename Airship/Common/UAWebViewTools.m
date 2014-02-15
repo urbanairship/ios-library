@@ -25,7 +25,11 @@
 
 #import "UAWebViewTools.h"
 
+#import "UAirship+Internal.h"
+#import "UAInbox.h"
 #import "UAInboxMessage.h"
+#import "UAJavaScriptDelegate.h"
+#import "UAWebViewCallData.h"
 
 @implementation UAWebViewTools
 
@@ -45,12 +49,12 @@
     NSURL *url = [request URL];
 
     /*
-     ua://callbackArguments:withOptions:/[<arguments>][?<dictionary>]
+     ua://command/[<arguments>][?<dictionary>]
      */
 
     if ([[url scheme] isEqualToString:@"ua"]) {
         if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
-            [UAInboxMessage performJSDelegate:wv url:url];
+            [self performJSDelegate:wv url:url];
             return NO;
         }
     }
@@ -123,5 +127,60 @@
     // load local file and http/https webpages in webview
     return YES;
 }
+
++ (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
+
+    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
+#pragma clang diagnostic pop
+    id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
+    id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
+
+    if ([data.name isEqualToString:@"run-action"] || [data.name isEqualToString:@"run-basic-action"]) {
+        [self performAsyncJSCallWithDelegate:actionJSDelegate
+                                     withWebView:webView
+                                        withData:data];
+    } else {
+        //user JS delegate, if applicable
+        [self performAsyncJSCallWithDelegate:userJSDDelegate
+                                     withWebView:webView
+                                        withData:data];
+        //deprecated inbox JS delegate, if applicable
+        [self performDeprecatedJSCallWithDelegate:inboxJSDelegate
+                                          withWebView:webView
+                                             withData:data];
+    }
+}
+
++ (void)performAsyncJSCallWithDelegate:(id<UAJavaScriptDelegate>)delegate
+                               withWebView:(UIWebView *)webView
+                             withData:(UAWebViewCallData *)data {
+    SEL selector = @selector(callWithData:withCompletionHandler:);
+    if ([delegate respondsToSelector:selector]) {
+        __weak UIWebView *weakWebView = webView;
+        [delegate callWithData:data withCompletionHandler:^(NSString *script){
+            [weakWebView stringByEvaluatingJavaScriptFromString:script];
+        }];
+    }
+}
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
++ (void)performDeprecatedJSCallWithDelegate:(id<UAInboxJavaScriptDelegate>)delegate
+                                    withWebView:(UIWebView *)webView
+                                       withData:(UAWebViewCallData *)data {
+    //SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
+    SEL selector = @selector(callbackArguments:withOptions:);
+    if ([delegate respondsToSelector:selector]) {
+        NSString *script = nil;
+        script = [delegate callbackArguments:data.arguments withOptions:data.options];
+        if (script) {
+            [webView stringByEvaluatingJavaScriptFromString:script];
+        }
+    }
+}
+#pragma clang diagnostic pop
 
 @end

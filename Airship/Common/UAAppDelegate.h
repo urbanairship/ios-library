@@ -1,4 +1,3 @@
-
 /*
  Copyright 2009-2013 Urban Airship Inc. All rights reserved.
 
@@ -25,42 +24,16 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "UADeviceRegistrationPayload.h"
 
 /**
- * Model object encapsulating the data relevant to a registration or unregistration processed by UADeviceAPIClient.
- */
-@interface UADeviceRegistrationData : NSObject
-
-/**
- * UADeviceRegistrationData initializer.
+ * This class is a replacement app delegate that handles incoming push notifications and registration
+ * callbacks. When used with UAAppDelegateProxy, both this class and the original app delegate
+ * can receive and respond to messages sent to the default app delegate.
  *
- * @param token A device token string.
- * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param enabled A BOOL indicating whether push is currently enabled.
+ * Note: Do not extend any other class other than NSObject.  In the UAAppDelegateProxy,
+ * it will not forward any of the base NSObject invocations, instead it will only forward
+ * invocations for methods that this class directly implements. 
  */
-- (id)initWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
-
-/**
- * Autoreleased UADeviceRegistrationData class factory method.
- *
- * @param token A device token string.
- * @param payload An NSDictionary representing the payload to be sent in the request body.
- * @param enabled A BOOL indicating whether push is currently enabled.
- */
-+ (id)dataWithDeviceToken:(NSString *)token withPayload:(UADeviceRegistrationPayload *)payload pushEnabled:(BOOL)enabled;
-
-/**
- * The device token.
- */
-@property(nonatomic, copy, readonly) NSString *deviceToken;
-/**
- * The request payload as an NSDictionary.
- */
-@property(nonatomic, strong, readonly) UADeviceRegistrationPayload *payload;
-/**
- * Indicates whether push was enabled at the time the object was constructed.
- */
-@property(nonatomic, assign, readonly) BOOL pushEnabled;
+@interface UAAppDelegate : NSObject<UIApplicationDelegate>
 
 @end

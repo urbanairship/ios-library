@@ -35,7 +35,7 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
-#import "UAKablamAction.h"
+#import "UALandingPageAction.h"
 #import "UAActionRegistrar.h"
 
 @interface InboxSampleAppDelegate()
@@ -79,8 +79,8 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
-    UAKablamAction *kablamAction = [[UAKablamAction alloc] init];
-    [[UAActionRegistrar shared] registerAction:kablamAction name:@"kablam" alias:@"^k"];
+    UALandingPageAction *kablamAction = [[UALandingPageAction alloc] init];
+    [[UAActionRegistrar shared] registerAction:kablamAction names:@[@"kablam", @"^k"]];
 
     [UAPush shared].tags = @[@"kablam"];
 
@@ -99,8 +99,6 @@
 
 - (void)dealloc {
     [UAInbox shared].jsDelegate = nil;
-    
-    
 }
 
 - (void)failIfSimulator {

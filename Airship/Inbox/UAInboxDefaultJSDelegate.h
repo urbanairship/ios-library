@@ -30,8 +30,9 @@
 /**
  * The reference implementation of the UAInboxJavaScriptDelegate protocol.
  */
-@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate> {
-
-}
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate>
+#pragma clang diagnostic pop
 
 @end

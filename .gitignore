@@ -13,6 +13,7 @@ Release/
 Distribution/
 build/
 Airship/*.a
+Airship/Common/JS/UANativeBridge.c
 xcuserdata/
 *.xcworkspace/
 AirshipConfig.plist
