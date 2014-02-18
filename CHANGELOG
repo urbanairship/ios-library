@@ -1,4 +1,9 @@
 -------------------------
+3.0.3 - February 18, 2014
+-------------------------
+- Fix auto detecting provision mode
+
+-------------------------
 3.0.2 - November 21, 2013
 -------------------------
 - Moved headers to project level.
