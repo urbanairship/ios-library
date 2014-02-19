@@ -30,6 +30,7 @@
 #import "UAKeychainUtils.h"
 #import "UAPush+Internal.h"
 #import "UAirship+Internal.h"
+#import "UAConfig+Internal.h"
 
 #import <OCMock/OCMock.h>
 #import <OCMock/OCMConstraint.h>
@@ -48,16 +49,19 @@
     [super setUp];
     self.user = [[UAUser alloc] init];
 
+    UAConfig *config = [[UAConfig alloc] init];
+    config.developmentAppKey = @"9Q1tVTl0RF16baYKYp8HPQ";
+
     self.mockedAirship =[OCMockObject niceMockForClass:[UAirship class]];
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    [[[self.mockedAirship stub] andReturn:config] config];
+
+    [[[NSBundle mainBundle] infoDictionary] setValue:@"someBundleId" forKey:@"CFBundleIdentifier"];
 
     self.mockUserClient = [OCMockObject partialMockForObject:self.user.apiClient];
     self.mockKeychainUtils = [OCMockObject niceMockForClass:[UAKeychainUtils class]];
 
     self.mockedUAPush = [OCMockObject partialMockForObject:[UAPush shared]];
-
-    // set an app key to allow the keychain utils to look for a username
-    self.user.appKey = @"9Q1tVTl0RF16baYKYp8HPQ";
 }
 
 - (void)tearDown {

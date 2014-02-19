@@ -94,9 +94,9 @@
 @property(nonatomic, assign) BOOL isObservingDeviceRegistrationChanges;
 
 /**
- *  The current app key
+ * The current app key
  */
-@property(nonatomic, copy) NSString *appKey;
+@property(nonatomic, readonly) NSString *appKey;
 
 /**
  * Flag indicating if the  user is being created
