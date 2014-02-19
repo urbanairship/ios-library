@@ -51,11 +51,6 @@
 		1F610E0617835C3A00BCD96E /* UAPush.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DDE17835C3A00BCD96E /* UAPush.m */; };
 		1F610E0A17835C6700BCD96E /* UAConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610E0817835C6700BCD96E /* UAConfig.h */; };
 		1F610E0B17835C6700BCD96E /* UAConfig+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610E0917835C6700BCD96E /* UAConfig+Internal.h */; };
-		1F65BB7718997AB6000E8ACC /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB6F18997AB6000E8ACC /* UABespokeCloseView.h */; };
-		1F65BB7818997AB6000E8ACC /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB6F18997AB6000E8ACC /* UABespokeCloseView.h */; };
-		1F65BB7918997AB6000E8ACC /* UABespokeCloseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7018997AB6000E8ACC /* UABespokeCloseView.m */; };
-		1F65BB7A18997AB6000E8ACC /* UABespokeCloseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7018997AB6000E8ACC /* UABespokeCloseView.m */; };
-		1F65BB7B18997AB6000E8ACC /* UABespokeCloseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7018997AB6000E8ACC /* UABespokeCloseView.m */; };
 		1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */; };
 		1F65BB7D18997AB6000E8ACC /* UALandingPageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */; };
 		1F65BB7E18997AB6000E8ACC /* UALandingPageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */; };
@@ -496,8 +491,6 @@
 		1F610DDE17835C3A00BCD96E /* UAPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPush.m; sourceTree = "<group>"; };
 		1F610E0817835C6700BCD96E /* UAConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfig.h; sourceTree = "<group>"; };
 		1F610E0917835C6700BCD96E /* UAConfig+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAConfig+Internal.h"; sourceTree = "<group>"; };
-		1F65BB6F18997AB6000E8ACC /* UABespokeCloseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UABespokeCloseView.h; path = ../LandingPages/UABespokeCloseView.h; sourceTree = "<group>"; };
-		1F65BB7018997AB6000E8ACC /* UABespokeCloseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UABespokeCloseView.m; path = ../LandingPages/UABespokeCloseView.m; sourceTree = "<group>"; };
 		1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageAction.h; path = ../LandingPages/UALandingPageAction.h; sourceTree = "<group>"; };
 		1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageAction.m; path = ../LandingPages/UALandingPageAction.m; sourceTree = "<group>"; };
 		1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageViewController.h; path = ../LandingPages/UALandingPageViewController.h; sourceTree = "<group>"; };
@@ -882,8 +875,6 @@
 		1F55FB2C18106066002AA192 /* LandingPages */ = {
 			isa = PBXGroup;
 			children = (
-				1F65BB6F18997AB6000E8ACC /* UABespokeCloseView.h */,
-				1F65BB7018997AB6000E8ACC /* UABespokeCloseView.m */,
 				1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */,
 				1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */,
 				1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */,
@@ -1408,7 +1399,6 @@
 				CC7DC951183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */,
 				1FE0B74917E2751000856C60 /* UAHTTPConnection.h in Headers */,
 				1FE0B74B17E2751000856C60 /* UAObservable.h in Headers */,
-				1F65BB7818997AB6000E8ACC /* UABespokeCloseView.h in Headers */,
 				1FE0B74D17E2751000856C60 /* UASignificantChangeProvider.h in Headers */,
 				1FE0B74E17E2751000856C60 /* UAStandardLocationProvider.h in Headers */,
 				1FE0B75017E2751000856C60 /* UABaseLocationProvider.h in Headers */,
@@ -1514,7 +1504,6 @@
 				CC7DC950183E978A00E95BB8 /* UADeviceRegistrar+Internal.h in Headers */,
 				BB8860E3159A7E9600584445 /* UASignificantChangeProvider.h in Headers */,
 				BB8860E4159A7E9600584445 /* UAStandardLocationProvider.h in Headers */,
-				1F65BB7718997AB6000E8ACC /* UABespokeCloseView.h in Headers */,
 				BB8860E5159A7E9600584445 /* UABaseLocationProvider.h in Headers */,
 				BB8860E6159A7E9600584445 /* UALocationCommonValues.h in Headers */,
 				BB8860DB159A7E9600584445 /* UAAnalyticsDBManager.h in Headers */,
@@ -1772,7 +1761,6 @@
 				4905C4E2182458AC001D48E3 /* UAActionJSDelegate.m in Sources */,
 				CC1D229E180373E0005C8393 /* UAAction+Operators.m in Sources */,
 				1FE0B78817E2751000856C60 /* UAUser.m in Sources */,
-				1F65BB7B18997AB6000E8ACC /* UABespokeCloseView.m in Sources */,
 				1FE0B78917E2751000856C60 /* UAAnalytics.m in Sources */,
 				1F680E83189B1ECF00991E57 /* UIWebView+UAAdditions.m in Sources */,
 				1FE0B78A17E2751000856C60 /* UATagUtils.m in Sources */,
@@ -1880,7 +1868,6 @@
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
-				1F65BB7A18997AB6000E8ACC /* UABespokeCloseView.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 				1F65BB7F18997AB6000E8ACC /* UALandingPageAction.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
@@ -1963,7 +1950,6 @@
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
 				494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */,
 				494BF70E1762789D00B25E12 /* UAUserData.m in Sources */,
-				1F65BB7918997AB6000E8ACC /* UABespokeCloseView.m in Sources */,
 				76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */,
 				CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */,
 				49EECA8C17CBD4BC00DE0AFB /* UADisposable.m in Sources */,
