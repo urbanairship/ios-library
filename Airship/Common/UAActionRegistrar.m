@@ -32,6 +32,7 @@
 #import "UARemoveTagsAction.h"
 #import "UASetTagsAction.h"
 #import "UALandingPageAction.h"
+#import "UACloseWindowAction.h"
 
 
 @implementation UAActionRegistrar
@@ -253,6 +254,11 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
     [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
 
+    UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
+    [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:^(UAActionArguments *args){
+        return (BOOL)(args.situation == UASituationWebViewInvocation);
+    }];
+
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
         return (BOOL)(args.situation == UASituationLaunchedFromPush ||
@@ -282,7 +288,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction
-                   names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]];    
+                   names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]];
+
 }
 
 
