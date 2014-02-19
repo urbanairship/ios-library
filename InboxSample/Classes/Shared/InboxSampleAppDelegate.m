@@ -79,11 +79,6 @@
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 
-    UALandingPageAction *kablamAction = [[UALandingPageAction alloc] init];
-    [[UAActionRegistrar shared] registerAction:kablamAction names:@[@"kablam", @"^k"]];
-
-    [UAPush shared].tags = @[@"kablam"];
-
     // Return value is ignored for push notifications, so it's safer to return
     // NO by default for other resources
     return NO;

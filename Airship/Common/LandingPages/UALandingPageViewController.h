@@ -28,11 +28,7 @@
 #import "UIWebView+UAAdditions.h"
 
 /**
- * This class provides an overlay window that can be popped over
- * the app's UI without totally obscuring it, and that loads a
- * given rich push message in an embedded UIWebView.  It is used
- * in the reference UI implementation for displaying in-app messages
- * without requiring navigation to the inbox.
+ * Primary interface for displaying landing pages.
  */
 @interface UALandingPageViewController : UIViewController<UIWebViewDelegate>
 
@@ -46,15 +42,15 @@
  */
 @property(nonatomic, strong) NSURL *url;
 
+/**
+ * Shows the passed URL in a modal view controller, whose parent is the
+ * Current top-most view controller presented by the root.
+ */
 + (void)showURL:(NSURL *)url;
 
-+ (void)closeWindow:(BOOL)animated;
-
 /**
- * Initializer, creates an overlay window and loads the given content within a particular view controller.
- * @param viewController the view controller to display the overlay in
- * @param messageID the message ID of the rich push message to display
+ * Closes the currently displayed landing page.
  */
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url;
++ (void)closeWindow:(BOOL)animated;
 
 @end

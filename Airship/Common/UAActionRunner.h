@@ -38,7 +38,7 @@
  * Runs a registered action with the given name.
  *
  * If the action is not registered the completion handler 
- * will be called immediately with [UAActionResult none]
+ * will be called immediately with [UAActionResult emptyResult]
  *
  * @param actionName The name of the action to run
  * @param arguments The action's arguments

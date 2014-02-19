@@ -30,7 +30,6 @@
 #import "UAInboxUI.h"
 #import "UAHTTPConnection.h"
 #import "UAURLProtocol.h"
-#import "UALandingPageOverlayController.h"
 #import "UALandingPageViewController.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRegistrar.h"
@@ -48,56 +47,50 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSString *situation = arguments.situation;
-    NSURL *kablamURL = [NSURL URLWithString:arguments.value];
+    UASituation situation = arguments.situation;
+    NSURL *landingPageURL = [NSURL URLWithString:arguments.value];
 
-    NSArray *displaySituations = @[UASituationForegroundPush,
-                                    UASituationLaunchedFromPush,
-                                    UASituationLaunchedFromSpringBoard,
-                                    UASituationManualInvocation];
+    NSArray *displaySituations = @[[NSNumber numberWithInteger:UASituationForegroundPush],
+                                    [NSNumber numberWithInteger:UASituationLaunchedFromPush],
+                                    [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
+                                    [NSNumber numberWithInteger:UASituationManualInvocation]];
 
     // set cachable url
-    [UAURLProtocol addCachableURL:kablamURL];
+    [UAURLProtocol addCachableURL:landingPageURL];
 
     //close any existing windows
     [UALandingPageViewController closeWindow:NO];
-    [UALandingPageOverlayController closeWindow:NO];
 
-    if ([displaySituations containsObject:situation]) {
-        // show the widget, then load
-        if (self.modal) {
-            [UALandingPageViewController showURL:kablamURL];
-        } else {
-            [UALandingPageOverlayController showURL:kablamURL];
-        }
-
+    if ([displaySituations containsObject:[NSNumber numberWithInteger:situation]]) {
+        //load the landing page
+        [UALandingPageViewController showURL:landingPageURL];
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
-    } else if ([situation isEqualToString:UASituationBackgroundPush]) {
-        // pre-cache. set pending-kablam flag
+    } else if (situation == UASituationBackgroundPush) {
+        // pre-cache. set pending-landing-page flag
 
         //TODO: plan for this... we may want to schedule for springboard, but cancel it if the displayable view
         //is launched
-        //[UAPushActionArguments addPendingSpringBoardAction:@"kablam" value:arguments.value];
+        //[UAPushActionArguments addPendingSpringBoardAction:@"landing_page_action" value:arguments.value];
 
 
         // fetch url, then set flag in completion block
-        [self prefetchURL:kablamURL withCompletionHandler:completionHandler];
+        [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
 
     } else {
-        completionHandler([UAActionResult none]);
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[UASituationForegroundPush,
-                                 UASituationLaunchedFromPush,
-                                 UASituationBackgroundPush,
-                                 UASituationForegroundPush,
-                                 UASituationLaunchedFromSpringBoard,
-                                 UASituationManualInvocation];
+    NSArray *validSituations = @[[NSNumber numberWithInteger:UASituationForegroundPush],
+                                 [NSNumber numberWithInteger:UASituationLaunchedFromPush],
+                                 [NSNumber numberWithInteger:UASituationBackgroundPush],
+                                 [NSNumber numberWithInteger:UASituationForegroundPush],
+                                 [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
+                                 [NSNumber numberWithInteger:UASituationManualInvocation]];
 
-    if (!arguments.situation || ![validSituations containsObject:arguments.situation]) {
+    if (!arguments.situation || ![validSituations containsObject:[NSNumber numberWithInteger:arguments.situation]]) {
         return NO;
     }
 
@@ -108,26 +101,26 @@
     return [super acceptsArguments:arguments];
 }
 
-- (void)prefetchURL:(NSURL *)kablamURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
      UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
-         UA_LTRACE(@"Received KABLAM SUCCESS %ld for request %@.", (long)[request.response statusCode], request.url);
+         UA_LTRACE(@"Received landing page success %ld for request %@.", (long)[request.response statusCode], request.url);
 
          // 200, cache response
          if ([request.response statusCode] == 200) {
-             UA_LTRACE(@"Precached KABLAM.");
-             completionHandler([UAActionResult none]);//TODO: it actually has data!
+             UA_LTRACE(@"Precached landing page.");
+             completionHandler([UAActionResult emptyResult]);//TODO: it actually has data!
          } else {
              completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);//TODO: it actually has data!
          }
      };
 
      UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
-         UA_LTRACE(@"Error %@ for KABLAM request %@, attempting to fall back to cache.", request.error, request.url);
-         completionHandler([UAActionResult none]);//TODO: error, no data
+         UA_LTRACE(@"Error %@ for langing page request %@, attempting to fall back to cache.", request.error, request.url);
+         completionHandler([UAActionResult emptyResult]);//TODO: error, no data
      };
 
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:kablamURL];
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
 
      self.connection = [UAHTTPConnection connectionWithRequest:request
                                                   successBlock:successBlock

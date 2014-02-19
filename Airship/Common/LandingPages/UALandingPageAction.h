@@ -26,7 +26,4 @@
 #import "UAAction.h"
 
 @interface UALandingPageAction : UAAction
-
-@property (nonatomic, assign) BOOL modal;
-
 @end

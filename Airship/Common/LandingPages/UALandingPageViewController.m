@@ -68,7 +68,7 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)loadURL:(NSURL *)url;
 
-@property(nonatomic, strong) UIViewController *kablamHostController;
+@property(nonatomic, strong) UIViewController *landingPageHostController;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
 @end
 
@@ -106,10 +106,10 @@ static NSMutableSet *overlayControllers = nil;
 
     // It's the top view controller with a child root view controller
     UIViewController *topController = [UALandingPageViewController topController];
-    UALandingPageViewController *possibleKablamController = [[topController childViewControllers] firstObject];
-    if ([possibleKablamController isKindOfClass:[UALandingPageViewController class]]) {
-        UA_LDEBUG(@"Dismissing kablam modal.");
-        [possibleKablamController.presentingViewController dismissViewControllerAnimated:animated completion:NULL];
+    UALandingPageViewController *possibleLandingPageController = [[topController childViewControllers] firstObject];
+    if ([possibleLandingPageController isKindOfClass:[UALandingPageViewController class]]) {
+        UA_LDEBUG(@"Dismissing landing page.");
+        [possibleLandingPageController.presentingViewController dismissViewControllerAnimated:animated completion:NULL];
     }
 }
 
@@ -118,7 +118,7 @@ static NSMutableSet *overlayControllers = nil;
     if (self) {
         // Initialization code here.
 
-        self.kablamHostController = parent;
+        self.landingPageHostController = parent;
 
         //set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:parent.view.frame];
