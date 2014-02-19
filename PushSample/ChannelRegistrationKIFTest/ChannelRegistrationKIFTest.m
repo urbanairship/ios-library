@@ -34,11 +34,9 @@
 
 @implementation ChannelRegistrationKIFTest
 
-// TODO: Need to run each test in its own app bundle immediately after a brand new app install.
-
-- (void)testCRA {
+- (void)beforeAll {
     NSLog(@"-----------------------------------------------------------------------------------------------");
-    NSLog(@"Test Channel Registration.");
+    NSLog(@"Check for internet connection.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
     // Capture connection type using Reachability
@@ -47,6 +45,15 @@
         NSLog(@"The Internet connection appears to be offline. Abort KIF tests.");
         exit(EXIT_FAILURE);
     }
+}
+
+- (void)testCRA {
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+    NSLog(@"Test Channel Registration.");
+    NSLog(@"-----------------------------------------------------------------------------------------------");
+
+    // Clear Channel ID
+    [UAPush shared].channelID = nil;
 
     UADeviceRegistrar *registrar = [[UADeviceRegistrar alloc] init];
 
@@ -65,29 +72,28 @@
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kPushRegistrationWait];
 
-    // Verify device token
-    [tester tapViewWithAccessibilityLabel:@"Token Settings"];
-    [tester waitForTappableViewWithAccessibilityLabel:@"Device Token"];
-    [tester tapViewWithAccessibilityLabel:@"Device Token"];
-    [tester waitForViewWithAccessibilityLabel:[UAPush shared].deviceToken];
-    [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
-
     // Verify channel ID created
+    NSString *channelId = [UAPush shared].channelID;
+    NSLog(@"Channel ID is: %@", channelId);
+
+    if (!channelId) {
+        NSLog(@"Test failed: Expected channel ID to be created");
+        exit(EXIT_FAILURE);
+    }
+
     [tester tapViewWithAccessibilityLabel:@"Token Settings"];
     [tester waitForTappableViewWithAccessibilityLabel:@"Channel ID"];
     [tester tapViewWithAccessibilityLabel:@"Channel ID"];
 
-    NSString *channelId = [UAPush shared].channelID;
-    NSLog(@"      channel ID is: %@", channelId);
     [tester waitForViewWithAccessibilityLabel:channelId];
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
-    // disable push via the UI
+    // Disable push via the UI
     [tester tapViewWithAccessibilityLabel:@"Push Settings"];
     [tester setOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
 
-    // save push disabled
+    // Save push disabled
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
 }
@@ -97,12 +103,8 @@
     NSLog(@"Test Device Registration.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
-    // Capture connection type using Reachability
-    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
-    if (netStatus == UA_NotReachable) {
-        NSLog(@"The Internet connection appears to be offline. Abort KIF tests.");
-        exit(EXIT_FAILURE);
-    }
+    // Clear Channel ID
+    [UAPush shared].channelID = nil;
 
     UADeviceRegistrar *registrar = [[UADeviceRegistrar alloc] init];
 
@@ -123,11 +125,19 @@
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kPushRegistrationWait];
 
-    // Verify device token
+    // Verify device token created
+    NSString *deviceToken = [UAPush shared].deviceToken;
+    NSLog(@"Device token is: %@", deviceToken);
+
+    if (!deviceToken) {
+        NSLog(@"Test failed: Expected device token");
+        exit(EXIT_FAILURE);
+    }
+
     [tester tapViewWithAccessibilityLabel:@"Token Settings"];
     [tester waitForTappableViewWithAccessibilityLabel:@"Device Token"];
     [tester tapViewWithAccessibilityLabel:@"Device Token"];
-    [tester waitForViewWithAccessibilityLabel:[UAPush shared].deviceToken];
+    [tester waitForViewWithAccessibilityLabel:deviceToken];
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
 
     // Verify channel ID was not created (Should be Unavailable)
@@ -137,11 +147,11 @@
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
-    // disable push via the UI
+    // Disable push via the UI
     [tester tapViewWithAccessibilityLabel:@"Push Settings"];
     [tester setOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
 
-    // save push disabled
+    // Save push disabled
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 }
 
@@ -150,12 +160,8 @@
     NSLog(@"Test Channel Registration Fallback to Device Registration.");
     NSLog(@"-----------------------------------------------------------------------------------------------");
 
-    // Capture connection type using Reachability
-    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
-    if (netStatus == UA_NotReachable) {
-        NSLog(@"The Internet connection appears to be offline. Abort KIF tests.");
-        exit(EXIT_FAILURE);
-    }
+    // Clear Channel ID
+    [UAPush shared].channelID = nil;
 
     // Swizzle to force server to return 501
     [UAChannelRegistrationPayload jr_swizzleMethod:@selector(asJSONData) withMethod:@selector(asJSONData_fallback) error:nil];
@@ -179,11 +185,19 @@
     NSLog(@"Wait for the registration to succeed.");
     [tester waitForTimeInterval:kPushRegistrationWait];
 
-    // Verify device token
+    // Verify device token created
+    NSString *deviceToken = [UAPush shared].deviceToken;
+    NSLog(@"Device token is: %@", deviceToken);
+
+    if (!deviceToken) {
+        NSLog(@"Test failed: Expected device token");
+        exit(EXIT_FAILURE);
+    }
+
     [tester tapViewWithAccessibilityLabel:@"Token Settings"];
     [tester waitForTappableViewWithAccessibilityLabel:@"Device Token"];
     [tester tapViewWithAccessibilityLabel:@"Device Token"];
-    [tester waitForViewWithAccessibilityLabel:[UAPush shared].deviceToken];
+    [tester waitForViewWithAccessibilityLabel:deviceToken];
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
 
     // Verify channel ID was not created (Should be Unavailable)
@@ -193,11 +207,11 @@
     [tester tapViewWithAccessibilityLabel:@"Back" traits:UIAccessibilityTraitButton];
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
-    // disable push via the UI
+    // Disable push via the UI
     [tester tapViewWithAccessibilityLabel:@"Push Settings"];
     [tester setOn:NO forSwitchWithAccessibilityLabel:@"Push Notifications Enabled"];
 
-    // save push disabled
+    // Save push disabled
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
     // Unswizzle
