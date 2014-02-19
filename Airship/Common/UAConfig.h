@@ -142,7 +142,9 @@
  * detectProvisioningMode is set to 'YES', the inProduction value will
  * be determined at runtime by reading the provisioning profile. If it is set to
  * 'NO' (the default), the inProduction flag may be set directly or by using the
- * AirshipConfig.plist file. The inProduction flag defaults to 'YES' for safety
+ * AirshipConfig.plist file.
+ *
+ * When this flag is enabled, the inProduction flag defaults to 'YES' for safety
  * so that the production keys will always be used if the profile cannot be read
  * in a released app. Simulator builds do not include the profile, and the
  * detectProvisioningMode flag does not have any effect in cases where a profile
