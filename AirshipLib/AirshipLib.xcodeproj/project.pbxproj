@@ -67,10 +67,6 @@
 		1F6759521756C24200C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */; };
 		1F6759531756C24200C062E0 /* AirshipConfig-Valid-NeXTStep.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759511756C24100C062E0 /* AirshipConfig-Valid-NeXTStep.plist */; };
 		1F675959175900BC00C062E0 /* AirshipConfig-Valid.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F675958175900BC00C062E0 /* AirshipConfig-Valid.plist */; };
-		1F680E7A189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */; };
-		1F680E7B189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */; };
-		1F680E7C189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */; };
-		1F680E7E189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */; };
 		1F680E7F189B1ECF00991E57 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */; };
 		1F680E80189B1ECF00991E57 /* UIWebView+UAAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */; };
 		1F680E81189B1ECF00991E57 /* UIWebView+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F680E79189B1ECF00991E57 /* UIWebView+UAAdditions.m */; };
@@ -502,8 +498,6 @@
 		1F6759501756C24100C062E0 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "AirshipConfig-Valid-Legacy-NeXTStep.plist"; path = "Support/AirshipConfig-Valid-Legacy-NeXTStep.plist"; sourceTree = "<group>"; };
 		1F6759511756C24100C062E0 /* AirshipConfig-Valid-NeXTStep.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "AirshipConfig-Valid-NeXTStep.plist"; path = "Support/AirshipConfig-Valid-NeXTStep.plist"; sourceTree = "<group>"; };
 		1F675958175900BC00C062E0 /* AirshipConfig-Valid.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AirshipConfig-Valid.plist"; path = "Support/AirshipConfig-Valid.plist"; sourceTree = "<group>"; };
-		1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABeveledLoadingIndicator.h; sourceTree = "<group>"; };
-		1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABeveledLoadingIndicator.m; sourceTree = "<group>"; };
 		1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+UAAdditions.h"; sourceTree = "<group>"; };
 		1F680E79189B1ECF00991E57 /* UIWebView+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+UAAdditions.m"; sourceTree = "<group>"; };
 		1FC71652129597F9003BDD2B /* UAUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUser.h; sourceTree = "<group>"; };
@@ -1318,8 +1312,6 @@
 			isa = PBXGroup;
 			children = (
 				1F55FB6A181A34B7002AA192 /* UI */,
-				1F680E76189B1ECF00991E57 /* UABeveledLoadingIndicator.h */,
-				1F680E77189B1ECF00991E57 /* UABeveledLoadingIndicator.m */,
 				1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */,
 				1F680E79189B1ECF00991E57 /* UIWebView+UAAdditions.m */,
 				49C671F2184EA8F90088F210 /* JS */,
@@ -1429,7 +1421,6 @@
 				1FE0B75817E2751000856C60 /* UAAppDelegateProxy.h in Headers */,
 				CC8542C017F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */,
-				1F680E7B189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */,
 				1FE0B75C17E2751000856C60 /* UAInboxUtils.h in Headers */,
 				49C67200184EAB640088F210 /* UANativeBridge.h in Headers */,
 				1FE0B75D17E2751000856C60 /* UAInbox.h in Headers */,
@@ -1565,7 +1556,6 @@
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
 				1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */,
-				1F680E7A189B1ECF00991E57 /* UABeveledLoadingIndicator.h in Headers */,
 				494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */,
 				1F610E0B17835C6700BCD96E /* UAConfig+Internal.h in Headers */,
 				1F610DF217835C3A00BCD96E /* UAInboxPushHandler.h in Headers */,
@@ -1786,7 +1776,6 @@
 				CC8542BE17F4B81600D2DE10 /* UAActionRegistrar.m in Sources */,
 				1FE0B79717E2751000856C60 /* UAStandardLocationProvider.m in Sources */,
 				CC85427C17F2130700D2DE10 /* UAURLProtocol.m in Sources */,
-				1F680E7E189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */,
 				CCDD379E1807019000B8866E /* UAIncomingRichPushAction.m in Sources */,
 				1FE0B79817E2751000856C60 /* UABaseLocationProvider.m in Sources */,
 				4905C4D618242D6F001D48E3 /* UAWebViewTools.m in Sources */,
@@ -1944,7 +1933,6 @@
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,
 				495048A81738812500F8B5BE /* UADelayOperation.m in Sources */,
-				1F680E7C189B1ECF00991E57 /* UABeveledLoadingIndicator.m in Sources */,
 				49E9C9C3183AD42300B7BCFF /* UAWebViewCallData.m in Sources */,
 				CC1D229D180373E0005C8393 /* UAAction+Operators.m in Sources */,
 				1F610DE317835C3A00BCD96E /* UAInboxAPIClient.m in Sources */,
