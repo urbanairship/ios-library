@@ -959,6 +959,8 @@
 		1F610E0E17835CCB00BCD96E /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */,
+				1F680E79189B1ECF00991E57 /* UIWebView+UAAdditions.m */,
 				4905C4D118242D6F001D48E3 /* UAWebViewTools.h */,
 				4905C4D218242D6F001D48E3 /* UAWebViewTools.m */,
 				1F2B10C312DD01B60020843D /* UATagUtils.h */,
@@ -1312,8 +1314,6 @@
 			isa = PBXGroup;
 			children = (
 				1F55FB6A181A34B7002AA192 /* UI */,
-				1F680E78189B1ECF00991E57 /* UIWebView+UAAdditions.h */,
-				1F680E79189B1ECF00991E57 /* UIWebView+UAAdditions.m */,
 				49C671F2184EA8F90088F210 /* JS */,
 				CC85429E17F4B7F900D2DE10 /* Actions */,
 				1F4230C216C16F1B004B52C1 /* Analytics */,
