@@ -38,16 +38,6 @@
                ReferencedContainer = "container:PushSampleLib.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "769AFCDF18AD4B1B006696A9"
-               BuildableName = "ChannelRegistrationKIFTest.octest"
-               BlueprintName = "ChannelRegistrationKIFTest"
-               ReferencedContainer = "container:PushSampleLib.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
