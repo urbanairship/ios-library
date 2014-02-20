@@ -26,11 +26,12 @@
 #import <Foundation/Foundation.h>
 
 #import "UIWebView+UAAdditions.h"
+#import "UARichContentWindowProtocol.h"
 
 /**
  * Primary interface for displaying landing pages.
  */
-@interface UALandingPageViewController : UIViewController<UIWebViewDelegate>
+@interface UALandingPageViewController : UIViewController<UIWebViewDelegate, UARichContentWindowProtocol>
 
 /**
  * The UIWebView used to display the message content.
