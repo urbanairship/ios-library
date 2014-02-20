@@ -214,7 +214,7 @@
     // Save push disabled
     [tester tapViewWithAccessibilityLabel:@"Done" traits:UIAccessibilityTraitButton];
 
-    // Unswizzle
+    // Unswizzle back to its normal implementation
     [UAChannelRegistrationPayload jr_swizzleMethod:@selector(asJSONData_fallback) withMethod:@selector(asJSONData) error:nil];
 }
 
