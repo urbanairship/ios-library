@@ -23,21 +23,14 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAChannelRegistrationPayload+UAAdditions.h"
-#import "UAChannelRegistrationPayload+Internal.h"
+#import "UAChannelRegistrationPayload.h"
 
+@interface UAChannelRegistrationPayload ()
 
-@implementation UAChannelRegistrationPayload (UAAdditions)
-
-- (NSData *)asJSONData_fallback {
-
-    NSDictionary *payload = [self payloadDictionary];
-
-    NSMutableDictionary *newPayload = [NSMutableDictionary dictionaryWithDictionary:payload];
-
-    [newPayload setValue:[NSNumber numberWithBool:YES] forKey:@"test_client_fallback"];
-
-    return [NSJSONSerialization dataWithJSONObject:newPayload options:0 error:nil];
-}
+/**
+ * The UAChannelRegistrationPayload as an NSDictionary.
+ * @return The payload as an NSDictionary.
+ */
+- (NSDictionary *)payloadDictionary;
 
 @end
