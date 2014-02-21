@@ -30,6 +30,13 @@
 
 @implementation UACloseWindowAction
 
+- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (arguments.situation == UASituationBackgroundPush) {
+        return NO;
+    }
+    return YES;
+}
+
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
