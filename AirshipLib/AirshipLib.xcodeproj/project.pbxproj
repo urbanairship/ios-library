@@ -15,7 +15,6 @@
 		1F55FB6D181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */; };
 		1F55FB6E181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */; };
 		1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
-		1F55FB70181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
 		1F55FB71181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
 		1F610DB517835C2200BCD96E /* UAAppDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F610DAD17835C2200BCD96E /* UAAppDelegate.h */; };
 		1F610DB617835C2200BCD96E /* UAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DAE17835C2200BCD96E /* UAAppDelegate.m */; };
@@ -54,12 +53,10 @@
 		1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */; };
 		1F65BB7D18997AB6000E8ACC /* UALandingPageAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */; };
 		1F65BB7E18997AB6000E8ACC /* UALandingPageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */; };
-		1F65BB7F18997AB6000E8ACC /* UALandingPageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */; };
 		1F65BB8018997AB6000E8ACC /* UALandingPageAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */; };
 		1F65BB8618997AB6000E8ACC /* UALandingPageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */; };
 		1F65BB8718997AB6000E8ACC /* UALandingPageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */; };
 		1F65BB8818997AB6000E8ACC /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7618997AB6000E8ACC /* UALandingPageViewController.m */; };
-		1F65BB8918997AB6000E8ACC /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7618997AB6000E8ACC /* UALandingPageViewController.m */; };
 		1F65BB8A18997AB6000E8ACC /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F65BB7618997AB6000E8ACC /* UALandingPageViewController.m */; };
 		1F675946175682E000C062E0 /* UAConfigTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F675945175682DF00C062E0 /* UAConfigTest.m */; };
 		1F67594A1756A97B00C062E0 /* development-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = 1F6759481756A97B00C062E0 /* development-embedded.mobileprovision */; };
@@ -1858,9 +1855,7 @@
 				CCA3A4F917FF1515009C7371 /* UAActionResultTest.m in Sources */,
 				CCDD37CE18089E6F00B8866E /* UAOpenExternalURLActionTest.m in Sources */,
 				495526B417D95552009BC301 /* UAUser+Test.m in Sources */,
-				1F55FB70181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */,
 				CCA3A4FF17FF1582009C7371 /* UAActionRegistryEntryTest.m in Sources */,
-				1F65BB8918997AB6000E8ACC /* UALandingPageViewController.m in Sources */,
 				CCBFA2E017B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m in Sources */,
 				49E9C9BE1836EBAB00B7BCFF /* UAWebViewToolsTest.m in Sources */,
 				CCB7DF5B17BBF1B800CEDC56 /* UAInboxDBManagerTests.m in Sources */,
@@ -1875,7 +1870,6 @@
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
-				1F65BB7F18997AB6000E8ACC /* UALandingPageAction.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

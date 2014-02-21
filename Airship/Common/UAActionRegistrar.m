@@ -244,7 +244,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return (entry != nil);
 }
 
-
 - (void)registerDefaultActions {
     // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
@@ -289,9 +288,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
     [self registerAction:landingPageAction
                    names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]];
-
 }
-
-
 
 @end

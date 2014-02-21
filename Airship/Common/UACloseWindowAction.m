@@ -30,22 +30,10 @@
 
 @implementation UACloseWindowAction
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    BOOL acceptsValue = [arguments.value isKindOfClass:[NSNumber class]] ||
-        !arguments.value;
-
-    return acceptsValue;
-}
-
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    BOOL animated = NO;
-    if (arguments.value) {
-        animated = [((NSNumber *)arguments.value) boolValue];
-    }
-
-    [UALandingPageViewController closeWindow:animated];
+    [UALandingPageViewController closeWindow:YES];
         Class cls = [UAInbox shared].uiClass;
     if ([cls conformsToProtocol:@protocol(UARichContentWindow)]) {
         [cls closeWindow:YES];
