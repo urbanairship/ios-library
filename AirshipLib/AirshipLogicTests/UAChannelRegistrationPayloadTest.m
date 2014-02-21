@@ -270,8 +270,6 @@ UAChannelRegistrationPayload *payload;
     NSDictionary *dict = [[NSDictionary alloc] initWithDictionary:[payload payloadDictionary]];
     NSDictionary *channel = [dict valueForKey:kUAChannelKey];
 
-    // Verify that tags are not present when setTags is false
-    dict = [[NSDictionary alloc] initWithDictionary:[payload payloadDictionary]];
     channel = [dict valueForKey:kUAChannelKey];
     XCTAssertNil([channel valueForKey:kUAChannelTagsJSONKey], @"tags should be nil");
 }
