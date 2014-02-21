@@ -231,8 +231,8 @@
 		49B2EE8718B538F600201576 /* UACloseWindowAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B2EE8418B538F600201576 /* UACloseWindowAction.h */; };
 		49B2EE8818B538F600201576 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B2EE8518B538F600201576 /* UACloseWindowAction.m */; };
 		49B2EE8918B538F600201576 /* UACloseWindowAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B2EE8518B538F600201576 /* UACloseWindowAction.m */; };
-		49B2EE8B18B575E400201576 /* UARichContentWindowProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B2EE8A18B575E400201576 /* UARichContentWindowProtocol.h */; };
-		49B2EE8C18B575E400201576 /* UARichContentWindowProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B2EE8A18B575E400201576 /* UARichContentWindowProtocol.h */; };
+		49B2EE8B18B575E400201576 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B2EE8A18B575E400201576 /* UARichContentWindow.h */; };
+		49B2EE8C18B575E400201576 /* UARichContentWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B2EE8A18B575E400201576 /* UARichContentWindow.h */; };
 		49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
 		49C67200184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
 		49C67204184EB9120088F210 /* UANativeBridge.c in Sources */ = {isa = PBXBuildFile; fileRef = 49C67203184EB9120088F210 /* UANativeBridge.c */; };
@@ -559,7 +559,7 @@
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
 		49B2EE8418B538F600201576 /* UACloseWindowAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UACloseWindowAction.h; sourceTree = "<group>"; };
 		49B2EE8518B538F600201576 /* UACloseWindowAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UACloseWindowAction.m; sourceTree = "<group>"; };
-		49B2EE8A18B575E400201576 /* UARichContentWindowProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindowProtocol.h; sourceTree = "<group>"; };
+		49B2EE8A18B575E400201576 /* UARichContentWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARichContentWindow.h; sourceTree = "<group>"; };
 		49C671FE184EAB640088F210 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = JS/UANativeBridge.h; sourceTree = "<group>"; };
 		49C67203184EB9120088F210 /* UANativeBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = UANativeBridge.c; path = JS/UANativeBridge.c; sourceTree = "<group>"; };
 		49C6721B1857CB040088F210 /* UANativeBridgeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANativeBridgeTest.m; sourceTree = "<group>"; };
@@ -893,7 +893,7 @@
 				1F55FB2C18106066002AA192 /* LandingPages */,
 				1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */,
 				1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */,
-				49B2EE8A18B575E400201576 /* UARichContentWindowProtocol.h */,
+				49B2EE8A18B575E400201576 /* UARichContentWindow.h */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1376,7 +1376,7 @@
 			files = (
 				1FE0B74117E2751000856C60 /* UAInboxDBManager.h in Headers */,
 				CC8542D417F4B81600D2DE10 /* UAPushActionArguments.h in Headers */,
-				49B2EE8C18B575E400201576 /* UARichContentWindowProtocol.h in Headers */,
+				49B2EE8C18B575E400201576 /* UARichContentWindow.h in Headers */,
 				CC8542CC17F4B81600D2DE10 /* UAIncomingPushAction.h in Headers */,
 				4995C63B180DBBC9004F8724 /* UAAddTagsAction.h in Headers */,
 				CC8542D817F4B81600D2DE10 /* UASyncAction.h in Headers */,
@@ -1568,7 +1568,7 @@
 				1F610E0517835C3A00BCD96E /* UAPush.h in Headers */,
 				1F610DE817835C3A00BCD96E /* UAInboxDefaultJSDelegate.h in Headers */,
 				CC7DC941183E977100E95BB8 /* UAChannelAPIClient.h in Headers */,
-				49B2EE8B18B575E400201576 /* UARichContentWindowProtocol.h in Headers */,
+				49B2EE8B18B575E400201576 /* UARichContentWindow.h in Headers */,
 				495048B7173B11A500F8B5BE /* UAHTTPConnection+Internal.h in Headers */,
 				494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */,
 				1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */,

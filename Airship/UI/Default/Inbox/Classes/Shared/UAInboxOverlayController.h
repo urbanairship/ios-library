@@ -49,6 +49,7 @@
 #import "UAInboxMessage.h"
 #import "UABeveledLoadingIndicator.h"
 #import "UIWebView+UAAdditions.h"
+#import "UARichContentWindow.h"
 
 /**
  * This class provides an overlay window that can be popped over
@@ -75,6 +76,11 @@
  * @param messageID the message ID of the rich push message to display
  */
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageId;
+
+/**
+ * Closes all open overlay controllers;
+ */
++ (void)closeAll;
 
 /**
  * Initializer, creates an overlay window and loads the given content within a particular view controller.

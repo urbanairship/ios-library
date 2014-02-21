@@ -166,6 +166,14 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     }
 }
 
++ (void)closeWindow:(BOOL)animated {
+    if ([self shared].useOverlay) {
+        [UAInboxOverlayController closeAll];
+    } else {
+        [self quitInbox];
+    }
+}
+
 + (void)quitInbox {
     [[UAInboxUI shared] quitInbox];
 }

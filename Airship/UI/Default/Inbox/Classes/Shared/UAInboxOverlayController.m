@@ -90,6 +90,12 @@ static NSMutableSet *overlayControllers = nil;
     [overlayControllers addObject:overlayController];
 }
 
++ (void)closeAll {
+    for (UAInboxOverlayController *controller in overlayControllers) {
+        [controller closePopupWindow];
+    }
+}
+
 
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
     self = [super init];

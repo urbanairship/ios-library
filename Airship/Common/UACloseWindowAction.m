@@ -25,7 +25,7 @@
 
 #import "UACloseWindowAction.h"
 #import "UALandingPageViewController.h"
-#import "UARichContentWindowProtocol.h"
+#import "UARichContentWindow.h"
 #import "UAInbox.h"
 
 @implementation UACloseWindowAction
@@ -47,7 +47,7 @@
 
     [UALandingPageViewController closeWindow:animated];
         Class cls = [UAInbox shared].uiClass;
-    if ([cls conformsToProtocol:@protocol(UARichContentWindowProtocol)]) {
+    if ([cls conformsToProtocol:@protocol(UARichContentWindow)]) {
         [cls closeWindow:YES];
     }
 }

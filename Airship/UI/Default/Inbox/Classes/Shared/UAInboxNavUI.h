@@ -27,11 +27,10 @@
 
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
-
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-
 #import "UAInboxPushHandler.h"
+#import "UARichContentWindow.h"
 
 #ifndef UA_INBOX_TR
 #define UA_INBOX_TR(key) [[UAInboxNavUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
@@ -45,7 +44,7 @@
  * to be displayed in either a navigation controller (in the iPhone UI idiom)
  * or a popover controller (in the iPad UI idiom).
  */
-@interface UAInboxNavUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate, UIPopoverControllerDelegate>
+@interface UAInboxNavUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate, UIPopoverControllerDelegate, UARichContentWindow>
 
 /**
  * Set this property to YES if the class should display in-app messages
@@ -92,6 +91,11 @@ SINGLETON_INTERFACE(UAInboxNavUI);
 + (void)quitInbox;
 + (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
 + (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
+
+///---------------------------------------------------------------------------------------
+/// @name UARichContentWindow Methods
+///---------------------------------------------------------------------------------------
++ (void)closeWindow:(BOOL)animated;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAInboxPushHandlerDelegate Methods

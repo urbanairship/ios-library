@@ -4,7 +4,7 @@
 /**
  * Protocol for classes reponsible for managing rich content windows.
  */
-@protocol UARichContentWindowProtocol <NSObject>
+@protocol UARichContentWindow <NSObject>
 
 @required
 
@@ -15,4 +15,3 @@
 + (void)closeWindow:(BOOL)animated;
 
 @end
-
