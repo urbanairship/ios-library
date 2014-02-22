@@ -131,7 +131,7 @@ static NSMutableSet *overlayControllers = nil;
 
         self.loadingIndicator = [UABeveledLoadingIndicator indicator];
 
-        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                               target:self
                                                                                               action:@selector(finish)];
 
@@ -217,6 +217,7 @@ static NSMutableSet *overlayControllers = nil;
 - (void)webViewDidFinishLoad:(UIWebView *)wv {
     [self.loadingIndicator hide];
     [self.webView injectViewportFix];
+    [self.webView populateJavascriptEnvironment];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
