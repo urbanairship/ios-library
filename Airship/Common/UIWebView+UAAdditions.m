@@ -58,26 +58,26 @@
      * Set the current message ID.
      */
     NSString *messageID = message.messageID;
-    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID];
+    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID ?: @"null"];
 
     /*
      * Set the current message's sent date (GMT).
      */
     NSDate *date = message.messageSent;
     NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:date];
-    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate];
+    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate ?: @"null"];
 
     /*
      * Set the current message's sent date (unix epoch time in milliseconds).
      */
     NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970] * 1000];
-    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=%@;", messageSentDateMS];
+    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=%@;", messageSentDateMS ?: @"null"];
 
     /*
      * Set the current message's title.
      */
     NSString *messageTitle = message.title;
-    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle];
+    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle ?: @"null"];
 
     /*
      * Define action/native bridge functionality:
@@ -98,6 +98,10 @@
      * Execute the JS we just constructed.
      */
     [self stringByEvaluatingJavaScriptFromString:js];
+}
+
+- (void)populateJavascriptEnvironment {
+    [self populateJavascriptEnvironment:nil];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
