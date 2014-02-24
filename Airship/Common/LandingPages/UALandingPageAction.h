@@ -25,5 +25,20 @@
 
 #import "UAAction.h"
 
+/**
+ * Opens a landing page URL in a rich content window.
+ *
+ * This action is registered under the names landing_page_action and ^l.
+ *
+ * Expected argument values: NSString
+ *
+ * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush, UASituationLaunchedFromSpringboard,
+ * UASituationWebViewInvocation, UASituationManualInvocation.
+ *
+ * Result value: nil
+ *
+ * Fetch result: UAActionFetchResultNewData
+ *
+ */
 @interface UALandingPageAction : UAAction
 @end

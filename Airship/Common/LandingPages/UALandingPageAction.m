@@ -50,8 +50,6 @@
 
     NSArray *validSituations = @[[NSNumber numberWithInteger:UASituationForegroundPush],
                                  [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                 [NSNumber numberWithInteger:UASituationBackgroundPush],
-                                 [NSNumber numberWithInteger:UASituationForegroundPush],
                                  [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
                                  [NSNumber numberWithInteger:UASituationManualInvocation]];
 

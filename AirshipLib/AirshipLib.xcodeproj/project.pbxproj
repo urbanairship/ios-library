@@ -491,8 +491,8 @@
 		1F610DDE17835C3A00BCD96E /* UAPush.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPush.m; sourceTree = "<group>"; };
 		1F610E0817835C6700BCD96E /* UAConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfig.h; sourceTree = "<group>"; };
 		1F610E0917835C6700BCD96E /* UAConfig+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAConfig+Internal.h"; sourceTree = "<group>"; };
-		1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageAction.h; path = ../LandingPages/UALandingPageAction.h; sourceTree = "<group>"; };
-		1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageAction.m; path = ../LandingPages/UALandingPageAction.m; sourceTree = "<group>"; };
+		1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageAction.h; path = LandingPages/UALandingPageAction.h; sourceTree = "<group>"; };
+		1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageAction.m; path = LandingPages/UALandingPageAction.m; sourceTree = "<group>"; };
 		1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageViewController.h; path = ../LandingPages/UALandingPageViewController.h; sourceTree = "<group>"; };
 		1F65BB7618997AB6000E8ACC /* UALandingPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageViewController.m; path = ../LandingPages/UALandingPageViewController.m; sourceTree = "<group>"; };
 		1F675944175682DF00C062E0 /* UAConfigTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAConfigTest.h; sourceTree = "<group>"; };
@@ -877,8 +877,6 @@
 		1F55FB2C18106066002AA192 /* LandingPages */ = {
 			isa = PBXGroup;
 			children = (
-				1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */,
-				1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */,
 				1F65BB7518997AB6000E8ACC /* UALandingPageViewController.h */,
 				1F65BB7618997AB6000E8ACC /* UALandingPageViewController.m */,
 			);
@@ -1203,6 +1201,8 @@
 				CC8542AA17F4B81600D2DE10 /* UAAggregateActionResult.m */,
 				CC8542AB17F4B81600D2DE10 /* UAIncomingPushAction.h */,
 				CC8542AC17F4B81600D2DE10 /* UAIncomingPushAction.m */,
+				1F65BB7118997AB6000E8ACC /* UALandingPageAction.h */,
+				1F65BB7218997AB6000E8ACC /* UALandingPageAction.m */,
 				CC8542AF17F4B81600D2DE10 /* UAPushActionArguments.h */,
 				CC8542B017F4B81600D2DE10 /* UAPushActionArguments.m */,
 				CC8542B117F4B81600D2DE10 /* UASyncAction.h */,
