@@ -31,10 +31,10 @@
 @implementation UACloseWindowAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if (arguments.situation == UASituationBackgroundPush) {
-        return NO;
+    if (arguments.situation == UASituationManualInvocation || arguments.situation == UASituationWebViewInvocation) {
+        return YES;
     }
-    return YES;
+    return NO;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments

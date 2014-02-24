@@ -25,8 +25,17 @@
 
 #import "UAAction.h"
 
+/**
+ * Closes any currently displayed rich content window.
+ * This action is registered under the name close_window_action, and is reserved.
+ *
+ * Expected argument values: none
+ *
+ * Valid situations: UASituationWebViewInvocation, UASituationManualInvocation
+ *
+ * Result value: nil
+ *
+ */
 @interface UACloseWindowAction : UAAction
-
-
 
 @end

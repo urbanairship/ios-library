@@ -254,9 +254,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
 
     UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
-    [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:^(UAActionArguments *args){
-        return (BOOL)(args.situation == UASituationWebViewInvocation || args.situation == UASituationManualInvocation);
-    }];
+    [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:nil];
 
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
