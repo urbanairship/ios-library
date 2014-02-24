@@ -4,7 +4,7 @@
 # and copies the appropriate files to the test directory. The library is built  The libOCMock.a file and the headers are all that's 
 # required.
  
-url="https://github.com/urbanairship/ocmock.git" 
+url="https://github.com/erikdoe/ocmock.git"
 temp_dir="/tmp/objectClone"
 library_source_dir="/tmp/objectClone/Source"
 library_build_dir="/tmp/objectClone/Source/build/Release-iphoneos"
