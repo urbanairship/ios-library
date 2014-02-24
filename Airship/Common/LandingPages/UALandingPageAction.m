@@ -25,61 +25,26 @@
 
 #import "UALandingPageAction.h"
 
-
 #import "UAGlobal.h"
-#import "UAInboxUI.h"
-#import "UAHTTPConnection.h"
 #import "UAURLProtocol.h"
 #import "UALandingPageViewController.h"
-#import "UAPushActionArguments.h"
-#import "UAActionRegistrar.h"
-
-@interface UALandingPageAction()
-
-@property(nonatomic, strong) UAHTTPConnection *connection;
-
-@end
 
 @implementation UALandingPageAction
-
-// A URL: https://sbux-dl-staging.urbanairship.com/binary/public/kwG7rEc3Tz6542jxYJ4eWA/da67242f-a22c-440c-a270-1a78e0917334
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UASituation situation = arguments.situation;
     NSURL *landingPageURL = [NSURL URLWithString:arguments.value];
-
-    NSArray *displaySituations = @[[NSNumber numberWithInteger:UASituationForegroundPush],
-                                    [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                    [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
-                                    [NSNumber numberWithInteger:UASituationManualInvocation]];
-
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
 
     //close any existing windows
     [UALandingPageViewController closeWindow:NO];
 
-    if ([displaySituations containsObject:[NSNumber numberWithInteger:situation]]) {
-        //load the landing page
-        [UALandingPageViewController showURL:landingPageURL];
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
-    } else if (situation == UASituationBackgroundPush) {
-        // pre-cache. set pending-landing-page flag
-
-        //TODO: plan for this... we may want to schedule for springboard, but cancel it if the displayable view
-        //is launched
-        //[UAPushActionArguments addPendingSpringBoardAction:@"landing_page_action" value:arguments.value];
-
-
-        // fetch url, then set flag in completion block
-        [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
-
-    } else {
-        completionHandler([UAActionResult emptyResult]);
-    }
-}
+    //load the landing page
+    [UALandingPageViewController showURL:landingPageURL];
+    completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+  }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
@@ -99,34 +64,6 @@
     }
 
     return [super acceptsArguments:arguments];
-}
-
-- (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
-
-     UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
-         UA_LTRACE(@"Received landing page success %ld for request %@.", (long)[request.response statusCode], request.url);
-
-         // 200, cache response
-         if ([request.response statusCode] == 200) {
-             UA_LTRACE(@"Precached landing page.");
-             completionHandler([UAActionResult emptyResult]);//TODO: it actually has data!
-         } else {
-             completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);//TODO: it actually has data!
-         }
-     };
-
-     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
-         UA_LTRACE(@"Error %@ for langing page request %@, attempting to fall back to cache.", request.error, request.url);
-         completionHandler([UAActionResult emptyResult]);//TODO: error, no data
-     };
-
-    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
-
-     self.connection = [UAHTTPConnection connectionWithRequest:request
-                                                  successBlock:successBlock
-                                                  failureBlock:failureBlock];
-     
-     [self.connection start];
 }
 
 @end

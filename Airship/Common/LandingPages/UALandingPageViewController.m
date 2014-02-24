@@ -23,44 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* UAInboxOverlayController is based on MTPopupWindow
- * http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
- *
- * Copyright 2011 Marin Todorov. MIT license
- * http://www.opensource.org/licenses/mit-license.php
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
- * is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 #import "UALandingPageViewController.h"
 
-#import "UAInboxMessage.h"
-#import "UAInboxMessageList.h"
-#import "UAInbox.h"
-#import "UAInboxUI.h"
+#import "UABeveledLoadingIndicator.h"
 #import "UAUtils.h"
-
 #import "UIWebView+UAAdditions.h"
 #import "UAWebViewTools.h"
-
-#import <QuartzCore/QuartzCore.h>
-
-#define kShadeViewTag 1000
-
-static NSMutableSet *overlayControllers = nil;
+#import "UAGlobal.h"
 
 @interface UALandingPageViewController()
 
@@ -68,26 +37,24 @@ static NSMutableSet *overlayControllers = nil;
 
 @property(nonatomic, strong) UIViewController *landingPageHostController;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
+
 @end
 
 @implementation UALandingPageViewController
 
-// While this breaks from convention, it does not actually leak. Turning off analyzer warnings
 + (void)showURL:(NSURL *)url {
-
     [UALandingPageViewController closeWindow:NO];
 
     UIViewController *topController = [UALandingPageViewController topController];
 
-    UALandingPageViewController *overlayController = [[UALandingPageViewController alloc] initWithParentViewController:topController andURL:url];
+    UALandingPageViewController *lpvc = [[UALandingPageViewController alloc] initWithParentViewController:topController andURL:url];
 
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:overlayController];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lpvc];
     navController.modalPresentationStyle = UIModalPresentationFormSheet;
     [topController presentViewController:navController animated:YES completion:NULL];
 
-    [overlayController loadURL:url];
+    [lpvc loadURL:url];
 }
-
 
 // a utility method that grabs the top-most view controller
 + (UIViewController *)topController {
@@ -155,14 +122,11 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)loadURL:(NSURL *)url {
-
-
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = self.parentViewController.view.center;
 
     [self.loadingIndicator show];
 
-    //TODO: consider adding a hard-coded HTML frame
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
     [requestObj setTimeoutInterval:30];
@@ -181,22 +145,22 @@ static NSMutableSet *overlayControllers = nil;
     // casts a device orientation to an interface orientation
 
 // IF iOS6+, the following will work:
-//
-//    if ((self.parentViewController.supportedInterfaceOrientations & (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
-//        return;
-//    }
-// Otherwise:
-
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
     if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
         return;
     }
+#else
+    if (([self.parentViewController supportedInterfaceOrientations] & (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
+        return;
+    }
+#endif
 
     // This will inject the current device orientation
     [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
 /**
- * Removes all views from the hierarchy and releases self
+ * Dismisses self
  */
 - (void)finish {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
@@ -230,6 +194,5 @@ static NSMutableSet *overlayControllers = nil;
 
     UALOG(@"Failed to load message: %@", error);
 }
-
 
 @end
