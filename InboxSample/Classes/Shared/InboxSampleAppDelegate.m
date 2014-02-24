@@ -35,9 +35,6 @@
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 
-#import "UALandingPageAction.h"
-#import "UAActionRegistrar.h"
-
 @interface InboxSampleAppDelegate()
 @property (nonatomic, strong) UAInboxDefaultJSDelegate *jsDelegate;
 @end
