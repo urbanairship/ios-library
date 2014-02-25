@@ -46,7 +46,9 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             [self runAction:action withArguments:arguments withCompletionHandler:completionHandler];
         } else {
             UA_LINFO(@"Not running action %@ because of predicate.", actionName);
-            completionHandler([UAActionResult rejectedArgumentsResult]);
+            if (completionHandler) {
+                completionHandler([UAActionResult rejectedArgumentsResult]);
+            }
         }
     } else {
         UA_LINFO(@"No action found with name %@, skipping action.", actionName);
@@ -56,7 +58,10 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
             UA_LWARN(@"Extra names beginning with the carat (^) character are reserved by Urban Airship \
                      and may be subject to future use.");
         }
-        completionHandler([UAActionResult actionNotFoundResult]);
+
+        if (completionHandler) {
+            completionHandler([UAActionResult actionNotFoundResult]);
+        }
     }
 }
 
@@ -76,7 +81,9 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     if (!actions.count) {
         UA_LTRACE("No actions to perform.");
-        completionHandler(aggregateResult);
+        if (completionHandler) {
+            completionHandler(aggregateResult);
+        }
         return;
     }
 
