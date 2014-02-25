@@ -31,6 +31,7 @@
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
 #import "UASetTagsAction.h"
+#import "UADeepLinkAction.h"
 
 
 @implementation UAActionRegistrar
@@ -278,6 +279,10 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
     [self registerAction:setTagsAction
                     names:@[kUASetTagsActionDefaultRegistryName, kUASetTagsActionDefaultRegistryAlias]];
+
+    UADeepLinkAction *deepLinkAction = [[UADeepLinkAction alloc] init];
+    [self registerAction:deepLinkAction
+                   names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]];
 }
 
 

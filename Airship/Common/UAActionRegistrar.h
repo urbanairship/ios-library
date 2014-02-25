@@ -36,6 +36,9 @@
 #define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
 #define kUASetTagsActionDefaultRegistryName @"^t"
 #define kUASetTagsActionDefaultRegistryAlias @"set_tags_action"
+#define kUADeepLinkActionDefaultRegistryName @"deep_link_action"
+#define kUADeepLinkActionDefaultRegistryAlias @"^d"
+
 
 @interface UAActionRegistrar : NSObject
 
