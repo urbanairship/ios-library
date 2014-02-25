@@ -42,7 +42,7 @@ NS_ENUM(NSInteger, UADeepLinkActionErrorCode) {
 extern NSString * const UADeepLinkActionErrorDomain;
 
 /**
- * Opens a URL, either in safari or using custom URL schemes. This action is
+ * Opens a deep link, using custom URL schemes. This action is
  * registered under the names ^d and deep_link_action.
  *
  * Expected argument values: NSString
