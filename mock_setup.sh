@@ -5,6 +5,7 @@
 # required.
  
 url="https://github.com/erikdoe/ocmock.git"
+tag="v2.2.3"
 temp_dir="/tmp/objectClone"
 library_source_dir="/tmp/objectClone/Source"
 library_build_dir="/tmp/objectClone/Source/build/Release-iphoneos"
@@ -29,9 +30,10 @@ if [ -d "$temp_dir" ]
   rm -rf "$temp_dir"
 fi
  
-mkdir -pv "$temp_dir" 
-git clone $url "$temp_dir"
- 
+mkdir -pv "$temp_dir"
+
+git clone --branch $tag $url "$temp_dir"
+
 current_dir=`pwd`
 cd "$library_source_dir"
 /usr/bin/xcodebuild clean -target OCMockLib 
