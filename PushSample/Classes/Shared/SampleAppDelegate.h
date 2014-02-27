@@ -28,7 +28,7 @@
 @interface SampleAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
-@property (nonatomic, strong) IBOutlet UIViewController *controller;
+@property (nonatomic, weak) IBOutlet UIViewController *controller;
 
 - (void)failIfSimulator;
 

@@ -248,20 +248,22 @@ enum {
     //Older  devies do not like the custom size. It breaks the picker.
                     
     //If the picker is in a portrait container, use std portrait picker dims
+    UIDatePicker *strongDatePicker = self.datePicker;
+
     if (viewBounds.size.height >= viewBounds.size.width) {
-        self.datePicker.bounds = CGRectMake(0, 0, 320, 216);
+        strongDatePicker.bounds = CGRectMake(0, 0, 320, 216);
     } else {
-        self.datePicker.bounds = CGRectMake(0, 0, 480, 162);
+        strongDatePicker.bounds = CGRectMake(0, 0, 480, 162);
     }
     
     // reset picker subviews
-    for (UIView* subview in self.datePicker.subviews) {
-        subview.frame = self.datePicker.bounds;
+    for (UIView* subview in strongDatePicker.subviews) {
+        subview.frame = strongDatePicker.bounds;
     }
     
     // reset the visible/hidden views
     int viewOffset = self.view.frame.origin.y;
-    CGRect pickerBounds = self.datePicker.bounds;
+    CGRect pickerBounds = strongDatePicker.bounds;
     self.pickerShownFrame = CGRectMake(0, viewOffset+viewBounds.size.height-pickerBounds.size.height,
                                   viewBounds.size.width, pickerBounds.size.height);
     self.pickerHiddenFrame = CGRectMake(0, viewOffset+viewBounds.size.height,
@@ -269,9 +271,9 @@ enum {
     
     //reset actual frame
     if (self.pickerDisplayed) {
-        self.datePicker.frame = self.pickerShownFrame;
+        strongDatePicker.frame = self.pickerShownFrame;
     } else {
-        self.datePicker.frame = self.pickerHiddenFrame;
+        strongDatePicker.frame = self.pickerHiddenFrame;
     }
 }
 
@@ -294,8 +296,9 @@ enum {
 - (IBAction)pickerValueChanged:(id)sender {
 
     self.dirty = YES;
-    
-    NSDate *date = [self.datePicker date];
+
+    UIDatePicker *strongDatePicker = self.datePicker;
+    NSDate *date = [strongDatePicker date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterNoStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
@@ -309,7 +312,7 @@ enum {
         [self.toCell setNeedsLayout];
     } else {
         NSDate *now = [[NSDate alloc] init];
-        [self.datePicker setDate:now animated:YES];
+        [strongDatePicker setDate:now animated:YES];
         return;
     }
 
@@ -339,29 +342,33 @@ enum {
     
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
+
+    UIDatePicker *strongDatePicker = self.datePicker;
+    UITableView *strongTableView = self.tableView;
+
     if (show) {
-        [self.view addSubview:self.datePicker];
+        [self.view addSubview:strongDatePicker];
         self.pickerDisplayed = YES;
-        self.datePicker.frame = self.pickerShownFrame;
+        strongDatePicker.frame = self.pickerShownFrame;
         
         //Scroll the table view so the "To" field is just above the top of the data picker
         int scrollOffset = MAX(0, 
                                self.toCell.frame.origin.y
                                + self.toCell.frame.size.height
-                               + self.tableView.sectionFooterHeight
-                               - self.datePicker.frame.origin.y);
-        self.tableView.contentOffset = CGPointMake(0, scrollOffset);
+                               + strongTableView.sectionFooterHeight
+                               - strongDatePicker.frame.origin.y);
+        strongTableView.contentOffset = CGPointMake(0, scrollOffset);
     } else {
         self.pickerDisplayed = NO;
-        self.tableView.contentOffset = CGPointZero;//reset scroll offset
-        self.datePicker.frame = self.pickerHiddenFrame;
-        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
+        strongTableView.contentOffset = CGPointZero;//reset scroll offset
+        strongDatePicker.frame = self.pickerHiddenFrame;
+        [strongTableView deselectRowAtIndexPath:[strongTableView indexPathForSelectedRow] animated:NO];
     }
     [UIView commitAnimations];
     
     //remove picker display after animation
     if (!self.pickerDisplayed) {
-        [self.datePicker removeFromSuperview];
+        [strongDatePicker removeFromSuperview];
     }
 
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -371,13 +378,13 @@ enum {
     NSString *fromString = self.fromCell.detailTextLabel.text;
     NSString *toString = self.toCell.detailTextLabel.text;
 
-    NSUInteger row = (NSUInteger)[[self.tableView indexPathForSelectedRow] row];
+    NSUInteger row = (NSUInteger)[[strongTableView indexPathForSelectedRow] row];
     if (row == 1 && [fromString length] != 0) {
         NSDate *fromDate = [formatter dateFromString:fromString];
-        [self.datePicker setDate:fromDate animated:YES];
+        [strongDatePicker setDate:fromDate animated:YES];
     } else if (row == 2 && [toString length] != 0) {
         NSDate *toDate = [formatter dateFromString:toString];
-        [self.datePicker setDate:toDate animated:YES];
+        [strongDatePicker setDate:toDate animated:YES];
     }
 }
 

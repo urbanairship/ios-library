@@ -30,8 +30,8 @@
 
 @property (nonatomic, strong) UAPushSettingsAddTagViewController *addTagController;
 @property (nonatomic, strong) UIBarButtonItem *addButton;
-@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
-@property (nonatomic, strong) IBOutlet UILabel *textLabel;
+@property (nonatomic, weak) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, weak) IBOutlet UILabel *textLabel;
 
 - (void)addItem:(id)sender;
 

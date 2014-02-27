@@ -31,9 +31,9 @@
 
 @property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, copy) NSMutableArray *locations;
-@property (nonatomic, strong) IBOutlet MKMapView *mapView;
+@property (nonatomic, weak) IBOutlet MKMapView *mapView;
 @property (nonatomic, strong) NSMutableArray *annotations;
-@property (nonatomic, strong) IBOutlet UIBarButtonItem *rightButton;
+@property (nonatomic, weak) IBOutlet UIBarButtonItem *rightButton;
 @property (nonatomic, strong) id <MKAnnotation> lastUserAnnotation;
 
 - (void)moveSpanToCoordinate:(CLLocationCoordinate2D)location;

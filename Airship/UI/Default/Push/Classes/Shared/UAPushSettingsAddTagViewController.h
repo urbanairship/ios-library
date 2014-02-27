@@ -38,9 +38,9 @@
 @property (nonatomic, weak) id<UAPushSettingsAddTagDelegate> tagDelegate;
 @property (nonatomic, strong) UIBarButtonItem *cancelButton;
 @property (nonatomic, strong) UIBarButtonItem *saveButton;
-@property (nonatomic, strong) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) IBOutlet UITableViewCell *tagCell;
-@property (nonatomic, strong) IBOutlet UITextField *tagField;
+@property (nonatomic, weak) IBOutlet UITableView *tableView;
+@property (nonatomic, weak) IBOutlet UITableViewCell *tagCell;
+@property (nonatomic, weak) IBOutlet UITextField *tagField;
 @property (nonatomic, strong) NSArray *presetTags;
 
 @end

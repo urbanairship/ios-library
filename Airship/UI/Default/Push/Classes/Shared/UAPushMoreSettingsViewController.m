@@ -106,7 +106,8 @@ static NSUInteger channelRowCount = 1;
     [[UAPush shared] addObserver:self forKeyPath:kUAPushChannelIDPath options:NSKeyValueObservingOptionNew context:nil];
 
     [self updateCellValues];
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:animated];
+    UITableView *strongTableView = self.tableView;
+    [strongTableView deselectRowAtIndexPath:[strongTableView indexPathForSelectedRow] animated:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -302,6 +303,8 @@ static NSUInteger channelRowCount = 1;
 }
 
 - (void)tableView:(UITableView *)view didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableView *strongTableView = self.tableView;
+
     if (indexPath.section == SectionDeviceToken) {
         if (indexPath.row == DeviceTokenSectionTokenCell) {
             if (!self.tokenViewController) {
@@ -324,7 +327,7 @@ static NSUInteger channelRowCount = 1;
             [self.navigationController pushViewController:self.tagsViewController animated:YES];
             
         } else {
-            [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+            [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
         }
     } else if (indexPath.section == SectionChannel) {
         if (!self.channelInfoViewController ) {
@@ -343,7 +346,7 @@ static NSUInteger channelRowCount = 1;
                                                                          initWithNibName:@"UAPushSettingsSoundsViewController" bundle:nil];
             [self.navigationController pushViewController:soundsViewController animated:YES];
         } else {
-            [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+            [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
         }
         
 
@@ -352,10 +355,10 @@ static NSUInteger channelRowCount = 1;
                                                                      initWithNibName:@"UALocationSettingsViewController" 
                                                                      bundle:nil];
         [self.navigationController pushViewController:locationViewController animated:YES];
-        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     else {
-        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [strongTableView deselectRowAtIndexPath:indexPath animated:YES];
     }
 
 }

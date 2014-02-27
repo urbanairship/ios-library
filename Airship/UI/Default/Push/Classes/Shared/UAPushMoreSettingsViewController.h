@@ -43,7 +43,7 @@
 @property (nonatomic, strong) UIViewController *tagsViewController;
 @property (nonatomic, strong) UIViewController *channelInfoViewController;
 @property (nonatomic, strong) UIViewController *userInfoViewController;
-@property (nonatomic, strong) IBOutlet UITableView *tableView;
+@property (nonatomic, weak) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UIImageView *footerImageView;
 @property (nonatomic, strong) UITableViewCell *locationCell;
 @property (nonatomic, strong) id userCreatedObserver;

@@ -29,7 +29,7 @@
 @interface UAPushSettingsSoundsViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *soundList;
-@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
-@property (nonatomic, strong) IBOutlet UILabel *textLabel;
+@property (nonatomic, weak) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, weak) IBOutlet UILabel *textLabel;
 
 @end
