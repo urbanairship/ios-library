@@ -237,6 +237,7 @@ static UAInboxMessageList *_messageList = nil;
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
             for (UAInboxMessage *message in updateMessageArray) {
                 message.unread = NO;
+                self.unreadCount -= 1;
             }
             
             [[UAInboxDBManager shared] saveContext];
