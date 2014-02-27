@@ -29,7 +29,6 @@
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageListController.h"
-#import "UARichContentWindow.h"
 
 #define UA_INBOX_TR(key) [[UAInboxUI shared].localizationBundle localizedStringForKey:key value:@"" table:nil]
 
@@ -38,7 +37,7 @@
  * designated as the [UAInbox uiClass], launching the inbox will cause it
  * to be displayed in a modal view controller.
  */
-@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate, UARichContentWindow>
+@interface UAInboxUI : NSObject <UAInboxUIProtocol, UAInboxPushHandlerDelegate>
 /**
  * Set this property to YES if the class should display in-app messages
  * using UAInboxOverlayController, and NO if it should navigate to the
@@ -61,11 +60,6 @@ SINGLETON_INTERFACE(UAInboxUI);
 + (void)quitInbox;
 + (void)displayInboxInViewController:(UIViewController *)parentViewController animated:(BOOL)animated;
 + (void)displayMessageWithID:(NSString *)messageID inViewController:(UIViewController *)parentViewController;
-
-///---------------------------------------------------------------------------------------
-/// @name UARichContentWindow Methods
-///---------------------------------------------------------------------------------------
-+ (void)closeWindow:(BOOL)animated;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAInboxPushHandlerDelegate Methods

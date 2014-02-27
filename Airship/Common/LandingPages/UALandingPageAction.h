@@ -28,7 +28,7 @@
 /**
  * Opens a landing page URL in a rich content window.
  *
- * This action is registered under the names landing_page_action and ^l.
+ * This action is registered under the names landing_page_action and ^p.
  *
  * Expected argument values: NSString
  *

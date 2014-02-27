@@ -98,6 +98,3 @@ UAirship.finishAction = function(err, data, callbackKey) {
     };
 }
 
-UAirship.close = function(cb) {
-    UAirship.runAction("close_window_action", null, cb)
-}

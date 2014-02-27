@@ -27,7 +27,6 @@
 
 #define kUAIncomingRichPushActionRegistryName @"_uamid"
 #define kUAIncomingPushActionRegistryName @"__incoming_push_action"
-#define kUACloseWindowActionRegistryName @"close_window_action"
 
 @interface UAActionRegistrar ()
 

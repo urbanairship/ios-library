@@ -156,14 +156,6 @@ static BOOL runiPhoneTargetOniPad = NO;
     [[UAInboxNavUI shared] quitInbox];
 }
 
-+ (void)closeWindow:(BOOL)animated {
-    if ([self shared].useOverlay) {
-        [UAInboxOverlayController closeAll];
-    } else {
-        [self quitInbox];
-    }
-}
-
 - (void)quitInbox {
     self.isVisible = NO;
     [self.navigationController popToViewController:self.messageListController animated:YES];

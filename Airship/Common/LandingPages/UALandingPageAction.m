@@ -48,7 +48,8 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[[NSNumber numberWithInteger:UASituationForegroundPush],
+    NSArray *validSituations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
+                                 [NSNumber numberWithInteger:UASituationForegroundPush],
                                  [NSNumber numberWithInteger:UASituationLaunchedFromPush],
                                  [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
                                  [NSNumber numberWithInteger:UASituationManualInvocation]];

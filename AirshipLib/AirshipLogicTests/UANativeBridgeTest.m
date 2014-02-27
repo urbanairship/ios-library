@@ -139,19 +139,4 @@
     XCTAssertEqualObjects(finishResult, @"done", @"result of finishTest should be 'done'");
 }
 
-- (void)testClose {
-    __block BOOL invoked = NO;
-
-    //this would be more straightforward if we were dealing with runAction instead, but its argument structure is more complicated
-    //here. future testing of porcelain JS should probably be done using a real JS mock/test framework.
-    self.jsc[@"UAirship"][@"invoke"] = ^(NSString *url) {
-        XCTAssertTrue([url isEqualToString:@"uairship://run-action-cb/ua-cb-1?close_window_action=null"],
-                      @"close should map to a URL invocation");
-        invoked = YES;
-    };
-
-    [self.jsc evaluateScript:@"UAirship.close();"];
-    XCTAssertTrue(invoked, @"UAirship.invoke should have been called");
-}
-
 @end
