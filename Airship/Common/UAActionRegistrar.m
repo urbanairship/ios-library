@@ -30,7 +30,6 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
-#import "UASetTagsAction.h"
 
 
 @implementation UAActionRegistrar
@@ -273,11 +272,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
                     names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
-
-
-    UASetTagsAction *setTagsAction = [[UASetTagsAction alloc] init];
-    [self registerAction:setTagsAction
-                    names:@[kUASetTagsActionDefaultRegistryName, kUASetTagsActionDefaultRegistryAlias]];
 }
 
 

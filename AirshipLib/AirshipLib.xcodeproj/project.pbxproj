@@ -211,10 +211,6 @@
 		4995C641180DBBDD004F8724 /* UARemoveTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */; };
 		4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */; };
 		4995C643180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */; };
-		4995C646180DBBF7004F8724 /* UASetTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C644180DBBF7004F8724 /* UASetTagsAction.h */; };
-		4995C647180DBBF7004F8724 /* UASetTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C644180DBBF7004F8724 /* UASetTagsAction.h */; };
-		4995C648180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
-		4995C649180DBBF7004F8724 /* UASetTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C645180DBBF7004F8724 /* UASetTagsAction.m */; };
 		4995C6B3180DC5D3004F8724 /* UATagActionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */; };
 		49C671FF184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
 		49C67200184EAB640088F210 /* UANativeBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C671FE184EAB640088F210 /* UANativeBridge.h */; };
@@ -533,8 +529,6 @@
 		4995C639180DBBC9004F8724 /* UAAddTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAddTagsAction.m; sourceTree = "<group>"; };
 		4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARemoveTagsAction.h; sourceTree = "<group>"; };
 		4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARemoveTagsAction.m; sourceTree = "<group>"; };
-		4995C644180DBBF7004F8724 /* UASetTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UASetTagsAction.h; sourceTree = "<group>"; };
-		4995C645180DBBF7004F8724 /* UASetTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UASetTagsAction.m; sourceTree = "<group>"; };
 		4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UATagActionsTest.m; sourceTree = "<group>"; };
 		49C671FE184EAB640088F210 /* UANativeBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UANativeBridge.h; path = JS/UANativeBridge.h; sourceTree = "<group>"; };
 		49C67203184EB9120088F210 /* UANativeBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = UANativeBridge.c; path = JS/UANativeBridge.c; sourceTree = "<group>"; };
@@ -972,8 +966,6 @@
 				4995C639180DBBC9004F8724 /* UAAddTagsAction.m */,
 				4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */,
 				4995C63F180DBBDD004F8724 /* UARemoveTagsAction.m */,
-				4995C644180DBBF7004F8724 /* UASetTagsAction.h */,
-				4995C645180DBBF7004F8724 /* UASetTagsAction.m */,
 				49F437501810B5B400182D06 /* UAModifyTagsAction.h */,
 				49F437511810B5B400182D06 /* UAModifyTagsAction.m */,
 			);
@@ -1328,7 +1320,6 @@
 				CCA3A50217FF626C009C7371 /* UAActionRegistrar+Internal.h in Headers */,
 				1FE0B74817E2751000856C60 /* NSJSONSerialization+UAAdditions.h in Headers */,
 				4995C641180DBBDD004F8724 /* UARemoveTagsAction.h in Headers */,
-				4995C647180DBBF7004F8724 /* UASetTagsAction.h in Headers */,
 				1F4EDB3B1831839A00F77343 /* UAAction+Internal.h in Headers */,
 				CC1D229C180373E0005C8393 /* UAAction+Operators.h in Headers */,
 				CCDD37C918089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
@@ -1472,7 +1463,6 @@
 				CC8542C317F4B81600D2DE10 /* UAActionRunner.h in Headers */,
 				1F610DC017835C2200BCD96E /* UAirship+Internal.h in Headers */,
 				1F610E0117835C3A00BCD96E /* UADeviceRegistrationPayload.h in Headers */,
-				4995C646180DBBF7004F8724 /* UASetTagsAction.h in Headers */,
 				BB8860CE159A7E9600584445 /* UA_Reachability.h in Headers */,
 				4905C4DF182458AC001D48E3 /* UAActionJSDelegate.h in Headers */,
 				CCDD37C818089E5700B8866E /* UAOpenExternalURLAction.h in Headers */,
@@ -1729,7 +1719,6 @@
 				1FE0B79917E2751000856C60 /* UAInboxDefaultJSDelegate.m in Sources */,
 				CC8542D617F4B81600D2DE10 /* UAPushActionArguments.m in Sources */,
 				1FE0B79A17E2751000856C60 /* UALocationCommonValues.m in Sources */,
-				4995C649180DBBF7004F8724 /* UASetTagsAction.m in Sources */,
 				49F437551810B5B400182D06 /* UAModifyTagsAction.m in Sources */,
 				1FE0B79B17E2751000856C60 /* UAHTTPConnectionOperation.m in Sources */,
 				1FE0B79C17E2751000856C60 /* UAHTTPRequestEngine.m in Sources */,
@@ -1831,7 +1820,6 @@
 				BB886105159A7E9600584445 /* UAKeychainUtils.m in Sources */,
 				CC8542C117F4B81600D2DE10 /* UAActionResult.m in Sources */,
 				BB886107159A7E9600584445 /* UAUser.m in Sources */,
-				4995C648180DBBF7004F8724 /* UASetTagsAction.m in Sources */,
 				4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,

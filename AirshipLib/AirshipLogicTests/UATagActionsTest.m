@@ -5,7 +5,6 @@
 #import "UAAction+Internal.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
-#import "UASetTagsAction.h"
 #import "UAPush+Internal.h"
 #import "UAPush+Test.h"
 
@@ -138,22 +137,6 @@
            [self.mockPush verify];
     }];
 
-}
-
-/**
- * Checks argument validation and UAPush side effects of the set tags action
- */
-- (void)testSetTagsAction {
-    UASetTagsAction *action = [[UASetTagsAction alloc] init];
-    [self validateArgumentsForSetTagsAction:action];
-
-    [[self.mockPush expect] setTags:[OCMArg any]];
-    [[self.mockPush expect] updateRegistration];
-
-    [action runWithArguments:self.arrayArgs
-       withCompletionHandler:^(UAActionResult *result){
-           [self.mockPush verify];
-    }];
 }
 
 @end
