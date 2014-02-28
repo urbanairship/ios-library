@@ -34,7 +34,7 @@
 - (NSURL *)sanitizedURL:(NSURL *)url {
     if (!url.scheme || !url.scheme.length){
         return [NSURL URLWithString:
-                [@"https" stringByAppendingString:[url absoluteString]]];
+                [@"https://" stringByAppendingString:[url absoluteString]]];
     }
     return url;
 }

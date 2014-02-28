@@ -22,7 +22,7 @@
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
-    self.urlString = @"http://foo.bar.com/whatever";
+    self.urlString = @"https://foo.bar.com/whatever";
 }
 
 - (void)tearDown {
@@ -46,8 +46,6 @@
             UAActionArguments *args = [UAActionArguments argumentsWithValue:value
                                                               withSituation:[situationNumber integerValue]];
             BOOL accepts = [self.action acceptsArguments:args];
-            NSLog(@"value: %@", value);
-            NSLog(@"situation %@", situationNumber);
             XCTAssertTrue(accepts, @"landing page action should accept situation %@, value %@", situationNumber, value);
         }
     }
@@ -60,13 +58,13 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation];
 
     [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
-        NSLog(@"hey");
-        return [obj isKindOfClass:[NSURL class]];
+        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
     }]];
 
     [[self.mockLandingPageViewController expect] closeWindow:NO];
+
     [[self.mockLandingPageViewController expect] showURL:[OCMArg checkWithBlock:^(id obj){
-        return [obj isKindOfClass:[NSURL class]];
+        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
     }]];
 
     [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
@@ -86,6 +84,10 @@
 
 - (void)testPerformWithUrl {
     [self performWithValue:[NSURL URLWithString:self.urlString]];
+}
+
+- (void)testPerformWithSchemelessURL {
+    [self performWithValue:@"foo.bar.com/whatever"];
 }
 
 @end
