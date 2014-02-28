@@ -282,7 +282,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
 
     UADeepLinkAction *deepLinkAction = [[UADeepLinkAction alloc] init];
     [self registerAction:deepLinkAction
-                   names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]];
+                   names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
+               predicate:urlPredicate];
 }
 
 
