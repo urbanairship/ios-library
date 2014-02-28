@@ -31,6 +31,7 @@
 - (void)tearDown {
     [self.mockLandingPageViewController stopMocking];
     [self.mockURLProtocol stopMocking];
+    [self.mockHTTPConnection stopMocking];
     [super tearDown];
 }
 
