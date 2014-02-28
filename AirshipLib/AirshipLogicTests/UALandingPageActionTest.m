@@ -46,8 +46,6 @@
             UAActionArguments *args = [UAActionArguments argumentsWithValue:value
                                                               withSituation:[situationNumber integerValue]];
             BOOL accepts = [self.action acceptsArguments:args];
-            NSLog(@"value: %@", value);
-            NSLog(@"situation %@", situationNumber);
             XCTAssertTrue(accepts, @"landing page action should accept situation %@, value %@", situationNumber, value);
         }
     }
@@ -60,7 +58,6 @@
     UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation];
 
     [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
-        NSLog(@"hey");
         return [obj isKindOfClass:[NSURL class]];
     }]];
 
