@@ -23,40 +23,8 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAAction.h"
+#import "UAOpenExternalURLAction.h"
 
-/**
- * Represents the possible error conditions
- * when running a `UADeepLinkAction`.
- */
-NS_ENUM(NSInteger, UADeepLinkActionErrorCode) {
-    /**
-     * Indicates that the URL failed to open.
-     */
-    UADeepLinkActionErrorCodeURLFailedToOpen
-};
-
-/**
- * The domain for errors encountered when running a `UADeepLinkAction`.
- */
-extern NSString * const UADeepLinkActionErrorDomain;
-
-/**
- * Opens a deep link, using custom URL schemes. This action is
- * registered under the names ^d and deep_link_action.
- *
- * Expected argument values: NSString
- *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
- * UASituationWebViewInvocation, UASituationLaunchedFromSpringBoard,
- * and UASituationManualInvocation
- *
- * Result value: An NSURL representation of the input
- *
- * Error: `UADeepLinkActionErrorCodeURLFailedToOpen` if the URL could not be opened
- *
- * Fetch result: UAActionFetchResultNone
- */
-@interface UADeepLinkAction : UAAction
+@interface UADeepLinkAction : UAOpenExternalURLAction
 
 @end

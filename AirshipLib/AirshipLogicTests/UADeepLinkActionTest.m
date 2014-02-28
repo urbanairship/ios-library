@@ -166,8 +166,8 @@ id mockApplication;
 
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
     XCTAssertNotNil(result.error, @"result should have an error if the application failed opens the url");
-    XCTAssertEqualObjects(UADeepLinkActionErrorDomain, result.error.domain, @"error domain should be set to UADeepLinkActionErrorDomain");
-    XCTAssertEqual(UADeepLinkActionErrorCodeURLFailedToOpen, result.error.code, @"error code should be set to UADeepLinkActionErrorCodeURLFailedToOpen");
+    XCTAssertEqualObjects(UAOpenExternalURLActionErrorDomain, result.error.domain, @"error domain should be set to UAOpenExternalURLActionErrorDomain");
+    XCTAssertEqual(UAOpenExternalURLActionErrorCodeURLFailedToOpen, result.error.code, @"error code should be set to UAOpenExternalURLActionErrorCodeURLFailedToOpen");
 }
 
 /**
