@@ -77,11 +77,6 @@
 + (void)showWindowInsideViewController:(UIViewController *)viewController withMessageID:(NSString *)messageId;
 
 /**
- * Closes all open overlay controllers;
- */
-+ (void)closeAll;
-
-/**
  * Initializer, creates an overlay window and loads the given content within a particular view controller.
  * @param viewController the view controller to display the overlay in
  * @param messageID the message ID of the rich push message to display
