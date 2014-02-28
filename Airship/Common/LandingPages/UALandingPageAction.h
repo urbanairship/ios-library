@@ -39,7 +39,7 @@
  *
  * Result value: nil
  *
- * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultNoData if the data could not be fetched.
+ * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
  *
  */
 @interface UALandingPageAction : UAAction
