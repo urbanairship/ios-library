@@ -34,8 +34,6 @@
 #define kUAAddTagsActionDefaultRegistryAlias @"^+t"
 #define kUARemoveTagsActionDefaultRegistryName @"remove_tags_action"
 #define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
-#define kUASetTagsActionDefaultRegistryName @"^t"
-#define kUASetTagsActionDefaultRegistryAlias @"set_tags_action"
 
 @interface UAActionRegistrar : NSObject
 
