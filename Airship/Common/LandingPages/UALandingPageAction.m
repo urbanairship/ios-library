@@ -34,7 +34,6 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-
     NSURL *landingPageURL;
     if ([arguments.value isKindOfClass:[NSURL class]]) {
         landingPageURL = arguments.value;

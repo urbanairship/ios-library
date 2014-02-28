@@ -4,12 +4,14 @@
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
 #import "UALandingPageViewController.h"
+#import "UAAction+Internal.h"
 
 @interface UALandingPageActionTest : XCTestCase
 
 @property(nonatomic, strong) id mockURLProtocol;
 @property(nonatomic, strong) id mockLandingPageViewController;
 @property(nonatomic, strong) UALandingPageAction *action;
+@property(nonatomic, strong) NSString *urlString;
 
 @end
 
@@ -20,6 +22,7 @@
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
+    self.urlString = @"http://foo.bar.com/whatever";
 }
 
 - (void)tearDown {
@@ -35,8 +38,8 @@
                                     [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
 
-    NSArray *acceptedValues= @[@"https://foo.bar.com/whatever",
-                               [NSURL URLWithString:@"https://foo.bar.com/whatever"]];
+
+    NSArray *acceptedValues= @[self.urlString, [NSURL URLWithString:self.urlString]];
 
     for (NSNumber *situationNumber in acceptedSituations) {
         for (id value in acceptedValues) {
@@ -50,8 +53,39 @@
     }
 }
 
-- (void)testPerform {
+- (void)performWithValue:(id)value {
 
+    __block BOOL finished = NO;
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation];
+
+    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
+        NSLog(@"hey");
+        return [obj isKindOfClass:[NSURL class]];
+    }]];
+
+    [[self.mockLandingPageViewController expect] closeWindow:NO];
+    [[self.mockLandingPageViewController expect] showURL:[OCMArg checkWithBlock:^(id obj){
+        return [obj isKindOfClass:[NSURL class]];
+    }]];
+
+    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+        finished = YES;
+        XCTAssertEqual(result.fetchResult, UAActionFetchResultNewData, @"fetch result should show new data");
+    }];
+
+    [self.mockURLProtocol verify];
+    [self.mockLandingPageViewController verify];
+
+    XCTAssertTrue(finished, @"action should have completed");
+}
+
+- (void)testPerformWithString {
+    [self performWithValue:self.urlString];
+}
+
+- (void)testPerformWithUrl {
+    [self performWithValue:[NSURL URLWithString:self.urlString]];
 }
 
 @end
