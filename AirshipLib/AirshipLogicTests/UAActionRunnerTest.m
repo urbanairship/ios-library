@@ -148,6 +148,12 @@ NSString *anotherActionName = @"AnotherActionName";
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+
+
+    // Try again with a nil completion handler
+    XCTAssertNoThrow([UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
+
 }
 
 /**
@@ -196,7 +202,28 @@ NSString *anotherActionName = @"AnotherActionName";
 
     }];
 
+
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+
+    // Try again with a nil completion handler
+    XCTAssertNoThrow([UAActionRunner runActionWithName:@"SomeUnregisteredActionName" withArguments:arguments withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
+
+}
+
+/**
+ * Test running an action with a null completion handler
+ */
+- (void)testRunActionNullCompletionHandler {
+    UAActionArguments *arguments = [UAActionArguments argumentsWithValue:@"value" withSituation:UASituationForegroundPush];
+    UAActionResult *result = [UAActionResult emptyResult];
+
+    UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
+        completionHandler(result);
+    }];
+
+    XCTAssertNoThrow([UAActionRunner runAction:action withArguments:arguments withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
 }
 
 /**
@@ -219,6 +246,10 @@ NSString *anotherActionName = @"AnotherActionName";
     }];
 
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
+
+    // Try again with a nil completion handler
+    XCTAssertNoThrow([UAActionRunner runActions:[NSDictionary dictionary] withCompletionHandler:nil],
+                     "Null completion handler should not throw an exception");
 }
 
 /**
@@ -262,5 +293,8 @@ NSString *anotherActionName = @"AnotherActionName";
     XCTAssertTrue(didCompletionHandlerRun, @"Runner completion handler did not run");
     XCTAssertEqual(2, actionRunCount, @"Both actions should of ran");
 }
+
+
+
 
 @end
