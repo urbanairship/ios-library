@@ -30,7 +30,7 @@
  *
  * This action is registered under the names landing_page_action and ^p.
  *
- * Expected argument values: NSString
+ * Expected argument values: NSString, NSURL
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush, UASituationLaunchedFromSpringboard,
  * UASituationWebViewInvocation, UASituationManualInvocation.

@@ -34,7 +34,14 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSURL *landingPageURL = [NSURL URLWithString:arguments.value];
+
+    NSURL *landingPageURL;
+    if ([arguments.value isKindOfClass:[NSURL class]]) {
+        landingPageURL = arguments.value;
+    } else {
+        landingPageURL = [NSURL URLWithString:arguments.value];
+    }
+
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
 
@@ -58,11 +65,12 @@
         return NO;
     }
 
-    if (![arguments.value isKindOfClass:[NSString class]]) {
+    if (![arguments.value isKindOfClass:[NSString class]] ||
+        ![arguments.value isKindOfClass:[NSURL class]]) {
         return NO;
     }
 
-    return [super acceptsArguments:arguments];
+    return YES;
 }
 
 @end
