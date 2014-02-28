@@ -155,7 +155,6 @@
 		494BF70C1762789D00B25E12 /* UAUserAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF7071762789D00B25E12 /* UAUserAPIClient.m */; };
 		494BF70D1762789D00B25E12 /* UAUserData.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7081762789D00B25E12 /* UAUserData.h */; };
 		494BF70E1762789D00B25E12 /* UAUserData.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF7091762789D00B25E12 /* UAUserData.m */; };
-		494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF71017628B1900B25E12 /* UAirship+Test.m */; };
 		495048A11738593000F8B5BE /* UAHTTPConnectionOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */; };
 		495048A41738778300F8B5BE /* UAHTTPConnection+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495048A31738778300F8B5BE /* UAHTTPConnection+Test.m */; };
 		495048A71738812500F8B5BE /* UADelayOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 495048A51738812500F8B5BE /* UADelayOperation.h */; };
@@ -344,8 +343,6 @@
 		494BF7071762789D00B25E12 /* UAUserAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserAPIClient.m; sourceTree = "<group>"; };
 		494BF7081762789D00B25E12 /* UAUserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserData.h; sourceTree = "<group>"; };
 		494BF7091762789D00B25E12 /* UAUserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserData.m; sourceTree = "<group>"; };
-		494BF70F17628B1800B25E12 /* UAirship+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAirship+Test.h"; sourceTree = "<group>"; };
-		494BF71017628B1900B25E12 /* UAirship+Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAirship+Test.m"; sourceTree = "<group>"; };
 		4950489F1738593000F8B5BE /* UAHTTPConnectionOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPConnectionOperationTest.h; sourceTree = "<group>"; };
 		495048A01738593000F8B5BE /* UAHTTPConnectionOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPConnectionOperationTest.m; sourceTree = "<group>"; };
 		495048A21738778300F8B5BE /* UAHTTPConnection+Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPConnection+Test.h"; sourceTree = "<group>"; };
@@ -805,8 +802,6 @@
 				CCF0A53B17D139B200098A2B /* Location */,
 				CCF0A53C17D139D500098A2B /* User */,
 				CCF0A53D17D139DF00098A2B /* Util */,
-				494BF70F17628B1800B25E12 /* UAirship+Test.h */,
-				494BF71017628B1900B25E12 /* UAirship+Test.m */,
 				1F675944175682DF00C062E0 /* UAConfigTest.h */,
 				1F675945175682DF00C062E0 /* UAConfigTest.m */,
 				495526AE17D95552009BC301 /* UAUser+Test.h */,
@@ -1271,7 +1266,6 @@
 				1F675946175682E000C062E0 /* UAConfigTest.m in Sources */,
 				CC85427E17F2164500D2DE10 /* UAURLProtocolTest.m in Sources */,
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
-				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 			);
@@ -1635,7 +1629,7 @@
 					"-DUADEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
@@ -1665,7 +1659,7 @@
 				HEADER_SEARCH_PATHS = "../Airship/**";
 				INSTALL_PATH = /Airship;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
@@ -1738,7 +1732,7 @@
 					"-DUADEBUG",
 					"-D_UA_VERSION=\\\"$(CURRENT_PROJECT_VERSION)\\\"",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "UAirship-$(CURRENT_PROJECT_VERSION)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
