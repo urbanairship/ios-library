@@ -188,6 +188,7 @@
 		49416D5B18BECBD100A18B72 /* UALandingPageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D5818BECBD100A18B72 /* UALandingPageViewController.h */; };
 		49416D5C18BECBD100A18B72 /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5918BECBD100A18B72 /* UALandingPageViewController.m */; };
 		49416D5D18BECBD100A18B72 /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5918BECBD100A18B72 /* UALandingPageViewController.m */; };
+		49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */; };
 		494BF703176277E000B25E12 /* UAUserTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 494BF702176277E000B25E12 /* UAUserTest.m */; };
 		494BF70A1762789D00B25E12 /* UAUser+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7051762789D00B25E12 /* UAUser+Internal.h */; };
 		494BF70B1762789D00B25E12 /* UAUserAPIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 494BF7061762789D00B25E12 /* UAUserAPIClient.h */; };
@@ -510,6 +511,7 @@
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
 		49416D5818BECBD100A18B72 /* UALandingPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageViewController.h; path = LandingPages/UALandingPageViewController.h; sourceTree = "<group>"; };
 		49416D5918BECBD100A18B72 /* UALandingPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageViewController.m; path = LandingPages/UALandingPageViewController.m; sourceTree = "<group>"; };
+		49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALandingPageActionTest.m; sourceTree = "<group>"; };
 		494BF702176277E000B25E12 /* UAUserTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAUserTest.m; sourceTree = "<group>"; };
 		494BF7051762789D00B25E12 /* UAUser+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAUser+Internal.h"; sourceTree = "<group>"; };
 		494BF7061762789D00B25E12 /* UAUserAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAUserAPIClient.h; sourceTree = "<group>"; };
@@ -1233,6 +1235,7 @@
 				CCDD37A41807157500B8866E /* UAIncomingRichPushActionTest.m */,
 				4995C6B2180DC5D3004F8724 /* UATagActionsTest.m */,
 				49E9C9C5183C28E900B7BCFF /* UAActionJSDelegateTest.m */,
+				49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -1850,6 +1853,7 @@
 				CC7DC95D183E97E900E95BB8 /* UAUserAPIClientTest.m in Sources */,
 				494BF703176277E000B25E12 /* UAUserTest.m in Sources */,
 				494BF71117628B1900B25E12 /* UAirship+Test.m in Sources */,
+				49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */,
 				CC85FD171773A1010074674F /* UAAnalyticsTest.m in Sources */,
 				49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */,
 				490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */,

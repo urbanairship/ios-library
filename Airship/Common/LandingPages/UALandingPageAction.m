@@ -55,17 +55,11 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
-    NSArray *validSituations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
-                                 [NSNumber numberWithInteger:UASituationForegroundPush],
-                                 [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                 [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
-                                 [NSNumber numberWithInteger:UASituationManualInvocation]];
-
-    if (!arguments.situation || ![validSituations containsObject:[NSNumber numberWithInteger:arguments.situation]]) {
+    if (arguments.situation == UASituationBackgroundPush) {
         return NO;
     }
 
-    if (![arguments.value isKindOfClass:[NSString class]] ||
+    if (![arguments.value isKindOfClass:[NSString class]] &&
         ![arguments.value isKindOfClass:[NSURL class]]) {
         return NO;
     }
