@@ -51,7 +51,7 @@
     //load the landing page
     [UALandingPageViewController showURL:landingPageURL];
     completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
-  }
+}
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
 
