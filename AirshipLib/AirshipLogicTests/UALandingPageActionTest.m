@@ -3,6 +3,7 @@
 #import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
+#import "UAHTTPConnection.h"
 #import "UALandingPageViewController.h"
 #import "UAAction+Internal.h"
 
@@ -10,6 +11,7 @@
 
 @property(nonatomic, strong) id mockURLProtocol;
 @property(nonatomic, strong) id mockLandingPageViewController;
+@property(nonatomic, strong) id mockHTTPConnection;
 @property(nonatomic, strong) UALandingPageAction *action;
 @property(nonatomic, strong) NSString *urlString;
 
@@ -22,6 +24,7 @@
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
+    self.mockHTTPConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
     self.urlString = @"http://foo.bar.com/whatever";
 }
 
@@ -53,39 +56,88 @@
     }
 }
 
-- (void)performWithValue:(id)value {
+- (void)performWithArgs:(UAActionArguments *)args withExpectedFetchResult:(UAActionFetchResult)fetchResult {
 
     __block BOOL finished = NO;
-
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation];
 
     [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
         NSLog(@"hey");
         return [obj isKindOfClass:[NSURL class]];
     }]];
 
+    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+        finished = YES;
+        XCTAssertEqual(result.fetchResult, fetchResult,
+                       @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);
+    }];
+
+    [self.mockURLProtocol verify];
+    [self.mockLandingPageViewController verify];
+    [self.mockHTTPConnection verify];
+
+    XCTAssertTrue(finished, @"action should have completed");
+}
+
+- (void)performInForegroundWithValue:(id)value {
     [[self.mockLandingPageViewController expect] closeWindow:NO];
     [[self.mockLandingPageViewController expect] showURL:[OCMArg checkWithBlock:^(id obj){
         return [obj isKindOfClass:[NSURL class]];
     }]];
 
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
-        finished = YES;
-        XCTAssertEqual(result.fetchResult, UAActionFetchResultNewData, @"fetch result should show new data");
-    }];
+    [self performWithArgs:[UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation] withExpectedFetchResult:UAActionFetchResultNewData];
+}
 
-    [self.mockURLProtocol verify];
-    [self.mockLandingPageViewController verify];
+- (void)performInBackground:(BOOL)successful {
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:self.urlString withSituation:UASituationBackgroundPush];
 
-    XCTAssertTrue(finished, @"action should have completed");
+    __block UAHTTPConnectionSuccessBlock success;
+    __block UAHTTPConnectionFailureBlock failure;
+    __block UAHTTPRequest *request;
+
+    [[[self.mockHTTPConnection stub] andReturn:self.mockHTTPConnection]
+     connectionWithRequest:[OCMArg checkWithBlock:^(id obj){
+        request = obj;
+        return YES;
+    }] successBlock:[OCMArg checkWithBlock:^(id obj){
+        success = obj;
+        return YES;
+    }] failureBlock:[OCMArg checkWithBlock:^(id obj){
+        failure = obj;
+        return YES;
+    }]];
+
+    [(UAHTTPConnection *)[[self.mockHTTPConnection expect] andDo:^(NSInvocation *inv){
+        if (successful) {
+            NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:request.url
+                                                                      statusCode:200
+                                                                     HTTPVersion:nil
+                                                                    headerFields:nil];
+            [request setValue:response forKey:@"response"];
+            success(request);
+        } else {
+            failure(request);
+        }
+    }] start];
+
+    UAActionFetchResult expectedResult = successful? UAActionFetchResultNewData : UAActionFetchResultFailed;
+
+    [self performWithArgs:args withExpectedFetchResult:expectedResult];
+}
+
+- (void)testPerformInBackgroundSuccess {
+    [self performInBackground:YES];
+}
+
+- (void)testPerformInBackgroundFailure {
+    [self performInBackground:NO];
 }
 
 - (void)testPerformWithString {
-    [self performWithValue:self.urlString];
+    [self performInForegroundWithValue:self.urlString];
 }
 
 - (void)testPerformWithUrl {
-    [self performWithValue:[NSURL URLWithString:self.urlString]];
+    [self performInForegroundWithValue:[NSURL URLWithString:self.urlString]];
 }
 
 @end

@@ -83,14 +83,15 @@
 
         if ([request.response statusCode] == 200) {
             UA_LTRACE(@"Cached landing page.");
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+        } else {
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
         }
-
-        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     };
 
     UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
         UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", request.error, request.url);
-        completionHandler([UAActionResult resultWithError:request.error]);
+        completionHandler([UAActionResult resultWithError:request.error withFetchResult:UAActionFetchResultFailed]);
     };
 
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
