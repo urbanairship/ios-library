@@ -27,7 +27,7 @@
 
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
-#import "UALandingPageViewController.h"
+#import "UALandingPageOverlayController.h"
 
 @implementation UALandingPageAction
 
@@ -45,10 +45,10 @@
     [UAURLProtocol addCachableURL:landingPageURL];
 
     //close any existing windows
-    [UALandingPageViewController closeWindow:NO];
+    [UALandingPageOverlayController closeWindow:NO];
 
     //load the landing page
-    [UALandingPageViewController showURL:landingPageURL];
+    [UALandingPageOverlayController showURL:landingPageURL];
     completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
 }
 

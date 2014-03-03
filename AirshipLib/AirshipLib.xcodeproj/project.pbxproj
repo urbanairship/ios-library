@@ -184,10 +184,6 @@
 		4905C4E818246339001D48E3 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 4905C4E418246339001D48E3 /* NSString+URLEncoding.m */; };
 		490710BC184D3EAB00E494AF /* UAWebViewCallDataTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */; };
 		49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */; };
-		49416D5A18BECBD100A18B72 /* UALandingPageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D5818BECBD100A18B72 /* UALandingPageViewController.h */; };
-		49416D5B18BECBD100A18B72 /* UALandingPageViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D5818BECBD100A18B72 /* UALandingPageViewController.h */; };
-		49416D5C18BECBD100A18B72 /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5918BECBD100A18B72 /* UALandingPageViewController.m */; };
-		49416D5D18BECBD100A18B72 /* UALandingPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5918BECBD100A18B72 /* UALandingPageViewController.m */; };
 		49416D5F18C025E900A18B72 /* UALandingPageActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */; };
 		49416D6218C513D500A18B72 /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D6018C513D500A18B72 /* UABespokeCloseView.h */; };
 		49416D6318C513D500A18B72 /* UABespokeCloseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49416D6018C513D500A18B72 /* UABespokeCloseView.h */; };
@@ -517,8 +513,6 @@
 		4905C4E318246339001D48E3 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
 		4905C4E418246339001D48E3 /* NSString+URLEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncoding.m"; sourceTree = "<group>"; };
 		490710BB184D3EAB00E494AF /* UAWebViewCallDataTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAWebViewCallDataTest.m; sourceTree = "<group>"; };
-		49416D5818BECBD100A18B72 /* UALandingPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALandingPageViewController.h; path = LandingPages/UALandingPageViewController.h; sourceTree = "<group>"; };
-		49416D5918BECBD100A18B72 /* UALandingPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALandingPageViewController.m; path = LandingPages/UALandingPageViewController.m; sourceTree = "<group>"; };
 		49416D5E18C025E900A18B72 /* UALandingPageActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALandingPageActionTest.m; sourceTree = "<group>"; };
 		49416D6018C513D500A18B72 /* UABespokeCloseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UABespokeCloseView.h; sourceTree = "<group>"; };
 		49416D6118C513D500A18B72 /* UABespokeCloseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UABespokeCloseView.m; sourceTree = "<group>"; };
@@ -885,8 +879,6 @@
 				1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */,
 				49416D6018C513D500A18B72 /* UABespokeCloseView.h */,
 				49416D6118C513D500A18B72 /* UABespokeCloseView.m */,
-				49416D6618C513F500A18B72 /* UALandingPageOverlayController.h */,
-				49416D6718C513F500A18B72 /* UALandingPageOverlayController.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -1001,8 +993,8 @@
 		49416D5718BECBC300A18B72 /* LandingPages */ = {
 			isa = PBXGroup;
 			children = (
-				49416D5818BECBD100A18B72 /* UALandingPageViewController.h */,
-				49416D5918BECBD100A18B72 /* UALandingPageViewController.m */,
+				49416D6618C513F500A18B72 /* UALandingPageOverlayController.h */,
+				49416D6718C513F500A18B72 /* UALandingPageOverlayController.m */,
 			);
 			name = LandingPages;
 			sourceTree = "<group>";
@@ -1420,7 +1412,6 @@
 				1FE0B75417E2751000856C60 /* UALocationProviderDelegate.h in Headers */,
 				1F65BB7D18997AB6000E8ACC /* UALandingPageAction.h in Headers */,
 				1FE0B75517E2751000856C60 /* UAEvent.h in Headers */,
-				49416D5B18BECBD100A18B72 /* UALandingPageViewController.h in Headers */,
 				1FE0B75717E2751000856C60 /* UALocationEvent.h in Headers */,
 				1FE0B75917E2751000856C60 /* UALocationService.h in Headers */,
 				1FE0B75A17E2751000856C60 /* UAUtils.h in Headers */,
@@ -1497,7 +1488,6 @@
 				CCBFA2DA17B5436500F97E1D /* NSJSONSerialization+UAAdditions.h in Headers */,
 				CCDD379B1807019000B8866E /* UAIncomingRichPushAction.h in Headers */,
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
-				49416D5A18BECBD100A18B72 /* UALandingPageViewController.h in Headers */,
 				CC8542B717F4B81600D2DE10 /* UAActionArguments.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
@@ -1746,7 +1736,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49416D5D18BECBD100A18B72 /* UALandingPageViewController.m in Sources */,
 				49F4375918188F5100182D06 /* UAMailComposerAction.m in Sources */,
 				49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */,
 				CC8542BA17F4B81600D2DE10 /* UAActionArguments.m in Sources */,
@@ -1915,7 +1904,6 @@
 				4995C648180DBBF7004F8724 /* UASetTagsAction.m in Sources */,
 				4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */,
 				BB88610B159A7E9600584445 /* UAAnalytics.m in Sources */,
-				49416D5C18BECBD100A18B72 /* UALandingPageViewController.m in Sources */,
 				BB88610D159A7E9600584445 /* UATagUtils.m in Sources */,
 				CC7DC94E183E978A00E95BB8 /* UADeviceRegistrar.m in Sources */,
 				BB88610E159A7E9600584445 /* UASQLite.m in Sources */,
