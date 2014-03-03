@@ -30,8 +30,8 @@
 @interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> 
 
 @property (nonatomic, strong) IBOutlet UIWindow *window;
-@property (nonatomic, strong) IBOutlet InboxSampleViewController *viewController;
-@property (nonatomic, strong) IBOutlet UINavigationController *navigationController;
+@property (nonatomic, weak) IBOutlet InboxSampleViewController *viewController;
+@property (nonatomic, weak) IBOutlet UINavigationController *navigationController;
 
 - (void)failIfSimulator;
 

@@ -43,7 +43,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    [self.window setRootViewController:self.navigationController];
+    UINavigationController *strongNavigationController = self.navigationController;
+    [self.window setRootViewController:strongNavigationController];
     [self.window makeKeyAndVisible];
 
     // Display a UIAlertView warning developers that push notifications do not work in the simulator
@@ -68,11 +69,11 @@
     [UAInbox shared].jsDelegate = self.jsDelegate;
     
     // For modal UI:
-    [UAInboxUI shared].inboxParentController = self.navigationController;
+    [UAInboxUI shared].inboxParentController = strongNavigationController;
     [UAInboxUI shared].useOverlay = YES;
     
     // For Navigation UI:
-    [UAInboxNavUI shared].inboxParentController = self.navigationController;
+    [UAInboxNavUI shared].inboxParentController = strongNavigationController;
     [UAInboxNavUI shared].useOverlay = YES;
     [UAInboxNavUI shared].popoverSize = CGSizeMake(600, 1100);
 

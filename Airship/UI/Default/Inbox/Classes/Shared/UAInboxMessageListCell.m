@@ -38,36 +38,41 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     [self.title setText: message.title];
 
+    UIView* strongUnreadIndicator = self.unreadIndicator;
+
     if(!message.unread) {
-        self.unreadIndicator.hidden = YES;
+        strongUnreadIndicator.hidden = YES;
     } else {
-        self.unreadIndicator.hidden = NO;
+        strongUnreadIndicator.hidden = NO;
     }
 }
 
 - (void)layoutSubviews {
+    UILabel *strongDateView = self.dateView;
+    UIImageView *strongCheckmark = self.checkmark;
+
     if(self.editing) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
 
         if (self.editingStyle == UITableViewCellEditingStyleNone) {
             // batch update
-            self.checkmark.hidden = NO;
+            strongCheckmark.hidden = NO;
             if (self.selected) {
-                self.checkmark.image = [UIImage imageNamed:@"check.png"];
+                strongCheckmark.image = [UIImage imageNamed:@"check.png"];
                 self.backgroundView = self.selectedEditingBackgroundView;
             } else {
-                self.checkmark.image = [UIImage imageNamed:@"uncheck.png"];
+                strongCheckmark.image = [UIImage imageNamed:@"uncheck.png"];
                 self.backgroundView = nil;
             }
         } else if (self.editingStyle == UITableViewCellEditingStyleDelete) {
             // swipe deletion
-            self.dateView.hidden = YES;
+            strongDateView.hidden = YES;
         }
     } else {
         self.backgroundView = nil;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
-        self.checkmark.hidden = YES;
-        self.dateView.hidden = NO;
+        strongCheckmark.hidden = YES;
+        strongDateView.hidden = NO;
     }
 
     [super layoutSubviews];
