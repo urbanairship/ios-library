@@ -199,7 +199,7 @@ typedef enum {
  * The number of messages that are currently unread or -1
  * if the message list is not loaded.
  */
-@property(assign) NSUInteger unreadCount;
+@property(assign) NSInteger unreadCount;
 
 /**
  * YES if a batch update is currently being performed on the message list,
