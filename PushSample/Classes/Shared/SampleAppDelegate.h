@@ -27,6 +27,7 @@
 
 @interface SampleAppDelegate : UIResponder <UIApplicationDelegate>
 
+// window needs to be strong (inherits from UIApplicationDelegate which is strong)
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, weak) IBOutlet UIViewController *controller;
 

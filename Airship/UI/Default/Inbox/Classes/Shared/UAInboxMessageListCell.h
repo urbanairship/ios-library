@@ -54,6 +54,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Background view used when a cell is selected in editing mode.
+ * This needs to be strong.
  */
 @property (nonatomic, strong) IBOutlet UIView *selectedEditingBackgroundView;
 

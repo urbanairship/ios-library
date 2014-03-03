@@ -28,6 +28,7 @@
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
+// datePicker is created by the xib so it needs to be strong
 @property (nonatomic, strong) IBOutlet UIDatePicker *datePicker;
 @property (nonatomic, assign) CGRect pickerShownFrame;
 @property (nonatomic, assign) CGRect pickerHiddenFrame;
@@ -37,6 +38,7 @@
 @property (nonatomic, weak) IBOutlet UILabel *pushEnabledLabel;
 @property (nonatomic, weak) IBOutlet UISwitch *pushEnabledSwitch;
 
+// these are created by the xib so they need to be strong
 @property (nonatomic, strong) IBOutlet UITableViewCell *quietTimeEnabledCell;
 @property (nonatomic, strong) IBOutlet UILabel *quietTimeLabel;
 @property (nonatomic, strong) IBOutlet UISwitch *quietTimeSwitch;
