@@ -126,9 +126,11 @@ enum {
             return (NSInteger)AirshipLocationEnabledSectionRowCount;
         case SectionQuietTime:
         {
-            if (self.pushEnabledSwitch.on && self.quietTimeSwitch.on) {
+            UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
+            if (strongPushEnabledSwitch.on && self.quietTimeSwitch.on) {
                 return QuietTimeSectionRowCount;
-            } else if (self.pushEnabledSwitch.on) {
+            } else if (strongPushEnabledSwitch.on) {
                 return 1;
             }
         }
@@ -177,16 +179,20 @@ enum {
                                                                                             action:@selector(quit)];
 
     UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
     if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
-        self.pushEnabledSwitch.on = NO;
+        strongPushEnabledSwitch.on = NO;
     } else {
-        self.pushEnabledSwitch.on = YES;
+        strongPushEnabledSwitch.on = YES;
     }
+
+    UISwitch *strongAirshipLocationEnabledSwitch = self.airshipLocationEnabledSwitch;
     if ([UALocationService airshipLocationServiceEnabled]) {
-        self.airshipLocationEnabledSwitch.on = YES;
+        strongAirshipLocationEnabledSwitch.on = YES;
     }
     else {
-        self.airshipLocationEnabledSwitch.on = NO;
+        strongAirshipLocationEnabledSwitch.on = NO;
     }
     
     self.pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
@@ -248,22 +254,21 @@ enum {
     //Older  devies do not like the custom size. It breaks the picker.
                     
     //If the picker is in a portrait container, use std portrait picker dims
-    UIDatePicker *strongDatePicker = self.datePicker;
 
     if (viewBounds.size.height >= viewBounds.size.width) {
-        strongDatePicker.bounds = CGRectMake(0, 0, 320, 216);
+        self.datePicker.bounds = CGRectMake(0, 0, 320, 216);
     } else {
-        strongDatePicker.bounds = CGRectMake(0, 0, 480, 162);
+        self.datePicker.bounds = CGRectMake(0, 0, 480, 162);
     }
     
     // reset picker subviews
-    for (UIView* subview in strongDatePicker.subviews) {
-        subview.frame = strongDatePicker.bounds;
+    for (UIView* subview in self.datePicker.subviews) {
+        subview.frame = self.datePicker.bounds;
     }
     
     // reset the visible/hidden views
     int viewOffset = self.view.frame.origin.y;
-    CGRect pickerBounds = strongDatePicker.bounds;
+    CGRect pickerBounds = self.datePicker.bounds;
     self.pickerShownFrame = CGRectMake(0, viewOffset+viewBounds.size.height-pickerBounds.size.height,
                                   viewBounds.size.width, pickerBounds.size.height);
     self.pickerHiddenFrame = CGRectMake(0, viewOffset+viewBounds.size.height,
@@ -271,19 +276,20 @@ enum {
     
     //reset actual frame
     if (self.pickerDisplayed) {
-        strongDatePicker.frame = self.pickerShownFrame;
+        self.datePicker.frame = self.pickerShownFrame;
     } else {
-        strongDatePicker.frame = self.pickerHiddenFrame;
+        self.datePicker.frame = self.pickerHiddenFrame;
     }
 }
 
 - (IBAction)quit {
     
     if (self.dirty) {
+        UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
+        [UAPush shared].pushEnabled = strongPushEnabledSwitch.on;
         
-        [UAPush shared].pushEnabled = self.pushEnabledSwitch.on;
-        
-        if (self.pushEnabledSwitch.on) {
+        if (strongPushEnabledSwitch.on) {
             [self updateQuietTime];
         }
         
@@ -297,8 +303,7 @@ enum {
 
     self.dirty = YES;
 
-    UIDatePicker *strongDatePicker = self.datePicker;
-    NSDate *date = [strongDatePicker date];
+    NSDate *date = [self.datePicker date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterNoStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
@@ -312,7 +317,7 @@ enum {
         [self.toCell setNeedsLayout];
     } else {
         NSDate *now = [[NSDate alloc] init];
-        [strongDatePicker setDate:now animated:YES];
+        [self.datePicker setDate:now animated:YES];
         return;
     }
 
@@ -343,32 +348,31 @@ enum {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
 
-    UIDatePicker *strongDatePicker = self.datePicker;
     UITableView *strongTableView = self.tableView;
 
     if (show) {
-        [self.view addSubview:strongDatePicker];
+        [self.view addSubview:self.datePicker];
         self.pickerDisplayed = YES;
-        strongDatePicker.frame = self.pickerShownFrame;
+        self.datePicker.frame = self.pickerShownFrame;
         
         //Scroll the table view so the "To" field is just above the top of the data picker
         int scrollOffset = MAX(0, 
                                self.toCell.frame.origin.y
                                + self.toCell.frame.size.height
                                + strongTableView.sectionFooterHeight
-                               - strongDatePicker.frame.origin.y);
+                               - self.datePicker.frame.origin.y);
         strongTableView.contentOffset = CGPointMake(0, scrollOffset);
     } else {
         self.pickerDisplayed = NO;
         strongTableView.contentOffset = CGPointZero;//reset scroll offset
-        strongDatePicker.frame = self.pickerHiddenFrame;
+        self.datePicker.frame = self.pickerHiddenFrame;
         [strongTableView deselectRowAtIndexPath:[strongTableView indexPathForSelectedRow] animated:NO];
     }
     [UIView commitAnimations];
     
     //remove picker display after animation
     if (!self.pickerDisplayed) {
-        [strongDatePicker removeFromSuperview];
+        [self.datePicker removeFromSuperview];
     }
 
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -381,10 +385,10 @@ enum {
     NSUInteger row = (NSUInteger)[[strongTableView indexPathForSelectedRow] row];
     if (row == 1 && [fromString length] != 0) {
         NSDate *fromDate = [formatter dateFromString:fromString];
-        [strongDatePicker setDate:fromDate animated:YES];
+        [self.datePicker setDate:fromDate animated:YES];
     } else if (row == 2 && [toString length] != 0) {
         NSDate *toDate = [formatter dateFromString:toString];
-        [strongDatePicker setDate:toDate animated:YES];
+        [self.datePicker setDate:toDate animated:YES];
     }
 }
 
