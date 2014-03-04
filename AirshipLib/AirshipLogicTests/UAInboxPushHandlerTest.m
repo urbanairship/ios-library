@@ -41,11 +41,9 @@
 
 id mockedUAInboxPushHandlerDelegate;
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     self.pushHandler = [[UAInboxPushHandler alloc] init];
-    self.pushHandler.viewingMessageID = @"viewingMessageId";
     self.message = [[UAInboxMessage alloc] init];
 
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
@@ -55,8 +53,7 @@ id mockedUAInboxPushHandlerDelegate;
     self.pushHandler.delegate = mockedUAInboxPushHandlerDelegate;
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     [super tearDown];
     [self.mockMessageList stopMocking];
     [mockedUAInboxPushHandlerDelegate stopMocking];
@@ -67,8 +64,9 @@ id mockedUAInboxPushHandlerDelegate;
  */
 - (void)testMessageListLoadSucceededLaunchMesg {
     self.pushHandler.hasLaunchMessage = YES;
+    self.pushHandler.viewingMessageID = @"viewingMessageId";
 
-    [[[self.mockMessageList stub] andReturn:self.message] messageForID:[OCMArg any]];
+    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
 
     [[mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
@@ -84,9 +82,10 @@ id mockedUAInboxPushHandlerDelegate;
  */
 - (void)testMessageListLoadSucceededNilLaunchMesg {
     self.pushHandler.hasLaunchMessage = YES;
+    self.pushHandler.viewingMessageID = @"viewingMessageId";
     UAInboxMessage *message = nil;
 
-    [[[self.mockMessageList stub] andReturn:message] messageForID:[OCMArg any]];
+    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
 
     [[mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
@@ -102,8 +101,9 @@ id mockedUAInboxPushHandlerDelegate;
  */
 - (void)testMessageListLoadSucceededDisplayMesg {
     self.pushHandler.hasLaunchMessage = NO;
+    self.pushHandler.viewingMessageID = @"viewingMessageId";
 
-    [[[self.mockMessageList stub] andReturn:self.message] messageForID:[OCMArg any]];
+    [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
 
     [[mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 
@@ -119,9 +119,10 @@ id mockedUAInboxPushHandlerDelegate;
  */
 - (void)testMessageListLoadSucceededNilDisplayMesg {
     self.pushHandler.hasLaunchMessage = NO;
+    self.pushHandler.viewingMessageID = @"viewingMessageId";
     UAInboxMessage *message = nil;
 
-    [[[self.mockMessageList stub] andReturn:message] messageForID:[OCMArg any]];
+    [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
 
     [[mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 
