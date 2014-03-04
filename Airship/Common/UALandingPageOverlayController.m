@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* UAInboxOverlayController is based on MTPopupWindow
+    /* UAInboxOverlayController is based on MTPopupWindow
  * http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
  *
  * Copyright 2011 Marin Todorov. MIT license
@@ -211,32 +211,44 @@ static NSMutableSet *overlayControllers = nil;
     self.bigPanelView.autoresizesSubviews = YES;
     self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2.0, self.bgView.frame.size.height/2.0);
 
+
+    NSInteger webOffset = 15;
     //on iPad 540.0 x 620.0
 
     //add the window background
-    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 15.0, 30.0)];
+    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 0, webOffset)];
 
-    // set size for iPad
+        // set size for iPad
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        background.frame = CGRectMake(0.0, 0.0, 540.0, 620.0);
+        background.frame = CGRectMake(0.0, 0.0, 555.0, 635.0);
     }
 
-    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    background.backgroundColor = [UIColor whiteColor];
+    UIView *backgroundInset = [[UIView alloc] initWithFrame:CGRectInset(CGRectMake(0,0,background.frame.size.width, background.frame.size.height), webOffset, webOffset)];
 
-    background.layer.borderColor = [[UIColor blackColor] CGColor];
-    background.layer.borderWidth = 0.5;
+    [background addSubview:backgroundInset];
+    backgroundInset.backgroundColor = [UIColor whiteColor];
+
+    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    background.backgroundColor = [UIColor clearColor];
+
+    //background.layer.borderColor = [[UIColor blackColor] CGColor];
+    //background.layer.borderWidth = 0.5;
     background.center = CGPointMake(self.bigPanelView.frame.size.width/2.0, self.bigPanelView.frame.size.height/2.0);
     [self.bigPanelView addSubview:background];
 
     //add the web view
-    NSInteger webOffset = 0;
-    self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
+    //self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
+    self.webView.frame = CGRectMake(0, 0, background.frame.size.width, background.frame.size.height);
+    self.webView.frame = CGRectInset(CGRectMake(0, 0, background.frame.size.width, background.frame.size.height), webOffset, webOffset);
     self.webView.scalesPageToFit = YES;
 
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-    [self.bigPanelView addSubview:self.webView];
+    [background addSubview:self.webView];
+
+    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    backgroundInset.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
 
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
@@ -249,20 +261,20 @@ static NSMutableSet *overlayControllers = nil;
     UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
     bespokeCloseButtonView.userInteractionEnabled = NO;
 
-    NSUInteger closeBtnOffset = 0;
+    NSInteger closeBtnOffset = 0;
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
 
     [closeButton setFrame:CGRectMake(
-                                     background.frame.size.width - bespokeCloseButtonView.frame.size.width - closeBtnOffset,
-                                     closeBtnOffset,
-                                     bespokeCloseButtonView.frame.size.width + closeBtnOffset,
-                                     bespokeCloseButtonView.frame.size.height + closeBtnOffset)];
+                                     background.frame.size.width - bespokeCloseButtonView.frame.size.width + closeBtnOffset,
+                                     -closeBtnOffset,
+                                     bespokeCloseButtonView.frame.size.width,
+                                     bespokeCloseButtonView.frame.size.height)];
 
     [closeButton addSubview:bespokeCloseButtonView];
     [closeButton addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
 
-    [self.webView addSubview:closeButton];
+    [background addSubview:closeButton];
 
     // custom resize mask for iPad. TODO: see if this is also what we want on the iPhone.
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -304,6 +316,7 @@ static NSMutableSet *overlayControllers = nil;
         shadeView.backgroundColor = [UIColor blackColor];
         shadeView.alpha = 0.3;
         shadeView.tag = kShadeViewTag;
+        shadeView.userInteractionEnabled = NO;
 
         [self.bigPanelView addSubview:shadeView];
         [self.bigPanelView sendSubviewToBack:shadeView];
