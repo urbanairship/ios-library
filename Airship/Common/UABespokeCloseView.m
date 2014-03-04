@@ -41,18 +41,22 @@
 - (void)drawRect:(CGRect)rect {
 
     //an iOS7y blue: 0x105efb
-    UIColor *funBlue = [UIColor colorWithRed:0.062 green:0.368 blue:0.984 alpha:1.0];
+    UIColor *strokeColor = [UIColor whiteColor];
 
     // draw a white circle
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
 
     NSInteger circleInset = 5;
     CGRect circleRect = CGRectInset(self.bounds, circleInset, circleInset);
     CGContextFillEllipseInRect(context, circleRect);
 
+    CGContextSetLineWidth(context, 2);
+    CGContextSetStrokeColorWithColor(context, strokeColor.CGColor);
+    CGContextStrokeEllipseInRect(context, circleRect);
+
     // the X gets to be a little smaller than the circle
-    NSInteger xInset = 5;
+    NSInteger xInset = 7;
 
     CGRect xFrame = CGRectInset(circleRect, xInset, xInset);
 
@@ -66,11 +70,11 @@
     [bPath addLineToPoint:CGPointMake(CGRectGetMinX(xFrame), CGRectGetMaxY(xFrame))];
 
     // Set the render colors.
-    [funBlue setStroke];
+    [strokeColor setStroke];
 
     // Adjust the drawing options as needed.
-    aPath.lineWidth = 2;
-    bPath.lineWidth = 2;
+    aPath.lineWidth = 3;
+    bPath.lineWidth = 3;
 
     // Line cap style
     aPath.lineCapStyle = kCGLineCapButt;
