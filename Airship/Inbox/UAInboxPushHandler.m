@@ -47,13 +47,17 @@
         id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
 
         if (self.hasLaunchMessage) {
-            [strongDelegate launchRichPushMessageAvailable:message];
-            self.hasLaunchMessage = NO;
+            if (message != nil) {
+                [strongDelegate launchRichPushMessageAvailable:message];
+                self.hasLaunchMessage = NO;
+            }
         }
 
         //otherwise, have the UI class display it
         else {
-            [strongDelegate richPushMessageAvailable:message];
+            if (message != nil) {
+                [strongDelegate richPushMessageAvailable:message];
+            }
         }
 
         self.viewingMessageID = nil;
