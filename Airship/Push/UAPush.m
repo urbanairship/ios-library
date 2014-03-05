@@ -552,13 +552,6 @@ static Class _uiClass;
  * the Device API client. PushEnabled -> register, !PushEnabled -> unregister.
  */
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-        
-    // if the application is backgrounded, do not send a registration
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
-        return;
-    }
-    
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (self.pushEnabled) {
@@ -650,7 +643,13 @@ static Class _uiClass;
 
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    [self updateRegistration];
+
+
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground) {
+        [self updateRegistration];
+    } else {
+        UA_LDEBUG(@"Skipping device token registration. The app is currently backgrounded.");
+    }
 }
 
 #pragma mark -
