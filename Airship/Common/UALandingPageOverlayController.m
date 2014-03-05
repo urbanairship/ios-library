@@ -23,28 +23,6 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-    /* UAInboxOverlayController is based on MTPopupWindow
- * http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/
- *
- * Copyright 2011 Marin Todorov. MIT license
- * http://www.opensource.org/licenses/mit-license.php
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
- * is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 #import "UALandingPageOverlayController.h"
 
 #import "UABespokeCloseView.h"
@@ -57,22 +35,9 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#define kShadeViewTag (NSInteger)1000
-
 static NSMutableSet *overlayControllers = nil;
 
 @interface UALandingPageOverlayController()
-
-
-- (void)closePopupWindow;
-- (void)loadURL:(NSURL *)url;
-- (void)displayWindow;
-- (void)constructWindow;
-- (void)finish;
-- (void)orientationChanged:(NSNotification *)notification;
-- (void)removeChildViews;
-
-+ (UIViewController *)topController;
 
 /**
  * The UIWebView used to display the message content.
@@ -83,11 +48,10 @@ static NSMutableSet *overlayControllers = nil;
  * The URL being displayed.
  */
 @property(nonatomic, strong) NSURL *url;
-
 @property(nonatomic, strong) UIViewController *parentViewController;
-@property(nonatomic, strong) UIView *bgView;
-@property(nonatomic, strong) UIView *bigPanelView;
+@property(nonatomic, strong) UIView *overlayView;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
+
 @end
 
 @implementation UALandingPageOverlayController
@@ -115,9 +79,8 @@ static NSMutableSet *overlayControllers = nil;
 
 + (void)closeWindow:(BOOL)animated {
     for (UALandingPageOverlayController *oc in overlayControllers) {
-        UA_LDEBUG(@"Closing Kablam overlay controller: %@", [oc.url absoluteString]);
-        //TODO: toggle animations
-        [oc closePopupWindow];
+        UA_LDEBUG(@"Closing landing page overlay controller: %@", [oc.url absoluteString]);
+        [oc finish:animated];
     }
 }
 
@@ -135,16 +98,8 @@ static NSMutableSet *overlayControllers = nil;
 - (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
     self = [super init];
     if (self) {
-        // Initialization code here.
 
         self.parentViewController = parent;
-        UIView *sview = parent.view;
-
-        self.bgView = [[UIView alloc] initWithFrame:sview.bounds];
-        self.bgView.autoresizesSubviews = YES;
-        self.bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-        [sview addSubview:self.bgView];
 
         //set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
@@ -154,7 +109,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
         self.webView.scalesPageToFit = YES;
 
-        //hack to hide the ugly webview gradient
+        //hack to hide the ugly webview gradient (iOS6 and earlier)
         for (UIView *subView in [self.webView subviews]) {
             if ([subView isKindOfClass:[UIScrollView class]]) {
                 for (UIView *shadowView in [subView subviews]) {
@@ -174,6 +129,7 @@ static NSMutableSet *overlayControllers = nil;
                                                  selector:@selector(orientationChanged:)
                                                      name:UIDeviceOrientationDidChangeNotification
                                                    object:nil];
+        [self buildOverlay];
     }
 
     return self;
@@ -187,69 +143,76 @@ static NSMutableSet *overlayControllers = nil;
                                                   object:nil];
 }
 
-- (void)loadURL:(NSURL *)url {
+- (void)buildOverlay {
 
-    self.url = url;
+    UIView *parentView = self.parentViewController.view;
 
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
+    //note that we're using parentView.bounds instead of frame here, so that we'll have the correct dimensions if the
+    //parent view is autorotated or otherwised transformed.
 
-    // No auth required here:
-    // TODO: add an auth enum to the overlay, so it can be set by the caller?
-    [requestObj setTimeoutInterval:30];
+    self.overlayView = [[UIView alloc] initWithFrame:
+                        CGRectMake(0, 0, CGRectGetWidth(parentView.bounds), CGRectGetHeight(parentView.bounds))];
 
-    [self.webView stopLoading];
-    [self.webView loadRequest:requestObj];
-    [self performSelector:@selector(displayWindow) withObject:nil afterDelay:0.1];
-}
+    self.overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.overlayView.autoresizesSubviews = YES;
+    self.overlayView.center = CGPointMake(CGRectGetWidth(parentView.bounds)/2.0, CGRectGetHeight(parentView.bounds)/2.0);
+    self.overlayView.alpha = 0.0;
+    self.overlayView.backgroundColor = [UIColor clearColor];
 
-- (void)constructWindow {
-
-    //the new panel
-    self.bigPanelView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bgView.frame.size.width, self.bgView.frame.size.height)];
-
-    self.bigPanelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.bigPanelView.autoresizesSubviews = YES;
-    self.bigPanelView.center = CGPointMake(self.bgView.frame.size.width/2.0, self.bgView.frame.size.height/2.0);
-
-
-    NSInteger webOffset = 15;
-    //on iPad 540.0 x 620.0
+    //padding for the the webview
+    NSInteger webViewPadding = 15;
 
     //add the window background
-    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.bigPanelView.frame, 0, webOffset)];
+    UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.overlayView.frame, 0, webViewPadding)];
 
-        // set size for iPad
+    // set size for iPad (540 x 620 + webView padding)
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        background.frame = CGRectMake(0.0, 0.0, 555.0, 635.0);
+        background.frame = CGRectMake(0.0, 0.0, 540.0 + webViewPadding, 620.0 + webViewPadding);
     }
 
-    UIView *backgroundInset = [[UIView alloc] initWithFrame:CGRectInset(CGRectMake(0,0,background.frame.size.width, background.frame.size.height), webOffset, webOffset)];
+    //center the background in the middle of the overlay
+    background.center = CGPointMake(self.overlayView.frame.size.width/2.0, self.overlayView.frame.size.height/2.0);
 
-    [background addSubview:backgroundInset];
-    backgroundInset.backgroundColor = [UIColor whiteColor];
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+        UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleBottomMargin;
+    } else {
+        background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
 
-    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    //make the background transparent, so that the close button can safely overlap the corner of the webView
     background.backgroundColor = [UIColor clearColor];
 
-    //background.layer.borderColor = [[UIColor blackColor] CGColor];
-    //background.layer.borderWidth = 0.5;
-    background.center = CGPointMake(self.bigPanelView.frame.size.width/2.0, self.bigPanelView.frame.size.height/2.0);
-    [self.bigPanelView addSubview:background];
+    [self.overlayView addSubview:background];
 
-    //add the web view
-    //self.webView.frame = CGRectInset(background.frame, webOffset, webOffset);
-    self.webView.frame = CGRectMake(0, 0, background.frame.size.width, background.frame.size.height);
-    self.webView.frame = CGRectInset(CGRectMake(0, 0, background.frame.size.width, background.frame.size.height), webOffset, webOffset);
+    //create and add a background inset that will serve as the visible background to the webview
+    UIView *backgroundInset = [[UIView alloc] initWithFrame:
+                               CGRectInset(CGRectMake(0,0,CGRectGetWidth(background.frame),CGRectGetHeight(background.frame)),
+                                           webViewPadding, webViewPadding)];
+    backgroundInset.backgroundColor = [UIColor whiteColor];
+    backgroundInset.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    [background addSubview:backgroundInset];
+
+    //set the webView's frame to be identical to the background inset
+    self.webView.frame = CGRectMake(webViewPadding, webViewPadding, CGRectGetWidth(backgroundInset.frame), CGRectGetHeight(backgroundInset.frame));
+
     self.webView.scalesPageToFit = YES;
 
-    self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
+        UIViewAutoresizingFlexibleTopMargin |
+        UIViewAutoresizingFlexibleRightMargin |
+        UIViewAutoresizingFlexibleBottomMargin;
+    } else {
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
 
     [background addSubview:self.webView];
 
-    background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    backgroundInset.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-
+    //add the loading indicator and center it in the middle of the webView
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
 
@@ -258,70 +221,68 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     //add the close button
-    UABespokeCloseView *bespokeCloseButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
-    bespokeCloseButtonView.userInteractionEnabled = NO;
+    UABespokeCloseView *closeButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
 
-    NSInteger closeBtnOffset = 0;
+    //technically UABespokeCloseView is a not a UIButton, so we will be adding it as a subView of an actual, transparent one.
+    closeButtonView.userInteractionEnabled = NO;
+
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        closeButton.autoresizingMask = UIViewAutoresizingNone;
+    } else {
+        closeButton.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+    }
 
     [closeButton setFrame:CGRectMake(
-                                     background.frame.size.width - bespokeCloseButtonView.frame.size.width + closeBtnOffset,
-                                     -closeBtnOffset,
-                                     bespokeCloseButtonView.frame.size.width,
-                                     bespokeCloseButtonView.frame.size.height)];
+                                     CGRectGetWidth(background.frame) - CGRectGetWidth(closeButtonView.frame),
+                                     0,
+                                     CGRectGetWidth(closeButtonView.frame),
+                                     CGRectGetHeight(closeButtonView.frame))];
 
-    [closeButton addSubview:bespokeCloseButtonView];
-    [closeButton addTarget:self action:@selector(closePopupWindow) forControlEvents:UIControlEventTouchUpInside];
+    [closeButton addSubview:closeButtonView];
+
+    //tapping the button will finish the overlay and dismiss all views
+    [closeButton addTarget:self action:@selector(finish) forControlEvents:UIControlEventTouchUpInside];
 
     [background addSubview:closeButton];
 
-    // custom resize mask for iPad. TODO: see if this is also what we want on the iPhone.
-    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
-        self.webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
-        UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleRightMargin |
-        UIViewAutoresizingFlexibleBottomMargin;
-
-        background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
-        UIViewAutoresizingFlexibleTopMargin |
-        UIViewAutoresizingFlexibleRightMargin |
-        UIViewAutoresizingFlexibleBottomMargin;
-
-        closeButton.autoresizingMask = UIViewAutoresizingNone;
-    }
+    [self.overlayView layoutSubviews];
 }
 
-- (void)displayWindow {
+- (void)loadURL:(NSURL *)url {
 
-    //faux view
-    UIView *fauxView = [[UIView alloc] initWithFrame: self.bgView.bounds];
-    fauxView.autoresizesSubviews = YES;
-    fauxView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self.bgView addSubview:fauxView];
+    self.url = url;
 
-    //animation options
-    UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
-    UIViewAnimationOptionAllowUserInteraction    |
-    UIViewAnimationOptionBeginFromCurrentState;
+    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
-    [self constructWindow];
+    // TODO: add an auth enum to the overlay, so it can be set by the caller?
+    [requestObj setTimeoutInterval:30];
 
-    //run the animation
-    [UIView transitionFromView:fauxView toView:self.bigPanelView duration:0.5 options:options completion: ^(BOOL finished) {
+    [self.webView stopLoading];
+    [self.webView loadRequest:requestObj];
+    [self showOverlay];
+}
 
-        //dim the contents behind the popup window
-        UIView *shadeView = [[UIView alloc] initWithFrame:self.bigPanelView.bounds];
-        shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        shadeView.backgroundColor = [UIColor blackColor];
-        shadeView.alpha = 0.3;
-        shadeView.tag = kShadeViewTag;
-        shadeView.userInteractionEnabled = NO;
+- (void)showOverlay {
 
-        [self.bigPanelView addSubview:shadeView];
-        [self.bigPanelView sendSubviewToBack:shadeView];
+    [self.parentViewController.view addSubview:self.overlayView];
+
+    //dims the contents behind the popup window
+    UIView *shadeView = [[UIView alloc] initWithFrame:self.overlayView.bounds];
+    shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    shadeView.backgroundColor = [UIColor blackColor];
+    shadeView.alpha = 0.3;
+    shadeView.userInteractionEnabled = NO;
+
+    [self.overlayView addSubview:shadeView];
+
+    //send to the back so it doesn't obscure the landing page/etc
+    [self.overlayView sendSubviewToBack:shadeView];
+
+    //fade in
+    [UIView animateWithDuration:0.5 animations:^{
+        self.overlayView.alpha = 1.0;
     }];
-
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
@@ -336,51 +297,32 @@ static NSMutableSet *overlayControllers = nil;
     [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
-/**
- * Removes the shade background and calls the finish selector
- */
-- (void)closePopupWindow {
-    //remove the shade
-    [[self.bigPanelView viewWithTag:kShadeViewTag] removeFromSuperview];
-    [self performSelector:@selector(finish) withObject:nil afterDelay:0.1];//todo:replace this with a block
-}
-
-/**
- * Removes child views from bigPanelView and bgView
- */
-- (void)removeChildViews {
-    for (UIView *child in self.bigPanelView.subviews) {
-        [child removeFromSuperview];
-    }
-    for (UIView *child in self.bgView.subviews) {
-        [child removeFromSuperview];
-    }
-}
-
-
-/**
- * Removes all views from the hierarchy and releases self
- */
 - (void)finish {
+    [self finish:YES];
+}
 
-    //TODO: add animation toggle
+/**
+ * Removes all views from the hierarchy and releases self, animated if desired.
+ */
+- (void)finish:(BOOL)animated {
 
-    //faux view
-    UIView *fauxView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 200)];
-    [self.bgView addSubview:fauxView];
-
-    //run the animation
-    UIViewAnimationOptions options = UIViewAnimationOptionTransitionCrossDissolve |
-    UIViewAnimationOptionAllowUserInteraction |
-    UIViewAnimationOptionBeginFromCurrentState;
-
-    [UIView transitionFromView:self.bigPanelView toView:fauxView duration:0.5 options:options completion:^(BOOL finished) {
-        [self removeChildViews];
-        self.bigPanelView = nil;
-        [self.bgView removeFromSuperview];
+    void (^remove)(void) = ^{
+        [self.overlayView removeFromSuperview];
         [overlayControllers removeObject:self];
-    }];
+    };
 
+    if (animated) {
+        //fade out and remove
+        [UIView
+        animateWithDuration:0.5
+        animations:^{
+            self.overlayView.alpha = 0.0;
+        } completion:^(BOOL finished){
+            remove();
+        }];
+    } else {
+        remove();
+    }
 }
 
 
@@ -409,9 +351,7 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     UALOG(@"Failed to load message: %@", [error localizedDescription]);
-
 }
-
 
 @end
 

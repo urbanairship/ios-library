@@ -23,35 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* UAInboxOverlayController is based on MTPopupWindow by
- * Marin Todorov https://github.com/icanzilb + http://www.touch-code-magazine.com/
- *
- * Latest MTPopupWindow code: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios6-modernized-tutorial-code-download/
- *
- * (Original version: http://www.touch-code-magazine.com/showing-a-popup-window-in-ios-class-for-download/ )
- *
- */
-
 #import <Foundation/Foundation.h>
 
 /**
- * This class provides an overlay window that can be popped over
- * the app's UI without totally obscuring it, and that loads a
- * given rich push message in an embedded UIWebView.  It is used
- * in the reference UI implementation for displaying in-app messages
- * without requiring navigation to the inbox.
+ * This class provides an interface for displaying overlay window over
+ * the app's UI without totally obscuring it, which loads a landing
+ * page in an embedded UIWebView.
  */
 @interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate>
 
+/**
+ * Create and dsiplays a landing page overlay.
+ * @param url The URL of the landing page to display
+ */
 + (void)showURL:(NSURL *)url;
 
-+ (void)closeWindow:(BOOL)animated;
-
 /**
- * Initializer, creates an overlay window and loads the given content within a particular view controller.
- * @param viewController the view controller to display the overlay in
- * @param messageID the message ID of the rich push message to display
+ * Closes all currently displayed overlays.
+ * @param animated Indicates whether to animate the close transition.
  */
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url;
+
++ (void)closeWindow:(BOOL)animated;
 
 @end
