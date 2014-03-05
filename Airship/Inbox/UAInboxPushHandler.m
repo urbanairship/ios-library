@@ -38,24 +38,24 @@
 
 - (void)messageListLoadSucceeded {
 
-    //only take action if there's a new message
-    if(self.viewingMessageID) {
+    // only take action if there's a new message
+    if (self.viewingMessageID) {
 
         UAInboxMessage *message = [[UAInbox shared].messageList messageForID:self.viewingMessageID];
 
-        //if the notification came in while the app was backgrounded, treat it as a launch message
+        // if the notification came in while the app was backgrounded, treat it as a launch message
         id<UAInboxPushHandlerDelegate> strongDelegate = self.delegate;
 
-        if (self.hasLaunchMessage) {
-            if (message != nil) {
+        if (message) {
+
+            if (self.hasLaunchMessage) {
                 [strongDelegate launchRichPushMessageAvailable:message];
                 self.hasLaunchMessage = NO;
-            }
-        }
 
-        //otherwise, have the UI class display it
-        else {
-            if (message != nil) {
+            }
+
+            // otherwise, have the UI class display it
+            else {
                 [strongDelegate richPushMessageAvailable:message];
             }
         }

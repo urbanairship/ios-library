@@ -35,11 +35,11 @@
 @property(nonatomic, strong) UAInboxMessage *message;
 @property(nonatomic, strong) id mockMessageList;
 @property(nonatomic, strong) UAInboxPushHandler *pushHandler;
+@property(nonatomic, strong) id mockedUAInboxPushHandlerDelegate;
 @end
 
 @implementation UAInboxPushHandlerTest
 
-id mockedUAInboxPushHandlerDelegate;
 
 - (void)setUp {
     [super setUp];
@@ -49,14 +49,14 @@ id mockedUAInboxPushHandlerDelegate;
     self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
     [UAInbox shared].messageList = self.mockMessageList;
 
-    mockedUAInboxPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
-    self.pushHandler.delegate = mockedUAInboxPushHandlerDelegate;
+    self.mockedUAInboxPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
+    self.pushHandler.delegate = self.mockedUAInboxPushHandlerDelegate;
 }
 
 - (void)tearDown {
     [super tearDown];
     [self.mockMessageList stopMocking];
-    [mockedUAInboxPushHandlerDelegate stopMocking];
+    [self.mockedUAInboxPushHandlerDelegate stopMocking];
 }
 
 /*
@@ -68,13 +68,13 @@ id mockedUAInboxPushHandlerDelegate;
 
     [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
 
-    [[mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
+    [[self.mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
     [self.pushHandler messageListLoadSucceeded];
 
     XCTAssertFalse(self.pushHandler.hasLaunchMessage, "Expect hasLaunchMessage to be false");
     XCTAssertNil(self.pushHandler.viewingMessageID, "Expect viewingMessageID to be nil");
-    XCTAssertNoThrow([mockedUAInboxPushHandlerDelegate verify], "launchRichPushMessageAvailable should be called");
+    XCTAssertNoThrow([self.mockedUAInboxPushHandlerDelegate verify], "launchRichPushMessageAvailable should be called");
 }
 
 /*
@@ -87,13 +87,13 @@ id mockedUAInboxPushHandlerDelegate;
 
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
 
-    [[mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
+    [[self.mockedUAInboxPushHandlerDelegate expect] launchRichPushMessageAvailable:self.message];
 
     [self.pushHandler messageListLoadSucceeded];
 
     XCTAssertTrue(self.pushHandler.hasLaunchMessage, "Expect hasLaunchMessage to be true");
     XCTAssertNil(self.pushHandler.viewingMessageID, "Expect viewingMessageID to be nil");
-    XCTAssertThrows([mockedUAInboxPushHandlerDelegate verify], "launchRichPushMessageAvailable should not be called");
+    XCTAssertThrows([self.mockedUAInboxPushHandlerDelegate verify], "launchRichPushMessageAvailable should not be called");
 }
 
 /*
@@ -105,13 +105,13 @@ id mockedUAInboxPushHandlerDelegate;
 
     [[[self.mockMessageList stub] andReturn:self.message] messageForID:@"viewingMessageId"];
 
-    [[mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
+    [[self.mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 
     [self.pushHandler messageListLoadSucceeded];
 
     XCTAssertFalse(self.pushHandler.hasLaunchMessage, "Expect hasLaunchMessage to be false");
     XCTAssertNil(self.pushHandler.viewingMessageID, "Expect viewingMessageID to be nil");
-    XCTAssertNoThrow([mockedUAInboxPushHandlerDelegate verify], "richPushMessageAvailable should be called");
+    XCTAssertNoThrow([self.mockedUAInboxPushHandlerDelegate verify], "richPushMessageAvailable should be called");
 }
 
 /*
@@ -124,13 +124,13 @@ id mockedUAInboxPushHandlerDelegate;
 
     [[[self.mockMessageList stub] andReturn:message] messageForID:@"viewingMessageId"];
 
-    [[mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
+    [[self.mockedUAInboxPushHandlerDelegate expect] richPushMessageAvailable:self.message];
 
     [self.pushHandler messageListLoadSucceeded];
 
     XCTAssertFalse(self.pushHandler.hasLaunchMessage, "Expect hasLaunchMessage to be false");
     XCTAssertNil(self.pushHandler.viewingMessageID, "Expect viewingMessageID to be nil");
-    XCTAssertThrows([mockedUAInboxPushHandlerDelegate verify], "richPushMessageAvailable should not be called");
+    XCTAssertThrows([self.mockedUAInboxPushHandlerDelegate verify], "richPushMessageAvailable should not be called");
 }
 
 @end
