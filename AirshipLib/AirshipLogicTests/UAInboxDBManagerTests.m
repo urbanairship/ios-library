@@ -37,6 +37,7 @@
 
 - (void)setUp {
     self.dbManager = [UAInboxDBManager shared];
+    [self.dbManager deleteMessages:[self.dbManager getMessages]];
     [super setUp];
 }
 
