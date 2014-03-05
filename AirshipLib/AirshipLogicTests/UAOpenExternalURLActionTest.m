@@ -165,7 +165,7 @@ id mockApplication;
     [self semaphoreWait];
 
     XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
-    XCTAssertNotNil(result.error, @"result should have an error if the application failed opens the url");
+    XCTAssertNotNil(result.error, @"result should have an error if the application failed to open the url");
     XCTAssertEqualObjects(UAOpenExternalURLActionErrorDomain, result.error.domain, @"error domain should be set to UAOpenExternalURLActionErrorDomain");
     XCTAssertEqual(UAOpenExternalURLActionErrorCodeURLFailedToOpen, result.error.code, @"error code should be set to UAOpenExternalURLActionErrorCodeURLFailedToOpen");
 }
