@@ -25,30 +25,20 @@
 
 #import <XCTest/XCTest.h>
 #import "UAAction+Internal.h"
+#import "UATestSynchronizer.h"
 
 @interface UAActionTest : XCTestCase
-@property (nonatomic, strong)UAActionArguments *emptyArgs;
-#if OS_OBJECT_USE_OBJC
-@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-#else
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
-#endif
+@property (nonatomic, strong) UAActionArguments *emptyArgs;
+@property (nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAActionTest
 
 - (void)setUp {
     self.emptyArgs = [UAActionArguments argumentsWithValue:nil withSituation:UASituationManualInvocation];
-    self.semaphore = dispatch_semaphore_create(0);
+    self.sync = [[UATestSynchronizer alloc] init];
 
     [super setUp];
-}
-
-- (void)tearDown {
-#if !OS_OBJECT_USE_OBJC
-    dispatch_release(self.semaphore);
-#endif
-    [super tearDown];
 }
 
 /*
@@ -128,8 +118,6 @@
     __block UAActionArguments *blockAcceptsArgs;
     __block UAActionResult *blockResult;
 
-
-
     UAAction *action = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler completionHandler) {
         blockPerformArgs = args;
         completionHandler([UAActionResult resultWithValue:@"hi" withFetchResult:UAActionFetchResultNewData]);
@@ -172,14 +160,11 @@
         [action runWithArguments:nil withCompletionHandler:^(UAActionResult *result){
             XCTAssertTrue(isMainThread(), @"we should be on the main thread");
             ran = YES;
-            dispatch_semaphore_signal(self.semaphore);
+            [self.sync continue];
         }];
     });
 
-    //wait on the semaphore with a 2 second timeout
-    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-    }
+    [self.sync wait];
 
     XCTAssertTrue(ran, @"action should have been run");
 }
@@ -200,7 +185,7 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             XCTAssertFalse(isMainThread(), @"we should be on a background thread");
             handler([UAActionResult emptyResult]);
-            dispatch_semaphore_signal(self.semaphore);
+            [self.sync continue];
         });
     }];
 
@@ -209,10 +194,7 @@
         XCTAssertTrue(isMainThread(), @"we should be back on the main thread");
     }];
 
-    //wait on the semaphore with a 2 second timeout
-    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW)) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:2]];
-    }
+    [self.sync wait];
 
     XCTAssertTrue(ran, @"action should have been run");
 }
@@ -235,7 +217,6 @@
     [action runWithArguments:self.emptyArgs withCompletionHandler:^(UAActionResult *actionResult) {
         blockResult = actionResult;
     }];
-
 
     XCTAssertNil(blockResult.value, @"runWithArguments:withCompletionHandler: should default to calling completion handler with a nil value");
     XCTAssertEqual(blockResult.fetchResult, UAActionFetchResultNoData, @"runWithArguments:withCompletionHandler: should default to calling completion handler with UAActionFetchResultNoData");

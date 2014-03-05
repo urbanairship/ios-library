@@ -4,49 +4,22 @@
 #import "UAHTTPConnection+Test.h"
 #import "UAHTTPConnection+Test.h" 
 #import "UADelayOperation.h"
+#import "UATestSynchronizer.h"
+#import "NSObject+AnonymousKVO.h"
 
 @interface UAHTTPConnectionOperationTest()
 @property(nonatomic, strong) UAHTTPConnectionOperation *operation;
-#if OS_OBJECT_USE_OBJC
-@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-#else
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
-#endif
+@property(nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAHTTPConnectionOperationTest
-
-/* convenience methods for async/runloop manipulation */
-
-//spin the current run loop until we get a completion signal
-- (void)waitUntilDone {
-    self.semaphore = dispatch_semaphore_create(0);
-
-    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW))
-        //this is effectively a 10 second timeout, in case something goes awry
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    #if !OS_OBJECT_USE_OBJC
-    dispatch_release(self.semaphore);
-    #endif
-
-}
-
-//send a completion signal
-- (void)done {
-    dispatch_semaphore_signal(self.semaphore);
-}
-
-//wait until the next iteration of the run loop
-- (void)waitUntilNextRunLoopIteration {
-    [self performSelector:@selector(done) withObject:nil afterDelay:0];
-    [self waitUntilDone];
-}
 
 /* setup and teardown */
 
 - (void)setUp {
     [super setUp];
+
+    self.sync = [[UATestSynchronizer alloc] init];
 
     [UAHTTPConnection swizzle];
 
@@ -55,11 +28,11 @@
     self.operation = [UAHTTPConnectionOperation operationWithRequest:request onSuccess:^(UAHTTPRequest *request) {
         XCTAssertNil(request.error, @"there should be no error on success");
         // signal completion
-        [self done];
+        [self.sync continue];
     } onFailure: ^(UAHTTPRequest *request) {
         XCTAssertNotNil(request.error, @"there should be an error on failure");
         // signal completion
-        [self done];
+        [self.sync continue];
     }];
 }
 
@@ -82,20 +55,19 @@
 - (void)testSuccessCase {
     [UAHTTPConnection succeed];
     [self.operation start];
-    [self waitUntilDone];
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
 }
 
 - (void)testFailureCase {
     [UAHTTPConnection fail];
     [self.operation start];
-    [self waitUntilDone];
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
 }
 
 - (void)testStart {
-
     [self.operation start];
-    [self waitUntilDone];
-    
+    XCTAssertTrue([self.sync wait], @"timeout should not be reached");
+
     XCTAssertEqual(self.operation.isExecuting, NO, @"the operation should no longer be executing");
     XCTAssertEqual(self.operation.isFinished, YES, @"the operation should be finished");
 }
@@ -104,8 +76,6 @@
     [self.operation cancel];
     XCTAssertEqual(self.operation.isCancelled, YES, @"you can cancel operations before they have started");
     [self.operation start];
-
-    [self waitUntilNextRunLoopIteration];
 
     XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
@@ -121,24 +91,32 @@
     [queue addOperation:delayOperation];
     [queue addOperation:self.operation];
 
-    //give the queue a little time to spin things up
-    sleep(1);
+    UADisposable *subscription = [queue observeAtKeyPath:@"operationCount" withBlock:^(id value){
+        //stop spinning once the operationCount has reached zero
+        if ([value isEqual:@0]) {
+            [self.sync continue];
+        }
+    }];
 
+    //this should eventually drop the operation count, although the change will not be instantaneous
     [queue cancelAllOperations];
 
-    //give the queue a little time to wind things down
-    sleep(1);
+    [self.sync wait];
 
     //we should have an operation count of zero
     XCTAssertTrue(queue.operationCount == 0, @"queue operation count should be zero");
+
+    [subscription dispose];
 }
 
 - (void)testInFlightCancel {
+
     [self.operation start];
     [self.operation cancel];
-    [self waitUntilNextRunLoopIteration];
+
+    [self.sync wait];
+
     XCTAssertEqual(self.operation.isCancelled, YES, @"the operation should now be canceled");
-    [self waitUntilNextRunLoopIteration];
     XCTAssertEqual(self.operation.isExecuting, NO, @"start should have no effect after cancellation");
     XCTAssertEqual(self.operation.isFinished, YES, @"cancelled operations always move to the finished state");
 }

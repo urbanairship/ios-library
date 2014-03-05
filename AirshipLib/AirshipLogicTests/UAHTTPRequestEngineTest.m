@@ -4,6 +4,7 @@
 #import "UAHTTPConnection+Test.h"
 #import "UAHTTPConnectionOperation.h"
 #import "UADelayOperation.h"
+#import "UATestSynchronizer.h"
 #import <OCMock/OCMock.h>
 
 @interface UAHTTPRequestEngineTest()
@@ -11,46 +12,17 @@
 @property(nonatomic, strong) UAHTTPRequest *request;
 @property(nonatomic, strong) NSOperationQueue *queue;
 @property(nonatomic, strong) id mockQueue;
-#if OS_OBJECT_USE_OBJC
-@property(nonatomic, strong) dispatch_semaphore_t semaphore;    // GCD objects use ARC
-#else
-@property(nonatomic, assign) dispatch_semaphore_t semaphore;    // GCD object don't use ARC
-#endif
+@property(nonatomic, strong) UATestSynchronizer *sync;
 @end
 
 @implementation UAHTTPRequestEngineTest
-
-/* convenience methods for async/runloop manipulation */
-
-//spin the current run loop until we get a completion signal
-- (void)waitUntilDone {
-    self.semaphore = dispatch_semaphore_create(0);
-
-    while (dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_NOW))
-        //this is effectively a 10 second timeout, in case something goes awry
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    #if !OS_OBJECT_USE_OBJC
-    dispatch_release(self.semaphore);
-    #endif
-}
-
-//send a completion signal
-- (void)done {
-    dispatch_semaphore_signal(self.semaphore);
-}
-
-//wait until the next iteration of the run loop
-- (void)waitUntilNextRunLoopIteration {
-    [self performSelector:@selector(done) withObject:nil afterDelay:0];
-    [self waitUntilDone];
-}
-
 
 /* setup and teardown */
 
 - (void)setUp {
     [super setUp];
+
+    self.sync = [[UATestSynchronizer alloc] init];
 
     [UAHTTPConnection swizzle];
 
@@ -107,13 +79,13 @@
          return NO;
      }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTAssertEqual(lastDelay, self.engine.initialDelayIntervalInSeconds, @"after one successful try, the last delay should be the initial value");
-         [self done];
+         [self.sync continue];
      }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay ) {
          XCTFail(@"this should not happen");
-         [self done];
+         [self.sync continue];
      }];
 
-    [self waitUntilDone];
+    XCTAssertTrue([self.sync wait], "timeout should not be reached");
 }
 
 - (void)testMaxDelayInterval {
@@ -128,13 +100,13 @@
          return result;
      }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTFail(@"this should not happen");
-         [self done];
+         [self.sync continue];
      }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTAssertEqual(lastDelay, self.engine.maxDelayIntervalInSeconds, @"at this point, we should have clipped at the max delay interval");
-         [self done];
+         [self.sync continue];
      }];
 
-    [self waitUntilDone];    
+    XCTAssertTrue([self.sync wait], "timeout should not be reached");
 }
 
 - (void)testBackoffFactor {
@@ -149,13 +121,14 @@
          return result;
      }onSuccess:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTFail(@"this should not happen");
-         [self done];
+         [self.sync continue];
      }onFailure:^(UAHTTPRequest *request, NSUInteger lastDelay) {
          XCTAssertEqual(self.engine.initialDelayIntervalInSeconds, lastDelay/self.engine.backoffFactor, @"with two tries, the last delay should be the initial interval * backoff factor");
-         [self done];
+         [self.sync continue];
      }];
 
-    [self waitUntilDone];
+    //give this one a little more time to finish
+    XCTAssertTrue([self.sync waitWithTimeoutInterval:5], "timeout should not be reached");
 }
 
 @end
