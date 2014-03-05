@@ -79,7 +79,7 @@
     [self.locationDisplay removeObjectsInRange:NSMakeRange(1, ([self.locationDisplay count] -1))];
 
     UITableView *strongLocationTableView = self.locationTableView;
-    NSUInteger rows = (NSUInteger)[strongLocationTableView numberOfRowsInSection:0];
+    NSInteger rows = (NSInteger)[strongLocationTableView numberOfRowsInSection:0];
     NSMutableArray *arrayOfDeletes = [NSMutableArray arrayWithCapacity:3];
 
     for (NSUInteger i=1; i < rows; i++) {

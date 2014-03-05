@@ -29,7 +29,7 @@
 
 @interface InboxSampleAppDelegate : NSObject <UIApplicationDelegate> 
 
-// window needs to be strong (inherits from UIApplicationDelegate which is strong)
+// window needs to be strong to match the property inherited from UIApplicationDelegate
 @property (nonatomic, strong) IBOutlet UIWindow *window;
 @property (nonatomic, weak) IBOutlet InboxSampleViewController *viewController;
 @property (nonatomic, weak) IBOutlet UINavigationController *navigationController;

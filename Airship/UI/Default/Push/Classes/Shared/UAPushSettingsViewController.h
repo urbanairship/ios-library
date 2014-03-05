@@ -28,7 +28,11 @@
 @interface UAPushSettingsViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
-// datePicker is created by the xib so it needs to be strong
+
+// The datePicker IBOutlet needs to be strong because it is removed from the view
+// when both 'Push Enabled' and 'Quiet Time' is set to false. It needs to be
+// re-created and added back to the view when both 'Push Enabled' and 'Quiet Time'
+// is set to true.
 @property (nonatomic, strong) IBOutlet UIDatePicker *datePicker;
 @property (nonatomic, assign) CGRect pickerShownFrame;
 @property (nonatomic, assign) CGRect pickerHiddenFrame;
@@ -38,7 +42,9 @@
 @property (nonatomic, weak) IBOutlet UILabel *pushEnabledLabel;
 @property (nonatomic, weak) IBOutlet UISwitch *pushEnabledSwitch;
 
-// these are created by the xib so they need to be strong
+// These quiet time IBOutlets needs to be strong because they are removed from
+// the table view when 'Push Enabled' is set to false. When 'Push Enabled' is
+// set to true, they need to be re-created and added back to the table view.
 @property (nonatomic, strong) IBOutlet UITableViewCell *quietTimeEnabledCell;
 @property (nonatomic, strong) IBOutlet UILabel *quietTimeLabel;
 @property (nonatomic, strong) IBOutlet UISwitch *quietTimeSwitch;

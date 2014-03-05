@@ -38,7 +38,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     [self.title setText: message.title];
 
-    UIView* strongUnreadIndicator = self.unreadIndicator;
+    UIView *strongUnreadIndicator = self.unreadIndicator;
 
     if(!message.unread) {
         strongUnreadIndicator.hidden = YES;

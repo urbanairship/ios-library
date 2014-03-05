@@ -35,17 +35,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  *Displays the message date.
  */
-@property (nonatomic, weak) IBOutlet UILabel* dateView;
+@property (nonatomic, weak) IBOutlet UILabel *dateView;
 
 /**
  * Displays the message title.
  */
-@property (nonatomic, weak) IBOutlet UILabel* title;
+@property (nonatomic, weak) IBOutlet UILabel *title;
 
 /**
  * Indicates whether a message has previously been read.
  */
-@property (nonatomic, weak) IBOutlet UIView* unreadIndicator;
+@property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
 
 /**
  * Checkmark image used in batch message selection
@@ -54,7 +54,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Background view used when a cell is selected in editing mode.
- * This needs to be strong.
+ *
+ * This needs to be strong because it is removed from the view when not in
+ * editing mode and needs to be re-created and added back to the view when in
+ * editing mode.
  */
 @property (nonatomic, strong) IBOutlet UIView *selectedEditingBackgroundView;
 
