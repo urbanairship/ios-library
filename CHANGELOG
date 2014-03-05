@@ -1,4 +1,10 @@
 -------------------------
+3.0.4 - March 4, 2014
+-------------------------
+- Allow registrations in the background.
+- Fix an issue with inbox count.
+
+-------------------------
 3.0.3 - February 18, 2014
 -------------------------
 - Fix detectProvisioningMode behavior when inProduction is not set.
