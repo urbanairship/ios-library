@@ -253,6 +253,7 @@
 		49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62817FE3655004F8724 /* UAMailComposerData.m */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		761BB98318B58290005B45D5 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 761BB98218B58290005B45D5 /* JRSwizzle.m */; };
+		7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */; };
 		7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
 		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
@@ -573,6 +574,7 @@
 		761BB98218B58290005B45D5 /* JRSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../TestCommon/JRSwizzle/JRSwizzle.m; sourceTree = "<group>"; };
 		761BB98418B5840B005B45D5 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JRSwizzle.h; path = ../TestCommon/JRSwizzle/JRSwizzle.h; sourceTree = "<group>"; };
 		762CD99F18B6CC2A00AD4C4F /* UAChannelRegistrationPayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+Internal.h"; sourceTree = "<group>"; };
+		7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxPushHandlerTest.m; sourceTree = "<group>"; };
 		76792D0E178E12A10054F8AD /* UAHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequest.h; sourceTree = "<group>"; };
 		76792D0F178E12A10054F8AD /* UAHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequest.m; sourceTree = "<group>"; };
 		76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPRequest+Internal.h"; sourceTree = "<group>"; };
@@ -1238,6 +1240,7 @@
 				495526AB17D95552009BC301 /* UAInboxMessageListTest.m */,
 				495526AC17D95552009BC301 /* UAInboxMessageTest.m */,
 				CCB7DF5A17BBF1B800CEDC56 /* UAInboxDBManagerTests.m */,
+				7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */,
 			);
 			name = Inbox;
 			sourceTree = "<group>";
@@ -1803,6 +1806,7 @@
 				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
+				7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */,
 				BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */,
 				CCDD37A51807157500B8866E /* UAIncomingRichPushActionTest.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
