@@ -1151,28 +1151,6 @@ NSDictionary *notification;
     XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
 }
 
-
-/**
- * Test that updateRegistration calls in the background only happen
- * if a channel id needs to be created.
- */
-- (void)testUpdateRegistrationInBackground {
-    UAPush *push = [UAPush shared];
-    push.pushEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-    // Need a channel id case
-    push.channelID = nil;
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
-
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:NO];
-
-    [push updateRegistrationForcefully:NO];
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Device Registrar should register with channel ID");
-}
-
 /**
  * Test channel created
  */
