@@ -35,9 +35,11 @@
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush, UASituationLaunchedFromSpringboard,
  * UASituationWebViewInvocation, UASituationManualInvocation.
  *
+ * In the background situation, this action will attempt to pre-fetch the data and cache it for later use.
+ *
  * Result value: nil
  *
- * Fetch result: UAActionFetchResultNewData
+ * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
  *
  */
 @interface UALandingPageAction : UAAction

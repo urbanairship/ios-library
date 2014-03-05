@@ -28,6 +28,11 @@
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
 #import "UALandingPageViewController.h"
+#import "UAHTTPConnection.h"
+
+@interface UALandingPageAction()
+@property(nonatomic, strong) UAHTTPConnection *connection;
+@end
 
 @implementation UALandingPageAction
 
@@ -44,26 +49,58 @@
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
 
-    //close any existing windows
-    [UALandingPageViewController closeWindow:NO];
+    if (arguments.situation == UASituationBackgroundPush ) {
+        // pre-fetch url so that it can be accessed later from the cache
+        [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
+    } else {
+        //close any existing windows
+        [UALandingPageViewController closeWindow:NO];
 
-    //load the landing page
-    [UALandingPageViewController showURL:landingPageURL];
-    completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+        //load the landing page
+        [UALandingPageViewController showURL:landingPageURL];
+        completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+    }
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-
-    if (arguments.situation == UASituationBackgroundPush) {
-        return NO;
-    }
-
     if (![arguments.value isKindOfClass:[NSString class]] &&
         ![arguments.value isKindOfClass:[NSURL class]]) {
         return NO;
     }
 
     return YES;
+}
+
+- (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+
+    if (self.connection) {
+        [self.connection cancel];
+    }
+
+    UAHTTPConnectionSuccessBlock successBlock = ^(UAHTTPRequest *request){
+        UA_LTRACE(@"Retrieved landing page with status code %ld at url: %@.",
+                  (long)[request.response statusCode], request.url);
+
+        if ([request.response statusCode] == 200) {
+            UA_LTRACE(@"Cached landing page.");
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
+        } else {
+            completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultFailed]);
+        }
+    };
+
+    UAHTTPConnectionFailureBlock failureBlock = ^(UAHTTPRequest *request){
+        UA_LTRACE(@"Error %@ for landing page pre-fetch request at url: %@", request.error, request.url);
+        completionHandler([UAActionResult resultWithError:request.error withFetchResult:UAActionFetchResultFailed]);
+    };
+
+    UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
+
+    self.connection = [UAHTTPConnection connectionWithRequest:request
+                                                 successBlock:successBlock
+                                                 failureBlock:failureBlock];
+
+    [self.connection start];
 }
 
 @end

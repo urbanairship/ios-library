@@ -128,4 +128,13 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  */
 + (instancetype)resultWithError:(NSError *)error;
 
+/**
+ * Creates a UAActionResult with the value set to nil. The `error`
+ * and `fetchResult` properties are set to the supplied arguments.
+ *
+ * @param An instance of NSError.
+ * @param A UAActionFetchResult enum value;
+ */
++ (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
+
 @end
