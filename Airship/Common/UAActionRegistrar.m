@@ -31,6 +31,7 @@
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
 #import "UALandingPageAction.h"
+#import "UADeepLinkAction.h"
 
 @implementation UAActionRegistrar
 @dynamic registeredEntries;
@@ -278,6 +279,11 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
                predicate:^(UAActionArguments *args){
                    return (BOOL)(args.situation != UASituationForegroundPush);
     }];
+
+    UADeepLinkAction *deepLinkAction = [[UADeepLinkAction alloc] init];
+    [self registerAction:deepLinkAction
+                   names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
+               predicate:urlPredicate];
 }
 
 @end

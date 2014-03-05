@@ -24,11 +24,11 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAOpenExternalURLAction.h"
+#import "UADeepLinkAction.h"
 #import <OCMock/OCMock.h>
 #import "UAAction+Operators.h"
 
-@interface UAOpenExternalURLActionTest : XCTestCase
+@interface UADeepLinkActionTest : XCTestCase
 
 @property (nonatomic, strong)UAActionArguments *emptyArgs;
 #if OS_OBJECT_USE_OBJC
@@ -40,7 +40,7 @@
 @end
 
 
-@implementation UAOpenExternalURLActionTest
+@implementation UADeepLinkActionTest
 
 UAAction *action;
 UAActionArguments *arguments;
@@ -52,7 +52,7 @@ id mockApplication;
     self.semaphore = dispatch_semaphore_create(0);
 
     arguments = [[UAActionArguments alloc] init];
-    action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+    action = [[[UADeepLinkAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
         dispatch_semaphore_signal(self.semaphore);
     }];
     mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
@@ -76,8 +76,8 @@ id mockApplication;
 }
 
 /**
-* Test accepts valid arguments
-*/
+ * Test accepts valid arguments
+ */
 - (void)testAcceptsArguments {
     arguments.value = @"http://some-valid-url";
     XCTAssertTrue([action acceptsArguments:arguments], @"action should accept valid string URLs");
@@ -224,7 +224,7 @@ id mockApplication;
     }];
 
     [self semaphoreWait];
-
+    
     XCTAssertEqualObjects([result.value absoluteString], @"http://phobos.apple.com/some-app", @"results value should be http iTunes link");
 }
 @end

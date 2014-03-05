@@ -36,6 +36,8 @@
 #define kUARemoveTagsActionDefaultRegistryAlias @"^-t"
 #define kUALandingPageActionDefaultRegistryName @"landing_page_action"
 #define kUALandingPageActionDefaultRegistryAlias @"^p"
+#define kUADeepLinkActionDefaultRegistryName @"deep_link_action"
+#define kUADeepLinkActionDefaultRegistryAlias @"^d"
 
 @interface UAActionRegistrar : NSObject
 
