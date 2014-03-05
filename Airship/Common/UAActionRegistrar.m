@@ -30,7 +30,7 @@
 #import "UAOpenExternalURLAction.h"
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
-
+#import "UALandingPageAction.h"
 
 @implementation UAActionRegistrar
 @dynamic registeredEntries;
@@ -241,7 +241,6 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     return (entry != nil);
 }
 
-
 - (void)registerDefaultActions {
     // Incoming push action
     UAIncomingPushAction *incomingPushAction = [[UAIncomingPushAction alloc] init];
@@ -272,8 +271,13 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     UARemoveTagsAction *removeTagsAction = [[UARemoveTagsAction alloc] init];
     [self registerAction:removeTagsAction
                     names:@[kUARemoveTagsActionDefaultRegistryName, kUARemoveTagsActionDefaultRegistryAlias]];
+
+    UALandingPageAction *landingPageAction = [[UALandingPageAction alloc] init];
+    [self registerAction:landingPageAction
+                   names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]
+               predicate:^(UAActionArguments *args){
+                   return (BOOL)(args.situation != UASituationForegroundPush);
+    }];
 }
-
-
 
 @end

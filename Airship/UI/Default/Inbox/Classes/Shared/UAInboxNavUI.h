@@ -27,10 +27,8 @@
 
 #import "UAInboxAlertHandler.h"
 #import "UAInbox.h"
-
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-
 #import "UAInboxPushHandler.h"
 
 #ifndef UA_INBOX_TR

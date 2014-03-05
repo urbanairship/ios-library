@@ -23,14 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
+#import "UAAction.h"
 
-@interface UIWebView (UAAdditions)
-
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
-- (void)populateJavascriptEnvironment;
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
-- (void)injectViewportFix;
-
+/**
+ * Opens a landing page URL in a rich content window.
+ *
+ * This action is registered under the names landing_page_action and ^p.
+ *
+ * Expected argument values: NSString, NSURL
+ *
+ * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush, UASituationLaunchedFromSpringboard,
+ * UASituationWebViewInvocation, UASituationManualInvocation.
+ *
+ * In the background situation, this action will attempt to pre-fetch the data and cache it for later use.
+ *
+ * Result value: nil
+ *
+ * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
+ *
+ */
+@interface UALandingPageAction : UAAction
 @end

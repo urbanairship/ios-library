@@ -56,12 +56,18 @@
     return [self resultWithValue:nil withFetchResult:UAActionFetchResultNoData];
 }
 
-+ (instancetype)resultWithError:(NSError *)error {
+
++ (instancetype)resultWithError:(NSError *)error
+                withFetchResult:(UAActionFetchResult)fetchResult {
     UAActionResult *result = [[self alloc] initWithValue:nil
-                                         withFetchResult:UAActionFetchResultNoData
+                                         withFetchResult:fetchResult
                                               withStatus:UAActionStatusError];
     result.error = error;
     return result;
+}
+
++ (instancetype)resultWithError:(NSError *)error {
+    return [self resultWithError:error withFetchResult:UAActionFetchResultNoData];
 }
 
 + (instancetype)rejectedArgumentsResult {

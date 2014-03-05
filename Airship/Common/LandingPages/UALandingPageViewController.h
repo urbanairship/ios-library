@@ -23,14 +23,34 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
+#import <Foundation/Foundation.h>
 
-@interface UIWebView (UAAdditions)
+#import "UIWebView+UAAdditions.h"
 
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
-- (void)populateJavascriptEnvironment;
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
-- (void)injectViewportFix;
+/**
+ * Primary interface for displaying landing pages.
+ */
+@interface UALandingPageViewController : UIViewController<UIWebViewDelegate>
+
+/**
+ * The UIWebView used to display the message content.
+ */
+@property(nonatomic, strong) UIWebView *webView;
+
+/**
+ * The URL being displayed.
+ */
+@property(nonatomic, strong) NSURL *url;
+
+/**
+ * Shows the passed URL in a modal view controller, whose parent is the
+ * Current top-most view controller presented by the root.
+ */
++ (void)showURL:(NSURL *)url;
+
+/**
+ * Closes the currently displayed landing page.
+ */
++ (void)closeWindow:(BOOL)animated;
 
 @end

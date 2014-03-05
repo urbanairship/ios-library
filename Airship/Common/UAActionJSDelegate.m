@@ -68,7 +68,7 @@
         UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                 withSituation:UASituationWebViewInvocation];
         [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-            UA_LDEBUG("Action %@ finished executing with status %ld", actionName, result.status);
+            UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
             if (!callbackID) {
                 completionHandler(nil);
                 return;

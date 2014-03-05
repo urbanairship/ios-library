@@ -90,7 +90,6 @@ static NSMutableSet *overlayControllers = nil;
     [overlayControllers addObject:overlayController];
 }
 
-
 - (id)initWithParentViewController:(UIViewController *)parent andMessageID:(NSString*)messageID {
     self = [super init];
     if (self) {
