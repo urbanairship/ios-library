@@ -56,7 +56,9 @@ static NSMutableSet *overlayControllers = nil;
 
 @implementation UALandingPageOverlayController
 
-// Setup a container for the newly allocated controllers, will be released by OS.
+/** 
+ * Setup a container for the newly allocated controllers, will be released by OS.
+ */
 + (void)initialize {
     if (self == [UALandingPageOverlayController class]) {
         overlayControllers = [[NSMutableSet alloc] initWithCapacity:1];
@@ -65,10 +67,10 @@ static NSMutableSet *overlayControllers = nil;
 
 + (void)showURL:(NSURL *)url {
 
-    //close existing windows
+    // Close existing windows
     [UALandingPageOverlayController closeWindow:NO];
 
-    // get the top view controller
+    // Get the top view controller
     UIViewController *topController = [UALandingPageOverlayController topController];
 
     UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:topController andURL:url];
@@ -84,7 +86,9 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-// a utility method that grabs the top-most view controller
+/** 
+ * A utility method that grabs the top-most view controller
+ */
 + (UIViewController *)topController {
     UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
@@ -101,7 +105,7 @@ static NSMutableSet *overlayControllers = nil;
 
         self.parentViewController = parent;
 
-        //set the frame later
+        // Set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         self.webView.backgroundColor = [UIColor clearColor];
         self.webView.opaque = NO;
@@ -109,7 +113,7 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
         self.webView.scalesPageToFit = YES;
 
-        //hack to hide the ugly webview gradient (iOS6 and earlier)
+        // Hack to hide the ugly webview gradient (iOS6 and earlier)
         for (UIView *subView in [self.webView subviews]) {
             if ([subView isKindOfClass:[UIScrollView class]]) {
                 for (UIView *shadowView in [subView subviews]) {
@@ -122,7 +126,7 @@ static NSMutableSet *overlayControllers = nil;
 
         self.loadingIndicator = [UABeveledLoadingIndicator indicator];
 
-        //required to receive orientation updates from NSNotificationCenter
+        // Required to receive orientation updates from NSNotificationCenter
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -147,8 +151,8 @@ static NSMutableSet *overlayControllers = nil;
 
     UIView *parentView = self.parentViewController.view;
 
-    //note that we're using parentView.bounds instead of frame here, so that we'll have the correct dimensions if the
-    //parent view is autorotated or otherwised transformed.
+    // Note that we're using parentView.bounds instead of frame here, so that we'll have the correct dimensions if the
+    // Parent view is autorotated or otherwised transformed.
 
     self.overlayView = [[UIView alloc] initWithFrame:
                         CGRectMake(0, 0, CGRectGetWidth(parentView.bounds), CGRectGetHeight(parentView.bounds))];
@@ -159,18 +163,18 @@ static NSMutableSet *overlayControllers = nil;
     self.overlayView.alpha = 0.0;
     self.overlayView.backgroundColor = [UIColor clearColor];
 
-    //padding for the the webview
+    // Padding for the the webview
     NSInteger webViewPadding = 15;
 
-    //add the window background
+    // Add the window background
     UIView *background = [[UIView alloc] initWithFrame:CGRectInset(self.overlayView.frame, 0, webViewPadding)];
 
-    // set size for iPad (540 x 620 + webView padding)
+    // Set size for iPad (540 x 620 + webView padding)
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         background.frame = CGRectMake(0.0, 0.0, 540.0 + webViewPadding, 620.0 + webViewPadding);
     }
 
-    //center the background in the middle of the overlay
+    // Center the background in the middle of the overlay
     background.center = CGPointMake(self.overlayView.frame.size.width/2.0, self.overlayView.frame.size.height/2.0);
 
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
@@ -182,12 +186,12 @@ static NSMutableSet *overlayControllers = nil;
         background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     }
 
-    //make the background transparent, so that the close button can safely overlap the corner of the webView
+    // Make the background transparent, so that the close button can safely overlap the corner of the webView
     background.backgroundColor = [UIColor clearColor];
 
     [self.overlayView addSubview:background];
 
-    //create and add a background inset that will serve as the visible background to the webview
+    // Create and add a background inset that will serve as the visible background to the webview
     UIView *backgroundInset = [[UIView alloc] initWithFrame:
                                CGRectInset(CGRectMake(0,0,CGRectGetWidth(background.frame),CGRectGetHeight(background.frame)),
                                            webViewPadding, webViewPadding)];
@@ -196,7 +200,7 @@ static NSMutableSet *overlayControllers = nil;
 
     [background addSubview:backgroundInset];
 
-    //set the webView's frame to be identical to the background inset
+    // Set the webView's frame to be identical to the background inset
     self.webView.frame = CGRectMake(webViewPadding, webViewPadding, CGRectGetWidth(backgroundInset.frame), CGRectGetHeight(backgroundInset.frame));
 
     self.webView.scalesPageToFit = YES;
@@ -212,7 +216,7 @@ static NSMutableSet *overlayControllers = nil;
 
     [background addSubview:self.webView];
 
-    //add the loading indicator and center it in the middle of the webView
+    // Add the loading indicator and center it in the middle of the webView
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
 
@@ -220,10 +224,10 @@ static NSMutableSet *overlayControllers = nil;
         [self.loadingIndicator show];
     }
 
-    //add the close button
+    // Add the close button
     UABespokeCloseView *closeButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
 
-    //technically UABespokeCloseView is a not a UIButton, so we will be adding it as a subView of an actual, transparent one.
+    // Technically UABespokeCloseView is a not a UIButton, so we will be adding it as a subView of an actual, transparent one.
     closeButtonView.userInteractionEnabled = NO;
 
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -241,7 +245,7 @@ static NSMutableSet *overlayControllers = nil;
 
     [closeButton addSubview:closeButtonView];
 
-    //tapping the button will finish the overlay and dismiss all views
+    // Tapping the button will finish the overlay and dismiss all views
     [closeButton addTarget:self action:@selector(finish) forControlEvents:UIControlEventTouchUpInside];
 
     [background addSubview:closeButton];
@@ -267,7 +271,7 @@ static NSMutableSet *overlayControllers = nil;
 
     [self.parentViewController.view addSubview:self.overlayView];
 
-    //dims the contents behind the popup window
+    // Dims the contents behind the popup window
     UIView *shadeView = [[UIView alloc] initWithFrame:self.overlayView.bounds];
     shadeView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     shadeView.backgroundColor = [UIColor blackColor];
@@ -276,10 +280,10 @@ static NSMutableSet *overlayControllers = nil;
 
     [self.overlayView addSubview:shadeView];
 
-    //send to the back so it doesn't obscure the landing page/etc
+    // Send to the back so it doesn't obscure the landing page/etc
     [self.overlayView sendSubviewToBack:shadeView];
 
-    //fade in
+    // Fade in
     [UIView animateWithDuration:0.5 animations:^{
         self.overlayView.alpha = 1.0;
     }];
@@ -312,7 +316,7 @@ static NSMutableSet *overlayControllers = nil;
     };
 
     if (animated) {
-        //fade out and remove
+        // Fade out and remove
         [UIView
         animateWithDuration:0.5
         animations:^{

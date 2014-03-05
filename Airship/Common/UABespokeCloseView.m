@@ -35,15 +35,11 @@
     return self;
 }
 
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
 
-    //an iOS7y blue: 0x105efb
     UIColor *strokeColor = [UIColor whiteColor];
 
-    // draw a white circle
+    // Draw a white circle
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
 
@@ -55,12 +51,12 @@
     CGContextSetStrokeColorWithColor(context, strokeColor.CGColor);
     CGContextStrokeEllipseInRect(context, circleRect);
 
-    // the X gets to be a little smaller than the circle
+    // The X gets to be a little smaller than the circle
     NSInteger xInset = 7;
 
     CGRect xFrame = CGRectInset(circleRect, xInset, xInset);
 
-    //CGRect gymnastics
+    // CGRect gymnastics
     UIBezierPath *aPath = [UIBezierPath bezierPath];
     [aPath moveToPoint:xFrame.origin];//minx, miny
     [aPath addLineToPoint:CGPointMake(CGRectGetMaxX(xFrame), CGRectGetMaxY(xFrame))];
@@ -80,7 +76,7 @@
     aPath.lineCapStyle = kCGLineCapButt;
     bPath.lineCapStyle = kCGLineCapButt;
 
-    //draw both strokes
+    // Draw both strokes
     [aPath stroke];
     [bPath stroke];
 }
