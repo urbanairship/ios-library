@@ -43,7 +43,6 @@
     UASituation situations[4] = {
         UASituationLaunchedFromPush,
         UASituationForegroundPush,
-        UASituationLaunchedFromSpringBoard,
         UASituationWebViewInvocation
     };
 
