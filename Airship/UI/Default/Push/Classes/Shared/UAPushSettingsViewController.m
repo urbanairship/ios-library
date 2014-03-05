@@ -126,9 +126,11 @@ enum {
             return (NSInteger)AirshipLocationEnabledSectionRowCount;
         case SectionQuietTime:
         {
-            if (self.pushEnabledSwitch.on && self.quietTimeSwitch.on) {
+            UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
+            if (strongPushEnabledSwitch.on && self.quietTimeSwitch.on) {
                 return QuietTimeSectionRowCount;
-            } else if (self.pushEnabledSwitch.on) {
+            } else if (strongPushEnabledSwitch.on) {
                 return 1;
             }
         }
@@ -177,16 +179,20 @@ enum {
                                                                                             action:@selector(quit)];
 
     UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+    UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
     if (type == UIRemoteNotificationTypeNone || ![UAPush shared].pushEnabled) {
-        self.pushEnabledSwitch.on = NO;
+        strongPushEnabledSwitch.on = NO;
     } else {
-        self.pushEnabledSwitch.on = YES;
+        strongPushEnabledSwitch.on = YES;
     }
+
+    UISwitch *strongAirshipLocationEnabledSwitch = self.airshipLocationEnabledSwitch;
     if ([UALocationService airshipLocationServiceEnabled]) {
-        self.airshipLocationEnabledSwitch.on = YES;
+        strongAirshipLocationEnabledSwitch.on = YES;
     }
     else {
-        self.airshipLocationEnabledSwitch.on = NO;
+        strongAirshipLocationEnabledSwitch.on = NO;
     }
     
     self.pushEnabledLabel.text = UA_PU_TR(@"UA_Push_Settings_Enabled_Label");
@@ -248,6 +254,7 @@ enum {
     //Older  devies do not like the custom size. It breaks the picker.
                     
     //If the picker is in a portrait container, use std portrait picker dims
+
     if (viewBounds.size.height >= viewBounds.size.width) {
         self.datePicker.bounds = CGRectMake(0, 0, 320, 216);
     } else {
@@ -278,10 +285,11 @@ enum {
 - (IBAction)quit {
     
     if (self.dirty) {
+        UISwitch *strongPushEnabledSwitch = self.pushEnabledSwitch;
+
+        [UAPush shared].pushEnabled = strongPushEnabledSwitch.on;
         
-        [UAPush shared].pushEnabled = self.pushEnabledSwitch.on;
-        
-        if (self.pushEnabledSwitch.on) {
+        if (strongPushEnabledSwitch.on) {
             [self updateQuietTime];
         }
         
@@ -294,7 +302,7 @@ enum {
 - (IBAction)pickerValueChanged:(id)sender {
 
     self.dirty = YES;
-    
+
     NSDate *date = [self.datePicker date];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterNoStyle];
@@ -339,6 +347,9 @@ enum {
     
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.4];
+
+    UITableView *strongTableView = self.tableView;
+
     if (show) {
         [self.view addSubview:self.datePicker];
         self.pickerDisplayed = YES;
@@ -348,14 +359,14 @@ enum {
         int scrollOffset = MAX(0, 
                                self.toCell.frame.origin.y
                                + self.toCell.frame.size.height
-                               + self.tableView.sectionFooterHeight
+                               + strongTableView.sectionFooterHeight
                                - self.datePicker.frame.origin.y);
-        self.tableView.contentOffset = CGPointMake(0, scrollOffset);
+        strongTableView.contentOffset = CGPointMake(0, scrollOffset);
     } else {
         self.pickerDisplayed = NO;
-        self.tableView.contentOffset = CGPointZero;//reset scroll offset
+        strongTableView.contentOffset = CGPointZero;//reset scroll offset
         self.datePicker.frame = self.pickerHiddenFrame;
-        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
+        [strongTableView deselectRowAtIndexPath:[strongTableView indexPathForSelectedRow] animated:NO];
     }
     [UIView commitAnimations];
     
@@ -371,7 +382,7 @@ enum {
     NSString *fromString = self.fromCell.detailTextLabel.text;
     NSString *toString = self.toCell.detailTextLabel.text;
 
-    NSUInteger row = (NSUInteger)[[self.tableView indexPathForSelectedRow] row];
+    NSUInteger row = (NSUInteger)[[strongTableView indexPathForSelectedRow] row];
     if (row == 1 && [fromString length] != 0) {
         NSDate *fromDate = [formatter dateFromString:fromString];
         [self.datePicker setDate:fromDate animated:YES];

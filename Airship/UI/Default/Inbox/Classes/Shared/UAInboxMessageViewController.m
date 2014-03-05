@@ -41,9 +41,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)refreshHeader;
 - (void)updateMessageNavButtons;
 
-@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activity;
-@property (nonatomic, strong) IBOutlet UIView *statusBar;
-@property (nonatomic, strong) IBOutlet UILabel *statusBarTitle;
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activity;
+@property (nonatomic, weak) IBOutlet UIView *statusBar;
+@property (nonatomic, weak) IBOutlet UILabel *statusBarTitle;
 @property (nonatomic, strong) UISegmentedControl *messageNav;
 /**
  * The UIWebView used to display the message content.

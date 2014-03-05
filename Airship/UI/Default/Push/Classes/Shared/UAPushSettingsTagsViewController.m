@@ -189,14 +189,15 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *text;
-    
+
+    UILabel *strongTextLabel = self.textLabel;
     if (indexPath.section == SectionDesc) {
-        text = self.textLabel.text;
+        text = strongTextLabel.text;
     } else {
         text = [[UAPush shared].tags objectAtIndex:(NSUInteger)indexPath.row];
     }
     
-    CGFloat height = [text sizeWithFont:self.textLabel.font
+    CGFloat height = [text sizeWithFont:strongTextLabel.font
                                      constrainedToSize:CGSizeMake(240, 1500)
                                          lineBreakMode:NSLineBreakByWordWrapping].height;
     

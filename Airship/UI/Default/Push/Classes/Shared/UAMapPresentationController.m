@@ -94,10 +94,11 @@
 
 - (IBAction)rightBarButtonPressed:(id)sender {
     UA_LDEBUG(@"Right bar button pressed");
-    // The Map                   
-    if (self.mapView.annotations.count > 1) {
+    // The Map
+    MKMapView *strongMapView = self.mapView;
+    if (strongMapView.annotations.count > 1) {
         UA_LDEBUG(@"Removing annotations");
-        [self.mapView removeAnnotations:self.annotations];
+        [strongMapView removeAnnotations:self.annotations];
         self.rightButton.title = @"+Pin";
     }
     else {

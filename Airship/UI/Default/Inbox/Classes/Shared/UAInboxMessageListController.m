@@ -52,10 +52,10 @@
 - (BOOL)checkSetOfIndexPaths:(NSSet *)setOfPaths forIndexPath:(NSIndexPath *)indexPath;
 - (NSUInteger)countOfUnreadMessagesInSetOfIndexPaths:(NSSet *)set;
 
-@property (nonatomic, strong) IBOutlet UITableView *messageTable;
-@property (nonatomic, strong) IBOutlet UIView *loadingView;
-@property (nonatomic, strong) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
-@property (nonatomic, strong) IBOutlet UILabel *loadingLabel;
+@property (nonatomic, weak) IBOutlet UITableView *messageTable;
+@property (nonatomic, weak) IBOutlet UIView *loadingView;
+@property (nonatomic, weak) IBOutlet UABeveledLoadingIndicator *loadingIndicator;
+@property (nonatomic, weak) IBOutlet UILabel *loadingLabel;
 @property (nonatomic, strong) NSMutableSet *setOfUnreadMessagesInSelection;
 @property (nonatomic, strong) NSMutableSet *selectedIndexPathsForEditing;
 @property (nonatomic, strong) UABarButtonSegmentedControl *deleteItem;
@@ -151,8 +151,10 @@
         [self tableReloadData];
         [self updateNavigationTitleText];
     }
-    
-    [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:animated];
+
+    UITableView *strongMessageTable = self.messageTable;
+
+    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:animated];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(messageListWillUpdate)
@@ -196,25 +198,28 @@
 }
 
 - (void)tableReloadData {
-    [self.messageTable reloadData];
-    [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:NO];
+    UITableView *strongMessageTable = self.messageTable;
+    [strongMessageTable reloadData];
+    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
 }
 
 - (void)refreshAfterBatchUpdate {
     [self.selectedIndexPathsForEditing removeAllObjects];
     self.cancelItem.enabled = YES;
     [self cancelButtonPressed:nil];
-    
-    [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:NO];
+
+    UITableView *strongMessageTable = self.messageTable;
+    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:NO];
     
     [self refreshBatchUpdateButtons];
 }
 
 - (void)showLoadingScreen {
     self.loadingView.hidden = NO;
-    self.loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
+    UILabel *strongLoadingLabel = self.loadingLabel;
+    strongLoadingLabel.text = UA_INBOX_TR(@"UA_Loading");
     [self.loadingIndicator show];
-    self.loadingLabel.hidden = NO;
+    strongLoadingLabel.hidden = NO;
 }
 
 - (void)coverUpEmptyListIfNeeded {
@@ -286,7 +291,8 @@
     }
     
     self.navigationItem.rightBarButtonItem = self.cancelItem;
-    [self.messageTable deselectRowAtIndexPath:[self.messageTable indexPathForSelectedRow] animated:YES];
+    UITableView *strongMessageTable = self.messageTable;
+    [strongMessageTable deselectRowAtIndexPath:[strongMessageTable indexPathForSelectedRow] animated:YES];
     [self setEditing:YES animated:YES];
     // refresh need to be called after setEdit, because in iPad platform,
     // the trash button is decided by the table list's edit status.
@@ -299,12 +305,13 @@
     
     self.navigationItem.rightBarButtonItem = self.editItem;
 
+    UITableView *strongMessageTable = self.messageTable;
     if ([self.selectedIndexPathsForEditing count] > 0) {
-        NSSet *visibleCells = [NSSet setWithArray:[self.messageTable indexPathsForVisibleRows]];
+        NSSet *visibleCells = [NSSet setWithArray:[strongMessageTable indexPathsForVisibleRows]];
         [self.selectedIndexPathsForEditing intersectSet:visibleCells];
 
         for (NSIndexPath *indexPath in self.selectedIndexPathsForEditing) {
-            [self.messageTable cellForRowAtIndexPath:indexPath].selected = NO;
+            [strongMessageTable cellForRowAtIndexPath:indexPath].selected = NO;
         }
 
         [self.selectedIndexPathsForEditing removeAllObjects];
@@ -502,10 +509,11 @@
 
 
 - (void)batchDeleteFinished {
-    [self.messageTable beginUpdates];
-    [self.messageTable deleteRowsAtIndexPaths:[self.selectedIndexPathsForEditing allObjects]
+    UITableView *strongMessageTable = self.messageTable;
+    [strongMessageTable beginUpdates];
+    [strongMessageTable deleteRowsAtIndexPaths:[self.selectedIndexPathsForEditing allObjects]
                         withRowAnimation:UITableViewRowAnimationLeft];
-    [self.messageTable endUpdates];
+    [strongMessageTable endUpdates];
     
     [self refreshAfterBatchUpdate];
 }

@@ -30,9 +30,9 @@
 
 @property (nonatomic, copy) NSString *text;
 //note: naming this property copyButton will confuse cocoa's getter naming conventions with respect to memory management
-@property (nonatomic, strong) IBOutlet UIButton *cpyButton;
-@property (nonatomic, strong) IBOutlet UIButton *emailButton;
-@property (nonatomic, strong) IBOutlet UILabel *usernameLabel;
+@property (nonatomic, weak) IBOutlet UIButton *cpyButton;
+@property (nonatomic, weak) IBOutlet UIButton *emailButton;
+@property (nonatomic, weak) IBOutlet UILabel *usernameLabel;
 
 - (IBAction)copyUsername;
 - (IBAction)emailUsername;

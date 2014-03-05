@@ -49,10 +49,11 @@ enum {
     [super viewDidLoad];
 
     self.title = @"Device Alias";
-    
-    self.aliasField.text = [UAPush shared].alias;
-    self.aliasField.clearsOnBeginEditing = YES;
-    self.aliasField.accessibilityLabel = @"Edit Alias";
+
+    UITextField *strongAliasField = self.aliasField;
+    strongAliasField.text = [UAPush shared].alias;
+    strongAliasField.clearsOnBeginEditing = YES;
+    strongAliasField.accessibilityLabel = @"Edit Alias";
     self.textLabel.text = @"Assign an alias to a device or a group of devices to simplify "
                      @"the process of sending notifications.";
 }
@@ -72,7 +73,8 @@ enum {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == SectionDesc) {
-        CGFloat height = [self.textLabel.text sizeWithFont:self.textLabel.font
+        UILabel *strongTextLabel = self.textLabel;
+        CGFloat height = [strongTextLabel.text sizeWithFont:strongTextLabel.font
                           constrainedToSize:CGSizeMake(300, 1500)
                               lineBreakMode:NSLineBreakByWordWrapping].height;
         return height + kCellPaddingHeight * 2;

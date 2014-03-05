@@ -26,9 +26,9 @@
 
 @interface SampleViewController : UIViewController
 
-@property (nonatomic, strong) IBOutlet UIButton *settingsButton;
-@property (nonatomic, strong) IBOutlet UIButton *tokenButton;
-@property (nonatomic, strong) IBOutlet UILabel *version;
+@property (nonatomic, weak) IBOutlet UIButton *settingsButton;
+@property (nonatomic, weak) IBOutlet UIButton *tokenButton;
+@property (nonatomic, weak) IBOutlet UILabel *version;
 
 - (IBAction)buttonPressed:(id)sender;
 

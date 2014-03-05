@@ -31,7 +31,7 @@
 @property (nonatomic, strong) UALocationService *locationService;
 @property (nonatomic, strong) NSMutableArray *locationDisplay;
 @property (nonatomic, strong) NSMutableArray *reportedLocations;
-@property (nonatomic, strong) IBOutlet UITableView *locationTableView;
+@property (nonatomic, weak) IBOutlet UITableView *locationTableView;
 
 - (void)setupLocationDisplay;
 

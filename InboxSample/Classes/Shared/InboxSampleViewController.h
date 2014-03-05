@@ -28,7 +28,7 @@
 
 @interface InboxSampleViewController : UIViewController <UIActionSheetDelegate>
 
-@property(nonatomic, strong) IBOutlet UILabel* version;
+@property(nonatomic, weak) IBOutlet UILabel *version;
 
 - (IBAction)mail:(id)sender;
 - (IBAction)selectInboxStyle:(id)sender;

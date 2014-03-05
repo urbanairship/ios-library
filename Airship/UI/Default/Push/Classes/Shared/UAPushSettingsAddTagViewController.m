@@ -178,8 +178,9 @@ enum TagSections {
 #pragma mark Save/Cancel
 
 - (void)save:(id)sender {
-    [self.tagDelegate addTag:self.tagField.text];
-    self.tagField.text = nil;
+    UITextField *strongTagField = self.tagField;
+    [self.tagDelegate addTag:strongTagField.text];
+    strongTagField.text = nil;
 }
 
 - (void)cancel:(id)sender {
