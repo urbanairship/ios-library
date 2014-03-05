@@ -549,7 +549,105 @@ NSDictionary *notification;
     XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
 }
 
+/**
+ * Test registering a device token in the background does not
+ * update registration if we already have a channel
+ */
+- (void)testRegisterDeviceTokenBackground {
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = nil;
+    [UAPush shared].channelID = @"channel";
 
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
+
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
+    [[UAPush shared] registerDeviceToken:token];
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"should add device registration event to analytics");
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"should not allow registration in background except for channel creation");
+
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
+}
+
+/**
+ * Test registering a device token in the background does not
+ * update registration if we are using device registration
+ */
+- (void)testRegisterDeviceTokenBackgroundDeviceRegistration {
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = nil;
+
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isUsingChannelRegistration];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
+
+    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
+    [[UAPush shared] registerDeviceToken:token];
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"should add device registration event to analytics");
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"should not allow registration in background except for channel creation");
+
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
+}
+
+/**
+ * Test device token registration in the background updates registration for
+ * channel creation.
+ */
+- (void)testRegisterDeviceTokenBackgroundChannelCreation {
+    [UAPush shared].notificationTypes = UIRemoteNotificationTypeSound;
+    [UAPush shared].pushEnabled = YES;
+    [UAPush shared].deviceToken = nil;
+    [UAPush shared].channelID = nil;
+
+    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+
+    NSData *token = [@"some-token" dataUsingEncoding:NSASCIIStringEncoding];
+    [[self.mockedAnalytics expect] addEvent:OCMOCK_ANY];
+
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
+
+    [[UAPush shared] registerDeviceToken:token];
+
+    XCTAssertNoThrow([self.mockedAnalytics verify],
+                     @"should add device registration event to analytics");
+
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                     @"should update registration on registering device token");
+
+    // 736f6d652d746f6b656e = "some-token" in hex
+    XCTAssertEqualObjects(@"736f6d652d746f6b656e", [UAPush shared].deviceToken, @"Register device token should set the device token");
+}
 
 - (void)testRegisterDeviceTokenNoNotificationTypes {
     [UAPush shared].notificationTypes = 0;
@@ -1073,27 +1171,6 @@ NSDictionary *notification;
     [push updateRegistrationForcefully:NO];
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Device Registrar should register with channel ID");
-}
-
-/**
- * Test that updateRegistration does not attempt a registration when we are in the
- * background and we have a channel id
- */
-- (void)testUpdateRegistrationInBackgroundIgnores {
-    UAPush *push = [UAPush shared];
-    push.pushEnabled = YES;
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
-
-    // Need a channel id case
-    push.channelID = @"some-channel";
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
-
-    [[self.mockedDeviceRegistrar reject] registerWithChannelID:OCMOCK_ANY channelLocation:OCMOCK_ANY withPayload:OCMOCK_ANY forcefully:OCMOCK_ANY];
-
-    [push updateRegistrationForcefully:NO];
-
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Registration should not be attempted in the background unless its to create a channel ID");
 }
 
 /**

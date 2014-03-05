@@ -614,13 +614,6 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)updateRegistrationForcefully:(BOOL)forcefully {
-    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-
-    // Only allow new registrations to happen in the background if we are creating a channel ID
-    if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
-        return;
-    }
-
     // If we have a channel ID or we are not doing channel registration, cancel all requests.
     if (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration) {
         [self.deviceRegistrar cancelAllRequests];
@@ -670,7 +663,15 @@ BOOL deferChannelCreationOnForeground = false;
 
     UAEventDeviceRegistration *regEvent = [UAEventDeviceRegistration eventWithContext:nil];
     [[UAirship shared].analytics addEvent:regEvent];
-    [self updateRegistrationForcefully:NO];
+
+    BOOL inBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
+
+    // Only allow new registrations to happen in the background if we are creating a channel ID
+    if (inBackground && (self.channelID || !self.deviceRegistrar.isUsingChannelRegistration)) {
+        UA_LDEBUG(@"Skipping device registration. The app is currently backgrounded.");
+    } else {
+        [self updateRegistrationForcefully:NO];
+    }
 }
 
 - (void)channelCreated:(NSNotification *)channelNotification {
