@@ -235,14 +235,8 @@ static UAInboxMessageList *_messageList = nil;
     } else if (command == UABatchReadMessages) {
         UA_LDEBUG("Marking messages as read: %@", updateMessageArray);
         [self.client performBatchMarkAsReadForMessages:updateMessageArray onSuccess:^{
-            for (UAInboxMessage *message in updateMessageArray) {
-                message.unread = NO;
-            }
-            
             [[UAInboxDBManager shared] saveContext];
-
             [self notifyObservers:@selector(batchMarkAsReadFinished)];
-
             succeed();
         }onFailure:^(UAHTTPRequest *request){
             [self notifyObservers:@selector(batchMarkAsReadFailed)];
