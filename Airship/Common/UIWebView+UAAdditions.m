@@ -40,44 +40,57 @@
     /*
      * Define and initialize our one global
      */
-    NSString *js = @"var UAirship = {};";
+    __block NSString *js = @"var UAirship = {};";
+
+    void (^appendJavascriptProperty)(NSString *, NSString *, id) = ^(NSString *propertyName, NSString *methodName, id value){
+        NSString *valueAsString;
+        if (!value) {
+            valueAsString = @"null";
+        } else if ([value isKindOfClass:[NSString class]]) {
+            valueAsString = [NSString stringWithFormat:@"\"%@\"", value];
+        } else {
+            valueAsString = [value stringValue];
+        }
+
+        js = [js stringByAppendingFormat:@"UAirship.%@ = %@;", propertyName, valueAsString];
+        js = [js stringByAppendingFormat:@"UAirship.%@ = function() {return %@};", methodName, valueAsString];
+    };
 
     /*
      * Set the device model.
      */
-    NSString *model = [UIDevice currentDevice].model;
-    js = [js stringByAppendingFormat:@"UAirship.devicemodel=\"%@\";", model];
+    appendJavascriptProperty(@"devicemodel", @"getDeviceModel", [UIDevice currentDevice].model);
 
     /*
      * Set the UA user ID.
      */
-    NSString *userID = [UAUser defaultUser].username;
-    js = [js stringByAppendingFormat:@"UAirship.userID=\"%@\";", userID];
+    appendJavascriptProperty(@"userID", @"getUserId", [UAUser defaultUser].username);
 
     /*
      * Set the current message ID.
      */
-    NSString *messageID = message.messageID;
-    js = [js stringByAppendingFormat:@"UAirship.messageID=\"%@\";", messageID ?: @"null"];
-
-    /*
-     * Set the current message's sent date (GMT).
-     */
-    NSDate *date = message.messageSent;
-    NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:date];
-    js = [js stringByAppendingFormat:@"UAirship.messageSentDate=\"%@\";", messageSentDate ?: @"null"];
-
-    /*
-     * Set the current message's sent date (unix epoch time in milliseconds).
-     */
-    NSString *messageSentDateMS = [NSString stringWithFormat:@"%.0f", [date timeIntervalSince1970] * 1000];
-    js =[js stringByAppendingFormat:@"UAirship.messageSentDateMS=%@;", messageSentDateMS ?: @"null"];
+    appendJavascriptProperty(@"messageID", @"getMessageId", message.messageID);
 
     /*
      * Set the current message's title.
      */
-    NSString *messageTitle = message.title;
-    js = [js stringByAppendingFormat:@"UAirship.messageTitle=\"%@\";", messageTitle ?: @"null"];
+    appendJavascriptProperty(@"messageTitle", @"getMessageTitle", message.title);
+
+    /*
+     * Set the current message's sent date
+     */
+    if (message.messageSent) {
+        NSTimeInterval messageSentDateMS = [message.messageSent timeIntervalSince1970] * 1000;
+        NSNumber *milliseconds = [NSNumber numberWithDouble:messageSentDateMS];
+        appendJavascriptProperty(@"messageSentDateMS", @"getMessageSentDateMS", milliseconds);
+
+        NSString *messageSentDate = [[UAUtils ISODateFormatterUTC] stringFromDate:message.messageSent];
+        appendJavascriptProperty(@"messageSentDate", @"getMessageSentDate", messageSentDate);
+
+    } else {
+        appendJavascriptProperty(@"messageSentDateMS", @"getMessageSentDateMS", @(-1));
+        appendJavascriptProperty(@"messageSentDate", @"getMessageSentDate", nil);
+    }
 
     /*
      * Define action/native bridge functionality:
@@ -99,6 +112,7 @@
      */
     [self stringByEvaluatingJavaScriptFromString:js];
 }
+
 
 - (void)populateJavascriptEnvironment {
     [self populateJavascriptEnvironment:nil];

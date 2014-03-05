@@ -90,7 +90,6 @@ UAirship.runAction = function(actionName, argument, callback) {
     UAirship.invoke(url);
 }
 
-
 UAirship.finishAction = function(err, data, callbackKey) {
     if (callbackKey in window) {
         var cb = window[callbackKey];
