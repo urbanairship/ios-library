@@ -233,6 +233,10 @@
     // Verify message send date ms
     XCTAssertEqualObjects(@1376352982000, [self.jsc evaluateScript:@"UAirship.getMessageSentDateMS()"].toNumber);
     XCTAssertEqualObjects(@1376352982000, [self.jsc evaluateScript:@"UAirship.messageSentDateMS"].toNumber);
+
+
+    // Delete the message
+    [[UAInboxDBManager shared] deleteMessages:@[message.messageID]];
 }
 
 @end
