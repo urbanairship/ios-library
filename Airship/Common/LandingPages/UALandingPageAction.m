@@ -36,6 +36,14 @@
 
 @implementation UALandingPageAction
 
+- (NSURL *)sanitizedURL:(NSURL *)url {
+    if (!url.scheme || !url.scheme.length){
+        return [NSURL URLWithString:
+                [@"https://" stringByAppendingString:[url absoluteString]]];
+    }
+    return url;
+}
+
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
@@ -45,6 +53,8 @@
     } else {
         landingPageURL = [NSURL URLWithString:arguments.value];
     }
+
+    landingPageURL = [self sanitizedURL:landingPageURL];
 
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];

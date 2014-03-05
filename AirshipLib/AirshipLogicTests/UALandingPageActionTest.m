@@ -25,7 +25,7 @@
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
     self.mockHTTPConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
-    self.urlString = @"http://foo.bar.com/whatever";
+    self.urlString = @"https://foo.bar.com/whatever";
 }
 
 - (void)tearDown {
@@ -60,9 +60,8 @@
     __block BOOL finished = NO;
 
     [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
-        return [obj isKindOfClass:[NSURL class]];
+        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
     }]];
-
     
     [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
         finished = YES;
@@ -79,8 +78,9 @@
 
 - (void)performInForegroundWithValue:(id)value {
     [[self.mockLandingPageViewController expect] closeWindow:NO];
+
     [[self.mockLandingPageViewController expect] showURL:[OCMArg checkWithBlock:^(id obj){
-        return [obj isKindOfClass:[NSURL class]];
+        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
     }]];
 
     [self performWithArgs:[UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation] withExpectedFetchResult:UAActionFetchResultNewData];
@@ -137,6 +137,10 @@
 
 - (void)testPerformWithUrl {
     [self performInForegroundWithValue:[NSURL URLWithString:self.urlString]];
+}
+
+- (void)testPerformWithSchemelessURL {
+    [self performInForegroundWithValue:@"foo.bar.com/whatever"];
 }
 
 @end
