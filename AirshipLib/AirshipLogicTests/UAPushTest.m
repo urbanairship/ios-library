@@ -724,18 +724,25 @@ NSDictionary *notification;
                    @"UAPushEnabledSettingsKey in standardUserDefaults should default to NO");
 }
 
+
 - (void)testUpdateRegistrationForcefullyPushEnabled {
     [UAPush shared].pushEnabled = YES;
     [UAPush shared].deviceToken = validDeviceToken;
 
-    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
-                                               channelLocation:OCMOCK_ANY
-                                                   withPayload:OCMOCK_ANY
-                                                    forcefully:YES];
+    // Check every app state.  We want to allow manual registration in any state.
+    for(int i = UIApplicationStateActive; i < UIApplicationStateBackground; i++) {
+        UIApplicationState state = (UIApplicationState)i;
+        [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
 
-    [[UAPush shared] updateRegistrationForcefully:YES];
-    XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"updateRegistration should register with the device registrar if push is enabled.");
+        [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                                   channelLocation:OCMOCK_ANY
+                                                       withPayload:OCMOCK_ANY
+                                                        forcefully:YES];
+
+        [[UAPush shared] updateRegistrationForcefully:YES];
+        XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
+                         @"updateRegistration should register with the device registrar if push is enabled.");
+    }
 }
 
 
