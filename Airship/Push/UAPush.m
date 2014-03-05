@@ -546,8 +546,6 @@ static Class _uiClass;
 #pragma mark UA Registration Methods
 
 /* 
- * Checks the current application state, bails if in the background with the
- * assumption that next app init or isActive notif will call update.
  * Dispatches a registration request to the server if necessary via
  * the Device API client. PushEnabled -> register, !PushEnabled -> unregister.
  */
