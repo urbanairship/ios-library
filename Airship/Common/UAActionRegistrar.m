@@ -32,6 +32,8 @@
 #import "UARemoveTagsAction.h"
 #import "UALandingPageAction.h"
 #import "UADeepLinkAction.h"
+#import "UAirship.h"
+#import "UAApplicationMetrics.h"
 
 @implementation UAActionRegistrar
 @dynamic registeredEntries;
@@ -277,6 +279,11 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     [self registerAction:landingPageAction
                    names:@[kUALandingPageActionDefaultRegistryName, kUALandingPageActionDefaultRegistryAlias]
                predicate:^(UAActionArguments *args){
+                   if (UASituationBackgroundPush == args.situation) {
+                       UAApplicationMetrics *metrics = [UAirship shared].applicationMetrics;
+                       NSTimeInterval timeSinceLastOpen = [[NSDate date] timeIntervalSinceDate:metrics.lastApplicationOpenDate];
+                       return (BOOL)(timeSinceLastOpen <= [kUALandingPageActionLastOpenTimeLimitInSeconds doubleValue]);
+                   }
                    return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 

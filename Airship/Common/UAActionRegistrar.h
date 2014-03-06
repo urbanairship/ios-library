@@ -38,6 +38,7 @@
 #define kUALandingPageActionDefaultRegistryAlias @"^p"
 #define kUADeepLinkActionDefaultRegistryName @"deep_link_action"
 #define kUADeepLinkActionDefaultRegistryAlias @"^d"
+#define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
 @interface UAActionRegistrar : NSObject
 

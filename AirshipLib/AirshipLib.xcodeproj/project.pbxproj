@@ -342,6 +342,13 @@
 		CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D22A118037DD9005C8393 /* UAAggregateActionResultTest.m */; };
 		CC1D22A61804587F005C8393 /* UAIncomingPushActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC1D22A51804587F005C8393 /* UAIncomingPushActionTest.m */; };
 		CC4AADF618C67B23001F23B3 /* UIWebView+UAAdditionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AADF518C67B23001F23B3 /* UIWebView+UAAdditionsTest.m */; };
+		CC4AAE0518C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0218C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h */; };
+		CC4AAE0618C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0218C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h */; };
+		CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */; };
+		CC4AAE0818C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */; };
+		CC4AAE0918C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */; };
+		CC4AAE0A18C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */; };
+		CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */; };
 		CC4C2A1017CE50E4003B9A55 /* UAAppDelegateProxyTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CC4C2A0F17CE50E4003B9A55 /* UAAppDelegateProxyTest.m */; };
 		CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */; };
 		CC523FB117B985F800233005 /* UAJSONValueTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */; };
@@ -645,6 +652,10 @@
 		CC1D22A118037DD9005C8393 /* UAAggregateActionResultTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAggregateActionResultTest.m; sourceTree = "<group>"; };
 		CC1D22A51804587F005C8393 /* UAIncomingPushActionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAIncomingPushActionTest.m; sourceTree = "<group>"; };
 		CC4AADF518C67B23001F23B3 /* UIWebView+UAAdditionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+UAAdditionsTest.m"; sourceTree = "<group>"; };
+		CC4AAE0218C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAApplicationMetriccs+Internal.h"; sourceTree = "<group>"; };
+		CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAApplicationMetrics.h; sourceTree = "<group>"; };
+		CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetrics.m; sourceTree = "<group>"; };
+		CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAApplicationMetricsTest.m; sourceTree = "<group>"; };
 		CC4C2A0F17CE50E4003B9A55 /* UAAppDelegateProxyTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateProxyTest.m; sourceTree = "<group>"; };
 		CC523FAE17B985F700233005 /* UAJSONValueTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAJSONValueTransformer.h; sourceTree = "<group>"; };
 		CC523FAF17B985F700233005 /* UAJSONValueTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAJSONValueTransformer.m; sourceTree = "<group>"; };
@@ -1122,6 +1133,7 @@
 				495526AF17D95552009BC301 /* UAUser+Test.m */,
 				CCBFA2DF17B547B600F97E1D /* NSJSONSerialization+UAAdditionsTests.m */,
 				CC85427D17F2164500D2DE10 /* UAURLProtocolTest.m */,
+				CC4AAE0B18C93EF2001F23B3 /* UAApplicationMetricsTest.m */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -1342,6 +1354,9 @@
 				CCBFA2D917B5436500F97E1D /* NSJSONSerialization+UAAdditions.m */,
 				1F610DB317835C2200BCD96E /* UAirship.m */,
 				1F610DB417835C2200BCD96E /* UAirship+Internal.h */,
+				CC4AAE0218C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h */,
+				CC4AAE0318C93ECF001F23B3 /* UAApplicationMetrics.h */,
+				CC4AAE0418C93ECF001F23B3 /* UAApplicationMetrics.m */,
 				D9FD1C43122DBCEA00522B4E /* UAGlobal.h */,
 				1F610E0817835C6700BCD96E /* UAConfig.h */,
 				1F610E0917835C6700BCD96E /* UAConfig+Internal.h */,
@@ -1438,6 +1453,7 @@
 				CC8542C017F4B81600D2DE10 /* UAActionResult.h in Headers */,
 				1FE0B75B17E2751000856C60 /* UAInboxMessageList.h in Headers */,
 				1FE0B75C17E2751000856C60 /* UAInboxUtils.h in Headers */,
+				CC4AAE0818C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
 				49C67200184EAB640088F210 /* UANativeBridge.h in Headers */,
 				1FE0B75D17E2751000856C60 /* UAInbox.h in Headers */,
 				CC8542C417F4B81600D2DE10 /* UAActionRunner.h in Headers */,
@@ -1460,6 +1476,7 @@
 				1FE0B76817E2751000856C60 /* UAAnalytics+Internal.h in Headers */,
 				1FE0B76917E2751000856C60 /* UAirship.h in Headers */,
 				1FE0B76A17E2751000856C60 /* UAHTTPConnectionOperation.h in Headers */,
+				CC4AAE0618C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h in Headers */,
 				1FE0B76B17E2751000856C60 /* UAHTTPRequestEngine.h in Headers */,
 				1FE0B76C17E2751000856C60 /* UADelayOperation.h in Headers */,
 				1FE0B76D17E2751000856C60 /* UAPush.h in Headers */,
@@ -1498,6 +1515,7 @@
 				1F610E0417835C3A00BCD96E /* UAPush+Internal.h in Headers */,
 				CC8542B717F4B81600D2DE10 /* UAActionArguments.h in Headers */,
 				1F610DEB17835C3A00BCD96E /* UAInboxMessage.h in Headers */,
+				CC4AAE0518C93ECF001F23B3 /* UAApplicationMetriccs+Internal.h in Headers */,
 				BB8860B1159A7E9600584445 /* UAGlobal.h in Headers */,
 				BB8860D0159A7E9600584445 /* UAKeychainUtils.h in Headers */,
 				BB8860D2159A7E9600584445 /* UAUser.h in Headers */,
@@ -1580,6 +1598,7 @@
 				CC85427817F2130700D2DE10 /* UAURLProtocol.h in Headers */,
 				76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */,
 				49DCFAC01831B580002CD5FB /* UAJavaScriptDelegate.h in Headers */,
+				CC4AAE0718C93ECF001F23B3 /* UAApplicationMetrics.h in Headers */,
 				76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */,
 				CC523FB017B985F800233005 /* UAJSONValueTransformer.h in Headers */,
 				4903208017BD55E800E03BA1 /* UAInboxMessageListDelegate.h in Headers */,
@@ -1806,6 +1825,7 @@
 				49F437551810B5B400182D06 /* UAModifyTagsAction.m in Sources */,
 				1FE0B79B17E2751000856C60 /* UAHTTPConnectionOperation.m in Sources */,
 				1FE0B79C17E2751000856C60 /* UAHTTPRequestEngine.m in Sources */,
+				CC4AAE0A18C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */,
 				CC8542CA17F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */,
 				49416D6518C513D500A18B72 /* UABespokeCloseView.m in Sources */,
 				1FE0B79D17E2751000856C60 /* UAInbox.m in Sources */,
@@ -1835,6 +1855,7 @@
 				CCDD37A51807157500B8866E /* UAIncomingRichPushActionTest.m in Sources */,
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
+				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
 				CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,
@@ -1949,6 +1970,7 @@
 				49C67204184EB9120088F210 /* UANativeBridge.c in Sources */,
 				49D11C03171E00980058E7C3 /* UAHTTPConnectionOperation.m in Sources */,
 				49D11C1317270C6E0058E7C3 /* UAHTTPRequestEngine.m in Sources */,
+				CC4AAE0918C93ECF001F23B3 /* UAApplicationMetrics.m in Sources */,
 				CC8542C917F4B81600D2DE10 /* UAAggregateActionResult.m in Sources */,
 				1F610DE017835C3A00BCD96E /* UAInbox.m in Sources */,
 				1F610DEF17835C3A00BCD96E /* UAInboxMessageList.m in Sources */,

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,32 +23,37 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
+#import <XCTest/XCTest.h>
+#import "UAApplicationMetriccs+Internal.h"
+#import <OCMock/OCMock.h>
 
-#define kUAIncomingRichPushActionRegistryName @"_uamid"
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
+@interface UAApplicationMetricsTest : XCTestCase
+@property(nonatomic, strong)UAApplicationMetrics *metrics;
+@end
 
-@interface UAActionRegistrar ()
+@implementation UAApplicationMetricsTest
 
-/**
- * Map of names to action entries
- */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+- (void)setUp {
+    [super setUp];
 
-/**
- * An array of the reserved entry names
- */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
+    self.metrics = [[UAApplicationMetrics alloc] init];
+}
 
+- (void)tearDown {
+    [super tearDown];
+}
 
-/**
- * Registers a reserved action.  Reserved actions can not be removed or modified.
- */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
+- (void)testApplicationActive {
+    NSDate *expectedDate = [NSDate date];
 
-/**
- * Registers default actions.
- */
-- (void)registerDefaultActions;
+    // Make date always return our expected date
+    id mockDate = [OCMockObject mockForClass:[NSDate class]];
+    [[[mockDate stub] andReturn:expectedDate] date];
+
+    [self.metrics didBecomeActive];
+
+    XCTAssertEqualObjects(expectedDate, self.metrics.lastApplicationOpenDate,
+                          @"Application active should set the last open date");
+}
 
 @end
