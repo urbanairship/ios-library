@@ -293,8 +293,17 @@ static NSMutableSet *overlayControllers = nil;
     // Note that face up and face down orientations will be ignored as this
     // casts a device orientation to an interface orientation
 
-    if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
-        return;
+    //iOS6+ uses supportedInterfaceOrientations for this, so if it's available we should use it.
+    if ([self.parentViewController respondsToSelector:@selector(supportedInterfaceOrientations)]) {
+        if (([self.parentViewController supportedInterfaceOrientations] &
+             (UIInterfaceOrientation)[UIDevice currentDevice].orientation) == 0) {
+            return;
+        }
+    } else {
+        //otherwise call the deprecated method
+        if (![self.parentViewController shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
+            return;
+        }
     }
 
     // This will inject the current device orientation
