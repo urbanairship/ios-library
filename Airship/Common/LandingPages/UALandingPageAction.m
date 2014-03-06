@@ -27,12 +27,13 @@
 
 #import "UAGlobal.h"
 #import "UAURLProtocol.h"
-#import "UALandingPageViewController.h"
 #import "UAHTTPConnection.h"
+#import "UALandingPageOverlayController.h"
 
 @interface UALandingPageAction()
 @property(nonatomic, strong) UAHTTPConnection *connection;
 @end
+
 
 @implementation UALandingPageAction
 
@@ -64,10 +65,10 @@
         [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
     } else {
         //close any existing windows
-        [UALandingPageViewController closeWindow:NO];
+        [UALandingPageOverlayController closeWindow:NO];
 
         //load the landing page
-        [UALandingPageViewController showURL:landingPageURL];
+        [UALandingPageOverlayController showURL:landingPageURL];
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     }
 }

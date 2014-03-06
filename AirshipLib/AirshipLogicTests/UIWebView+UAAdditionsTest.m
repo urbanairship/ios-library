@@ -75,21 +75,6 @@
 }
 
 /**
- * Test injecting the view port fix
- */
-- (void)testInjectViewPortFix {
-    NSString *expectedJS = @"var metaTag = document.createElement('meta');"
-    "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; user-scalable=no;';";
-
-    [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:expectedJS];
-
-    [self.mockWebView injectViewportFix];
-
-    [self.mockWebView verify];
-}
-
-/**
  * Test willRotateToInterfaceOrientation to UIInterfaceOrientationPortrait
  */
 - (void)testWillRotateToInterfaceOrientationUIDeviceOrientationPortrait {

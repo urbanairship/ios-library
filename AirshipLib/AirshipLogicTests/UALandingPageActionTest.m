@@ -4,13 +4,13 @@
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
 #import "UAHTTPConnection.h"
-#import "UALandingPageViewController.h"
+#import "UALandingPageOverlayController.h"
 #import "UAAction+Internal.h"
 
 @interface UALandingPageActionTest : XCTestCase
 
 @property(nonatomic, strong) id mockURLProtocol;
-@property(nonatomic, strong) id mockLandingPageViewController;
+@property(nonatomic, strong) id mockLandingPageOverlayController;
 @property(nonatomic, strong) id mockHTTPConnection;
 @property(nonatomic, strong) UALandingPageAction *action;
 @property(nonatomic, strong) NSString *urlString;
@@ -23,13 +23,13 @@
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
-    self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
+    self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
     self.mockHTTPConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
     self.urlString = @"https://foo.bar.com/whatever";
 }
 
 - (void)tearDown {
-    [self.mockLandingPageViewController stopMocking];
+    [self.mockLandingPageOverlayController stopMocking];
     [self.mockURLProtocol stopMocking];
     [self.mockHTTPConnection stopMocking];
     [super tearDown];
@@ -70,16 +70,16 @@
     }];
 
     [self.mockURLProtocol verify];
-    [self.mockLandingPageViewController verify];
+    [self.mockLandingPageOverlayController verify];
     [self.mockHTTPConnection verify];
 
     XCTAssertTrue(finished, @"action should have completed");
 }
 
 - (void)performInForegroundWithValue:(id)value {
-    [[self.mockLandingPageViewController expect] closeWindow:NO];
+    [[self.mockLandingPageOverlayController expect] closeWindow:NO];
 
-    [[self.mockLandingPageViewController expect] showURL:[OCMArg checkWithBlock:^(id obj){
+    [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
         return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
     }]];
 

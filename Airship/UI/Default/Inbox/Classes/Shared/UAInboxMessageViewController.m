@@ -193,8 +193,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if(self.message.unread) {
         [self.message markAsReadWithDelegate:nil];
     }
-    
-    [self.webView injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {

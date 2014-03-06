@@ -23,13 +23,26 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <UIKit/UIKit.h>
-#import "UAInboxMessage.h"
+#import <Foundation/Foundation.h>
 
-@interface UIWebView (UAAdditions)
+/**
+ * This class provides an interface for displaying overlay window over
+ * the app's UI without totally obscuring it, which loads a landing
+ * page in an embedded UIWebView.
+ */
+@interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate>
 
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
-- (void)populateJavascriptEnvironment;
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
+/**
+ * Create and dsiplays a landing page overlay.
+ * @param url The URL of the landing page to display
+ */
++ (void)showURL:(NSURL *)url;
+
+/**
+ * Closes all currently displayed overlays.
+ * @param animated Indicates whether to animate the close transition.
+ */
+
++ (void)closeWindow:(BOOL)animated;
 
 @end
