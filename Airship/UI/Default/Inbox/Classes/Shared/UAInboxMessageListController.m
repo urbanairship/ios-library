@@ -290,11 +290,14 @@
     self.loadingView.hidden = NO;
 
 
-    self.loadingLabel.text = UA_INBOX_TR(@"UA_Loading");
-    self.loadingIndicator.alpha = 0.9;
+    UILabel *strongLoadingLabel = self.loadingLabel;
+    strongLoadingLabel.text = UA_INBOX_TR(@"UA_Loading");
 
-    [self.loadingIndicator show];
-    self.loadingLabel.hidden = NO;
+    UABeveledLoadingIndicator *strongLoadingIndicator = self.loadingIndicator;
+    strongLoadingIndicator.alpha = 0.9;
+
+    [strongLoadingIndicator show];
+    strongLoadingLabel.hidden = NO;
 }
 
 - (void)coverUpEmptyListIfNeeded {
@@ -343,25 +346,27 @@
 #pragma mark Button Action Methods
 
 - (void)selectAllButtonPressed:(id)sender {
-    NSInteger rows = [self.messageTable numberOfRowsInSection:0];
+
+    UITableView *strongMessageTable = self.messageTable;
+    NSInteger rows = [strongMessageTable numberOfRowsInSection:0];
 
     NSIndexPath *currentPath;
-    if ([self.messageTable.indexPathsForSelectedRows count] == rows) {
+    if ([strongMessageTable.indexPathsForSelectedRows count] == rows) {
         //everything is selected, so we deselect all
         for (NSInteger i = 0; i < rows; ++i) {
             currentPath = [NSIndexPath indexPathForRow:i inSection:0];
-            [self.messageTable deselectRowAtIndexPath:currentPath
+            [strongMessageTable deselectRowAtIndexPath:currentPath
                                              animated:NO];
-            [self tableView:self.messageTable didSelectRowAtIndexPath:currentPath];
+            [self tableView:strongMessageTable didSelectRowAtIndexPath:currentPath];
         }
     } else {
         // not everything is selected, so let's select all
         for (NSInteger i = 0; i < rows; ++i) {
             currentPath = [NSIndexPath indexPathForRow:i inSection:0];
-            [self.messageTable selectRowAtIndexPath:currentPath
+            [strongMessageTable selectRowAtIndexPath:currentPath
                                            animated:NO
                                      scrollPosition:UITableViewScrollPositionNone];
-            [self tableView:self.messageTable didDeselectRowAtIndexPath:currentPath];
+            [self tableView:strongMessageTable didDeselectRowAtIndexPath:currentPath];
         }
     }
 
@@ -401,14 +406,17 @@
 }
 
 - (void)batchUpdateButtonPressed:(id)sender {
+
+    UITableView *strongMessageTable = self.messageTable;
+
     NSMutableIndexSet *messageIDs = [NSMutableIndexSet indexSet];
-    for (NSIndexPath *indexPath in self.messageTable.indexPathsForSelectedRows) {
+    for (NSIndexPath *indexPath in strongMessageTable.indexPathsForSelectedRows) {
         [messageIDs addIndex:(NSUInteger)indexPath.row];
     }
 
     self.cancelItem.enabled = NO;
 
-    self.currentBatchUpdateIndexPaths = self.messageTable.indexPathsForSelectedRows;
+    self.currentBatchUpdateIndexPaths = strongMessageTable.indexPathsForSelectedRows;
 
     if (sender == self.markAsReadButtonItem) {
         [[UAInbox shared].messageList performBatchUpdateCommand:UABatchReadMessages
@@ -458,7 +466,7 @@
         }
     }
 
-    if ([self.messageTable.indexPathsForSelectedRows count] < [self.messageTable numberOfRowsInSection:0]) {
+    if ([strongMessageTable.indexPathsForSelectedRows count] < [strongMessageTable numberOfRowsInSection:0]) {
         self.selectAllButtonItem.title = UA_INBOX_TR(@"UA_Select_All");
     } else {
         self.selectAllButtonItem.title = UA_INBOX_TR(@"UA_Select_None");
@@ -609,10 +617,11 @@
 
 - (void)batchDeleteFinished {
 
-    [self.messageTable beginUpdates];
-    [self.messageTable deleteRowsAtIndexPaths:self.currentBatchUpdateIndexPaths
+    UITableView *strongMessageTable = self.messageTable;
+    [strongMessageTable beginUpdates];
+    [strongMessageTable deleteRowsAtIndexPaths:self.currentBatchUpdateIndexPaths
                              withRowAnimation:UITableViewRowAnimationLeft];
-    [self.messageTable endUpdates];
+    [strongMessageTable endUpdates];
     
     [self refreshAfterBatchUpdate];
 }

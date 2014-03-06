@@ -42,9 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - (void)updateMessageNavButtons;
 
 
-@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activity;
-@property (nonatomic, strong) IBOutlet UIView *statusBar;
-@property (nonatomic, strong) IBOutlet UILabel *statusBarTitle;
+@property (nonatomic, weak) IBOutlet UIActivityIndicatorView *activity;
+@property (nonatomic, weak) IBOutlet UIView *statusBar;
+@property (nonatomic, weak) IBOutlet UILabel *statusBarTitle;
 
 @property (nonatomic, strong) UIBarButtonItem *upButtonItem;
 @property (nonatomic, strong) UIBarButtonItem *downButtonItem;
