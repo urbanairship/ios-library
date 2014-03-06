@@ -39,7 +39,10 @@
 @property (nonatomic, strong) UIBarButtonItem *cancelButton;
 @property (nonatomic, strong) UIBarButtonItem *saveButton;
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
-@property (nonatomic, weak) IBOutlet UITableViewCell *tagCell;
+
+// The tagCell IBOutlet needs to be strong because it has to be re-created and
+// added back to the view for iOS 6.
+@property (nonatomic, strong) IBOutlet UITableViewCell *tagCell;
 @property (nonatomic, weak) IBOutlet UITextField *tagField;
 @property (nonatomic, strong) NSArray *presetTags;
 

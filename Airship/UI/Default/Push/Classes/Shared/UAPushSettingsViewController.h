@@ -37,8 +37,9 @@
 @property (nonatomic, assign) CGRect pickerShownFrame;
 @property (nonatomic, assign) CGRect pickerHiddenFrame;
 
-
-@property (nonatomic, weak) IBOutlet UITableViewCell *pushEnabledCell;
+// The pushEnabledCell IBOutlet needs to be strong because it has to be
+// re-created and added back to the view for iOS 6.
+@property (nonatomic, strong) IBOutlet UITableViewCell *pushEnabledCell;
 @property (nonatomic, weak) IBOutlet UILabel *pushEnabledLabel;
 @property (nonatomic, weak) IBOutlet UISwitch *pushEnabledSwitch;
 
@@ -51,9 +52,12 @@
 @property (nonatomic, strong) UITableViewCell *fromCell;
 @property (nonatomic, strong) UITableViewCell *toCell;
 
+// The airshipLocationEnabledCell IBOutlet needs to be strong because it has
+// to be re-created and added back to the view for iOS 6.
+@property (nonatomic, strong) IBOutlet UITableViewCell *airshipLocationEnabledCell;
 @property (nonatomic, weak) IBOutlet UISwitch *airshipLocationEnabledSwitch;
 @property (nonatomic, weak) IBOutlet UILabel *airshipLocationEnabledLabel;
-@property (nonatomic, weak) IBOutlet UITableViewCell *airshipLocationEnabledCell;
+
 
 
 @property (nonatomic, assign) BOOL dirty;

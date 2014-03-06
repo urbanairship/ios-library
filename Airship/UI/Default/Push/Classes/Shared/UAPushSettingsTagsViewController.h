@@ -30,8 +30,11 @@
 
 @property (nonatomic, strong) UAPushSettingsAddTagViewController *addTagController;
 @property (nonatomic, strong) UIBarButtonItem *addButton;
-@property (nonatomic, weak) IBOutlet UITableViewCell *textCell;
-@property (nonatomic, weak) IBOutlet UILabel *textLabel;
+
+// These IBOutlets needs to be strong because they have to be re-created and
+// added back to the view for iOS 6.
+@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
+@property (nonatomic, strong) IBOutlet UILabel *textLabel;
 
 - (void)addItem:(id)sender;
 
