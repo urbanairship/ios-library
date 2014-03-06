@@ -175,7 +175,7 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     // Center the background in the middle of the overlay
-    background.center = CGPointMake(self.overlayView.frame.size.width/2.0, self.overlayView.frame.size.height/2.0);
+    background.center = CGPointMake(CGRectGetWidth(self.overlayView.frame)/2.0, CGRectGetHeight(self.overlayView.frame)/2.0);
 
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         background.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
@@ -218,7 +218,7 @@ static NSMutableSet *overlayControllers = nil;
 
     // Add the loading indicator and center it in the middle of the webView
     [self.webView addSubview:self.loadingIndicator];
-    self.loadingIndicator.center = CGPointMake(self.webView.frame.size.width/2.0, self.webView.frame.size.height/2.0);
+    self.loadingIndicator.center = CGPointMake(CGRectGetWidth(self.webView.frame)/2.0, CGRectGetHeight(self.webView.frame)/2.0);
 
     if (self.webView.isLoading) {
         [self.loadingIndicator show];
