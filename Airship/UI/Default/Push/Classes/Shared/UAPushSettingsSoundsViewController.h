@@ -29,7 +29,10 @@
 @interface UAPushSettingsSoundsViewController : UITableViewController
 
 @property (nonatomic, strong) NSMutableArray *soundList;
-@property (nonatomic, weak) IBOutlet UITableViewCell *textCell;
+
+// The textCell IBOutlet needs to be strong because it has to be re-created and
+// added back to the view for iOS 6.
+@property (nonatomic, strong) IBOutlet UITableViewCell *textCell;
 @property (nonatomic, weak) IBOutlet UILabel *textLabel;
 
 @end
