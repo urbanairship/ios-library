@@ -3,7 +3,7 @@
 #import <OCMock/OCMock.h>
 #import "UALandingPageAction.h"
 #import "UAURLProtocol.h"
-#import "UALandingPageViewController.h"
+#import "UALandingPageOverlayController.h"
 #import "UAAction+Internal.h"
 
 @interface UALandingPageActionTest : XCTestCase
@@ -21,7 +21,7 @@
     [super setUp];
     self.action = [[UALandingPageAction alloc] init];
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
-    self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageViewController class]];
+    self.mockLandingPageViewController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
     self.urlString = @"http://foo.bar.com/whatever";
 }
 
