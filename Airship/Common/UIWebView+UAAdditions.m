@@ -124,13 +124,4 @@
     }
 }
 
-- (void)injectViewportFix {
-
-    NSString *js = @"var metaTag = document.createElement('meta');"
-    "metaTag.name = 'viewport';"
-    "metaTag.content = 'width=device-width; user-scalable=no;';";
-
-    [self stringByEvaluatingJavaScriptFromString:js];
-}
-
 @end

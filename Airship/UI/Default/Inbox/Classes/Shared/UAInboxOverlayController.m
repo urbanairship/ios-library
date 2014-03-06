@@ -335,7 +335,6 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-
 #pragma mark UIWebViewDelegate
 
 - (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
@@ -354,8 +353,6 @@ static NSMutableSet *overlayControllers = nil;
     if(self.message.unread) {
         [self.message markAsReadWithDelegate:nil];
     }
-
-    [self.webView injectViewportFix];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
