@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,32 +23,36 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
 
-#define kUAIncomingRichPushActionRegistryName @"_uamid"
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
-
-@interface UAActionRegistrar ()
-
-/**
- * Map of names to action entries
- */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
-
-/**
- * An array of the reserved entry names
- */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
+#import "UAApplicationMetrics.h"
 
 
-/**
- * Registers a reserved action.  Reserved actions can not be removed or modified.
- */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
+@implementation UAApplicationMetrics
+NSString *const UAApplicationMetricLastOpenDate = @"UAApplicationMetricLastOpenDate";
 
-/**
- * Registers default actions.
- */
-- (void)registerDefaultActions;
+- (id)init {
+    self = [super init];
+    if (self) {
+        // App inactive/active for incoming calls, notification center, and taskbar
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive)
+                                                     name:UIApplicationDidBecomeActiveNotification
+                                                   object:nil];
+    }
+
+    return self;
+}
+
+- (void)didBecomeActive {
+    self.lastApplicationOpenDate = [NSDate date];
+}
+
+- (NSDate *)lastApplicationOpenDate {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:UAApplicationMetricLastOpenDate];
+}
+
+- (void)setLastApplicationOpenDate:(NSDate *)date {
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:UAApplicationMetricLastOpenDate];
+}
 
 @end

@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
+@class UAApplicationMetrics;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
@@ -64,6 +65,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * so this is for internal library use only at this time.
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
+
+/**
+ * Stores common application metrics such as last open.
+ */
+@property (nonatomic, strong, readonly) UAApplicationMetrics *applicationMetrics;
 
 /**
  * This flag is set to `YES` if the application is set up 

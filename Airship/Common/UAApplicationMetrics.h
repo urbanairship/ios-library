@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -23,32 +23,15 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
 
-#define kUAIncomingRichPushActionRegistryName @"_uamid"
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
+#import <Foundation/Foundation.h>
 
-@interface UAActionRegistrar ()
+@interface UAApplicationMetrics : NSObject
 
 /**
- * Map of names to action entries
+ * The date of the last time the application was active.
  */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+@property (nonatomic, readonly, strong) NSDate *lastApplicationOpenDate;
 
-/**
- * An array of the reserved entry names
- */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
-
-
-/**
- * Registers a reserved action.  Reserved actions can not be removed or modified.
- */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
-
-/**
- * Registers default actions.
- */
-- (void)registerDefaultActions;
 
 @end

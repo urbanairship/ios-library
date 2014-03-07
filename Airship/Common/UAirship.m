@@ -36,6 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UAPush.h"
 #import "UAConfig.h"
+#import "UAApplicationMetrics.h"
 
 #import "UAAppDelegateProxy.h"
 #import "UAAppDelegate.h"
@@ -167,6 +168,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     _sharedAirship.analytics = [[UAAnalytics alloc] initWithConfig:_sharedAirship.config];
     [_sharedAirship.analytics delayNextSend:UAAnalyticsFirstBatchUploadInterval];
 
+    _sharedAirship.applicationMetrics = [[UAApplicationMetrics alloc] init];
     /*
      * Handle Debug Options
      */
