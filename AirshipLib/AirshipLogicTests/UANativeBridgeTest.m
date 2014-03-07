@@ -110,7 +110,7 @@
 
     //mock UAirship.invoke that immediately calls UAirship.finishAction with a result string and the passed callback ID
     self.jsc[@"UAirship"][@"invoke"] = ^(NSString *url) {
-        UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url]];
+        UAWebViewCallData *data = [UAWebViewCallData callDataForURL:[NSURL URLWithString:url] webView:nil];
         NSString *cbID = [data.arguments firstObject];
         invoked = YES;
         command = data.name;

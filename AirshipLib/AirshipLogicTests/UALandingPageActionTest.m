@@ -77,7 +77,8 @@
 }
 
 - (void)performInForegroundWithValue:(id)value {
-    [[self.mockLandingPageOverlayController expect] closeWindow:NO];
+    [[self.mockLandingPageOverlayController expect] closeAll:NO];
+    
 
     [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
         return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
