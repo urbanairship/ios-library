@@ -146,11 +146,6 @@ static NSMutableSet *overlayControllers = nil;
                                                   object:nil];
 }
 
-- (void)closeWindow:(BOOL)animated {
-    UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
-    [self finish:animated];
-}
-
 - (void)buildOverlay {
 
     UIView *parentView = self.parentViewController.view;
@@ -350,6 +345,7 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
+    [self.webView populateJavascriptEnvironment];
     [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 
@@ -366,6 +362,13 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     UALOG(@"Failed to load message: %@", [error localizedDescription]);
+}
+
+#pragma mark UARichContentWindow
+
+- (void)closeWindow:(BOOL)animated {
+    UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
+    [self finish:animated];
 }
 
 @end
