@@ -32,6 +32,7 @@
 #import "UARemoveTagsAction.h"
 #import "UALandingPageAction.h"
 #import "UADeepLinkAction.h"
+#import "UACloseWindowAction.h"
 
 @implementation UAActionRegistrar
 @dynamic registeredEntries;
@@ -250,6 +251,10 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     // Incoming RAP action
     UAIncomingRichPushAction *richPushAction = [[UAIncomingRichPushAction alloc] init];
     [self registerReservedAction:richPushAction name:kUAIncomingRichPushActionRegistryName predicate:nil];
+
+    // Close window action
+    UACloseWindowAction *closeWindowAction = [[UACloseWindowAction alloc] init];
+    [self registerReservedAction:closeWindowAction name:kUACloseWindowActionRegistryName predicate:nil];
 
     // Open external URL predicate
     UAActionPredicate urlPredicate = ^(UAActionArguments *args) {
