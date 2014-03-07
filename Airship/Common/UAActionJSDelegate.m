@@ -7,6 +7,7 @@
 
 #import "UAActionRunner.h"
 #import "UAWebViewCallData.h"
+#import "UAWebInvocationActionArguments.h"
 
 @implementation UAActionJSDelegate
 
@@ -40,6 +41,7 @@
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
                     withOptions:(NSDictionary *)options
+                    withWebView:(UIWebView *)webView
        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     NSArray *keys = [options allKeys];
 
@@ -65,8 +67,9 @@
 
     //if we found an action by that name, and there's either no argument or a correctly decoded argument
     if (decodedArgumentsValue || !encodedArgumentsValue) {
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                withSituation:UASituationWebViewInvocation];
+        UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                withSituation:UASituationWebViewInvocation
+                                                                                            withWebView:webView];
         [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
             UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
             if (!callbackID) {
@@ -131,7 +134,8 @@
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionsWithOptions:(NSDictionary *)options
-          withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+                  withWebView:(UIWebView *)webView
+        withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
 
@@ -150,8 +154,9 @@
 
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (decodedArgumentsValue || !encodedArgumentsValue) {
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                    withSituation:UASituationWebViewInvocation];
+            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                              withSituation:UASituationWebViewInvocation
+                                                                                                withWebView:webView];
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -179,7 +184,8 @@
  * @param completionHandler The completion handler passed in the JS delegate callback.
  */
 - (void)runBasicActionsWithOptions:(NSDictionary *)options
-         withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
+                       withWebView:(UIWebView *)webView
+             withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
@@ -191,7 +197,9 @@
         NSString *encodedArgumentsValue = [options objectForKey:actionName];
         NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation];
+        UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                          withSituation:UASituationWebViewInvocation
+                                                                                            withWebView:webView];
 
         //if we found an action by that name, and there's either no argument or a correctly decoded argument
         if (!encodedArgumentsValue || decodedArgumentsValue) {
@@ -223,15 +231,16 @@
         NSString *callbackID = [data.arguments firstObject];
         [self runActionWithCallbackID:callbackID
                           withOptions:data.options
+                          withWebView:data.webView
                 withCompletionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-actions"]){
         //run-actions is the 'complex' version with JSON-encoded string arguments, and
         //allows multiple simultaneous actions
-        [self runActionsWithOptions:data.options withCompletionHandler:completionHandler];
+        [self runActionsWithOptions:data.options withWebView:data.webView withCompletionHandler:completionHandler];
     } else if ([data.name isEqualToString:@"run-basic-actions"]) {
         //run-basic-actions is the 'demo-friendly' version with implicit string argument values and
         //allows multiple simultaneous actions
-        [self runBasicActionsWithOptions:data.options withCompletionHandler:completionHandler];
+        [self runBasicActionsWithOptions:data.options withWebView:data.webView withCompletionHandler:completionHandler];
     } else {
         //arguments not recognized, pass a nil script result
         completionHandler(nil);
