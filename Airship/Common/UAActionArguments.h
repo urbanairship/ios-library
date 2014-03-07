@@ -49,12 +49,6 @@ typedef NS_ENUM(NSInteger, UASituation) {
     UASituationBackgroundPush,
 
     /**
-     * Represents a situation in which the action was triggered from the application
-     * being launched from the springboard.
-     */
-    UASituationLaunchedFromSpringBoard,
-
-    /**
      * Represents a situation in which the action was triggered from a
      * web view
      */
@@ -74,32 +68,6 @@ typedef NS_ENUM(NSInteger, UASituation) {
  */
 + (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation;
 
-/**
- * Returns pending springboard actions and arguments.
- * 
- * @return An NSDictionary representing pending springboard actions by name, and their arguments.
- */
-+ (NSDictionary *)pendingSpringBoardPushActionArguments;
-
-/**
- * Adds a pending springboard action by name.
- *
- * @param name The name of the action.
- * @param value The value of the action's arguments.
- */
-+ (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value;
-
-/**
- * Removes a pending springboard action by name.
- *
- * @param name The name of the action to remove.
- */
-+ (void)removePendingSpringBoardAction:(NSString *)name;
-
-/**
- * Clears all pending springboard action arguments.
- */
-+ (void)clearSpringBoardActionArguments;
 
 /**
  * Situation of the action

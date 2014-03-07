@@ -1053,44 +1053,6 @@ NSDictionary *notification;
 }
 
 /**
- * Test springboard actions are called if application did enter foreground when 
- * the launch notification is nil
- */
-- (void)testApplicationDidBecomeActiveSpringBoardActions {
-    UAPush *push = [UAPush shared];
-    push.launchNotification = nil;
-
-    [UAActionArguments clearSpringBoardActionArguments];
-    [UAActionArguments addPendingSpringBoardAction:@"some-action" value:@"some-value"];
-    [UAActionArguments addPendingSpringBoardAction:@"some-other-action" value:@"some-other-value"];
-
-    BOOL (^runActionsCheck)(id obj) = ^(id obj) {
-        NSDictionary *actions = (NSDictionary *)obj;
-        if (actions.count != 2) {
-            return NO;
-        }
-
-        UAActionArguments *args = [actions valueForKey:@"some-action"];
-        return (BOOL)(args != nil
-                      && args.situation == UASituationLaunchedFromSpringBoard
-                      && [args.value isEqualToString:@"some-value"]);
-    };
-
-
-    [[self.mockActionRunner expect] runActions:[OCMArg checkWithBlock:runActionsCheck] withCompletionHandler:OCMOCK_ANY];
-
-    [push applicationDidBecomeActive];
-    XCTAssertNoThrow([self.mockActionRunner verify], @"springboard launch should run springboard actions");
-    XCTAssertEqual((NSUInteger)0, [UAActionArguments pendingSpringBoardPushActionArguments].count, @"springboard actions should be cleared");
-
-
-    push.launchNotification = notification;
-    [[self.mockActionRunner reject] runActions:OCMOCK_ANY withCompletionHandler:OCMOCK_ANY];
-    [push applicationDidBecomeActive];
-    XCTAssertNoThrow([self.mockActionRunner verify], @"springboard actions should not be ran if a launchNotification is available");
-}
-
-/**
  * Test the registrationFinished finishes the backgroundTask if the background
  * task is valid
  */

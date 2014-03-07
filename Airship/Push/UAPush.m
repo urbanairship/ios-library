@@ -548,14 +548,6 @@ BOOL deferChannelCreationOnForeground = false;
             [self updateRegistrationForcefully:NO];
         }
     }
-
-    if (!self.launchNotification) {
-        NSDictionary *springBoardActions = [UAActionArguments pendingSpringBoardPushActionArguments];
-        [UAActionArguments clearSpringBoardActionArguments];
-        [UAActionRunner runActions:springBoardActions withCompletionHandler:^(UAActionResult *result){
-            UA_LDEBUG(@"Finished performing springboard actions");
-        }];
-    }
 }
 
 - (void)applicationDidEnterBackground {

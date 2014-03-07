@@ -10,8 +10,6 @@
 		1F4230C016C09876004B52C1 /* libUAirship-3.1.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB88612C159A7E9600584445 /* libUAirship-3.1.1.a */; };
 		1F4EDB3B1831839A00F77343 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62217FA3D71004F8724 /* UAAction+Internal.h */; };
 		1F4EDB3C1831839A00F77343 /* UAAction+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62217FA3D71004F8724 /* UAAction+Internal.h */; };
-		1F4EDB3D183183AF00F77343 /* UAMailComposerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62317FE34FC004F8724 /* UAMailComposerAction.h */; };
-		1F4EDB3E183183B600F77343 /* UAMailComposerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62717FE3655004F8724 /* UAMailComposerData.h */; };
 		1F55FB6D181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */; };
 		1F55FB6E181A34DD002AA192 /* UABeveledLoadingIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F55FB6B181A34DD002AA192 /* UABeveledLoadingIndicator.h */; };
 		1F55FB6F181A34DD002AA192 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F55FB6C181A34DD002AA192 /* UABeveledLoadingIndicator.m */; };
@@ -210,10 +208,6 @@
 		495526B417D95552009BC301 /* UAUser+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 495526AF17D95552009BC301 /* UAUser+Test.m */; };
 		497B0EAA1836AB8700DA65BB /* NSString_URLEncodingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 497B0EA91836AB8700DA65BB /* NSString_URLEncodingTest.m */; };
 		49942CDB17B19A3B007E5FB1 /* UADelayOperationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */; };
-		4995C62517FE34FC004F8724 /* UAMailComposerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62317FE34FC004F8724 /* UAMailComposerAction.h */; };
-		4995C62617FE34FC004F8724 /* UAMailComposerAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62417FE34FC004F8724 /* UAMailComposerAction.m */; };
-		4995C62917FE3655004F8724 /* UAMailComposerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C62717FE3655004F8724 /* UAMailComposerData.h */; };
-		4995C62A17FE3655004F8724 /* UAMailComposerData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62817FE3655004F8724 /* UAMailComposerData.m */; };
 		4995C63A180DBBC9004F8724 /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C638180DBBC9004F8724 /* UAAddTagsAction.h */; };
 		4995C63B180DBBC9004F8724 /* UAAddTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4995C638180DBBC9004F8724 /* UAAddTagsAction.h */; };
 		4995C63C180DBBC9004F8724 /* UAAddTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C639180DBBC9004F8724 /* UAAddTagsAction.m */; };
@@ -255,8 +249,6 @@
 		49F437531810B5B400182D06 /* UAModifyTagsAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F437501810B5B400182D06 /* UAModifyTagsAction.h */; };
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		49F437551810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
-		49F4375918188F5100182D06 /* UAMailComposerAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62417FE34FC004F8724 /* UAMailComposerAction.m */; };
-		49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */ = {isa = PBXBuildFile; fileRef = 4995C62817FE3655004F8724 /* UAMailComposerData.m */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
 		761BB98318B58290005B45D5 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 761BB98218B58290005B45D5 /* JRSwizzle.m */; };
 		7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */; };
@@ -547,10 +539,6 @@
 		49942CD917B19A3B007E5FB1 /* UADelayOperationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UADelayOperationTest.h; sourceTree = "<group>"; };
 		49942CDA17B19A3B007E5FB1 /* UADelayOperationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UADelayOperationTest.m; sourceTree = "<group>"; };
 		4995C62217FA3D71004F8724 /* UAAction+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAAction+Internal.h"; sourceTree = "<group>"; };
-		4995C62317FE34FC004F8724 /* UAMailComposerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMailComposerAction.h; sourceTree = "<group>"; };
-		4995C62417FE34FC004F8724 /* UAMailComposerAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMailComposerAction.m; sourceTree = "<group>"; };
-		4995C62717FE3655004F8724 /* UAMailComposerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMailComposerData.h; sourceTree = "<group>"; };
-		4995C62817FE3655004F8724 /* UAMailComposerData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMailComposerData.m; sourceTree = "<group>"; };
 		4995C638180DBBC9004F8724 /* UAAddTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAddTagsAction.h; sourceTree = "<group>"; };
 		4995C639180DBBC9004F8724 /* UAAddTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAddTagsAction.m; sourceTree = "<group>"; };
 		4995C63E180DBBDD004F8724 /* UARemoveTagsAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UARemoveTagsAction.h; sourceTree = "<group>"; };
@@ -1207,10 +1195,6 @@
 				CC8542B017F4B81600D2DE10 /* UAPushActionArguments.m */,
 				CC8542B117F4B81600D2DE10 /* UASyncAction.h */,
 				CC8542B217F4B81600D2DE10 /* UASyncAction.m */,
-				4995C62317FE34FC004F8724 /* UAMailComposerAction.h */,
-				4995C62417FE34FC004F8724 /* UAMailComposerAction.m */,
-				4995C62717FE3655004F8724 /* UAMailComposerData.h */,
-				4995C62817FE3655004F8724 /* UAMailComposerData.m */,
 				CC1D2299180373E0005C8393 /* UAAction+Operators.h */,
 				CC1D229A180373E0005C8393 /* UAAction+Operators.m */,
 				CCDD37991807019000B8866E /* UAIncomingRichPushAction.h */,
@@ -1430,7 +1414,6 @@
 				1FE0B74C17E2751000856C60 /* UAInboxMessage.h in Headers */,
 				1FE0B74F17E2751000856C60 /* UAInboxDBManager+Internal.h in Headers */,
 				1F680E80189B1ECF00991E57 /* UIWebView+UAAdditions.h in Headers */,
-				1F4EDB3D183183AF00F77343 /* UAMailComposerAction.h in Headers */,
 				CC8542B417F4B81600D2DE10 /* UAAction.h in Headers */,
 				CC103E1218A9456200DC950F /* UAActionResult+Internal.h in Headers */,
 				1FE0B75617E2751000856C60 /* UAConfig.h in Headers */,
@@ -1452,7 +1435,6 @@
 				CC7DC946183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
 				49E9C9C2183AD42300B7BCFF /* UAWebViewCallData.h in Headers */,
 				CCA3A4EC17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
-				1F4EDB3E183183B600F77343 /* UAMailComposerData.h in Headers */,
 				CC8542C817F4B81600D2DE10 /* UAAggregateActionResult.h in Headers */,
 				1FE0B76517E2751000856C60 /* UAAppDelegate.h in Headers */,
 				CCA3A5051803184D009C7371 /* UAActionRegistryEntry+Internal.h in Headers */,
@@ -1525,7 +1507,6 @@
 				BB8860E2159A7E9600584445 /* UALocationService.h in Headers */,
 				BB8860B3159A7E9600584445 /* UAUtils.h in Headers */,
 				4995C640180DBBDD004F8724 /* UARemoveTagsAction.h in Headers */,
-				4995C62517FE34FC004F8724 /* UAMailComposerAction.h in Headers */,
 				CCB7DF5E17BBF71000CEDC56 /* UAInboxDBManager+Internal.h in Headers */,
 				CC1D229B180373E0005C8393 /* UAAction+Operators.h in Headers */,
 				CC8542B317F4B81600D2DE10 /* UAAction.h in Headers */,
@@ -1552,7 +1533,6 @@
 				BB8860CF159A7E9600584445 /* UA_Base64.h in Headers */,
 				1F65BB7C18997AB6000E8ACC /* UALandingPageAction.h in Headers */,
 				CC7DC945183E977100E95BB8 /* UAChannelRegistrationPayload.h in Headers */,
-				4995C62917FE3655004F8724 /* UAMailComposerData.h in Headers */,
 				BB8860E1159A7E9600584445 /* UALocationService+Internal.h in Headers */,
 				4905C4D318242D6F001D48E3 /* UAWebViewTools.h in Headers */,
 				CCA3A4EB17FCB3A8009C7371 /* UAActionRegistryEntry.h in Headers */,
@@ -1744,8 +1724,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49F4375918188F5100182D06 /* UAMailComposerAction.m in Sources */,
-				49F4375B18188F5100182D06 /* UAMailComposerData.m in Sources */,
 				CC8542BA17F4B81600D2DE10 /* UAActionArguments.m in Sources */,
 				1FE0B77B17E2751000856C60 /* UADeviceRegistrationPayload.m in Sources */,
 				1FE0B77C17E2751000856C60 /* UAUtils.m in Sources */,
@@ -1889,7 +1867,6 @@
 			files = (
 				7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */,
 				CC8542B917F4B81600D2DE10 /* UAActionArguments.m in Sources */,
-				4995C62A17FE3655004F8724 /* UAMailComposerData.m in Sources */,
 				4995C642180DBBDD004F8724 /* UARemoveTagsAction.m in Sources */,
 				1F610E0217835C3A00BCD96E /* UADeviceRegistrationPayload.m in Sources */,
 				CCDD37CA18089E5700B8866E /* UAOpenExternalURLAction.m in Sources */,
@@ -1933,7 +1910,6 @@
 				BB886117159A7E9600584445 /* UALocationService.m in Sources */,
 				1F610DF917835C3A00BCD96E /* UAInboxUtils.m in Sources */,
 				4905C4E1182458AC001D48E3 /* UAActionJSDelegate.m in Sources */,
-				4995C62617FE34FC004F8724 /* UAMailComposerAction.m in Sources */,
 				1F610DEC17835C3A00BCD96E /* UAInboxMessage.m in Sources */,
 				1F610DE617835C3A00BCD96E /* UAInboxDBManager.m in Sources */,
 				BB886118159A7E9600584445 /* UASignificantChangeProvider.m in Sources */,

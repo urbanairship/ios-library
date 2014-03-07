@@ -39,7 +39,6 @@
     NSArray *acceptedSituations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                     [NSNumber numberWithInteger:UASituationForegroundPush],
                                     [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                    [NSNumber numberWithInteger:UASituationLaunchedFromSpringBoard],
                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
 
 

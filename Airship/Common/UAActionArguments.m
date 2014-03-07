@@ -42,36 +42,4 @@
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 
-+ (NSDictionary *)pendingSpringBoardPushActionArguments {
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
-    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] objectForKey:kPendingPushActionDefaultsKey];
-
-    for (NSString *name in pendingArguments) {
-        NSString *value = [pendingArguments valueForKey:name];
-        UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:value withSituation:UASituationLaunchedFromSpringBoard];
-        [arguments setValue:actionArgs forKey:name];
-    }
-
-    return arguments;
-}
-
-+ (void)addPendingSpringBoardAction:(NSString *)name value:(NSString *)value {
-    NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
-
-    NSDictionary *pendingArguments = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kPendingPushActionDefaultsKey];
-    if (pendingArguments) {
-        [arguments addEntriesFromDictionary:pendingArguments];
-    }
-
-    [arguments setValue:value forKey:name];
-    [[NSUserDefaults standardUserDefaults] setObject:arguments forKey:kPendingPushActionDefaultsKey];
-}
-
-+ (void)removePendingSpringBoardAction:(NSString *)name {
-    [self addPendingSpringBoardAction:name value:nil];
-}
-
-+ (void)clearSpringBoardActionArguments {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPendingPushActionDefaultsKey];
-}
 @end
