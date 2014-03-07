@@ -68,7 +68,7 @@ static NSMutableSet *overlayControllers = nil;
 + (void)showURL:(NSURL *)url {
 
     // Close existing windows
-    [UALandingPageOverlayController closeWindow:NO];
+    [UALandingPageOverlayController closeAll:NO];
 
     // Get the top view controller
     UIViewController *topController = [UALandingPageOverlayController topController];
@@ -79,10 +79,9 @@ static NSMutableSet *overlayControllers = nil;
     [overlayController loadURL:url];
 }
 
-+ (void)closeWindow:(BOOL)animated {
++ (void)closeAll:(BOOL)animated {
     for (UALandingPageOverlayController *oc in overlayControllers) {
-        UA_LDEBUG(@"Closing landing page overlay controller: %@", [oc.url absoluteString]);
-        [oc finish:animated];
+        [oc closeWindow:animated];
     }
 }
 
@@ -145,6 +144,11 @@ static NSMutableSet *overlayControllers = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIDeviceOrientationDidChangeNotification
                                                   object:nil];
+}
+
+- (void)closeWindow:(BOOL)animated {
+    UA_LDEBUG(@"Closing landing page overlay controller: %@", [self.url absoluteString]);
+    [self finish:animated];
 }
 
 - (void)buildOverlay {
