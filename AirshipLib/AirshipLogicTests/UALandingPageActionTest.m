@@ -13,7 +13,6 @@
 @property(nonatomic, strong) id mockLandingPageOverlayController;
 @property(nonatomic, strong) id mockHTTPConnection;
 @property(nonatomic, strong) UALandingPageAction *action;
-@property(nonatomic, strong) NSString *urlString;
 
 @end
 
@@ -25,7 +24,6 @@
     self.mockURLProtocol = [OCMockObject niceMockForClass:[UAURLProtocol class]];
     self.mockLandingPageOverlayController = [OCMockObject niceMockForClass:[UALandingPageOverlayController class]];
     self.mockHTTPConnection = [OCMockObject niceMockForClass:[UAHTTPConnection class]];
-    self.urlString = @"https://foo.bar.com/whatever";
 }
 
 - (void)tearDown {
@@ -35,64 +33,100 @@
     [super tearDown];
 }
 
+/**
+ * Test accepts arguments
+ */
 - (void)testAcceptsArguments {
-    NSArray *acceptedSituations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
-                                    [NSNumber numberWithInteger:UASituationForegroundPush],
-                                    [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                    [NSNumber numberWithInteger:UASituationManualInvocation]];
+    [self verifyAcceptsArgumentsWithValue:@"foo.urbanairship.com" shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:@"https://foo.urbanairship.com" shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:@"http://foo.urbanairship.com" shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:true];
+}
+
+/**
+ * Test accepts arguments rejects argument values that are unable to parsed
+ * as a URL
+ */
+- (void)testAcceptsArgumentsNo {
+    [self verifyAcceptsArgumentsWithValue:nil shouldAccept:false];
+    [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:false];
+    [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:false];
+}
+
+/**
+ * Test perform in UASituationBackgroundPush
+ */
+- (void)tesPerformInForeground {
+    // Verify https is added to schemeless urls
+    [self verifyPerformInForegroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
+
+    // Verify common scheme types
+    [self verifyPerformInForegroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com"];
+    [self verifyPerformInForegroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
+    [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
+}
+
+/**
+ * Test perform in foreground situations
+ */
+- (void)testPerformInBackground {
+    // Verify https is added to schemeless urls
+    [self verifyPerformInBackgroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
+
+    // Verify common scheme types
+    [self verifyPerformInBackgroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com" successful:YES];
+    [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
+    [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:YES];
+}
 
 
-    NSArray *acceptedValues= @[self.urlString, [NSURL URLWithString:self.urlString]];
+/**
+ * Test perform in background situation when caching fails
+ */
+- (void)testPerformInBackgroundFail {
+    // Verify https is added to schemeless urls
+    [self verifyPerformInBackgroundWithValue:@"foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
 
-    for (NSNumber *situationNumber in acceptedSituations) {
-        for (id value in acceptedValues) {
-            UAActionArguments *args = [UAActionArguments argumentsWithValue:value
-                                                              withSituation:[situationNumber integerValue]];
-            BOOL accepts = [self.action acceptsArguments:args];
-            XCTAssertTrue(accepts, @"landing page action should accept situation %@, value %@", situationNumber, value);
-        }
+    // Verify common scheme types
+    [self verifyPerformInBackgroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com" successful:NO];
+    [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
+    [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:NO];
+}
+
+
+/**
+ * Helper method to verify perfrom in foreground situations
+ */
+- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl {
+    NSArray *foregroundSitutions = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
+                                     [NSNumber numberWithInteger:UASituationForegroundPush],
+                                     [NSNumber numberWithInteger:UASituationLaunchedFromPush],
+                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
+
+    for (NSNumber *situationNumber in foregroundSitutions) {
+        [[self.mockLandingPageOverlayController expect] closeWindow:NO];
+
+        [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
+            return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
+        }]];
+
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:[situationNumber integerValue]];
+        [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:UAActionFetchResultNewData];
     }
 }
 
-- (void)performWithArgs:(UAActionArguments *)args withExpectedFetchResult:(UAActionFetchResult)fetchResult {
-
-    __block BOOL finished = NO;
-
-    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
-        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
-    }]];
-    
-    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
-        finished = YES;
-        XCTAssertEqual(result.fetchResult, fetchResult,
-                       @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);
-    }];
-
-    [self.mockURLProtocol verify];
-    [self.mockLandingPageOverlayController verify];
-    [self.mockHTTPConnection verify];
-
-    XCTAssertTrue(finished, @"action should have completed");
-}
-
-- (void)performInForegroundWithValue:(id)value {
-    [[self.mockLandingPageOverlayController expect] closeWindow:NO];
-
-    [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
-        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).scheme isEqualToString:@"https"]);
-    }]];
-
-    [self performWithArgs:[UAActionArguments argumentsWithValue:value withSituation:UASituationManualInvocation] withExpectedFetchResult:UAActionFetchResultNewData];
-}
-
-- (void)performInBackground:(BOOL)successful {
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:self.urlString withSituation:UASituationBackgroundPush];
+/**
+ * Helper method to verify perform in background situations
+ */
+- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl successful:(BOOL)successful  {
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationBackgroundPush];
 
     __block UAHTTPConnectionSuccessBlock success;
     __block UAHTTPConnectionFailureBlock failure;
     __block UAHTTPRequest *request;
 
-    [[[self.mockHTTPConnection stub] andReturn:self.mockHTTPConnection]
+    [[[self.mockHTTPConnection expect] andReturn:self.mockHTTPConnection]
      connectionWithRequest:[OCMArg checkWithBlock:^(id obj){
         request = obj;
         return YES;
@@ -119,27 +153,54 @@
 
     UAActionFetchResult expectedResult = successful? UAActionFetchResultNewData : UAActionFetchResultFailed;
 
-    [self performWithArgs:args withExpectedFetchResult:expectedResult];
+    [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:expectedResult];
 }
 
-- (void)testPerformInBackgroundSuccess {
-    [self performInBackground:YES];
+/**
+ * Helper method to verify perfrom
+ */
+- (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedUrl:(NSString *)expectedUrl withExpectedFetchResult:(UAActionFetchResult)fetchResult {
+
+    __block BOOL finished = NO;
+
+    [[self.mockURLProtocol expect] addCachableURL:[OCMArg checkWithBlock:^(id obj){
+        return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
+    }]];
+
+    [self.action performWithArguments:args withCompletionHandler:^(UAActionResult *result){
+        finished = YES;
+        XCTAssertEqual(result.fetchResult, fetchResult,
+                       @"fetch result %ud should match expect result %ud", result.fetchResult, fetchResult);
+    }];
+
+    [self.mockURLProtocol verify];
+    [self.mockLandingPageOverlayController verify];
+    [self.mockHTTPConnection verify];
+
+    XCTAssertTrue(finished, @"action should have completed");
 }
 
-- (void)testPerformInBackgroundFailure {
-    [self performInBackground:NO];
-}
+/**
+ * Helper method to verify accepts arguments
+ */
+- (void)verifyAcceptsArgumentsWithValue:(id)value shouldAccept:(BOOL)shouldAccept {
+    NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
+                                     [NSNumber numberWithInteger:UASituationForegroundPush],
+                                     [NSNumber numberWithInteger:UASituationBackgroundPush],
+                                     [NSNumber numberWithInteger:UASituationLaunchedFromPush],
+                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
 
-- (void)testPerformWithString {
-    [self performInForegroundWithValue:self.urlString];
-}
+    for (NSNumber *situationNumber in situations) {
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:value
+                                                          withSituation:[situationNumber integerValue]];
 
-- (void)testPerformWithUrl {
-    [self performInForegroundWithValue:[NSURL URLWithString:self.urlString]];
-}
-
-- (void)testPerformWithSchemelessURL {
-    [self performInForegroundWithValue:@"foo.bar.com/whatever"];
+        BOOL accepts = [self.action acceptsArguments:args];
+        if (shouldAccept) {
+            XCTAssertTrue(accepts, @"landing page action should accept value %@ in situation %@", value, situationNumber);
+        } else {
+            XCTAssertFalse(accepts, @"landing page action should not accept value %@ in situation %@", value, situationNumber);
+        }
+    }
 }
 
 @end
