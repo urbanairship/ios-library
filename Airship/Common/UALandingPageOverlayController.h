@@ -40,6 +40,13 @@
 + (void)showURL:(NSURL *)url;
 
 /**
+ * Create and dsiplays a landing page overlay.
+ * @param url The URL of the landing page to display.
+ * @param authString The string used for authorization when connecting to the URL.
+ */
++ (void)showURL:(NSURL *)url withAuthString:(NSString *)authString;
+
+/**
  * Closes all currently displayed overlays.
  * @param animated Indicates whether to animate the close transition.
  */

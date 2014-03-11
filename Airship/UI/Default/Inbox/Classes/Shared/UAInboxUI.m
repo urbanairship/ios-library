@@ -27,10 +27,12 @@
 #import "UAInboxUtils.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UAInboxOverlayController.h"
 
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
+
+#import "UALandingPageOverlayController.h"
+#import "UAUtils.h"
 
 @interface UAInboxUI ()
 
@@ -94,7 +96,13 @@ SINGLETON_IMPLEMENTATION(UAInboxUI)
     if(![UAInboxUI shared].isVisible) {
         
         if ([UAInboxUI shared].useOverlay) {
-            [UAInboxOverlayController showWindowInsideViewController:[UAInboxUI shared].inboxParentController withMessageID:messageID];
+            UAInboxMessage *message = [[UAInbox shared].messageList messageForID:messageID];
+            NSURL *messageBodyURL = message.messageBodyURL;
+            if (messageBodyURL) {
+                [UALandingPageOverlayController showURL:messageBodyURL withAuthString:[UAUtils userAuthHeaderString]];
+            } else {
+                UA_LDEBUG(@"Unable to retrieve message body URL");
+            }
             return;
         }
         

@@ -31,6 +31,9 @@
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 
+#import "UALandingPageOverlayController.h"
+#import "UAUtils.h"
+
 @interface UAInboxNavUI ()
 
 @property (nonatomic, strong) UIViewController *rootViewController;
@@ -123,7 +126,13 @@ static BOOL runiPhoneTargetOniPad = NO;
     if(![UAInboxNavUI shared].isVisible) {
         
         if ([UAInboxNavUI shared].useOverlay) {
-            [UAInboxOverlayController showWindowInsideViewController:[UAInboxNavUI shared].inboxParentController withMessageID:messageID];
+            UAInboxMessage *message = [[UAInbox shared].messageList messageForID:messageID];
+            NSURL *messageBodyURL = message.messageBodyURL;
+            if (messageBodyURL) {
+                [UALandingPageOverlayController showURL:messageBodyURL withAuthString:[UAUtils userAuthHeaderString]];
+            } else {
+                UA_LDEBUG(@"Unable to retrieve message body URL");
+            }
             return;
         }
 

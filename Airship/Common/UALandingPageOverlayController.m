@@ -66,7 +66,10 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 + (void)showURL:(NSURL *)url {
+    [self showURL:url withAuthString:nil];
+}
 
++ (void)showURL:(NSURL *)url withAuthString:(NSString *)authString {
     // Close existing windows
     [UALandingPageOverlayController closeAll:NO];
 
@@ -76,7 +79,7 @@ static NSMutableSet *overlayControllers = nil;
     UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:topController andURL:url];
     [overlayControllers addObject:overlayController];
 
-    [overlayController loadURL:url];
+    [overlayController loadURL:url withAuthString:authString];
 }
 
 + (void)closeAll:(BOOL)animated {
@@ -252,13 +255,18 @@ static NSMutableSet *overlayControllers = nil;
     [self.overlayView layoutSubviews];
 }
 
-- (void)loadURL:(NSURL *)url {
+- (void)loadURL:(NSURL *)url withAuthString:(NSString *)authString {
 
     self.url = url;
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
 
-    // TODO: add an auth enum to the overlay, so it can be set by the caller?
+    if (authString) {
+        [requestObj setValue:authString forKey:@"Authorization"];
+    }
+
+    [self.webView loadRequest:requestObj];
+
     [requestObj setTimeoutInterval:30];
 
     [self.webView stopLoading];
