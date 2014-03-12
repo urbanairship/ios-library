@@ -101,8 +101,7 @@
  */
 - (void)testEnterForeground {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    [[mockAnalytics expect] invalidateBackgroundTask];
-    
+
     //set up event capture
     __block id arg = nil;
     void (^getSingleArg)(NSInvocation *) = ^(NSInvocation *invocation){
@@ -228,7 +227,6 @@
 
 - (void)testEnterBackground {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    [[mockAnalytics expect] send];
     __block id arg = nil;
     void (^getSingleArg)(NSInvocation*) = ^(NSInvocation *invocation){
         __unsafe_unretained id unsafeArg = nil;
@@ -238,21 +236,10 @@
     [[[mockAnalytics expect] andDo:getSingleArg] addEvent:OCMOCK_ANY];
     [_analytics enterBackground];
     XCTAssertTrue([arg isKindOfClass:[UAEventAppBackground class]], @"Enter background should fire UAEventAppBackground");
-    XCTAssertTrue(_analytics.sendBackgroundTask != UIBackgroundTaskInvalid, @"A background task should exist");
     [mockAnalytics verify];
     [mockAnalytics stopMocking];
 }
 
-- (void)testInvalidateBackgroundTask {
-    __block UIBackgroundTaskIdentifier identifier;
-    identifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [[UIApplication sharedApplication] endBackgroundTask:identifier];
-        identifier = UIBackgroundTaskInvalid;
-    }];
-    _analytics.sendBackgroundTask = identifier;
-    [_analytics invalidateBackgroundTask];
-    XCTAssertTrue(_analytics.sendBackgroundTask == UIBackgroundTaskInvalid);
-}
 
 - (void)testDidBecomeActive {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
@@ -305,9 +292,8 @@
     id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
     UIApplicationState state = UIApplicationStateBackground;
     [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
-    _analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    [[mockAnalytics reject] send];
+    [[mockAnalytics expect] send];
     [_analytics addEvent:event];
     [mockAnalytics verify];
     [mockAnalytics stopMocking];
@@ -324,7 +310,7 @@
     [mockAnalytics stopMocking];
 }
 
-- (void)testShouldSendAnalyticsCore {
+- (void)testShouldSendAnalytics {
     _analytics.config.analyticsEnabled = NO;
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     _analytics.config.analyticsEnabled = YES;
@@ -340,32 +326,6 @@
     [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)5L)] eventCount];
     XCTAssertFalse([_analytics shouldSendAnalytics]);
     [mockDBManger stopMocking];
-}
-
-- (void)testShouldSendAnalyticsBackgroundLogic {
-
-    _analytics.config.analyticsURL = @"cats";
-    id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)5L)] eventCount];
-
-    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
-    UIApplicationState state = UIApplicationStateBackground;
-    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
-    _analytics.sendBackgroundTask = 9;
-    XCTAssertTrue([_analytics shouldSendAnalytics]);
-    _analytics.sendBackgroundTask = UIBackgroundTaskInvalid;
-    _analytics.lastSendTime = [NSDate distantPast];
-    XCTAssertTrue([_analytics shouldSendAnalytics]);
-    _analytics.lastSendTime = [NSDate date];
-    XCTAssertFalse([_analytics shouldSendAnalytics]);
-    [mockApplication stopMocking];
-
-    mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
-    state = UIApplicationStateActive;
-    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
-    XCTAssertTrue([_analytics shouldSendAnalytics]);
-    [mockDBManger stopMocking];
-    [mockApplication stopMocking];
 }
 
 - (void)testSend {
