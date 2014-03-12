@@ -28,6 +28,46 @@
 #import "UAHTTPConnection.h"
 #import "UADeviceRegistrar.h"
 
+
+//---------------------------------------------------------------------------------------
+// UARegistrationDelegate
+//---------------------------------------------------------------------------------------
+
+/**
+ * Implement this protocol and add as a [UAPush registrationDelegate] to receive
+ * registration success and failure callbacks.
+ *
+ */
+@protocol UARegistrationDelegate <NSObject>
+@optional
+
+/**
+ * Called when the device channel and/or device token successfully registers with
+ * Urban Airship.  Successful registrations could be disabling push, enabling push,
+ * or updating the device registration settings.
+ *
+ * A nil channel id indicates the channel creation failed and the old device token
+ * registration is being used.
+ *
+ * The device token will only be available once the application successfully
+ * registers with APNS.
+ *
+ * When registration finishes in the background, any async tasks that are triggered
+ * from this call should request a background task.
+ */
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
+
+/**
+ * Called when the device channel and/or device token failed to register with
+ * Urban Airship.
+ *
+ * When registration finishes in the background, any async tasks that are triggered
+ * from this call should request a background task.
+ */
+- (void)registrationFailed;
+
+@end
+
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
 //---------------------------------------------------------------------------------------
@@ -156,7 +196,7 @@
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-@interface UAPush : NSObject
+@interface UAPush : NSObject <UADeviceRegistrarDelegate>
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -246,7 +286,7 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
-@property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
 
 /**
  * Notification that launched the application

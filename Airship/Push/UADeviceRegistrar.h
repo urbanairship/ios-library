@@ -27,86 +27,33 @@
 
 @class UAChannelRegistrationPayload;
 
-/**
- * The key for the channel payload in the posted NSNotification's user info
- * when the registration is finished.
- */
-extern NSString * const UAChannelPayloadNotificationKey;
-
-/**
- * The key for the channel id in the posted NSNotification's user info
- * when a channel is created.
- */
-extern NSString * const UAChannelNotificationKey;
-
-/**
- * The key for the channel location in the posted NSNotification's user info
- * when a channel is created.
- */
-extern NSString * const UAChannelLocationNotificationKey;
-
-/**
- * The key for the replaced channel id in the posted NSNotification's user info
- * when a channel has a conflict and is replaced.
- */
-extern NSString * const UAReplacedChannelNotificationKey;
-
-/**
- * The key for the replaced channel location in the posted NSNotification's user
- * info when a channel has a conflict and is replaced.
- */
-extern NSString * const UAReplacedChannelLocationNotificationKey;
-
-/**
- * NSNotification posted when a channel has been created.
- */
-extern NSString * const UAChannelCreatedNotification;
-
-/**
- * NSNotification posted when a channel update has a conflict and a new
- * channel is required.
- */
-extern NSString * const UAChannelConflictNotification;
-
-/**
- * NSNotification posted when a device registration finishes.
- *
- * Note: This will be posted at the end of every registration call, even if
- * a registration is skipped.
- */
-extern NSString * const UADeviceRegistrationFinishedNotification;
-
-
 //---------------------------------------------------------------------------------------
-// UARegistrationDelegate
+// UADeviceRegistrarDelegate
 //---------------------------------------------------------------------------------------
 
-/**
- * Implement this protocol and add as a [UAPush registrationDelegate] to receive
- * registration success and failure callbacks.
- *
- */
-@protocol UARegistrationDelegate <NSObject>
+@protocol UADeviceRegistrarDelegate <NSObject>
 @optional
 
 /**
- * Called when the device channel and/or device token successfully registers with
- * Urban Airship.  Successful registrations could be disabling push, enabling push,
- * or updating the device registration settings.
+ * Called when the device registrar failed to register.
  *
- * A nil channel id indicates the channel creation failed and the old device token
- * registration is being used.
- *
- * The device token will only be available once the application successfully
- * registers with APNS.
+ * When called from the background, any async tasks that are triggered
+ * from this call should request a background task.
  */
-- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
+- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when the device channel and/or device token failed to register with
- * Urban Airship.
+ * Called when the device registrar succesfully registered.
+ *
+ * When called from the background, any async tasks that are triggered
+ * from this call should request a background task.
  */
-- (void)registrationFailed;
+- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
+
+/**
+ * Called when the device registrar creates a new channel.
+ */
+- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
 
 @end
 
@@ -118,9 +65,9 @@ extern NSString * const UADeviceRegistrationFinishedNotification;
 @interface UADeviceRegistrar : NSObject
 
 /**
- * A UARegistrationDelegate delegate.
+ * A UADeviceRegistrarDelegate delegate.
  */
-@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UADeviceRegistrarDelegate> delegate;
 
 /**
  * Register the device with Urban Airship.

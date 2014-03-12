@@ -1053,71 +1053,22 @@ NSDictionary *notification;
 }
 
 /**
- * Test the registrationFinished finishes the backgroundTask if the background
- * task is valid
+ * Test update registartion is called when the device enters a background and
+ * we do not have a channel id
  */
-- (void)testRegistrationFinishedInBackground {
-    UAPush *push = [UAPush shared];
-
-    // Give push a valid background task identifier
-    push.registrationBackgroundTask = 100;
-
-    [[self.mockedApplication expect] endBackgroundTask:100];
-
-    [push registrationFinished:[NSNotification notificationWithName:@"someName" object:nil]];
-    XCTAssertNoThrow([self.mockedApplication verify], @"The registrationFinished in the background task should be valid.");
-    XCTAssertEqual(UIBackgroundTaskInvalid, push.registrationBackgroundTask, @"Background task identifier should be set back to invalid.");
-}
-
-/**
- * Test that a background task is created when entering the background and
- * registration is in progress
- */
-- (void)testBackgroundTaskCreatedWhenRegistrationInProgress {
-    UAPush *push = [UAPush shared];
-    push.channelID = @"some-channel";
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isRegistrationInProgress];
-
-    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [push applicationDidEnterBackground];
-
-    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
-    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
-}
-
-/**
- * Test that a background task is created when entering the background and
- * a channel id needs to be created.
- */
-- (void)testBackgroundTaskCreatedNeedChannelID {
+- (void)testApplicationDidEnterBackgroundCreatesChannel {
     UAPush *push = [UAPush shared];
     push.channelID = nil;
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
     [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(YES)] isUsingChannelRegistration];
 
-    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+    [[self.mockedDeviceRegistrar expect] registerWithChannelID:OCMOCK_ANY
+                                               channelLocation:OCMOCK_ANY
+                                                   withPayload:OCMOCK_ANY
+                                                    forcefully:NO];
 
     [push applicationDidEnterBackground];
 
-    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
-    XCTAssertEqual((NSUInteger)30, push.registrationBackgroundTask, @"registrationBackgroundTask should be set to the background task ID");
-}
-
-/**
- * Test that a background task is not created when entering the background 
- * if we dont need a channel id or registrations are not in progress
- */
-- (void)testBackgroundTaskNotCreated {
-    UAPush *push = [UAPush shared];
-    push.channelID = @"some-channel";
-    [[[self.mockedDeviceRegistrar stub] andReturnValue:OCMOCK_VALUE(NO)] isRegistrationInProgress];
-
-    [[[self.mockedApplication reject] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    [push applicationDidEnterBackground];
-
-    XCTAssertNoThrow([self.mockedApplication verify], @"A background task should be created when a registration is in progress");
+    XCTAssertNoThrow([self.mockedDeviceRegistrar verify], @"Channel registration should be called");
 }
 
 /**
@@ -1126,39 +1077,36 @@ NSDictionary *notification;
 - (void)testChannelCreated {
     UAPush *push = [UAPush shared];
 
-    NSNotification *notification = [NSNotification notificationWithName:UAChannelCreatedNotification
-                                                                 object:nil
-                                                               userInfo:@{UAChannelNotificationKey: @"someChannelID",
-                                                                          UAChannelLocationNotificationKey:@"someLocation"}];
+    [push channelCreated:@"someChannelID" channelLocation:@"someLocation"];
 
-    [push channelCreated:notification];
     XCTAssertEqualObjects(push.channelID, @"someChannelID", @"The channel ID should be set on channel creation.");
     XCTAssertEqualObjects(push.channelLocation, @"someLocation", @"The channel location should be set on channel creation.");
-
 }
 
 /**
- * Test channel conflict
+ * Test registration succeeded
  */
-- (void)testChannelConflict {
+- (void)testRegistrationSucceeded {
+    UAPush *push = [UAPush shared];
+    push.deviceToken = validDeviceToken;
+    push.channelID = @"someChannelID";
+
+    [[self.mockRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannelID" deviceToken:validDeviceToken];
+
+    [push registrationSucceededWithPayload:[[UAChannelRegistrationPayload alloc] init]];
+    XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
+}
+
+/**
+ * Test registration failed
+ */
+- (void)testRegistrationFailed {
     UAPush *push = [UAPush shared];
 
-    NSDictionary *userInfo = @{
-                               UAChannelNotificationKey: @"someNewChannel",
-                               UAChannelLocationNotificationKey: @"someNewChannelLocation",
-                               UAReplacedChannelNotificationKey: @"someOldChannel",
-                               UAReplacedChannelLocationNotificationKey: @"someOldLocation"
-                               };
+    [[self.mockRegistrationDelegate expect] registrationFailed];
 
-    NSNotification *notification = [NSNotification notificationWithName:UAChannelConflictNotification
-                                                                 object:nil
-                                                               userInfo:userInfo];
-
-
-    [push channelConflict:notification];
-    XCTAssertEqualObjects(push.channelID, @"someNewChannel", @"The channel should update to the new channel ID.");
-    XCTAssertEqualObjects(push.channelLocation, @"someNewChannelLocation", @"The channel should update to the new channel location.");
-
+    [push registrationFailedWithPayload:[[UAChannelRegistrationPayload alloc] init]];
+    XCTAssertNoThrow([self.mockRegistrationDelegate verify], @"Delegate should be called");
 }
 
 /**
