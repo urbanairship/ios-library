@@ -99,10 +99,6 @@
  */
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 
-/**
- * Background identifier for the analytics background task.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 
 /**
  * The UAConfig object containing the configuration values.
@@ -210,12 +206,6 @@
  * Refresh the session when the application becomes active.
  */
 - (void)refreshSessionWhenActive;
-
-/**
- * Invalidate the background task that will be running
- * if the app has been backgrounded after being active.
- */
-- (void)invalidateBackgroundTask;
 
 /**
  * Generate an analytics request with the proper fields

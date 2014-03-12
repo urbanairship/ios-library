@@ -52,10 +52,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     [self.queue cancelAllOperations];
-    
-    
 }
 
 - (id)initWithConfig:(UAConfig *)airshipConfig {
@@ -102,7 +99,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
         
         [self initSession];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
@@ -224,7 +220,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
-    [self invalidateBackgroundTask];
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
@@ -237,29 +232,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
     
-    //Set a blank session_id for app_exit events
+    // Set a blank session_id for app_exit events
     [self.session removeAllObjects];
     [self.session setValue:@"" forKey:@"session_id"];
-
     self.notificationUserInfo = nil;
-
-    // Only place where a background task is created
-    self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [self.queue cancelAllOperations];
-        [self invalidateBackgroundTask];
-    }];
-
-    [self send];
 }
 
-- (void)invalidateBackgroundTask {
-    if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending analytics background task %lu", (unsigned long)self.sendBackgroundTask);
-        
-        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
-    }
-}
 
 - (void)didBecomeActive {
     UA_LTRACE(@"Application did become active.");
@@ -344,14 +322,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             self.oldestEventTime = [event.time doubleValue];
         }
         
-        // If the app is in the background without a background task id, then this is a location
-        // event, and we should attempt to send. 
-        UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
-        BOOL isLocation = [event isKindOfClass:[UALocationEvent class]];
-        if (appState == UIApplicationStateActive ||
-            (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation)) {
-            [self send];
-        }
+        [self send];
     }
 }
 
@@ -462,16 +433,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
         // If the app is in the background and there is a valid background task to upload events
-        if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
-            return YES;
-        } else {
-            // There is no background task, and the app is in the background, it is likely that
-            // this is a location related event and we should only send every 15 minutes
-            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-            return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
-        }
+        // There is no background task, and the app is in the background, it is likely that
+        // this is a location related event and we should only send every 15 minutes
+        NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+        return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
     }
-    
+
     return YES;
 }
 
@@ -720,33 +687,40 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 //NOTE: this method is intended to be called from the main thread
-- (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
+- (void)send {
     UA_LTRACE(@"Attempting to send analytics.");
 
-    if (self.isSending) {
-        UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
-        return;
+    @synchronized(self) {
+        if (self.isSending) {
+            UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
+            return;
+        }
+
+        if (![self shouldSendAnalytics]) {
+            UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send.");
+            return;
+        }
+
+        self.isSending = YES;
     }
 
-    if (![self shouldSendAnalytics]) {
-        UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send.");
-        completionBlock();
-        return;
-    }
+    UA_LTRACE(@"Analtyics send started.");
 
-    self.isSending = YES;
-
-    [self batchAndSendEventsWithCompletionBlock:completionBlock];
-}
-
-//NOTE: this method is intended to be called from the main thread
-- (void)send {
-    [self sendEventsWithCompletionBlock:^{
-        // Marshall this onto the main queue, in case the block is called in the background 
-        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            [self invalidateBackgroundTask];
+    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        UA_LTRACE(@"Analytics background task expired.");
+        @synchronized(self) {
+            [self.queue cancelAllOperations];
             self.isSending = NO;
-        }]];
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        }
+    }];
+
+    [self batchAndSendEventsWithCompletionBlock:^{
+        UA_LTRACE(@"Analytics send completed.");
+        @synchronized(self) {
+            self.isSending = NO;
+            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+        }
     }];
 }
 
