@@ -26,13 +26,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <UIKit/UIKit.h>
 #import "UAInboxMessage.h"
 #import "UIWebView+UAAdditions.h"
+#import "UARichContentWindow.h"
 
 
 /**
  * This class is a reference implementation of a view controller embedding
  * a UIWebview sourcing content from a rich push message.
  */
-@interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate> 
+@interface UAInboxMessageViewController : UIViewController <UIWebViewDelegate, UARichContentWindow>
 
 /**
  * The UAInboxMessage being displayed.
@@ -44,6 +45,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * situations, NO otherwise.
  */
 @property (nonatomic, assign) BOOL shouldShowAlerts;
+
+/**
+ * Block that will be invoked when this class receives a closeWindow message from the webView.
+ */
+@property (nonatomic, copy) void (^closeBlock)(BOOL animated);
 
 /**
  * Load a UAInboxMessage at a particular index in the message list.

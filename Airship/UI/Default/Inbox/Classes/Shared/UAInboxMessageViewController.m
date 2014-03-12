@@ -214,6 +214,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     }
 }
 
+#pragma mark UARichContentWindow
+
+- (void)closeWindow:(BOOL)animated {
+    if (self.closeBlock) {
+        self.closeBlock(animated);
+    }
+}
+
 #pragma mark Message Nav
 
 - (IBAction)segmentAction:(id)sender {
