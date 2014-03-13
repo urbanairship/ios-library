@@ -438,7 +438,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     request.compressBody = YES;//enable GZIP
     request.HTTPMethod = @"POST";
-    
+
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
@@ -690,27 +690,40 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             return;
         }
 
+
+        UA_LTRACE(@"Analtyics send started.");
+
+        __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            UA_LTRACE(@"Analytics background task expired.");
+            @synchronized(self) {
+                [self.queue cancelAllOperations];
+                self.isSending = NO;
+                if (backgroundTask != UIBackgroundTaskInvalid) {
+                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }
+            }
+        }];
+
+        if (backgroundTask == UIBackgroundTaskInvalid) {
+            UA_LTRACE("Background task unavailable, skipping analytics");
+            return;
+        }
+
         self.isSending = YES;
+
+        [self batchAndSendEventsWithCompletionBlock:^{
+            UA_LTRACE(@"Analytics send completed.");
+            @synchronized(self) {
+                self.isSending = NO;
+                if (backgroundTask != UIBackgroundTaskInvalid) {
+                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }
+            }
+        }];
     }
 
-    UA_LTRACE(@"Analtyics send started.");
-
-    __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        UA_LTRACE(@"Analytics background task expired.");
-        @synchronized(self) {
-            [self.queue cancelAllOperations];
-            self.isSending = NO;
-            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-        }
-    }];
-
-    [self batchAndSendEventsWithCompletionBlock:^{
-        UA_LTRACE(@"Analytics send completed.");
-        @synchronized(self) {
-            self.isSending = NO;
-            [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
-        }
-    }];
-}
+   }
 
 @end
