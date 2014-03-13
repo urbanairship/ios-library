@@ -57,8 +57,7 @@
     [self.notificationAlert dismissWithClickedButtonIndex:0 animated:NO];
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (buttonIndex != alertView.cancelButtonIndex) {
         self.viewBlock();
     }

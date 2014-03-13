@@ -48,6 +48,10 @@ static NSMutableSet *overlayControllers = nil;
  * The URL being displayed.
  */
 @property(nonatomic, strong) NSURL *url;
+/**
+ * The message being displayed, if applicable. This value may be nil.
+ */
+@property(nonatomic, strong) UAInboxMessage *message;
 @property(nonatomic, strong) UIViewController *parentViewController;
 @property(nonatomic, strong) UIView *overlayView;
 @property(nonatomic, strong) UABeveledLoadingIndicator *loadingIndicator;
@@ -65,18 +69,27 @@ static NSMutableSet *overlayControllers = nil;
     }
 }
 
-+ (void)showURL:(NSURL *)url {
-
++ (void)showLandingPageController:(UALandingPageOverlayController *)overlayController {
     // Close existing windows
     [UALandingPageOverlayController closeAll:NO];
-
-    // Get the top view controller
-    UIViewController *topController = [UALandingPageOverlayController topController];
-
-    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:topController andURL:url];
+    // Add the overlay controller to our static collection
     [overlayControllers addObject:overlayController];
+    //load it
+    [overlayController load];
+}
 
-    [overlayController loadURL:url];
++ (void)showURL:(NSURL *)url {
+    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[self topController]
+                                                                                                                      andURL:url
+                                                                                                                  andMessage:nil];
+    [self showLandingPageController:overlayController];
+}
+
++ (void)showMessage:(UAInboxMessage *)message {
+    UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[self topController]
+                                                                                                                      andURL:message.messageBodyURL
+                                                                                                                   andMessage:message];
+    [self showLandingPageController:overlayController];
 }
 
 + (void)closeAll:(BOOL)animated {
@@ -98,11 +111,13 @@ static NSMutableSet *overlayControllers = nil;
     return topController;
 }
 
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url {
+- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message {
     self = [super init];
     if (self) {
 
         self.parentViewController = parent;
+        self.url = url;
+        self.message = message;
 
         // Set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
@@ -110,7 +125,6 @@ static NSMutableSet *overlayControllers = nil;
         self.webView.opaque = NO;
         self.webView.delegate = self;
         self.webView.dataDetectorTypes = UIDataDetectorTypeNone;
-        self.webView.scalesPageToFit = YES;
 
         // Hack to hide the ugly webview gradient (iOS6 and earlier)
         for (UIView *subView in [self.webView subviews]) {
@@ -202,8 +216,6 @@ static NSMutableSet *overlayControllers = nil;
     // Set the webView's frame to be identical to the background inset
     self.webView.frame = CGRectMake(webViewPadding, webViewPadding, CGRectGetWidth(backgroundInset.frame), CGRectGetHeight(backgroundInset.frame));
 
-    self.webView.scalesPageToFit = YES;
-
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         self.webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin |
         UIViewAutoresizingFlexibleTopMargin |
@@ -252,13 +264,14 @@ static NSMutableSet *overlayControllers = nil;
     [self.overlayView layoutSubviews];
 }
 
-- (void)loadURL:(NSURL *)url {
+- (void)load {
 
-    self.url = url;
+    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.url];
 
-    NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:url];
+    if (self.message) {
+        [requestObj setValue:[UAUtils userAuthHeaderString] forHTTPHeaderField:@"Authorization"];
+    }
 
-    // TODO: add an auth enum to the overlay, so it can be set by the caller?
     [requestObj setTimeoutInterval:30];
 
     [self.webView stopLoading];
@@ -345,7 +358,7 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)wv {
-    [self.webView populateJavascriptEnvironment];
+    [self.webView populateJavascriptEnvironment:self.message];
     [self.webView willRotateToInterfaceOrientation:(UIInterfaceOrientation)[[UIDevice currentDevice] orientation]];
 }
 

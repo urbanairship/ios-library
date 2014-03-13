@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import "UARichContentWindow.h"
 
+@class UAInboxMessage;
+
 /**
  * This class provides an interface for displaying overlay window over
  * the app's UI without totally obscuring it, which loads a landing
@@ -34,10 +36,16 @@
 @interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate, UARichContentWindow>
 
 /**
- * Create and dsiplays a landing page overlay.
+ * Creates and dsiplays a landing page overlay from a URL.
  * @param url The URL of the landing page to display
  */
 + (void)showURL:(NSURL *)url;
+
+/**
+ * Creates and displays a landing page overlay from a Rich Push message.
+ * @param message The Rich Push message to display.
+ */
++ (void)showMessage:(UAInboxMessage *)message;
 
 /**
  * Closes all currently displayed overlays.
@@ -45,7 +53,5 @@
  */
 
 + (void)closeAll:(BOOL)animated;
-
-- (void)closeWindow:(BOOL)animated;
 
 @end
