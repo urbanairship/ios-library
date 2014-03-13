@@ -97,3 +97,6 @@ UAirship.finishAction = function(err, data, callbackKey) {
     };
 }
 
+var uaLibraryReadyEvent = document.createEvent('Event');
+uaLibraryReadyEvent.initEvent('ualibraryready', true, true);
+document.dispatchEvent(uaLibraryReadyEvent);
