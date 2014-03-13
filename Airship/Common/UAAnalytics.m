@@ -691,7 +691,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         }
 
 
-        UA_LTRACE(@"Analtyics send started.");
+        UA_LTRACE(@"Analytics send started.");
 
         __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
             UA_LTRACE(@"Analytics background task expired.");
