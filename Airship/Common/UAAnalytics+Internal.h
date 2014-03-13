@@ -99,10 +99,6 @@
  */
 @property (nonatomic, assign) NSTimeInterval oldestEventTime;
 
-/**
- * Background identifier for the analytics background task.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier sendBackgroundTask;
 
 /**
  * The UAConfig object containing the configuration values.
@@ -165,13 +161,6 @@
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
 
 /**
- * YES if the app is in the background and there is a valid background task to
- * upload events. NO if analytics is disabled or there are no analytics events
- * to upload.
- */
-- (BOOL)shouldSendAnalytics;
-
-/**
  * Sets the last send time analytics data was sent successfully.
  * @param lastSendTime The time as an NSDate.
  */
@@ -210,12 +199,6 @@
  * Refresh the session when the application becomes active.
  */
 - (void)refreshSessionWhenActive;
-
-/**
- * Invalidate the background task that will be running
- * if the app has been backgrounded after being active.
- */
-- (void)invalidateBackgroundTask;
 
 /**
  * Generate an analytics request with the proper fields

@@ -43,11 +43,6 @@
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 
 /**
- * Background identifier for the analytics background task.
- */
-@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
-
-/**
  * The notification as an NSDictionary.
  */
 @property (nonatomic, strong, readonly) NSDictionary *notificationUserInfo;

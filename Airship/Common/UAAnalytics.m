@@ -52,10 +52,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
     [self.queue cancelAllOperations];
-    
-    
 }
 
 - (id)initWithConfig:(UAConfig *)airshipConfig {
@@ -102,7 +99,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
         
         [self initSession];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
 
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
@@ -224,7 +220,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)enterForeground {
     UA_LTRACE(@"Enter Foreground.");
 
-    [self invalidateBackgroundTask];
     // do not send the foreground event yet, as we are not actually in the foreground
     // (we are merely in the process of foregorunding)
     // set this flag so that the even will be sent as soon as the app is active.
@@ -237,29 +232,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     // add app_background event
     [self addEvent:[UAEventAppBackground eventWithContext:nil]];
     
-    //Set a blank session_id for app_exit events
+    // Set a blank session_id for app_exit events
     [self.session removeAllObjects];
     [self.session setValue:@"" forKey:@"session_id"];
-
     self.notificationUserInfo = nil;
-
-    // Only place where a background task is created
-    self.sendBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-        [self.queue cancelAllOperations];
-        [self invalidateBackgroundTask];
-    }];
-
-    [self send];
 }
 
-- (void)invalidateBackgroundTask {
-    if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
-        UA_LTRACE(@"Ending analytics background task %lu", (unsigned long)self.sendBackgroundTask);
-        
-        [[UIApplication sharedApplication] endBackgroundTask:self.sendBackgroundTask];
-        self.sendBackgroundTask = UIBackgroundTaskInvalid;
-    }
-}
 
 - (void)didBecomeActive {
     UA_LTRACE(@"Application did become active.");
@@ -343,15 +321,21 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];
         }
-        
-        // If the app is in the background without a background task id, then this is a location
-        // event, and we should attempt to send. 
-        UIApplicationState appState = [[UIApplication sharedApplication] applicationState];
-        BOOL isLocation = [event isKindOfClass:[UALocationEvent class]];
-        if (appState == UIApplicationStateActive ||
-            (self.sendBackgroundTask == UIBackgroundTaskInvalid && appState == UIApplicationStateBackground && isLocation)) {
+
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
+            && [event getType] == UALocationEventAnalyticsType) {
+
+            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+
+            if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
+                [self send];
+            } else {
+                UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
+            }
+        } else {
             [self send];
         }
+
     }
 }
 
@@ -449,38 +433,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     return self.databaseSize > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
 }
 
-- (BOOL)shouldSendAnalytics {
-    if (!self.config.analyticsEnabled) {
-        UA_LTRACE("Analytics disabled.");
-        return NO;
-    }
-
-    if (![self hasEventsToSend]) {
-        UA_LTRACE(@"No analytics events to upload.");
-        return NO;
-    }
-    
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
-        // If the app is in the background and there is a valid background task to upload events
-        if (self.sendBackgroundTask != UIBackgroundTaskInvalid) {
-            return YES;
-        } else {
-            // There is no background task, and the app is in the background, it is likely that
-            // this is a location related event and we should only send every 15 minutes
-            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-            return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
-        }
-    }
-    
-    return YES;
-}
-
 - (UAHTTPRequest*)analyticsRequest {
     NSString *urlString = [NSString stringWithFormat:@"%@%@", self.config.analyticsURL, @"/warp9/"];
     UAHTTPRequest *request = [UAHTTPRequest requestWithURLString:urlString];
     request.compressBody = YES;//enable GZIP
     request.HTTPMethod = @"POST";
-    
+
     // Required Items
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
@@ -650,13 +608,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSBlockOperation *)batchOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
 
     NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-
-        //in case the facts on the ground have changed since we last checked
-        if (![self shouldSendAnalytics]) {
-            UA_LTRACE(@"shouldSendAnalytics returned NO, skiping batchOperation");
-            completionBlock();
-        }
-
         NSArray* events = [self prepareEventsForUpload];
 
         //this could indicate a read problem, or simply an empty database
@@ -719,35 +670,60 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.queue addOperation:batchOperation];
 }
 
-//NOTE: this method is intended to be called from the main thread
-- (void)sendEventsWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
+- (void)send {
     UA_LTRACE(@"Attempting to send analytics.");
 
-    if (self.isSending) {
-        UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
-        return;
+    @synchronized(self) {
+
+        if (!self.config.analyticsEnabled) {
+            UA_LTRACE("Analytics disabled.");
+            return;
+        }
+
+        if (![self hasEventsToSend]) {
+            UA_LTRACE(@"No analytics events to upload.");
+            return;
+        }
+
+        if (self.isSending) {
+            UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
+            return;
+        }
+
+
+        UA_LTRACE(@"Analytics send started.");
+
+        __block UIBackgroundTaskIdentifier backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            UA_LTRACE(@"Analytics background task expired.");
+            @synchronized(self) {
+                [self.queue cancelAllOperations];
+                self.isSending = NO;
+                if (backgroundTask != UIBackgroundTaskInvalid) {
+                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }
+            }
+        }];
+
+        if (backgroundTask == UIBackgroundTaskInvalid) {
+            UA_LTRACE("Background task unavailable, skipping analytics");
+            return;
+        }
+
+        self.isSending = YES;
+
+        [self batchAndSendEventsWithCompletionBlock:^{
+            UA_LTRACE(@"Analytics send completed.");
+            @synchronized(self) {
+                self.isSending = NO;
+                if (backgroundTask != UIBackgroundTaskInvalid) {
+                    [[UIApplication sharedApplication] endBackgroundTask:backgroundTask];
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }
+            }
+        }];
     }
 
-    if (![self shouldSendAnalytics]) {
-        UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send.");
-        completionBlock();
-        return;
-    }
-
-    self.isSending = YES;
-
-    [self batchAndSendEventsWithCompletionBlock:completionBlock];
-}
-
-//NOTE: this method is intended to be called from the main thread
-- (void)send {
-    [self sendEventsWithCompletionBlock:^{
-        // Marshall this onto the main queue, in case the block is called in the background 
-        [[NSOperationQueue mainQueue] addOperation:[NSBlockOperation blockOperationWithBlock:^{
-            [self invalidateBackgroundTask];
-            self.isSending = NO;
-        }]];
-    }];
-}
+   }
 
 @end
