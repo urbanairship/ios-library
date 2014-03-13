@@ -23,33 +23,24 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
-
-#define kUAIncomingRichPushActionRegistryName @"_uamid"
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
-#define kUACloseWindowActionRegistryName @"__close_window_action"
-
-@interface UAActionRegistrar ()
+#import "UAActionArguments.h"
 
 /**
- * Map of names to action entries
+ * Custom action arguments for UIWebView invocation.
  */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+@interface UAWebInvocationActionArguments : UAActionArguments
+
+@property(nonatomic, strong) UIWebView *webView;
 
 /**
- * An array of the reserved entry names
+ * Factory constructor for UAWebInvocationActionArguments.
+ *
+ * @param value The value.
+ * @param situation The situation.
+ * @param webView The UIWebView invoking the action.
  */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
-
-
-/**
- * Registers a reserved action.  Reserved actions can not be removed or modified.
- */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
-
-/**
- * Registers default actions.
- */
-- (void)registerDefaultActions;
++ (instancetype) argumentsWithValue:(id)value
+                      withSituation:(UASituation)situation
+                        withWebView:(UIWebView *)webView;
 
 @end

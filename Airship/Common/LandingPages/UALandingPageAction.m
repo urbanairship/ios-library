@@ -84,7 +84,7 @@
         [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
     } else {
         //close any existing windows
-        [UALandingPageOverlayController closeWindow:NO];
+        [UALandingPageOverlayController closeAll:NO];
 
         //load the landing page
         [UALandingPageOverlayController showURL:landingPageURL];

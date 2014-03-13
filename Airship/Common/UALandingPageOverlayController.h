@@ -24,13 +24,14 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "UARichContentWindow.h"
 
 /**
  * This class provides an interface for displaying overlay window over
  * the app's UI without totally obscuring it, which loads a landing
  * page in an embedded UIWebView.
  */
-@interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate>
+@interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate, UARichContentWindow>
 
 /**
  * Create and dsiplays a landing page overlay.
@@ -43,6 +44,8 @@
  * @param animated Indicates whether to animate the close transition.
  */
 
-+ (void)closeWindow:(BOOL)animated;
++ (void)closeAll:(BOOL)animated;
+
+- (void)closeWindow:(BOOL)animated;
 
 @end

@@ -111,7 +111,6 @@
     [self verifyPerformInBackgroundWithValue:@[@"uuid"] expectedUrl:@"https://dl-origin.urbanairship.com/binary/public/app-key/uuid" successful:YES];
 }
 
-
 /**
  * Test perform in background situation when caching fails
  */
@@ -141,7 +140,7 @@
                                      [NSNumber numberWithInteger:UASituationManualInvocation]];
 
     for (NSNumber *situationNumber in foregroundSitutions) {
-        [[self.mockLandingPageOverlayController expect] closeWindow:NO];
+        [[self.mockLandingPageOverlayController expect] closeAll:NO];
 
         [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);

@@ -11,7 +11,7 @@
  this list of conditions and the following disclaimer in the documentation
  and/or other materials provided withthe distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -23,33 +23,20 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
-
-#define kUAIncomingRichPushActionRegistryName @"_uamid"
-#define kUAIncomingPushActionRegistryName @"__incoming_push_action"
-#define kUACloseWindowActionRegistryName @"__close_window_action"
-
-@interface UAActionRegistrar ()
+#import <Foundation/Foundation.h>
 
 /**
- * Map of names to action entries
+ * Protocol for mediating the display of rich content pages
  */
-@property(nonatomic, strong) NSMutableDictionary *registeredActionEntries;
+@protocol UARichContentWindow <NSObject>
+
+@required
 
 /**
- * An array of the reserved entry names
+ * Closes the window.
+ *
+ * @param animated Indicates whether to animate the transition.
  */
-@property(nonatomic, strong) NSMutableArray *reservedEntryNames;
-
-
-/**
- * Registers a reserved action.  Reserved actions can not be removed or modified.
- */
-- (BOOL)registerReservedAction:(UAAction *)action name:(NSString *)name predicate:(UAActionPredicate)predicate;
-
-/**
- * Registers default actions.
- */
-- (void)registerDefaultActions;
+- (void)closeWindow:(BOOL)animated;
 
 @end

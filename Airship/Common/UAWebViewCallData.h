@@ -10,9 +10,10 @@
  * Processes a custom delegate call URL into associated call data.
  *
  * @param url The URL to be processed.
+ * @param webView The UIWebView originating the call
  * @return An instance of UAWebViewCallData.
  */
-+ (UAWebViewCallData *)callDataForURL:(NSURL *)url;
++ (UAWebViewCallData *)callDataForURL:(NSURL *)url webView:(UIWebView *)webView;
 
 /**
  * A name, derived from the host passed in the delegate call URL.
@@ -29,5 +30,10 @@
  * The query options passed in the call.
  */
 @property(nonatomic, strong) NSDictionary *options;
+
+/**
+ * The UIWebView initiating the call;
+ */
+@property(nonatomic, strong) UIWebView *webView;
 
 @end
