@@ -40,7 +40,9 @@
     UIWebView *webView = ((UAWebInvocationActionArguments *)arguments).webView;
     
     if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
-        [(id<UARichContentWindow>)webView.delegate closeWindow:YES];
+        if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
+            [(id<UARichContentWindow>)webView.delegate closeWindow:YES];
+        }
     }
 }
 
