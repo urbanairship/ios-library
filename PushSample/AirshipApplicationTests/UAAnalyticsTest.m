@@ -277,56 +277,98 @@
     [mockAnalytics stopMocking];
 }
 
-- (void)testAddEvent {
-    // Should add an event in the foreground
-    UAEventAppActive *event = [[UAEventAppActive alloc] init];
+
+- (void)testAddEventForeground {
+    // Set up application to be in the foreground
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
     id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
+
+    UAEventAppActive *event = [[UAEventAppActive alloc] init];
+
+    // Expect adding event to add it tot he db and to start sending analytics
     [[mockDBManager expect] addEvent:event withSession:_analytics.session];
-    _analytics.oldestEventTime = 0;
+    [[mockAnalytics expect] send];
+
     [_analytics addEvent:event];
     [mockDBManager verify];
-
-    // Should not send an event in the background when not location event
-    XCTAssertTrue(_analytics.oldestEventTime == [event.time doubleValue]);
-    [[mockDBManager expect] addEvent:event withSession:_analytics.session];
-    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
-    UIApplicationState state = UIApplicationStateBackground;
-    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(state)] applicationState];
-    id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    [[mockAnalytics expect] send];
-    [_analytics addEvent:event];
     [mockAnalytics verify];
-    [mockAnalytics stopMocking];
 
-    // Should send a location event in the background
-    mockAnalytics = [OCMockObject partialMockForObject:_analytics];
-    UALocationEvent *locationEvent = [[UALocationEvent alloc] initWithLocationContext:nil];
-    [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
-    [[mockAnalytics expect] send];
-    [_analytics addEvent:locationEvent];
-    [mockAnalytics verify];
-    [mockDBManager stopMocking];
+    // Clean up mocks
     [mockApplication stopMocking];
     [mockAnalytics stopMocking];
+    [mockDBManager stopMocking];
 }
 
-- (void)testShouldSendAnalytics {
-    _analytics.config.analyticsEnabled = NO;
-    XCTAssertFalse([_analytics shouldSendAnalytics]);
-    _analytics.config.analyticsEnabled = YES;
-    id mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
 
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)0L)] eventCount];
-    XCTAssertFalse([_analytics shouldSendAnalytics]);
-    _analytics.databaseSize = 0;
-    [mockDBManger stopMocking];
+- (void)testAddEventBackground {
+    // Set up application to be in the background
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
 
-    mockDBManger = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
 
-    [[[mockDBManger stub] andReturnValue:OCMOCK_VALUE((NSUInteger)5L)] eventCount];
-    XCTAssertFalse([_analytics shouldSendAnalytics]);
-    [mockDBManger stopMocking];
+    // Verify adding non location events in the background tries to send the events
+    UAEventAppActive *event = [[UAEventAppActive alloc] init];
+
+    // Expect adding event to add it tot he db and to start sending analytics
+    [[mockDBManager expect] addEvent:event withSession:_analytics.session];
+    [[mockAnalytics expect] send];
+
+    [_analytics addEvent:event];
+    [mockDBManager verify];
+    [mockAnalytics verify];
+
+
+    // Clean up mocks
+    [mockApplication stopMocking];
+    [mockAnalytics stopMocking];
+    [mockDBManager stopMocking];
 }
+
+- (void)testAddLocationEventBackground {
+    // Set up application to be in the background
+    id mockApplication = [OCMockObject partialMockForObject:[UIApplication sharedApplication]];
+    [[[mockApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateBackground)] applicationState];
+
+    id mockDBManager = [OCMockObject partialMockForObject:[UAAnalyticsDBManager shared]];
+    id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
+
+    // Verify adding a location event in the background sends if the last send time
+    // was 15 minutes ago.
+    UALocationEvent *locationEvent = [[UALocationEvent alloc] initWithLocationContext:nil];
+    _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
+
+    // Expect adding event to add it tot he db and to start sending analytics
+    [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
+    [[mockAnalytics expect] send];
+
+    [_analytics addEvent:locationEvent];
+    [mockDBManager verify];
+    [mockAnalytics verify];
+
+    // Verify adding a location event in the background does not send when
+    // the last send time was within 15 minutes
+    _analytics.lastSendTime = [NSDate date];
+
+    // Expect adding event to add it tot he db and to start sending analytics
+    [[mockDBManager expect] addEvent:locationEvent withSession:_analytics.session];
+    [[mockAnalytics reject] send];
+
+    [_analytics addEvent:locationEvent];
+    [mockDBManager verify];
+    [mockAnalytics verify];
+
+
+    // Clean up mocks
+    [mockApplication stopMocking];
+    [mockAnalytics stopMocking];
+    [mockDBManager stopMocking];
+}
+
 
 - (void)testSend {
     id mockAnalytics = [OCMockObject partialMockForObject:_analytics];
@@ -334,7 +376,6 @@
     _analytics.queue = mockQueue;
     [[mockQueue expect] addOperation:[OCMArg any]];
 
-    [[[mockAnalytics stub] andReturnValue:OCMOCK_VALUE(YES)] shouldSendAnalytics];
     NSArray* data = [NSArray arrayWithObjects:@"one", @"two", nil];
     [[[mockAnalytics stub] andReturn:data] prepareEventsForUpload];
     [_analytics send];

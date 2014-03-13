@@ -161,13 +161,6 @@
 - (void)updateAnalyticsParametersWithHeaderValues:(NSHTTPURLResponse*)response;
 
 /**
- * YES if the app is in the background and there is a valid background task to
- * upload events. NO if analytics is disabled or there are no analytics events
- * to upload.
- */
-- (BOOL)shouldSendAnalytics;
-
-/**
  * Sets the last send time analytics data was sent successfully.
  * @param lastSendTime The time as an NSDate.
  */

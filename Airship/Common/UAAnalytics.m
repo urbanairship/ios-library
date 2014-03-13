@@ -321,8 +321,21 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];
         }
-        
-        [self send];
+
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
+            && [event getType] == UALocationEventAnalyticsType) {
+
+            NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
+
+            if (timeSinceLastSend >= kMinBackgroundLocationIntervalSeconds) {
+                [self send];
+            } else {
+                UA_LTRACE("Skipping send, background location events batch for 15 minutes.");
+            }
+        } else {
+            [self send];
+        }
+
     }
 }
 
@@ -418,28 +431,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (BOOL)hasEventsToSend {
     return self.databaseSize > 0 && [[UAAnalyticsDBManager shared] eventCount] > 0;
-}
-
-- (BOOL)shouldSendAnalytics {
-    if (!self.config.analyticsEnabled) {
-        UA_LTRACE("Analytics disabled.");
-        return NO;
-    }
-
-    if (![self hasEventsToSend]) {
-        UA_LTRACE(@"No analytics events to upload.");
-        return NO;
-    }
-    
-    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground) {
-        // If the app is in the background and there is a valid background task to upload events
-        // There is no background task, and the app is in the background, it is likely that
-        // this is a location related event and we should only send every 15 minutes
-        NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
-        return timeSinceLastSend > kMinBackgroundLocationIntervalSeconds;
-    }
-
-    return YES;
 }
 
 - (UAHTTPRequest*)analyticsRequest {
@@ -617,13 +608,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (NSBlockOperation *)batchOperationWithCompletionBlock:(UAAnalyticsUploadCompletionBlock)completionBlock {
 
     NSBlockOperation *batchOperation = [NSBlockOperation blockOperationWithBlock:^{
-
-        //in case the facts on the ground have changed since we last checked
-        if (![self shouldSendAnalytics]) {
-            UA_LTRACE(@"shouldSendAnalytics returned NO, skiping batchOperation");
-            completionBlock();
-        }
-
         NSArray* events = [self prepareEventsForUpload];
 
         //this could indicate a read problem, or simply an empty database
@@ -686,18 +670,23 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.queue addOperation:batchOperation];
 }
 
-//NOTE: this method is intended to be called from the main thread
 - (void)send {
     UA_LTRACE(@"Attempting to send analytics.");
 
     @synchronized(self) {
-        if (self.isSending) {
-            UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
+
+        if (!self.config.analyticsEnabled) {
+            UA_LTRACE("Analytics disabled.");
             return;
         }
 
-        if (![self shouldSendAnalytics]) {
-            UA_LTRACE(@"ShouldSendAnalytics returned NO, skipping analytics send.");
+        if (![self hasEventsToSend]) {
+            UA_LTRACE(@"No analytics events to upload.");
+            return;
+        }
+
+        if (self.isSending) {
+            UA_LTRACE(@"Analytics upload in progress, skipping analytics send.");
             return;
         }
 
