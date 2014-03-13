@@ -65,6 +65,7 @@ UADeviceRegistrar *registrar;
     // Set up a mocked application
     self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
 
 
     channelCreateSuccessChannelID = @"newChannelID";
@@ -145,7 +146,6 @@ UADeviceRegistrar *registrar;
     [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
     // Expect a background task to be created and ended
-    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
@@ -170,7 +170,6 @@ UADeviceRegistrar *registrar;
     [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
     // Expect a background task to be created and ended
-    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
     [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
