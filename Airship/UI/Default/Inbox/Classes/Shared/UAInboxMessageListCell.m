@@ -28,54 +28,30 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "UAGlobal.h"
 #import "UADateUtils.h"
 
-
 @implementation UAInboxMessageListCell
 
 
-- (void)setData:(UAInboxMessage*)message {
+- (void)setData:(UAInboxMessage *)message {
 
     self.dateView.text = [UADateUtils formattedDateRelativeToNow:message.messageSent];
 
-    [self.title setText: message.title];
 
-    UIView *strongUnreadIndicator = self.unreadIndicator;
+    self.title.text = message.title;
 
-    if(!message.unread) {
-        strongUnreadIndicator.hidden = YES;
+    UIView *localUnreadIndicator = self.unreadIndicator;
+
+    if (message.unread) {
+        localUnreadIndicator.hidden = NO;
     } else {
-        strongUnreadIndicator.hidden = NO;
+        localUnreadIndicator.hidden = YES;
     }
 }
 
-- (void)layoutSubviews {
-    UILabel *strongDateView = self.dateView;
-    UIImageView *strongCheckmark = self.checkmark;
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
 
-    if(self.editing) {
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-
-        if (self.editingStyle == UITableViewCellEditingStyleNone) {
-            // batch update
-            strongCheckmark.hidden = NO;
-            if (self.selected) {
-                strongCheckmark.image = [UIImage imageNamed:@"check.png"];
-                self.backgroundView = self.selectedEditingBackgroundView;
-            } else {
-                strongCheckmark.image = [UIImage imageNamed:@"uncheck.png"];
-                self.backgroundView = nil;
-            }
-        } else if (self.editingStyle == UITableViewCellEditingStyleDelete) {
-            // swipe deletion
-            strongDateView.hidden = YES;
-        }
-    } else {
-        self.backgroundView = nil;
-        self.selectionStyle = UITableViewCellSelectionStyleBlue;
-        strongCheckmark.hidden = YES;
-        strongDateView.hidden = NO;
-    }
-
-    [super layoutSubviews];
+    // don't let the selection color override the bg color on the unread marker
+    self.unreadIndicator.backgroundColor = [UIColor colorWithRed:0.42f green:0.51f blue:0.63f alpha:1.0f];
 }
 
 @end

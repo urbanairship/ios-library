@@ -26,14 +26,16 @@
 
 #import <UIKit/UIKit.h>
 #import "UAInboxMessageListDelegate.h"
-#import "UABarButtonSegmentedControl.h"
 #import "UABeveledLoadingIndicator.h"
 
 /**
  * This class is a reference implementation of a table view controller drawing from the inbox
  * message list.
  */
-@interface UAInboxMessageListController : UIViewController <UITableViewDelegate, UITableViewDataSource, UAInboxMessageListDelegate>
+@interface UAInboxMessageListController : UIViewController <UITableViewDelegate,
+                                                            UITableViewDataSource,
+                                                            UAInboxMessageListDelegate,
+                                                            UIScrollViewDelegate>
 
 /**
  * Set this property to YES if the class should show alert dialogs in erroneous

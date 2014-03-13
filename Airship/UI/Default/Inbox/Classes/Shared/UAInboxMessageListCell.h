@@ -48,23 +48,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @property (nonatomic, weak) IBOutlet UIView *unreadIndicator;
 
 /**
- * Checkmark image used in batch message selection
+ * The message icon.
  */
-@property (nonatomic, weak) IBOutlet UIImageView *checkmark;
-
-/**
- * Background view used when a cell is selected in editing mode.
- *
- * This needs to be strong because it is removed from the view when not in
- * editing mode and needs to be re-created and added back to the view when in
- * editing mode.
- */
-@property (nonatomic, strong) IBOutlet UIView *selectedEditingBackgroundView;
+@property (nonatomic, weak) IBOutlet UIImageView *listIconView;
 
 /**
  * Set the UAInboxMessage associated with this cell.
  * @param message The associated UAInboxMessage object.
  */
-- (void)setData:(UAInboxMessage*)message;
+- (void)setData:(UAInboxMessage *)message;
 
 @end
