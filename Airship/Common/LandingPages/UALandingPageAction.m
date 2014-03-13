@@ -29,6 +29,8 @@
 #import "UAURLProtocol.h"
 #import "UAHTTPConnection.h"
 #import "UALandingPageOverlayController.h"
+#import "UAirship.h"
+#import "UAConfig.h"
 
 @interface UALandingPageAction()
 @property(nonatomic, strong) UAHTTPConnection *connection;
@@ -51,8 +53,25 @@
     NSURL *landingPageURL;
     if ([arguments.value isKindOfClass:[NSURL class]]) {
         landingPageURL = arguments.value;
-    } else {
+    } else if ([arguments.value isKindOfClass:[NSString class]]) {
         landingPageURL = [NSURL URLWithString:arguments.value];
+    } else {
+        NSArray *urlArray = arguments.value;
+        NSString *urlString;
+
+        if (urlArray.count == 1) {
+            urlString = [NSString stringWithFormat:kUALandingPageContentURL,
+                         KUALandingPageDefaultThirdLevelDomain,
+                         [UAirship shared].config.appKey,
+                         [urlArray objectAtIndex:0]];
+        } else {
+            urlString = [NSString stringWithFormat:kUALandingPageContentURL,
+                         [urlArray objectAtIndex:0],
+                         [UAirship shared].config.appKey,
+                         [urlArray objectAtIndex:1]];
+        }
+
+        landingPageURL = [NSURL URLWithString:urlString];
     }
 
     landingPageURL = [self sanitizedURL:landingPageURL];
@@ -74,12 +93,30 @@
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if (![arguments.value isKindOfClass:[NSString class]] &&
-        ![arguments.value isKindOfClass:[NSURL class]]) {
-        return NO;
+    if ([arguments.value isKindOfClass:[NSString class]] ||
+        [arguments.value isKindOfClass:[NSURL class]]) {
+        return YES;
     }
 
-    return YES;
+    if ([arguments.value isKindOfClass:[NSArray class]]) {
+        NSArray *urlArray = arguments.value;
+
+        if ([urlArray count] != 2 && [urlArray count] != 1) {
+            UA_LDEBUG(@"Landing page url encoded arrays can only contain 1 or 2 string elements.");
+            return NO;
+        }
+
+        for(id element in urlArray) {
+            if (![element isKindOfClass:[NSString class]]) {
+                UA_LDEBUG(@"Landing page url encoded array element is not a string.");
+                return NO;
+            }
+        }
+
+        return YES;
+    }
+
+    return NO;
 }
 
 - (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
