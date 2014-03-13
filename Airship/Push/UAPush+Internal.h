@@ -88,11 +88,6 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 @property (nonatomic, strong) NSDictionary *launchNotification;
 
 /**
- * Background task identifier used to do any registration in the background.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
-
-/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;
@@ -110,25 +105,19 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 - (void)applicationDidEnterBackground;
 
 /**
- * Called when the UADeviceRegistrar finishes any registration call.
- *
- * @param notification The registration notification.
+ * Called when the device registrar failed to register.
  */
-- (void)registrationFinished:(NSNotification *)notification;
+- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when a channel is created.
- *
- * @param channelNotification The channel creation notification.
+ * Called when the device registrar succesfully registered.
  */
-- (void)channelCreated:(NSNotification *)channelNotification;
+- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
- * Called when a current channel had a conflict and a new channel is created.
- *
- * @param channelNotification The channel notification.
+ * Called when the device registrar creates a new channel.
  */
-- (void)channelConflict:(NSNotification *)channelNotification;
+- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation;
 
 /**
  * Register the user defaults for this class. You should not need to call this method

@@ -33,18 +33,6 @@
 
 NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
-NSString * const UAChannelNotificationKey = @"channel_id";
-NSString * const UAChannelLocationNotificationKey = @"channel_location";
-
-NSString * const UAReplacedChannelNotificationKey = @"replaced_channel_id";
-NSString * const UAReplacedChannelLocationNotificationKey = @"replaced_channel_location";
-
-NSString * const UAChannelPayloadNotificationKey = @"channel_payload";
-
-NSString * const UAChannelCreatedNotification = @"com.urbanairship.notification.channel_created";
-NSString * const UAChannelConflictNotification = @"com.urbanairship.notification.channel_conflict";
-NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.notification.registration_finished";
-
 @implementation UADeviceRegistrar
 
 -(id)init {
@@ -54,6 +42,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         self.channelAPIClient = [[UAChannelAPIClient alloc] init];
         self.isUsingChannelRegistration = YES;
         self.isRegistrationInProgress = NO;
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
     }
     return self;
 }
@@ -64,6 +53,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
                    forcefully:(BOOL)forcefully {
 
     UAChannelRegistrationPayload *payloadCopy = [payload copy];
+
     @synchronized(self) {
         if (self.isRegistrationInProgress) {
             UA_LDEBUG(@"Unable to perform registration, one is already in progress.");
@@ -71,6 +61,14 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         }
 
         if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:YES]) {
+
+            [self beginBackgroundTask];
+
+            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                [self failedWithPayload:payload];
+                return;
+            }
 
             self.isRegistrationInProgress = YES;
 
@@ -91,7 +89,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
         } else {
             UA_LDEBUG(@"Ignoring duplicate update request.");
-            [self notifyRegistrationFinishedWithPayload:payloadCopy];
+            [self succeededWithPayload:payload];
         }
     }
 }
@@ -111,6 +109,15 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         }
 
         if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:NO]) {
+
+            [self beginBackgroundTask];
+
+            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                [self failedWithPayload:payload];
+                return;
+            }
+
             self.isRegistrationInProgress = YES;
 
             // Fallback to old device registration
@@ -130,7 +137,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
         } else {
             UA_LDEBUG(@"Ignoring duplicate update request.");
-            [self notifyRegistrationFinishedWithPayload:payloadCopy];
+            [self succeededWithPayload:payload];
         }
     }
 }
@@ -146,7 +153,10 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         if (self.isRegistrationInProgress) {
             self.lastSuccessPayload = nil;
         }
+
         self.isRegistrationInProgress = NO;
+
+        [self endBackgroundTask];
     }
 }
 
@@ -156,7 +166,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
     UAChannelAPIClientUpdateSuccessBlock successBlock = ^{
         UA_LTRACE(@"Channel %@ updated successfully.", channelID);
-        [self succeededWithChannelID:channelID payload:payload];
+        [self succeededWithPayload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -169,13 +179,8 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
         // Conflict with channel id, create a new one
         UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *newChannelID, NSString *newChannelLocation) {
             UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", newChannelID, newChannelLocation);
-
-            [self notifyChannelConflict:channelID
-                        channelLocation:location
-                             newChannel:newChannelID
-                     newChannelLocation:newChannelLocation];
-
-            [self succeededWithChannelID:newChannelID payload:payload];
+            [self channelCreated:newChannelID channelLocation:newChannelLocation];
+            [self succeededWithPayload:payload];
         };
 
         UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -200,8 +205,8 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
     UAChannelAPIClientCreateSuccessBlock successBlock = ^(NSString *channelID, NSString *channelLocation) {
         UA_LTRACE(@"Channel %@ created successfully. Channel location: %@.", channelID, channelLocation);
-        [self notifyChannelCreated:channelID channelLocation:channelLocation];
-        [self succeededWithChannelID:channelID payload:payload];
+        [self channelCreated:channelID channelLocation:channelLocation];
+        [self succeededWithPayload:payload];
     };
 
     UAChannelAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -224,7 +229,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 - (void)unregisterDeviceTokenWithChannelPayload:(UAChannelRegistrationPayload *)payload {
     if (!self.isDeviceTokenRegistered) {
         UA_LDEBUG(@"Device token already unregistered, skipping.");
-        [self notifyRegistrationFinishedWithPayload:payload];
+        [self succeededWithPayload:payload];
         return;
     }
 
@@ -233,14 +238,14 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     // that uses push, the DELETE will fail with a 404.
     if (!payload.pushAddress) {
         UA_LDEBUG(@"Device token is nil, unregistering with Urban Airship not possible. It is likely the app is already unregistered.");
-        [self notifyRegistrationFinishedWithPayload:payload];
+        [self succeededWithPayload:payload];
         return;
     }
 
     UADeviceAPIClientSuccessBlock successBlock = ^{
         UA_LTRACE(@"Device token unregistered with Urban Airship successfully.");
         self.deviceTokenRegistered = NO;
-        [self succeededWithChannelID:nil payload:payload];
+        [self succeededWithPayload:payload];
     };
 
     UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -258,7 +263,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     // If there is no device token, wait for the application delegate to update with one.
     if (!payload.pushAddress) {
         UA_LDEBUG(@"Device token is nil. Registration will be attempted at a later time.");
-        [self notifyRegistrationFinishedWithPayload:payload];
+        [self failedWithPayload:payload];
         return;
     }
 
@@ -268,7 +273,7 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     UADeviceAPIClientSuccessBlock successBlock = ^{
         UA_LDEBUG(@"Device token registered on Urban Airship successfully.");
         self.deviceTokenRegistered = YES;
-        [self succeededWithChannelID:nil payload:payload];
+        [self succeededWithPayload:payload];
     };
 
     UADeviceAPIClientFailureBlock failureBlock = ^(UAHTTPRequest *request) {
@@ -284,28 +289,35 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
 
 - (void)failedWithPayload:(UAChannelRegistrationPayload *)payload {
     @synchronized(self) {
-        self.isRegistrationInProgress = NO;
-    }
+        id strongDelegate = self.delegate;
+        if ([strongDelegate respondsToSelector:@selector(registrationFailedWithPayload:)]) {
+            [strongDelegate registrationFailedWithPayload:payload];
+        }
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
-        [strongDelegate registrationFailed];
+        self.isRegistrationInProgress = NO;
+        [self endBackgroundTask];
     }
-    [self notifyRegistrationFinishedWithPayload:payload];
 }
 
-- (void)succeededWithChannelID:(NSString *)channelID payload:(UAChannelRegistrationPayload *)payload {
+- (void)succeededWithPayload:payload {
     @synchronized(self) {
+        id strongDelegate = self.delegate;
+        if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
+            [strongDelegate registrationSucceededWithPayload:payload];
+        }
+
         self.lastSuccessPayload = payload;
         self.isRegistrationInProgress = NO;
+        [self endBackgroundTask];
+    }
+}
+
+- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
+    id strongDelegate = self.delegate;
+    if ([strongDelegate respondsToSelector:@selector(channelCreated:channelLocation:)]) {
+        [strongDelegate channelCreated:channelID channelLocation:channelLocation];
     }
 
-    id strongDelegate = self.registrationDelegate;
-    if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
-        [strongDelegate registrationSucceededForChannelID:channelID deviceToken:payload.pushAddress];
-    }
-
-    [self notifyRegistrationFinishedWithPayload:payload];
 }
 
 - (BOOL)shouldRegisterPayload:(UAChannelRegistrationPayload *)payload pushEnabled:(BOOL) pushEnabled {
@@ -330,34 +342,20 @@ NSString * const UADeviceRegistrationFinishedNotification = @"com.urbanairship.n
     [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
 }
 
-- (void)notifyRegistrationFinishedWithPayload:(UAChannelRegistrationPayload *)payload {
-    [[NSNotificationCenter defaultCenter] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                        object:nil
-                                                      userInfo:@{UAChannelPayloadNotificationKey: payload}];
+
+- (void)beginBackgroundTask {
+    if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [self cancelAllRequests];
+        }];
+    }
 }
 
-- (void)notifyChannelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
-    NSDictionary *userInfo = @{UAChannelNotificationKey: channelID,
-                               UAChannelLocationNotificationKey: channelLocation};
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelCreatedNotification
-                                                        object:nil
-                                                      userInfo:userInfo];
-}
-
-- (void)notifyChannelConflict:(NSString *)currentChannelID
-        channelLocation:(NSString *)currentChannelLocation
-             newChannel:(NSString *)newChannelID
-     newChannelLocation:(NSString *)newChannelLocation {
-
-    NSDictionary *userInfo = @{UAChannelNotificationKey: newChannelID,
-                               UAChannelLocationNotificationKey: newChannelLocation,
-                               UAReplacedChannelNotificationKey: currentChannelID,
-                               UAReplacedChannelLocationNotificationKey: currentChannelLocation};
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:UAChannelConflictNotification
-                                                        object:nil
-                                                      userInfo:userInfo];
+- (void)endBackgroundTask {
+    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+    }
 }
 
 @end

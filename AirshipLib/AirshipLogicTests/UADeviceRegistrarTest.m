@@ -33,25 +33,21 @@
 #import "UAHTTPRequest+Internal.h"
 
 @interface UADeviceRegistrarTest : XCTestCase
+@property(nonatomic, strong) id mockedApplication;
 @end
 
 @implementation UADeviceRegistrarTest
 
 id mockedDeviceClient;
 id mockedChannelClient;
-id mockedRegistrationDelegate;
-id mockedNSNotificationCenter;
+id mockedRegistrarDelegate;
 
 void (^channelUpdateSuccessDoBlock)(NSInvocation *);
 void (^channelCreateSuccessDoBlock)(NSInvocation *);
 void (^channelUpdateFailureDoBlock)(NSInvocation *);
 void (^channelCreateFailureDoBlock)(NSInvocation *);
 
-
 void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
-void (^deviceRegisterFailureDoBlock)(NSInvocation *);
-void (^deviceUnregisterSuccessDoBlock)(NSInvocation *);
-void (^deviceUnregisterFailureDoBlock)(NSInvocation *);
 
 UAHTTPRequest *deviceFailureRequest;
 UAHTTPRequest *channelFailureRequest;
@@ -66,27 +62,30 @@ UADeviceRegistrar *registrar;
 - (void)setUp {
     [super setUp];
 
+    // Set up a mocked application
+    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+
     channelCreateSuccessChannelID = @"newChannelID";
     channelCreateSuccessChannelLocation = @"newChannelLocation";
 
     mockedDeviceClient = [OCMockObject niceMockForClass:[UADeviceAPIClient class]];
     mockedChannelClient = [OCMockObject niceMockForClass:[UAChannelAPIClient class]];
 
-    mockedRegistrationDelegate = [OCMockObject niceMockForProtocol:@protocol(UARegistrationDelegate)];
+    mockedRegistrarDelegate = [OCMockObject niceMockForProtocol:@protocol(UADeviceRegistrarDelegate)];
 
     registrar = [[UADeviceRegistrar alloc] init];
     registrar.deviceAPIClient = mockedDeviceClient;
     registrar.channelAPIClient = mockedChannelClient;
-    registrar.registrationDelegate = mockedRegistrationDelegate;
+    registrar.delegate = mockedRegistrarDelegate;
 
     payload = [[UAChannelRegistrationPayload alloc] init];
     payload.pushAddress = @"someDeviceToken";
 
     channelFailureRequest = [[UAHTTPRequest alloc] init];
     deviceFailureRequest = [[UAHTTPRequest alloc] init];
-
-    mockedNSNotificationCenter = [OCMockObject niceMockForClass:[NSNotificationCenter class]];
-    [[[mockedNSNotificationCenter stub] andReturn:mockedNSNotificationCenter] defaultCenter];
 
     channelUpdateSuccessDoBlock = ^(NSInvocation *invocation) {
         void *arg;
@@ -122,27 +121,6 @@ UADeviceRegistrar *registrar;
         UADeviceAPIClientSuccessBlock successBlock = (__bridge UADeviceAPIClientSuccessBlock)arg;
         successBlock();
     };
-
-    deviceRegisterFailureDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        UADeviceAPIClientFailureBlock failureBlock = (__bridge UADeviceAPIClientFailureBlock)arg;
-        failureBlock(deviceFailureRequest);
-    };
-
-    deviceUnregisterSuccessDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        UADeviceAPIClientSuccessBlock successBlock = (__bridge UADeviceAPIClientSuccessBlock)arg;
-        successBlock();
-    };
-
-    deviceUnregisterFailureDoBlock = ^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:4];
-        UADeviceAPIClientFailureBlock failureBlock = (__bridge UADeviceAPIClientFailureBlock)arg;
-        failureBlock(deviceFailureRequest);
-    };
 }
 
 
@@ -151,73 +129,63 @@ UADeviceRegistrar *registrar;
     
     [mockedDeviceClient stopMocking];
     [mockedChannelClient stopMocking];
-    [mockedRegistrationDelegate stopMocking];
-    [mockedNSNotificationCenter stopMocking];
+    [mockedRegistrarDelegate stopMocking];
 }
 
 /**
- * Test registerWithChannelID with valid channel ID and the request succeeds.
+ * Test sucessful register with a channel
  */
-- (void)testRegisterWithChannelID {
-
-    //Expect the channel client to update channel and call the update block
+- (void)testRegisterWithChannel {
+    // Expect the channel client to update channel and call the update block
     [[[mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
                                                                         withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                           onSuccess:OCMOCK_ANY
                                                                           onFailure:OCMOCK_ANY];
 
-
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannel" deviceToken:payload.pushAddress];
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
-
+    // Background task should be ended
+    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
+
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be called on success with the channel ID and device token.");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called.");
+    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
-
 /**
- * Test registerWithChannelID with valid channel ID and the request fails.
+ * Test failed register with a channnel
  */
-- (void)testRegisterWithChannelIDFails {
-    //Expect the channel client to update channel and call the update block
+- (void)testRegisterWithChannelFail {
+    // Expect the channel client to update channel and call the update block
     [[[mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
 
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationFailed];
+    [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification object:nil userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
+    // Expect a background task to be created and ended
+    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
+
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
-
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
+    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 /**
- * Test registerWithChannelID with the same payload as the previous successful
- * payload.
+ * Test register with a channel ID with the same payload as the last successful
+ * registration payload.
  */
-- (void)testRegisterWithChannelIDSameAsPreviousSuccessPayload {
-    //Expect the channel client to update channel and call the update block
+- (void)testRegisterWithChannelDuplicate {
+    // Expect the channel client to update channel and call the update block
     [[[mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
@@ -232,9 +200,13 @@ UADeviceRegistrar *registrar;
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
 
+    // Expect the delegate to be called
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
+
     // Run it again forcefully
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:YES];
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering forcefully should not care about previous requests.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called");
 
 
     // Run it normally, it should not call update
@@ -243,60 +215,40 @@ UADeviceRegistrar *registrar;
                                                   onSuccess:OCMOCK_ANY
                                                   onFailure:OCMOCK_ANY];
 
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
+    // Delegate should still be called
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:payload];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on success");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
- * Test registerWithChannelID where a new channel ID is created successfully.
+ * Test register without a channel creates a channel
  */
-- (void)testRegisterNoChannelID {
-    //Expect the channel client to create a channel and call success block
+- (void)testRegisterNoChannel {
+    // Expect the channel client to create a channel and call success block
     [[[mockedChannelClient expect] andDo:channelCreateSuccessDoBlock] createChannelWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
 
-    NSDictionary *expectedUserInfo = @{UAChannelNotificationKey : channelCreateSuccessChannelID,
-                                       UAChannelLocationNotificationKey: channelCreateSuccessChannelLocation};
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
+    [[mockedRegistrarDelegate expect] channelCreated:channelCreateSuccessChannelID channelLocation:channelCreateSuccessChannelLocation];
 
-    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithSelector:@selector(isEqualToDictionary:) onObject:expectedUserInfo]];
-
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
-
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:channelCreateSuccessChannelID
-                                                               deviceToken:payload.pushAddress];
 
     [registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Device should clear any pending requests");
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted for finished registration and creating a channel id.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on success");
 }
 
 /**
- * Test that registering when a pending request is in progress does not make
- * a second request.
+ * Test that registering registering when a request is in progress 
+ * does not attempt to register again
  */
-- (void)testRegisterPendingRequest {
+- (void)testRegisterRequestInProgress {
     // Expect the channel client to create a channel and not call either block so the
     // request stays pending
     [[mockedChannelClient expect] createChannelWithPayload:OCMOCK_ANY
@@ -306,18 +258,11 @@ UADeviceRegistrar *registrar;
     // Make a pending request
     [registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
-
-    // It should wait to call notify of the finished registration until the pending request finishes
-    [[mockedNSNotificationCenter reject] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:OCMOCK_ANY
-                                                     userInfo:OCMOCK_ANY];
-
     // Reject any registration requests
     [[mockedChannelClient reject] updateChannelWithLocation:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[mockedChannelClient reject] createChannelWithPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[mockedDeviceClient reject] registerDeviceToken:OCMOCK_ANY withPayload:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
     [[mockedDeviceClient reject] unregisterDeviceToken:OCMOCK_ANY onSuccess:OCMOCK_ANY onFailure:OCMOCK_ANY];
-
 
     XCTAssertNoThrow([registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO], @"A pending request should ignore any further requests.");
     XCTAssertNoThrow([registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:YES], @"A pending request should ignore any further requests.");
@@ -326,70 +271,52 @@ UADeviceRegistrar *registrar;
 }
 
 /**
- * Test registerPushDisabledWithChannelID with valid channel ID when the
- * request succeeds.
+ * Test a succesful register when push is disabled with a channel
  */
-- (void)testRegisterPushDisabledWithChannelID {
+- (void)testRegisterPushDisabledWithChannel {
     [[[mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
 
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"someChannel" deviceToken:payload.pushAddress];
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on success with the channel and device tokens");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on success");
 }
 
 /**
- * Test registerPushDisabledWithChannelID with valid channel ID when the
- * request fails.
+ * Test a failed register when push is disabled with a channel
  */
-- (void)testRegisterPushDisabledWithChannelIDFails {
+- (void)testRegisterPushDisabledWithChannelFail {
     [[[mockedChannelClient expect] andDo:channelUpdateFailureDoBlock] updateChannelWithLocation:@"someLocation"
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
-
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationFailed];
+    [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
+    // Background task should be ended
+    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
+    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 
 /**
- * Test registerPushDisabledWithChannelID with the same payload as the
+ * Test register push disabled with the same payload as the
  * previous successful payload.
  */
-- (void)testRegisterPushDisabledWithChannelIDSameAsPreviousSuccessPayload {
-
-    //Expect the channel client to update channel and call the update block
+- (void)testRegisterPushDisabledWithChannelDuplicate {
+    // Expect the channel client to update channel and call the update block
     [[[mockedChannelClient expect] andDo:channelUpdateSuccessDoBlock] updateChannelWithLocation:@"someLocation"
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
@@ -403,6 +330,9 @@ UADeviceRegistrar *registrar;
                                                                                     withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
                                                                                       onSuccess:OCMOCK_ANY
                                                                                       onFailure:OCMOCK_ANY];
+
+
+
 
     // Run it again forcefully
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:YES];
@@ -415,55 +345,32 @@ UADeviceRegistrar *registrar;
                                                   onSuccess:OCMOCK_ANY
                                                   onFailure:OCMOCK_ANY];
 
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering with a payload that is already registered should skip.");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted on registration finish.");
 }
 
 /**
- * Test registerPushDisabledWithChannelID without a channel id
- * tries to create a channel.
+ * Test that register push disabeld without a channel attempts to create a channel
  */
 - (void)testRegisterPushDisabledNoChannelID {
-    //Expect the channel client to create a channel and call success block
+    // Expect the channel client to create a channel and call success block
     [[[mockedChannelClient expect] andDo:channelCreateSuccessDoBlock] createChannelWithPayload:OCMOCK_ANY
                                                                                      onSuccess:OCMOCK_ANY
                                                                                      onFailure:OCMOCK_ANY];
 
 
-    NSDictionary *expectedUserInfo = @{UAChannelNotificationKey : channelCreateSuccessChannelID,
-                                       UAChannelLocationNotificationKey: channelCreateSuccessChannelLocation};
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelCreatedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithSelector:@selector(isEqualToDictionary:) onObject:expectedUserInfo]];
-
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"newChannelID"
-                                                               deviceToken:payload.pushAddress];
-
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
-
+    // Background task should be ended
+    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerPushDisabledWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted for finished registration and creating a channel id.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registration delegate should be notified of the successful registration");
+    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 /**
@@ -488,14 +395,13 @@ UADeviceRegistrar *registrar;
                                                                                 onSuccess:OCMOCK_ANY
                                                                                 onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:nil
-                                                               deviceToken:payload.pushAddress];
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
     [registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Device client should be called to register the device token");
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should attempt to create a channel id");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registration delegate should be notified of the successful registration");
     XCTAssertFalse(registrar.isUsingChannelRegistration, @"Failing to create a channel with a 501 should fallback to device token registration");
 
     // Reject any more unregister calls
@@ -513,8 +419,7 @@ UADeviceRegistrar *registrar;
 }
 
 /**
- * Test that registering with a nil channel id first tries to create a channel
- * and falls back to registering the device token.
+ * Test device fallback when trying to register push disabled.
  */
 - (void)testRegisterPushDisabledNoChannelFallback {
     payload.pushAddress = @"some-device-token";
@@ -534,14 +439,13 @@ UADeviceRegistrar *registrar;
                                                                                 onSuccess:OCMOCK_ANY
                                                                                 onFailure:OCMOCK_ANY];
 
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:nil
-                                                               deviceToken:payload.pushAddress];
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
     [registrar registerWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Device client should be called to register the device token");
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should attempt to create a channel id");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the successful registration");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on success");
     XCTAssertFalse(registrar.isUsingChannelRegistration, @"Failing to create a channel with a 501 should fallback to device token registration");
 
     // Reject any more unregister calls
@@ -584,7 +488,7 @@ UADeviceRegistrar *registrar;
 
 /**
  * Test that a channel update with a 409 status tries to 
- * create a new channel id and sends a ChannelConflict notification.
+ * create a new channel id.
  */
 - (void)testChannelConflictNewChannel {
     channelFailureRequest.response = [[NSHTTPURLResponse alloc] initWithURL:nil statusCode:409 HTTPVersion:nil headerFields:nil];
@@ -602,35 +506,14 @@ UADeviceRegistrar *registrar;
                                                                                      onFailure:OCMOCK_ANY];
 
 
-
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationSucceededForChannelID:@"newChannel" deviceToken:OCMOCK_ANY];
+    [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
+    [[mockedRegistrarDelegate expect] channelCreated:@"newChannel" channelLocation:channelCreateSuccessChannelLocation];
 
-
-    // Expected notification user info
-    NSDictionary *userInfo =  @{UAChannelNotificationKey: @"newChannel",
-                                UAChannelLocationNotificationKey:@"newChannelLocation",
-                                UAReplacedChannelNotificationKey:@"someChannel",
-                                UAReplacedChannelLocationNotificationKey:@"someLocation"};
-
-
-    [[mockedNSNotificationCenter expect] postNotificationName:UAChannelConflictNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithSelector:@selector(isEqualToDictionary:) onObject:userInfo]];
-
-
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Conflict with the channel id should create a new channel");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be called with the new channel");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"A notification should be posted about the conflict and registration finishing.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registration delegate should be called with the new channel");
 }
 
 /**
@@ -652,26 +535,42 @@ UADeviceRegistrar *registrar;
                                                                                      onFailure:OCMOCK_ANY];
 
     // Expect the delegate to be called
-    [[mockedRegistrationDelegate expect] registrationFailed];
+    [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
 
-    // Reject a conflict notification
-    [[mockedNSNotificationCenter reject] postNotificationName:UAChannelConflictNotification
-                                                       object:nil
-                                                     userInfo:OCMOCK_ANY];
-
-    // Check that the finished registration notification is still called with the payload
-    BOOL (^checkUserInfoBlock)(id obj) =  ^(id obj){
-        return (BOOL) [[obj valueForKey:UAChannelPayloadNotificationKey] isEqualToPayload:payload];
-    };
-    [[mockedNSNotificationCenter expect] postNotificationName:UADeviceRegistrationFinishedNotification
-                                                       object:nil
-                                                     userInfo:[OCMArg checkWithBlock:checkUserInfoBlock]];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedChannelClient verify], @"Conflict with the channel id should try to create a new channel");
-    XCTAssertNoThrow([mockedRegistrationDelegate verify], @"Registration delegate should be notified of the registration failure.");
-    XCTAssertNoThrow([mockedNSNotificationCenter verify], @"Only a notification should be posted about the device registration finishing.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
+
+/**
+ * Test that when a background task is unable to be created registration is aborted.f
+ */
+- (void)testRegisterBackgroundTaskInvalid {
+    [self.mockedApplication stopMocking];
+
+    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
+
+    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
+
+    // Reject the channel client to update channel and call the update block
+    [[mockedChannelClient reject] updateChannelWithLocation:@"someLocation"
+                                                 withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
+                                                   onSuccess:OCMOCK_ANY
+                                                   onFailure:OCMOCK_ANY];
+
+
+    // Expect the delegate to be called
+    [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
+
+    [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:YES];
+
+    XCTAssertNoThrow([mockedChannelClient verify], @"Should not register when an invalid background task ID is returned.");
+    XCTAssertNoThrow([self.mockedApplication verify], @"Should request a background task.");
+    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
+}
+
 
 @end

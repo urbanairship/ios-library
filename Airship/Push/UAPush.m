@@ -95,34 +95,21 @@ static Class _uiClass;
                                                  selector:@selector(applicationDidBecomeActive) 
                                                      name:UIApplicationDidBecomeActiveNotification 
                                                    object:[UIApplication sharedApplication]];
+
         // Only for observing the first call to app background
-        [[NSNotificationCenter defaultCenter] addObserver:self 
+        [[NSNotificationCenter defaultCenter] addObserver:self
                                               selector:@selector(applicationDidEnterBackground) 
                                                   name:UIApplicationDidEnterBackgroundNotification 
                                                 object:[UIApplication sharedApplication]];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelCreated:)
-                                                     name:UAChannelCreatedNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(channelConflict:)
-                                                     name:UAChannelConflictNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(registrationFinished:)
-                                                     name:UADeviceRegistrationFinishedNotification
-                                                   object:nil];
 
         self.deviceRegistrar = [[UADeviceRegistrar alloc] init];
+        self.deviceRegistrar.delegate = self;
+
         self.deviceTagsEnabled = YES;
         self.notificationTypes = (UIRemoteNotificationTypeAlert
                                   |UIRemoteNotificationTypeBadge
                                   |UIRemoteNotificationTypeSound);
-
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
 
         // Log the channel ID at error level, but without logging
         // it as an error.
@@ -172,14 +159,6 @@ static Class _uiClass;
 
 #pragma mark -
 #pragma mark Get/Set Methods
-
-- (id<UARegistrationDelegate>)registrationDelegate {
-    return self.deviceRegistrar.registrationDelegate;
-}
-
-- (void)setRegistrationDelegate:(id<UARegistrationDelegate>)registrationDelegate {
-    self.deviceRegistrar.registrationDelegate = registrationDelegate;
-}
 
 - (void)setChannelID:(NSString *)channelID {
     [[NSUserDefaults standardUserDefaults] setValue:channelID forKey:UAPushChannelIDKey];
@@ -561,15 +540,8 @@ BOOL deferChannelCreationOnForeground = false;
                                                     name:UIApplicationDidEnterBackgroundNotification 
                                                   object:[UIApplication sharedApplication]];
 
-    BOOL shouldCreateChannelId = (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration);
-
-    if (shouldCreateChannelId || self.deviceRegistrar.isRegistrationInProgress) {
-        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self.deviceRegistrar cancelAllRequests];
-        }];
-    }
-
-    if (shouldCreateChannelId) {
+    // Create a channel if we do not have a channel id and we are using channel registration
+    if (!self.channelID && self.deviceRegistrar.isUsingChannelRegistration) {
         [self updateRegistrationForcefully:NO];
     }
 }
@@ -666,58 +638,39 @@ BOOL deferChannelCreationOnForeground = false;
     }
 }
 
-- (void)channelCreated:(NSNotification *)channelNotification {
-    self.channelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
-    self.channelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
-}
-
-- (void)channelConflict:(NSNotification *)channelNotification {
-    NSString *newChannelID = [channelNotification.userInfo valueForKey:UAChannelNotificationKey];
-    NSString *newChannelLocation = [channelNotification.userInfo valueForKey:UAChannelLocationNotificationKey];
-    NSString *currentChannelID = [channelNotification.userInfo valueForKey:UAReplacedChannelNotificationKey];
-
-    UA_LTRACE(@"Channel conflict with %@, new channel: %@", currentChannelID, newChannelID);
-    self.channelID = newChannelID;
-    self.channelLocation = newChannelLocation;
-}
-
-- (void)registrationFinished:(NSNotification *)notification {
-    // Dispatch on the main queue so we dont have a race condition with
-    // creating and invalidating the background task
-    [self dispatchBlockToMainIfNecessary:^{
-        // Finish the background task if we have one
-        if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
-            [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
-            self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-            return;
-        }
-
-        UAChannelRegistrationPayload *payload = [self createChannelPayload];
-        UAChannelRegistrationPayload *notificationPayload = [[notification userInfo]objectForKey:UAChannelPayloadNotificationKey];
-
+- (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
+    // If we are in the background do not allow any other registrations to take place
+    if ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground) {
         // Register again if we are using old registration, and we have a deviceToken, and if the
         // device token does not match if push is enabled.
         //
         // TODO: remove this check once we remove device token registration
         if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
             [self updateRegistrationForcefully:NO];
-            return;
-        }
-
-        // If the payload does not match the current payload, register
-        //
-        // TODO: Move this to device registrar once we remove device token registration
-        if (![notificationPayload isEqualToPayload:payload]) {
+        } else if (![payload isEqualToPayload:[self createChannelPayload]]) {
             [self updateRegistrationForcefully:NO];
         }
-    }];
+    }
+
+    id strongDelegate = self.registrationDelegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
+        [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
+    }
 }
 
--(void) dispatchBlockToMainIfNecessary:(void (^)())block {
-    if (![[NSThread currentThread] isEqual:[NSThread mainThread]]) {
-        dispatch_async(dispatch_get_main_queue(), block);
-    } else {
-        block();
+- (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload {
+    id strongDelegate = self.registrationDelegate;
+    if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
+        [strongDelegate registrationFailed];
+    }
+}
+
+- (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
+    self.channelID = channelID;
+    self.channelLocation = channelLocation;
+
+    if (uaLogLevel >= UALogLevelError) {
+        NSLog(@"Channel ID: %@", self.channelID);
     }
 }
 
