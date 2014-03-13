@@ -64,6 +64,12 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
             [self beginBackgroundTask];
 
+            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                [self failedWithPayload:payload];
+                return;
+            }
+
             self.isRegistrationInProgress = YES;
 
             // Fallback to old device registration
@@ -103,6 +109,15 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         }
 
         if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:NO]) {
+
+            [self beginBackgroundTask];
+
+            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+                [self failedWithPayload:payload];
+                return;
+            }
+
             self.isRegistrationInProgress = YES;
 
             // Fallback to old device registration
