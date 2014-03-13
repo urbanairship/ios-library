@@ -30,6 +30,8 @@
  */
 @protocol UARichContentWindow <NSObject>
 
+@required
+
 /**
  * Closes the window.
  *
