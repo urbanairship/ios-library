@@ -37,6 +37,7 @@
  *
  * @param callbackID A callback identifier generated in the JS layer. This can be nil.
  * @param options The options passed in the JS delegate call.
+ * @param webView The UIWebView originating the delegate call
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionWithCallbackID:(NSString *)callbackID
@@ -131,6 +132,7 @@
  * used from JavaScript, but can be used entirely through URL loading as well.
  *
  * @param options The options passed in the JS delegate call.
+ * @param webView The UIWebView originating the delegate call
  * @param completionHandler The completion handler passed in the JS delegate call.
  */
 - (void)runActionsWithOptions:(NSDictionary *)options
@@ -181,6 +183,7 @@
  * be passed in the query options, in which case they will all be run at once.
  *
  * @param options The options passed in the JS delegate callback.
+ * @param webView The UIWebView originating the delegate call
  * @param completionHandler The completion handler passed in the JS delegate callback.
  */
 - (void)runBasicActionsWithOptions:(NSDictionary *)options
