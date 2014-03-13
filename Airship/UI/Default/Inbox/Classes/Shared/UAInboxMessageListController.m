@@ -221,7 +221,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListWillUpdateNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UAInboxMessageListUpdatedNotification object:nil];
 
-    // NOTE: This is next bit is optional. You may want to clear the cache when the view disappears, though you can also
+    // NOTE: This next bit is optional. You may want to clear the cache when the view disappears, though you can also
     // just clear the cache on low memory warning (as implemented)
 
     // [self.iconCache removeAllObjects]; // Remove all the objects - they can be repopulated from the URL cache
