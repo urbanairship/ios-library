@@ -292,7 +292,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
     }];
 
     // Register external URL action under the deep link action name/alias
-    [self registerAction:urlAction
+    UAOpenExternalURLAction *deepLinkAction = [[UAOpenExternalURLAction alloc] init];
+    [self registerAction:deepLinkAction
                    names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
                predicate:urlPredicate];
 }
