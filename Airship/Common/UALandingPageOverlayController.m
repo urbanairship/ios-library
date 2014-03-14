@@ -366,7 +366,7 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
 
-    // Only retry if the the page is temporarliy unreachable due to recoverable conditions
+    // Only retry if the page is temporarily unreachable due to recoverable conditions
     NSSet *retryConditions = [NSSet setWithObjects:
                               @(NSURLErrorTimedOut),
                               @(NSURLErrorCannotFindHost),
@@ -375,7 +375,7 @@ static NSMutableSet *overlayControllers = nil;
                               @(NSURLErrorDNSLookupFailed),
                               @(NSURLErrorNotConnectedToInternet), nil];
 
-    if([retryConditions containsObject:@(error.code)]) {
+    if ([retryConditions containsObject:@(error.code)]) {
         __typeof(self) __weak weakSelf = self;
 
         // Wait twenty seconds, try again if necessary
