@@ -292,8 +292,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
                    return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 
-    UADeepLinkAction *deepLinkAction = [[UADeepLinkAction alloc] init];
-    [self registerAction:deepLinkAction
+    // Register external URL action under the deep link action name/alias
+    [self registerAction:urlAction
                    names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
                predicate:urlPredicate];
 }
