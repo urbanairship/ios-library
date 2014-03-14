@@ -98,7 +98,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * Creates a UAActionResult with the supplied value. The `fetchResult` and `error` properties
  * default to UAActionFetchResultNone and nil, respectively.
  *
- * @param An id typed value object.
+ * @param value An id typed value object.
  * @return An instance of UAActionResult.
  */
 + (instancetype)resultWithValue:(id)value;
@@ -107,8 +107,8 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * Creates a UAActionResult with the supplied value and fetch result. The `error` property
  * defaults to nil.
  *
- * @param An id typed value object.
- * @param A UAActionFetchResult enum value.
+ * @param result An id typed value object.
+ * @param fetchResult A UAActionFetchResult enum value.
  * @return An instance of UAActionResult.
  */
 + (instancetype)resultWithValue:(id)result withFetchResult:(UAActionFetchResult)fetchResult;
@@ -124,7 +124,7 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * nil and UAActionFetchResultNone, respectively. The `error` property
  * is set to the supplied argument.
  *
- * @param An instance of NSError.
+ * @param error An instance of NSError.
  */
 + (instancetype)resultWithError:(NSError *)error;
 
@@ -132,8 +132,8 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * Creates a UAActionResult with the value set to nil. The `error`
  * and `fetchResult` properties are set to the supplied arguments.
  *
- * @param An instance of NSError.
- * @param A UAActionFetchResult enum value;
+ * @param error An instance of NSError.
+ * @param fetchResult A UAActionFetchResult enum value;
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
 

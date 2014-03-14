@@ -26,6 +26,9 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 
+/**
+ * An entry in the UAActionRegistrar.
+ */
 @interface UAActionRegistryEntry : NSObject
 
 /**
@@ -47,7 +50,7 @@
 /**
  * Returns the action for the situation, or the default action if
  * there are no situation overrides.
- *
+ * @param situation The specified UASituation enum value
  * @return UAAction for the situation.
  */
 - (UAAction *)actionForSituation:(UASituation)situation;

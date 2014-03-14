@@ -326,6 +326,7 @@ static NSMutableSet *overlayControllers = nil;
 
 /**
  * Removes all views from the hierarchy and releases self, animated if desired.
+ * @param animated `YES` to animate the transition, otherwise `NO`
  */
 - (void)finish:(BOOL)animated {
 

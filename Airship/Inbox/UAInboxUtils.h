@@ -43,7 +43,7 @@
  * Retrieves a rich push message ID from an NSArray containing the ID
  * or if the value is the ID.
  *
- * @param richPushValue The value of the rich push id from a notification.
+ * @param richPushValues The value of the rich push id from a notification.
  * @return a rich push message ID if found, nil otherwise
  */
 + (NSString *)getRichPushMessageIDFromValue:(id)richPushValues;

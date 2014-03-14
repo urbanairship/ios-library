@@ -26,6 +26,9 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * The UAApplicationMetrics class keeps track of application related information.
+ */
 @interface UAApplicationMetrics : NSObject
 
 /**

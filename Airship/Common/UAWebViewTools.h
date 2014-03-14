@@ -27,6 +27,9 @@
 
 @class UAWebViewCallData;
 
+/**
+ * The UAWebViewTools provides an interface for the webview utility methods.
+ */
 @interface UAWebViewTools : NSObject
 
 /**
