@@ -20,7 +20,6 @@
 		1F57821B14182289003FA039 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821214182289003FA039 /* UAInboxMessageListController.m */; };
 		1F57821C14182289003FA039 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821414182289003FA039 /* UAInboxMessageViewController.m */; };
 		1F57821D14182289003FA039 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821614182289003FA039 /* UAInboxNavUI.m */; };
-		1F57821E14182289003FA039 /* UAInboxOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821814182289003FA039 /* UAInboxOverlayController.m */; };
 		1F57824A141823FB003FA039 /* overlayCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F578248141823FB003FA039 /* overlayCloseBtn.png */; };
 		1F57824B141823FB003FA039 /* overlayCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F578249141823FB003FA039 /* overlayCloseBtn@2x.png */; };
 		1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B12313BD1D8C002CA606 /* libz.dylib */; };
@@ -60,8 +59,7 @@
 		1FE0B7DE17E27BA800856C60 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821214182289003FA039 /* UAInboxMessageListController.m */; };
 		1FE0B7DF17E27BA800856C60 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821414182289003FA039 /* UAInboxMessageViewController.m */; };
 		1FE0B7E017E27BA800856C60 /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821614182289003FA039 /* UAInboxNavUI.m */; };
-		1FE0B7E117E27BA800856C60 /* UAInboxOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57821814182289003FA039 /* UAInboxOverlayController.m */; };
-		1FE0B7E217E27BA800856C60 /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
+		1FE0B7E217E27BA800856C60 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		1FE0B7E417E27BA800856C60 /* UADateUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54E0231772555F0037A20E /* UADateUtils.m */; };
 		1FE0B7E717E27BA800856C60 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		1FE0B7E817E27BA800856C60 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B12313BD1D8C002CA606 /* libz.dylib */; };
@@ -80,7 +78,7 @@
 		1FE423A51893262600624335 /* list-image-placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE423A21893262600624335 /* list-image-placeholder.png */; };
 		1FE423A61893262600624335 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE423A31893262600624335 /* list-image-placeholder@2x.png */; };
 		1FE423A71893262600624335 /* list-image-placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FE423A31893262600624335 /* list-image-placeholder@2x.png */; };
-		4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 4977C18C141ECF31009263FA /* UABeveledLoadingIndicator.m */; };
+		4977C18D141ECF31009263FA /* (null) in Sources */ = {isa = PBXBuildFile; };
 		49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49E001AF154F6535009305B7 /* CoreLocation.framework */; };
 		636CB20F128CF6FC00481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D27C1CA1165E9440086F66D /* libsqlite3.dylib */; };
 		63C51F0211D30F730078DED4 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D5F511011744AF5004AE48F /* MobileCoreServices.framework */; };
@@ -143,8 +141,6 @@
 		1F57821414182289003FA039 /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
 		1F57821514182289003FA039 /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
 		1F57821614182289003FA039 /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
-		1F57821714182289003FA039 /* UAInboxOverlayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxOverlayController.h; sourceTree = "<group>"; };
-		1F57821814182289003FA039 /* UAInboxOverlayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxOverlayController.m; sourceTree = "<group>"; };
 		1F578248141823FB003FA039 /* overlayCloseBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlayCloseBtn.png; sourceTree = "<group>"; };
 		1F578249141823FB003FA039 /* overlayCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "overlayCloseBtn@2x.png"; sourceTree = "<group>"; };
 		1F69B12313BD1D8C002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -193,7 +189,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FE0B85717E8D7D800856C60 /* libUAirship-3.2.0.a in Frameworks */,
+				1FE0B85717E8D7D800856C60 /* libUAirship-3.1.1.a in Frameworks */,
 				49E001B0154F6535009305B7 /* CoreLocation.framework in Frameworks */,
 				1F69B12413BD1D8C002CA606 /* libz.dylib in Frameworks */,
 				9A50FAE90FCA81810007E1BE /* CFNetwork.framework in Frameworks */,
@@ -212,7 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a in Frameworks */,
+				1FE0B85617E8D7AE00856C60 /* libUAirship-iOS5-3.1.1.a in Frameworks */,
 				1FE0B7E717E27BA800856C60 /* CoreLocation.framework in Frameworks */,
 				1FE0B7E817E27BA800856C60 /* libz.dylib in Frameworks */,
 				1FE0B7E917E27BA800856C60 /* CFNetwork.framework in Frameworks */,
@@ -241,8 +237,8 @@
 		184E3F3A129E4C0D004465C8 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				1FE0B7F817E27C1D00856C60 /* libUAirship-3.2.0.a */,
-				1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.2.0.a */,
+				1FE0B7F817E27C1D00856C60 /* libUAirship-3.1.1.a */,
+				1FE0B85517E8D7AE00856C60 /* libUAirship-iOS5-3.1.1.a */,
 			);
 			name = Support;
 			sourceTree = "<group>";
@@ -421,8 +417,6 @@
 		E9CB364612B89BA5002E39EA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				766F8ADB179CF55B00F09E7A /* UIWebView+UAAdditions.h */,
-				766F8ADC179CF55B00F09E7A /* UIWebView+UAAdditions.m */,
 				1F54E0221772555F0037A20E /* UADateUtils.h */,
 				1F54E0231772555F0037A20E /* UADateUtils.m */,
 				1F57821114182289003FA039 /* UAInboxMessageListController.h */,
@@ -431,8 +425,6 @@
 				1F57821414182289003FA039 /* UAInboxMessageViewController.m */,
 				1F57821514182289003FA039 /* UAInboxNavUI.h */,
 				1F57821614182289003FA039 /* UAInboxNavUI.m */,
-				1F57821714182289003FA039 /* UAInboxOverlayController.h */,
-				1F57821814182289003FA039 /* UAInboxOverlayController.m */,
 				D5624D6712C2E68400A962EE /* UAInboxAlertHandler.h */,
 				D5624D6812C2E68400A962EE /* UAInboxAlertHandler.m */,
 				D56858E512C1924800BBF31A /* UAInboxUI.h */,
@@ -660,8 +652,7 @@
 				1F57821B14182289003FA039 /* UAInboxMessageListController.m in Sources */,
 				1F57821C14182289003FA039 /* UAInboxMessageViewController.m in Sources */,
 				1F57821D14182289003FA039 /* UAInboxNavUI.m in Sources */,
-				1F57821E14182289003FA039 /* UAInboxOverlayController.m in Sources */,
-				4977C18D141ECF31009263FA /* UABeveledLoadingIndicator.m in Sources */,
+				4977C18D141ECF31009263FA /* (null) in Sources */,
 				1F54E0251772555F0037A20E /* UADateUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -679,8 +670,7 @@
 				1FE0B7DE17E27BA800856C60 /* UAInboxMessageListController.m in Sources */,
 				1FE0B7DF17E27BA800856C60 /* UAInboxMessageViewController.m in Sources */,
 				1FE0B7E017E27BA800856C60 /* UAInboxNavUI.m in Sources */,
-				1FE0B7E117E27BA800856C60 /* UAInboxOverlayController.m in Sources */,
-				1FE0B7E217E27BA800856C60 /* UABeveledLoadingIndicator.m in Sources */,
+				1FE0B7E217E27BA800856C60 /* (null) in Sources */,
 				1FE0B7E417E27BA800856C60 /* UADateUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
