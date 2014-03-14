@@ -1,4 +1,4 @@
-var callbackID = 0;
+UAirship.callbackID = 0;
 
 UAirship.delegateCallURL = function() {
     if (!arguments.length) {
@@ -62,8 +62,8 @@ UAirship.invoke = function(url) {
 UAirship.runAction = function(actionName, argument, callback) {
     var opt = {};
 
-    callbackID++;
-    var callbackKey = 'ua-cb-' + (callbackID);
+    UAirship.callbackID++;
+    var callbackKey = 'ua-cb-' + (UAirship.callbackID);
 
     opt[actionName] = JSON.stringify(argument);
 
@@ -101,6 +101,3 @@ UAirship.close = function() {
     UAirship.runAction('__close_window_action', null, null);
 }
 
-var uaLibraryReadyEvent = document.createEvent('Event');
-uaLibraryReadyEvent.initEvent('ualibraryready', true, true);
-document.dispatchEvent(uaLibraryReadyEvent);
