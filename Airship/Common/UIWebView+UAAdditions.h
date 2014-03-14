@@ -30,6 +30,7 @@
 
 - (void)populateJavascriptEnvironment:(UAInboxMessage *)message;
 - (void)populateJavascriptEnvironment;
+- (void)fireUALibraryReadyEvent;
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation;
 
 @end

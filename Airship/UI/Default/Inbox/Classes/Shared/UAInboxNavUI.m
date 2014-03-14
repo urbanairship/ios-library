@@ -26,8 +26,6 @@
 #import "UAInboxNavUI.h"
 #import "UAInboxMessageListController.h"
 #import "UAInboxMessageViewController.h"
-#import "UAInboxOverlayController.h"
-
 #import "UAInboxMessageList.h"
 #import "UAInboxPushHandler.h"
 

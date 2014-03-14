@@ -193,6 +193,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if(self.message.unread) {
         [self.message markAsReadWithDelegate:nil];
     }
+
+    [self.webView fireUALibraryReadyEvent];
 }
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {

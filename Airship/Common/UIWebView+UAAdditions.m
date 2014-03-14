@@ -118,6 +118,14 @@
     [self populateJavascriptEnvironment:nil];
 }
 
+- (void)fireUALibraryReadyEvent {
+    NSString *js = @"var uaLibraryReadyEvent = document.createEvent('Event');\
+    uaLibraryReadyEvent.initEvent('ualibraryready', true, true); \
+    document.dispatchEvent(uaLibraryReadyEvent);";
+
+    [self stringByEvaluatingJavaScriptFromString:js];
+}
+
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
 
     switch (toInterfaceOrientation) {
