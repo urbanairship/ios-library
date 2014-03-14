@@ -1,4 +1,4 @@
-var UAirship.callbackID = 0;
+UAirship.callbackID = 0;
 
 UAirship.delegateCallURL = function() {
     if (!arguments.length) {
