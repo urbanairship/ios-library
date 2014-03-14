@@ -231,10 +231,6 @@ static NSMutableSet *overlayControllers = nil;
     [self.webView addSubview:self.loadingIndicator];
     self.loadingIndicator.center = CGPointMake(CGRectGetWidth(self.webView.frame)/2.0, CGRectGetHeight(self.webView.frame)/2.0);
 
-    if (self.webView.isLoading) {
-        [self.loadingIndicator show];
-    }
-
     // Add the close button
     UABespokeCloseView *closeButtonView = [[UABespokeCloseView alloc] initWithFrame:CGRectMake(0.0, 0.0, 35.0, 35.0)];
 
@@ -277,6 +273,8 @@ static NSMutableSet *overlayControllers = nil;
     [self.webView stopLoading];
     [self.webView loadRequest:requestObj];
     [self showOverlay];
+
+    [self.loadingIndicator show];
 }
 
 - (void)showOverlay {
@@ -368,13 +366,32 @@ static NSMutableSet *overlayControllers = nil;
 
 - (void)webView:(UIWebView *)wv didFailLoadWithError:(NSError *)error {
 
-    [self.loadingIndicator hide];
+    // Only retry if the page is temporarily unreachable due to recoverable conditions
+    NSSet *retryConditions = [NSSet setWithObjects:
+                              @(NSURLErrorTimedOut),
+                              @(NSURLErrorCannotFindHost),
+                              @(NSURLErrorCannotConnectToHost),
+                              @(NSURLErrorNetworkConnectionLost),
+                              @(NSURLErrorDNSLookupFailed),
+                              @(NSURLErrorNotConnectedToInternet), nil];
 
-    if (error.code == NSURLErrorCancelled) {
-        return;
+    if ([retryConditions containsObject:@(error.code)]) {
+        __typeof(self) __weak weakSelf = self;
+
+        // Wait twenty seconds, try again if necessary
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+            __typeof(self) __strong strongSelf = weakSelf;
+            if (strongSelf) {
+                UA_LINFO(@"Retrying landing page url: %@", strongSelf.url);
+                [strongSelf load];
+            }
+        });
+    } else {
+        [self.loadingIndicator hide];
+        if (error.code != NSURLErrorCancelled) {
+            UALOG(@"Failed to load message: %@", [error localizedDescription]);
+        }
     }
-
-    UALOG(@"Failed to load message: %@", [error localizedDescription]);
 }
 
 #pragma mark UARichContentWindow
