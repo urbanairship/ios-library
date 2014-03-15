@@ -260,12 +260,12 @@
 		49F437541810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		49F437551810B5B400182D06 /* UAModifyTagsAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F437511810B5B400182D06 /* UAModifyTagsAction.m */; };
 		760D14BA17C2C9E600BBE6E6 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D14B917C2C9E600BBE6E6 /* XCTest.framework */; };
-		761BB98318B58290005B45D5 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 761BB98218B58290005B45D5 /* JRSwizzle.m */; };
 		7649615518C644D4003AF5EE /* UAInboxPushHandlerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */; };
 		7676AA0C18C4EF5B00B4E5B4 /* UAAppDelegateProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F610DB017835C2200BCD96E /* UAAppDelegateProxy.m */; };
 		76792D10178E12A10054F8AD /* UAHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D0E178E12A10054F8AD /* UAHTTPRequest.h */; };
 		76792D11178E12A10054F8AD /* UAHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 76792D0F178E12A10054F8AD /* UAHTTPRequest.m */; };
 		76792D13178E13810054F8AD /* UAHTTPRequest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */; };
+		76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 76F9B4AD18D3CE2A00C438D4 /* JRSwizzle.m */; };
 		7B909D431429363300D0AB36 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B909D421429363300D0AB36 /* Security.framework */; };
 		7BB679091429288D00B877DB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		7BB6790A1429288D00B877DB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
@@ -594,13 +594,13 @@
 		49F437511810B5B400182D06 /* UAModifyTagsAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAModifyTagsAction.m; sourceTree = "<group>"; };
 		633146B3122FA474008F2D48 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		760D14B917C2C9E600BBE6E6 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		761BB98218B58290005B45D5 /* JRSwizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../TestCommon/JRSwizzle/JRSwizzle.m; sourceTree = "<group>"; };
-		761BB98418B5840B005B45D5 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JRSwizzle.h; path = ../TestCommon/JRSwizzle/JRSwizzle.h; sourceTree = "<group>"; };
 		762CD99F18B6CC2A00AD4C4F /* UAChannelRegistrationPayload+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+Internal.h"; sourceTree = "<group>"; };
 		7649615418C644D4003AF5EE /* UAInboxPushHandlerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxPushHandlerTest.m; sourceTree = "<group>"; };
 		76792D0E178E12A10054F8AD /* UAHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAHTTPRequest.h; sourceTree = "<group>"; };
 		76792D0F178E12A10054F8AD /* UAHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAHTTPRequest.m; sourceTree = "<group>"; };
 		76792D12178E13810054F8AD /* UAHTTPRequest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAHTTPRequest+Internal.h"; sourceTree = "<group>"; };
+		76F9B4AC18D3CE2A00C438D4 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
+		76F9B4AD18D3CE2A00C438D4 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		7B909D421429363300D0AB36 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7BB679061429288D00B877DB /* AirshipLogicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipLogicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BB679071429288D00B877DB /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -812,9 +812,8 @@
 				D9FD1A13122DB77000522B4E /* Airship */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				7BB6790C1429288D00B877DB /* AirshipLogicTests */,
-				761BB98418B5840B005B45D5 /* JRSwizzle.h */,
-				761BB98218B58290005B45D5 /* JRSwizzle.m */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
+				76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1F31E8FC15F14C5500DC63BA /* Config.xcconfig */,
 			);
@@ -1071,6 +1070,16 @@
 				49C671FE184EAB640088F210 /* UANativeBridge.h */,
 			);
 			name = JS;
+			sourceTree = "<group>";
+		};
+		76F9B4AB18D3CE2A00C438D4 /* JRSwizzle */ = {
+			isa = PBXGroup;
+			children = (
+				76F9B4AC18D3CE2A00C438D4 /* JRSwizzle.h */,
+				76F9B4AD18D3CE2A00C438D4 /* JRSwizzle.m */,
+			);
+			name = JRSwizzle;
+			path = ../TestCommon/JRSwizzle;
 			sourceTree = "<group>";
 		};
 		7BB6790C1429288D00B877DB /* AirshipLogicTests */ = {
@@ -1852,7 +1861,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				761BB98318B58290005B45D5 /* JRSwizzle.m in Sources */,
 				49226C8318A3045900D4A57A /* UAURLProtocolTest.m in Sources */,
 				7BB679151429288D00B877DB /* UAUtilsTest.m in Sources */,
 				CCD3158417CFBD5A002E93A1 /* UAPushTest.m in Sources */,
@@ -1862,6 +1870,7 @@
 				495526B117D95552009BC301 /* UAInboxMessageListTest.m in Sources */,
 				BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */,
 				CC4AAE0C18C93EF2001F23B3 /* UAApplicationMetricsTest.m in Sources */,
+				76F9B4AE18D3CE2A00C438D4 /* JRSwizzle.m in Sources */,
 				CC1D22A218037DD9005C8393 /* UAAggregateActionResultTest.m in Sources */,
 				BBB87D64150574DE00971CEC /* UALocationServiceTest.m in Sources */,
 				CCA3A4F317FF14DF009C7371 /* UAActionTest.m in Sources */,
