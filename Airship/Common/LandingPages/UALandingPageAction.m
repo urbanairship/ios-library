@@ -32,6 +32,7 @@
 #import "UAirship.h"
 #import "UAConfig.h"
 #import "NSString+URLEncoding.h"
+#import "UAUtils.h"
 
 @interface UALandingPageAction()
 @property(nonatomic, strong) UAHTTPConnection *connection;
@@ -74,18 +75,34 @@
 
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
 
+    // Include app auth for any content id requests
+    BOOL includeAppAuth = [arguments.value hasPrefix:@"u:"];
+
+
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
 
     if (arguments.situation == UASituationBackgroundPush ) {
         // pre-fetch url so that it can be accessed later from the cache
-        [self prefetchURL:landingPageURL withCompletionHandler:completionHandler];
+        if (includeAppAuth) {
+            [self prefetchURL:landingPageURL withUserName:UAirship.shared.config.appSecret
+                 withPassword:UAirship.shared.config.appKey withCompletionHandler:completionHandler];
+        } else {
+            [self prefetchURL:landingPageURL withUserName:nil
+                 withPassword:nil withCompletionHandler:completionHandler];
+        }
     } else {
         //close any existing windows
         [UALandingPageOverlayController closeAll:NO];
 
+        NSMutableDictionary *headers = [NSMutableDictionary dictionary];
+
+        if (includeAppAuth) {
+            [headers setValue:[UAUtils appAuthHeaderString] forKey:@"Authorization"];
+        }
+
         //load the landing page
-        [UALandingPageOverlayController showURL:landingPageURL];
+        [UALandingPageOverlayController showURL:landingPageURL withHeaders:headers];
         completionHandler([UAActionResult resultWithValue:nil withFetchResult:UAActionFetchResultNewData]);
     }
 }
@@ -94,7 +111,8 @@
     return (BOOL)([self parseURLFromValue:arguments.value] != nil);
 }
 
-- (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {
+- (void)prefetchURL:(NSURL *)landingPageURL withUserName:(NSString *)username
+       withPassword:(NSString *)password withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     if (self.connection) {
         [self.connection cancel];
@@ -118,6 +136,8 @@
     };
 
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
+    request.username = UAirship.shared.config.appKey;
+    request.password = UAirship.shared.config.appSecret;
 
     self.connection = [UAHTTPConnection connectionWithRequest:request
                                                  successBlock:successBlock

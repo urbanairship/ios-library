@@ -48,6 +48,12 @@ static NSMutableSet *overlayControllers = nil;
  * The URL being displayed.
  */
 @property(nonatomic, strong) NSURL *url;
+
+/**
+ * The request headers
+ */
+@property(nonatomic, strong) NSDictionary *headers;
+
 /**
  * The message being displayed, if applicable. This value may be nil.
  */
@@ -78,17 +84,24 @@ static NSMutableSet *overlayControllers = nil;
     [overlayController load];
 }
 
-+ (void)showURL:(NSURL *)url {
++ (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers {
     UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[self topController]
                                                                                                                       andURL:url
-                                                                                                                  andMessage:nil];
+                                                                                                                  andMessage:nil
+                                                                                                                  andHeaders:headers];
     [self showLandingPageController:overlayController];
 }
 
 + (void)showMessage:(UAInboxMessage *)message {
+    NSDictionary *headers = @{@"Authorization":[UAUtils userAuthHeaderString]};
+    [UALandingPageOverlayController showMessage:message withHeaders:headers];
+}
+
++ (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers {
     UALandingPageOverlayController *overlayController = [[UALandingPageOverlayController alloc] initWithParentViewController:[self topController]
                                                                                                                       andURL:message.messageBodyURL
-                                                                                                                   andMessage:message];
+                                                                                                                   andMessage:message
+                                                                                                                  andHeaders:headers];
     [self showLandingPageController:overlayController];
 }
 
@@ -111,13 +124,14 @@ static NSMutableSet *overlayControllers = nil;
     return topController;
 }
 
-- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message {
+- (id)initWithParentViewController:(UIViewController *)parent andURL:(NSURL *)url andMessage:(UAInboxMessage *)message andHeaders:(NSDictionary *)headers {
     self = [super init];
     if (self) {
 
         self.parentViewController = parent;
         self.url = url;
         self.message = message;
+        self.headers = headers;
 
         // Set the frame later
         self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
@@ -266,6 +280,28 @@ static NSMutableSet *overlayControllers = nil;
 
     if (self.message) {
         [requestObj setValue:[UAUtils userAuthHeaderString] forHTTPHeaderField:@"Authorization"];
+    }
+
+    for (id key in self.headers) {
+        id value = [self.headers valueForKey:key];
+
+        if (![key isKindOfClass:[NSString class]] || ![key isKindOfClass:[NSString class]]) {
+            UA_LERR(@"Invalid header value.  Only string values are accepted for header names and values.");
+            continue;
+        }
+
+        [requestObj addValue:value forHTTPHeaderField:key];
+    }
+
+    if (self.headers) {
+        
+    }
+    [requestObj setAllHTTPHeaderFields:self.headers];
+
+    if (self.headers) {
+        for (id key in self.headers) {
+
+        }
     }
 
     [requestObj setTimeoutInterval:30];

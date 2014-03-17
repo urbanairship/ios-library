@@ -38,8 +38,16 @@
 /**
  * Creates and dsiplays a landing page overlay from a URL.
  * @param url The URL of the landing page to display
+ * @param headers The headers to include with the request
  */
-+ (void)showURL:(NSURL *)url;
++ (void)showURL:(NSURL *)url withHeaders:(NSDictionary *)headers;
+
+/**
+ * Creates and displays a landing page overlay from a Rich Push message.
+ * @param message The Rich Push message to display.
+ * @param headers The headers to include with the request.
+ */
++ (void)showMessage:(UAInboxMessage *)message withHeaders:(NSDictionary *)headers;
 
 /**
  * Creates and displays a landing page overlay from a Rich Push message.

@@ -177,15 +177,23 @@
 }
 
 + (NSString *)userAuthHeaderString {
-    NSString *username = [UAUser defaultUser].username;
-    NSString *password = [UAUser defaultUser].password;
+    return [UAUtils authHeaderStringWithName:[UAUser defaultUser].username
+                                    password:[UAUser defaultUser].password];
+}
+
++ (NSString *)appAuthHeaderString {
+    return [UAUtils authHeaderStringWithName:[UAirship shared].config.appKey
+                                    password:[UAirship shared].config.appSecret];
+}
+
++ (NSString *)authHeaderStringWithName:(NSString *)username password:(NSString *)password {
     NSString *authString = UA_base64EncodedStringFromData([[NSString stringWithFormat:@"%@:%@", username, password] dataUsingEncoding:NSUTF8StringEncoding]);
-    
+
     //strip carriage return and linefeed characters
     authString = [authString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     authString = [authString stringByReplacingOccurrencesOfString:@"\r" withString:@""];
     authString = [NSString stringWithFormat: @"Basic %@", authString];
-    
+
     return authString;
 }
 
