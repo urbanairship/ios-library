@@ -31,7 +31,6 @@
 #import "UAAddTagsAction.h"
 #import "UARemoveTagsAction.h"
 #import "UALandingPageAction.h"
-#import "UADeepLinkAction.h"
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UACloseWindowAction.h"
@@ -292,7 +291,8 @@ SINGLETON_IMPLEMENTATION(UAActionRegistrar)
                    return (BOOL)(args.situation != UASituationForegroundPush);
     }];
 
-    UADeepLinkAction *deepLinkAction = [[UADeepLinkAction alloc] init];
+    // Register external URL action under the deep link action name/alias
+    UAOpenExternalURLAction *deepLinkAction = [[UAOpenExternalURLAction alloc] init];
     [self registerAction:deepLinkAction
                    names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
                predicate:urlPredicate];
