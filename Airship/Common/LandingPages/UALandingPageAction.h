@@ -25,7 +25,7 @@
 
 #import "UAAction.h"
 
-#define kUALandingPageContentURL @"https://dl.urbanairship.com/%@/%@"
+#define kUALandingPageContentURL @"https://dl.urbanairship.com/aaa/%@/%@"
 
 /**
  * Opens a landing page URL in a rich content window.

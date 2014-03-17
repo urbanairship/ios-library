@@ -92,11 +92,11 @@
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 
     [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"u:content-id"]
-                                 expectedUrl:@"https://dl.urbanairship.com/app-key/content-id"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/content-id"
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
@@ -116,7 +116,7 @@
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
                             expectedUserName:@"app-key"
                             expectedPassword:@"app-secret"
                                   successful:YES];
@@ -137,7 +137,7 @@
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
-                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
                             expectedUserName:@"app-key"
                             expectedPassword:@"app-secret"
                                   successful:NO];
