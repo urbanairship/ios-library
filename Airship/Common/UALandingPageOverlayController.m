@@ -284,24 +284,12 @@ static NSMutableSet *overlayControllers = nil;
 
     for (id key in self.headers) {
         id value = [self.headers valueForKey:key];
-
-        if (![key isKindOfClass:[NSString class]] || ![key isKindOfClass:[NSString class]]) {
+        if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
             UA_LERR(@"Invalid header value.  Only string values are accepted for header names and values.");
             continue;
         }
 
         [requestObj addValue:value forHTTPHeaderField:key];
-    }
-
-    if (self.headers) {
-        
-    }
-    [requestObj setAllHTTPHeaderFields:self.headers];
-
-    if (self.headers) {
-        for (id key in self.headers) {
-
-        }
     }
 
     [requestObj setTimeoutInterval:30];

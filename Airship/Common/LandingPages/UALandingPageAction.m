@@ -100,8 +100,8 @@
     if (arguments.situation == UASituationBackgroundPush ) {
         // pre-fetch url so that it can be accessed later from the cache
         if (includeAppAuth) {
-            [self prefetchURL:landingPageURL withUserName:UAirship.shared.config.appSecret
-                 withPassword:UAirship.shared.config.appKey withCompletionHandler:completionHandler];
+            [self prefetchURL:landingPageURL withUserName:UAirship.shared.config.appKey
+                 withPassword:UAirship.shared.config.appSecret withCompletionHandler:completionHandler];
         } else {
             [self prefetchURL:landingPageURL withUserName:nil
                  withPassword:nil withCompletionHandler:completionHandler];
@@ -151,8 +151,8 @@
     };
 
     UAHTTPRequest *request = [UAHTTPRequest requestWithURL:landingPageURL];
-    request.username = UAirship.shared.config.appKey;
-    request.password = UAirship.shared.config.appSecret;
+    request.username = username;
+    request.password = password;
 
     self.connection = [UAHTTPConnection connectionWithRequest:request
                                                  successBlock:successBlock

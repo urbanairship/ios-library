@@ -117,7 +117,7 @@
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
                                  expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
-                            expectedUserName:@"app-key"
+                            expectedUsername:@"app-key"
                             expectedPassword:@"app-secret"
                                   successful:YES];
 }
@@ -138,7 +138,7 @@
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
                                  expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
-                            expectedUserName:@"app-key"
+                            expectedUsername:@"app-key"
                             expectedPassword:@"app-secret"
                                   successful:NO];
 }
@@ -178,7 +178,7 @@
  * Helper method to verify perform in background situations
  */
 - (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl
-                          expectedUserName:(NSString *)userName
+                          expectedUsername:(NSString *)username
                           expectedPassword:(NSString *)password
                                 successful:(BOOL)successful  {
 
@@ -216,13 +216,16 @@
     UAActionFetchResult expectedResult = successful? UAActionFetchResultNewData : UAActionFetchResultFailed;
 
     [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:expectedResult];
+
+    XCTAssertEqualObjects(username, request.username, @"Invalid user name");
+    XCTAssertEqualObjects(password, request.password, @"Invalid user name");
 }
 
 /**
  * Helper method to verify perform in background situations with no auth expected
  */
 - (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl successful:(BOOL)successful  {
-    [self verifyPerformInBackgroundWithValue:value expectedUrl:expectedUrl expectedUserName:nil expectedPassword:nil successful:successful];
+    [self verifyPerformInBackgroundWithValue:value expectedUrl:expectedUrl expectedUsername:nil expectedPassword:nil successful:successful];
 }
 
 /**
