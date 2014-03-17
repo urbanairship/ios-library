@@ -39,42 +39,31 @@
 
 @implementation UALandingPageAction
 
-- (NSURL *)sanitizedURL:(NSURL *)url {
-    if (!url.scheme || !url.scheme.length){
-        return [NSURL URLWithString:
-                [@"https://" stringByAppendingString:[url absoluteString]]];
+- (NSURL *)parseURLFromValue:(id)value {
+
+    NSURL *url;
+    if ([value isKindOfClass:[NSURL class]]) {
+        url = value;
+    } else {
+        url = [NSURL URLWithString:value];
     }
+
+    if ([url.scheme isEqualToString:@"u"]) {
+        NSString *contentUrlString = [NSString stringWithFormat:kUALandingPageContentURL,
+                                      UAirship.shared.config.appKey, url.resourceSpecifier];
+
+        url = [NSURL URLWithString:contentUrlString];
+    } else if  (!url.scheme || !url.scheme.length) {
+        url=  [NSURL URLWithString:[@"https://" stringByAppendingString:[url absoluteString]]];
+    }
+
     return url;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSURL *landingPageURL;
-    if ([arguments.value isKindOfClass:[NSURL class]]) {
-        landingPageURL = arguments.value;
-    } else if ([arguments.value isKindOfClass:[NSString class]]) {
-        landingPageURL = [NSURL URLWithString:arguments.value];
-    } else {
-        NSArray *urlArray = arguments.value;
-        NSString *urlString;
-
-        if (urlArray.count == 1) {
-            urlString = [NSString stringWithFormat:kUALandingPageContentURL,
-                         KUALandingPageDefaultThirdLevelDomain,
-                         [UAirship shared].config.appKey,
-                         [urlArray objectAtIndex:0]];
-        } else {
-            urlString = [NSString stringWithFormat:kUALandingPageContentURL,
-                         [urlArray objectAtIndex:0],
-                         [UAirship shared].config.appKey,
-                         [urlArray objectAtIndex:1]];
-        }
-
-        landingPageURL = [NSURL URLWithString:urlString];
-    }
-
-    landingPageURL = [self sanitizedURL:landingPageURL];
+    NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
 
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
@@ -95,24 +84,6 @@
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if ([arguments.value isKindOfClass:[NSString class]] ||
         [arguments.value isKindOfClass:[NSURL class]]) {
-        return YES;
-    }
-
-    if ([arguments.value isKindOfClass:[NSArray class]]) {
-        NSArray *urlArray = arguments.value;
-
-        if ([urlArray count] != 2 && [urlArray count] != 1) {
-            UA_LDEBUG(@"Landing page url encoded arrays can only contain 1 or 2 string elements.");
-            return NO;
-        }
-
-        for(id element in urlArray) {
-            if (![element isKindOfClass:[NSString class]]) {
-                UA_LDEBUG(@"Landing page url encoded array element is not a string.");
-                return NO;
-            }
-        }
-
         return YES;
     }
 

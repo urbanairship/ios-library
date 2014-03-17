@@ -54,10 +54,9 @@
     [self verifyAcceptsArgumentsWithValue:@"file://foo.urbanairship.com" shouldAccept:true];
     [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] shouldAccept:true];
 
-    // Verify url encoded arrays
-    [self verifyAcceptsArgumentsWithValue:@[@"third", @"uuid"] shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:@[@"uuid"] shouldAccept:true];
-
+    // Verify UA content id urls
+    [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"u://content-id"] shouldAccept:true];
 }
 
 /**
@@ -68,10 +67,6 @@
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:false];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:false];
     [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:false];
-
-    // Verify it doesnt accept arrays that do not contain 2 String elements
-    [self verifyAcceptsArgumentsWithValue:@[@"one", @2] shouldAccept:false];
-    [self verifyAcceptsArgumentsWithValue:@[@"one", @"two", @"three"] shouldAccept:false];
 }
 
 /**
@@ -87,10 +82,9 @@
     [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
 
 
-    // Verify arrays with shortened url data - https://<third-level doman>.urbanairship.com/binary/public/<app key>/<UUID>
+    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInForegroundWithValue:@[@"third", @"uuid"] expectedUrl:@"https://third.urbanairship.com/binary/public/app-key/uuid"];
-    [self verifyPerformInForegroundWithValue:@[@"uuid"] expectedUrl:@"https://dl-origin.urbanairship.com/binary/public/app-key/uuid"];
+    [self verifyPerformInForegroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id"];
 }
 
 /**
@@ -105,10 +99,9 @@
     [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
     [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:YES];
 
-    // Verify arrays with shortened url data - https://<third-level doman>.urbanairship.com/binary/public/<app key>/<UUID>
+    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@[@"third", @"uuid"] expectedUrl:@"https://third.urbanairship.com/binary/public/app-key/uuid" successful:YES];
-    [self verifyPerformInBackgroundWithValue:@[@"uuid"] expectedUrl:@"https://dl-origin.urbanairship.com/binary/public/app-key/uuid" successful:YES];
+    [self verifyPerformInBackgroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id" successful:YES];
 }
 
 /**
@@ -123,10 +116,9 @@
     [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
     [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:NO];
 
-    // Verify arrays with shortened url data - https://<third-level doman>.urbanairship.com/binary/public/<app key>/<UUID>
+    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@[@"third", @"uuid"] expectedUrl:@"https://third.urbanairship.com/binary/public/app-key/uuid" successful:NO];
-    [self verifyPerformInBackgroundWithValue:@[@"uuid"] expectedUrl:@"https://dl-origin.urbanairship.com/binary/public/app-key/uuid" successful:NO];
+    [self verifyPerformInBackgroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id" successful:NO];
 }
 
 
