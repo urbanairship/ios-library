@@ -41,33 +41,49 @@
 
 @implementation UALandingPageAction
 
+- (NSURL *)parseContentUrl:(NSString *)urlString {
+    if ([urlString length] <= 2) {
+        return nil;
+    }
+
+    NSString *contentId = [urlString substringFromIndex:2];
+    return [NSURL URLWithString:[NSString stringWithFormat:kUALandingPageContentURL,
+                                 UAirship.shared.config.appKey,
+                                 [contentId urlEncodedStringWithEncoding:NSUTF8StringEncoding]]];
+}
+
 - (NSURL *)parseURLFromValue:(id)value {
 
     NSURL *url;
 
     if ([value isKindOfClass:[NSURL class]]) {
         url = value;
+        if ([url.scheme isEqualToString:@"u"]) {
+            url = [self parseContentUrl:[url absoluteString]];
+        }
     } else if ([value isKindOfClass:[NSString class]]) {
         if ([value hasPrefix:@"u:"]) {
-
-            NSString *contentId = [value substringFromIndex:2];
-            url = [NSURL URLWithString:[NSString stringWithFormat:kUALandingPageContentURL,
-                                        UAirship.shared.config.appKey,
-                                        [contentId urlEncodedStringWithEncoding:NSUTF8StringEncoding]]];
+            url = [self parseContentUrl:value];
         } else {
             url = [NSURL URLWithString:value];
         }
     }
 
-    if (!url) {
-        return nil;
-    }
-
-    if  (!url.scheme || !url.scheme.length) {
-        url=  [NSURL URLWithString:[@"https://" stringByAppendingString:[url absoluteString]]];
+    if  (url && !url.scheme.length) {
+        url = [NSURL URLWithString:[@"https://" stringByAppendingString:[url absoluteString]]];
     }
 
     return url;
+}
+
+
+- (BOOL)includeAppAuthForValue:(id)value {
+    if ([value isKindOfClass:[NSURL class]]) {
+        return [[value scheme] isEqualToString:@"u"];
+    } else if ([value isKindOfClass:[NSString class]]) {
+        return [value hasPrefix:@"u:"];
+    }
+    return NO;
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
@@ -76,8 +92,7 @@
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
 
     // Include app auth for any content id requests
-    BOOL includeAppAuth = [arguments.value hasPrefix:@"u:"];
-
+    BOOL includeAppAuth = [self includeAppAuthForValue:arguments.value];
 
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];

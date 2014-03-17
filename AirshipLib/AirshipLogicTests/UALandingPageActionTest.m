@@ -8,6 +8,8 @@
 #import "UAAction+Internal.h"
 #import "UAirship.h"
 #import "UAConfig.h"
+#import "UAUtils.h"
+
 @interface UALandingPageActionTest : XCTestCase
 
 @property(nonatomic, strong) id mockURLProtocol;
@@ -33,6 +35,9 @@
     [[[self.mockAirship stub] andReturn:self.mockAirship] shared];
     [[[self.mockAirship stub] andReturn:self.mockConfig] config];
 
+
+    [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
+    [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
 }
 
 - (void)tearDown {
@@ -56,7 +61,7 @@
 
     // Verify UA content id urls
     [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"u://content-id"] shouldAccept:true];
+    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"u:content-id"] shouldAccept:true];
 }
 
 /**
@@ -67,6 +72,7 @@
     [self verifyAcceptsArgumentsWithValue:nil shouldAccept:false];
     [self verifyAcceptsArgumentsWithValue:[[NSObject alloc] init] shouldAccept:false];
     [self verifyAcceptsArgumentsWithValue:@[] shouldAccept:false];
+    [self verifyAcceptsArgumentsWithValue:@"u:" shouldAccept:false];
 }
 
 /**
@@ -79,13 +85,19 @@
     // Verify common scheme types
     [self verifyPerformInForegroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com"];
     [self verifyPerformInForegroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com"];
+    [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com"];
     [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
 
 
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"];
+    [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
+                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                             expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
+
+    [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"u:content-id"]
+                                 expectedUrl:@"https://dl.urbanairship.com/app-key/content-id"
+                             expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
 /**
@@ -98,12 +110,16 @@
     // Verify common scheme types
     [self verifyPerformInBackgroundWithValue:@"http://foo.urbanairship.com" expectedUrl:@"http://foo.urbanairship.com" successful:YES];
     [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
+    [self verifyPerformInBackgroundWithValue:[NSURL URLWithString:@"https://foo.urbanairship.com"] expectedUrl:@"https://foo.urbanairship.com" successful:YES];
     [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:YES];
 
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E" successful:YES];
+    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
+                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                            expectedUserName:@"app-key"
+                            expectedPassword:@"app-secret"
+                                  successful:YES];
 }
 
 /**
@@ -120,15 +136,18 @@
 
     // Verify content urls - https://dl.urbanairship.com/<app>/<id>
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
-    [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E" successful:NO];
+    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>"
+                                 expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
+                            expectedUserName:@"app-key"
+                            expectedPassword:@"app-secret"
+                                  successful:NO];
 }
 
 
 /**
  * Helper method to verify perfrom in foreground situations
  */
-- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl {
+- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl expectedHeaders:(NSDictionary *)headers {
     NSArray *foregroundSitutions = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
                                      [NSNumber numberWithInteger:UASituationForegroundPush],
                                      [NSNumber numberWithInteger:UASituationLaunchedFromPush],
@@ -139,6 +158,8 @@
 
         [[self.mockLandingPageOverlayController expect] showURL:[OCMArg checkWithBlock:^(id obj){
             return (BOOL)([obj isKindOfClass:[NSURL class]] && [((NSURL *)obj).absoluteString isEqualToString:expectedUrl]);
+        }] withHeaders:[OCMArg checkWithBlock:^(id obj){
+            return (BOOL) ([headers count] ? [headers isEqualToDictionary:obj] : [obj count] == 0);
         }]];
 
         UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:[situationNumber integerValue]];
@@ -147,9 +168,20 @@
 }
 
 /**
+ * Helper method to verify perfrom in foreground situations with no expected headers
+ */
+- (void)verifyPerformInForegroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl {
+    [self verifyPerformInForegroundWithValue:value expectedUrl:expectedUrl expectedHeaders:nil];
+}
+
+/**
  * Helper method to verify perform in background situations
  */
-- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl successful:(BOOL)successful  {
+- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl
+                          expectedUserName:(NSString *)userName
+                          expectedPassword:(NSString *)password
+                                successful:(BOOL)successful  {
+
     UAActionArguments *args = [UAActionArguments argumentsWithValue:value withSituation:UASituationBackgroundPush];
 
     __block UAHTTPConnectionSuccessBlock success;
@@ -184,6 +216,13 @@
     UAActionFetchResult expectedResult = successful? UAActionFetchResultNewData : UAActionFetchResultFailed;
 
     [self verifyPerformWithArgs:args withExpectedUrl:expectedUrl withExpectedFetchResult:expectedResult];
+}
+
+/**
+ * Helper method to verify perform in background situations with no auth expected
+ */
+- (void)verifyPerformInBackgroundWithValue:(id)value expectedUrl:(NSString *)expectedUrl successful:(BOOL)successful  {
+    [self verifyPerformInBackgroundWithValue:value expectedUrl:expectedUrl expectedUserName:nil expectedPassword:nil successful:successful];
 }
 
 /**
