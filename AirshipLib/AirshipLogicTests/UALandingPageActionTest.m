@@ -82,9 +82,10 @@
     [self verifyPerformInForegroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com"];
 
 
-    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
+    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
+    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInForegroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id"];
+    [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"];
 }
 
 /**
@@ -99,9 +100,10 @@
     [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:YES];
     [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:YES];
 
-    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
+    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
+    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id" successful:YES];
+    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E" successful:YES];
 }
 
 /**
@@ -116,9 +118,10 @@
     [self verifyPerformInBackgroundWithValue:@"https://foo.urbanairship.com" expectedUrl:@"https://foo.urbanairship.com" successful:NO];
     [self verifyPerformInBackgroundWithValue:@"file://foo.urbanairship.com" expectedUrl:@"file://foo.urbanairship.com" successful:NO];
 
-    // Verify arrays with shortened url data - https://dl.urbanairship.com/<app>/<id>
+    // Verify content urls - https://dl.urbanairship.com/<app>/<id>
+    // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
-    [self verifyPerformInBackgroundWithValue:@"u:content-id" expectedUrl:@"https://dl.urbanairship.com/app-key/content-id" successful:NO];
+    [self verifyPerformInBackgroundWithValue:@"u:<~@rH7,ASuTABk.~>" expectedUrl:@"https://dl.urbanairship.com/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E" successful:NO];
 }
 
 

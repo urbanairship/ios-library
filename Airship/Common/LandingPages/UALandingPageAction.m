@@ -31,6 +31,7 @@
 #import "UALandingPageOverlayController.h"
 #import "UAirship.h"
 #import "UAConfig.h"
+#import "NSString+URLEncoding.h"
 
 @interface UALandingPageAction()
 @property(nonatomic, strong) UAHTTPConnection *connection;
@@ -42,18 +43,26 @@
 - (NSURL *)parseURLFromValue:(id)value {
 
     NSURL *url;
+
     if ([value isKindOfClass:[NSURL class]]) {
         url = value;
-    } else {
-        url = [NSURL URLWithString:value];
+    } else if ([value isKindOfClass:[NSString class]]) {
+        if ([value hasPrefix:@"u:"]) {
+
+            NSString *contentId = [value substringFromIndex:2];
+            url = [NSURL URLWithString:[NSString stringWithFormat:kUALandingPageContentURL,
+                                        UAirship.shared.config.appKey,
+                                        [contentId urlEncodedStringWithEncoding:NSUTF8StringEncoding]]];
+        } else {
+            url = [NSURL URLWithString:value];
+        }
     }
 
-    if ([url.scheme isEqualToString:@"u"]) {
-        NSString *contentUrlString = [NSString stringWithFormat:kUALandingPageContentURL,
-                                      UAirship.shared.config.appKey, url.resourceSpecifier];
+    if (!url) {
+        return nil;
+    }
 
-        url = [NSURL URLWithString:contentUrlString];
-    } else if  (!url.scheme || !url.scheme.length) {
+    if  (!url.scheme || !url.scheme.length) {
         url=  [NSURL URLWithString:[@"https://" stringByAppendingString:[url absoluteString]]];
     }
 
@@ -82,12 +91,7 @@
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if ([arguments.value isKindOfClass:[NSString class]] ||
-        [arguments.value isKindOfClass:[NSURL class]]) {
-        return YES;
-    }
-
-    return NO;
+    return (BOOL)([self parseURLFromValue:arguments.value] != nil);
 }
 
 - (void)prefetchURL:(NSURL *)landingPageURL withCompletionHandler:(UAActionCompletionHandler)completionHandler {

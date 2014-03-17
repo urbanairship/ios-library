@@ -93,6 +93,13 @@
 
     NSString *snowman = @"☃";
     XCTAssertEqualObjects(@"%E2%98%83", [snowman urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"snowman test failed");
+
+    /**
+     * %3C%7EBOu%21rD%5Dj7%3B%40%3C%3CW%2BF%21%2C%2B6Bl7Q%2BDf-%02ATD%3FH%7E%3E 
+     * from Java's URLEncoder.encode("<~BOu!rD]j7;@<<W+F!,+6Bl7Q+Df-\2ATD?H~>", "UTF-8")
+     */
+    NSString *ascii85 = @"<~BOu!rD]j7;@<<W+F!,+6Bl7Q+Df-\2ATD?H~>";
+    XCTAssertEqualObjects(@"%3C%7EBOu%21rD%5Dj7%3B%40%3C%3CW%2BF%21%2C%2B6Bl7Q%2BDf-%02ATD%3FH%7E%3E", [ascii85 urlEncodedStringWithEncoding:NSUTF8StringEncoding], @"ascii85 test failed");
 }
 
 - (void)testURLDecoding {
@@ -168,5 +175,8 @@
 
     NSString *snowman = @"%E2%98%83";
     XCTAssertEqualObjects(@"☃", [snowman urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"snowman test failed");
+
+    NSString *ascii85 = @"%3C%7EBOu%21rD%5Dj7%3B%40%3C%3CW%2BF%21%2C%2B6Bl7Q%2BDf-%02ATD%3FH%7E%3E";
+    XCTAssertEqualObjects(@"<~BOu!rD]j7;@<<W+F!,+6Bl7Q+Df-\2ATD?H~>", [ascii85 urlDecodedStringWithEncoding:NSUTF8StringEncoding], @"ascii85 test failed");
 }
 @end

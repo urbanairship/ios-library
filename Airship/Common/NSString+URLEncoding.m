@@ -48,7 +48,7 @@
                                                                 NULL,
                                                                 (CFStringRef)self,
                                                                 NULL,
-                                                                (CFStringRef)@"!*\"'();:@&=+$,/?%#[]",
+                                                                (CFStringRef)@"~!*\"'();:@&=+$,/?%#[]",
                                                                 CFStringConvertNSStringEncodingToEncoding(encoding));
 
     NSString *value = [NSString stringWithString:(NSString *)CFBridgingRelease(result)];
