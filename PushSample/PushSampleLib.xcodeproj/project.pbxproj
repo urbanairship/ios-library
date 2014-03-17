@@ -59,7 +59,6 @@
 		4944B7EC178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */; };
 		4944B7EF178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */; };
 		636CB1E9128CF51200481EFC /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18C02A08124F250000D49CD5 /* libsqlite3.dylib */; };
-		761BB98718B58496005B45D5 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 761BB98618B58496005B45D5 /* JRSwizzle.m */; };
 		762F81DD183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */; };
 		762F81E0183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */; };
 		76811EED17EBA63700874D1F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0181507F3A400976645 /* SenTestingKit.framework */; };
@@ -83,6 +82,7 @@
 		76B14D6F17ECBFFE00377362 /* PushSampleKIFTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 76811ED617EBA60100874D1F /* PushSampleKIFTests.m */; };
 		76B14D7317ECC4D400377362 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F79711212DE3BFB00D4937F /* AirshipConfig.plist */; };
 		76C69E9918AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */; };
+		76F9B4B718D3CE8A00C438D4 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 76F9B4B618D3CE8A00C438D4 /* JRSwizzle.m */; };
 		BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */; };
 		BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */; };
 		BB6B828C15892C0D00C42B03 /* TagTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB6B828B15892C0D00C42B03 /* TagTest.plist */; };
@@ -270,8 +270,6 @@
 		4944B7EA178F60E200E07A40 /* UAPushSettingsUserInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsUserInfoViewController.h; sourceTree = "<group>"; };
 		4944B7EB178F60E200E07A40 /* UAPushSettingsUserInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsUserInfoViewController.m; sourceTree = "<group>"; };
 		4944B7EE178F6A3A00E07A40 /* UAPushSettingsUserInfoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsUserInfoView.xib; sourceTree = "<group>"; };
-		761BB98518B58496005B45D5 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JRSwizzle.h; path = ../../TestCommon/JRSwizzle/JRSwizzle.h; sourceTree = "<group>"; };
-		761BB98618B58496005B45D5 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JRSwizzle.m; path = ../../TestCommon/JRSwizzle/JRSwizzle.m; sourceTree = "<group>"; };
 		762F81DA183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAPushSettingsChannelInfoViewController.h; sourceTree = "<group>"; };
 		762F81DB183EBEF200F30033 /* UAPushSettingsChannelInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAPushSettingsChannelInfoViewController.m; sourceTree = "<group>"; };
 		762F81DF183EC10500F30033 /* UAPushSettingsChannelInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UAPushSettingsChannelInfoViewController.xib; sourceTree = "<group>"; };
@@ -296,6 +294,8 @@
 		769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChannelRegistrationKIFTest.m; sourceTree = "<group>"; };
 		76C69E9718AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAChannelRegistrationPayload+UAAdditions.h"; sourceTree = "<group>"; };
 		76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UAChannelRegistrationPayload+UAAdditions.m"; sourceTree = "<group>"; };
+		76F9B4B518D3CE8A00C438D4 /* JRSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
+		76F9B4B618D3CE8A00C438D4 /* JRSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
 		BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UALocationTestUtils.h; path = ../../TestCommon/LocationTest/UALocationTestUtils.h; sourceTree = "<group>"; };
 		BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UALocationTestUtils.m; path = ../../TestCommon/LocationTest/UALocationTestUtils.m; sourceTree = "<group>"; };
 		BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAnalyticsTest.m; sourceTree = "<group>"; };
@@ -707,8 +707,7 @@
 				769AFCFF18AD4D9B006696A9 /* ChannelRegistrationKIFTest.m */,
 				76C69E9718AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.h */,
 				76C69E9818AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m */,
-				761BB98518B58496005B45D5 /* JRSwizzle.h */,
-				761BB98618B58496005B45D5 /* JRSwizzle.m */,
+				76F9B4B418D3CE8A00C438D4 /* JRSwizzle */,
 				769AFCE518AD4B1B006696A9 /* Supporting Files */,
 			);
 			path = ChannelRegistrationKIFTest;
@@ -722,6 +721,16 @@
 				769AFCEC18AD4B1B006696A9 /* ChannelRegistrationKIFTest-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		76F9B4B418D3CE8A00C438D4 /* JRSwizzle */ = {
+			isa = PBXGroup;
+			children = (
+				76F9B4B518D3CE8A00C438D4 /* JRSwizzle.h */,
+				76F9B4B618D3CE8A00C438D4 /* JRSwizzle.m */,
+			);
+			name = JRSwizzle;
+			path = ../../TestCommon/JRSwizzle;
 			sourceTree = "<group>";
 		};
 		BBEFB01C1507F3A400976645 /* AirshipApplicationTests */ = {
@@ -1103,7 +1112,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				76C69E9918AEC2FF00572214 /* UAChannelRegistrationPayload+UAAdditions.m in Sources */,
-				761BB98718B58496005B45D5 /* JRSwizzle.m in Sources */,
+				76F9B4B718D3CE8A00C438D4 /* JRSwizzle.m in Sources */,
 				769AFD0018AD4D9B006696A9 /* ChannelRegistrationKIFTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
