@@ -41,7 +41,7 @@
 
 @implementation UALandingPageAction
 
-- (NSURL *)parseContentUrl:(NSString *)urlString {
+- (NSURL *)parseShortURL:(NSString *)urlString {
     if ([urlString length] <= 2) {
         return nil;
     }
@@ -58,12 +58,9 @@
 
     if ([value isKindOfClass:[NSURL class]]) {
         url = value;
-        if ([url.scheme isEqualToString:@"u"]) {
-            url = [self parseContentUrl:[url absoluteString]];
-        }
     } else if ([value isKindOfClass:[NSString class]]) {
         if ([value hasPrefix:@"u:"]) {
-            url = [self parseContentUrl:value];
+            url = [self parseShortURL:value];
         } else {
             url = [NSURL URLWithString:value];
         }
@@ -115,6 +112,10 @@
 }
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
+    if (arguments.situation == UASituationBackgroundPush && UAirship.shared.config.cacheDiskSizeInMB == 0) {
+        return NO;
+    }
+
     return (BOOL)([self parseURLFromValue:arguments.value] != nil);
 }
 

@@ -38,6 +38,8 @@
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
+    [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
+
 }
 
 - (void)tearDown {
@@ -61,7 +63,6 @@
 
     // Verify UA content id urls
     [self verifyAcceptsArgumentsWithValue:@"u:content-id" shouldAccept:true];
-    [self verifyAcceptsArgumentsWithValue:[NSURL URLWithString:@"u:content-id"] shouldAccept:true];
 }
 
 /**
@@ -93,10 +94,6 @@
     // u:<id> where id is ascii85 encoded... so it needs to be url encoded
     [self verifyPerformInForegroundWithValue:@"u:<~@rH7,ASuTABk.~>"
                                  expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/%3C%7E%40rH7%2CASuTABk.%7E%3E"
-                             expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
-
-    [self verifyPerformInForegroundWithValue:[NSURL URLWithString:@"u:content-id"]
-                                 expectedUrl:@"https://dl.urbanairship.com/aaa/app-key/content-id"
                              expectedHeaders:@{@"Authorization": [UAUtils appAuthHeaderString]}];
 }
 
