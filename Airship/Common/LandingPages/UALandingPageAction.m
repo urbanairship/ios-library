@@ -82,7 +82,7 @@
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
 
     // Include app auth for any content id requests
-    BOOL isContentUrl = ([landingPageURL.absoluteString hasPrefix:kUALandingPageContentURL]);
+    BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:kUALandingPageContentURL];
 
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
@@ -90,10 +90,12 @@
     if (arguments.situation == UASituationBackgroundPush ) {
         // pre-fetch url so that it can be accessed later from the cache
         if (isContentUrl) {
-            [self prefetchURL:landingPageURL withUserName:UAirship.shared.config.appKey
-                 withPassword:UAirship.shared.config.appSecret withCompletionHandler:completionHandler];
+            [self prefetchURL:landingPageURL
+                 withUsername:UAirship.shared.config.appKey
+                 withPassword:UAirship.shared.config.appSecret
+        withCompletionHandler:completionHandler];
         } else {
-            [self prefetchURL:landingPageURL withUserName:nil
+            [self prefetchURL:landingPageURL withUsername:nil
                  withPassword:nil withCompletionHandler:completionHandler];
         }
     } else {
@@ -116,7 +118,7 @@
     return (BOOL)([self parseURLFromValue:arguments.value] != nil);
 }
 
-- (void)prefetchURL:(NSURL *)landingPageURL withUserName:(NSString *)username
+- (void)prefetchURL:(NSURL *)landingPageURL withUsername:(NSString *)username
        withPassword:(NSString *)password withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
     if (self.connection) {
