@@ -27,10 +27,9 @@
 
 @class UAChannelRegistrationPayload;
 
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrarDelegate
-//---------------------------------------------------------------------------------------
-
+/**
+ * The UADeviceRegistrarDelegate protocol for registration events.
+ */
 @protocol UADeviceRegistrarDelegate <NSObject>
 @optional
 
@@ -57,11 +56,9 @@
 
 @end
 
-//---------------------------------------------------------------------------------------
-// UADeviceRegistrar
-//---------------------------------------------------------------------------------------
-
-
+/**
+ * The UADeviceRegistrar class is responsible for device registrations.
+ */
 @interface UADeviceRegistrar : NSObject
 
 /**

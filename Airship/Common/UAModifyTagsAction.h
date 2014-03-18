@@ -25,6 +25,9 @@
 
 #import "UAAction.h"
 
+/**
+ * This is the base class for UAAddTagsAction and UARemoveTagsAction.
+ */
 @interface UAModifyTagsAction : UAAction
 
 @end

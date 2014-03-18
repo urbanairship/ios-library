@@ -40,6 +40,10 @@
 #define kUADeepLinkActionDefaultRegistryAlias @"^d"
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
+/**
+ * This class is responsible for runtime-persisting actions and associating
+ * them with names and predicates.
+ */
 @interface UAActionRegistrar : NSObject
 
 SINGLETON_INTERFACE(UAActionRegistrar);

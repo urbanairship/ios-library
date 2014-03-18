@@ -54,6 +54,8 @@
  *
  * When registration finishes in the background, any async tasks that are triggered
  * from this call should request a background task.
+ * @param channelID The channel ID string.
+ * @param deviceToken The device token string.
  */
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
 
