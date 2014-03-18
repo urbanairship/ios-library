@@ -283,7 +283,7 @@ static NSMutableSet *overlayControllers = nil;
     }
 
     for (id key in self.headers) {
-        id value = [self.headers valueForKey:key];
+        id value = [self.headers objectForKey:key];
         if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
             UA_LERR(@"Invalid header value.  Only string values are accepted for header names and values.");
             continue;
