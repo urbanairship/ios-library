@@ -82,6 +82,16 @@
  */
 + (NSString *)userAuthHeaderString;
 
+
+/**
+ * Returns a basic auth header string.
+ *
+ * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
+ *
+ * @return An HTTP Basic Auth header string value for the app's credentials.
+ */
++ (NSString *)appAuthHeaderString;
+
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers
 ///---------------------------------------------------------------------------------------

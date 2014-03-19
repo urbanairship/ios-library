@@ -25,18 +25,17 @@
 
 #import "UAAction.h"
 
-#define kUALandingPageContentURL @"https://%@.urbanairship.com/binary/public/%@/%@"
-#define KUALandingPageDefaultThirdLevelDomain @"dl-origin"
+#define kUALandingPageContentURL @"https://dl.urbanairship.com/aaa/"
 
 /**
  * Opens a landing page URL in a rich content window.
  *
  * This action is registered under the names landing_page_action and ^p.
  *
- * Expected argument values: NSString, NSURL, or an NSArray containing either a
- * third level domain and a UUID of the Urban Airship hosted content, or just the UUID.
+ * Expected argument values: NSString or NSURL.   Short url formats are in the form
+ * of "u:<content-id>" and will be used to construct a new URL using the content-id.
  *
- * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush, UASituationLaunchedFromSpringboard,
+ * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation.
  *
  * In the background situation, this action will attempt to pre-fetch the data and cache it for later use.
