@@ -110,14 +110,17 @@ static NSMutableSet *overlayControllers = nil;
     // Prefer the window property, if accessible
     if ([appDelegate respondsToSelector:@selector(window)]){
         window = appDelegate.window;
-    } else {
+    } else if ([UIApplication sharedApplication].windows.count)  {
         // Otherwise find the first window in the app's collection, if present
-        if ([UIApplication sharedApplication].windows.count) {
-            window = [[UIApplication sharedApplication].windows objectAtIndex:0];
-        }
+        window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
 
     UIViewController *topController = window.rootViewController;
+
+    if (!topController) {
+        UA_LDEBUG(@"unable to find top controller");
+        return nil;
+    }
 
     BOOL presented = NO;
     UIModalPresentationStyle presentationStyle = topController.modalPresentationStyle;
@@ -136,10 +139,6 @@ static NSMutableSet *overlayControllers = nil;
     if (presented && presentationStyle == UIModalPresentationCustom) {
         UA_LDEBUG(@"top view controller is using a custom presentation style, returning nil");
         return nil;
-    }
-
-    if (!topController){
-        UA_LDEBUG(@"unable to find top controller");
     }
 
     return topController;
