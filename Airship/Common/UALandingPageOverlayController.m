@@ -99,13 +99,39 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 /** 
- * A utility method that grabs the top-most view controller
+ * A utility method that grabs the top-most view controller for the main application window.
+ * May return nil if a suitable view controller cannot be found.
  */
 + (UIViewController *)topController {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
+    UIWindow *window;
+
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    //prefer the window property, if accessible
+    if ([appDelegate respondsToSelector:@selector(window)]){
+        window = appDelegate.window;
+    } else {
+        //otherwise find the first window in the app's collection, if present
+        if ([UIApplication sharedApplication].windows.count) {
+            window = [[UIApplication sharedApplication].windows objectAtIndex:0];
+        }
+    }
+
+    UIViewController *topController = window.rootViewController;
+
+    BOOL presented = NO;
     while (topController.presentedViewController) {
         topController = topController.presentedViewController;
+        presented = YES;
+    }
+
+    //custom modal presentation could leave us in an unpredictable display state
+    if (presented && topController.modalPresentationStyle == UIModalPresentationCustom) {
+        return nil;
+    }
+
+    if (!topController){
+        UA_LDEBUG(@"unable to find top controller");
     }
 
     return topController;
