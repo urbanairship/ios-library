@@ -107,11 +107,11 @@ static NSMutableSet *overlayControllers = nil;
     UIWindow *window;
 
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
-    //prefer the window property, if accessible
+    // Prefer the window property, if accessible
     if ([appDelegate respondsToSelector:@selector(window)]){
         window = appDelegate.window;
     } else {
-        //otherwise find the first window in the app's collection, if present
+        // Otherwise find the first window in the app's collection, if present
         if ([UIApplication sharedApplication].windows.count) {
             window = [[UIApplication sharedApplication].windows objectAtIndex:0];
         }
@@ -120,13 +120,21 @@ static NSMutableSet *overlayControllers = nil;
     UIViewController *topController = window.rootViewController;
 
     BOOL presented = NO;
+    UIModalPresentationStyle presentationStyle = topController.modalPresentationStyle;
+
+    // Iterate through any presented view controllers and find the top-most presentation context
     while (topController.presentedViewController) {
-        topController = topController.presentedViewController;
         presented = YES;
+        // UIModalPresentationCurrentContext allows a view controller to use the presentation style of its modal parent.
+        if (topController.presentedViewController.modalPresentationStyle != UIModalPresentationCurrentContext) {
+            presentationStyle = topController.presentedViewController.modalPresentationStyle;
+        }
+        topController = topController.presentedViewController;
     }
 
-    //custom modal presentation could leave us in an unpredictable display state
-    if (presented && topController.modalPresentationStyle == UIModalPresentationCustom) {
+    // Custom modal presentation could leave us in an unpredictable display state
+    if (presented && presentationStyle == UIModalPresentationCustom) {
+        UA_LDEBUG(@"top view controller is using a custom presentation style, returning nil");
         return nil;
     }
 
