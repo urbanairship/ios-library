@@ -123,10 +123,10 @@ static NSMutableSet *overlayControllers = nil;
     // Prefer the window property, if accessible
     if ([appDelegate respondsToSelector:@selector(window)]){
         window = appDelegate.window;
-    } else if ([UIApplication sharedApplication].windows.count)  {
-        // Otherwise find the first window in the app's collection, if present
-        window = [[UIApplication sharedApplication].windows objectAtIndex:0];
     }
+
+    // Otherwise fall back on the first window of the app's collection, if present
+    window = window ?: [[UIApplication sharedApplication].windows firstObject];
 
     UIViewController *topController = window.rootViewController;
 
