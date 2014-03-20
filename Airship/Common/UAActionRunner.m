@@ -36,7 +36,7 @@ NSString * const UAActionRunnerErrorDomain = @"com.urbanairship.actions.runner";
                 withArguments:(UAActionArguments *)arguments
         withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAActionRegistryEntry *entry = [[UAActionRegistrar shared] registryEntryWithName:actionName];
+    UAActionRegistryEntry *entry = [[UAActionRegistry shared] registryEntryWithName:actionName];
 
     if (entry) {
         if (!entry.predicate || entry.predicate(arguments)) {

@@ -27,7 +27,7 @@
 #import "UAAction.h"
 
 /**
- * An entry in the UAActionRegistrar.
+ * An entry in the UAActionRegistry.
  */
 @interface UAActionRegistryEntry : NSObject
 

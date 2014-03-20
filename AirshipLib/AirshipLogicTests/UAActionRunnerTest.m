@@ -26,7 +26,7 @@
 #import <XCTest/XCTest.h>
 #import "UAAction.h"
 #import "UAActionRunner.h"
-#import "UAActionRegistrar.h"
+#import "UAActionRegistry.h"
 
 @interface UAActionRunnerTest : XCTestCase
 
@@ -40,8 +40,8 @@ NSString *anotherActionName = @"AnotherActionName";
 
 - (void)tearDown {
     // Clear possible actions that were registered in the tests
-    [[UAActionRegistrar shared] registerAction:nil name:actionName];
-    [[UAActionRegistrar shared] registerAction:nil name:anotherActionName];
+    [[UAActionRegistry shared] registerAction:nil name:actionName];
+    [[UAActionRegistry shared] registerAction:nil name:anotherActionName];
 
     [super tearDown];
 }
@@ -83,7 +83,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:action name:actionName];
+    [[UAActionRegistry shared] registerAction:action name:actionName];
 
     [UAActionRunner runActionWithName:actionName withArguments:arguments withCompletionHandler:^(UAActionResult *finalResult) {
         didCompletionHandlerRun = YES;
@@ -110,7 +110,7 @@ NSString *anotherActionName = @"AnotherActionName";
     didCompletionHandlerRun = NO;
 
     //re-register the action with a predicate guaranteed to fail
-    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^(UAActionArguments *args){
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^(UAActionArguments *args){
         return NO;
     }];
 
@@ -135,7 +135,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return NO;
     }];
@@ -171,7 +171,7 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];
@@ -267,13 +267,13 @@ NSString *anotherActionName = @"AnotherActionName";
         completionHandler([UAActionResult emptyResult]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
+    [[UAActionRegistry shared] registerAction:action name:actionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];
 
     // Register another action
-    [[UAActionRegistrar shared] registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
+    [[UAActionRegistry shared] registerAction:action name:anotherActionName predicate:^BOOL(UAActionArguments *args) {
         XCTAssertEqualObjects(args, arguments, @"Runner should pass the supplied arguments to the action");
         return YES;
     }];

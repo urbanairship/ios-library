@@ -33,7 +33,7 @@
 #import "UADeviceRegistrationPayload.h"
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
-#import "UAActionRegistrar+Internal.h"
+#import "UAActionRegistry+Internal.h"
 #import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
 #import "UAChannelRegistrationPayload.h"

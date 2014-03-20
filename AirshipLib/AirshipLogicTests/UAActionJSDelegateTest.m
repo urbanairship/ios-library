@@ -1,7 +1,7 @@
 
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
-#import "UAActionRegistrar.h"
+#import "UAActionRegistry.h"
 #import "UAActionJSDelegate.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAWebViewCallData.h"
@@ -31,7 +31,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/some-callback-ID?test_action=%22hi%22"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
@@ -44,7 +44,7 @@
 
     XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
     XCTAssertTrue(ran, @"the action should have been run");
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 
@@ -62,14 +62,14 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
     [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
         result = script;
     }];
 
     XCTAssertEqualObjects(result, @"UAirship.finishAction(new Error('Error decoding arguments: blah'), null, 'some-callback-ID');", @"resulting script should pass an arguments encoding error, a null result value, and the provided callback ID");
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 - (void)testRunActionCBInvalidAction {
@@ -95,7 +95,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/some-callback-ID?test_action"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
@@ -107,7 +107,7 @@
 
     XCTAssertTrue(ran, @"the action should have been run");
     XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 - (void)testRunActionCBNoCallback {
@@ -119,7 +119,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb?test_action"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
@@ -131,7 +131,7 @@
 
     XCTAssertTrue(ran, @"the action should have been run");
     XCTAssertNil(result, @"resulting script value should be nil if there is not callback ID");
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 
@@ -150,8 +150,8 @@
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
-    [[UAActionRegistrar shared] registerAction:alsoTest name:@"also_test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:alsoTest name:@"also_test_action"];
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=%22hi%22&also_test_action"];
@@ -166,8 +166,8 @@
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
 
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
-    [[UAActionRegistrar shared] removeEntryWithName:@"also_test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"also_test_action"];
 }
 
 - (void)testRunActionInvalidAction {
@@ -195,7 +195,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action=blah"];
@@ -209,7 +209,7 @@
     XCTAssertFalse(ran, @"no action should have run");
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
 
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 - (void)testRunActionsMultipleArgs {
@@ -221,7 +221,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-actions?test_action&test_action"];
@@ -235,7 +235,7 @@
     XCTAssertNil(result, @"run-actions should not produce a script result");
     XCTAssertEqual(runCount, 2, @"the action should have run 2 times");
 
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 
@@ -254,8 +254,8 @@
         handler([UAActionResult resultWithValue:@"yeah!"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
-    [[UAActionRegistrar shared] registerAction:alsoTest name:@"also_test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:alsoTest name:@"also_test_action"];
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?test_action=hi&also_test_action"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
@@ -269,8 +269,8 @@
     XCTAssertTrue(ran, @"the action should have run");
     XCTAssertTrue(alsoRan, @"the other action should have run");
 
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
-    [[UAActionRegistrar shared] removeEntryWithName:@"also_test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"also_test_action"];
 }
 
 - (void)testRunBasicActionMultipleArgs {
@@ -282,7 +282,7 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
-    [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
 
     NSURL *url = [NSURL URLWithString:@"uairship://run-basic-actions?test_action&test_action"];
@@ -296,7 +296,7 @@
     XCTAssertNil(result, @"run-basic-actions should not produce a script result");
     XCTAssertEqual(runCount, 2, @"the action should have run 2 times");
 
-    [[UAActionRegistrar shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
 }
 
 - (void)testRunInvalidAction {

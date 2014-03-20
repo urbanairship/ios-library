@@ -44,9 +44,9 @@
  * This class is responsible for runtime-persisting actions and associating
  * them with names and predicates.
  */
-@interface UAActionRegistrar : NSObject
+@interface UAActionRegistry : NSObject
 
-SINGLETON_INTERFACE(UAActionRegistrar);
+SINGLETON_INTERFACE(UAActionRegistry);
 
 
 /**
