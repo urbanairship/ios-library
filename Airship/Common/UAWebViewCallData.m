@@ -28,8 +28,16 @@
     for (int i = 0; i < [queries count]; i++) {
         NSArray *optionPair = [[queries objectAtIndex:(NSUInteger)i] componentsSeparatedByString:@"="];
         NSString *key = [optionPair objectAtIndex:0];
-        NSString *object = [optionPair objectAtIndex:1];
-        [options setObject:object forKey:key];
+        NSString *object = (optionPair.count >= 2) ? [optionPair objectAtIndex:1] : [NSNull null];
+
+
+        NSMutableArray *values = [options valueForKey:key];
+        if (!values) {
+            values = [NSMutableArray array];
+            [options setObject:values forKey:key];
+        }
+
+        [values addObject:object];
     }
 
     UAWebViewCallData *data = [[UAWebViewCallData alloc] init];

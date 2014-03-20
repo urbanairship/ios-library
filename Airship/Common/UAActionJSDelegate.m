@@ -60,7 +60,11 @@
         return;
     }
 
-    NSString *encodedArgumentsValue = [options valueForKey:actionName];
+    id encodedArgumentsValue = [[options valueForKey:actionName] objectAtIndex:0];
+    if (encodedArgumentsValue == [NSNull null]) {
+        encodedArgumentsValue = nil;
+    }
+
     id decodedArgumentsValue;
     if (encodedArgumentsValue) {
         decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
@@ -148,26 +152,30 @@
             return;
         }
 
-        NSString *encodedArgumentsValue = [options valueForKey:actionName];
-        id decodedArgumentsValue;
-        if (encodedArgumentsValue) {
-            decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-        }
+        for (id arg in [options objectForKey:actionName]) {
 
-        //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (decodedArgumentsValue || !encodedArgumentsValue) {
-            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                              withSituation:UASituationWebViewInvocation
-                                                                                                withWebView:webView];
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.status == UAActionStatusCompleted) {
-                    UA_LDEBUG(@"action %@ completed successfully", actionName);
-                } else {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                }
-            }];
-        } else {
-            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+            id encodedArgumentsValue = (arg && arg != [NSNull null]) ? arg : nil;
+
+            id decodedArgumentsValue;
+            if (encodedArgumentsValue) {
+                decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
+            }
+
+            //if we found an action by that name, and there's either no argument or a correctly decoded argument
+            if (decodedArgumentsValue || !encodedArgumentsValue) {
+                UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                                  withSituation:UASituationWebViewInvocation
+                                                                                                    withWebView:webView];
+                [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+                    if (result.status == UAActionStatusCompleted) {
+                        UA_LDEBUG(@"action %@ completed successfully", actionName);
+                    } else {
+                        UA_LDEBUG(@"action %@ completed with an error", actionName);
+                    }
+                }];
+            } else {
+                NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+            }
         }
     }
 
@@ -191,30 +199,39 @@
              withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
+
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
         if (!decodedActionName) {
             UA_LDEBUG(@"unable to decode action name");
             completionHandler(nil);
             return;
         }
-        NSString *encodedArgumentsValue = [options objectForKey:actionName];
-        NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
-        UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                          withSituation:UASituationWebViewInvocation
-                                                                                            withWebView:webView];
+        for (id arg in [options objectForKey:actionName]) {
 
-        //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (!encodedArgumentsValue || decodedArgumentsValue) {
-            [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-                if (result.status == UAActionStatusCompleted) {
-                    UA_LDEBUG(@"action %@ completed successfully", actionName);
-                } else {
-                    UA_LDEBUG(@"action %@ completed with an error", actionName);
-                }
-            }];
-        } else {
-            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+            id encodedArgumentsValue = (arg && arg != [NSNull null]) ? arg : nil;
+
+            NSString *decodedArgumentsValue;
+            if (encodedArgumentsValue) {
+                decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+            }
+
+            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                              withSituation:UASituationWebViewInvocation
+                                                                                                withWebView:webView];
+
+            //if we found an action by that name, and there's either no argument or a correctly decoded argument
+            if (!encodedArgumentsValue || decodedArgumentsValue) {
+                [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+                    if (result.status == UAActionStatusCompleted) {
+                        UA_LDEBUG(@"action %@ completed successfully", actionName);
+                    } else {
+                        UA_LDEBUG(@"action %@ completed with an error", actionName);
+                    }
+                }];
+            } else {
+                NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+            }
         }
     }
 
