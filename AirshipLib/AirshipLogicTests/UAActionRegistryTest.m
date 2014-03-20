@@ -90,9 +90,9 @@
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
 
-    XCTAssertFalse([self.registrar registerAction:nil name:@"some-name"], @"Should not be able to register a nil action");
-    XCTAssertFalse([self.registrar registerAction:action name:nil], @"Should not be able to register an entry under a nil name.");
-    XCTAssertFalse([self.registrar registerAction:action name:@"reserved"], @"Should not be able to register a reserved action name.");
+    XCTAssertFalse([self.registry registerAction:nil name:@"some-name"], @"Should not be able to register a nil action");
+    XCTAssertFalse([self.registry registerAction:action name:nil], @"Should not be able to register an entry under a nil name.");
+    XCTAssertFalse([self.registry registerAction:action name:@"reserved"], @"Should not be able to register a reserved action name.");
 }
 
 /**
@@ -108,8 +108,8 @@
     [self.registry registerReservedAction:action name:@"another-reserved" predicate:predicate];
     [self validateActionIsRegistered:action names:@[@"another-reserved"] predicate:predicate];
 
-    XCTAssertFalse([self.registrar registerReservedAction:action name:@"reserved" predicate:nil], @"Should not be able to reregister a reserved action");
-    XCTAssertEqual((NSUInteger)0, [self.registrar registeredEntries].count, @"Reserved actions should not be in the list of registered entries.");
+    XCTAssertFalse([self.registry registerReservedAction:action name:@"reserved" predicate:nil], @"Should not be able to reregister a reserved action");
+    XCTAssertEqual((NSUInteger)0, [self.registry registeredEntries].count, @"Reserved actions should not be in the list of registered entries.");
 }
 
 /**
@@ -119,9 +119,9 @@
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerAction:action names:@[@"name", @"alias"]];
 
-    XCTAssertNotNil([self.registrar registryEntryWithName:@"name"], "RegistryEntry is not returning entries for names");
-    XCTAssertNotNil([self.registrar registryEntryWithName:@"alias"], "RegistryEntry is not returning entries for aliases");
-    XCTAssertNil([self.registrar registryEntryWithName:@"blah"], "RegistryEntry is returning entries for unregistered names or aliases");
+    XCTAssertNotNil([self.registry registryEntryWithName:@"name"], "RegistryEntry is not returning entries for names");
+    XCTAssertNotNil([self.registry registryEntryWithName:@"alias"], "RegistryEntry is not returning entries for aliases");
+    XCTAssertNil([self.registry registryEntryWithName:@"blah"], "RegistryEntry is returning entries for unregistered names or aliases");
 }
 
 /**
@@ -132,14 +132,14 @@
     [self.registry registerAction:action names:@[@"name", @"alias"]];
 
     UAAction *situationOverrideAction = [[UAAction alloc] init];
-    XCTAssertTrue([self.registrar addSituationOverride:UASituationForegroundPush forEntryWithName:@"alias" action:situationOverrideAction], @"Situation return YES on a valid, unreserved situation");
+    XCTAssertTrue([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"alias" action:situationOverrideAction], @"Situation return YES on a valid, unreserved situation");
 
     UAActionRegistryEntry *entry = [self.registry registryEntryWithName:@"name"];
     XCTAssertEqual(action, entry.action, @"Original action should be left unharmed");
     XCTAssertEqual(situationOverrideAction, [entry actionForSituation:UASituationForegroundPush], @"Action for the situation should be the situationOverrideAction");
 
     // Remove the situation override
-    XCTAssertTrue([self.registrar addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:nil], @"Situation return YES on a valid, unreserved situation");
+    XCTAssertTrue([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:nil], @"Situation return YES on a valid, unreserved situation");
     XCTAssertEqual(action, [entry actionForSituation:UASituationForegroundPush], @"Action for the situation should be the default action");
 }
 
@@ -149,9 +149,9 @@
 - (void)testSituationOverrideInvalid {
     UAAction *situationOverrideAction = [[UAAction alloc] init];
 
-    XCTAssertFalse([self.registrar addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:situationOverrideAction], @"Situation return NO if the registry for the name does not exist.");
-    XCTAssertFalse([self.registrar addSituationOverride:UASituationForegroundPush forEntryWithName:nil action:situationOverrideAction], @"Situation return NO if the name is nil.");
-    XCTAssertFalse([self.registrar addSituationOverride:UASituationForegroundPush forEntryWithName:kUAIncomingPushActionRegistryName action:situationOverrideAction], @"Situation return NO if the action is reserved.");
+    XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:@"name" action:situationOverrideAction], @"Situation return NO if the registry for the name does not exist.");
+    XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:nil action:situationOverrideAction], @"Situation return NO if the name is nil.");
+    XCTAssertFalse([self.registry addSituationOverride:UASituationForegroundPush forEntryWithName:kUAIncomingPushActionRegistryName action:situationOverrideAction], @"Situation return NO if the action is reserved.");
 }
 
 /**
@@ -167,11 +167,11 @@
     [self validateActionIsRegistered:action names:@[@"name"] predicate:yesPredicate];
 
     // Update the predicate to noPredicate
-    XCTAssertTrue([self.registrar updatePredicate:noPredicate forEntryWithName:@"name"], @"Predicate should update on this unreserved action");
+    XCTAssertTrue([self.registry updatePredicate:noPredicate forEntryWithName:@"name"], @"Predicate should update on this unreserved action");
     [self validateActionIsRegistered:action names:@[@"name"] predicate:noPredicate];
 
     // Clear the predicate
-     XCTAssertTrue([self.registrar updatePredicate:nil forEntryWithName:@"name"], "Predicate should update on this unreserved action");
+     XCTAssertTrue([self.registry updatePredicate:nil forEntryWithName:@"name"], "Predicate should update on this unreserved action");
     [self validateActionIsRegistered:action names:@[@"name"] predicate:nil];
 }
 
@@ -183,8 +183,8 @@
     UAActionPredicate predicate = ^(UAActionArguments *args) { return YES; };
     [self.registry registerReservedAction:action name:@"reserved" predicate:predicate];
 
-    XCTAssertFalse([self.registrar updatePredicate:nil forEntryWithName:@"name"], @"Update predicate should return NO if the registry for the name does not exist.");
-    XCTAssertFalse([self.registrar updatePredicate:nil forEntryWithName:@"reserved"], @"Update predicate should return NO if the entry is reserved");
+    XCTAssertFalse([self.registry updatePredicate:nil forEntryWithName:@"name"], @"Update predicate should return NO if the registry for the name does not exist.");
+    XCTAssertFalse([self.registry updatePredicate:nil forEntryWithName:@"reserved"], @"Update predicate should return NO if the entry is reserved");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:predicate];
 }
 
@@ -197,7 +197,7 @@
 
     [self.registry registerAction:action name:@"name"];
 
-    XCTAssertTrue([self.registrar updateAction:anotherAction forEntryWithName:@"name"], @"Should allow updating action if its not reserved.");
+    XCTAssertTrue([self.registry updateAction:anotherAction forEntryWithName:@"name"], @"Should allow updating action if its not reserved.");
     [self validateActionIsRegistered:anotherAction names:@[@"name"] predicate:nil];
 }
 
@@ -210,12 +210,12 @@
     [self.registry registerReservedAction:action name:@"reserved" predicate:predicate];
     [self.registry registerAction:action name:@"name"];
 
-    XCTAssertFalse([self.registrar updateAction:nil forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
+    XCTAssertFalse([self.registry updateAction:nil forEntryWithName:@"not-found"], @"Update action should return NO if the registry for the name does not exist.");
 
-    XCTAssertFalse([self.registrar updateAction:nil forEntryWithName:@"name"], @"Update action should return NO if the action is nil.");
+    XCTAssertFalse([self.registry updateAction:nil forEntryWithName:@"name"], @"Update action should return NO if the action is nil.");
     [self validateActionIsRegistered:action names:@[@"name"] predicate:nil];
 
-    XCTAssertFalse([self.registrar updateAction:action forEntryWithName:@"reserved"], @"Update action should return NO if the entry is reserved");
+    XCTAssertFalse([self.registry updateAction:action forEntryWithName:@"reserved"], @"Update action should return NO if the entry is reserved");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:predicate];
 }
 
@@ -228,17 +228,17 @@
     [self.registry registerAction:action name:@"name"];
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
 
-    XCTAssertTrue([self.registrar addName:@"anotherName" forEntryWithName:@"name"], @"Should be able to add names to any entry.");
-    XCTAssertTrue([self.registrar addName:@"yetAnotherName" forEntryWithName:@"anotherName"], @"Should be able to add names to any entry.");
+    XCTAssertTrue([self.registry addName:@"anotherName" forEntryWithName:@"name"], @"Should be able to add names to any entry.");
+    XCTAssertTrue([self.registry addName:@"yetAnotherName" forEntryWithName:@"anotherName"], @"Should be able to add names to any entry.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName"] predicate:nil];
 
     // Check conflict
-    XCTAssertTrue([self.registrar addName:@"reservedAlias" forEntryWithName:@"name"], @"Should be able to add a non original resereved name to another entry.");
+    XCTAssertTrue([self.registry addName:@"reservedAlias" forEntryWithName:@"name"], @"Should be able to add a non original resereved name to another entry.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
 
     // Adding a name to an entry with a name already
-    XCTAssertTrue([self.registrar addName:@"reservedAlias" forEntryWithName:@"reservedAlias"], @"Should be able to add a name to the entry who's name is the name you are adding.  Yeah.");
+    XCTAssertTrue([self.registry addName:@"reservedAlias" forEntryWithName:@"reservedAlias"], @"Should be able to add a name to the entry who's name is the name you are adding.  Yeah.");
     [self validateActionIsRegistered:action names:@[@"name", @"anotherName", @"yetAnotherName", @"reservedAlias"] predicate:nil];
 }
 
@@ -250,9 +250,9 @@
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
     [self.registry registerReservedAction:action name:@"anotherReserved" predicate:nil];
 
-    XCTAssertFalse([self.registrar addName:@"anotherReserved" forEntryWithName:@"reserved"], @"Should not be able to add a reserved name to another entry.");
-    XCTAssertFalse([self.registrar addName:@"someName" forEntryWithName:@"not found"], @"Should not be able to add a name to a not found entry.");
-    XCTAssertFalse([self.registrar addName:@"randomName" forEntryWithName:@"reserved"], @"Should not be able to add a name to a reserved entry.");
+    XCTAssertFalse([self.registry addName:@"anotherReserved" forEntryWithName:@"reserved"], @"Should not be able to add a reserved name to another entry.");
+    XCTAssertFalse([self.registry addName:@"someName" forEntryWithName:@"not found"], @"Should not be able to add a name to a not found entry.");
+    XCTAssertFalse([self.registry addName:@"randomName" forEntryWithName:@"reserved"], @"Should not be able to add a name to a reserved entry.");
 
 }
 
@@ -264,17 +264,17 @@
 
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
 
-    XCTAssertTrue([self.registrar removeName:@"name"], @"Should be able to remove a non reserved name.");
+    XCTAssertTrue([self.registry removeName:@"name"], @"Should be able to remove a non reserved name.");
     [self validateActionIsRegistered:action names:@[@"anotherName"] predicate:nil];
 
-    XCTAssertTrue([self.registrar removeName:@"anotherName"], @"Should be able to remove a non reserved name.");
-    XCTAssertEqual((NSUInteger) 0, [self.registrar.reservedEntryNames count], @"If no names reference an entry, it should be dropped.");
+    XCTAssertTrue([self.registry removeName:@"anotherName"], @"Should be able to remove a non reserved name.");
+    XCTAssertEqual((NSUInteger) 0, [self.registry.reservedEntryNames count], @"If no names reference an entry, it should be dropped.");
 
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
     [self.registry addName:@"reservedAlias" forEntryWithName:@"reserved"];
 
-    XCTAssertTrue([self.registrar removeName:@"reservedAlias"], @"Should be able to remove the name that was added to a reserved action.");
-    XCTAssertTrue([self.registrar removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
+    XCTAssertTrue([self.registry removeName:@"reservedAlias"], @"Should be able to remove the name that was added to a reserved action.");
+    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
 /**
@@ -284,7 +284,7 @@
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
 
-    XCTAssertFalse([self.registrar removeName:@"reserved"], @"Should not be able to remove a reserved name.");
+    XCTAssertFalse([self.registry removeName:@"reserved"], @"Should not be able to remove a reserved name.");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
 }
 
@@ -296,10 +296,10 @@
 
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
 
-    XCTAssertTrue([self.registrar removeEntryWithName:@"name"], @"Should be able to remove a non reserved entry.");
-    XCTAssertEqual((NSUInteger) 0, [self.registrar.reservedEntryNames count], @"The entry should be dropped.");
+    XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove a non reserved entry.");
+    XCTAssertEqual((NSUInteger) 0, [self.registry.reservedEntryNames count], @"The entry should be dropped.");
 
-    XCTAssertTrue([self.registrar removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
+    XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }
 
 /**
@@ -309,7 +309,7 @@
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
 
-    XCTAssertFalse([self.registrar removeEntryWithName:@"reserved"], @"Should not be able to remove a reserved entry.");
+    XCTAssertFalse([self.registry removeEntryWithName:@"reserved"], @"Should not be able to remove a reserved entry.");
     [self validateActionIsRegistered:action names:@[@"reserved"] predicate:nil];
 }
 
@@ -320,10 +320,10 @@
 - (void)testRegisteredEntries {
     UAAction *action = [[UAAction alloc] init];
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
-    XCTAssertEqual((NSUInteger)1, [self.registrar.registeredEntries count], @"Duplicate names should be ignored.");
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Duplicate names should be ignored.");
 
     [self.registry registerReservedAction:action name:@"reserved" predicate:nil];
-    XCTAssertEqual((NSUInteger)1, [self.registrar.registeredEntries count], @"Reserved entries should be ignored");
+    XCTAssertEqual((NSUInteger)1, [self.registry.registeredEntries count], @"Reserved entries should be ignored");
 }
 
 - (void)validateActionIsRegistered:(UAAction *)action
