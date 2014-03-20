@@ -60,68 +60,70 @@
         return;
     }
 
-    NSString *encodedArgumentsValue = [options valueForKey:actionName];
+    id encodedArgumentsValue = [[options valueForKey:actionName] firstObject];
     id decodedArgumentsValue;
-    if (encodedArgumentsValue) {
+    if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
         decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-    }
 
-    //if we found an action by that name, and there's either no argument or a correctly decoded argument
-    if (decodedArgumentsValue || !encodedArgumentsValue) {
-        UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                          withSituation:UASituationWebViewInvocation
-                                                                                            withWebView:webView];
-        [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
-            UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
-            if (!callbackID) {
+        if (!decodedArgumentsValue) {
+            if (callbackID) {
+                NSString *errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
+                NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
+                completionHandler(script);
+            } else {
                 completionHandler(nil);
-                return;
             }
 
-            NSString *script = nil;
-            switch (result.status) {
-                case UAActionStatusCompleted:
-                {
-                    NSString *resultString;
-                    if (result.value) {
-                        //if the action completed with a result value, serialize into JSON
-                        //accepting fragments so we can write lower level JSON values
-                        resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES];
-                    }
-                    //in the case where there is no result value, pass null
-                    resultString = resultString ?: @"null";
-                    //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
-                    script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
-                    break;
-                }
-                case UAActionStatusActionNotFound:
-                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                              [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName],
-                              callbackID];
-                    break;
-                case UAActionStatusError:
-                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                               result.error.localizedDescription,
-                               callbackID];
-                    break;
-                case UAActionStatusArgumentsRejected:
-                    script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
-                              [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName],
-                              callbackID];
-                    break;
-            }
-
-            completionHandler(script);
-        }];
-    } else {
-        if (callbackID) {
-            NSString *errorString = [NSString stringWithFormat:@"Error decoding arguments: %@", encodedArgumentsValue];
-            NSString *script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');", errorString, callbackID];
-            completionHandler(script);
-        } else {
-            completionHandler(nil);
+            return;
         }
     }
+
+    UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                      withSituation:UASituationWebViewInvocation
+                                                                                        withWebView:webView];
+
+    [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
+        UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
+        if (!callbackID) {
+            completionHandler(nil);
+            return;
+        }
+
+        NSString *script = nil;
+        switch (result.status) {
+            case UAActionStatusCompleted:
+            {
+                NSString *resultString;
+                if (result.value) {
+                    //if the action completed with a result value, serialize into JSON
+                    //accepting fragments so we can write lower level JSON values
+                    resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES];
+                }
+                //in the case where there is no result value, pass null
+                resultString = resultString ?: @"null";
+                //note: JSON.parse('null') and JSON.parse(null) are functionally equivalent.
+                script = [NSString stringWithFormat:@"UAirship.finishAction(null, '%@', '%@');", resultString, callbackID];
+                break;
+            }
+            case UAActionStatusActionNotFound:
+                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                          [NSString stringWithFormat:@"No action found with name %@, skipping action.", actionName],
+                          callbackID];
+                break;
+            case UAActionStatusError:
+                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                          result.error.localizedDescription,
+                          callbackID];
+                break;
+            case UAActionStatusArgumentsRejected:
+                script = [NSString stringWithFormat:@"UAirship.finishAction(new Error('%@'), null, '%@');",
+                          [NSString stringWithFormat:@"Action %@ rejected arguments.", actionName],
+                          callbackID];
+                break;
+        }
+
+        completionHandler(script);
+    }];
 }
 
 /**
@@ -143,19 +145,23 @@
 
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
         if (!decodedActionName) {
-            UA_LDEBUG(@"unable to decode action name");
-            completionHandler(nil);
-            return;
+            UA_LDEBUG(@"unable to decode action name %@", actionName);
+            continue;
         }
 
-        NSString *encodedArgumentsValue = [options valueForKey:actionName];
-        id decodedArgumentsValue;
-        if (encodedArgumentsValue) {
-            decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
-        }
+        for (id encodedArgumentsValue in [options objectForKey:actionName]) {
 
-        //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (decodedArgumentsValue || !encodedArgumentsValue) {
+            id decodedArgumentsValue;
+            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
+                decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
+
+                if (!decodedArgumentsValue) {
+                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
+                    continue;
+                }
+            }
+
+
             UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
                                                                                               withSituation:UASituationWebViewInvocation
                                                                                                 withWebView:webView];
@@ -166,8 +172,6 @@
                     UA_LDEBUG(@"action %@ completed with an error", actionName);
                 }
             }];
-        } else {
-            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
         }
     }
 
@@ -191,21 +195,30 @@
              withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
 
     for (NSString *actionName in options) {
+
         NSString *decodedActionName = [actionName urlDecodedStringWithEncoding:NSUTF8StringEncoding];
         if (!decodedActionName) {
             UA_LDEBUG(@"unable to decode action name");
-            completionHandler(nil);
-            return;
+            continue;
         }
-        NSString *encodedArgumentsValue = [options objectForKey:actionName];
-        NSString *decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
-        UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                          withSituation:UASituationWebViewInvocation
-                                                                                            withWebView:webView];
+        for (id encodedArgumentsValue in [options objectForKey:actionName]) {
 
-        //if we found an action by that name, and there's either no argument or a correctly decoded argument
-        if (!encodedArgumentsValue || decodedArgumentsValue) {
+
+            NSString *decodedArgumentsValue;
+            if (encodedArgumentsValue && encodedArgumentsValue != [NSNull null]) {
+                decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
+
+                if (!decodedArgumentsValue) {
+                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
+                    continue;
+                }
+            }
+
+            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                                              withSituation:UASituationWebViewInvocation
+                                                                                                withWebView:webView];
+
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -213,8 +226,6 @@
                     UA_LDEBUG(@"action %@ completed with an error", actionName);
                 }
             }];
-        } else {
-            NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
         }
     }
 
@@ -224,6 +235,7 @@
 - (void)callWithData:(UAWebViewCallData *)data
     withCompletionHandler:(UAJavaScriptDelegateCompletionHandler)completionHandler {
     UA_LDEBUG(@"action js delegate arguments: %@ \n options: %@", data.arguments, data.options);
+
 
     //we need at least one argument
     //run-action-cb is the full JS callback interface, and only runs one action at a time
