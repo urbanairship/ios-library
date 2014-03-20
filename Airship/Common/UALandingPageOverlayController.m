@@ -112,13 +112,46 @@ static NSMutableSet *overlayControllers = nil;
 }
 
 /** 
- * A utility method that grabs the top-most view controller
+ * A utility method that grabs the top-most view controller for the main application window.
+ * May return nil if a suitable view controller cannot be found.
  */
 + (UIViewController *)topController {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
 
+    UIWindow *window;
+
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    // Prefer the window property, if accessible
+    if ([appDelegate respondsToSelector:@selector(window)]){
+        window = appDelegate.window;
+    } else if ([UIApplication sharedApplication].windows.count)  {
+        // Otherwise find the first window in the app's collection, if present
+        window = [[UIApplication sharedApplication].windows objectAtIndex:0];
+    }
+
+    UIViewController *topController = window.rootViewController;
+
+    if (!topController) {
+        UA_LDEBUG(@"unable to find top controller");
+        return nil;
+    }
+
+    BOOL presented = NO;
+    UIModalPresentationStyle presentationStyle = topController.modalPresentationStyle;
+
+    // Iterate through any presented view controllers and find the top-most presentation context
     while (topController.presentedViewController) {
+        presented = YES;
+        // UIModalPresentationCurrentContext allows a view controller to use the presentation style of its modal parent.
+        if (topController.presentedViewController.modalPresentationStyle != UIModalPresentationCurrentContext) {
+            presentationStyle = topController.presentedViewController.modalPresentationStyle;
+        }
         topController = topController.presentedViewController;
+    }
+
+    // Custom modal presentation could leave us in an unpredictable display state
+    if (presented && presentationStyle == UIModalPresentationCustom) {
+        UA_LDEBUG(@"top view controller is using a custom presentation style, returning nil");
+        return nil;
     }
 
     return topController;
