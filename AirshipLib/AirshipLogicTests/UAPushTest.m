@@ -32,7 +32,7 @@
 #import "UAAnalytics.h"
 #import "UAirship+Internal.h"
 #import "UAActionRunner.h"
-#import "UAActionRegistrar+Internal.h"
+#import "UAActionRegistry+Internal.h"
 #import "UAUtils.h"
 #import "UAUser.h"
 #import "UAChannelRegistrationPayload.h"

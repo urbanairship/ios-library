@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar+Internal.h"
+#import "UAActionRegistry+Internal.h"
 #import "UAActionRegistryEntry+Internal.h"
 #import "UAIncomingPushAction.h"
 #import "UAIncomingRichPushAction.h"
@@ -35,10 +35,10 @@
 #import "UAApplicationMetrics.h"
 #import "UACloseWindowAction.h"
 
-@implementation UAActionRegistrar
+@implementation UAActionRegistry
 @dynamic registeredEntries;
 
-SINGLETON_IMPLEMENTATION(UAActionRegistrar)
+SINGLETON_IMPLEMENTATION(UAActionRegistry)
 
 - (id)init {
     self = [super init];

@@ -23,13 +23,13 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UAActionRegistrar.h"
+#import "UAActionRegistry.h"
 
 #define kUAIncomingRichPushActionRegistryName @"_uamid"
 #define kUAIncomingPushActionRegistryName @"__incoming_push_action"
 #define kUACloseWindowActionRegistryName @"__close_window_action"
 
-@interface UAActionRegistrar ()
+@interface UAActionRegistry ()
 
 /**
  * Map of names to action entries

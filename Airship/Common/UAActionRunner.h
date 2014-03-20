@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
-#import "UAActionRegistrar.h"
+#import "UAActionRegistry.h"
 #import "UAPushActionArguments.h"
 #import "UAAggregateActionResult.h"
 
