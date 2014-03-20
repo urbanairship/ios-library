@@ -156,7 +156,7 @@
                 decodedArgumentsValue = [self objectForEncodedArguments:encodedArgumentsValue];
 
                 if (!decodedArgumentsValue) {
-                    NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
                     continue;
                 }
             }
@@ -210,7 +210,7 @@
                 decodedArgumentsValue = [encodedArgumentsValue urlDecodedStringWithEncoding:NSUTF8StringEncoding];
 
                 if (!decodedArgumentsValue) {
-                    NSLog(@"Error decoding arguments: %@", encodedArgumentsValue);
+                    UA_LERR(@"Error decoding arguments: %@", encodedArgumentsValue);
                     continue;
                 }
             }
