@@ -37,6 +37,7 @@
 
 
     [[[self.mockConfig stub] andReturn:@"app-key"] appKey];
+    [[[self.mockConfig stub] andReturn:kUAProductionLandingPageContentURL] landingPageContentURL];
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
     [[[self.mockConfig stub] andReturnValue:OCMOCK_VALUE((NSUInteger)100)] cacheDiskSizeInMB];
 

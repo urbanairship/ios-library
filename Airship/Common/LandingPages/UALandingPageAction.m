@@ -47,7 +47,7 @@
     }
 
     NSString *contentId = [urlString substringFromIndex:2];
-    return [NSURL URLWithString:[kUALandingPageContentURL stringByAppendingFormat:@"%@/%@",
+    return [NSURL URLWithString:[UAirship.shared.config.landingPageContentURL stringByAppendingFormat:@"/%@/%@",
                                  UAirship.shared.config.appKey,
                                  [contentId urlEncodedStringWithEncoding:NSUTF8StringEncoding]]];
 }
@@ -79,7 +79,7 @@
     NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
 
     // Include app auth for any content id requests
-    BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:kUALandingPageContentURL];
+    BOOL isContentUrl = [landingPageURL.absoluteString hasPrefix:UAirship.shared.config.landingPageContentURL];
 
     // set cachable url
     [UAURLProtocol addCachableURL:landingPageURL];
