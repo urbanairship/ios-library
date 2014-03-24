@@ -14,7 +14,8 @@
     self = [super init];
     if (self) {
         self.queue = queue;
-        self.queue.maxConcurrentOperationCount = self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
+        self.queue.maxConcurrentOperationCount = kUARequestEngineDefaultMaxConcurrentRequests;
+        self.maxConcurrentRequests = kUARequestEngineDefaultMaxConcurrentRequests;
         self.initialDelayIntervalInSeconds = kUARequestEngineDefaultInitialDelayIntervalSeconds;
         self.maxDelayIntervalInSeconds = kUARequestEngineDefaultMaxDelayIntervalSeconds;
         self.backoffFactor = kUARequestEngineDefaultBackoffFactor;
