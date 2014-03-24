@@ -311,10 +311,6 @@ static NSMutableSet *overlayControllers = nil;
 
     NSMutableURLRequest *requestObj = [NSMutableURLRequest requestWithURL:self.url];
 
-    if (self.message) {
-        [requestObj setValue:[UAUtils userAuthHeaderString] forHTTPHeaderField:@"Authorization"];
-    }
-
     for (id key in self.headers) {
         id value = [self.headers objectForKey:key];
         if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]]) {
