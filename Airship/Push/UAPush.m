@@ -116,8 +116,10 @@ static Class _uiClass;
         if (self.channelID && uaLogLevel >= UALogLevelError) {
             NSLog(@"Channel ID: %@", self.channelID);
         }
+
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
     }
-    
+
     return self;
 }
 
@@ -583,6 +585,11 @@ BOOL deferChannelCreationOnForeground = false;
         [self.deviceRegistrar cancelAllRequests];
     }
 
+    if (![self beginRegistrationBackgroundTask]) {
+        UA_LDEBUG(@"Unable to perform registration, background task not granted.");
+        return;
+    }
+
     if (self.pushEnabled) {
         [self.deviceRegistrar registerWithChannelID:self.channelID
                                     channelLocation:self.channelLocation
@@ -639,22 +646,19 @@ BOOL deferChannelCreationOnForeground = false;
 }
 
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload {
-    // If we are in the background do not allow any other registrations to take place
-    if ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground) {
-        // Register again if we are using old registration, and we have a deviceToken, and if the
-        // device token does not match if push is enabled.
-        //
-        // TODO: remove this check once we remove device token registration
-        if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
-            [self updateRegistrationForcefully:NO];
-        } else if (![payload isEqualToPayload:[self createChannelPayload]]) {
-            [self updateRegistrationForcefully:NO];
-        }
-    }
-
     id strongDelegate = self.registrationDelegate;
     if ([strongDelegate respondsToSelector:@selector(registrationSucceededForChannelID:deviceToken:)]) {
         [strongDelegate registrationSucceededForChannelID:self.channelID deviceToken:self.deviceToken];
+    }
+
+    // Register again if we are using old registration, and we have a deviceToken, and if the
+    // device token does not match if push is enabled.
+    if (!self.deviceRegistrar.isUsingChannelRegistration && self.deviceToken && self.pushEnabled != self.deviceRegistrar.isDeviceTokenRegistered) {
+        [self updateRegistrationForcefully:NO];
+    } else if (![payload isEqualToPayload:[self createChannelPayload]]) {
+        [self updateRegistrationForcefully:NO];
+    } else {
+        [self endRegistrationBackgroundTask];
     }
 }
 
@@ -663,6 +667,8 @@ BOOL deferChannelCreationOnForeground = false;
     if ([strongDelegate respondsToSelector:@selector(registrationFailed)]) {
         [strongDelegate registrationFailed];
     }
+
+    [self endRegistrationBackgroundTask];
 }
 
 - (void)channelCreated:(NSString *)channelID channelLocation:(NSString *)channelLocation {
@@ -701,6 +707,23 @@ BOOL deferChannelCreationOnForeground = false;
     NSDictionary *defaults = @{ UAPushEnabledSettingsKey: [NSNumber numberWithBool:YES] };
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+}
+
+- (BOOL)beginRegistrationBackgroundTask {
+    if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
+        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [self.deviceRegistrar cancelAllRequests];
+        }];
+    }
+
+    return (BOOL) self.registrationBackgroundTask != UIBackgroundTaskInvalid;
+}
+
+- (void)endRegistrationBackgroundTask {
+    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
+        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
+    }
 }
 
 
