@@ -116,7 +116,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     }
 
     if ([self.reservedEntryNames containsObject:name]) {
-        UA_LWARN(@"Unable remove name for action. %@ is a reserved action name.", name);
+        UA_LWARN(@"Unable to remove name for action. %@ is a reserved action name.", name);
         return NO;
     }
 
@@ -149,7 +149,7 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     }
 
     for (NSString *entryName in entry.mutableNames) {
-        [self.registeredActionEntries removeObjectForKey:name];
+        [self.registeredActionEntries removeObjectForKey:entryName];
     }
 
     return YES;
