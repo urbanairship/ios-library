@@ -283,10 +283,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
 - (void)restoreSavedUploadEventSettings {
     // If the key is missing the int will end up being 0 and the values will clamp to there lower end.
-    self.maxTotalDBSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
-    self.maxBatchSize = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
-    self.maxWait = [[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
-    self.minBatchInterval = [[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
+    self.maxTotalDBSize = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxTotalDBSizeUserDefaultsKey];
+    self.maxBatchSize = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxBatchSizeUserDefaultsKey];
+    self.maxWait = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMaxWaitUserDefaultsKey];
+    self.minBatchInterval = (NSUInteger)[[NSUserDefaults standardUserDefaults] integerForKey:kMinBatchIntervalUserDefaultsKey];
 }
 
 - (void)saveUploadEventSettings {
@@ -348,22 +348,22 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     id maxTotalValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Total"];
     if (maxTotalValue) {
-        self.maxTotalDBSize = [maxTotalValue integerValue] * 1024; //value returned in KB;
+        self.maxTotalDBSize = (NSUInteger)[maxTotalValue integerValue] * 1024; //value returned in KB;
     }
 
     id maxBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Batch"];
     if (maxBatchValue) {
-        self.maxBatchSize = [maxBatchValue integerValue] * 1024; //value return in KB
+        self.maxBatchSize = (NSUInteger)[maxBatchValue integerValue] * 1024; //value return in KB
     }
 
     id maxWaitValue = [[response allHeaderFields] objectForKey:@"X-UA-Max-Wait"];
     if (maxWaitValue) {
-        self.maxWait = [maxWaitValue integerValue];
+        self.maxWait = (NSUInteger)[maxWaitValue integerValue];
     }
 
     id minBatchValue = [[response allHeaderFields] objectForKey:@"X-UA-Min-Batch-Interval"];
     if (minBatchValue) {
-        self.minBatchInterval = [minBatchValue integerValue];
+        self.minBatchInterval = (NSUInteger)[minBatchValue integerValue];
     }
 
     [self saveUploadEventSettings];

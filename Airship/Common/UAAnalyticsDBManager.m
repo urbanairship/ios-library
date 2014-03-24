@@ -193,7 +193,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     }
 }
 
-- (NSInteger)sizeInBytes {
+- (NSUInteger)sizeInBytes {
     __block NSArray *results = nil;
     dispatch_sync(dbQueue, ^{
        results = [self.db executeQuery:@"SELECT SUM(event_size) size FROM analytics"];
@@ -205,7 +205,7 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
         if ([count isKindOfClass:[NSNull class]]) {
             return 0;
         }
-        return [count intValue];
+        return [count unsignedIntegerValue];
     }
 }
 
