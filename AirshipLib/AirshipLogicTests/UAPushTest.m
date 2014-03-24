@@ -799,7 +799,7 @@ NSDictionary *notification;
 
 
     XCTAssertNoThrow([self.mockedDeviceRegistrar verify],
-                     @"updateRegistration should not call any registartion without a valid background task");
+                     @"updateRegistration should not call any registration without a valid background task");
 }
 
 - (void)testUpdateRegistrationExistingBackgroundTask {
