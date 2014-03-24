@@ -65,12 +65,7 @@
 /**
  * A flag indicating if registration is in progress.
  */
-@property (nonatomic, assign) BOOL isRegistrationInProgress;
-
-/**
- * Background task identifier used to do any registration in the background.
- */
-@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+@property (assign) BOOL isRegistrationInProgress;
 
 
 @end

@@ -88,6 +88,11 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 @property (nonatomic, strong) NSDictionary *launchNotification;
 
 /**
+ * Background task identifier used to do any registration in the background.
+ */
+@property (nonatomic, assign) UIBackgroundTaskIdentifier registrationBackgroundTask;
+
+/**
  * Get the local time zone, considered the default.
  */
 - (NSTimeZone *)defaultTimeZoneForQuietTime;

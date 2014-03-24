@@ -42,7 +42,6 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         self.channelAPIClient = [[UAChannelAPIClient alloc] init];
         self.isUsingChannelRegistration = YES;
         self.isRegistrationInProgress = NO;
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
     }
     return self;
 }
@@ -60,17 +59,10 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             return;
         }
 
+        self.isRegistrationInProgress = YES;
+
         if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:YES]) {
 
-            [self beginBackgroundTask];
-
-            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
-                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-                [self failedWithPayload:payload];
-                return;
-            }
-
-            self.isRegistrationInProgress = YES;
 
             // Fallback to old device registration
             if (!self.isUsingChannelRegistration) {
@@ -108,15 +100,9 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
             return;
         }
 
+        self.isRegistrationInProgress = YES;
+
         if (forcefully || [self shouldRegisterPayload:payloadCopy pushEnabled:NO]) {
-
-            [self beginBackgroundTask];
-
-            if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
-                UA_LDEBUG(@"Unable to perform registration, background task not granted.");
-                [self failedWithPayload:payload];
-                return;
-            }
 
             self.isRegistrationInProgress = YES;
 
@@ -155,8 +141,6 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
         }
 
         self.isRegistrationInProgress = NO;
-
-        [self endBackgroundTask];
     }
 }
 
@@ -289,26 +273,32 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 
 - (void)failedWithPayload:(UAChannelRegistrationPayload *)payload {
     @synchronized(self) {
+        if (!self.isRegistrationInProgress) {
+            return;
+        }
+
+        self.isRegistrationInProgress = NO;
+
         id strongDelegate = self.delegate;
         if ([strongDelegate respondsToSelector:@selector(registrationFailedWithPayload:)]) {
             [strongDelegate registrationFailedWithPayload:payload];
         }
-
-        self.isRegistrationInProgress = NO;
-        [self endBackgroundTask];
     }
 }
 
 - (void)succeededWithPayload:payload {
     @synchronized(self) {
-        id strongDelegate = self.delegate;
-        if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
-            [strongDelegate registrationSucceededWithPayload:payload];
+        if (!self.isRegistrationInProgress) {
+            return;
         }
 
         self.lastSuccessPayload = payload;
         self.isRegistrationInProgress = NO;
-        [self endBackgroundTask];
+
+        id strongDelegate = self.delegate;
+        if ([strongDelegate respondsToSelector:@selector(registrationSucceededWithPayload:)]) {
+            [strongDelegate registrationSucceededWithPayload:payload];
+        }
     }
 }
 
@@ -340,22 +330,6 @@ NSString * const UADeviceTokenRegistered = @"UARegistrarDeviceTokenRegistered";
 // TODO: Remove this once device token registration is removed
 - (void)setDeviceTokenRegistered:(BOOL)deviceTokenRegistered {
     [[NSUserDefaults standardUserDefaults] setBool:deviceTokenRegistered forKey:UADeviceTokenRegistered];
-}
-
-
-- (void)beginBackgroundTask {
-    if (self.registrationBackgroundTask == UIBackgroundTaskInvalid) {
-        self.registrationBackgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-            [self cancelAllRequests];
-        }];
-    }
-}
-
-- (void)endBackgroundTask {
-    if (self.registrationBackgroundTask != UIBackgroundTaskInvalid) {
-        [[UIApplication sharedApplication] endBackgroundTask:self.registrationBackgroundTask];
-        self.registrationBackgroundTask = UIBackgroundTaskInvalid;
-    }
 }
 
 @end

@@ -33,7 +33,6 @@
 #import "UAHTTPRequest+Internal.h"
 
 @interface UADeviceRegistrarTest : XCTestCase
-@property(nonatomic, strong) id mockedApplication;
 @end
 
 @implementation UADeviceRegistrarTest
@@ -61,12 +60,6 @@ UADeviceRegistrar *registrar;
 
 - (void)setUp {
     [super setUp];
-
-    // Set up a mocked application
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE((NSUInteger)30)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
 
     channelCreateSuccessChannelID = @"newChannelID";
     channelCreateSuccessChannelLocation = @"newChannelLocation";
@@ -145,15 +138,11 @@ UADeviceRegistrar *registrar;
     // Expect the delegate to be called
     [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    // Background task should be ended
-    [[self.mockedApplication expect] endBackgroundTask:30];
-
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called.");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 /**
@@ -169,15 +158,12 @@ UADeviceRegistrar *registrar;
     // Expect the delegate to be called
     [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    // Expect a background task to be created and ended
-    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 /**
@@ -300,14 +286,11 @@ UADeviceRegistrar *registrar;
     // Expect the delegate to be called
     [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    // Background task should be ended
-    [[self.mockedApplication expect] endBackgroundTask:30];
 
     [registrar registerPushDisabledWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:NO];
     XCTAssertNoThrow([mockedDeviceClient verify], @"Registering should always cancel current and pending requests.");
     XCTAssertNoThrow([mockedChannelClient verify], @"Registering should always cancel all requests and call updateChannel with passed payload and channel id.");
     XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 
@@ -363,14 +346,10 @@ UADeviceRegistrar *registrar;
 
     [[mockedRegistrarDelegate expect] registrationSucceededWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
 
-    // Background task should be ended
-    [[self.mockedApplication expect] endBackgroundTask:30];
-
     [registrar registerPushDisabledWithChannelID:nil channelLocation:nil withPayload:payload forcefully:NO];
 
     XCTAssertNoThrow([mockedChannelClient verify], @"Channel client should create a new create request");
     XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Registration delegate should be notified of the successful registration");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should end the start and end a background task");
 }
 
 /**
@@ -543,34 +522,5 @@ UADeviceRegistrar *registrar;
     XCTAssertNoThrow([mockedChannelClient verify], @"Conflict with the channel id should try to create a new channel");
     XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
 }
-
-/**
- * Test that when a background task is unable to be created registration is aborted.f
- */
-- (void)testRegisterBackgroundTaskInvalid {
-    [self.mockedApplication stopMocking];
-
-    self.mockedApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[self.mockedApplication stub] andReturn:self.mockedApplication] sharedApplication];
-
-    [[[self.mockedApplication expect] andReturnValue:OCMOCK_VALUE((NSUInteger)UIBackgroundTaskInvalid)] beginBackgroundTaskWithExpirationHandler:OCMOCK_ANY];
-
-    // Reject the channel client to update channel and call the update block
-    [[mockedChannelClient reject] updateChannelWithLocation:@"someLocation"
-                                                 withPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]
-                                                   onSuccess:OCMOCK_ANY
-                                                   onFailure:OCMOCK_ANY];
-
-
-    // Expect the delegate to be called
-    [[mockedRegistrarDelegate expect] registrationFailedWithPayload:[OCMArg checkWithSelector:@selector(isEqualToPayload:) onObject:payload]];
-
-    [registrar registerWithChannelID:@"someChannel" channelLocation:@"someLocation" withPayload:payload forcefully:YES];
-
-    XCTAssertNoThrow([mockedChannelClient verify], @"Should not register when an invalid background task ID is returned.");
-    XCTAssertNoThrow([self.mockedApplication verify], @"Should request a background task.");
-    XCTAssertNoThrow([mockedRegistrarDelegate verify], @"Delegate should be called on failure");
-}
-
 
 @end

@@ -35,17 +35,11 @@
 
 /**
  * Called when the device registrar failed to register.
- *
- * When called from the background, any async tasks that are triggered
- * from this call should request a background task.
  */
 - (void)registrationFailedWithPayload:(UAChannelRegistrationPayload *)payload;
 
 /**
  * Called when the device registrar succesfully registered.
- *
- * When called from the background, any async tasks that are triggered
- * from this call should request a background task.
  */
 - (void)registrationSucceededWithPayload:(UAChannelRegistrationPayload *)payload;
 
