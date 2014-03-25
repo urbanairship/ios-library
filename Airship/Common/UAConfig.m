@@ -72,7 +72,7 @@
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
-            "Cache Size: %ld MB\n",
+            "Cache Size: %ld MB\n"
             "Landing Page Content URL: %@\n",
             self.appKey,
             self.appSecret,
@@ -90,8 +90,8 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
-            self.landingPageContentURL,
-            (unsigned long)self.cacheDiskSizeInMB];
+            (unsigned long)self.cacheDiskSizeInMB,
+            self.landingPageContentURL];
 }
 
 #pragma mark -
