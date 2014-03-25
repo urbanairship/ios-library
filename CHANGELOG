@@ -9,8 +9,8 @@ A migration guide can be found at http://docs.urbanairship.com/topic_guides/ios_
 
 - Added Urban Airship Actions framework - a generic framework that provides a convenient way to
 automatically perform tasks by name in response to push notifications, Rich App Page interactions and JavaScript.
-- Use background tasks for every registration and analytic event uploads.
-- Refactored Urban Airship Javascript interface injecting and webview url intercepting into UAWebViewTools and UIWebView+UAAdditions.
+- Use background tasks for all registration and analytics traffic.
+- Refactored Urban Airship Javascript interface injection and webview url interception into UAWebViewTools and UIWebView+UAAdditions.
 - Deprecated Urban Airship scheme "ua" in favor of the new scheme "uairship".
 - Added Javascript interface methods - getMessageSentDateMS, getMessageSentDate, getMessageTitle, getMessageId, getUserId and getDeviceModel
 to match the Android Urban Airship Javascript interface.
