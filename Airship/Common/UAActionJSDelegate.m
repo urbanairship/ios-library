@@ -91,7 +91,7 @@
                         // If there was an error serializing, fall back to a string description.
                         if (error) {
                             UA_LDEBUG(@"Unable to serialize result value %@, falling back to string description", result.value);
-                            resultString = [NSString stringWithFormat:@"\"%@\"", [result.value description]];
+                            resultString = [NSJSONSerialization stringWithObject:[result.value description] acceptingFragments:YES];
                         }
                     }
                     //in the case where there is no result value, pass null
