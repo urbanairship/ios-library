@@ -43,6 +43,7 @@
         if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
             [(id<UARichContentWindow>)webView.delegate closeWindow:YES];
         }
+        completionHandler([UAActionResult emptyResult]);
     }
 }
 
