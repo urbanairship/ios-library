@@ -31,7 +31,15 @@
         handler([UAActionResult resultWithValue:@"howdy"]);
     }];
 
+    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        ran = YES;
+        handler([UAActionResult resultWithValue:self]);
+    }];
+
     [[UAActionRegistrar shared] registerAction:test name:@"test_action"];
+    [[UAActionRegistrar shared] registerAction:unserializable name:@"unserializable"];
+
+
 
     UAWebViewCallData *data = [[UAWebViewCallData alloc] init];
     data.arguments = @[@"some-callback-ID"];
@@ -44,6 +52,16 @@
     }];
 
     XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
+
+    //this produces an unserializable result, which should be converted into a string description
+    data.options = @{@"unserializable":@"%22hi%22"};
+
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+        result = script;
+    }];
+
+    NSString *expectedResult = [NSString stringWithFormat:@"UAirship.finishAction(null, '\"%@\"', 'some-callback-ID');", self.description];
+    XCTAssertEqualObjects(result, expectedResult, @"resulting script should pass a null error, the description of the result, and the provided callback ID");
 
     //these are invalid arguments because they are not properly JSON encoded
     data.options = @{@"test_action":@"blah"};

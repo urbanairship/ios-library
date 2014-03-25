@@ -84,9 +84,15 @@
                 {
                     NSString *resultString;
                     if (result.value) {
+                        NSError *error;
                         //if the action completed with a result value, serialize into JSON
                         //accepting fragments so we can write lower level JSON values
-                        resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES];
+                        resultString = [NSJSONSerialization stringWithObject:result.value acceptingFragments:YES error:&error];
+                        // If there was an error serializing, fall back to a string description.
+                        if (error) {
+                            UA_LDEBUG(@"Unable to serialize result value %@, falling back to string description", result.value);
+                            resultString = [NSString stringWithFormat:@"\"%@\"", [result.value description]];
+                        }
                     }
                     //in the case where there is no result value, pass null
                     resultString = resultString ?: @"null";
