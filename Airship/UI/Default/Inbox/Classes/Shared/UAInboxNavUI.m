@@ -143,6 +143,9 @@ static BOOL runiPhoneTargetOniPad = NO;
         }
     }
 
+    // Use the parent view controller if one is not specified.
+    parentViewController = parentViewController ?: [self shared].inboxParentController;
+
     // If the message view is already open, just load the first message.
     if ([parentViewController isKindOfClass:[UINavigationController class]]) {
 
