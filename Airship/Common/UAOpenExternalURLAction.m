@@ -56,7 +56,7 @@ NSString * const UAOpenExternalURLActionErrorDomain = @"com.urbanairship.actions
 
             completionHandler([UAActionResult resultWithError:error]);
         } else {
-            completionHandler([UAActionResult resultWithValue:url]);
+            completionHandler([UAActionResult resultWithValue:url.absoluteString]);
         }
 
     });
