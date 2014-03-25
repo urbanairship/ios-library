@@ -40,6 +40,7 @@
     if (self) {
         self.deviceAPIURL = kAirshipProductionServer;
         self.analyticsURL = kAnalyticsProductionServer;
+        self.landingPageContentURL = kUAProductionLandingPageContentURL;
         self.developmentLogLevel = UALogLevelDebug;
         self.productionLogLevel = UALogLevelError;
         self.inProduction = NO;
@@ -71,7 +72,8 @@
             "Analytics Enabled: %d\n"
             "Analytics URL: %@\n"
             "Device API URL: %@\n"
-            "Cache Size: %ld MB\n",
+            "Cache Size: %ld MB\n"
+            "Landing Page Content URL: %@\n",
             self.appKey,
             self.appSecret,
             self.inProduction,
@@ -88,8 +90,8 @@
             self.analyticsEnabled,
             self.analyticsURL,
             self.deviceAPIURL,
-
-            (unsigned long)self.cacheDiskSizeInMB];
+            (unsigned long)self.cacheDiskSizeInMB,
+            self.landingPageContentURL];
 }
 
 #pragma mark -
@@ -322,6 +324,16 @@
         _deviceAPIURL = [deviceAPIURL substringWithRange:NSMakeRange(0, [deviceAPIURL length] - 1)];
     } else {
         _deviceAPIURL = [deviceAPIURL copy];
+    }
+}
+
+- (void)setLandingPageContentURL:(NSString *)landingPageContentURL {
+    //Any appending url starts with a beginning /, so make sure the base url does not
+    if ([landingPageContentURL hasSuffix:@"/"]) {
+        UA_LWARN(@"Landing page content URL ends with a trailing slash, stripping ending slash.");
+        _landingPageContentURL = [landingPageContentURL substringWithRange:NSMakeRange(0, [landingPageContentURL length] - 1)];
+    } else {
+        _landingPageContentURL = [landingPageContentURL copy];
     }
 }
 

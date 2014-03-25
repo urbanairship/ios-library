@@ -172,6 +172,11 @@
  */
 @property (nonatomic, copy) NSString *analyticsURL;
 
+/**
+ * The Urban Airship landing page content url. This option is reserved for internal debugging.
+ */
+@property (nonatomic, copy) NSString *landingPageContentURL;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Factory Methods
