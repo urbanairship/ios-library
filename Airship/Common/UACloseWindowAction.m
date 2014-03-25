@@ -44,6 +44,8 @@
             [(id<UARichContentWindow>)webView.delegate closeWindow:YES];
         }
     }
+
+    completionHandler([UAActionResult emptyResult]);
 }
 
 @end
