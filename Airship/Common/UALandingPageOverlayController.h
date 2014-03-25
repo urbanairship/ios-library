@@ -33,7 +33,7 @@
  * the app's UI without totally obscuring it, which loads a landing
  * page in an embedded UIWebView.
  */
-@interface UALandingPageOverlayController : UIViewController<UIWebViewDelegate, UARichContentWindow>
+@interface UALandingPageOverlayController : NSObject<UIWebViewDelegate, UARichContentWindow>
 
 /**
  * Creates and dsiplays a landing page overlay from a URL.

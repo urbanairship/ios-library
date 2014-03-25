@@ -297,7 +297,7 @@
     [self.registry registerAction:action names:@[@"name", @"anotherName"]];
 
     XCTAssertTrue([self.registry removeEntryWithName:@"name"], @"Should be able to remove a non reserved entry.");
-    XCTAssertEqual((NSUInteger) 0, [self.registry.reservedEntryNames count], @"The entry should be dropped.");
+    XCTAssertEqual((NSUInteger) 0, [self.registry.registeredEntries count], @"The entry should be dropped.");
 
     XCTAssertTrue([self.registry removeName:@"notFound"], @"Removing a name that does not exist should return YES.");
 }

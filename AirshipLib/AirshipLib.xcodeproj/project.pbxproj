@@ -165,7 +165,6 @@
 		1FE0B7A917E2751000856C60 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		1FE0B7AA17E2751000856C60 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
 		1FE0B7AB17E2751000856C60 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		1FE0B7AC17E2751000856C60 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
 		4903208017BD55E800E03BA1 /* UAInboxMessageListDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4903207F17BD55E800E03BA1 /* UAInboxMessageListDelegate.h */; };
 		4905C4D318242D6F001D48E3 /* UAWebViewTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4D118242D6F001D48E3 /* UAWebViewTools.h */; };
 		4905C4D418242D6F001D48E3 /* UAWebViewTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 4905C4D118242D6F001D48E3 /* UAWebViewTools.h */; };
@@ -322,7 +321,6 @@
 		BB886120159A7E9600584445 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9FD198B122DB5D000522B4E /* SystemConfiguration.framework */; };
 		BB886122159A7E9600584445 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 633146B3122FA474008F2D48 /* UIKit.framework */; };
-		BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B63B5ECF1246380200145424 /* libsqlite3.dylib */; };
 		BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F23FFE912B1B09C001DB898 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		BBB87D5F150574DE00971CEC /* CLLocationManager+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D57150574DE00971CEC /* CLLocationManager+Test.m */; };
 		BBB87D63150574DE00971CEC /* UALocationProviderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBB87D5C150574DE00971CEC /* UALocationProviderTests.m */; };
@@ -744,7 +742,6 @@
 				1FE0B7A917E2751000856C60 /* SystemConfiguration.framework in Frameworks */,
 				1FE0B7AA17E2751000856C60 /* UIKit.framework in Frameworks */,
 				1FE0B7AB17E2751000856C60 /* CoreTelephony.framework in Frameworks */,
-				1FE0B7AC17E2751000856C60 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -781,7 +778,6 @@
 				BB886121159A7E9600584445 /* SystemConfiguration.framework in Frameworks */,
 				BB886122159A7E9600584445 /* UIKit.framework in Frameworks */,
 				BB886127159A7E9600584445 /* CoreTelephony.framework in Frameworks */,
-				BB886123159A7E9600584445 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

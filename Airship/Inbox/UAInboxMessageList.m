@@ -133,7 +133,7 @@ NSString * const UAInboxMessageListUpdatedNotification = @"com.urbanairship.noti
         self.isRetrieving = NO;
 
         self.messages = newMessages;
-        self.unreadCount = unread;
+        self.unreadCount = (NSInteger)unread;
 
         UA_LDEBUG(@"Retrieve message list succeeded with messages: %@", self.messages);
         if (successBlock && !isCallbackCancelled) {
