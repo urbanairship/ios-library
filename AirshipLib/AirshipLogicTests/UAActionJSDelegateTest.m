@@ -33,6 +33,14 @@
 
     [[UAActionRegistry shared] registerAction:test name:@"test_action"];
 
+    UAAction *unserializable = [UAAction actionWithBlock:^(UAActionArguments *args, UAActionCompletionHandler handler){
+        ran = YES;
+        handler([UAActionResult resultWithValue:self]);
+    }];
+
+    [[UAActionRegistry shared] registerAction:unserializable name:@"unserializable"];
+
+
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/some-callback-ID?test_action=%22hi%22"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
@@ -44,15 +52,28 @@
 
     XCTAssertEqualObjects(result, @"UAirship.finishAction(null, '\"howdy\"', 'some-callback-ID');", @"resulting script should pass a null error, the result value 'howdy', and the provided callback ID");
     XCTAssertTrue(ran, @"the action should have been run");
-    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
-}
 
+    //this produces an unserializable result, which should be converted into a string description
+    url = [NSURL URLWithString:@"uairship://run-action-cb/some-callback-ID?unserializable=%22hi%22"];
+    data = [UAWebViewCallData callDataForURL:url
+                                     webView:nil];
+
+    [self.jsDelegate callWithData:data withCompletionHandler:^(NSString *script){
+        result = script;
+    }];
+
+    NSString *expectedResult = [NSString stringWithFormat:@"UAirship.finishAction(null, '\"%@\"', 'some-callback-ID');", self.description];
+    XCTAssertEqualObjects(result, expectedResult, @"resulting script should pass a null error, the description of the result, and the provided callback ID");
+
+    [[UAActionRegistry shared] removeEntryWithName:@"test_action"];
+    [[UAActionRegistry shared] removeEntryWithName:@"unserializable"];
+}
 
 - (void)testRunActionCBInvalidArgs {
     __block BOOL ran = NO;
     __block NSString *result;
 
-    // Invalid arction argument value because it is not properly JSON encoded
+    // Invalid action argument value because it is not properly JSON encoded
     NSURL *url = [NSURL URLWithString:@"uairship://run-action-cb/some-callback-ID?test_action=blah"];
     UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url
                                                         webView:nil];
