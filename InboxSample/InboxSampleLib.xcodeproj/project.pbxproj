@@ -27,8 +27,6 @@
 		1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F5781FD14182166003FA039 /* UAInboxMessageViewController.xib */; };
 		1F57820614182188003FA039 /* UAInboxMessageListController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820114182188003FA039 /* UAInboxMessageListController.m */; };
 		1F57820714182188003FA039 /* UAInboxMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F57820314182188003FA039 /* UAInboxMessageViewController.m */; };
-		1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F57825E141829B0003FA039 /* overlayCloseBtn.png */; };
-		1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F57825F141829B0003FA039 /* overlayCloseBtn@2x.png */; };
 		1F69B13013BD1E62002CA606 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F69B10413BD1A41002CA606 /* libz.dylib */; };
 		1F7CDC2113F1E37000BB72EB /* UAInboxNavUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */; };
 		1F7D02DE12B8338A00B45C37 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D02DD12B8338A00B45C37 /* CoreTelephony.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -128,8 +126,6 @@
 		1F57820114182188003FA039 /* UAInboxMessageListController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageListController.m; sourceTree = "<group>"; };
 		1F57820214182188003FA039 /* UAInboxMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxMessageViewController.h; sourceTree = "<group>"; };
 		1F57820314182188003FA039 /* UAInboxMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxMessageViewController.m; sourceTree = "<group>"; };
-		1F57825E141829B0003FA039 /* overlayCloseBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = overlayCloseBtn.png; path = ../Overlay/overlayCloseBtn.png; sourceTree = "<group>"; };
-		1F57825F141829B0003FA039 /* overlayCloseBtn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "overlayCloseBtn@2x.png"; path = "../Overlay/overlayCloseBtn@2x.png"; sourceTree = "<group>"; };
 		1F69B10413BD1A41002CA606 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1F7CDC1F13F1E37000BB72EB /* UAInboxNavUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInboxNavUI.h; sourceTree = "<group>"; };
 		1F7CDC2013F1E37000BB72EB /* UAInboxNavUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAInboxNavUI.m; sourceTree = "<group>"; };
@@ -300,15 +296,6 @@
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
-		4979986B13EC6577002B9100 /* Overlay */ = {
-			isa = PBXGroup;
-			children = (
-				1F57825E141829B0003FA039 /* overlayCloseBtn.png */,
-				1F57825F141829B0003FA039 /* overlayCloseBtn@2x.png */,
-			);
-			path = Overlay;
-			sourceTree = "<group>";
-		};
 		9A9CBA1E0FCC559100435BCB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -415,7 +402,6 @@
 			children = (
 				1FE42389188475C900624335 /* list-image-placeholder.png */,
 				1FE4238A188475C900624335 /* list-image-placeholder@2x.png */,
-				4979986B13EC6577002B9100 /* Overlay */,
 				1FF574111367788300FEA1FD /* UAInboxMessageListCell.xib */,
 				1F5781FC14182166003FA039 /* UAInboxMessageListController.xib */,
 				1F5781FD14182166003FA039 /* UAInboxMessageViewController.xib */,
@@ -503,7 +489,7 @@
 		1FC0E38317E91B8700840A52 /* libUAirship-iOS5-3.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-iOS5-3.1.1.a";
+			path = "libUAirship-iOS5-3.2.0.a";
 			remoteRef = 1FC0E38217E91B8700840A52 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -517,7 +503,8 @@
 		BB5EBCB6159B7AF600F2A716 /* libUAirship-3.1.1.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libUAirship-3.1.1.a";
+			name = "libUAirship-3.1.1.a";
+			path = "libUAirship-3.2.0.a";
 			remoteRef = BB5EBCB5159B7AF600F2A716 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -551,8 +538,6 @@
 				1FE4238C188475C900624335 /* list-image-placeholder@2x.png in Resources */,
 				1F5781FE14182166003FA039 /* UAInboxMessageListController.xib in Resources */,
 				1F5781FF14182166003FA039 /* UAInboxMessageViewController.xib in Resources */,
-				1F578260141829B0003FA039 /* overlayCloseBtn.png in Resources */,
-				1F578261141829B0003FA039 /* overlayCloseBtn@2x.png in Resources */,
 				1F3CC4C7165C41D0008526E3 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
