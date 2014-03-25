@@ -67,6 +67,15 @@
     XCTAssertEqualObjects(jsonString, @"true", @"method should accept bool NSNumbers as fragment objects, and convert to JSON boolean values");
 }
 
+- (void)testStringWithInvalidObject {
+    NSError *error = nil;
+    NSString *jsonString = [NSJSONSerialization stringWithObject:self error:&error];
+    XCTAssertNil(jsonString, @"invalid (non-serializable) objects should result in a nil value");
+    XCTAssertNotNil(error, @"invalid objects should result in an error");
+    XCTAssertEqual(error.domain, UAJSONSerializationErrorDomain, @"error domain should be UAJSONSerializationErrorDomain");
+    XCTAssertEqual(error.code, UAJSONSerializationErrorCodeInvalidObject, @"error code should be UAJSONSerializationErrorCodeInvalidObject");
+}
+
 - (void)testobjectWithString {
     NSString *jsonString = @"{\"stringKey\":\"stringValue\",\"intKey\":1}";
     NSDictionary *jsonDictionary = [NSJSONSerialization objectWithString:jsonString];
