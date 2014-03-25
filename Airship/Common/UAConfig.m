@@ -330,7 +330,7 @@
 - (void)setLandingPageContentURL:(NSString *)landingPageContentURL {
     //Any appending url starts with a beginning /, so make sure the base url does not
     if ([landingPageContentURL hasSuffix:@"/"]) {
-        UA_LWARN(@"Device API URL ends with a trailing slash, stripping ending slash.");
+        UA_LWARN(@"Landing page content URL ends with a trailing slash, stripping ending slash.");
         _landingPageContentURL = [landingPageContentURL substringWithRange:NSMakeRange(0, [landingPageContentURL length] - 1)];
     } else {
         _landingPageContentURL = [landingPageContentURL copy];
