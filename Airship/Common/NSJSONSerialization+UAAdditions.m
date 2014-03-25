@@ -68,11 +68,11 @@ NSString * const UAJSONSerializationErrorDomain = @"com.urbanairship.json_serial
         if (![NSJSONSerialization isValidJSONObject:jsonObject]) {
             UA_LWARN(@"Attempting to JSON-serialize a non-foundation object. Returning nil.");
             if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Attempted to serialize invalid object: %@", jsonObject];
+                NSDictionary *info = @{NSLocalizedDescriptionKey:msg};
                 *error =  [NSError errorWithDomain:UAJSONSerializationErrorDomain
-                                                     code:UAJSONSerializationErrorCodeInvalidObject
-                                                 userInfo:@{NSLocalizedDescriptionKey:
-                                                                [NSString stringWithFormat:@"Attempted to serialize invalid object: %@", jsonObject]
-                                                           }];
+                                              code:UAJSONSerializationErrorCodeInvalidObject
+                                          userInfo:info];
             }
             return nil;
         }
