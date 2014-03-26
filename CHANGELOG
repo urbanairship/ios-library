@@ -7,12 +7,14 @@ Migration Guide: http://docs.urbanairship.com/topic_guides/ios_migration.html.
 4.0.0 - March 25, 2014
 ----------------------
 - Added Urban Airship Actions framework - a generic framework that provides a convenient way to
-automatically perform tasks by name in response to push notifications, Rich App Page interactions and JavaScript.
+  automatically perform tasks by name in response to push notifications, Rich App Page interactions and JavaScript.
+- Introduced a new device identifier, the Channel ID, which will replace the device token as the push address in Urban
+  Airship API calls.
 - Use background tasks for all registration and analytics traffic.
 - Refactored Urban Airship Javascript interface injection and webview url interception into UAWebViewTools and UIWebView+UAAdditions.
 - Deprecated Urban Airship scheme "ua" in favor of the new scheme "uairship".
 - Added Javascript interface methods - getMessageSentDateMS, getMessageSentDate, getMessageTitle, getMessageId, getUserId and getDeviceModel
-to match the Android Urban Airship Javascript interface.
+  to match the Android Urban Airship Javascript interface.
 
 --------------------------------------------
 3.1.1 (Internal Release) - November 21, 2013
