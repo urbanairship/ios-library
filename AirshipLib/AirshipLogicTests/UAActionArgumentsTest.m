@@ -49,4 +49,26 @@
     XCTAssertEqual(UASituationBackgroundPush, args.situation, @"argumentsWithValue:withSituation: is not setting the situation correctly");
 }
 
+- (void)testSituationString {
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"whatever" withSituation:UASituationManualInvocation];
+    XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
+    args.situation = UASituationBackgroundPush;
+    XCTAssertEqual(args.situationString, @"Background Push", @"situation string should read 'Background Push'");
+    args.situation = UASituationForegroundPush;
+    XCTAssertEqual(args.situationString, @"Foreground Push", @"situation string should read 'Foreground Push'");
+    args.situation = UASituationLaunchedFromPush;
+    XCTAssertEqual(args.situationString, @"Launched from Push", @"situation string should read 'Launched from Push'");
+    args.situation = UASituationWebViewInvocation;
+    XCTAssertEqual(args.situationString, @"Webview Invocation", @"situation string should read 'Webview Invocation'");
+    args.situation = 567;
+    XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
+}
+
+- (void)testDescription {
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
+    NSString *expectedDescription = [NSString stringWithFormat:@"UAActionArguments with situation: %@, value: %@",
+                                     args.situationString, args.value];
+    XCTAssertEqualObjects(args.description, expectedDescription, @"%@",[NSString stringWithFormat:@"description should read '%@'", expectedDescription]);
+}
+
 @end

@@ -42,4 +42,31 @@
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 
+- (NSString *)situationString {
+    switch (self.situation) {
+        case UASituationManualInvocation:
+            return @"Manual Invocation";
+            break;
+        case UASituationBackgroundPush:
+            return @"Background Push";
+            break;
+        case UASituationForegroundPush:
+            return @"Foreground Push";
+            break;
+        case UASituationLaunchedFromPush:
+            return @"Launched from Push";
+            break;
+        case UASituationWebViewInvocation:
+            return @"Webview Invocation";
+            break;
+        default:
+            return @"Manual Invocation";
+            break;
+    }
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAActionArguments with situation: %@, value: %@", self.situationString, self.value];
+}
+
 @end

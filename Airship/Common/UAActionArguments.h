@@ -75,6 +75,11 @@ typedef NS_ENUM(NSInteger, UASituation) {
 @property(nonatomic, assign) UASituation situation;
 
 /**
+ * The situation of the action as a string.
+ */
+@property(nonatomic, readonly) NSString *situationString;
+
+/**
  * The value associated with the action
  */
 @property(nonatomic, strong) id value;
