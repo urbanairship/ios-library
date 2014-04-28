@@ -49,6 +49,9 @@
     XCTAssertEqual(UASituationBackgroundPush, args.situation, @"argumentsWithValue:withSituation: is not setting the situation correctly");
 }
 
+/*
+ * Test that situations are correctly converted into string representations
+ */
 - (void)testSituationString {
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"whatever" withSituation:UASituationManualInvocation];
     XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
@@ -64,6 +67,9 @@
     XCTAssertEqual(args.situationString, @"Manual Invocation", @"situation string should read 'Manual Invocation'");
 }
 
+/*
+ * Test the override of the description method
+ */
 - (void)testDescription {
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"foo" withSituation:UASituationManualInvocation];
     NSString *expectedDescription = [NSString stringWithFormat:@"UAActionArguments with situation: %@, value: %@",
