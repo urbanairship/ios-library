@@ -50,7 +50,7 @@
 }
 
 /*
- * Test that situations are correctly converted into string representations
+ * Test that the situations are correctly converted into string representations
  */
 - (void)testSituationString {
     UAActionArguments *args = [UAActionArguments argumentsWithValue:@"whatever" withSituation:UASituationManualInvocation];
