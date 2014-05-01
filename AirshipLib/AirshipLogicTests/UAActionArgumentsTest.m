@@ -25,6 +25,7 @@
 
 #import <XCTest/XCTest.h>
 #import "UAActionArguments.h"
+#import "UAActionArguments+Internal.h"
 
 @interface UAActionArgumentsTest : XCTestCase
 

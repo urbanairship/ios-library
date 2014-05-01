@@ -24,50 +24,9 @@
  */
 
 #import "UAActionArguments.h"
-#import "UAActionArguments+Internal.h"
 
-@implementation UAActionArguments
+@interface UAActionArguments ()
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation {
-
-    self = [super init];
-    if (self) {
-        self.situation = situation;
-        self.value = value;
-    }
-
-    return self;
-}
-
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
-    return [[self alloc] initWithValue:value withSituation:situation];
-}
-
-- (NSString *)situationString {
-    switch (self.situation) {
-        case UASituationManualInvocation:
-            return @"Manual Invocation";
-            break;
-        case UASituationBackgroundPush:
-            return @"Background Push";
-            break;
-        case UASituationForegroundPush:
-            return @"Foreground Push";
-            break;
-        case UASituationLaunchedFromPush:
-            return @"Launched from Push";
-            break;
-        case UASituationWebViewInvocation:
-            return @"Webview Invocation";
-            break;
-        default:
-            return @"Manual Invocation";
-            break;
-    }
-}
-
-- (NSString *)description {
-    return [NSString stringWithFormat:@"UAActionArguments with situation: %@, value: %@", self.situationString, self.value];
-}
+@property (nonatomic, readonly) NSString *situationString;
 
 @end
