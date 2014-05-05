@@ -28,7 +28,7 @@
 /**
  * Category extensions for URL encoding and decoding of strings.
  */
-@interface NSString(URLEncoding)
+@interface NSString(UAURLEncoding)
 
 /**
  * URL decodes the receiver.

@@ -23,9 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "NSString+URLEncoding.h"
+#import "NSString+UAURLEncoding.h"
 
-@implementation NSString(URLEncoding)
+@implementation NSString(UAURLEncoding)
 
 - (NSString *)urlDecodedStringWithEncoding:(NSStringEncoding)encoding {
     /*

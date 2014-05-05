@@ -1,12 +1,12 @@
 
 #import <XCTest/XCTest.h>
-#import "NSString+URLEncoding.h"
+#import "NSString+UAURLEncoding.h"
 
-@interface NSString_URLEncodingTest : XCTestCase
+@interface NSString_UAURLEncodingTest : XCTestCase
 
 @end
 
-@implementation NSString_URLEncodingTest
+@implementation NSString_UAURLEncodingTest
 
 - (void)setUp
 {
