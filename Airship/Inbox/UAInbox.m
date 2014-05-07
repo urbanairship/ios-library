@@ -71,7 +71,7 @@ static Class _uiClass;
         _uiClass = customUIClass;
     }
     else {
-        UALOG(@"Custom UI class does not conform to UAInboxUIProtocol");
+        UA_LERR(@"Custom UI class does not conform to UAInboxUIProtocol");
     }
 }
 
