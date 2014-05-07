@@ -70,7 +70,7 @@ static Class _uiClass;
     if ([customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]){
         _uiClass = customUIClass;
     }
-    UALOG(@"Custom UI class doesn not conform to UAInboxUIProtocol");
+    UALOG(@"Custom UI class does not conform to UAInboxUIProtocol");
 }
 
 #pragma mark -
