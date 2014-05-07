@@ -67,7 +67,10 @@ static Class _uiClass;
 #pragma mark Open APIs, set custom ui
 
 + (void)useCustomUI:(Class)customUIClass {
-    _uiClass = customUIClass;
+    if ([customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]){
+        _uiClass = customUIClass;
+    }
+    UALOG(@"Custom UI class doesn not conform to UAInboxUIProtocol");
 }
 
 #pragma mark -
