@@ -154,7 +154,8 @@
 
 /**
  * Called when a push notification is received while the app is running in the background
- * for applications with the "remote-notification" background mode.  Overridden by receivedBackgroundNotification:fetchCompletionHandler.
+ * for applications with the "remote-notification" background mode.  
+ * Overridden by receivedBackgroundNotification:fetchCompletionHandler.
  *
  * @param notification The notification dictionary.
  */
