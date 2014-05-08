@@ -67,7 +67,7 @@ static Class _uiClass;
 #pragma mark Open APIs, set custom ui
 
 + (void)useCustomUI:(Class)customUIClass {
-    if ([customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]){
+    if (!customUIClass || [customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]){
         _uiClass = customUIClass;
     }
     else {
