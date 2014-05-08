@@ -69,8 +69,7 @@ static Class _uiClass;
 + (void)useCustomUI:(Class)customUIClass {
     if (!customUIClass || [customUIClass conformsToProtocol:@protocol(UAInboxUIProtocol)]){
         _uiClass = customUIClass;
-    }
-    else {
+    }else {
         UA_LERR(@"Custom UI class does not conform to UAInboxUIProtocol");
     }
 }
