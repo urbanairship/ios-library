@@ -75,46 +75,46 @@
 }
 
 /**
- * Test willRotateToInterfaceOrientation to UIInterfaceOrientationPortrait
+ * Test injectInterfaceOrientation to UIInterfaceOrientationPortrait
  */
-- (void)testWillRotateToInterfaceOrientationUIDeviceOrientationPortrait {
+- (void)testInjectInterfaceOrientationUIDeviceOrientationPortrait {
     NSString *expectedJS = @"window.__defineGetter__('orientation',function(){return 0;});window.onorientationchange();";
 
     [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:expectedJS];
-    [self.mockWebView willRotateToInterfaceOrientation:UIInterfaceOrientationPortrait];
+    [self.mockWebView injectInterfaceOrientation:UIInterfaceOrientationPortrait];
     [self.mockWebView verify];
 }
 
 /**
- * Test willRotateToInterfaceOrientation to UIInterfaceOrientationLandscapeLeft
+ * Test injectInterfaceOrientation to UIInterfaceOrientationLandscapeLeft
  */
-- (void)testWillRotateToInterfaceOrientationUIInterfaceOrientationLandscapeLeft {
+- (void)testInjectInterfaceOrientationUIInterfaceOrientationLandscapeLeft {
     NSString *expectedJS = @"window.__defineGetter__('orientation',function(){return -90;});window.onorientationchange();";
 
     [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:expectedJS];
-    [self.mockWebView willRotateToInterfaceOrientation:UIInterfaceOrientationLandscapeLeft];
+    [self.mockWebView injectInterfaceOrientation:UIInterfaceOrientationLandscapeLeft];
     [self.mockWebView verify];
 }
 
 /**
- * Test willRotateToInterfaceOrientation to UIInterfaceOrientationLandscapeRight
+ * Test injectInterfaceOrientation to UIInterfaceOrientationLandscapeRight
  */
-- (void)testWillRotateToInterfaceOrientationUIInterfaceOrientationLandscapeRight {
+- (void)testInjectInterfaceOrientationUIInterfaceOrientationLandscapeRight {
     NSString *expectedJS = @"window.__defineGetter__('orientation',function(){return 90;});window.onorientationchange();";
 
     [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:expectedJS];
-    [self.mockWebView willRotateToInterfaceOrientation:UIInterfaceOrientationLandscapeRight];
+    [self.mockWebView injectInterfaceOrientation:UIInterfaceOrientationLandscapeRight];
     [self.mockWebView verify];
 }
 
 /**
- * Test willRotateToInterfaceOrientation to UIInterfaceOrientationPortraitUpsideDown
+ * Test injectInterfaceOrientation to UIInterfaceOrientationPortraitUpsideDown
  */
-- (void)testWillRotateToInterfaceOrientationUIInterfaceOrientationPortraitUpsideDown {
+- (void)testInjectInterfaceOrientationUIInterfaceOrientationPortraitUpsideDown {
     NSString *expectedJS = @"window.__defineGetter__('orientation',function(){return 180;});window.onorientationchange();";
 
     [[self.mockWebView expect] stringByEvaluatingJavaScriptFromString:expectedJS];
-    [self.mockWebView willRotateToInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown];
+    [self.mockWebView injectInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown];
     [self.mockWebView verify];
 }
 
