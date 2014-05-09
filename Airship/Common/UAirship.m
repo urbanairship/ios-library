@@ -225,8 +225,16 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     if (!_sharedAirship) {
         _appDidFinishLaunchingNotification = notification;
-        UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
-        UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
+
+        // Log takeoff errors on the next run loop to give time for apps that
+        // use class loader to call takeoff.
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            if (!_sharedAirship) {
+                UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
+                UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
+            }
+        });
+
         return;
     }
 
