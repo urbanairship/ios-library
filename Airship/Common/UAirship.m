@@ -306,7 +306,7 @@ UALogLevel uaLogLevel = UALogLevelError;
     NSString *osVersion = [device systemVersion];
     
     NSString *libVersion = [UAirshipVersion get];
-    NSString *locale = [[NSLocale currentLocale] localeIdentifier];
+    NSString *locale = [[NSLocale autoupdatingCurrentLocale] localeIdentifier];
     
     NSString *userAgent = [NSString stringWithFormat:@"%@ %@ (%@; %@ %@; UALib %@; %@; %@)",
                            appName, appVersion, deviceModel, osName, osVersion, libVersion, self.config.appKey, locale];
