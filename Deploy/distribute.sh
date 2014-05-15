@@ -33,7 +33,7 @@ PBXPROJ_PATH=`dirname $0`/../AirshipLib/AirshipLib.xcodeproj/
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
 
-# Update AirshipLib.xcscheme with the realease version
+# Update AirshipLib.xcscheme with the release version
 sed "s/-[0-9].[0-9].[0-9].a/-$VERSION.a/g" $XCSCHEME_PATH/AirshipLib.xcscheme > AirshipLib.xcscheme.tmp && mv -f AirshipLib.xcscheme.tmp $XCSCHEME_PATH/AirshipLib.xcscheme
 
 # Update project.pbxproj with the realease version
