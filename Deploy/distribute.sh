@@ -27,8 +27,8 @@
 SCRIPT_DIRECTORY=`dirname $0`
 OUTPUT_PATH=$SCRIPT_DIRECTORY/output
 ROOT_PATH=`dirname "${0}"`/../
-XCSCHEME_PATH=`dirname $0`/../AirshipLib/AirshipLib.xcodeproj/xcshareddata/xcschemes/
-PBXPROJ_PATH=`dirname $0`/../AirshipLib/AirshipLib.xcodeproj/
+XCSCHEME_PATH=$ROOT_PATH/AirshipLib/AirshipLib.xcodeproj/xcshareddata/xcschemes/
+PBXPROJ_PATH=$ROOT_PATH/AirshipLib/AirshipLib.xcodeproj/
 
 # Grab the release version
 VERSION=$(awk <$SCRIPT_DIRECTORY/../AirshipLib/Config.xcconfig "\$1 == \"CURRENT_PROJECT_VERSION\" { print \$3 }")
