@@ -1,7 +1,7 @@
 
 #import "UAUser+Internal.h"
 
-@interface UAUser(Test)
+@interface UAUser (Test)
 
 /**
  * Swap out the defaultUserCreated method for one that
