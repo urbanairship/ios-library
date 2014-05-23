@@ -32,31 +32,33 @@
 @interface UAOpenExternalURLActionTest : XCTestCase
 
 @property (nonatomic, strong) UAActionArguments *emptyArgs;
+@property (nonatomic, strong) UAActionArguments *arguments;
 @property (nonatomic, strong) UATestSynchronizer *sync;
+@property (nonatomic, strong) UAAction *action;
+@property (nonatomic, strong) id mockApplication;
+
 @end
 
 
 @implementation UAOpenExternalURLActionTest
 
-UAAction *action;
-UAActionArguments *arguments;
-id mockApplication;
+
 
 - (void)setUp {
     [super setUp];
 
     self.sync = [[UATestSynchronizer alloc] init];
 
-    arguments = [[UAActionArguments alloc] init];
-    action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
+    self.arguments = [[UAActionArguments alloc] init];
+    self.action = [[[UAOpenExternalURLAction alloc] init] postExecution:^(UAActionArguments *args, UAActionResult *result){
         [self.sync continue];
     }];
-    mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
-    [[[mockApplication stub] andReturn:mockApplication] sharedApplication];
+    self.mockApplication = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.mockApplication stub] andReturn:self.mockApplication] sharedApplication];
 }
 
 - (void)tearDown {
-    [mockApplication stopMocking];
+    [self.mockApplication stopMocking];
     [super tearDown];
 }
 
@@ -64,27 +66,27 @@ id mockApplication;
 * Test accepts valid arguments
 */
 - (void)testAcceptsArguments {
-    arguments.value = @"http://some-valid-url";
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accept valid string URLs");
+    self.arguments.value = @"http://some-valid-url";
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept valid string URLs");
 
-    arguments.situation = UASituationManualInvocation;
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accept any situations that is not UASituationBackgroundPush");
+    self.arguments.situation = UASituationManualInvocation;
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept any situations that is not UASituationBackgroundPush");
 
-    arguments.value = [NSURL URLWithString:@"http://some-valid-url"];
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accept NSURLs");
+    self.arguments.value = [NSURL URLWithString:@"http://some-valid-url"];
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accept NSURLs");
 
-    arguments.value = nil;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept a nil value");
+    self.arguments.value = nil;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept a nil value");
 
-    arguments.value = @3213;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept an invalid url");
+    self.arguments.value = @3213;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept an invalid url");
 
-    arguments.value = @"oh hi";
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept an invalid url");
+    self.arguments.value = @"oh hi";
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept an invalid url");
 
-    arguments.value = @"http://some-valid-url";
-    arguments.situation = UASituationBackgroundPush;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept arguments with UASituationBackgroundPush situation");
+    self.arguments.value = @"http://some-valid-url";
+    self.arguments.situation = UASituationBackgroundPush;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept arguments with UASituationBackgroundPush situation");
 }
 
 /**
@@ -93,19 +95,19 @@ id mockApplication;
 - (void)testPerformWithStringURL {
     __block UAActionResult *result;
 
-    arguments.value = @"ftp://some-valid-url";
-    arguments.situation = UASituationForegroundPush;
+    self.arguments.value = @"ftp://some-valid-url";
+    self.arguments.situation = UASituationForegroundPush;
 
-    [[[mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:arguments.value]];
+    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:[NSURL URLWithString:self.arguments.value]];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
     [self.sync wait];
 
-    XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
-    XCTAssertEqualObjects(result.value, arguments.value, @"results value should be the url");
+    XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
+    XCTAssertEqualObjects(result.value, self.arguments.value, @"results value should be the url");
     XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
 }
 
@@ -116,18 +118,18 @@ id mockApplication;
 - (void)testPerformWithNSURL {
     __block UAActionResult *result;
 
-    arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
-    arguments.situation = UASituationForegroundPush;
+    self.arguments.value = [NSURL URLWithString:@"scheme://some-valid-url"];
+    self.arguments.situation = UASituationForegroundPush;
 
-    [[[mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:arguments.value];
+    [[[self.mockApplication expect] andReturnValue:OCMOCK_VALUE(YES)] openURL:self.arguments.value];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *performResult) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *performResult) {
         result = performResult;
     }];
 
     [self.sync wait];
 
-    XCTAssertNoThrow([mockApplication verify], @"application should try to open the url");
+    XCTAssertNoThrow([self.mockApplication verify], @"application should try to open the url");
     XCTAssertEqualObjects(result.value, ((NSURL *)arguments.value).absoluteString, @"results value should be the url");
     XCTAssertNil(result.error, @"result should have no error if the application successfully opens the url");
 }
