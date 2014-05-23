@@ -31,32 +31,33 @@
 
 @interface UAIncomingPushActionTest : XCTestCase
 
+@property (nonatomic, strong) UAIncomingPushAction *action;
+@property (nonatomic, strong) UAActionArguments *arguments;
+@property (nonatomic, strong) id mockedPushDelegate;
+@property (nonatomic, strong) id mockedAirship;
+@property bool backgroundNotificationEnabled;
+
+
 @end
 
 
 @implementation UAIncomingPushActionTest
 
-UAIncomingPushAction *action;
-UAActionArguments *arguments;
-id mockedPushDelegate;
-id mockedAirship;
-bool backgroundNotificationEnabled;
-
 - (void)setUp {
     [super setUp];
 
-    backgroundNotificationEnabled = NO;
-    arguments = [[UAActionArguments alloc] init];
-    arguments.value = @{ @"aps": @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" }};
+    self.backgroundNotificationEnabled = NO;
+    self.arguments = [[UAActionArguments alloc] init];
+    self.arguments.value = @{ @"aps": @{ @"alert": @"sample alert!", @"badge": @2, @"sound": @"cat" }};
 
-    mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
-    [UAPush shared].pushNotificationDelegate = mockedPushDelegate;
+    self.mockedPushDelegate = [OCMockObject niceMockForProtocol:@protocol(UAPushNotificationDelegate)];
+    [UAPush shared].pushNotificationDelegate = self.mockedPushDelegate;
 
-    mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
-    [[[mockedAirship stub] andReturn:mockedAirship] shared];
-    [[[mockedAirship stub] andDo:^(NSInvocation *invocation) {
-        [invocation setReturnValue:&backgroundNotificationEnabled];
-    }] backgroundNotificationEnabled];
+    self.mockedAirship = [OCMockObject niceMockForClass:[UAirship class]];
+    [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
+    [[[self.mockedAirship stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&_backgroundNotificationEnabled];
+    }] self.backgroundNotificationEnabled];
 
 
     action = [[UAIncomingPushAction alloc] init];
@@ -64,8 +65,8 @@ bool backgroundNotificationEnabled;
 
 - (void)tearDown {
     [UAPush shared].pushNotificationDelegate = nil;
-    [mockedPushDelegate stopMocking];
-    [mockedAirship stopMocking];
+    [self.mockedPushDelegate stopMocking];
+    [self.mockedAirship stopMocking];
 
     [super tearDown];
 }
@@ -81,22 +82,22 @@ bool backgroundNotificationEnabled;
         UASituationLaunchedFromPush
     };
 
-    arguments.value = nil;
+    self.arguments.value = nil;
 
     // Should not accept any of the valid situations because the value is nil
     for (int i = 0; i < 3; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertFalse([action acceptsArguments:arguments], @"Should not accept nil value arguments");
+        self.arguments.situation = validSituations[i];
+        XCTAssertFalse([action acceptsArguments:self.arguments], @"Should not accept nil value arguments");
     }
 
-    arguments.value = [NSDictionary dictionary];
-    arguments.situation = UASituationWebViewInvocation;
-    XCTAssertFalse([action acceptsArguments:arguments], @"Should not accept invalid situations");
+    self.arguments.value = [NSDictionary dictionary];
+    self.arguments.situation = UASituationWebViewInvocation;
+    XCTAssertFalse([action acceptsArguments:self.arguments], @"Should not accept invalid situations");
 
     // Arguments should be valid
     for (int i = 0; i < 3; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([action acceptsArguments:arguments], @"Should accept valid situation");
+        self.arguments.situation = validSituations[i];
+        XCTAssertTrue([action acceptsArguments:self.arguments], @"Should accept valid situation");
     }
 }
 
@@ -106,34 +107,34 @@ bool backgroundNotificationEnabled;
 - (void)testPerformInUASituationLaunchedFromPush {
     __block UAActionResult *runResult;
 
-    arguments.situation = UASituationLaunchedFromPush;
+    self.arguments.situation = UASituationLaunchedFromPush;
 
-    [[mockedPushDelegate expect] launchedFromNotification:arguments.value];
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value];
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate launchedFromNotification: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate launchedFromNotification: should be called");
     XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
-    backgroundNotificationEnabled = YES;
+    self.backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
-    [[mockedPushDelegate expect] launchedFromNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
         return YES;
     }]];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate launchedFromNotification:fetchCompletionHandler: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate launchedFromNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
@@ -145,34 +146,34 @@ bool backgroundNotificationEnabled;
 - (void)testPerformInUASituationBackgroundPush {
     __block UAActionResult *runResult;
 
-    arguments.situation = UASituationBackgroundPush;
+    self.arguments.situation = UASituationBackgroundPush;
 
-    [[mockedPushDelegate expect] receivedBackgroundNotification:arguments.value];
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value];
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification: should be called");
     XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
-    backgroundNotificationEnabled = YES;
+    self.backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
-    [[mockedPushDelegate expect] receivedBackgroundNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
         return YES;
     }]];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification:fetchCompletionHandler: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedBackgroundNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
@@ -183,35 +184,35 @@ bool backgroundNotificationEnabled;
 - (void)testPerformInUASituationForegroundPush {
     __block UAActionResult *runResult;
 
-    arguments.situation = UASituationForegroundPush;
+    self.arguments.situation = UASituationForegroundPush;
 
-    [[mockedPushDelegate expect] receivedForegroundNotification:arguments.value];
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:self.arguments.value];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedForegroundNotification: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedForegroundNotification: should be called");
     XCTAssertNotNil(runResult, @"Incoming push action should still generate an action result");
     XCTAssertNil(runResult.value, @"Incoming push action should default to an empty result");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNoData, @"Push action should return the delegate's fetch result");
 
     // Turn on background notifications
-    backgroundNotificationEnabled = YES;
+    self.backgroundNotificationEnabled = YES;
     XCTAssertTrue([UAirship shared].backgroundNotificationEnabled, @"Should accept valid situation");
 
     // Expect the notification and call the block with the delegateResult
-    [[mockedPushDelegate expect] receivedForegroundNotification:arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockedPushDelegate expect] receivedForegroundNotification:self.arguments.value fetchCompletionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UIBackgroundFetchResult) = obj;
         completionBlock(UIBackgroundFetchResultNewData);
         return YES;
     }]];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate receivedForegroundNotification:fetchCompletionHandler: should be called");
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate receivedForegroundNotification:fetchCompletionHandler: should be called");
     XCTAssertNil(runResult.value, @"Value should always be nil");
     XCTAssertEqual((NSUInteger)runResult.fetchResult, UIBackgroundFetchResultNewData, @"Push action should return the delegate's fetch result");
 }
@@ -222,35 +223,35 @@ bool backgroundNotificationEnabled;
  * the app delegate of an alert, sound, and badge
  */
 - (void)testPerformInUASituationForegroundPushNotifyForegroundAlert {
-    arguments.situation = UASituationForegroundPush;
+    self.arguments.situation = UASituationForegroundPush;
     [UAPush shared].autobadgeEnabled = NO;
     
-    [[mockedPushDelegate expect] playNotificationSound:@"cat"];
-    [[mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
-    [[mockedPushDelegate expect] handleBadgeUpdate:2];
+    [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {}];
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
 
     // Enable auto badge and verify handleBadgeUpdate: is not called
     [UAPush shared].autobadgeEnabled = YES;
 
-    [[mockedPushDelegate expect] playNotificationSound:@"cat"];
-    [[mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
-    [[mockedPushDelegate reject] handleBadgeUpdate:2];
+    [[self.mockedPushDelegate expect] playNotificationSound:@"cat"];
+    [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
+    [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {}];
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegates handleBadgeUpdate should not be called if autobadge is enabled");
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates handleBadgeUpdate should not be called if autobadge is enabled");
 
 
     // Set to an empty notification
-    arguments.value = [NSDictionary dictionary];
-    [[mockedPushDelegate reject] playNotificationSound:OCMOCK_ANY];
-    [[mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
-    [[mockedPushDelegate reject] handleBadgeUpdate:2];
+    self.arguments.value = [NSDictionary dictionary];
+    [[self.mockedPushDelegate reject] playNotificationSound:OCMOCK_ANY];
+    [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
+    [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {}];
-    XCTAssertNoThrow([mockedPushDelegate verify], @"Push delegates should not be notified of an empty dictionary");
+    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates should not be notified of an empty dictionary");
 }
 
 
