@@ -44,13 +44,6 @@
 
 @implementation UAIncomingRichPushActionTest
 
-//UAIncomingRichPushAction *action;
-//UAPushActionArguments *arguments;
-//id mockInbox;
-//id mockPushHandler;
-//id mockPushHandlerDelegate;
-//id mockMessageList;
-
 - (void)setUp {
     [super setUp];
 
