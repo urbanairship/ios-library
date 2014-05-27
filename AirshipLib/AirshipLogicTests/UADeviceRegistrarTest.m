@@ -49,21 +49,12 @@
 
 @implementation UADeviceRegistrarTest
 
-//id mockedDeviceClient;
-//id mockedChannelClient;
-//id mockedRegistrarDelegate;
-
 void (^channelUpdateSuccessDoBlock)(NSInvocation *);
 void (^channelCreateSuccessDoBlock)(NSInvocation *);
 void (^channelUpdateFailureDoBlock)(NSInvocation *);
 void (^channelCreateFailureDoBlock)(NSInvocation *);
 
 void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
-
-//UAHTTPRequest *deviceFailureRequest;
-//UAHTTPRequest *channelFailureRequest;
-//NSString *channelCreateSuccessChannelID;
-//NSString *channelCreateSuccessChannelLocation;
 
 
 UAChannelRegistrationPayload *payload;
