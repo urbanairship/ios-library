@@ -42,10 +42,7 @@
 @end
 
 @implementation UAChannelAPIClientTest
-//id mockRequestEngine;
-//id mockAirship;
-//UAConfig *config;
-//UAChannelAPIClient *client;
+
 
 
 - (void)setUp {
