@@ -57,10 +57,10 @@
     [[[self.mockedAirship stub] andReturn:self.mockedAirship] shared];
     [[[self.mockedAirship stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:&_backgroundNotificationEnabled];
-    }] self.backgroundNotificationEnabled];
+    }] backgroundNotificationEnabled];
 
 
-    action = [[UAIncomingPushAction alloc] init];
+    self.action = [[UAIncomingPushAction alloc] init];
 }
 
 - (void)tearDown {
@@ -87,17 +87,17 @@
     // Should not accept any of the valid situations because the value is nil
     for (int i = 0; i < 3; i++) {
         self.arguments.situation = validSituations[i];
-        XCTAssertFalse([action acceptsArguments:self.arguments], @"Should not accept nil value arguments");
+        XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Should not accept nil value arguments");
     }
 
     self.arguments.value = [NSDictionary dictionary];
     self.arguments.situation = UASituationWebViewInvocation;
-    XCTAssertFalse([action acceptsArguments:self.arguments], @"Should not accept invalid situations");
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"Should not accept invalid situations");
 
     // Arguments should be valid
     for (int i = 0; i < 3; i++) {
         self.arguments.situation = validSituations[i];
-        XCTAssertTrue([action acceptsArguments:self.arguments], @"Should accept valid situation");
+        XCTAssertTrue([self.action acceptsArguments:self.arguments], @"Should accept valid situation");
     }
 }
 
@@ -110,7 +110,7 @@
     self.arguments.situation = UASituationLaunchedFromPush;
 
     [[self.mockedPushDelegate expect] launchedFromNotification:self.arguments.value];
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -130,7 +130,7 @@
         return YES;
     }]];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -149,7 +149,7 @@
     self.arguments.situation = UASituationBackgroundPush;
 
     [[self.mockedPushDelegate expect] receivedBackgroundNotification:self.arguments.value];
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -169,7 +169,7 @@
         return YES;
     }]];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -188,7 +188,7 @@
 
     [[self.mockedPushDelegate expect] receivedForegroundNotification:self.arguments.value];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -208,7 +208,7 @@
         return YES;
     }]];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         runResult = result;
     }];
 
@@ -230,7 +230,7 @@
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
     [[self.mockedPushDelegate expect] handleBadgeUpdate:2];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegate should notify the delegate of a foreground notification");
 
     // Enable auto badge and verify handleBadgeUpdate: is not called
@@ -240,7 +240,7 @@
     [[self.mockedPushDelegate expect] displayNotificationAlert:@"sample alert!"];
     [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates handleBadgeUpdate should not be called if autobadge is enabled");
 
 
@@ -250,7 +250,7 @@
     [[self.mockedPushDelegate reject] displayNotificationAlert:OCMOCK_ANY];
     [[self.mockedPushDelegate reject] handleBadgeUpdate:2];
 
-    [action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {}];
     XCTAssertNoThrow([self.mockedPushDelegate verify], @"Push delegates should not be notified of an empty dictionary");
 }
 
