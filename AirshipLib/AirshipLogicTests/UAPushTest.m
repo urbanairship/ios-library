@@ -1018,7 +1018,7 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
         [[self.mockedAnalytics expect] handleNotification:self.notification inApplicationState:applicationState];
         [self.push handleNotification:self.notification applicationState:applicationState];
 
-        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %d", expectedSituation);
+        XCTAssertNoThrow([self.mockActionRunner verify], @"handleNotification should run push actions with situation %ld", expectedSituation);
         XCTAssertNoThrow([self.mockedAnalytics verify], @"analytics should be notified of the incoming notification");
 
         // Test handleNotification:fetchCompletionHandler: for every background fetch result
