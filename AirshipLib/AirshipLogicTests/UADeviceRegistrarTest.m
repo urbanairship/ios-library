@@ -59,10 +59,6 @@ void (^channelCreateFailureDoBlock)(NSInvocation *);
 
 void (^deviceRegisterSuccessDoBlock)(NSInvocation *);
 
-//UAChannelRegistrationPayload *payload;
-//UADeviceRegistrar *registrar;
-
-
 - (void)setUp {
     [super setUp];
 
