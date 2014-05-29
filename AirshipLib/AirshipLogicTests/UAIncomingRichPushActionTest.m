@@ -33,43 +33,43 @@
 
 @interface UAIncomingRichPushActionTest : XCTestCase
 
+@property(nonatomic, strong) UAIncomingRichPushAction *action;
+@property(nonatomic, strong) UAPushActionArguments *arguments;
+@property(nonatomic, strong) id mockInbox;
+@property(nonatomic, strong) id mockPushHandler;
+@property(nonatomic, strong) id mockPushHandlerDelegate;
+@property(nonatomic, strong) id mockMessageList;
+
 @end
 
 @implementation UAIncomingRichPushActionTest
 
-UAIncomingRichPushAction *action;
-UAPushActionArguments *arguments;
-id mockInbox;
-id mockPushHandler;
-id mockPushHandlerDelegate;
-id mockMessageList;
-
 - (void)setUp {
     [super setUp];
 
-    action = [[UAIncomingRichPushAction alloc] init];
+    self.action = [[UAIncomingRichPushAction alloc] init];
 
-    arguments = [[UAPushActionArguments alloc] init];
-    arguments.value = @"rich-push-id";
-    arguments.payload = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
+    self.arguments = [[UAPushActionArguments alloc] init];
+    self.arguments.value = @"rich-push-id";
+    self.arguments.payload = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
 
-    mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
-    mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
-    mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
-    mockInbox = [OCMockObject mockForClass:[UAInbox class]];
+    self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
+    self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
+    self.mockMessageList = [OCMockObject niceMockForClass:[UAInboxMessageList class]];
+    self.mockInbox = [OCMockObject mockForClass:[UAInbox class]];
 
-    [[[mockInbox stub] andReturn:mockInbox] shared];
-    [[[mockInbox stub] andReturn:mockMessageList] messageList];
-    [[[mockInbox stub] andReturn:mockPushHandler] pushHandler];
+    [[[self.mockInbox stub] andReturn:self.mockInbox] shared];
+    [[[self.mockInbox stub] andReturn:self.mockMessageList] messageList];
+    [[[self.mockInbox stub] andReturn:self.mockPushHandler] pushHandler];
 
-    [[[mockPushHandler stub] andReturn:mockPushHandlerDelegate] delegate];
+    [[[self.mockPushHandler stub] andReturn:self.mockPushHandlerDelegate] delegate];
 }
 
 - (void)tearDown {
-    [mockInbox stopMocking];
-    [mockPushHandler stopMocking];
-    [mockMessageList stopMocking];
-    [mockPushHandlerDelegate stopMocking];
+    [self.mockInbox stopMocking];
+    [self.mockPushHandler stopMocking];
+    [self.mockMessageList stopMocking];
+    [self.mockPushHandlerDelegate stopMocking];
 
     [super tearDown];
 }
@@ -78,77 +78,77 @@ id mockMessageList;
  * Test accepts valid arguments
  */
 - (void)testAcceptsArguments {
-    arguments.situation = UASituationForegroundPush;
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accepts valid arguments in UASituationForegroundPush situation");
+    self.arguments.situation = UASituationForegroundPush;
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts valid arguments in UASituationForegroundPush situation");
 
-    arguments.situation = UASituationLaunchedFromPush;
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accepts valid arguments in UASituationLaunchedFromPush situation");
+    self.arguments.situation = UASituationLaunchedFromPush;
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts valid arguments in UASituationLaunchedFromPush situation");
 
-    arguments.value = @[@"RAP-id"];
-    XCTAssertTrue([action acceptsArguments:arguments], @"action should accepts an array that contains a RAP id");
+    self.arguments.value = @[@"RAP-id"];
+    XCTAssertTrue([self.action acceptsArguments:self.arguments], @"action should accepts an array that contains a RAP id");
 
-    arguments.situation = UASituationBackgroundPush;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument in UASituationBackgroundPush situation");
+    self.arguments.situation = UASituationBackgroundPush;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument in UASituationBackgroundPush situation");
 
-    arguments.situation = UASituationWebViewInvocation;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument in an invalid situation");
+    self.arguments.situation = UASituationWebViewInvocation;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument in an invalid situation");
 
-    arguments.situation = UASituationForegroundPush;
-    arguments.value = @3;
-    XCTAssertFalse([action acceptsArguments:arguments], @"action should not accept argument with an invalid RAP id");
+    self.arguments.situation = UASituationForegroundPush;
+    self.arguments.value = @3;
+    XCTAssertFalse([self.action acceptsArguments:self.arguments], @"action should not accept argument with an invalid RAP id");
 
     UAActionArguments *invalidArgs = [UAActionArguments argumentsWithValue:@"valid-id" withSituation:UASituationForegroundPush];
-    XCTAssertFalse([action acceptsArguments:invalidArgs], @"action should not accept arguments that are not UAPushActionArguments");
+    XCTAssertFalse([self.action acceptsArguments:invalidArgs], @"action should not accept arguments that are not UAPushActionArguments");
 }
 
 /**
  * Test perform in UASituationForegroundPush situation
  */
 - (void)testPerformInUASituationForegroundPush {
-    arguments.situation = UASituationForegroundPush;
+    self.arguments.situation = UASituationForegroundPush;
     __block UAActionResult *actionResult = nil;
 
     // Should retrive new message list
-    [[mockMessageList expect] retrieveMessageListWithDelegate:mockPushHandler];
+    [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the RAP notification arrived
-    [[mockPushHandlerDelegate expect] richPushNotificationArrived:arguments.payload];
+    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:self.arguments.payload];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         actionResult = result;
     }];
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
     XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
-    XCTAssertNoThrow([mockMessageList verify], @"message list should retreive new RAPs");
-    XCTAssertNoThrow([mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
+    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retreive new RAPs");
+    XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
 }
 
 /**
  * Test perform in UASituationLaunchedFromPush situation
  */
 - (void)testPerformInUASituationLaunchedFromPush {
-    arguments.situation = UASituationLaunchedFromPush;
+    self.arguments.situation = UASituationLaunchedFromPush;
     __block UAActionResult *actionResult = nil;
 
     // Should retrive new message list
-    [[mockMessageList expect] retrieveMessageListWithDelegate:mockPushHandler];
+    [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the delegate that it was launched with a RAP notification
-    [[mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:arguments.payload];
+    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:self.arguments.payload];
 
     // Should tell the handler there is a launch message
-    [[mockPushHandler expect] setHasLaunchMessage:YES];
+    [[self.mockPushHandler expect] setHasLaunchMessage:YES];
 
-    [action performWithArguments:arguments withCompletionHandler:^(UAActionResult *result) {
+    [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         actionResult = result;
     }];
 
     XCTAssertNotNil(actionResult, @"perform did not call the completion handler");
     XCTAssertEqualObjects(actionResult.value, @"rich-push-id", @"Results value should be the RAP id");
-    XCTAssertNoThrow([mockMessageList verify], @"message list should retreive new RAPs");
-    XCTAssertNoThrow([mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
-    XCTAssertNoThrow([mockPushHandler verify], @"handler should set hasLaunchMessage");
+    XCTAssertNoThrow([self.mockMessageList verify], @"message list should retreive new RAPs");
+    XCTAssertNoThrow([self.mockPushHandlerDelegate verify], @"handler delegate should be notified of a RAP notification");
+    XCTAssertNoThrow([self.mockPushHandler verify], @"handler should set hasLaunchMessage");
 }
 
 

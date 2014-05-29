@@ -2,7 +2,7 @@
 #import "UAUser+Test.h"
 #import "JRSwizzle.h"
 
-@implementation UAUser(Test)
+@implementation UAUser (Test)
 
 + (void)swizzleDefaultUserCreated {
     [self jr_swizzleMethod:@selector(defaultUserCreated) withMethod:@selector(defaultUserCreatedAlways) error:nil];
