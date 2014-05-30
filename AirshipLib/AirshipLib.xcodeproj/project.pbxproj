@@ -2231,7 +2231,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 					"$(PROJECT_DIR)",
-					"/Users/dcrow/Desktop/ios-library-dev/TestCommon/OCMockLibrary",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -2269,7 +2268,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 					"$(PROJECT_DIR)",
-					"/Users/dcrow/Desktop/ios-library-dev/TestCommon/OCMockLibrary",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -2457,7 +2455,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../TestCommon/OCMockLibrary\"",
 					"$(PROJECT_DIR)",
-					"/Users/dcrow/Desktop/ios-library-dev/TestCommon/OCMockLibrary",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
