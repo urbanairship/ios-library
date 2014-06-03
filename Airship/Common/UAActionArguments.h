@@ -66,8 +66,27 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param value The value associated with the arguments.
  * @param situation The situation of the action.
  */
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation;
+//+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation; //dictionary passed in here
 
+
+/**
+ * UAActionArguments factory method.
+ *
+ * @param value The value associated with the arguments.
+ * @param situation The situation of the action.
+ * @param metadata for the action - e.g. webview, payload, etc.
+ */
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata;
+
+/**
+ * WebView metadata key.
+ */
+extern NSString * const UAWebViewMetadataKey;
+
+/**
+ * Payload metadata key.
+ */
+extern NSString * const UAPayloadMetadataKey;
 
 /**
  * Situation of the action
@@ -79,9 +98,16 @@ typedef NS_ENUM(NSInteger, UASituation) {
  */
 @property(nonatomic, strong) id value;
 
+
 /**
  * The name the action was invoked with.
  */
 @property(nonatomic, copy) NSString *name;
+
+
+/**
+ * The metadata
+ */
+@property(nonatomic, strong) NSDictionary *metadata;
 
 @end

@@ -26,6 +26,12 @@
 #import "UAActionArguments.h"
 #import "UAActionArguments+Internal.h"
 
+
+NSString * const UAWebViewMetadataKey = @"com.urbanairship.webview";
+NSString * const UAPayloadMetadataKey = @"com.urbanairship.payload";
+
+
+
 @implementation UAActionArguments
 
 - (instancetype)initWithValue:(id)value withSituation:(UASituation)situation {
@@ -39,8 +45,25 @@
     return self;
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
-    return [[self alloc] initWithValue:value withSituation:situation];
+- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metaData{
+    
+    self = [super init];
+    if (self) {
+        self.situation = situation;
+        self.value = value;
+        self.metadata = metaData;
+    }
+    
+    return self;
+}
+
+
+//+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
+//    return [[self alloc] initWithValue:value withSituation:situation];
+//}
+
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata {
+    return [[self alloc] initWithValue:value withSituation:situation andMetadata:metadata];
 }
 
 - (NSString *)situationString {
