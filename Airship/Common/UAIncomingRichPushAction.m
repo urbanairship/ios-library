@@ -47,10 +47,14 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAPushActionArguments *pushArgs = (UAPushActionArguments *)arguments;
+    NSDictionary *pushPayload = nil;
+    if ([arguments.metadata valueForKey:UAPayloadMetadataKey]) {
+        pushPayload = [arguments.metadata valueForKey:UAPayloadMetadataKey];
+    }
+    
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushArgs.value];
+    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushPayload];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
     handler.viewingMessageID = richPushID;
@@ -59,11 +63,11 @@
 
     switch (arguments.situation) {
         case UASituationForegroundPush:
-            [strongDelegate richPushNotificationArrived:pushArgs.payload];
+            [strongDelegate richPushNotificationArrived:pushPayload];
             break;
         case UASituationLaunchedFromPush:
             handler.hasLaunchMessage = YES;
-            [strongDelegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
+            [strongDelegate applicationLaunchedWithRichPushNotification:pushPayload];
             break;
         default:
             break;
