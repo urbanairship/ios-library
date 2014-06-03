@@ -77,7 +77,7 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
-#define UA_VERSION @ "1.1.2"
+#define UA_VERSION @ "0.0.0"
 #endif
 
 #define UA_VERSION_INTERFACE(CLASSNAME) \
