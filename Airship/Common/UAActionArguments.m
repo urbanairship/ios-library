@@ -58,9 +58,9 @@ NSString * const UAPayloadMetadataKey = @"com.urbanairship.payload";
 }
 
 
-//+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
-//    return [[self alloc] initWithValue:value withSituation:situation];
-//}
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
+    return [[self alloc] initWithValue:value withSituation:situation];
+}
 
 + (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata {
     return [[self alloc] initWithValue:value withSituation:situation andMetadata:metadata];

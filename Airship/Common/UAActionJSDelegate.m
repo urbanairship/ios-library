@@ -78,9 +78,14 @@
         }
     }
 
-    UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                      withSituation:UASituationWebViewInvocation
-                                                                                        withWebView:webView];
+    // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+    NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+    
+    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+    
+//    UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+//                                                                                      withSituation:UASituationWebViewInvocation
+//                                                                                        withWebView:webView];
 
     [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
@@ -167,10 +172,14 @@
                 }
             }
 
-
-            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                              withSituation:UASituationWebViewInvocation
-                                                                                                withWebView:webView];
+            NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+            
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+            
+//            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+//                                                                                              withSituation:UASituationWebViewInvocation
+//                                                                                                withWebView:webView];
+            
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -220,10 +229,14 @@
                     continue;
                 }
             }
-
-            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                              withSituation:UASituationWebViewInvocation
-                                                                                                withWebView:webView];
+            
+            NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+            
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+            
+//            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
+//                                                                                              withSituation:UASituationWebViewInvocation
+//                                                                                                withWebView:webView];
 
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {

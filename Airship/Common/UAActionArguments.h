@@ -66,7 +66,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param value The value associated with the arguments.
  * @param situation The situation of the action.
  */
-//+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation; //dictionary passed in here
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation;
 
 
 /**
