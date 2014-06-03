@@ -31,13 +31,18 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     return (BOOL)(arguments.situation == UASituationWebViewInvocation &&
-                  [arguments isKindOfClass:[UAWebInvocationActionArguments class]]);
+                  [arguments isKindOfClass:[UAActionArguments class]]);
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UIWebView *webView = ((UAWebInvocationActionArguments *)arguments).webView;
+    UIWebView *webView = nil;
+    
+    if ([arguments.metadata valueForKey:UAWebViewMetadataKey]) {
+        webView = [arguments.metadata valueForKey:UAWebViewMetadataKey];
+    }
+
     
     if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
         if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
