@@ -48,11 +48,11 @@
     [super setUp];
 
     self.action = [[UAIncomingRichPushAction alloc] init];
-
     self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-id";
     
     NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:@{@"aps": @{}, @"_uamid":@"rich-push-id"}, UAPayloadMetadataKey, nil];
+    
     self.arguments.metadata = metadata;
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];

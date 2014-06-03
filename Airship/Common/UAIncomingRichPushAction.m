@@ -36,7 +36,7 @@
     switch (arguments.situation) {
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
-            return ([arguments.metadata valueForKey:UAPayloadMetadataKey]
+            return ([arguments.metadata objectForKey:UAPayloadMetadataKey]
                     && [UAInboxUtils getRichPushMessageIDFromValue:arguments.value]);
         default:
             return NO;
@@ -51,7 +51,7 @@
     
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushPayload];
+    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:[pushPayload objectForKey:@"_uamid"]];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
     handler.viewingMessageID = richPushID;

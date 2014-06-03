@@ -78,9 +78,8 @@
     }
 
     // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
-    NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
-    
-    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metadata];
     
     [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
@@ -167,9 +166,9 @@
                 }
             }
 
-            NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+            NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
             
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metadata];
             
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
