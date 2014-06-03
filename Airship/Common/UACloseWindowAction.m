@@ -24,7 +24,6 @@
  */
 
 #import "UACloseWindowAction.h"
-#import "UAWebInvocationActionArguments.h"
 #import "UARichContentWindow.h"
 
 @implementation UACloseWindowAction
