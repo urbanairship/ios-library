@@ -26,7 +26,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAIncomingRichPushAction.h"
-#import "UAPushActionArguments.h"
+#import "UAActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
@@ -34,7 +34,7 @@
 @interface UAIncomingRichPushActionTest : XCTestCase
 
 @property(nonatomic, strong) UAIncomingRichPushAction *action;
-@property(nonatomic, strong) UAPushActionArguments *arguments;
+@property(nonatomic, strong) UAActionArguments *arguments;
 @property(nonatomic, strong) id mockInbox;
 @property(nonatomic, strong) id mockPushHandler;
 @property(nonatomic, strong) id mockPushHandlerDelegate;
@@ -49,7 +49,7 @@
 
     self.action = [[UAIncomingRichPushAction alloc] init];
 
-    self.arguments = [[UAPushActionArguments alloc] init];
+    self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-id";
     self.arguments.payload = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
 
