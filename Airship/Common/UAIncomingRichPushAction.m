@@ -25,7 +25,6 @@
 
 #import "UAIncomingRichPushAction.h"
 #import "UAInboxPushHandler.h"
-#import "UAPushActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
@@ -47,10 +46,8 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSDictionary *pushPayload = nil;
-    if ([arguments.metadata valueForKey:UAPayloadMetadataKey]) {
-        pushPayload = [arguments.metadata valueForKey:UAPayloadMetadataKey];
-    }
+    NSDictionary *pushPayload = [arguments.metadata objectForKey:UAPayloadMetadataKey];
+    
     
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
