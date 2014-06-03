@@ -37,7 +37,7 @@
     switch (arguments.situation) {
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
-            return ([arguments isKindOfClass:[UAPushActionArguments class]]
+            return ([arguments.metadata valueForKey:UAPayloadMetadataKey]
                     && [UAInboxUtils getRichPushMessageIDFromValue:arguments.value]);
         default:
             return NO;
