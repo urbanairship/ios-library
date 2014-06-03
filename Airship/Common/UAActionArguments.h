@@ -89,6 +89,12 @@ extern NSString * const UAWebViewMetadataKey;
 extern NSString * const UAPayloadMetadataKey;
 
 /**
+ * Name metadata key.
+ */
+extern NSString * const UANameMetadataKey;
+
+
+/**
  * Situation of the action
  */
 @property(nonatomic, assign) UASituation situation;
