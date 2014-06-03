@@ -36,12 +36,7 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UIWebView *webView = nil;
-    
-    if ([arguments.metadata valueForKey:UAWebViewMetadataKey]) {
-        webView = [arguments.metadata valueForKey:UAWebViewMetadataKey];
-    }
-
+    UIWebView *webView = [arguments.metadata objectForKey:UAWebViewMetadataKey];
     
     if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
         if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
