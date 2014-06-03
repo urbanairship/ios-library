@@ -51,7 +51,9 @@
 
     self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-id";
-    self.arguments.payload = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
+    
+    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:@{@"aps": @{}, @"_uamid":@"rich-push-id"}, UAPayloadMetadataKey, nil];
+    self.arguments.metadata = metadata;
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
@@ -112,7 +114,7 @@
     [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the RAP notification arrived
-    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:self.arguments.payload];
+    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:[self.arguments.metadata objectForKey:UAPayloadMetadataKey]];
 
     [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         actionResult = result;
@@ -135,7 +137,7 @@
     [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the delegate that it was launched with a RAP notification
-    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:self.arguments.payload];
+    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:[self.arguments.metadata objectForKey:UAPayloadMetadataKey]];
 
     // Should tell the handler there is a launch message
     [[self.mockPushHandler expect] setHasLaunchMessage:YES];
