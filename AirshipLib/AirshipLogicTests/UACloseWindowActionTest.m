@@ -68,8 +68,9 @@
     args.situation = UASituationManualInvocation;
     XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept UASituationManualInvocation.");
 
-    args = [UAActionArguments argumentsWithValue:@"blah" withSituation:UASituationWebViewInvocation];
-    XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept standard UAActionArguments.");
+//
+//    args = [UAActionArguments argumentsWithValue:@"blah" withSituation:UASituationWebViewInvocation];
+//    XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept standard UAActionArguments.");
 }
 
 /**
