@@ -46,13 +46,13 @@ NSString * const UANameMetadataKey = @"com.urbanairship.name";
     return self;
 }
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metaData{
+- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata{
     
     self = [super init];
     if (self) {
         self.situation = situation;
         self.value = value;
-        self.metadata = metaData;
+        self.metadata = metadata;
     }
     
     return self;
