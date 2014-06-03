@@ -34,7 +34,6 @@
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
@@ -492,10 +491,12 @@ static Class _uiClass;
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
     for (NSString *possibleActionName in notification) {
-        UAPushActionArguments *args = [UAPushActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+        // create metadata dictionary and include action name and payload under correct keys
+        NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:possibleActionName, UANameMetadataKey, notification, UAPayloadMetadataKey, nil];
+       
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
                                                                   withSituation:situation
-                                                                       withName:possibleActionName
-                                                                    withPayload:notification];
+                                                                       andMetadata:metaData];
 
         [actions setValue:args forKey:possibleActionName];
     }
