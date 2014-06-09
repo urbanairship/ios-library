@@ -117,7 +117,7 @@
 /**
  * Test setting the attribution type.
  */
-- (void)testSetAttritbutionType {
+- (void)testSetAttributionType {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name"];
     XCTAssertNil(event.attributionType, @"Attribution type should default to nil");
 
@@ -235,7 +235,7 @@
  * Test auto filling in the attribution if a hard conversion ID is set and neither
  * the attribution type or id is filled in.
  */
--(void)testAutoAttribution {
+- (void)testAutoAttribution {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     [event gatherData:@{}];
 
@@ -269,6 +269,20 @@
 
     XCTAssertEqualObjects(@"attribution type", [event.data objectForKey:@"attribution_type"], @"Attribution type should be the set value");
     XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution ID is not set and should be nil");
+}
+
+/**
+ * Test event is valid only when it has a set event name.
+ */
+- (void)testValid {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:nil];
+    XCTAssertTrue([event valid], @"Event has a valid event name");
+
+    event.eventName = nil;
+    XCTAssertFalse([event valid], @"Event should be invalid when it does not have an event name");
+
+    event.eventName = @"";
+    XCTAssertFalse([event valid], @"Event should be invalid when it does not have an event name");
 }
 
 @end

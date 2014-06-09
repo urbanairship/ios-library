@@ -99,6 +99,10 @@
     return kUACustomEventSize;
 }
 
+- (BOOL)valid {
+    return self.eventName.length > 0;
+}
+
 - (void)setEventName:(NSString *)eventName {
     if (eventName.length > kUACustomEventCharacterLimit) {
         UA_LERR(@"Event name is larger than %d characters.", kUACustomEventCharacterLimit);
