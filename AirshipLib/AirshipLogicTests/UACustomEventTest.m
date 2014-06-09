@@ -47,18 +47,18 @@
 - (void)testCustomEvent {
     NSString *eventName =  [@"" stringByPaddingToLength:255 withString:@"EVENT_NAME" startingAtIndex:0];
     NSString *transactionID =  [@"" stringByPaddingToLength:255 withString:@"TRANSACTION_ID" startingAtIndex:0];
-    NSString *attributinoID =  [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_ID" startingAtIndex:0];
+    NSString *attributionID =  [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_ID" startingAtIndex:0];
     NSString *attributionType =  [@"" stringByPaddingToLength:255 withString:@"ATTRIBUTION_TYPE" startingAtIndex:0];
 
     UACustomEvent *event = [UACustomEvent eventWithName:eventName value:@(INT32_MIN)];
     event.transactionID = transactionID;
-    event.attributionID = attributinoID;
+    event.attributionID = attributionID;
     event.attributionType = attributionType;
     [event gatherData:@{}];
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexepcted event name.");
     XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexepcted transaction id.");
-    XCTAssertEqualObjects(attributinoID, [event.data objectForKey:@"attribution_id"], @"Unexepcted attribution id.");
+    XCTAssertEqualObjects(attributionID, [event.data objectForKey:@"attribution_id"], @"Unexepcted attribution id.");
     XCTAssertEqualObjects(attributionType, [event.data objectForKey:@"attribution_type"], @"Unexepcted attribution type.");
     XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexepcted event value.");
 }
@@ -212,12 +212,14 @@
  * Test event value to data conversion.  The value should be a decimal multiplied by
  * 10^6 and cast to a long.
  */
-
 - (void)testEventValueToData {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     [event gatherData:@{}];
     XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexepcted event value.");
 }
+
+
+
 
 @end
 

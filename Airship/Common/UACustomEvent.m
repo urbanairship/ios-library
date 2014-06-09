@@ -30,7 +30,7 @@
 @implementation UACustomEvent
 
 #define kUACustomEventCharacterLimit 255
-#define kUACustomEventSize 1000
+#define kUACustomEventSize 800
 
 - (NSString *)getType {
     return @"custom_event";
@@ -88,7 +88,7 @@
          We use long long value here because on a 32 bit machine int and long
          have the same range. We clamp eventValue to [-2^31, 2^31-1] so we know
          for sure that the value multiplied by 10^6 (~2^20) will have an approximate
-         range of [-2^51, 2^51 -1] so it will always fit into the range warp9
+         range of [-2^51, 2^51-1] so it will always fit into the range warp9
          is expecting [-2^63, 2^63-1].
          */
         [self addDataWithValue:@([number longLongValue]) forKey:@"event_value"];
@@ -96,7 +96,7 @@
 }
 
 - (NSUInteger)getEstimatedSize {
-    return 1000;
+    return kUACustomEventSize;
 }
 
 - (void)setEventName:(NSString *)eventName {
@@ -133,7 +133,7 @@
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
     if ([eventValue compare:@(INT32_MAX)] > 0) {
-        UA_LERR(@"Event value %@ is larger than 2^31 - 1", self.eventValue);
+        UA_LERR(@"Event value %@ is larger than 2^31-1", self.eventValue);
     } else if ([eventValue compare:@(INT32_MIN)] < 0) {
         UA_LERR(@"Event value %@ is smaller than -2^31", self.eventValue);
     } else {
