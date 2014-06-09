@@ -25,19 +25,32 @@
 
 #import <XCTest/XCTest.h>
 #import "UACustomEvent.h"
+#import "UAAnalytics.h"
+#import "UAirship.h"
+#import <OCMock/OCMock.h>
 #import "NSJSONSerialization+UAAdditions.h"
 
 @interface UACustomEventTest : XCTestCase
+@property(nonatomic, strong) id analytics;
+@property(nonatomic, strong) id airship;
 
 @end
 
 @implementation UACustomEventTest
 
 - (void)setUp {
+    self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
+    self.airship = [OCMockObject mockForClass:[UAirship class]];
+    [[[self.airship stub] andReturn:self.airship] shared];
+    [[[self.airship stub] andReturn:self.analytics] analytics];
+
     [super setUp];
 }
 
 - (void)tearDown {
+    [self.airship stopMocking];
+    [self.analytics stopMocking];
+
     [super tearDown];
 }
 
@@ -218,8 +231,45 @@
     XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexepcted event value.");
 }
 
+/**
+ * Test auto filling in the attribution if a hard conversion ID is set and neither
+ * the attribution type or id is filled in.
+ */
+-(void)testAutoAttribution {
+    UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
+    [event gatherData:@{}];
 
+    // Verify attribution is blank when conversion ID is nil
+    XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution should be nil");
+    XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution should be nil");
 
+    // Set a conversion push ID for the analytics session
+    [[[self.analytics stub] andReturn:@{@"launched_from_push_id":@"push ID"}] session];
+
+    // Recreate the event to verify auto fil behavior
+    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
+    [event gatherData:@{}];
+
+    // Verify the attribution is hard open with the push ID
+    XCTAssertEqualObjects(@"ua_hard_open", [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
+    XCTAssertEqualObjects(@"push ID", [event.data objectForKey:@"attribution_id"], @"Attribution should autofil to push id");
+
+    // Recreate the event with a attribution ID to verify attribution does not auto fil
+    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
+    event.attributionID = @"attribution ID";
+    [event gatherData:@{}];
+
+    XCTAssertEqualObjects(@"attribution ID", [event.data objectForKey:@"attribution_id"], @"Attribution ID should be the set value");
+    XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution type is not set and should be nil");
+
+    // Recreate the event with a attribution type to verify attribution does not auto fil
+    event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
+    event.attributionType = @"attribution type";
+    [event gatherData:@{}];
+
+    XCTAssertEqualObjects(@"attribution type", [event.data objectForKey:@"attribution_type"], @"Attribution type should be the set value");
+    XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution ID is not set and should be nil");
+}
 
 @end
 

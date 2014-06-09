@@ -64,7 +64,7 @@
     [self addDataWithValue:self.eventName forKey:@"event_name"];
 
     // Attribution
-    if (!self.attributionType && self.attributionID) {
+    if (!self.attributionType && !self.attributionID) {
         NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
         if (conversionID) {
             [self addDataWithValue:@"ua_hard_open" forKey:@"attribution_type"];
