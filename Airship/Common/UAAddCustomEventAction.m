@@ -52,12 +52,21 @@ NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
 
-    UACustomEvent *event = [UACustomEvent eventWithName:[[dict valueForKey:@"event_name"] stringValue]
-                                        valueFromString:[[dict valueForKey:@"event_value"] stringValue]];
+    UACustomEvent *event;
+    id value = [dict valueForKey:@"event_value"];
+    NSString *valueAsString;
+    NSNumber *valueAsNumber;
+    if ([value isKindOfClass:[NSString class]]) {
+        valueAsString = [dict valueForKey:@"event_value"];
+        event = [UACustomEvent eventWithName:[dict valueForKey:@"event_name"] valueFromString:valueAsString];
+    } else if ([value isKindOfClass:[NSNumber class]]) {
+        valueAsNumber = [dict valueForKey:@"event_value"];
+        event = [UACustomEvent eventWithName:[dict valueForKey:@"event_name"] value:valueAsNumber];
+    }
 
-    event.transactionID = [[dict valueForKey:@"transaction_id"] stringValue];
-    event.attributionType = [[dict valueForKey:@"attribution_type"] stringValue];
-    event.attributionID = [[dict valueForKey:@"attribution_id"] stringValue];
+    event.transactionID = [dict valueForKey:@"transaction_id"];
+    event.attributionType = [dict valueForKey:@"attribution_type"];
+    event.attributionID = [dict valueForKey:@"attribution_id"];
 
     if ([event valid]) {
         completionHandler([UAActionResult emptyResult]);
