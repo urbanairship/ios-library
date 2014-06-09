@@ -24,7 +24,6 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAWebInvocationActionArguments.h"
 #import "UACloseWindowAction.h"
 #import <OCMock/OCMock.h>
 #import "UARichContentWindow.h"
@@ -60,27 +59,20 @@
  */
 - (void)testAcceptsArguments {
     
-    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:self.mockWebView, UAWebViewMetadataKey, nil];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationWebViewInvocation andMetadata: @{UAWebViewMetadataKey: self.mockWebView}];
     
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation andMetadata:metadata];
     XCTAssertTrue([self.action acceptsArguments:args], @"Close window action should accept any UAWebInvocationActionArguments with situation UASituationWebViewInvocation.");
 
     args.situation = UASituationManualInvocation;
     XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept UASituationManualInvocation.");
-
-//
-//    args = [UAActionArguments argumentsWithValue:@"blah" withSituation:UASituationWebViewInvocation];
-//    XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept standard UAActionArguments.");
 }
 
 /**
  * Test actions perform
  */
 - (void)testPerform {
-    
-    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:self.mockWebView, UAWebViewMetadataKey, nil];
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation andMetadata:metadata];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation andMetadata:@{UAWebViewMetadataKey: self.mockWebView}];
 
     [[self.mockUARichContentWindow expect] closeWindow:YES];
 

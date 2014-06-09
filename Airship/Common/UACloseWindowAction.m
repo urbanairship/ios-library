@@ -30,7 +30,7 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     return (BOOL)(arguments.situation == UASituationWebViewInvocation &&
-                  [arguments isKindOfClass:[UAActionArguments class]]);
+                  [arguments.metadata objectForKey:UAWebViewMetadataKey]);
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments

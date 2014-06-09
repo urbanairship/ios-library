@@ -491,12 +491,9 @@ static Class _uiClass;
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
     for (NSString *possibleActionName in notification) {
-        // create metadata dictionary and include action name and payload under correct keys
-        NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:possibleActionName, UANameMetadataKey, notification, UAPayloadMetadataKey, nil];
-       
         UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
                                                                   withSituation:situation
-                                                                       andMetadata:metaData];
+                                                                       andMetadata:@{UANameMetadataKey: notification}];
 
         [actions setValue:args forKey:possibleActionName];
     }
@@ -511,7 +508,6 @@ static Class _uiClass;
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
     }
 }
-
 
 BOOL deferChannelCreationOnForeground = false;
 

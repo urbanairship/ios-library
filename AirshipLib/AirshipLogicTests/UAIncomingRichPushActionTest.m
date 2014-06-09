@@ -51,9 +51,11 @@
     self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-id";
     
-    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:@{@"aps": @{}, @"_uamid":@"rich-push-id"}, UAPayloadMetadataKey, nil];
+    NSDictionary *notification = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
     
-    self.arguments.metadata = metadata;
+    self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-id"
+                                             withSituation:UASituationForegroundPush
+                                               andMetadata:@{UAPayloadMetadataKey: notification}];
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
