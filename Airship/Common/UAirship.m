@@ -47,10 +47,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_IMPLEMENTATION(UAirshipVersion, UA_VERSION)
 
-//Exceptions
+// Exceptions
 NSString * const UAirshipTakeOffBackgroundThreadException = @"UAirshipTakeOffBackgroundThreadException";
 
 static UAirship *_sharedAirship;
+
+// Its possible that plugins that use load to call takeoff will trigger after
+// handleAppDidFinishLaunchingNotification.  We need to store that notification
+// and call handleAppDidFinishLaunchingNotification in takeoff.
+static NSNotification *_appDidFinishLaunchingNotification;
 
 static dispatch_once_t takeOffPred_;
 
@@ -202,6 +207,16 @@ UALogLevel uaLogLevel = UALogLevelError;
     [[UAUser defaultUser] initializeUser];
 
     _sharedAirship.actionJSDelegate = [[UAActionJSDelegate alloc] init];
+
+    if (_appDidFinishLaunchingNotification) {
+
+        // Set up can occur after takeoff, so handle the launch notification on the
+        // next run loop to allow app setup to finish
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            [UAirship handleAppDidFinishLaunchingNotification:_appDidFinishLaunchingNotification];
+            _appDidFinishLaunchingNotification = nil;
+        });
+    }
 }
 
 + (void)handleAppDidFinishLaunchingNotification:(NSNotification *)notification {
@@ -209,8 +224,17 @@ UALogLevel uaLogLevel = UALogLevelError;
     [[NSNotificationCenter defaultCenter] removeObserver:[UAirship class] name:UIApplicationDidFinishLaunchingNotification object:nil];
 
     if (!_sharedAirship) {
-        UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
-        UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
+        _appDidFinishLaunchingNotification = notification;
+
+        // Log takeoff errors on the next run loop to give time for apps that
+        // use class loader to call takeoff.
+        dispatch_async(dispatch_get_main_queue(), ^() {
+            if (!_sharedAirship) {
+                UA_LERR(@"[UAirship takeOff] was not called in application:didFinishLaunchingWithOptions:");
+                UA_LERR(@"Please ensure that [UAirship takeOff] is called synchronously before application:didFinishLaunchingWithOptions: returns");
+            }
+        });
+
         return;
     }
 
