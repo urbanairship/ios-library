@@ -46,7 +46,7 @@ NSString * const UANameMetadataKey = @"com.urbanairship.name";
     return self;
 }
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata{
+- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary* ) metadata{
     
     self = [super init];
     if (self) {
@@ -63,8 +63,8 @@ NSString * const UANameMetadataKey = @"com.urbanairship.name";
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata {
-    return [[self alloc] initWithValue:value withSituation:situation andMetadata:metadata];
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary* ) metadata {
+    return [[self alloc] initWithValue:value withSituation:situation metadata:metadata];
 }
 
 - (NSString *)situationString {

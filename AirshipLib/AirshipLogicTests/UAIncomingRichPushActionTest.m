@@ -55,7 +55,7 @@
     
     self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-id"
                                              withSituation:UASituationForegroundPush
-                                               andMetadata:@{UAPayloadMetadataKey: notification}];
+                                               metadata:@{UAPayloadMetadataKey: notification}];
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];

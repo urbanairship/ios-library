@@ -59,7 +59,8 @@
  */
 - (void)testAcceptsArguments {
     
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationWebViewInvocation andMetadata: @{UAWebViewMetadataKey: self.mockWebView}];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil withSituation:UASituationWebViewInvocation metadata: @{UAWebViewMetadataKey: self.mockWebView}];
+
     
     XCTAssertTrue([self.action acceptsArguments:args], @"Close window action should accept any UAWebInvocationActionArguments with situation UASituationWebViewInvocation.");
 
@@ -72,7 +73,7 @@
  */
 - (void)testPerform {
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation andMetadata:@{UAWebViewMetadataKey: self.mockWebView}];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation metadata:@{UAWebViewMetadataKey: self.mockWebView}];
 
     [[self.mockUARichContentWindow expect] closeWindow:YES];
 
@@ -91,7 +92,7 @@
  */
 - (void)testPerformNilWebView {
     
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation andMetadata:nil];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation metadata:nil];
 
     __block id actionResult;
 

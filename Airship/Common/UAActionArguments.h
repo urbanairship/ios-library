@@ -76,7 +76,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
  * @param situation The situation of the action.
  * @param metadata for the action - e.g. webview, payload, etc.
  */
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation andMetadata:(NSDictionary* ) metadata;
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *) metadata;
 
 /**
  * WebView metadata key.

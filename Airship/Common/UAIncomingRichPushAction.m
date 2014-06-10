@@ -51,7 +51,7 @@
     
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:[pushPayload objectForKey:@"_uamid"]];
+    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:arguments.value];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
     handler.viewingMessageID = richPushID;

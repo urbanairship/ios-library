@@ -78,8 +78,12 @@
     }
 
     // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
-    NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
-    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metadata];
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setValue:webView forKey:UAWebViewMetadataKey];
+    
+    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                            withSituation:UASituationWebViewInvocation
+                                                              metadata:metadata];
     
     [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
@@ -166,9 +170,13 @@
                 }
             }
 
-            NSDictionary *metadata = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
+            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+            [metadata setValue:webView forKey:UAWebViewMetadataKey];
             
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metadata];
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationWebViewInvocation
+                                                                         metadata:metadata];
             
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
@@ -220,9 +228,13 @@
                 }
             }
             
-            NSDictionary *metaData = [[NSDictionary alloc] initWithObjectsAndKeys:webView, UAWebViewMetadataKey, nil];
-            
-            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue withSituation:UASituationWebViewInvocation andMetadata:metaData];
+            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+            [metadata setValue:webView forKey:UAWebViewMetadataKey];
+       
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationWebViewInvocation
+                                                                         metadata:metadata];
             
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
