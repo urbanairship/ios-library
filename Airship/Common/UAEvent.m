@@ -73,7 +73,7 @@
     return obj;
 }
 
-- (BOOL)valid {
+- (BOOL)isValid {
     return YES;
 }
 

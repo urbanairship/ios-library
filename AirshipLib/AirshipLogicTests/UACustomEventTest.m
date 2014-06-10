@@ -274,15 +274,15 @@
 /**
  * Test event is valid only when it has a set event name.
  */
-- (void)testValid {
+- (void)testIsValid {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:nil];
-    XCTAssertTrue([event valid], @"Event has a valid event name");
+    XCTAssertTrue([event isValid], @"Event has a valid event name");
 
     event.eventName = nil;
-    XCTAssertFalse([event valid], @"Event should be invalid when it does not have an event name");
+    XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");
 
     event.eventName = @"";
-    XCTAssertFalse([event valid], @"Event should be invalid when it does not have an event name");
+    XCTAssertFalse([event isValid], @"Event should be invalid when it does not have an event name");
 }
 
 @end

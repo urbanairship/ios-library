@@ -313,7 +313,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)addEvent:(UAEvent *)event {
-    if (!event.valid) {
+    if (!event.isValid) {
         UA_LWARN(@"Dropping invalid event %@.", event);
         return;
     }

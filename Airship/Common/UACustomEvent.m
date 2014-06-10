@@ -99,7 +99,7 @@
     return kUACustomEventSize;
 }
 
-- (BOOL)valid {
+- (BOOL)isValid {
     return self.eventName.length > 0;
 }
 
