@@ -69,11 +69,11 @@
     event.attributionType = attributionType;
     [event gatherData:@{}];
 
-    XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexepcted event name.");
-    XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexepcted transaction id.");
-    XCTAssertEqualObjects(attributionID, [event.data objectForKey:@"attribution_id"], @"Unexepcted attribution id.");
-    XCTAssertEqualObjects(attributionType, [event.data objectForKey:@"attribution_type"], @"Unexepcted attribution type.");
-    XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexepcted event value.");
+    XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
+    XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction id.");
+    XCTAssertEqualObjects(attributionID, [event.data objectForKey:@"attribution_id"], @"Unexpected attribution id.");
+    XCTAssertEqualObjects(attributionType, [event.data objectForKey:@"attribution_type"], @"Unexpected attribution type.");
+    XCTAssertEqualObjects(@(INT32_MIN * 1000000.0), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
 /**
@@ -228,7 +228,7 @@
 - (void)testEventValueToData {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     [event gatherData:@{}];
-    XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexepcted event value.");
+    XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
 /**
