@@ -85,9 +85,14 @@
  * Test performing the action actually creates and adds the event from a NSNumber event value.
  */
 - (void)testPerformNSNumber {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@(123.45), @"attribution_type":@"attribution type", @"attribution_id":@"attribution id"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @(123.45),
+                           @"attribution_type": @"attribution type",
+                           @"attribution_id": @"attribution id"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -108,12 +113,18 @@
 }
 
 /**
- * Test performing the action actually creates and adds the event from a string event value.
+ * Test performing the action actually creates and adds the event from a string
+ * event value.
  */
 - (void)testPerformString {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"attribution_type":@"attribution type", @"attribution_id":@"attribution id"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"attribution_type": @"attribution type",
+                           @"attribution_id": @"attribution id"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -137,7 +148,11 @@
  * Test perform with invalid event name should result in error.
  */
 - (void)testPerformInvalidCustomEventName {
-    NSDictionary *dict = @{@"event_name":@"", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"attribution_type":@"attribution type", @"attribution_id":@"attribution id"};
+    NSDictionary *dict = @{@"event_name": @"",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"attribution_type": @"attribution type",
+                           @"attribution_id": @"attribution id"};
 
     UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
 
@@ -154,9 +169,13 @@
  * Test perform when attribution ID does not exist.
  */
 - (void)testPerformNoAttributionID {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"attribution_type":@"attribution type"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"attribution_type": @"attribution type"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -180,9 +199,13 @@
  * Test perform when attribution type does not exist.
  */
 - (void)testPerformNoAttributionType {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"attribution_id":@"attribution id"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"attribution_id": @"attribution id"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -203,12 +226,17 @@
 }
 
 /**
- * Test perform when both attribution type and ID does not exist, autofill is true and conversion ID exist
+ * Test perform when both attribution type and ID does not exist, autofill is
+ * true and conversion ID exist
  */
 - (void)testPerformAutoFillTrueConversionID {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"auto_fill_landing_page":@"YES"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"auto_fill_landing_page": @"YES"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -232,12 +260,17 @@
 }
 
 /**
- * Test perform when both attribution type and ID does not exist, autofill is true and conversion ID does not exist
+ * Test perform when both attribution type and ID does not exist, autofill is
+ * true and conversion ID does not exist
  */
 - (void)testPerformAutoFillTrueNoConversionID {
-    NSDictionary *dict = @{@"event_name":@"event name", @"transaction_id":@"transaction id", @"event_value":@"123.45", @"auto_fill_landing_page":@"YES"};
+    NSDictionary *dict = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45",
+                           @"auto_fill_landing_page": @"YES"};
 
-    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict withSituation:UASituationManualInvocation];
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:dict
+                                                      withSituation:UASituationManualInvocation];
 
     UAActionResult *expectedResult = [UAActionResult emptyResult];
 
@@ -267,7 +300,8 @@
 /**
  * Helper method to verify perform.
  */
-- (void)verifyPerformWithArgs:(UAActionArguments *)args withExpectedResult:(UAActionResult *)expectedResult {
+- (void)verifyPerformWithArgs:(UAActionArguments *)args
+           withExpectedResult:(UAActionResult *)expectedResult {
 
     __block BOOL finished = NO;
 
