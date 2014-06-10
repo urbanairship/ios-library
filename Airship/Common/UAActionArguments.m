@@ -57,10 +57,6 @@ NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
     return self;
 }
 
-- (void)setMetadata:(NSDictionary *)metadata {
-    _metadata = [[NSDictionary alloc] initWithDictionary:metadata];
-}
-
 + (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
     return [[self alloc] initWithValue:value withSituation:situation];
 }
