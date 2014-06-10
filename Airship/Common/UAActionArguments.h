@@ -84,7 +84,7 @@ typedef NS_ENUM(NSInteger, UASituation) {
 extern NSString * const UAActionMetadataWebViewKey;
 
 /**
- * Payload metadata key.
+ * Push payload metadata key.
  */
 extern NSString * const UAActionMetadataPushPayloadKey;
 
