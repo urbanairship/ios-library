@@ -109,6 +109,6 @@ extern NSString * const UAActionMetadataPushPayloadKey;
  * The argument's metadata. Metadata provides more information
  * about the environment that the action was triggered from. 
  */
-@property(nonatomic, strong) NSDictionary *metadata;
+@property(nonatomic, copy, readonly) NSDictionary *metadata;
 
 @end

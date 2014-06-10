@@ -45,7 +45,7 @@ NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
     return self;
 }
 
-- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary* ) metadata{
+- (instancetype)initWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *)metadata{
     
     self = [super init];
     if (self) {
@@ -57,12 +57,15 @@ NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
     return self;
 }
 
+- (void)setMetadata:(NSDictionary *)metadata {
+    _metadata = [[NSDictionary alloc] initWithDictionary:metadata];
+}
 
 + (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation {
     return [[self alloc] initWithValue:value withSituation:situation];
 }
 
-+ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary* ) metadata {
++ (instancetype)argumentsWithValue:(id)value withSituation:(UASituation)situation metadata:(NSDictionary *)metadata {
     return [[self alloc] initWithValue:value withSituation:situation metadata:metadata];
 }
 
