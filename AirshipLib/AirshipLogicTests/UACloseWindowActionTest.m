@@ -24,7 +24,6 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "UAWebInvocationActionArguments.h"
 #import "UACloseWindowAction.h"
 #import <OCMock/OCMock.h>
 #import "UARichContentWindow.h"
@@ -59,21 +58,26 @@
  * Test the action accepts UASituationWebViewInvocation and UAWebInvocationActionArguments
  */
 - (void)testAcceptsArguments {
-    UAActionArguments *args = [UAWebInvocationActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation withWebView:self.mockWebView];
+    
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil
+                                                      withSituation:UASituationWebViewInvocation
+                                                           metadata:@{UAActionMetadataWebViewKey: self.mockWebView}];
+
+    
     XCTAssertTrue([self.action acceptsArguments:args], @"Close window action should accept any UAWebInvocationActionArguments with situation UASituationWebViewInvocation.");
 
     args.situation = UASituationManualInvocation;
     XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept UASituationManualInvocation.");
-
-    args = [UAActionArguments argumentsWithValue:@"blah" withSituation:UASituationWebViewInvocation];
-    XCTAssertFalse([self.action acceptsArguments:args], @"Close window action should not accept standard UAActionArguments.");
 }
 
 /**
  * Test actions perform
  */
 - (void)testPerform {
-    UAActionArguments *args = [UAWebInvocationActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation withWebView:self.mockWebView];
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil
+                                                      withSituation:UASituationWebViewInvocation
+                                                           metadata:@{UAActionMetadataWebViewKey: self.mockWebView}];
 
     [[self.mockUARichContentWindow expect] closeWindow:YES];
 
@@ -91,7 +95,10 @@
  * Test actions perform
  */
 - (void)testPerformNilWebView {
-    UAActionArguments *args = [UAWebInvocationActionArguments argumentsWithValue:nil  withSituation:UASituationWebViewInvocation withWebView:nil];
+    
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:nil
+                                                      withSituation:UASituationWebViewInvocation
+                                                           metadata:nil];
 
     __block id actionResult;
 

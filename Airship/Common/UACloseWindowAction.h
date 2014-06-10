@@ -30,7 +30,7 @@
  *
  * This action is registered under the reserved name __close_window_action.
  *
- * Expected argument type: UAWebInvocationActionArguments
+ * Expected argument type: UAActionArguments
  *
  * Expected argument value: none
  *

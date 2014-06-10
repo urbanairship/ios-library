@@ -34,7 +34,6 @@
 #import "UAPushNotificationHandler.h"
 #import "UAUtils.h"
 #import "UAActionRegistry+Internal.h"
-#import "UAPushActionArguments.h"
 #import "UAActionRunner.h"
 #import "UAChannelRegistrationPayload.h"
 #import "UAUser.h"
@@ -474,7 +473,7 @@ static Class _uiClass;
 
     // Add incoming push action
     UAActionArguments *incomingPushArgs = [UAActionArguments argumentsWithValue:notification
-                                                                   withSituation:situation];
+                                                                  withSituation:situation];
     [actions setValue:incomingPushArgs forKey:kUAIncomingPushActionRegistryName];
 
     //Run the actions
@@ -492,10 +491,9 @@ static Class _uiClass;
     NSMutableDictionary *actions = [NSMutableDictionary dictionary];
 
     for (NSString *possibleActionName in notification) {
-        UAPushActionArguments *args = [UAPushActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
-                                                                  withSituation:situation
-                                                                       withName:possibleActionName
-                                                                    withPayload:notification];
+        UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
+                                                          withSituation:situation
+                                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
         [actions setValue:args forKey:possibleActionName];
     }
@@ -510,7 +508,6 @@ static Class _uiClass;
         [[UIApplication sharedApplication] setApplicationIconBadgeNumber:[badgeNumber intValue]];
     }
 }
-
 
 BOOL deferChannelCreationOnForeground = false;
 

@@ -26,7 +26,7 @@
 #import <XCTest/XCTest.h>
 #import <OCMock/OCMock.h>
 #import "UAIncomingRichPushAction.h"
-#import "UAPushActionArguments.h"
+#import "UAActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxPushHandler.h"
 #import "UAInboxMessageList.h"
@@ -34,7 +34,7 @@
 @interface UAIncomingRichPushActionTest : XCTestCase
 
 @property(nonatomic, strong) UAIncomingRichPushAction *action;
-@property(nonatomic, strong) UAPushActionArguments *arguments;
+@property(nonatomic, strong) UAActionArguments *arguments;
 @property(nonatomic, strong) id mockInbox;
 @property(nonatomic, strong) id mockPushHandler;
 @property(nonatomic, strong) id mockPushHandlerDelegate;
@@ -48,10 +48,14 @@
     [super setUp];
 
     self.action = [[UAIncomingRichPushAction alloc] init];
-
-    self.arguments = [[UAPushActionArguments alloc] init];
+    self.arguments = [[UAActionArguments alloc] init];
     self.arguments.value = @"rich-push-id";
-    self.arguments.payload = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
+    
+    NSDictionary *notification = @{@"aps": @{}, @"_uamid":@"rich-push-id"};
+    
+    self.arguments = [UAActionArguments argumentsWithValue:@"rich-push-id"
+                                             withSituation:UASituationForegroundPush
+                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
     self.mockPushHandler = [OCMockObject niceMockForClass:[UAInboxPushHandler class]];
     self.mockPushHandlerDelegate = [OCMockObject niceMockForProtocol:@protocol(UAInboxPushHandlerDelegate)];
@@ -112,7 +116,7 @@
     [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the RAP notification arrived
-    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:self.arguments.payload];
+    [[self.mockPushHandlerDelegate expect] richPushNotificationArrived:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
 
     [self.action performWithArguments:self.arguments withCompletionHandler:^(UAActionResult *result) {
         actionResult = result;
@@ -135,7 +139,7 @@
     [[self.mockMessageList expect] retrieveMessageListWithDelegate:self.mockPushHandler];
 
     // Should notify the delegate that it was launched with a RAP notification
-    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:self.arguments.payload];
+    [[self.mockPushHandlerDelegate expect] applicationLaunchedWithRichPushNotification:[self.arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]];
 
     // Should tell the handler there is a launch message
     [[self.mockPushHandler expect] setHasLaunchMessage:YES];

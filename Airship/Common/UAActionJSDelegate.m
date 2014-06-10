@@ -7,7 +7,6 @@
 
 #import "UAActionRunner.h"
 #import "UAWebViewCallData.h"
-#import "UAWebInvocationActionArguments.h"
 
 @implementation UAActionJSDelegate
 
@@ -78,10 +77,14 @@
         }
     }
 
-    UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                      withSituation:UASituationWebViewInvocation
-                                                                                        withWebView:webView];
-
+    // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
+    
+    UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                            withSituation:UASituationWebViewInvocation
+                                                              metadata:metadata];
+    
     [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
         UA_LDEBUG("Action %@ finished executing with status %ld", actionName, (long)result.status);
         if (!callbackID) {
@@ -167,10 +170,14 @@
                 }
             }
 
-
-            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                              withSituation:UASituationWebViewInvocation
-                                                                                                withWebView:webView];
+            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
+            
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationWebViewInvocation
+                                                                         metadata:metadata];
+            
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);
@@ -220,11 +227,15 @@
                     continue;
                 }
             }
-
-            UAWebInvocationActionArguments *actionArgs = [UAWebInvocationActionArguments argumentsWithValue:decodedArgumentsValue
-                                                                                              withSituation:UASituationWebViewInvocation
-                                                                                                withWebView:webView];
-
+            
+            // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
+            NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
+       
+            UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
+                                                                    withSituation:UASituationWebViewInvocation
+                                                                         metadata:metadata];
+            
             [UAActionRunner runActionWithName:decodedActionName withArguments:actionArgs withCompletionHandler:^(UAActionResult *result){
                 if (result.status == UAActionStatusCompleted) {
                     UA_LDEBUG(@"action %@ completed successfully", actionName);

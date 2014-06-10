@@ -29,7 +29,7 @@
 /**
  * Action class used for handing incoming rich push messages and performing delegate callbacks. 
  *
- * Expected arguments: An instance of UAPushActionArguments.
+ * Expected arguments: An instance of UAActionArguments.
  *
  * Valid situations: UASituationForegroundPush and UASituationBackgroundPush
  *

@@ -24,20 +24,19 @@
  */
 
 #import "UACloseWindowAction.h"
-#import "UAWebInvocationActionArguments.h"
 #import "UARichContentWindow.h"
 
 @implementation UACloseWindowAction
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     return (BOOL)(arguments.situation == UASituationWebViewInvocation &&
-                  [arguments isKindOfClass:[UAWebInvocationActionArguments class]]);
+                  [arguments.metadata objectForKey:UAActionMetadataWebViewKey]);
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UIWebView *webView = ((UAWebInvocationActionArguments *)arguments).webView;
+    UIWebView *webView = [arguments.metadata objectForKey:UAActionMetadataWebViewKey];
     
     if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
         if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {

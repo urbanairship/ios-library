@@ -28,5 +28,6 @@
 @interface UAActionArguments ()
 
 @property (nonatomic, readonly) NSString *situationString;
+@property (nonatomic, copy) NSDictionary *metadata;
 
 @end

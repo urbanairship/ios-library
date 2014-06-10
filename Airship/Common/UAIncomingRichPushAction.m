@@ -25,7 +25,6 @@
 
 #import "UAIncomingRichPushAction.h"
 #import "UAInboxPushHandler.h"
-#import "UAPushActionArguments.h"
 #import "UAInbox.h"
 #import "UAInboxUtils.h"
 #import "UAInboxMessageList.h"
@@ -37,7 +36,7 @@
     switch (arguments.situation) {
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
-            return ([arguments isKindOfClass:[UAPushActionArguments class]]
+            return ([arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]
                     && [UAInboxUtils getRichPushMessageIDFromValue:arguments.value]);
         default:
             return NO;
@@ -47,10 +46,12 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UAPushActionArguments *pushArgs = (UAPushActionArguments *)arguments;
+    NSDictionary *pushPayload = [arguments.metadata objectForKey:UAActionMetadataPushPayloadKey];
+    
+    
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;
 
-    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:pushArgs.value];
+    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromValue:arguments.value];
 
     UA_LDEBUG(@"Received push for rich message id %@", richPushID);
     handler.viewingMessageID = richPushID;
@@ -59,11 +60,11 @@
 
     switch (arguments.situation) {
         case UASituationForegroundPush:
-            [strongDelegate richPushNotificationArrived:pushArgs.payload];
+            [strongDelegate richPushNotificationArrived:pushPayload];
             break;
         case UASituationLaunchedFromPush:
             handler.hasLaunchMessage = YES;
-            [strongDelegate applicationLaunchedWithRichPushNotification:pushArgs.payload];
+            [strongDelegate applicationLaunchedWithRichPushNotification:pushPayload];
             break;
         default:
             break;
