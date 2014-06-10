@@ -74,7 +74,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.
         }
     }
 
-    if ([event valid]) {
+    if ([event isValid]) {
         [[UAirship shared].analytics addEvent:event];
         completionHandler([UAActionResult emptyResult]);
     } else {
