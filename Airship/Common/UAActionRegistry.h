@@ -39,7 +39,6 @@
 #define kUADeepLinkActionDefaultRegistryName @"deep_link_action"
 #define kUADeepLinkActionDefaultRegistryAlias @"^d"
 #define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
-#define kUAAddCustomEventActionDefaultRegistryAlias @"^c"
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
 /**

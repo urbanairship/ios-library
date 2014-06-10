@@ -34,8 +34,7 @@ NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     if ([arguments.value isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
-        NSString *eventName = [dict valueForKey:@"event_name"];
+        NSString *eventName = [arguments.value valueForKey:@"event_name"];
         if (eventName) {
             return YES;
         } else {

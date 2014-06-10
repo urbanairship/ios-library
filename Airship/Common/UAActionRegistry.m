@@ -299,7 +299,10 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
 
     UAAddCustomEventAction *addCustomEventAction = [[UAAddCustomEventAction alloc] init];
     [self registerAction:addCustomEventAction
-                   names:@[kUAAddCustomEventActionDefaultRegistryName, kUAAddCustomEventActionDefaultRegistryAlias]];
+                    name:kUAAddCustomEventActionDefaultRegistryName
+               predicate:^BOOL(UAActionArguments *args) {
+                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+    }];
 }
 
 @end

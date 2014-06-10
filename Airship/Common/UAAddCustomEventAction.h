@@ -53,7 +53,9 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
  *
  * Result value: nil
  *
- * Fetch result: UAActionFetchResultNewData, or UAActionFetchResultFailed if the data could not be fetched.
+ * Fetch result: UAActionFetchResultNoData
+ *
+ * Default predicate: Only accepts UASituationWebViewInvocation and UASituationManualInvocation
  *
  */
 @interface UAAddCustomEventAction : UAAction
