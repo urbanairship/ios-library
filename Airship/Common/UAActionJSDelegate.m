@@ -79,7 +79,7 @@
 
     // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-    [metadata setValue:webView forKey:UAWebViewMetadataKey];
+    [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
     
     UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                             withSituation:UASituationWebViewInvocation
@@ -172,7 +172,7 @@
 
             // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
             NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-            [metadata setValue:webView forKey:UAWebViewMetadataKey];
+            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
             
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation
@@ -230,7 +230,7 @@
             
             // instantiate metadata dictionary and place webView under the UAWebViewMetadataKey
             NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
-            [metadata setValue:webView forKey:UAWebViewMetadataKey];
+            [metadata setValue:webView forKey:UAActionMetadataWebViewKey];
        
             UAActionArguments *actionArgs = [UAActionArguments argumentsWithValue:decodedArgumentsValue
                                                                     withSituation:UASituationWebViewInvocation

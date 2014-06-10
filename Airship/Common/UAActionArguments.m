@@ -27,9 +27,8 @@
 #import "UAActionArguments+Internal.h"
 
 
-NSString * const UAWebViewMetadataKey = @"com.urbanairship.webview";
-NSString * const UAPayloadMetadataKey = @"com.urbanairship.payload";
-NSString * const UANameMetadataKey = @"com.urbanairship.name";
+NSString * const UAActionMetadataWebViewKey = @"com.urbanairship.webview";
+NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
 
 
 

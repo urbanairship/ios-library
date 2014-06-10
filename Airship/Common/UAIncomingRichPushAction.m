@@ -36,7 +36,7 @@
     switch (arguments.situation) {
         case UASituationLaunchedFromPush:
         case UASituationForegroundPush:
-            return ([arguments.metadata objectForKey:UAPayloadMetadataKey]
+            return ([arguments.metadata objectForKey:UAActionMetadataPushPayloadKey]
                     && [UAInboxUtils getRichPushMessageIDFromValue:arguments.value]);
         default:
             return NO;
@@ -46,7 +46,7 @@
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    NSDictionary *pushPayload = [arguments.metadata objectForKey:UAPayloadMetadataKey];
+    NSDictionary *pushPayload = [arguments.metadata objectForKey:UAActionMetadataPushPayloadKey];
     
     
     UAInboxPushHandler *handler = [UAInbox shared].pushHandler;

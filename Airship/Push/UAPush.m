@@ -492,8 +492,8 @@ static Class _uiClass;
 
     for (NSString *possibleActionName in notification) {
         UAActionArguments *args = [UAActionArguments argumentsWithValue:[notification valueForKey:possibleActionName]
-                                                                  withSituation:situation
-                                                                       metadata:@{UANameMetadataKey: notification}];
+                                                          withSituation:situation
+                                                               metadata:@{UAActionMetadataPushPayloadKey: notification}];
 
         [actions setValue:args forKey:possibleActionName];
     }

@@ -81,18 +81,12 @@ typedef NS_ENUM(NSInteger, UASituation) {
 /**
  * WebView metadata key.
  */
-extern NSString * const UAWebViewMetadataKey;
+extern NSString * const UAActionMetadataWebViewKey;
 
 /**
  * Payload metadata key.
  */
-extern NSString * const UAPayloadMetadataKey;
-
-/**
- * Name metadata key.
- */
-extern NSString * const UANameMetadataKey;
-
+extern NSString * const UAActionMetadataPushPayloadKey;
 
 /**
  * Situation of the action

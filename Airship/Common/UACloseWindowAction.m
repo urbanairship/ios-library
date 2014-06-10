@@ -30,13 +30,13 @@
 
 - (BOOL)acceptsArguments:(UAActionArguments *)arguments {
     return (BOOL)(arguments.situation == UASituationWebViewInvocation &&
-                  [arguments.metadata objectForKey:UAWebViewMetadataKey]);
+                  [arguments.metadata objectForKey:UAActionMetadataWebViewKey]);
 }
 
 - (void)performWithArguments:(UAActionArguments *)arguments
        withCompletionHandler:(UAActionCompletionHandler)completionHandler {
 
-    UIWebView *webView = [arguments.metadata objectForKey:UAWebViewMetadataKey];
+    UIWebView *webView = [arguments.metadata objectForKey:UAActionMetadataWebViewKey];
     
     if ([webView.delegate conformsToProtocol:@protocol(UARichContentWindow)]) {
         if ([webView.delegate respondsToSelector:@selector(closeWindow:)]) {
