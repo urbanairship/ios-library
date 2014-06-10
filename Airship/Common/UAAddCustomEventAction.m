@@ -26,6 +26,7 @@
 #import "UAAddCustomEventAction.h"
 #import "UACustomEvent.h"
 #import "UAirship.h"
+#import "UAAnalytics.h"
 
 NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.addcustomeventaction";
 
@@ -52,23 +53,30 @@ NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.
 
     NSDictionary *dict = [NSDictionary dictionaryWithDictionary:arguments.value];
 
-    UACustomEvent *event;
-    id value = [dict valueForKey:@"event_value"];
-    NSString *valueAsString;
-    NSNumber *valueAsNumber;
-    if ([value isKindOfClass:[NSString class]]) {
-        valueAsString = [dict valueForKey:@"event_value"];
-        event = [UACustomEvent eventWithName:[dict valueForKey:@"event_name"] valueFromString:valueAsString];
-    } else if ([value isKindOfClass:[NSNumber class]]) {
-        valueAsNumber = [dict valueForKey:@"event_value"];
-        event = [UACustomEvent eventWithName:[dict valueForKey:@"event_name"] value:valueAsNumber];
+    NSString *eventName = [self parseStringFromDictionary:dict key:@"event_name"];
+    NSString *eventValue = [self parseStringFromDictionary:dict key:@"event_value"];
+    NSString *attributionID = [self parseStringFromDictionary:dict key:@"attribution_id"];
+    NSString *attributionType = [self parseStringFromDictionary:dict key:@"attribution_type"];
+    NSString *transactionID = [self parseStringFromDictionary:dict key:@"transaction_id"];
+
+    UACustomEvent *event = [UACustomEvent eventWithName:eventName valueFromString:eventValue];
+    event.transactionID = transactionID;
+
+    if (attributionID || attributionType) {
+        event.attributionType = attributionType;
+        event.attributionID = attributionID;
+    } else {
+        // TODO: Handle MC_RAP attribution
+        BOOL autoFill = [[self parseStringFromDictionary:dict key:@"auto_fill_landing_page"] boolValue];
+        NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
+        if (autoFill && conversionID) {
+            event.attributionType = kUAAttributionLandingPage;
+            event.attributionID = conversionID;
+        }
     }
 
-    event.transactionID = [dict valueForKey:@"transaction_id"];
-    event.attributionType = [dict valueForKey:@"attribution_type"];
-    event.attributionID = [dict valueForKey:@"attribution_id"];
-
     if ([event valid]) {
+        [[UAirship shared].analytics addEvent:event];
         completionHandler([UAActionResult emptyResult]);
     } else {
         NSError *error = [NSError errorWithDomain:UAAddCustomEventActionErrorDomain
@@ -76,6 +84,22 @@ NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.
                                          userInfo:@{NSLocalizedDescriptionKey:@"Invalid event. Verify event name is not empty and within 255 characters."}];
 
         completionHandler([UAActionResult resultWithError:error]);
+    }
+}
+
+/**
+ * Helper method to parse a string from a dictionary's value.
+ */
+- (NSString *)parseStringFromDictionary:(NSDictionary *)dict key:(NSString *)key {
+    id value = [dict objectForKey:key];
+    if (!value) {
+        return nil;
+    } else if ([value isKindOfClass:[NSString class]]) {
+        return value;
+    } else if ([value isKindOfClass:[NSNumber class]]) {
+        return [value stringValue];
+    } else {
+        return [value description];
     }
 }
 
