@@ -67,7 +67,7 @@
     if (!self.attributionType && !self.attributionID) {
         NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
         if (conversionID) {
-            [self addDataWithValue:@"ua_hard_open" forKey:@"attribution_type"];
+            [self addDataWithValue:kUAAttributionHardOpen forKey:@"attribution_type"];
             [self addDataWithValue:conversionID forKey:@"attribution_id"];
         }
     } else {

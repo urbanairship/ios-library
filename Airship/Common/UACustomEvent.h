@@ -26,6 +26,9 @@
 #import <Foundation/Foundation.h>
 #import "UAEvent.h"
 
+#define kUAAttributionHardOpen @"ua_hard_open"
+#define kUAAttributionLandingPage @"ua_landing_page"
+
 @interface UACustomEvent : UAEvent
 
 /**

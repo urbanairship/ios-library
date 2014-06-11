@@ -251,7 +251,7 @@
     [event gatherData:@{}];
 
     // Verify the attribution is hard open with the push ID
-    XCTAssertEqualObjects(@"ua_hard_open", [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
+    XCTAssertEqualObjects(kUAAttributionHardOpen, [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
     XCTAssertEqualObjects(@"push ID", [event.data objectForKey:@"attribution_id"], @"Attribution should autofil to push id");
 
     // Recreate the event with a attribution ID to verify attribution does not auto fil
