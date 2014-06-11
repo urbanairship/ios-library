@@ -29,18 +29,23 @@
 #import "UAAddCustomEventAction.h"
 #import "UAAction+Internal.h"
 #import "UACustomEvent.h"
+#import "UAInboxDBManager.h"
+#import "UAInboxMessage.h"
 
 @interface UAAddCustomEventActionTest : XCTestCase
 
 @property(nonatomic, strong) id analytics;
 @property(nonatomic, strong) id airship;
 @property(nonatomic, strong) UAAddCustomEventAction *action;
+@property(nonatomic, strong) UAInboxDBManager *inboxDBManager;
 
 @end
 
 @implementation UAAddCustomEventActionTest
 
 - (void)setUp {
+    self.inboxDBManager = [[UAInboxDBManager alloc] init];
+
     self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
     self.airship = [OCMockObject mockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
@@ -54,6 +59,9 @@
 - (void)tearDown {
     [self.analytics stopMocking];
     [self.airship stopMocking];
+
+    // Clean up the created message
+    [self.inboxDBManager deleteMessages:[self.inboxDBManager getMessages]];
 
     [super tearDown];
 }
@@ -291,10 +299,46 @@
 }
 
 /**
- * Test perform when both attribution type and ID does not exist and autofill is false
+ * Test auto filling in the attribution when the attribution is not set, auto landing page
+ * is false, and a MCRAP message is available in the Action Arguments metadata.
  */
 - (void)testPerformAutoFillFalse {
-    // TODO: Add test for MC_RAP
+    id messageDictionary = @{@"message_id": @"message id",
+                             @"title": @"someTitle",
+                             @"content_type": @"someContentType",
+                             @"extra": @{@"someKey":@"someValue"},
+                             @"message_body_url": @"http://someMessageBodyUrl",
+                             @"message_url": @"http://someMessageUrl",
+                             @"unread": @"0",
+                             @"message_sent": @"2013-08-13 00:16:22" };
+
+    // Only way to recreate a message is to actually save one
+    [self.inboxDBManager addMessageFromDictionary:messageDictionary];
+    UAInboxMessage *message = [[self.inboxDBManager getMessages] objectAtIndex:0];
+
+    NSDictionary *eventPayload = @{@"event_name": @"event name",
+                           @"transaction_id": @"transaction id",
+                           @"event_value": @"123.45"};
+
+    UAActionArguments *args = [UAActionArguments argumentsWithValue:eventPayload
+                                                      withSituation:UASituationManualInvocation
+                                                           metadata:@{UAActionMetadataInboxMessageKey: message}];
+
+    UAActionResult *expectedResult = [UAActionResult emptyResult];
+
+    [[self.analytics expect] addEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        UACustomEvent *event = obj;
+        return [event.eventName isEqualToString:@"event name"] &&
+        [event.transactionID isEqualToString:@"transaction id"] &&
+        [event.eventValue isEqualToNumber:@(123.45)] &&
+        [event.attributionID isEqualToString:@"message id"] &&
+        [event.attributionType isEqualToString:@"ua_mcrap"];
+    }]];
+
+    [self verifyPerformWithArgs:args withExpectedResult:expectedResult];
+
+    // Verify the event was added
+    XCTAssertNoThrow([self.analytics verify], @"Custom event should have been added.");
 }
 
 /**
