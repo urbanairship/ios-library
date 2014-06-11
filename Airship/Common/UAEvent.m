@@ -73,6 +73,10 @@
     return obj;
 }
 
+- (BOOL)isValid {
+    return YES;
+}
+
 - (NSString*)getType {
     return @"base";
 }
@@ -119,6 +123,10 @@
     [self gatherIndividualData:context];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"UAEvent id=%@, type=%@, time=%@, data=%@",
+            [self getType], self.time, self.event_id, self.data];
+}
 
 @end
 

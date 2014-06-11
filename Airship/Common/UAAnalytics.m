@@ -313,8 +313,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 }
 
 - (void)addEvent:(UAEvent *)event {
+    if (!event.isValid) {
+        UA_LWARN(@"Dropping invalid event %@.", event);
+        return;
+    }
+
     if (self.config.analyticsEnabled) {
-        UA_LTRACE(@"Add event type=%@ time=%@ data=%@", [event getType], event.time, event.data);
+        UA_LTRACE(@"Adding event: %@.", event);
 
         [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
         self.databaseSize += [event getEstimatedSize];

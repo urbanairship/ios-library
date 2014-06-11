@@ -45,6 +45,13 @@
 - (NSUInteger)getEstimatedSize;
 - (void)addDataFromSessionForKey:(NSString *)dataKey;
 - (void)addDataWithValue:(id)value forKey:(NSString *)key;
+
+/**
+ * Checks if the event is valid. Invalid events will be dropped.
+ * @return YES if the event is valid.
+ */
+- (BOOL)isValid;
+
 @end
 
 @interface UAEventAppInit : UAEvent

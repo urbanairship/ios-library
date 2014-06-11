@@ -34,6 +34,7 @@
 #import "UAirship.h"
 #import "UAApplicationMetrics.h"
 #import "UACloseWindowAction.h"
+#import "UAAddCustomEventAction.h"
 
 @implementation UAActionRegistry
 @dynamic registeredEntries;
@@ -295,6 +296,13 @@ SINGLETON_IMPLEMENTATION(UAActionRegistry)
     [self registerAction:deepLinkAction
                    names:@[kUADeepLinkActionDefaultRegistryName, kUADeepLinkActionDefaultRegistryAlias]
                predicate:urlPredicate];
+
+    UAAddCustomEventAction *addCustomEventAction = [[UAAddCustomEventAction alloc] init];
+    [self registerAction:addCustomEventAction
+                    name:kUAAddCustomEventActionDefaultRegistryName
+               predicate:^BOOL(UAActionArguments *args) {
+                   return args.situation == UASituationManualInvocation || args.situation == UASituationWebViewInvocation;
+    }];
 }
 
 @end
