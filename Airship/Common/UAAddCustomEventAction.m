@@ -28,7 +28,7 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 
-NSString * const UAAddCustomEventActionErrorDomain = @"com.urbanairship.actions.addcustomeventaction";
+NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionError";
 
 @implementation UAAddCustomEventAction
 
