@@ -26,6 +26,7 @@
 
 #define kEventAppInitSize               450//397 w/ push id, no inbox id
 #define kEventAppExitSize               200//136 w/ only network type
+
 #define kEventDeviceRegistrationSize    200//153 w/ only user info
 #define kEventPushReceivedSize          200//160 w/ uuid push info
 #define kEventAppActiveSize             120
@@ -34,17 +35,11 @@
 @interface UAEvent : NSObject
 
 @property (nonatomic, readonly, copy) NSString *time;
-@property (nonatomic, readonly, copy) NSString *event_id;
-@property (nonatomic, readonly, strong) NSMutableDictionary *data;
+@property (nonatomic, readonly, copy) NSString *eventId;
+@property (nonatomic, readonly, strong) NSDictionary *data;
+@property (nonatomic, readonly) NSString *eventType;
+@property (nonatomic, readonly) NSUInteger estimatedSize;
 
-+ (id)event;
-- (id)initWithContext:(NSDictionary *)context;
-+ (id)eventWithContext:(NSDictionary *)context;
-- (NSString *)getType;
-- (void)gatherData:(NSDictionary *)context;
-- (NSUInteger)getEstimatedSize;
-- (void)addDataFromSessionForKey:(NSString *)dataKey;
-- (void)addDataWithValue:(id)value forKey:(NSString *)key;
 
 /**
  * Checks if the event is valid. Invalid events will be dropped.
@@ -55,21 +50,25 @@
 @end
 
 @interface UAEventAppInit : UAEvent
++ (instancetype)event;
 @end
 
 @interface UAEventAppForeground : UAEventAppInit
 @end
 
 @interface UAEventAppExit : UAEvent
++ (instancetype)event;
 @end
 
 @interface UAEventAppBackground : UAEventAppExit
 @end
 
 @interface UAEventDeviceRegistration : UAEvent
++ (instancetype)event;
 @end
 
 @interface UAEventPushReceived : UAEvent
++ (instancetype)eventWithNotification:(NSDictionary *)notification;
 @end
 
 /**
@@ -78,6 +77,7 @@
  * trigger a UAEventAppInactive event.
  */
 @interface UAEventAppActive : UAEvent
++ (instancetype)event;
 @end
 
 /**
@@ -86,4 +86,5 @@
  * notification center in iOS5+, the user launches the task-bar, etc.
  */
 @interface UAEventAppInactive : UAEvent
++ (instancetype)event;
 @end

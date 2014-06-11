@@ -30,6 +30,9 @@
 #define kUAAttributionLandingPage @"ua_landing_page"
 #define kUAAttributionMCRAP @"ua_mcrap"
 
+#define kUACustomEventCharacterLimit 255
+#define kUACustomEventSize 800
+
 @class UAInboxMessage;
 
 @interface UACustomEvent : UAEvent

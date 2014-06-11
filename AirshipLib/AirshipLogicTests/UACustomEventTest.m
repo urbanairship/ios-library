@@ -67,7 +67,6 @@
     event.transactionID = transactionID;
     event.attributionID = attributionID;
     event.attributionType = attributionType;
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(eventName, [event.data objectForKey:@"event_name"], @"Unexpected event name.");
     XCTAssertEqualObjects(transactionID, [event.data objectForKey:@"transaction_id"], @"Unexpected transaction id.");
@@ -227,7 +226,6 @@
  */
 - (void)testEventValueToData {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
     XCTAssertEqualObjects(@(123123456), [event.data objectForKey:@"event_value"], @"Unexpected event value.");
 }
 
@@ -237,7 +235,6 @@
  */
 - (void)testAutoAttribution {
     UACustomEvent *event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
 
     // Verify attribution is blank when conversion ID is nil
     XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution should be nil");
@@ -248,7 +245,6 @@
 
     // Recreate the event to verify auto fil behavior
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
-    [event gatherData:@{}];
 
     // Verify the attribution is hard open with the push ID
     XCTAssertEqualObjects(kUAAttributionHardOpen, [event.data objectForKey:@"attribution_type"], @"Attribution should autofil to hard open");
@@ -257,7 +253,6 @@
     // Recreate the event with a attribution ID to verify attribution does not auto fil
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     event.attributionID = @"attribution ID";
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(@"attribution ID", [event.data objectForKey:@"attribution_id"], @"Attribution ID should be the set value");
     XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution type is not set and should be nil");
@@ -265,7 +260,6 @@
     // Recreate the event with a attribution type to verify attribution does not auto fil
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];
     event.attributionType = @"attribution type";
-    [event gatherData:@{}];
 
     XCTAssertEqualObjects(@"attribution type", [event.data objectForKey:@"attribution_type"], @"Attribution type should be the set value");
     XCTAssertNil([event.data objectForKey:@"attribution_id"], @"Attribution ID is not set and should be nil");

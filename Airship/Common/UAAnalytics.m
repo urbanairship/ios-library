@@ -230,7 +230,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     UA_LTRACE(@"Enter Background.");
 
     // add app_background event
-    [self addEvent:[UAEventAppBackground eventWithContext:nil]];
+    [self addEvent:[UAEventAppBackground event]];
     
     // Set a blank session_id for app_exit events
     [self.session removeAllObjects];
@@ -254,18 +254,18 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         [self refreshSessionWhenActive];
 
         //add app_foreground event
-        [self addEvent:[UAEventAppForeground eventWithContext:nil]];
+        [self addEvent:[UAEventAppForeground event]];
     }
     
     //add activity_started / AppActive event
-    [self addEvent:[UAEventAppActive eventWithContext:nil]];
+    [self addEvent:[UAEventAppActive event]];
 }
 
 - (void)willResignActive {
     UA_LTRACE(@"Application will resign active.");
     
     //add activity_stopped / AppInactive event
-    [self addEvent:[UAEventAppInactive eventWithContext:nil]];
+    [self addEvent:[UAEventAppInactive event]];
 }
 
 #pragma mark -
@@ -302,7 +302,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 - (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState {
     switch (applicationState) {
         case UIApplicationStateActive:
-            [self addEvent:[UAEventPushReceived eventWithContext:userInfo]];
+            [self addEvent:[UAEventPushReceived eventWithNotification:userInfo]];
             break;
         case UIApplicationStateInactive:
             self.notificationUserInfo = userInfo;
@@ -322,13 +322,13 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
         UA_LTRACE(@"Adding event: %@.", event);
 
         [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
-        self.databaseSize += [event getEstimatedSize];
+        self.databaseSize += event.estimatedSize;
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];
         }
 
         if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateBackground
-            && [event getType] == UALocationEventAnalyticsType) {
+            && event.eventType == UALocationEventAnalyticsType) {
 
             NSTimeInterval timeSinceLastSend = [[NSDate date] timeIntervalSinceDate:self.lastSendTime];
 

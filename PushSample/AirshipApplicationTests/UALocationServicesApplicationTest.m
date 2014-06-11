@@ -97,18 +97,19 @@
     __block UALocationEvent *event = nil;
 
     // Capture the args passed to the mock in a block
-    void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
-    {
+    void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) {
         __unsafe_unretained UALocationEvent *unsafeEvent = nil;
         [invocation getArgument:&unsafeEvent atIndex:2];
         event = unsafeEvent;
         NSLog(@"EVENT DATA %@", event.data);
     };
+
     [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
     [service reportLocationToAnalytics:PDX fromProvider:standard];
 
     BOOL compare = [event.data valueForKey:UALocationEventUpdateTypeKey] == UALocationEventUpdateTypeContinuous;
     XCTAssertTrue(compare, @"UALocationEventUpdateType should be UAUALocationEventUpdateTypeContinuous for standardLocationProvider");
+
     compare = [event.data valueForKey:UALocationEventProviderKey] == UALocationServiceProviderGps;
     XCTAssertTrue(compare, @"UALocationServiceProvider should be UALocationServiceProviderGps");
 

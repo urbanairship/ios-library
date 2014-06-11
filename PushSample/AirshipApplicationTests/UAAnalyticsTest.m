@@ -339,7 +339,7 @@
 
     // Verify adding a location event in the background sends if the last send time
     // was 15 minutes ago.
-    UALocationEvent *locationEvent = [[UALocationEvent alloc] initWithLocationContext:nil];
+    UALocationEvent *locationEvent = [[UALocationEvent alloc]init];
     _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
 
     // Expect adding event to add it tot he db and to start sending analytics
@@ -386,7 +386,8 @@
 
 // This test is not comprehensive for this method, as the method needs refactoring.
 - (void)testPrepareEventsForUpload {
-    UAEventAppForeground *appEvent = [[UAEventAppForeground alloc] initWithContext:nil];
+    UAEventAppForeground *appEvent = [UAEventAppForeground event];
+
     // If the events database is empty, everything crashes
     XCTAssertNotNil(appEvent);
     // Remember, the NSUserPreferences are in an unknown state in every test, so reset

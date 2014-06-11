@@ -72,6 +72,8 @@
 
 - (void)testInitWithLocationManager {
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+    locationManager.desiredAccuracy = 1;
+    locationManager.distanceFilter = 3;
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:_location 
                                                         locationManager:locationManager 
                                                           andUpdateType:UALocationEventUpdateTypeSingle];
@@ -94,8 +96,12 @@
 
 - (void)testInitWithProvider {
     UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
+    standard.locationManager.desiredAccuracy = 1;
+    standard.locationManager.distanceFilter = 2;
+
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:_location provider:standard andUpdateType:UALocationEventUpdateTypeContinuous];
     NSDictionary *data = event.data;
+
 
     XCTAssertEqualWithAccuracy(_location.coordinate.latitude, [[data valueForKey:UALocationEventLatitudeKey] doubleValue], 0.000001);
     XCTAssertEqualWithAccuracy(_location.coordinate.longitude, [[data valueForKey:UALocationEventLongitudeKey] doubleValue],0.000001);

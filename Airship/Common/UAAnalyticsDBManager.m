@@ -81,14 +81,11 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
 }
 
 - (void)addEvent:(UAEvent *)event withSession:(NSDictionary *)session {
-    NSUInteger estimateSize = [event getEstimatedSize];
-    
     // Serialize the event data dictionary
     NSString *errString = nil;
     NSData *serializedData = [NSPropertyListSerialization dataFromPropertyList:event.data
                                                                         format:NSPropertyListBinaryFormat_v1_0
                                                               errorDescription:&errString];
-
     if (errString) {
         UALOG(@"Dictionary Serialization Error: %@", errString);
     }
@@ -102,12 +99,12 @@ SINGLETON_IMPLEMENTATION(UAAnalyticsDBManager)
     
     dispatch_async(dbQueue, ^{
         [self.db executeUpdate:@"INSERT INTO analytics (type, event_id, time, data, session_id, event_size) VALUES (?, ?, ?, ?, ?, ?)",
-         [event getType],
-         event.event_id,
+         event.eventType,
+         event.eventId,
          event.time,
          serializedData,
          sessionID,
-         [NSString stringWithFormat:@"%lu", (unsigned long)estimateSize]];
+         [NSString stringWithFormat:@"%lu", (unsigned long)event.estimatedSize]];
     });
     //UALOG(@"DB Count %d", [self eventCount]);
     //UALOG(@"DB Size %d", [self sizeInBytes]);

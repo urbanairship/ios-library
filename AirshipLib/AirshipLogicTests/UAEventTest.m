@@ -47,8 +47,7 @@
                                     @"channel_id":@"someChannelID",
                                     @"user_id":@"someUserID" };
 
-    UAEventDeviceRegistration *deviceRegistration = [[UAEventDeviceRegistration alloc] init];
-    [deviceRegistration gatherData:@{}];
+    UAEventDeviceRegistration *deviceRegistration = [UAEventDeviceRegistration event];
     XCTAssertEqualObjects(deviceRegistration.data, expectedData, @"Event data is unexpected.");
 }
 

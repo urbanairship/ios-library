@@ -56,39 +56,27 @@ extern NSString * const UAAnalyticsValueNone;
  */
 @interface UALocationEvent : UAEvent
 
-
-///---------------------------------------------------------------------------------------
-/// @name Object Creation
-///---------------------------------------------------------------------------------------
-
-/** 
- * Create a UALocationEvent.
- * @param context A dictionary populated with all required data
- * @return A UALocationEvent populated with appropriate values
- */
-- (id)initWithLocationContext:(NSDictionary *)context;
-
-/** 
+/**
  * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
- * @param provider Provider that produced the location
+ * @param provider The type of provider that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
  * @return UALocationEvent populated with the necessary values
  */
-- (id)initWithLocation:(CLLocation *)location 
-              provider:(id<UALocationProviderProtocol>)provider 
-         andUpdateType:(UALocationEventUpdateType *)updateType; 
++ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
+                                  providerType:(UALocationServiceProviderType *)providerType
+                               desiredAccuracy:(NSNumber *)desiredAccuracy
+                                distanceFilter:(NSNumber *)distanceFilter
+                                    updateType:(UALocationEventUpdateType *)updateType;
 
-/** 
+/**
  * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
- * @param locationManager The location manager that produced the location
  * @param updateType One of the UALocationEvent updated types, see header for more details
  * @return UALocationEvent populated with the necessary values
  */
-- (id)initWithLocation:(CLLocation *)location 
-       locationManager:(CLLocationManager *)locationManager 
-         andUpdateType:(UALocationEventUpdateType *)updateType;
++ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
+                                    updateType:(UALocationEventUpdateType *)updateType;
 
 /**
  * Creates a UALocationEvent.
@@ -100,7 +88,6 @@ extern NSString * const UAAnalyticsValueNone;
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
                                       provider:(id<UALocationProviderProtocol>)provider 
                                  andUpdateType:(UALocationEventUpdateType *)updateType;
-
 /**
  * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
@@ -111,56 +98,5 @@ extern NSString * const UAAnalyticsValueNone;
 + (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
                                locationManager:(CLLocationManager *)locationManager 
                                  andUpdateType:(UALocationEventUpdateType *)updateType;
-
-
-///---------------------------------------------------------------------------------------
-/// @name Support Methods
-///---------------------------------------------------------------------------------------
-
-/** 
- * Populates a dictionary with the appropriate data gathered from the CLLocation.
- * @param dictionary The dictionary to populate with values
- * @param location Location to parse values from
- */
-- (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationValues:(CLLocation *)location;
-
-/** 
- * Populates a dictionary with the appropriate data gathered from the CLLocationManager.
- * @param dictionary The dictionary to populate with values
- * @param locationManager The location manager to parse values from
- */
-- (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationManagerValues:(CLLocationManager *)locationManager;
-
-/** 
- * Populates a dictionary with the appropriate data gathered from the object conforming to the UALocationProviderProtocol.
- * @param dictionary The dictionary to populate with values from the location provider
- * @param locationProvider The object implementing the UALocationProviderProtocol to parse data from
- */
-- (void)populateDictionary:(NSMutableDictionary *)dictionary withLocationProviderValues:(id<UALocationProviderProtocol>)locationProvider;
-
-/** 
- * Populates a dictionary with the defaulf values for reporting a significant change event. The values currently default
- * to NONE, and are defined in the implementation file.
- * @param context The dictionary to populate with values
-*/
-- (void)setDefaultSignificantChangeDistanceAndAccuracyValuesInContext:(NSMutableDictionary *)context;
-
-/**
- * Converts a double to a string keeping seven digit of precision
- * Seven digits produces sub meter accuracy at the equator.
- * http://en.wikipedia.org/wiki/Decimal_degrees
- * @param doubleValue The double to convert.
- * @return NSString representing the 7 digit value
- */
-- (NSString *)stringFromDoubleToSevenDigits:(double)doubleValue;
-
-/** 
- * Converts a double to a string and truncating it
- * to an int.
- * @param doubleValue The double to convert and truncate
- * @return NSString representing the double as an int
- */
-- (NSString *)stringAsIntFromDouble:(double)doubleValue;
-
 
 @end
