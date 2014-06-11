@@ -44,13 +44,17 @@ extern NSString * const UAAddCustomEventActionErrorDomain;
 /**
  * An action that adds a custom event.
  *
- * This action is registered under the names add_custom_event_action and ^c.
+ * This action is registered under the name "add_custom_event_action".
  *
- * Expected argument values: A dictionary of keys for the custom event.
+ * Expected argument values: A dictionary of keys for the custom event. When a
+ * custom event action is triggered from a Message Center Rich Push Message,
+ * the attribution type and ID will automatically be filled for the message if
+ * they are left blank.
  *
  * Valid situations: UASituationForegroundPush, UASituationLanchedFromPush,
  * UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush
  *
+ * 
  * Result value: nil
  *
  * Fetch result: UAActionFetchResultNoData
