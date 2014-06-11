@@ -28,6 +28,9 @@
 
 #define kUAAttributionHardOpen @"ua_hard_open"
 #define kUAAttributionLandingPage @"ua_landing_page"
+#define kUAAttributionMCRAP @"ua_mcrap"
+
+@class UAInboxMessage;
 
 @interface UACustomEvent : UAEvent
 
@@ -88,4 +91,9 @@
  * be ignored.
  */
 @property(nonatomic, copy) NSString *transactionID;
+
+/**
+ * Attributes the custom event to a UAInboxMessage.
+ */
+- (void)setAttributionFromMessage:(UAInboxMessage *)message;
 @end

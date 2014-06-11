@@ -26,6 +26,7 @@
 #import "UACustomEvent.h"
 #import "UAAnalytics.h"
 #import "UAirship.h"
+#import "UAInboxMessage.h"
 
 @implementation UACustomEvent
 
@@ -146,6 +147,13 @@
         } else {
             _eventValue = [NSDecimalNumber decimalNumberWithDecimal:[eventValue decimalValue]];
         }
+    }
+}
+
+- (void)setAttributionFromMessage:(UAInboxMessage *)message {
+    if (message) {
+        self.attributionID = message.messageID;
+        self.attributionType = kUAAttributionMCRAP;
     }
 }
 

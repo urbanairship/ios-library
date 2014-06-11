@@ -89,6 +89,12 @@ extern NSString * const UAActionMetadataWebViewKey;
 extern NSString * const UAActionMetadataPushPayloadKey;
 
 /**
+ * Inbox Message metadata key.
+ */
+extern NSString * const UAActionMetadataInboxMessageKey;
+
+
+/**
  * Situation of the action
  */
 @property(nonatomic, assign) UASituation situation;

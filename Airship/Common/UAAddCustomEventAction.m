@@ -65,12 +65,14 @@ NSString * const UAAddCustomEventActionErrorDomain = @"UAAddCustomEventActionErr
         event.attributionType = attributionType;
         event.attributionID = attributionID;
     } else {
-        // TODO: Handle MC_RAP attribution
         BOOL autoFill = [[self parseStringFromDictionary:dict key:@"auto_fill_landing_page"] boolValue];
         NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
         if (autoFill && conversionID) {
             event.attributionType = kUAAttributionLandingPage;
             event.attributionID = conversionID;
+        } else {
+            id message = [arguments.metadata objectForKey:UAActionMetadataInboxMessageKey];
+            [event setAttributionFromMessage:message];
         }
     }
 
