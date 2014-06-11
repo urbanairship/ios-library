@@ -46,6 +46,10 @@
 }
 
 + (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    return [UAWebViewTools webView:wv shouldStartLoadWithRequest:request navigationType:navigationType message:nil];
+  }
+
++ (BOOL)webView:(UIWebView *)wv shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType message:(UAInboxMessage *)message {
     NSURL *url = [request URL];
 
     /*
@@ -54,7 +58,8 @@
 
     if ([[url scheme] isEqualToString:@"uairship"] || [[url scheme] isEqualToString:@"ua"]) {
         if ((navigationType == UIWebViewNavigationTypeLinkClicked) || (navigationType == UIWebViewNavigationTypeOther)) {
-            [self performJSDelegate:wv url:url];
+            UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url webView:wv message:message];
+            [self performJSDelegateWithData:data];
             return NO;
         }
     }
@@ -128,10 +133,7 @@
     return YES;
 }
 
-+ (void)performJSDelegate:(UIWebView*)webView url:(NSURL *)url {
-
-    UAWebViewCallData *data = [UAWebViewCallData callDataForURL:url webView:webView];
-
++ (void)performJSDelegateWithData:(UAWebViewCallData *)data {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     id<UAInboxJavaScriptDelegate> inboxJSDelegate = [UAInbox shared].jsDelegate;
@@ -139,37 +141,32 @@
     id <UAJavaScriptDelegate> actionJSDelegate = [UAirship shared].actionJSDelegate;
     id <UAJavaScriptDelegate> userJSDDelegate = [UAirship shared].jsDelegate;
 
-    BOOL isUsingNewScheme = [url.scheme isEqualToString:@"uairship"];
-    BOOL isUsingDeprecatedScheme = [url.scheme isEqualToString:@"ua"];
+    BOOL isUsingNewScheme = [data.url.scheme isEqualToString:@"uairship"];
+    BOOL isUsingDeprecatedScheme = [data.url.scheme isEqualToString:@"ua"];
 
     if (isUsingNewScheme) {
         if ([data.name isEqualToString:@"run-actions"] ||
             [data.name isEqualToString:@"run-basic-actions"] ||
             [data.name isEqualToString:@"run-action-cb"]) {
 
-            [self performAsyncJSCallWithDelegate:actionJSDelegate
-                                     withWebView:webView
-                                        withData:data];
+            [self performAsyncJSCallWithDelegate:actionJSDelegate data:data];
 
         } else {
-            [self performAsyncJSCallWithDelegate:userJSDDelegate
-                                     withWebView:webView
-                                        withData:data];
+            [self performAsyncJSCallWithDelegate:userJSDDelegate data:data];
         }
     } else if (isUsingDeprecatedScheme) {
         //deprecated inbox JS delegate, if applicable
         [self performDeprecatedJSCallWithDelegate:inboxJSDelegate
-                                      withWebView:webView
-                                         withData:data];
+                                         data:data];
     }
 }
 
 + (void)performAsyncJSCallWithDelegate:(id<UAJavaScriptDelegate>)delegate
-                               withWebView:(UIWebView *)webView
-                             withData:(UAWebViewCallData *)data {
+                                  data:(UAWebViewCallData *)data {
+
     SEL selector = @selector(callWithData:withCompletionHandler:);
     if ([delegate respondsToSelector:selector]) {
-        __weak UIWebView *weakWebView = webView;
+        __weak UIWebView *weakWebView = data.webView;
         [delegate callWithData:data withCompletionHandler:^(NSString *script){
             [weakWebView stringByEvaluatingJavaScriptFromString:script];
         }];
@@ -178,15 +175,14 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (void)performDeprecatedJSCallWithDelegate:(id<UAInboxJavaScriptDelegate>)delegate
-                                    withWebView:(UIWebView *)webView
-                                       withData:(UAWebViewCallData *)data {
+                                       data:(UAWebViewCallData *)data {
     //SEL selector = NSSelectorFromString(@"callbackArguments:withOptions:");
     SEL selector = @selector(callbackArguments:withOptions:);
     if ([delegate respondsToSelector:selector]) {
         NSString *script = nil;
         script = [delegate callbackArguments:data.arguments withOptions:data.options];
         if (script) {
-            [webView stringByEvaluatingJavaScriptFromString:script];
+            [data.webView stringByEvaluatingJavaScriptFromString:script];
         }
     }
 }
