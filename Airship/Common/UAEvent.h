@@ -34,12 +34,30 @@
 
 @interface UAEvent : NSObject
 
+/**
+ * The time the event was created.
+ */
 @property (nonatomic, readonly, copy) NSString *time;
-@property (nonatomic, readonly, copy) NSString *eventId;
-@property (nonatomic, readonly, strong) NSDictionary *data;
-@property (nonatomic, readonly) NSString *eventType;
-@property (nonatomic, readonly) NSUInteger estimatedSize;
 
+/**
+ * The unique event id.
+ */
+@property (nonatomic, readonly, copy) NSString *eventId;
+
+/**
+ * The event's data.
+ */
+@property (nonatomic, readonly, strong) NSDictionary *data;
+
+/**
+ * The event's type.
+ */
+@property (nonatomic, readonly) NSString *eventType;
+
+/**
+ * The event's estimated size.
+ */
+@property (nonatomic, readonly) NSUInteger estimatedSize;
 
 /**
  * Checks if the event is valid. Invalid events will be dropped.
@@ -50,24 +68,44 @@
 @end
 
 @interface UAEventAppInit : UAEvent
+
+/**
+ * Factory method to create a UAEventAppInit.
+ */
 + (instancetype)event;
+
 @end
 
 @interface UAEventAppForeground : UAEventAppInit
 @end
 
 @interface UAEventAppExit : UAEvent
+
+/**
+ * Factory method to create a UAEventAppExit.
+ */
 + (instancetype)event;
+
 @end
 
 @interface UAEventAppBackground : UAEventAppExit
 @end
 
 @interface UAEventDeviceRegistration : UAEvent
+
+/**
+ * Factory method to create a UAEventDeviceRegistration.
+ */
 + (instancetype)event;
+
 @end
 
 @interface UAEventPushReceived : UAEvent
+
+/**
+ * Factory method to create a UAEventPushReceived.
+ * @param notification The received push notificaiton.
+ */
 + (instancetype)eventWithNotification:(NSDictionary *)notification;
 @end
 
@@ -86,5 +124,10 @@
  * notification center in iOS5+, the user launches the task-bar, etc.
  */
 @interface UAEventAppInactive : UAEvent
+
+/**
+ * Factory method to create a UAEventAppInactive.
+ */
 + (instancetype)event;
+
 @end
