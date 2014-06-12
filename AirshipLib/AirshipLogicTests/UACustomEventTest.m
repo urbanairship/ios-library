@@ -183,6 +183,14 @@
     // 0
     event = [UACustomEvent eventWithName:@"event name" valueFromString:@"0"];
     XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+
+    // nil
+    event = [UACustomEvent eventWithName:@"event name" valueFromString:nil];
+    XCTAssertNil(event.eventValue, @"Event values that nil should be ignored.");
+
+    // NaN
+    event = [UACustomEvent eventWithName:@"event name" valueFromString:@"blah"];
+    XCTAssertNil(event.eventValue, @"Event values that are not numbers should be ignored");
 }
 
 /**
@@ -217,6 +225,14 @@
     // 0
     event = [UACustomEvent eventWithName:@"event name" value:@(0)];
     XCTAssertEqualObjects(@(0), event.eventValue, @"Event value should be set from a valid numeric string.");
+
+    // nil
+    event = [UACustomEvent eventWithName:@"event name" value:nil];
+    XCTAssertNil(event.eventValue, @"Nil event values should be ignored.");
+
+    // NaN
+    event = [UACustomEvent eventWithName:@"event name" value:[NSDecimalNumber notANumber]];
+    XCTAssertNil(event.eventValue, @"NSDecimalNumbers that are equal to notANumber should be ignored.");
 }
 
 

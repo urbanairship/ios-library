@@ -49,7 +49,7 @@
 }
 
 + (instancetype)eventWithName:(NSString *)eventName valueFromString:(NSString *)eventValue {
-    NSDecimalNumber *decimalValue = [NSDecimalNumber decimalNumberWithString:eventValue];
+    NSDecimalNumber *decimalValue = eventValue ? [NSDecimalNumber decimalNumberWithString:eventValue] : nil;
     return [UACustomEvent eventWithName:eventName value:decimalValue];
 }
 
@@ -99,7 +99,13 @@
 }
 
 - (void)setEventValue:(NSDecimalNumber *)eventValue {
-    if ([eventValue compare:@(INT32_MAX)] > 0) {
+    if ([eventValue isEqualToNumber:[NSDecimalNumber notANumber]]) {
+        return;
+    }
+
+    if (!eventValue) {
+        _eventValue = nil;
+    } else if ([eventValue compare:@(INT32_MAX)] > 0) {
         UA_LERR(@"Event value %@ is larger than 2^31-1", self.eventValue);
     } else if ([eventValue compare:@(INT32_MIN)] < 0) {
         UA_LERR(@"Event value %@ is smaller than -2^31", self.eventValue);
