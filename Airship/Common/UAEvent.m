@@ -87,6 +87,7 @@
 @interface UAEventAppInit()
 - (NSMutableDictionary *)gatherData;
 @end
+
 @implementation UAEventAppInit
 
 + (instancetype)event {
@@ -103,12 +104,7 @@
     [data setValue:[UAEvent getSessionValueForKey:@"launched_from_push_id"] forKey:@"push_id"];
     [data setValue:[UAEvent getSessionValueForKey:@"launched_from_rich_push_id"] forKey:@"rich_push_id"];
     [data setValue:[UAEvent getSessionValueForKey:@"foreground"] forKey:@"foreground"];
-
-    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = netInfo.subscriberCellularProvider;
-
-    [data setValue:carrier.carrierName forKey:@"carrier"];
-
+    [data setValue:[UAEvent getSessionValueForKey:@"carrier"] forKey:@"carrier"];
     [data setValue:[UAEvent getSessionValueForKey:@"time_zone"] forKey:@"time_zone"];
     [data setValue:[UAEvent getSessionValueForKey:@"daylight_savings"] forKey:@"daylight_savings"];
     [data setValue:[UAEvent getSessionValueForKey:@"notification_types"] forKey:@"notification_types"];

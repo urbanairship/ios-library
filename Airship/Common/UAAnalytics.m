@@ -208,6 +208,10 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [self.session setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [self.session setValue:[UAirshipVersion get] forKey:@"lib_version"];
     [self.session setValue:self.packageVersion forKey:@"package_version"];
+
+    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    CTCarrier *carrier = netInfo.subscriberCellularProvider;
+    [self.session setValue:carrier forKey:@"carrier"];
     
     // ensure that the app is foregrounded (necessary for Newsstand background invocation
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
