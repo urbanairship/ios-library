@@ -93,7 +93,7 @@
 @property(nonatomic, copy) NSString *transactionID;
 
 /**
- * Attributes the custom event to a UAInboxMessage.
+ * Sets the custom event's attribution type and ID from a UAInboxMessage.
  */
 - (void)setAttributionFromMessage:(UAInboxMessage *)message;
 @end

@@ -21,7 +21,7 @@
  * Processes a custom delegate call URL into associated call data.
  *
  * @param url The URL to be processed.
- * @param webView The UIWebView originating the call
+ * @param webView The UIWebView originating the call.
  * @param message The UAInboxMessage associated with the webview.
  * @return An instance of UAWebViewCallData.
  */
@@ -49,7 +49,7 @@
 @property(nonatomic, strong) UIWebView *webView;
 
 /**
- * The orignal url that initiated the call.
+ * The orignal URL that initiated the call.
  */
 @property(nonatomic, strong) NSURL *url;
 
