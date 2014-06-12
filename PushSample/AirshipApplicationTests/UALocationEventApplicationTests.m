@@ -91,7 +91,6 @@
     XCTAssertTrue((UALocationEventUpdateTypeSingle == [data valueForKey:UALocationEventUpdateTypeKey]) );
     XCTAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey]);
     XCTAssertTrue((UALocationServiceProviderUnknown == [data valueForKey:UALocationEventProviderKey]));
-    XCTAssertEqualObjects([[UAirship shared].analytics.session valueForKey:@"session_id"], [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be set.");
 }
 
 - (void)testInitWithProvider {
@@ -112,7 +111,6 @@
     XCTAssertTrue((UALocationEventUpdateTypeContinuous == [data valueForKey:UALocationEventUpdateTypeKey]) );
     XCTAssertEqualObjects(@"true" , [data valueForKey:UALocationEventForegroundKey]);
     XCTAssertTrue((UALocationServiceProviderGps == [data valueForKey:UALocationEventProviderKey]));
-    XCTAssertEqualObjects([[UAirship shared].analytics.session valueForKey:@"session_id"], [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be set.");
 }
 
 - (void)testInitWithSigChangeProviderSetsDistanceFilterDesiredAccuracyNone {
@@ -120,18 +118,6 @@
     UALocationEvent *event = [UALocationEvent locationEventWithLocation:_location provider:sigChange andUpdateType:UALocationEventUpdateTypeChange];
     XCTAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDesiredAccuracyKey], @"desiredAccuracy should be UADesiredAccuracyValueNone");
     XCTAssertTrue(UAAnalyticsValueNone == [event.data valueForKey:UALocationEventDistanceFilterKey], @"distanceFilter should be UADistanceFilterValueNone");
-}
-
-- (void)testInitWhenAnalyticsInBackground {
-    [[UAirship shared].analytics enterBackground];
-    
-    UAStandardLocationProvider *standard = [UAStandardLocationProvider providerWithDelegate:nil];
-    UALocationEvent *event = [UALocationEvent locationEventWithLocation:_location provider:standard andUpdateType:UALocationEventUpdateTypeContinuous];
-
-    XCTAssertEqualObjects(@"", [event.data valueForKey:UALocationEventSessionIDKey], @"Session id should be empty.");
-
-    //Bring the analytics back into the foreground
-    [[UAirship shared].analytics enterForeground];
 }
 
 @end

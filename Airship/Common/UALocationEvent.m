@@ -29,7 +29,6 @@
 
 @implementation UALocationEvent
 
-UALocationEventAnalyticsKey * const UALocationEventSessionIDKey = @"session_id";
 UALocationEventAnalyticsKey * const UALocationEventForegroundKey = @"foreground";
 UALocationEventAnalyticsKey * const UALocationEventLatitudeKey = @"lat";
 UALocationEventAnalyticsKey * const UALocationEventLongitudeKey = @"long";
@@ -63,7 +62,6 @@ NSString * const UAAnalyticsValueNone = @"NONE";
     [data setValue:[NSString stringWithFormat:@"%.7f", location.coordinate.longitude] forKey:UALocationEventLongitudeKey];
     [data setValue:[NSString stringWithFormat:@"%i", (int)location.horizontalAccuracy] forKey:UALocationEventHorizontalAccuracyKey];
     [data setValue:[NSString stringWithFormat:@"%i", (int)location.verticalAccuracy] forKey:UALocationEventVerticalAccuracyKey];
-    [data setValue:[UAEvent getSessionValueForKey:UALocationEventSessionIDKey] forKey:UALocationEventSessionIDKey];
 
     if (providerType) {
         [data setValue:providerType forKey:UALocationEventProviderKey];
