@@ -98,9 +98,6 @@ UALogLevel uaLogLevel = UALogLevelError;
         self.ready = NO;
         self.backgroundNotificationEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
                                     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
-        if (!_UA_VERSION) {
-            UA_LERR(@"_UA_VERSION is undefined, UA_VERSION will be set to %@.", UA_VERSION);
-        }
     }
     return self;
 }
@@ -111,6 +108,10 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 + (void)takeOff:(UAConfig *)config {
 
+    if ([UA_VERSION  isEqual: @"0.0.0"]) {
+        UA_LERR(@"_UA_VERSION is undefined, UA_VERSION will be set to \"0.0.0\".");
+    }
+    
     // takeOff needs to be run on the main thread
     if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
