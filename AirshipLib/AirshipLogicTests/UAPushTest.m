@@ -180,6 +180,49 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                    @"tags are not being cleared in standardUserDefaults");
 }
 
+- (void)testSetTagsWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tagsNoSpaces, self.push.tags, @"whitespace was not trimmed from tags");
+}
+
+- (void)testSetTagsMaxTagSize {
+    NSArray *tags = @[@"127characters127characters127characters127characters127characters127characters127characters127characters127characters127charact"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with 127 characters should set");
+}
+
+- (void)testSetTagsOverMaxTagSizeRemoval {
+    NSArray *tags = @[@"128characters128characters128characters128characters128characters128characters128characters128characters128characters128characte"];
+    [self.push setTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
+}
+
+- (void)testNormalizeTagsWhitespaceRemoval {
+    NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
+    NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
+    [self.push normalizeTags:tags];
+    
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was not trimmed from tags");
+}
+
+- (void)testNormalizeTagsMaxTagSize {
+    NSArray *tags = @[@"127characters127characters127characters127characters127characters127characters127characters127characters127characters127charact"];
+    
+    XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
+}
+
+- (void)testNormalizeTagsOverMaxTagSizeRemoval {
+    NSArray *tags = @[@"128characters128characters128characters128characters128characters128characters128characters128characters128characters128characte"];
+    [self.push normalizeTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
+}
+
 - (void)testAddTagsToCurrentDevice {
     self.push.tags = nil;
 
