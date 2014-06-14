@@ -39,7 +39,7 @@
 #import "UAUser.h"
 
 #define kUAMinTagLength 1
-#define kUAMaxTagLength 127
+#define kUAMaxTagLength 128
 
 UAPushSettingsKey *const UAPushEnabledSettingsKey = @"UAPushEnabled";
 UAPushSettingsKey *const UAPushAliasSettingsKey = @"UAPushAlias";
@@ -228,11 +228,11 @@ static Class _uiClass;
         
         NSString *trimmedTag = [tag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
-        if ([trimmedTag length] > kUAMinTagLength || [trimmedTag length] < kUAMaxTagLength) {
+        if ([trimmedTag length] > kUAMinTagLength && [trimmedTag length] < kUAMaxTagLength) {
             [normalizedTags addObject:trimmedTag];
         }
         else {
-            UA_LERR(@"Tags must be > 0 and < 127 characters in length, tag %@ has been removed from the tag set", tag);
+            UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
         }
     }
     
