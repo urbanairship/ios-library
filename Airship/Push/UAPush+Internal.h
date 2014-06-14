@@ -131,6 +131,11 @@ extern UAPushUserInfoKey *const UAPushChannelCreationOnForeground;
 + (void)registerNSUserDefaults;
 
 /**
+ * Used to trim whitespace and filter out tags with unacceptable tag length
+ */
+-(NSArray *)normalizeTags:(NSArray *)tags;
+
+/**
  * Clean up when app is terminated. You should not ordinarily call this method as it is called
  * during [UAirship land].
  */
