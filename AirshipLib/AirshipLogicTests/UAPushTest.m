@@ -189,14 +189,35 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 - (void)testSetTagsMaxTagSize {
-    NSArray *tags = @[@"127characters127characters127characters127characters127characters127characters127characters127characters127characters127charact"];
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
     [self.push setTags:tags];
     
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with 127 characters should set");
 }
 
+- (void)testSetTagWhitespaceOnly {
+    NSArray *tags = @[@" "];
+    [self.push setTags:tags];
+    
+    XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with whitespace only should not set");
+}
+
+- (void)testSetTagsMinTagSize {
+    NSArray *tags = @[@"1"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with 1 character should set");
+}
+
+- (void)testSetTagsMultiByteCharacters {
+    NSArray *tags = @[@"함수 목록"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with multi-byte characters should set");
+}
+
 - (void)testSetTagsOverMaxTagSizeRemoval {
-    NSArray *tags = @[@"128characters128characters128characters128characters128characters128characters128characters128characters128characters128characte"];
+    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push setTags:tags];
     
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
@@ -211,17 +232,19 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
 }
 
 - (void)testNormalizeTagsMaxTagSize {
-    NSArray *tags = @[@"127characters127characters127characters127characters127characters127characters127characters127characters127characters127charact"];
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
     
     XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
 }
 
+
 - (void)testNormalizeTagsOverMaxTagSizeRemoval {
-    NSArray *tags = @[@"128characters128characters128characters128characters128characters128characters128characters128characters128characters128characte"];
+    NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push normalizeTags:tags];
     
     XCTAssertNotEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 128 characters should not set");
 }
+
 
 - (void)testAddTagsToCurrentDevice {
     self.push.tags = nil;
