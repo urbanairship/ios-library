@@ -230,8 +230,7 @@ static Class _uiClass;
 
         if ([trimmedTag length] >= kUAMinTagLength && [trimmedTag length] <= kUAMaxTagLength) {
             [normalizedTags addObject:trimmedTag];
-        }
-        else {
+        } else {
             UA_LERR(@"Tags must be > 0 and < 128 characters in length, tag %@ has been removed from the tag set", tag);
         }
     }
