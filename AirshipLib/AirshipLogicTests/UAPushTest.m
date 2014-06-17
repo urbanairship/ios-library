@@ -180,6 +180,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
                    @"tags are not being cleared in standardUserDefaults");
 }
 
+/**
+ * Tests tag setting when tag contains white space
+ */
 - (void)testSetTagsWhitespaceRemoval {
     NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
     NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
@@ -188,13 +191,9 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertEqualObjects(tagsNoSpaces, self.push.tags, @"whitespace was not trimmed from tags");
 }
 
-- (void)testSetTagsMaxTagSize {
-    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
-    [self.push setTags:tags];
-    
-    XCTAssertEqualObjects(tags, self.push.tags, @"tag with 127 characters should set");
-}
-
+/**
+ * Tests tag setting when tag consists entirely of whitespace
+ */
 - (void)testSetTagWhitespaceOnly {
     NSArray *tags = @[@" "];
     [self.push setTags:tags];
@@ -202,13 +201,29 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with whitespace only should not set");
 }
 
+/**
+ * Tests tag setting when tag has minimum acceptable length
+ */
 - (void)testSetTagsMinTagSize {
     NSArray *tags = @[@"1"];
     [self.push setTags:tags];
     
-    XCTAssertEqualObjects(tags, self.push.tags, @"tag with 1 character should set");
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum character should set");
 }
 
+/**
+ * Tests tag setting when tag has maximum acceptable length
+ */
+- (void)testSetTagsMaxTagSize {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum characters should set");
+}
+
+/**
+ * Tests tag setting when tag has multi-byte characters
+ */
 - (void)testSetTagsMultiByteCharacters {
     NSArray *tags = @[@"함수 목록"];
     [self.push setTags:tags];
@@ -216,6 +231,29 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertEqualObjects(tags, self.push.tags, @"tag with multi-byte characters should set");
 }
 
+/**
+ * Tests tag setting when tag has multi-byte characters and minimum length
+ */
+- (void)testMinLengthMultiByteCharacters {
+    NSArray *tags = @[@"함"];
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with minimum multi-byte characters should set");
+}
+
+/**
+ * Tests tag setting when tag has multi-byte characters and maximum length
+ */
+- (void)testMaxLengthMultiByteCharacters {
+    NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"함" startingAtIndex:0]];;
+    [self.push setTags:tags];
+    
+    XCTAssertEqualObjects(tags, self.push.tags, @"tag with maximum multi-byte characters should set");
+}
+
+/**
+ * Tests tag setting when tag has greater than maximum acceptable length
+ */
 - (void)testSetTagsOverMaxTagSizeRemoval {
     NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push setTags:tags];
@@ -223,21 +261,29 @@ NSString *validDeviceToken = @"0123456789abcdef0123456789abcdef0123456789abcdef0
     XCTAssertNotEqualObjects(tags, self.push.tags, @"tag with 128 characters should not set");
 }
 
+/**
+ * Tests tag normalization when tag includes whitespace
+ */
 - (void)testNormalizeTagsWhitespaceRemoval {
     NSArray *tags = @[@"   tag-one   ", @"tag-two   "];
     NSArray *tagsNoSpaces = @[@"tag-one", @"tag-two"];
     [self.push normalizeTags:tags];
     
-    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was not trimmed from tags");
+    XCTAssertEqualObjects(tagsNoSpaces, [self.push normalizeTags:tags], @"whitespace was trimmed from tags");
 }
 
+/**
+ * Tests tag normalization when tag has maximum acceptable length
+ */
 - (void)testNormalizeTagsMaxTagSize {
     NSArray *tags = @[[@"" stringByPaddingToLength:127 withString: @"." startingAtIndex:0]];
     
     XCTAssertEqualObjects(tags, [self.push normalizeTags:tags], @"tag with 127 characters should set");
 }
 
-
+/**
+ * Tests tag normalization when tag has greater than maximum acceptable length
+ */
 - (void)testNormalizeTagsOverMaxTagSizeRemoval {
     NSArray *tags = @[[@"" stringByPaddingToLength:128 withString: @"." startingAtIndex:0]];
     [self.push normalizeTags:tags];
