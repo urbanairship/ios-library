@@ -33,8 +33,19 @@
  */
 @interface UAAnalytics : NSObject
 
+/**
+ * The conversion push Id.
+ */
 @property (nonatomic, strong, readonly) NSString *conversionPushId;
+
+/**
+ * The conversion rich push Id.
+ */
 @property (nonatomic, strong, readonly) NSString *conversionRichPushId;
+
+/**
+ * The current session Id.
+ */
 @property (nonatomic, strong, readonly) NSString *sessionId;
 
 /**

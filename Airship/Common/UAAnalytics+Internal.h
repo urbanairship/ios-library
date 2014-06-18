@@ -56,8 +56,19 @@
 
 @interface UAAnalytics ()
 
+/**
+ * The conversion push Id.
+ */
 @property (nonatomic, strong) NSString *conversionPushId;
+
+/**
+ * The conversion rich push Id.
+ */
 @property (nonatomic, strong) NSString *conversionRichPushId;
+
+/**
+ * The current session Id.
+ */
 @property (nonatomic, strong) NSString *sessionId;
 
 /**
@@ -203,6 +214,10 @@
  */
 - (BOOL)isEventValid:(NSMutableDictionary *)event;
 
+
+/**
+ * Called to notify analytics the app was launched from a push notification.
+ */
 - (void)launchedFromNotification:(NSDictionary *)notification;
 
 @end
