@@ -218,7 +218,7 @@
     UAEventAppInactive *event = [UAEventAppInactive event];
     XCTAssertEqualObjects(event.data, expectedData, @"Event data is unexpected.");
     XCTAssertEqualObjects(event.eventType, @"activity_stopped", @"Event type is unexpected.");
-    XCTAssertEqual(event.estimatedSize, kEventAppActiveSize, @"Event is reporting wrong estimated size.");
+    XCTAssertEqual(event.estimatedSize, kEventAppInactiveSize, @"Event is reporting wrong estimated size.");
     XCTAssertNotNil(event.eventId, @"Event should have an ID");
 }
 

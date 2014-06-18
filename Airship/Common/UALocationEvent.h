@@ -59,7 +59,9 @@ extern NSString * const UAAnalyticsValueNone;
 /**
  * Creates a UALocationEvent.
  * @param location Location going to UAAnalytics
- * @param provider The type of provider that produced the location
+ * @param providerType The type of provider that produced the location
+ * @param desiredAccuracy The requested accuracy.
+ * @param distanceFilter The requested distance filter.
  * @param updateType One of the UALocationEvent updated types, see header for more details
  * @return UALocationEvent populated with the necessary values
  */

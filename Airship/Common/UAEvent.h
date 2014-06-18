@@ -104,7 +104,7 @@
 
 /**
  * Factory method to create a UAEventPushReceived.
- * @param notification The received push notificaiton.
+ * @param notification The received push notification.
  */
 + (instancetype)eventWithNotification:(NSDictionary *)notification;
 @end
@@ -115,7 +115,12 @@
  * trigger a UAEventAppInactive event.
  */
 @interface UAEventAppActive : UAEvent
+
+/**
+ * Factory method to create a UAEventAppActive.
+ */
 + (instancetype)event;
+
 @end
 
 /**
