@@ -33,13 +33,19 @@
 #import "UAEvent.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UA_Reachability.h"
 
 
 @interface UAEventTest : XCTestCase
+
+// stubs
 @property(nonatomic, strong) id analytics;
 @property(nonatomic, strong) id airship;
+@property(nonatomic, strong) id reachability;
+@property(nonatomic, strong) id timeZone;
+@property(nonatomic, strong) id airshipVersion;
+@property(nonatomic, strong) id application;
 
-@property(nonatomic, strong) NSMutableDictionary *session;
 @end
 
 @implementation UAEventTest
@@ -48,17 +54,32 @@
     [super setUp];
 
     self.analytics = [OCMockObject niceMockForClass:[UAAnalytics class]];
-    self.airship = [OCMockObject mockForClass:[UAirship class]];
+    self.airship = [OCMockObject niceMockForClass:[UAirship class]];
     [[[self.airship stub] andReturn:self.airship] shared];
     [[[self.airship stub] andReturn:self.analytics] analytics];
 
-    self.session = [NSMutableDictionary dictionary];
-    [[[self.analytics stub] andReturn:self.session] session];
+    self.reachability = [OCMockObject niceMockForClass:[Reachability class]];
+    [[[self.reachability stub] andReturn:self.reachability] reachabilityForInternetConnection];
+
+
+    self.timeZone = [OCMockObject niceMockForClass:[NSTimeZone class]];
+    [[[self.timeZone stub] andReturn:self.timeZone] defaultTimeZone];
+
+    self.airshipVersion = [OCMockObject niceMockForClass:[UAirshipVersion class]];
+
+    self.application = [OCMockObject niceMockForClass:[UIApplication class]];
+    [[[self.application stub] andReturn:self.application] sharedApplication];
+    
 }
 
 - (void)tearDown {
     [self.analytics stopMocking];
     [self.airship stopMocking];
+    [self.reachability stopMocking];
+    [self.timeZone stopMocking];
+    [self.airshipVersion stopMocking];
+    [self.application stopMocking];
+
     [super tearDown];
 }
 
@@ -67,32 +88,33 @@
  */
 - (void)testAppInitEvent {
     [UAUser defaultUser].username = @"user id";
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
-    [self.session setValue:@"connection type" forKey:@"connection_type"];
-    [self.session setValue:@"push id" forKey:@"launched_from_push_id"];
-    [self.session setValue:@"rich push id" forKey:@"launched_from_rich_push_id"];
-    [self.session setValue:@"true" forKey:@"foreground"];
-    [self.session setValue:@"time zone" forKey:@"time_zone"];
-    [self.session setValue:@"daylight savings" forKey:@"daylight_savings"];
-    [self.session setValue:@"notification types" forKey:@"notification_types"];
-    [self.session setValue:@"os version" forKey:@"os_version"];
-    [self.session setValue:@"package version" forKey:@"package_version"];
-    [self.session setValue:@"lib version" forKey:@"lib_version"];
-    [self.session setValue:@"some carrier" forKey:@"carrier"];
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
+    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
 
+    [[[self.airship stub] andReturn:@"os version"] osVersion];
+    [[[self.airship stub] andReturn:@"package version"] packageVersion];
+
+    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
+
+    [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+
+
+    // Same as app init but without the foreground key
     NSDictionary *expectedData = @{@"user_id": @"user id",
-                                   @"connection_type": @"connection type",
+                                   @"connection_type": @"cell",
                                    @"push_id": @"push id",
                                    @"rich_push_id": @"rich push id",
-                                   @"foreground": @"true",
-                                   @"carrier": @"some carrier",
-                                   @"time_zone": @"time zone",
-                                   @"daylight_savings": @"daylight savings",
-                                   @"daylight_savings": @"daylight savings",
-                                   @"notification_types": @"notification types",
+                                   @"time_zone": @2000,
+                                   @"daylight_savings": @"true",
+                                   @"notification_types": @[],
                                    @"os_version": @"os version",
-                                   @"lib_version": @"lib version",
-                                   @"package_version": @"package version"};
+                                   @"lib_version": @"airship version",
+                                   @"package_version": @"package version",
+                                   @"foreground": @"true"};
 
 
     UAEventAppInit *event = [UAEventAppInit event];
@@ -108,31 +130,28 @@
  */
 - (void)testAppForegroundEvent {
     [UAUser defaultUser].username = @"user id";
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
 
-    [self.session setValue:@"connection type" forKey:@"connection_type"];
-    [self.session setValue:@"push id" forKey:@"launched_from_push_id"];
-    [self.session setValue:@"rich push id" forKey:@"launched_from_rich_push_id"];
-    [self.session setValue:@"true" forKey:@"foreground"];
-    [self.session setValue:@"time zone" forKey:@"time_zone"];
-    [self.session setValue:@"daylight savings" forKey:@"daylight_savings"];
-    [self.session setValue:@"notification types" forKey:@"notification_types"];
-    [self.session setValue:@"os version" forKey:@"os_version"];
-    [self.session setValue:@"package version" forKey:@"package_version"];
-    [self.session setValue:@"lib version" forKey:@"lib_version"];
-    [self.session setValue:@"some carrier" forKey:@"carrier"];
+    [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
+    [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
+
+    [[[self.airship stub] andReturn:@"os version"] osVersion];
+    [[[self.airship stub] andReturn:@"package version"] packageVersion];
+
+    [[[self.airshipVersion stub] andReturn:@"airship version"] get];
 
     // Same as app init but without the foreground key
     NSDictionary *expectedData = @{@"user_id": @"user id",
-                                   @"connection_type": @"connection type",
+                                   @"connection_type": @"cell",
                                    @"push_id": @"push id",
                                    @"rich_push_id": @"rich push id",
-                                   @"carrier": @"some carrier",
-                                   @"time_zone": @"time zone",
-                                   @"daylight_savings": @"daylight savings",
-                                   @"daylight_savings": @"daylight savings",
-                                   @"notification_types": @"notification types",
+                                   @"time_zone": @2000,
+                                   @"daylight_savings": @"true",
+                                   @"notification_types": @[],
                                    @"os_version": @"os version",
-                                   @"lib_version": @"lib version",
+                                   @"lib_version": @"airship version",
                                    @"package_version": @"package version"};
 
 
@@ -148,11 +167,12 @@
  * Test app exit event
  */
 - (void)testAppExitEvent {
-    [self.session setValue:@"connection type" forKey:@"connection_type"];
-    [self.session setValue:@"push id" forKey:@"launched_from_push_id"];
-    [self.session setValue:@"rich push id" forKey:@"launched_from_rich_push_id"];
 
-    NSDictionary *expectedData = @{@"connection_type": @"connection type",
+    [[[self.reachability stub] andReturnValue:@(UA_ReachableViaWWAN)] currentReachabilityStatus];
+    [[[self.analytics stub] andReturn:@"push id"] conversionPushId];
+    [[[self.analytics stub] andReturn:@"rich push id"] conversionRichPushId];
+
+    NSDictionary *expectedData = @{@"connection_type": @"cell",
                                    @"push_id": @"push id",
                                    @"rich_push_id": @"rich push id"};
 

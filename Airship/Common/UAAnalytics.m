@@ -23,15 +23,9 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
-
 #import "UAAnalytics+Internal.h"
 
-#import "UA_Reachability.h"
-
 #import "UAirship.h"
-#import "UAUtils.h"
 #import "UAAnalyticsDBManager.h"
 #import "UAEvent.h"
 #import "UALocationEvent.h"
@@ -42,6 +36,7 @@
 #import "UAInboxUtils.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAPush.h"
+#import "UAUtils.h"
 
 typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
@@ -65,12 +60,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
         [self restoreSavedUploadEventSettings];
         [self saveUploadEventSettings];//save defaults to store lastSendTime if this was an initial condition
-        
-        // Register for interface-change notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(refreshSessionWhenNetworkChanged)
-                                                     name:kUA_ReachabilityChangedNotification
-                                                   object:nil];
+
         
         // Register for background notifications
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -95,15 +85,12 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
                                                      name:UIApplicationWillResignActiveNotification
                                                    object:nil];
         
-        // This is the Build field in Xcode. If it's not set, use a blank string.
-        self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
-        
-        [self initSession];
-
         self.queue = [[NSOperationQueue alloc] init];
         self.queue.maxConcurrentOperationCount = 1;
+
+        [self startSession];
     }
-    
+
     return self;
 }
 
@@ -115,107 +102,6 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     };
 
     [self.queue addOperation:delayOperation];
-}
-
-- (void)initSession {
-    self.session = [NSMutableDictionary dictionary];
-    [self refreshSessionWhenNetworkChanged];
-    [self refreshSessionWhenActive];
-}
-
-#pragma mark -
-#pragma mark Network Changes
-
-- (void)refreshSessionWhenNetworkChanged {
-    
-    // Capture connection type using Reachability
-    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
-    NSString *connectionTypeString = @"";
-    switch (netStatus) {
-        case UA_NotReachable:
-        {
-            connectionTypeString = @"none";//this should never be sent
-            break;
-        }    
-        case UA_ReachableViaWWAN:
-        {
-            connectionTypeString = @"cell";
-            break;
-        }            
-        case UA_ReachableViaWiFi:
-        {
-            connectionTypeString = @"wifi";
-            break;
-        }
-    }    
-    [self.session setValue:connectionTypeString forKey:@"connection_type"];
-}
-
-- (void)refreshSessionWhenActive {
-    
-    // marking the beginning of a new session
-    [self.session setObject:[UAUtils UUID] forKey:@"session_id"];
-    
-    // setup session with push id
-    BOOL launchedFromPush = self.notificationUserInfo != nil;
-    
-    NSString *pushId = [self.notificationUserInfo objectForKey:@"_"];
-    
-    // set launched-from-push session values for both push and rich push
-    if (pushId != nil) {
-        [self.session setValue:pushId forKey:@"launched_from_push_id"];
-    } else if (launchedFromPush) {
-        //if the server did not send a push ID (likely because the payload did not have room)
-        //generate an ID for the server to use
-        [self.session setValue:[UAUtils UUID] forKey:@"launched_from_push_id"];
-    } else {
-        [self.session removeObjectForKey:@"launched_from_push_id"];
-    }
-
-    NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo];
-    if (richPushID) {
-        [self.session setValue:richPushID forKey:@"launched_from_rich_push_id"];
-    }
-
-    self.notificationUserInfo = nil;
-    
-    // check enabled notification types
-    NSMutableArray *notification_types = [NSMutableArray array];
-    UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    
-    if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
-        [notification_types addObject:@"badge"];
-    }
-    
-    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
-        [notification_types addObject:@"sound"];
-    }
-    
-    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
-        [notification_types addObject:@"alert"];
-    }
-
-    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
-        [notification_types addObject:@"newsstand"];
-    }
-    
-    [self.session setObject:notification_types forKey:@"notification_types"];
-    
-    NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
-    [self.session setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
-    [self.session setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
-
-    [self.session setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
-    [self.session setValue:[UAirshipVersion get] forKey:@"lib_version"];
-    [self.session setValue:self.packageVersion forKey:@"package_version"];
-
-    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
-    CTCarrier *carrier = netInfo.subscriberCellularProvider;
-    [self.session setValue:carrier forKey:@"carrier"];
-    
-    // ensure that the app is foregrounded (necessary for Newsstand background invocation
-    BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
-    [self.session setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 }
 
 #pragma mark -
@@ -235,11 +121,9 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
 
     // add app_background event
     [self addEvent:[UAEventAppBackground event]];
-    
-    // Set a blank session_id for app_exit events
-    [self.session removeAllObjects];
-    [self.session setValue:@"" forKey:@"session_id"];
+
     self.notificationUserInfo = nil;
+    [self clearSession];
 }
 
 
@@ -251,11 +135,8 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if (self.isEnteringForeground) {
         self.isEnteringForeground = NO;
         
-        //update the network connection_type value
-        [self refreshSessionWhenNetworkChanged];
-
-        //update session in case the app lunched from push while sleep in background
-        [self refreshSessionWhenActive];
+        // Start a new session
+        [self startSession];
 
         //add app_foreground event
         [self addEvent:[UAEventAppForeground event]];
@@ -325,7 +206,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     if (self.config.analyticsEnabled) {
         UA_LTRACE(@"Adding event: %@.", event);
 
-        [[UAAnalyticsDBManager shared] addEvent:event withSession:self.session];    
+        [[UAAnalyticsDBManager shared] addEvent:event withSessionId:self.sessionId];
         self.databaseSize += event.estimatedSize;
         if (self.oldestEventTime == 0) {
             self.oldestEventTime = [event.time doubleValue];
@@ -452,7 +333,7 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
     [request addRequestHeader:@"X-UA-Device-Family" value:[UIDevice currentDevice].systemName];
     [request addRequestHeader:@"X-UA-Sent-At" value:[NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]]];
     [request addRequestHeader:@"X-UA-Package-Name" value:[[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleIdentifierKey]];
-    [request addRequestHeader:@"X-UA-Package-Version" value:self.packageVersion];
+    [request addRequestHeader:@"X-UA-Package-Version" value:[UAirship shared].packageVersion];
     [request addRequestHeader:@"X-UA-ID" value:[UAUtils deviceID]];
     [request addRequestHeader:@"X-UA-User-ID" value:[UAUser defaultUser].username];
     [request addRequestHeader:@"X-UA-App-Key" value:[UAirship shared].config.appKey];
@@ -732,7 +613,33 @@ typedef void (^UAAnalyticsUploadCompletionBlock)(void);
             }
         }];
     }
+}
 
-   }
+- (void)launchedFromNotification:(NSDictionary *)notification {
+    self.notificationUserInfo = notification;
+    [self startSession];
+}
+
+- (void)clearSession {
+    self.sessionId = @"";
+    self.conversionPushId = nil;
+    self.conversionRichPushId = nil;
+}
+
+- (void)startSession {
+    [self clearSession];
+
+    self.sessionId = [[NSUUID UUID] UUIDString];
+    if (self.notificationUserInfo) {
+        // If the server did not send a push ID (likely because the payload did not have room)
+        // generate an ID for the server to use
+        self.conversionPushId = [self.notificationUserInfo objectForKey:@"_"] ?: [[NSUUID UUID] UUIDString];
+
+        NSString *richPushID = [UAInboxUtils getRichPushMessageIDFromNotification:self.notificationUserInfo];
+        if (richPushID) {
+            self.conversionRichPushId = richPushID;
+        }
+    }
+}
 
 @end

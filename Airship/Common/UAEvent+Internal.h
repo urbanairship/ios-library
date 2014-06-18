@@ -6,5 +6,5 @@
 @property (nonatomic, copy) NSString *eventId;
 @property (nonatomic, strong) NSDictionary *data;
 
-+ (id)getSessionValueForKey:(NSString *)key;
+- (NSString *)connectionType;
 @end

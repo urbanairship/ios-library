@@ -41,7 +41,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.eventId = [UAUtils UUID];
+        self.eventId = [[NSUUID UUID] UUIDString];
         self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
         return self;
     }
@@ -55,6 +55,7 @@
 - (NSString *)eventType {
     return @"base";
 }
+
 
 - (NSUInteger)estimatedSize {
     NSMutableDictionary *eventDictionary = [NSMutableDictionary dictionary];
@@ -78,8 +79,56 @@
             self.eventId, self.eventType, self.time, self.data];
 }
 
-+ (id)getSessionValueForKey:(NSString *)key {
-    return [[UAirship shared].analytics.session objectForKey:key];
+- (NSString *)connectionType {
+    // Capture connection type using Reachability
+    NetworkStatus netStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
+    NSString *connectionTypeString = @"";
+    switch (netStatus) {
+        case UA_NotReachable:
+        {
+            connectionTypeString = @"none";//this should never be sent
+            break;
+        }
+        case UA_ReachableViaWWAN:
+        {
+            connectionTypeString = @"cell";
+            break;
+        }
+        case UA_ReachableViaWiFi:
+        {
+            connectionTypeString = @"wifi";
+            break;
+        }
+    }
+    return connectionTypeString;
+}
+
+- (NSString *)carrierName {
+    CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
+    return netInfo.subscriberCellularProvider.carrierName;
+}
+
+- (NSArray *)notificationTypes {
+    NSMutableArray *notificationTypes = [NSMutableArray array];
+    UIRemoteNotificationType enabledRemoteNotificationTypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+
+    if ((UIRemoteNotificationTypeBadge & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"badge"];
+    }
+
+    if ((UIRemoteNotificationTypeSound & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"sound"];
+    }
+
+    if ((UIRemoteNotificationTypeAlert & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"alert"];
+    }
+
+    if ((UIRemoteNotificationTypeNewsstandContentAvailability & enabledRemoteNotificationTypes) > 0) {
+        [notificationTypes addObject:@"newsstand"];
+    }
+
+    return notificationTypes;
 }
 
 @end
@@ -99,20 +148,28 @@
 - (NSMutableDictionary *)gatherData {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
+    UAAnalytics *analytics = [UAirship shared].analytics;
+
+    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
+
     [data setValue:[UAUser defaultUser].username forKey:@"user_id"];
-    [data setValue:[UAEvent getSessionValueForKey:@"connection_type"] forKey:@"connection_type"];
-    [data setValue:[UAEvent getSessionValueForKey:@"launched_from_push_id"] forKey:@"push_id"];
-    [data setValue:[UAEvent getSessionValueForKey:@"launched_from_rich_push_id"] forKey:@"rich_push_id"];
-    [data setValue:[UAEvent getSessionValueForKey:@"foreground"] forKey:@"foreground"];
-    [data setValue:[UAEvent getSessionValueForKey:@"carrier"] forKey:@"carrier"];
-    [data setValue:[UAEvent getSessionValueForKey:@"time_zone"] forKey:@"time_zone"];
-    [data setValue:[UAEvent getSessionValueForKey:@"daylight_savings"] forKey:@"daylight_savings"];
-    [data setValue:[UAEvent getSessionValueForKey:@"notification_types"] forKey:@"notification_types"];
+    [data setValue:[self connectionType] forKey:@"connection_type"];
+    [data setValue:[self carrierName] forKey:@"carrier"];
+    [data setValue:[self notificationTypes] forKey:@"notification_types"];
+
+    NSTimeZone *localtz = [NSTimeZone defaultTimeZone];
+    [data setValue:[NSNumber numberWithDouble:[localtz secondsFromGMT]] forKey:@"time_zone"];
+    [data setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
 
     // Component Versions
-    [data setValue:[UAEvent getSessionValueForKey:@"os_version"] forKey:@"os_version"];
-    [data setValue:[UAEvent getSessionValueForKey:@"lib_version"] forKey:@"lib_version"];
-    [data setValue:[UAEvent getSessionValueForKey:@"package_version"] forKey:@"package_version"];
+    [data setValue:[UAirship shared].osVersion forKey:@"os_version"];
+    [data setValue:[UAirshipVersion get] forKey:@"lib_version"];
+    [data setValue:[UAirship shared].packageVersion forKey:@"package_version"];
+
+    // Foreground
+    BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);
+    [data setValue:(isInForeground ? @"true" : @"false") forKey:@"foreground"];
 
     return data;
 }
@@ -145,12 +202,15 @@
 
 + (instancetype)event {
     UAEventAppExit *event = [[self alloc] init];
-
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-    [data setValue:[UAEvent getSessionValueForKey:@"connection_type"] forKey:@"connection_type"];
-    [data setValue:[UAEvent getSessionValueForKey:@"launched_from_push_id"] forKey:@"push_id"];
-    [data setValue:[UAEvent getSessionValueForKey:@"launched_from_rich_push_id"] forKey:@"rich_push_id"];
+    UAAnalytics *analytics = [UAirship shared].analytics;
+
+    [data setValue:analytics.conversionPushId forKey:@"push_id"];
+    [data setValue:analytics.conversionRichPushId forKey:@"rich_push_id"];
+
+
+    [data setValue:[event connectionType] forKey:@"connection_type"];
 
     event.data = [data mutableCopy];
     return event;

@@ -24,7 +24,6 @@
  */
 
 #import "UALocationEvent.h"
-#import "UAAnalytics.h"
 #import "UAEvent+Internal.h"
 
 @implementation UALocationEvent

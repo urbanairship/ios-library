@@ -22,6 +22,7 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
 
 @class UAEvent;
@@ -32,21 +33,14 @@
  */
 @interface UAAnalytics : NSObject
 
-/**
- * The analytics session as an NSMutableDictionary.
- */
-@property (nonatomic, strong, readonly) NSMutableDictionary *session;
+@property (nonatomic, strong, readonly) NSString *conversionPushId;
+@property (nonatomic, strong, readonly) NSString *conversionRichPushId;
+@property (nonatomic, strong, readonly) NSString *sessionId;
 
 /**
  * The oldest event time as an NSTimeInterval.
  */
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
-
-/**
- * The notification as an NSDictionary.
- */
-@property (nonatomic, strong, readonly) NSDictionary *notificationUserInfo;
-
 
 
 /**

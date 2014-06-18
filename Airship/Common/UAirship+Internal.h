@@ -43,6 +43,9 @@
 
 @property (nonatomic, strong) UAApplicationMetrics *applicationMetrics;
 
+@property (nonatomic, copy) NSString *osVersion;
+@property (nonatomic, copy) NSString *packageVersion;
+
 /**
  * Should set this user agent up
  * User agent string should be:

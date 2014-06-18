@@ -133,7 +133,7 @@
 
     // Attribution
     if (!self.attributionType && !self.attributionID) {
-        NSString *conversionID = [[UAirship shared].analytics.session objectForKey:@"launched_from_push_id"];
+        NSString *conversionID = [UAirship shared].analytics.conversionPushId;
         if (conversionID) {
             [dictionary setValue:kUAAttributionHardOpen forKey:@"attribution_type"];
             [dictionary setValue:conversionID forKey:@"attribution_id"];

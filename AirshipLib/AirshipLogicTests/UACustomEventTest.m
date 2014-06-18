@@ -257,7 +257,7 @@
     XCTAssertNil([event.data objectForKey:@"attribution_type"], @"Attribution should be nil");
 
     // Set a conversion push ID for the analytics session
-    [[[self.analytics stub] andReturn:@{@"launched_from_push_id":@"push ID"}] session];
+    [[[self.analytics stub] andReturn:@"push ID"] conversionPushId];
 
     // Recreate the event to verify auto fil behavior
     event = [UACustomEvent eventWithName:@"event name" value:@(123.123456789)];

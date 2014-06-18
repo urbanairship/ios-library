@@ -103,6 +103,11 @@ UALogLevel uaLogLevel = UALogLevelError;
         self.ready = NO;
         self.backgroundNotificationEnabled = [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"UIBackgroundModes"] containsObject:@"remote-notification"]
                                     && kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0;
+
+        self.osVersion = [[UIDevice currentDevice] systemVersion];
+
+        // This is the Build field in Xcode. If it's not set, use a blank string.
+        self.packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
     }
     return self;
 }
@@ -240,8 +245,9 @@ UALogLevel uaLogLevel = UALogLevelError;
 
     NSDictionary *remoteNotification = [notification.userInfo objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
 
-    _sharedAirship.analytics.notificationUserInfo = remoteNotification;
-    [_sharedAirship.analytics refreshSessionWhenActive];
+    [_sharedAirship.analytics launchedFromNotification:remoteNotification];
+
+
 
     //Send Startup Analytics Info
     //init first event
