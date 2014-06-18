@@ -45,6 +45,7 @@
 @property(nonatomic, strong) id timeZone;
 @property(nonatomic, strong) id airshipVersion;
 @property(nonatomic, strong) id application;
+@property(nonatomic, strong) id push;
 
 @end
 
@@ -69,7 +70,10 @@
 
     self.application = [OCMockObject niceMockForClass:[UIApplication class]];
     [[[self.application stub] andReturn:self.application] sharedApplication];
-    
+
+    self.push = [OCMockObject niceMockForClass:[UAPush class]];
+    [[[self.push stub] andReturn:self.push] shared];
+
 }
 
 - (void)tearDown {
@@ -79,6 +83,7 @@
     [self.timeZone stopMocking];
     [self.airshipVersion stopMocking];
     [self.application stopMocking];
+    [self.push stopMocking];
 
     [super tearDown];
 }
@@ -226,8 +231,8 @@
  * Test device registration event
  */
 - (void)testRegistrationEvent {
-    [UAPush shared].deviceToken = @"a12312ad";
-    [UAPush shared].channelID = @"someChannelID";
+    [[[self.push stub] andReturn:@"a12312ad"] deviceToken];
+    [[[self.push stub] andReturn:@"someChannelID"] channelID];
     [UAUser defaultUser].username = @"someUserID";
 
     NSDictionary *expectedData = @{@"device_token": @"a12312ad",
