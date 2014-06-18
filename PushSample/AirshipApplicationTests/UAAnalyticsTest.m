@@ -34,7 +34,6 @@
 #import "UAAnalytics+Internal.h"
 #import "UAirship+Internal.h"
 #import "UALocationTestUtils.h"
-#import "UAAnalyticSession.h"
 
 /* This class involves lots of async calls to the web
  Care should be taken to mock out responses and calls, race conditions
@@ -288,7 +287,7 @@
     UAEventAppActive *event = [[UAEventAppActive alloc] init];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSessionId:_analytics.session.sessionId];
+    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -314,7 +313,7 @@
     UAEventAppActive *event = [[UAEventAppActive alloc] init];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:event withSessionId:_analytics.session.sessionId];
+    [[mockDBManager expect] addEvent:event withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:event];
@@ -342,7 +341,7 @@
     _analytics.lastSendTime = [NSDate dateWithTimeIntervalSinceNow:-16*60*1000]; // 16 minutes ago
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.session.sessionId];
+    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics expect] send];
 
     [_analytics addEvent:locationEvent];
@@ -354,7 +353,7 @@
     _analytics.lastSendTime = [NSDate date];
 
     // Expect adding event to add it tot he db and to start sending analytics
-    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.session.sessionId];
+    [[mockDBManager expect] addEvent:locationEvent withSessionId:_analytics.sessionId];
     [[mockAnalytics reject] send];
 
     [_analytics addEvent:locationEvent];
