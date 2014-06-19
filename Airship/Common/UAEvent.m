@@ -40,7 +40,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.eventId = [[NSUUID UUID] UUIDString];
+        self.eventId = [UAUtils UUID];
         self.time = [NSString stringWithFormat:@"%f",[[NSDate date] timeIntervalSince1970]];
         return self;
     }
