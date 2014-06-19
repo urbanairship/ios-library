@@ -54,7 +54,7 @@ NSString * const UAAnalyticsValueNone = @"NONE";
                                     updateType:(UALocationEventUpdateType *)updateType {
 
     UALocationEvent *event = [[UALocationEvent alloc] init];
-    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithCapacity:10];
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
     [data setValue:updateType forKey:UALocationEventUpdateTypeKey];
     [data setValue:[NSString stringWithFormat:@"%.7f", location.coordinate.latitude] forKey:UALocationEventLatitudeKey];
