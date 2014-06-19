@@ -113,6 +113,10 @@ UALogLevel uaLogLevel = UALogLevelError;
 
 + (void)takeOff:(UAConfig *)config {
 
+    if ([UA_VERSION isEqualToString:@"0.0.0"]) {
+        UA_LERR(@"_UA_VERSION is undefined - this commonly indicates an issue with the build configuration, UA_VERSION will be set to \"0.0.0\".");
+    }
+    
     // takeOff needs to be run on the main thread
     if (![[NSThread currentThread] isMainThread]) {
         NSException *mainThreadException = [NSException exceptionWithName:UAirshipTakeOffBackgroundThreadException
