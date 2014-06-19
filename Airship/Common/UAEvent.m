@@ -162,9 +162,11 @@
     [data setValue:([localtz isDaylightSavingTime] ? @"true" : @"false") forKey:@"daylight_savings"];
 
     // Component Versions
-    [data setValue:[UAirship shared].osVersion forKey:@"os_version"];
+    [data setValue:[[UIDevice currentDevice] systemVersion] forKey:@"os_version"];
     [data setValue:[UAirshipVersion get] forKey:@"lib_version"];
-    [data setValue:[UAirship shared].packageVersion forKey:@"package_version"];
+
+    NSString *packageVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey] ?: @"";
+    [data setValue:packageVersion forKey:@"package_version"];
 
     // Foreground
     BOOL isInForeground = ([UIApplication sharedApplication].applicationState != UIApplicationStateBackground);

@@ -46,6 +46,7 @@
 @property(nonatomic, strong) id airshipVersion;
 @property(nonatomic, strong) id application;
 @property(nonatomic, strong) id push;
+@property(nonatomic, strong) id currentDevice;
 
 @end
 
@@ -74,6 +75,8 @@
     self.push = [OCMockObject niceMockForClass:[UAPush class]];
     [[[self.push stub] andReturn:self.push] shared];
 
+    self.currentDevice = [OCMockObject niceMockForClass:[UIDevice class]];
+    [[[self.currentDevice stub] andReturn:self.currentDevice] currentDevice];
 }
 
 - (void)tearDown {
@@ -84,6 +87,7 @@
     [self.airshipVersion stopMocking];
     [self.application stopMocking];
     [self.push stopMocking];
+    [self.currentDevice stopMocking];
 
     [super tearDown];
 }
@@ -100,15 +104,12 @@
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
 
-    [[[self.airship stub] andReturn:@"os version"] osVersion];
-    [[[self.airship stub] andReturn:@"package version"] packageVersion];
+    [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
     [[[self.airshipVersion stub] andReturn:@"airship version"] get];
 
     [[[self.application stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
 
-
-    // Same as app init but without the foreground key
     NSDictionary *expectedData = @{@"user_id": @"user id",
                                    @"connection_type": @"cell",
                                    @"push_id": @"push id",
@@ -118,7 +119,7 @@
                                    @"notification_types": @[],
                                    @"os_version": @"os version",
                                    @"lib_version": @"airship version",
-                                   @"package_version": @"package version",
+                                   @"package_version": @"",
                                    @"foreground": @"true"};
 
 
@@ -142,8 +143,7 @@
     [[[self.timeZone stub] andReturnValue:OCMOCK_VALUE((NSInteger)2000)] secondsFromGMT];
     [[[self.timeZone stub] andReturnValue:@YES] isDaylightSavingTime];
 
-    [[[self.airship stub] andReturn:@"os version"] osVersion];
-    [[[self.airship stub] andReturn:@"package version"] packageVersion];
+    [(UIDevice *)[[self.currentDevice stub] andReturn:@"os version"]systemVersion];
 
     [[[self.airshipVersion stub] andReturn:@"airship version"] get];
 
@@ -157,7 +157,7 @@
                                    @"notification_types": @[],
                                    @"os_version": @"os version",
                                    @"lib_version": @"airship version",
-                                   @"package_version": @"package version"};
+                                   @"package_version": @""};
 
 
     UAEventAppForeground *event = [UAEventAppForeground event];

@@ -92,16 +92,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
 
 
-/**
- * The operation system version.
- */
-@property (nonatomic, readonly, copy) NSString *osVersion;
-
-/**
- * The package version.
- */
-@property (nonatomic, readonly, copy) NSString *packageVersion;
-
 ///---------------------------------------------------------------------------------------
 /// @name Location Services
 ///---------------------------------------------------------------------------------------
