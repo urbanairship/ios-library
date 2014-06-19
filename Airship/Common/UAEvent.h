@@ -40,7 +40,7 @@
 @property (nonatomic, readonly, copy) NSString *time;
 
 /**
- * The unique event id.
+ * The unique event ID.
  */
 @property (nonatomic, readonly, copy) NSString *eventId;
 
