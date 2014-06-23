@@ -68,13 +68,13 @@ NSString * const UAAnalyticsValueNone = @"NONE";
         [data setValue:UALocationServiceProviderUnknown forKey:UALocationEventProviderKey];
     }
 
-    if ([desiredAccuracy intValue] >= 0) {
+    if (desiredAccuracy) {
         [data setValue:[NSString stringWithFormat:@"%i", [desiredAccuracy intValue]] forKey:UALocationEventDesiredAccuracyKey];
     } else {
         [data setValue:UAAnalyticsValueNone forKey:UALocationEventDesiredAccuracyKey];
     }
 
-    if ([distanceFilter intValue] >= 0) {
+    if (distanceFilter) {
         [data setValue:[NSString stringWithFormat:@"%i", [distanceFilter intValue]] forKey:UALocationEventDistanceFilterKey];
     } else {
         [data setValue:UAAnalyticsValueNone forKey:UALocationEventDistanceFilterKey];
