@@ -145,38 +145,6 @@
     [mockAnalytics stopMocking];
 }
 
-//// This is the dev analytics call that circumvents UALocation Services
-- (void)testSendLocationWithLocationManger {
-    _locationService = [[UALocationService alloc] initWithPurpose:@"TEST"];
-    id mockAnalytics = [OCMockObject partialMockForObject:[UAirship shared].analytics];
-    
-    __block UALocationEvent *event = nil;
-
-    // Capture the args passed to the mock in a block
-    void (^eventBlock)(NSInvocation *) = ^(NSInvocation *invocation) 
-    {
-        __unsafe_unretained UALocationEvent *unsafeEvent = nil;
-        [invocation getArgument:&unsafeEvent atIndex:2];
-        event = unsafeEvent;
-        NSLog(@"EVENT DATA %@", event.data);
-    };
-    [[[mockAnalytics stub] andDo:eventBlock] addEvent:[OCMArg any]];
-    CLLocationManager *manager = [[CLLocationManager alloc] init];
-    CLLocation *pdx = [UALocationTestUtils testLocationPDX];
-    UALocationEventUpdateType *type = UALocationEventUpdateTypeSingle;
-    [_locationService reportLocation:pdx fromLocationManager:manager withUpdateType:type];
-    NSDictionary *data = event.data;
-    NSString *lat =  [data valueForKey:UALocationEventLatitudeKey];
-    NSString *convertedLat = [NSString stringWithFormat:@"%.7f", pdx.coordinate.latitude];
-    NSLog(@"LAT %@, CONVERTED LAT %@", lat, convertedLat);
-    // Just do lightweight testing, heavy testing is done in the UALocationEvent class
-    XCTAssertTrue([event isKindOfClass:[UALocationEvent class]]);
-    XCTAssertTrue([lat isEqualToString:convertedLat]);
-    UALocationEventUpdateType *typeInDate = (UALocationEventUpdateType*)[data valueForKey:UALocationEventUpdateTypeKey];
-    XCTAssertTrue(type == typeInDate);
-    [mockAnalytics stopMocking];
-}
-
 - (BOOL)serviceAcquiredLocation {
     _timeout = [[NSDate alloc] initWithTimeIntervalSinceNow:15];
     while (!_locationReceived) {

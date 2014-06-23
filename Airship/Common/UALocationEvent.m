@@ -90,37 +90,53 @@ NSString * const UAAnalyticsValueNone = @"NONE";
     return event;
 }
 
-
-+ (UALocationEvent*)locationEventWithLocation:(CLLocation *)location
-                                     provider:(id<UALocationProviderProtocol>)provider
-                                andUpdateType:(UALocationEventUpdateType *)updateType {
++ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
+                                  providerType:(UALocationServiceProviderType *)providerType
+                               desiredAccuracy:(NSNumber *)desiredAccuracy
+                                distanceFilter:(NSNumber *)distanceFilter {
 
     return [UALocationEvent locationEventWithLocation:location
-                                         providerType:provider.provider
-                                      desiredAccuracy:@(provider.locationManager.desiredAccuracy)
-                                       distanceFilter:@(provider.locationManager.distanceFilter)
-                                           updateType:updateType];
+                                         providerType:providerType
+                                      desiredAccuracy:desiredAccuracy
+                                       distanceFilter:distanceFilter
+                                           updateType:UALocationEventUpdateTypeNone];
+
 }
 
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                               locationManager:(CLLocationManager *)locationManager
-                                 andUpdateType:(UALocationEventUpdateType*)updateType {
++ (UALocationEvent *)singleLocationEventWithLocation:(CLLocation *)location
+                                        providerType:(UALocationServiceProviderType *)providerType
+                                     desiredAccuracy:(NSNumber *)desiredAccuracy
+                                      distanceFilter:(NSNumber *)distanceFilter {
 
     return [UALocationEvent locationEventWithLocation:location
-                                         providerType:nil
-                                      desiredAccuracy:@(locationManager.desiredAccuracy)
-                                       distanceFilter:@(locationManager.distanceFilter)
-                                           updateType:updateType];
+                                         providerType:providerType
+                                      desiredAccuracy:desiredAccuracy
+                                       distanceFilter:distanceFilter
+                                           updateType:UALocationEventUpdateTypeSingle];
 }
 
-+ (UALocationEvent *)locationEventWithLocation:(CLLocation *)location
-                                    updateType:(UALocationEventUpdateType *)updateType {
++ (UALocationEvent *)significantChangeLocationEventWithLocation:(CLLocation *)location
+                                                   providerType:(UALocationServiceProviderType *)providerType {
 
     return [UALocationEvent locationEventWithLocation:location
-                                         providerType:nil
+                                         providerType:providerType
                                       desiredAccuracy:nil
                                        distanceFilter:nil
-                                           updateType:updateType];
+                                           updateType:UALocationEventUpdateTypeChange];
+
+}
+
++ (UALocationEvent *)standardLocationEventWithLocation:(CLLocation *)location
+                                          providerType:(UALocationServiceProviderType *)providerType
+                                       desiredAccuracy:(NSNumber *)desiredAccuracy
+                                        distanceFilter:(NSNumber *)distanceFilter {
+
+    return [UALocationEvent locationEventWithLocation:location
+                                         providerType:providerType
+                                      desiredAccuracy:desiredAccuracy
+                                       distanceFilter:distanceFilter
+                                           updateType:UALocationEventUpdateTypeContinuous];
+
 }
 
 - (NSString *)eventType {

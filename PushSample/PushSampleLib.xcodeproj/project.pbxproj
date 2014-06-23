@@ -98,7 +98,6 @@
 		BBEFB01A1507F3A400976645 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		BBEFB01B1507F3A400976645 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		BBEFB0211507F3A400976645 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BBEFB01F1507F3A400976645 /* InfoPlist.strings */; };
-		BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */; };
 		BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */; };
 		BBEFB0321507F68500976645 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0311507F68500976645 /* libOCMock.a */; };
 		BBEFB0521507F76400976645 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEFB0101507F37200976645 /* CoreLocation.framework */; };
@@ -317,7 +316,6 @@
 		BBEFB01E1507F3A400976645 /* AirshipApplicationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AirshipApplicationTests-Info.plist"; sourceTree = "<group>"; };
 		BBEFB0201507F3A400976645 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BBEFB0251507F3A400976645 /* AirshipApplicationTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AirshipApplicationTests-Prefix.pch"; sourceTree = "<group>"; };
-		BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationEventApplicationTests.m; sourceTree = "<group>"; };
 		BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UALocationServicesApplicationTest.m; sourceTree = "<group>"; };
 		BBEFB0311507F68500976645 /* libOCMock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libOCMock.a; path = ../TestCommon/OCMockLibrary/libOCMock.a; sourceTree = "<group>"; };
 		CC523FCB17BA8E6600233005 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -585,7 +583,7 @@
 			children = (
 				BBC923F515AC8F6000EE7C2A /* libUAirship-4.0.0.a */,
 				7B909D40142935C900D0AB36 /* AirshipLogicTests.xctest */,
-				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.1.1.a */,
+				1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-4.0.0.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -739,7 +737,6 @@
 				BBEFB01D1507F3A400976645 /* Supporting Files */,
 				BB4E13681545D4BB0076EC1B /* UAAnalyticsTest.m */,
 				BBDAEF1D1525264C007F7D92 /* UAirshipApplicationTests.m */,
-				BBEFB02C1507F65700976645 /* UALocationEventApplicationTests.m */,
 				BBEFB02D1507F65700976645 /* UALocationServicesApplicationTest.m */,
 				BB484B2C15910C7E0097B38C /* UALocationTestUtils.h */,
 				BB484B2D15910C7E0097B38C /* UALocationTestUtils.m */,
@@ -898,7 +895,7 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-3.1.1.a */ = {
+		1FC0E37B17E919FE00840A52 /* libUAirship-iOS5-4.0.0.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libUAirship-iOS5-4.0.0.a";
@@ -1123,7 +1120,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB4E13691545D4BB0076EC1B /* UAAnalyticsTest.m in Sources */,
-				BBEFB02F1507F65700976645 /* UALocationEventApplicationTests.m in Sources */,
 				BBEFB0301507F65700976645 /* UALocationServicesApplicationTest.m in Sources */,
 				BBDAEF1E1525264C007F7D92 /* UAirshipApplicationTests.m in Sources */,
 				BB484B2E15910C7E0097B38C /* UALocationTestUtils.m in Sources */,

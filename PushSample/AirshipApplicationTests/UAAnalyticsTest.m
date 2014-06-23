@@ -403,7 +403,7 @@
     dispatch_queue_t testQueue = dispatch_queue_create("com.urbanairship.analyticsThreadsafeTest", DISPATCH_QUEUE_CONCURRENT);
     dispatch_group_t testGroup = dispatch_group_create();
     dispatch_group_async(testGroup, testQueue, ^{
-        UALocationEvent *event = [UALocationEvent locationEventWithLocation:[UALocationTestUtils testLocationPDX] locationManager:nil andUpdateType:@"testUpdate"];
+        UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithLocation:[UALocationTestUtils testLocationPDX] providerType:@"testUpdate"];
         int random = 0;
         for (int i = 0; i < 10; i++) {
             random = arc4random() % 2;
