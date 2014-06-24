@@ -38,12 +38,12 @@
     self.location = [UALocationTestUtils testLocationPDX];
 }
 
-// Test creating a significant locatino update event
+// Test creating a significant location update event
 - (void)testSignificantLocationUpdate {
     UALocationEvent *event = [UALocationEvent significantChangeLocationEventWithLocation:self.location
                                                                             providerType:@"testLocation"];
 
-    [self validateLocaitonForEvent:event];
+    [self validateLocationForEvent:event];
 
     XCTAssertEqual(@"NONE", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqual(@"NONE", [event.data valueForKey:UALocationEventDistanceFilterKey]);
@@ -58,7 +58,7 @@
                                                               desiredAccuracy:@150
                                                                distanceFilter:@100];
 
-    [self validateLocaitonForEvent:event];
+    [self validateLocationForEvent:event];
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
@@ -73,7 +73,7 @@
                                                                 desiredAccuracy:@150
                                                                  distanceFilter:@100];
 
-    [self validateLocaitonForEvent:event];
+    [self validateLocationForEvent:event];
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
@@ -88,7 +88,7 @@
                                                                 desiredAccuracy:@150
                                                                  distanceFilter:@100];
 
-    [self validateLocaitonForEvent:event];
+    [self validateLocationForEvent:event];
 
     XCTAssertEqualObjects(@"150", [event.data valueForKey:UALocationEventDesiredAccuracyKey]);
     XCTAssertEqualObjects(@"100", [event.data valueForKey:UALocationEventDistanceFilterKey]);
@@ -96,8 +96,8 @@
     XCTAssertEqual(@"testLocation", [event.data valueForKey:UALocationEventProviderKey]);
 }
 
-// Helper mehtod to validate the location data
-- (void)validateLocaitonForEvent:(UALocationEvent *)event {
+// Helper method to validate the location data
+- (void)validateLocationForEvent:(UALocationEvent *)event {
     // 0.000001 equals sub meter accuracy at the equator.
     XCTAssertEqualWithAccuracy(self.location.coordinate.latitude, [[event.data valueForKey:UALocationEventLatitudeKey] doubleValue], 0.000001);
     XCTAssertEqualWithAccuracy(self.location.coordinate.longitude, [[event.data valueForKey:UALocationEventLongitudeKey] doubleValue],0.000001 );
